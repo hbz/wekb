@@ -5,6 +5,7 @@ import grails.util.Environment
 import grails.core.GrailsClass
 import grails.core.GrailsApplication
 import grails.converters.JSON
+import org.gokb.LanguagesService
 
 import javax.servlet.http.HttpServletRequest
 import grails.plugin.springsecurity.acl.*
@@ -995,6 +996,8 @@ class BootStrap {
     RefdataCategory.lookupOrCreate('Job.Type', 'RejectTIWithoutIdentifier').save(flush: true, failOnError: true)
     RefdataCategory.lookupOrCreate('Job.Type', 'PlatformCleanup').save(flush: true, failOnError: true)
     RefdataCategory.lookupOrCreate('Job.Type', 'RecalculateStatistics').save(flush: true, failOnError: true)
+
+    LanguagesService.initialize()
 
     log.debug("Deleting any null refdata values");
     RefdataValue.executeUpdate('delete from RefdataValue where value is null');
