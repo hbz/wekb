@@ -52,7 +52,7 @@
 
        <div class="nav navbar-nav navbar-right">
           <g:if test="${grailsApplication.config.gokb.ygorUrl}">
-            <li><a  style="font-weight:bold;" href ="${grailsApplication.config.gokb.ygorUrl}/ygor">Ygor</a></li>
+            <li><a  style="font-weight:bold;" href ="${grailsApplication.config.gokb.ygorUrl}">Ygor</a></li>
           </g:if>
 
           <li><span style="width:15px"></span></li>
