@@ -1,54 +1,23 @@
 package gokbg3;
 
 import grails.util.Environment
-import grails.util.GrailsNameUtils;
 
 import grails.core.GrailsClass
 import grails.core.GrailsApplication
 import grails.converters.JSON
 
-
-import java.lang.reflect.Method
-
-import org.gokb.GOKbTextUtils
-
 import javax.servlet.http.HttpServletRequest
-
 import grails.plugin.springsecurity.acl.*
 
 import org.gokb.DomainClassExtender
-import org.gokb.ESWrapperService
 import org.gokb.ComponentStatisticService
 import org.gokb.cred.*
-import org.gokb.refine.RefineProject
-
-//import org.gokb.validation.types.*
 
 import com.k_int.apis.A_Api;
 import com.k_int.ConcurrencyManagerService.Job
-
-import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
-import static org.springframework.security.acls.domain.BasePermission.DELETE
-import static org.springframework.security.acls.domain.BasePermission.READ
-import static org.springframework.security.acls.domain.BasePermission.WRITE
-import static org.springframework.security.acls.domain.BasePermission.CREATE
-
-import org.springframework.security.core.context.SecurityContextHolder as SCH
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.authority.AuthorityUtils
-
-import org.elasticsearch.client.Client
-import org.elasticsearch.client.AdminClient
 import org.elasticsearch.client.IndicesAdminClient
-import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest
-import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse
-import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequestBuilder
-import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse
-import org.elasticsearch.action.admin.indices.settings.get.GetSettingsResponse
-import static org.elasticsearch.common.xcontent.XContentFactory.*
-import org.elasticsearch.common.xcontent.XContentBuilder
 
 
 class BootStrap {
@@ -449,10 +418,13 @@ class BootStrap {
 
 
   def refdataCats() {
-    RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, KBComponent.STATUS_CURRENT, '0').save(flush: true, failOnError: true)
-    RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, KBComponent.STATUS_DELETED, '3').save(flush: true, failOnError: true)
-    RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, KBComponent.STATUS_EXPECTED, '1').save(flush: true, failOnError: true)
-    RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, KBComponent.STATUS_RETIRED, '2').save(flush: true, failOnError: true)
+    RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS,
+        [(KBComponent.STATUS_CURRENT)  : '0',
+         (KBComponent.STATUS_EXPECTED) : '1',
+         (KBComponent.STATUS_RETIRED)  : '2',
+         (KBComponent.STATUS_DELETED)  : '3'
+        ]
+    )
 
     RefdataCategory.lookupOrCreate(KBComponent.RD_EDIT_STATUS, KBComponent.EDIT_STATUS_APPROVED).save(flush: true, failOnError: true)
     RefdataCategory.lookupOrCreate(KBComponent.RD_EDIT_STATUS, KBComponent.EDIT_STATUS_IN_PROGRESS).save(flush: true, failOnError: true)
@@ -1023,7 +995,6 @@ class BootStrap {
     RefdataCategory.lookupOrCreate('Job.Type', 'RejectTIWithoutIdentifier').save(flush: true, failOnError: true)
     RefdataCategory.lookupOrCreate('Job.Type', 'PlatformCleanup').save(flush: true, failOnError: true)
     RefdataCategory.lookupOrCreate('Job.Type', 'RecalculateStatistics').save(flush: true, failOnError: true)
-
 
     log.debug("Deleting any null refdata values");
     RefdataValue.executeUpdate('delete from RefdataValue where value is null');
