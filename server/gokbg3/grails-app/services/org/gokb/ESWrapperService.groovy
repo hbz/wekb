@@ -35,15 +35,18 @@ class ESWrapperService {
 
   private def ensureClient() {
     if ( esclient == null ) {
-      def es_cluster_name = grailsApplication.config?.gokb?.es?.cluster
-      def es_host_name = grailsApplication.config?.gokb?.es?.host
-      log.debug("Elasticsearch client is null, creating now... host: ${es_host_name} cluster:${es_cluster_name}")
-      log.debug("Looking for Elasticsearch on host ${es_host_name} with cluster name ${es_cluster_name}")
+      def es_cluster_name = grailsApplication.config?.gokb?.es?.cluster ?: 'elasticsearch'
+      def es_host_name = grailsApplication.config?.gokb?.es?.host ?: 'localhost'
 
-      Settings settings = Settings.builder().put("cluster.name", es_cluster_name).build()
-      esclient = new org.elasticsearch.transport.client.PreBuiltTransportClient(settings)
-      esclient.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(es_host_name), 9300))
-      log.debug("ES wrapper service init completed OK")
+      log.debug("esclient is null, creating now... host: ${es_host_name} cluster:${es_cluster_name}");
+
+      log.debug("Looking for es on host ${es_host_name} with cluster name ${es_cluster_name}");
+
+      Settings settings = Settings.builder().put("cluster.name", es_cluster_name).build();
+      esclient = new org.elasticsearch.transport.client.PreBuiltTransportClient(settings);
+      esclient.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(es_host_name), 9300));
+
+      log.debug("ES wrapper service init completed OK");
     }
     esclient
   }

@@ -48,6 +48,11 @@ class OtherInstance extends TitleInstance {
     submitRemapWorkTask();
   }
 
+  @Override
+  public String getNiceName() {
+    return "Other";
+  }
+
   def submitRemapWorkTask(newMap) {
     log.debug("OtherInstance::submitRemapWorkTask");
     def tls = grailsApplication.mainContext.getBean("titleLookupService")
