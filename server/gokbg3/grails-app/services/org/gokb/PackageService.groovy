@@ -979,7 +979,7 @@ class PackageService {
   /**
    * collects the data of the given package into a KBART formatted TSV file for later download
    */
-  public void createKbartExport(Package pkg) {
+  void createKbartExport(Package pkg) {
     if (pkg) {
       def exportFileName = generateExportFileName(pkg, ExportType.KBART)
       def path = exportFilePath()
@@ -1339,7 +1339,7 @@ class PackageService {
     }
   }
 
-  public void sendFile(Package pkg, ExportType type, def response) {
+  void sendFile(Package pkg, ExportType type, def response) {
     String fileName = generateExportFileName(pkg, type)
     try {
       File file = new File(exportFilePath() + fileName)
