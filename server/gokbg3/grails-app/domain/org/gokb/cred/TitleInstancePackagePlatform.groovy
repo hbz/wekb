@@ -38,6 +38,15 @@ class TitleInstancePackagePlatform extends KBComponent {
   String publisherName
   Date dateFirstInPrint
   Date dateFirstOnline
+  String firstAuthor
+  RefdataValue publicationType
+  String volumeNumber
+  String editionStatement
+  String firstEditor
+  String parentPublicationTitleId
+  String precedingPublicationTitleId
+  Date lastChangedExternal
+  RefdataValue medium
 
   private static SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd")
 
@@ -71,20 +80,29 @@ class TitleInstancePackagePlatform extends KBComponent {
       'hybridOAUrl'
     ],
     'es'           : [
-      'hostPlatformUuid': "hostPlatform.uuid",
-      'hostPlatformName': "hostPlatform.name",
-      'hostPlatform'    : "hostPlatform.id",
-      'tippTitleUuid'   : "title.uuid",
-      'tippTitleName'   : "title.name",
-      'tippTitle'       : "title.id",
-      'tippPackageUuid' : "pkg.uuid",
-      'tippPackageName' : "pkg.name",
-      'tippPackage'     : "pkg.id",
-      'titleType'       : "title.niceName",
-      'coverage'        : "coverageStatements",
-      'publisherName'   : "publisherName",
-      'dateFirstInPrint': "dateFirstInPrint",
-      'dateFirstOnline' : "dateFirstOnline"
+      'hostPlatformUuid'      : "hostPlatform.uuid",
+      'hostPlatformName'      : "hostPlatform.name",
+      'hostPlatform'          : "hostPlatform.id",
+      'tippTitleUuid'         : "title.uuid",
+      'tippTitleName'         : "title.name",
+      'tippTitle'             : "title.id",
+      'tippPackageUuid'       : "pkg.uuid",
+      'tippPackageName'       : "pkg.name",
+      'tippPackage'           : "pkg.id",
+      'titleType'             : "title.niceName",
+      'coverage'              : "coverageStatements",
+      'publisherName'         : "publisherName",
+      'dateFirstInPrint'      : "dateFirstInPrint",
+      'dateFirstOnline'       : "dateFirstOnline",
+      'firstAuthor'           : "firstAuthor",
+      'publicationType'       : "publicationType",
+      'volumeNumber'          : "volumeNumber",
+      'editionStatement'      : "editionStatement",
+      'firstEditor'           : "firstEditor",
+      'parentPublicationTitleId'   : "parentPublicationTitleId",
+      'precedingPublicationId': "precedingPublicationId",
+      'lastChangedExternal'     : "lastChangedExternal",
+      'medium'                : "medium"
     ],
     'defaultLinks' : [
       'pkg',
@@ -157,6 +175,15 @@ class TitleInstancePackagePlatform extends KBComponent {
     paymentType column: 'tipp_payment_type'
     accessStartDate column: 'tipp_access_start_date'
     accessEndDate column: 'tipp_access_end_date'
+    firstAuthor column: 'tipp_first_author'
+    publicationType column: 'tipp_publication_type_rv_fk'
+    volumeNumber column: 'tipp_volume_number'
+    editionStatement column: 'tipp_edition_statement'
+    firstEditor column: 'tipp_first_editor'
+    parentPublicationTitleId column: 'tipp_parent_publication_id'
+    precedingPublicationId column: 'tipp_preceding_publication_id'
+    lastChangedExternal column: 'tipp_last_change_ext'
+    medium column: 'tipp_medium_rv_fk'
   }
 
   static constraints = {
@@ -183,6 +210,15 @@ class TitleInstancePackagePlatform extends KBComponent {
       }
     })
     url(nullable: true, blank: true)
+    firstAuthor(nullable: true, blank: true)
+    publicationType(nullable: true, blank: true)
+    volumeNumber(nullable: true, blank: true)
+    editionStatement(nullable: true, blank: true)
+    firstEditor(nullable: true, blank: true)
+    parentPublicationTitleId(nullable: true, blank: true)
+    precedingPublicationTitleId(nullable: true, blank: true)
+    lastChangedExternal(nullable: true, blank: true)
+    medium(nullable: true, blank: true)
   }
 
   public static final String restPath = "/package-titles"
@@ -250,7 +286,7 @@ class TitleInstancePackagePlatform extends KBComponent {
    * Please see https://github.com/openlibraryenvironment/gokb/wiki/tipp_dto
    */
   @Transient
-  public static def validateDTO(tipp_dto) {
+  public static def validateDTO(tipp_dto, locale) {
     def result = ['valid': true]
     def errors = [:]
     def pkgLink = tipp_dto.pkg ?: tipp_dto.package
@@ -260,8 +296,7 @@ class TitleInstancePackagePlatform extends KBComponent {
     if (!pkgLink) {
       result.valid = false
       errors.pkg = [[message: "Missing package link!", baddata: pkgLink]]
-    }
-    else {
+    } else {
       def pkg = null
 
       if (pkgLink instanceof Map) {
@@ -279,8 +314,7 @@ class TitleInstancePackagePlatform extends KBComponent {
     if (!pltLink) {
       result.valid = false
       errors.hostPlatform = [[message: "Missing platform link!", baddata: pltLink]]
-    }
-    else {
+    } else {
       def plt = null
 
       if (pltLink instanceof Map) {
@@ -298,20 +332,31 @@ class TitleInstancePackagePlatform extends KBComponent {
     if (!tiLink) {
       result.valid = false
       errors.title = [[message: "Missing title link!", baddata: tiLink]]
-    }
-    else {
+    } else {
       def ti = null
 
-        if (tiLink instanceof Map) {
-          ti = TitleInstance.get(tiLink.id ?: tiLink.internalId)
-        }
-        else {
-          ti = TitleInstance.get(tiLink)
-        }
+      if (tiLink instanceof Map) {
+        ti = TitleInstance.get(tiLink.id ?: tiLink.internalId)
+      } else {
+        ti = TitleInstance.get(tiLink)
+      }
 
       if (!ti) {
         result.valid = false
         errors.title = [[message: "Could not resolve title id!", baddata: tiLink, code: 404]]
+      }
+    }
+
+    String idJsonKey = 'ids'
+    def ids_list = tipp_dto[idJsonKey]
+    if (!ids_list) {
+      idJsonKey = 'identifiers'
+      ids_list = tipp_dto[idJsonKey]
+    }
+    if (ids_list) {
+      def id_errors = Identifier.validateDTOs(ids_list, locale)
+      if (id_errors.size() > 0) {
+        errors.put(idJsonKey, id_errors)
       }
     }
 
@@ -347,8 +392,7 @@ class TitleInstancePackagePlatform extends KBComponent {
         }
         coverage.coverageDepth = "fulltext"
         errors.coverageDepth << [message: "Missing value for coverage depth: set to fulltext", baddata: coverage.coverageDepth]
-      }
-      else {
+      } else {
         if (coverage.coverageDepth instanceof String && !['fulltext', 'selected articles', 'abstracts'].contains(coverage.coverageDepth?.toLowerCase())) {
           if (!errors.coverageDepth) {
             errors.coverageDepth = []
@@ -356,8 +400,7 @@ class TitleInstancePackagePlatform extends KBComponent {
 
           result.valid = false
           errors.coverageDepth << [message: "Unrecognized value '${coverage.coverageDepth}' for coverage depth", baddata: coverage.coverageDepth]
-        }
-        else if (coverage.coverageDepth instanceof Integer) {
+        } else if (coverage.coverageDepth instanceof Integer) {
           try {
             def candidate = RefdataValue.get(coverage.coverageDepth)
 
@@ -404,6 +447,39 @@ class TitleInstancePackagePlatform extends KBComponent {
       if (parsedStart && parsedEnd && (parsedEnd < parsedStart)) {
         result.valid = false
         errors.endDate = [[message: "Coverage end date must not be prior to its start date!", baddata: coverage.endDate]]
+      }
+    }
+
+    if (tipp_dto.medium) {
+      RefdataValue[] media = RefdataCategory.lookup("TitleInstance.Medium")
+      if (!media*.value.contains(tipp_dto.medium))
+        errors.put('medium', [message: "unknown", baddata: tipp_dto.remove('medium')])
+    }
+
+    if (tipp_dto.publicationType) {
+      RefdataValue[] pubTypes = RefdataCategory.lookup("TitleInstancePackagePlatform.PublicationType")
+      if (!pubTypes*.value.contains(tipp_dto.publicationType))
+        errors.put('publicationType', [message: "unknown", baddata: tipp_dto.remove('publicationType')])
+    }
+
+    if (tipp_dto.dateFirstInPrint) {
+      LocalDateTime dfip = GOKbTextUtils.completeDateString(tipp_dto.dateFirstInPrint, false)
+      if (!dfip) {
+        errors.put('dateFirstInPrint', [message: "Unable to parse", baddata: tipp_dto.remove('dateFirstInPrint')])
+      }
+    }
+
+    if (tipp_dto.dateFirstOnline) {
+      LocalDateTime dfo = GOKbTextUtils.completeDateString(tipp_dto.dateFirstOnline, false)
+      if (!dfo) {
+        errors.put('dateFirstOnline', [message: "Unable to parse", baddata: tipp_dto.remove('dateFirstOnline')])
+      }
+    }
+
+    if (tipp_dto.lastChangedExternal) {
+      LocalDateTime lce = GOKbTextUtils.completeDateString(tipp_dto.lastChangedExternal, false)
+      if (!lce) {
+        errors.put('lastChangedExternal', [message: "Unable to parse", baddata: tipp_dto.remove('lastChangedExternal')])
       }
     }
 
@@ -579,8 +655,23 @@ class TitleInstancePackagePlatform extends KBComponent {
 
         changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'url', trimmed_url)
         changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'name', tipp_dto.name)
+        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'firstAuthor', tipp_dto.firstAuthor)
+        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'firstEditor', tipp_dto.firstEditor)
+        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'publisherName', tipp_dto.publisherName)
+        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'volumeNumber', tipp_dto.volumeNumber)
+        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'editionStatement', tipp_dto.editionStatement)
+        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'series', tipp_dto.series)
+        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'subjectArea', tipp_dto.subjectArea)
+        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'editionStatement', tipp_dto.editionStatement)
+        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'parentPublicationTitleId', tipp_dto.parentPublicationTitleId)
+        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'precedingPublicationTitleId', tipp_dto.precedingPublicationTitleId)
         changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.accessStartDate, tipp, 'accessStartDate')
         changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.accessEndDate, tipp, 'accessEndDate')
+        changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.dateFirstInPrint, tipp, 'dateFirstInPrint')
+        changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.dateFirstOnline, tipp, 'dateFirstOnline')
+        changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.lastChangedExternal, tipp, 'lastChangedExternal')
+        changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.medium, tipp, 'medium', 'TitleInstance.Medium')
+        changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.publicationType, tipp, 'publicationType', 'TitleInstancePackagePlatform.PublicationType')
 
         if (tipp_dto.coverageStatements && !tipp_dto.coverage) {
           tipp_dto.coverage = tipp_dto.coverageStatements
@@ -608,8 +699,8 @@ class TitleInstancePackagePlatform extends KBComponent {
 
           def cs_match = false
           def conflict = false
-          def startAsDate = (parsedStart ? Date.from( parsedStart.atZone(ZoneId.systemDefault()).toInstant()) : null)
-          def endAsDate = (parsedEnd ? Date.from( parsedEnd.atZone(ZoneId.systemDefault()).toInstant()) : null)
+          def startAsDate = (parsedStart ? Date.from(parsedStart.atZone(ZoneId.systemDefault()).toInstant()) : null)
+          def endAsDate = (parsedEnd ? Date.from(parsedEnd.atZone(ZoneId.systemDefault()).toInstant()) : null)
           def conflicting_statements = []
 
           tipp.coverageStatements?.each { tcs ->
@@ -622,53 +713,45 @@ class TitleInstancePackagePlatform extends KBComponent {
               changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endIssue', c.endIssue)
               changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'embargo', c.embargo)
               changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'coverageNote', c.coverageNote)
-              changed |= com.k_int.ClassUtils.setDateIfPresent(parsedStart,tcs,'startDate')
-              changed |= com.k_int.ClassUtils.setDateIfPresent(parsedEnd,tcs,'endDate')
+              changed |= com.k_int.ClassUtils.setDateIfPresent(parsedStart, tcs, 'startDate')
+              changed |= com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tcs, 'endDate')
               changed |= com.k_int.ClassUtils.setRefdataIfPresent(c.coverageDepth, tipp, 'coverageDepth', 'TIPPCoverageStatement.CoverageDepth')
 
               cs_match = true
-            }
-            else if ( !cs_match ) {
+            } else if (!cs_match) {
               if (!tcs.endDate && !endAsDate) {
                 conflict = true
-              }
-              else if (tcs.startVolume && tcs.startVolume == c.startVolume) {
+              } else if (tcs.startVolume && tcs.startVolume == c.startVolume) {
                 log.debug("Matched CoverageStatement by startVolume")
                 cs_match = true
-              }
-              else if (tcs.startDate && tcs.startDate == startAsDate) {
+              } else if (tcs.startDate && tcs.startDate == startAsDate) {
                 log.debug("Matched CoverageStatement by startDate")
                 cs_match = true
-              }
-              else if (!tcs.startVolume && !tcs.startDate && !tcs.endVolume && !tcs.endDate) {
+              } else if (!tcs.startVolume && !tcs.startDate && !tcs.endVolume && !tcs.endDate) {
                 log.debug("Matched CoverageStatement with unspecified values")
                 cs_match = true
-              }
-              else if (tcs.startDate && tcs.endDate) {
+              } else if (tcs.startDate && tcs.endDate) {
                 if (startAsDate && startAsDate > tcs.startDate && startAsDate < tcs.endDate) {
                   conflict = true
-                }
-                else if (endAsDate && endAsDate > tcs.startDate && endAsDate < tcs.endDate) {
+                } else if (endAsDate && endAsDate > tcs.startDate && endAsDate < tcs.endDate) {
                   conflict = true
                 }
               }
 
               if (conflict) {
                 conflicting_statements.add(tcs)
-              }
-              else if (cs_match) {
+              } else if (cs_match) {
                 changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startIssue', c.startIssue)
                 changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startVolume', c.startVolume)
                 changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endVolume', c.endVolume)
                 changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endIssue', c.endIssue)
                 changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'embargo', c.embargo)
                 changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'coverageNote', c.coverageNote)
-                changed |= com.k_int.ClassUtils.setDateIfPresent(parsedStart,tcs,'startDate')
-                changed |= com.k_int.ClassUtils.setDateIfPresent(parsedEnd,tcs,'endDate')
+                changed |= com.k_int.ClassUtils.setDateIfPresent(parsedStart, tcs, 'startDate')
+                changed |= com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tcs, 'endDate')
                 changed |= com.k_int.ClassUtils.setRefdataIfPresent(c.coverageDepth, tipp, 'coverageDepth', 'TIPPCoverageStatement.CoverageDepth')
               }
-            }
-            else {
+            } else {
               log.debug("Matched new coverage ${c} on multiple existing coverages!")
             }
           }
@@ -693,15 +776,15 @@ class TitleInstancePackagePlatform extends KBComponent {
               }
             }
 
-            tipp.addToCoverageStatements('startVolume': c.startVolume,   \
-              'startIssue': c.startIssue,   \
-              'endVolume': c.endVolume,   \
-              'endIssue': c.endIssue,   \
-              'embargo': c.embargo,   \
-              'coverageDepth': cov_depth,   \
-              'coverageNote': c.coverageNote,   \
-              'startDate': startAsDate,   \
-              'endDate': endAsDate
+            tipp.addToCoverageStatements('startVolume': c.startVolume,        \
+                   'startIssue': c.startIssue,        \
+                   'endVolume': c.endVolume,        \
+                   'endIssue': c.endIssue,        \
+                   'embargo': c.embargo,        \
+                   'coverageDepth': cov_depth,        \
+                   'coverageNote': c.coverageNote,        \
+                   'startDate': startAsDate,        \
+                   'endDate': endAsDate
             )
           }
           // refdata setStringIfDifferent(tipp, 'coverageDepth', c.coverageDepth)
@@ -716,25 +799,8 @@ class TitleInstancePackagePlatform extends KBComponent {
           }
         }
       }
-      if (tipp_dto.series) {
-        tipp.setSeries(tipp_dto.series)
-      }
-      if (tipp_dto.subjectArea) {
-        tipp.setSubjectArea(tipp_dto.subjectArea)
-      }
-      if (tipp_dto.publisherName) {
-        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'publisherName', tipp_dto.publisherName)
-      }
-      if (org.apache.commons.lang.StringUtils.isNotEmpty(tipp_dto.dateFirstInPrint)) {
-        def print = GOKbTextUtils.completeDateString(tipp_dto.dateFirstInPrint)
-        com.k_int.ClassUtils.setDateIfPresent(print, tipp, 'dateFirstInPrint')
-      }
-      if (org.apache.commons.lang.StringUtils.isNotEmpty(tipp_dto.dateFirstOnline)) {
-        def online = GOKbTextUtils.completeDateString(tipp_dto.dateFirstOnline)
-        com.k_int.ClassUtils.setDateIfPresent(online, tipp, 'dateFirstOnline')
-      }
 
-      tipp.save(flush:true, failOnError:true);
+      tipp.save(flush: true, failOnError: true);
 
       result = tipp
     } else {
@@ -771,8 +837,8 @@ class TitleInstancePackagePlatform extends KBComponent {
     def linked_pkg = getPkg()
     def ti = getTitle()
 
-    builder.'gokb' (attr) {
-      builder.'tipp' ([id:(id), uuid:(uuid)]) {
+    builder.'gokb'(attr) {
+      builder.'tipp'([id: (id), uuid: (uuid)]) {
 
         addCoreGOKbXmlFields(builder, attr)
         builder.'lastUpdated'(lastUpdated ? dateFormatService.formatIsoTimestamp(lastUpdated) : null)
@@ -784,10 +850,20 @@ class TitleInstancePackagePlatform extends KBComponent {
         builder.'publisherName'(publisherName?.trim())
         builder.'dateFirstInPrint'(dateFirstInPrint?.trim())
         builder.'dateFirstOnline'(dateFirstOnline?.trim())
-        builder.'title' ([id:ti.id, uuid:ti.uuid]) {
-          builder.'name' (ti.name?.trim())
-          builder.'type' (titleClass)
-          builder.'status' (ti.status?.value)
+        builder.'firstAuthor'(firstAuthor?.trim())
+        builder.'publicationType'(publicationType.value.trim())
+        builder.'volumeNumber'(volumeNumber?.trim())
+        builder.'editionStatement'(editionStatement?.trim())
+        builder.'firstEditor'(firstEditor?.trim())
+        builder.'parentPublicationTitleId'(parentPublicationTitleId?.trim())
+        builder.'precedingPublicationTitleId'(precedingPublicationTitleId?.trim())
+        builder.'lastChangedExternal'(lastChangedExternal?.trim())
+        builder.'medium'(medium?.value.trim())
+
+        builder.'title'([id: ti.id, uuid: ti.uuid]) {
+          builder.'name'(ti.name?.trim())
+          builder.'type'(titleClass)
+          builder.'status'(ti.status?.value)
           builder.'identifiers' {
             titleIds.each { tid ->
               builder.'identifier'([namespace: tid[0], namespaceName: tid[3], value: tid[1], type: tid[2]])
@@ -814,8 +890,7 @@ class TitleInstancePackagePlatform extends KBComponent {
                 'name'(provider?.name)
                 'mission'(provider?.mission?.value)
               }
-            }
-            else {
+            } else {
               builder.'provider'()
             }
             if (nominalPlatform) {
@@ -823,8 +898,7 @@ class TitleInstancePackagePlatform extends KBComponent {
                 'name'(nominalPlatform.name?.trim())
                 'primaryUrl'(nominalPlatform.primaryUrl?.trim())
               }
-            }
-            else {
+            } else {
               builder.'nominalPlatform'()
             }
             builder.'curatoryGroups' {
@@ -845,15 +919,15 @@ class TitleInstancePackagePlatform extends KBComponent {
         if (cov_statements?.size() > 0) {
           cov_statements.each { tcs ->
             'coverage'(
-                    startDate: (tcs.startDate ? dateFormatService.formatIsoTimestamp(tcs.startDate) : null),
-                    startVolume: (tcs.startVolume),
-                    startIssue: (tcs.startIssue),
-                    endDate: (tcs.endDate ? dateFormatService.formatIsoTimestamp(tcs.endDate) : null),
-                    endVolume: (tcs.endVolume),
-                    endIssue: (tcs.endIssue),
-                    coverageDepth: (tcs.coverageDepth?.value ?: null),
-                    coverageNote: (tcs.coverageNote),
-                    embargo: (tcs.embargo)
+              startDate: (tcs.startDate ? dateFormatService.formatIsoTimestamp(tcs.startDate) : null),
+              startVolume: (tcs.startVolume),
+              startIssue: (tcs.startIssue),
+              endDate: (tcs.endDate ? dateFormatService.formatIsoTimestamp(tcs.endDate) : null),
+              endVolume: (tcs.endVolume),
+              endIssue: (tcs.endIssue),
+              coverageDepth: (tcs.coverageDepth?.value ?: null),
+              coverageNote: (tcs.coverageNote),
+              embargo: (tcs.embargo)
             )
           }
         }
