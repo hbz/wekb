@@ -83,20 +83,30 @@ class TitleInstancePackagePlatform extends KBComponent {
       'hybridOAUrl'
     ],
     'es'           : [
-      'hostPlatformUuid': "hostPlatform.uuid",
-      'hostPlatformName': "hostPlatform.name",
-      'hostPlatform'    : "hostPlatform.id",
-      'tippTitleUuid'   : "title.uuid",
-      'tippTitleName'   : "title.name",
-      'tippTitle'       : "title.id",
-      'tippPackageUuid' : "pkg.uuid",
-      'tippPackageName' : "pkg.name",
-      'tippPackage'     : "pkg.id",
-      'titleType'       : "title.niceName",
-      'coverage'        : "coverageStatements",
-      'publisherName'   : "publisherName",
-      'dateFirstInPrint': "dateFirstInPrint",
-      'dateFirstOnline' : "dateFirstOnline"
+      'hostPlatformUuid'      : "hostPlatform.uuid",
+      'hostPlatformName'      : "hostPlatform.name",
+      'hostPlatform'          : "hostPlatform.id",
+      'tippTitleUuid'         : "title.uuid",
+      'tippTitleName'         : "title.name",
+      'tippTitle'             : "title.id",
+      'tippPackageUuid'       : "pkg.uuid",
+      'tippPackageName'       : "pkg.name",
+      'tippPackage'           : "pkg.id",
+      'titleType'             : "title.niceName",
+      'coverage'              : "coverageStatements",
+      'publisherName'         : "publisherName",
+      'dateFirstInPrint'      : "dateFirstInPrint",
+      'dateFirstOnline'       : "dateFirstOnline",
+      'firstAuthor'           : "firstAuthor",
+      'publicationType'       : "publicationType",
+      'volumeNumber'          : "volumeNumber",
+      'editionStatement'      : "editionStatement",
+      'firstEditor'           : "firstEditor",
+      'parentPublicationTitleId'   : "parentPublicationTitleId",
+      'precedingPublicationId': "precedingPublicationId",
+      'lastChangedExternal'     : "lastChangedExternal",
+      'medium'                : "medium",
+      'language'              : "language"
     ],
     'defaultLinks' : [
       'pkg',
@@ -841,6 +851,16 @@ class TitleInstancePackagePlatform extends KBComponent {
         builder.'publisherName'(publisherName?.trim())
         builder.'dateFirstInPrint'(dateFirstInPrint?.trim())
         builder.'dateFirstOnline'(dateFirstOnline?.trim())
+        builder.'firstAuthor'(firstAuthor?.trim())
+        builder.'publicationType'(publicationType.value.trim())
+        builder.'volumeNumber'(volumeNumber?.trim())
+        builder.'editionStatement'(editionStatement?.trim())
+        builder.'firstEditor'(firstEditor?.trim())
+        builder.'parentPublicationTitleId'(parentPublicationTitleId?.trim())
+        builder.'precedingPublicationTitleId'(precedingPublicationTitleId?.trim())
+        builder.'lastChangedExternal'(lastChangedExternal?.trim())
+        builder.'medium'(medium?.value.trim())
+        builder.'language'(language?.value.trim())
         builder.'title'([id: ti.id, uuid: ti.uuid]) {
           builder.'name'(ti.name?.trim())
           builder.'type'(titleClass)
