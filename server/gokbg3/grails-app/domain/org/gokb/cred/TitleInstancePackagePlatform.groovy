@@ -48,6 +48,7 @@ class TitleInstancePackagePlatform extends KBComponent {
   Date lastChangedExternal
   RefdataValue medium
 
+
   private static SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd")
 
   private static refdataDefaults = [
@@ -101,8 +102,9 @@ class TitleInstancePackagePlatform extends KBComponent {
       'firstEditor'           : "firstEditor",
       'parentPublicationTitleId'   : "parentPublicationTitleId",
       'precedingPublicationId': "precedingPublicationId",
-      'lastChangedExternal'     : "lastChangedExternal",
-      'medium'                : "medium"
+      'lastChangedExternal'   : "lastChangedExternal",
+      'medium'                : "medium",
+      'language'              : "language"
     ],
     'defaultLinks' : [
       'pkg',
@@ -147,11 +149,11 @@ class TitleInstancePackagePlatform extends KBComponent {
     coverageStatements: 'owner'
   ]
 
-  public getPersistentId() {
+  getPersistentId() {
     "${uuid ?: 'gokb:TIPP:' + title?.id + ':' + pkg?.id + ':' + hostPlatform?.id}"
   }
 
-  public static isTypeCreatable(boolean defaultValue = false) {
+  static isTypeCreatable(boolean defaultValue = false) {
     return defaultValue;
   }
 
@@ -240,14 +242,14 @@ class TitleInstancePackagePlatform extends KBComponent {
   }
 
   @Override
-  public String getNiceName() {
+  String getNiceName() {
     return "TIPP"
   }
 
   /**
    * Create a new TIPP being mindful of the need to create TIPLs
    */
-  public static tiplAwareCreate(tipp_fields = [:]) {
+  static tiplAwareCreate(tipp_fields = [:]) {
 
 //     def result = new TitleInstancePackagePlatform(tipp_fields)
 //     result.title = tipp_fields.title
@@ -255,7 +257,8 @@ class TitleInstancePackagePlatform extends KBComponent {
 //     result.pkg = tipp_fields.pkg
     def tipp_status = tipp_fields.status ? RefdataCategory.lookup('KBComponent.Status', tipp_fields.status) : null
     def tipp_editstatus = tipp_fields.editStatus ? RefdataCategory.lookup('KBComponent.EditStatus', tipp_fields.editStatus) : null
-    def result = new TitleInstancePackagePlatform(uuid: tipp_fields.uuid, status: tipp_status, editStatus: tipp_editstatus, name: tipp_fields.name).save(failOnError: true)
+    def tipp_language = tipp_fields.language ? RefdataCategory.lookup('KBComponent.Language', tipp_fields.language) : null
+    def result = new TitleInstancePackagePlatform(uuid: tipp_fields.uuid, status: tipp_status, editStatus: tipp_editstatus, name: tipp_fields.name, language: tipp_language).save(failOnError: true)
 
     if (result) {
 
@@ -278,7 +281,7 @@ class TitleInstancePackagePlatform extends KBComponent {
 
   @Override
   @Transient
-  public String getDisplayName() {
+  String getDisplayName() {
     return name ?: "${pkg?.name} / ${title?.name} / ${hostPlatform?.name}"
   }
 
@@ -286,7 +289,7 @@ class TitleInstancePackagePlatform extends KBComponent {
    * Please see https://github.com/openlibraryenvironment/gokb/wiki/tipp_dto
    */
   @Transient
-  public static def validateDTO(tipp_dto, locale) {
+  static def validateDTO(tipp_dto, locale) {
     def result = ['valid': true]
     def errors = [:]
     def pkgLink = tipp_dto.pkg ?: tipp_dto.package
@@ -612,7 +615,8 @@ class TitleInstancePackagePlatform extends KBComponent {
           'uuid'        : (tipp_dto.uuid ?: null),
           'status'      : (tipp_dto.status ?: null),
           'name'        : (tipp_dto.name ?: null),
-          'editStatus'  : (tipp_dto.editStatus ?: null)
+          'editStatus'  : (tipp_dto.editStatus ?: null),
+          'language'    : (tipp_dto.language ?: null)
         ]
 
         tipp = tiplAwareCreate(tmap)
@@ -638,7 +642,7 @@ class TitleInstancePackagePlatform extends KBComponent {
 
         if (tipp_dto.paymentType && tipp_dto.paymentType.length() > 0) {
 
-          def payment_statement = null
+          def payment_statement
 
           if (tipp_dto.paymentType == 'P') {
             payment_statement = 'Paid'
@@ -672,6 +676,7 @@ class TitleInstancePackagePlatform extends KBComponent {
         changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.lastChangedExternal, tipp, 'lastChangedExternal')
         changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.medium, tipp, 'medium', 'TitleInstance.Medium')
         changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.publicationType, tipp, 'publicationType', 'TitleInstancePackagePlatform.PublicationType')
+        changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.language, tipp, 'language')
 
         if (tipp_dto.coverageStatements && !tipp_dto.coverage) {
           tipp_dto.coverage = tipp_dto.coverageStatements
@@ -859,7 +864,7 @@ class TitleInstancePackagePlatform extends KBComponent {
         builder.'precedingPublicationTitleId'(precedingPublicationTitleId?.trim())
         builder.'lastChangedExternal'(lastChangedExternal?.trim())
         builder.'medium'(medium?.value.trim())
-
+        builder.'language'(language?.value.trim())
         builder.'title'([id: ti.id, uuid: ti.uuid]) {
           builder.'name'(ti.name?.trim())
           builder.'type'(titleClass)
@@ -951,23 +956,16 @@ class TitleInstancePackagePlatform extends KBComponent {
   }
 
   @Transient
-  public getTitleIds() {
+  getTitleIds() {
     def refdata_ids = RefdataCategory.lookupOrCreate('Combo.Type', 'KBComponent.Ids');
     def status_active = RefdataCategory.lookupOrCreate(Combo.RD_STATUS, Combo.STATUS_ACTIVE)
     def result = Identifier.executeQuery("select i.namespace.value, i.value, i.namespace.family, i.namespace.name from Identifier as i, Combo as c where c.fromComponent = ? and c.type = ? and c.toComponent = i and c.status = ?", [title, refdata_ids, status_active], [readOnly: true]);
     result
   }
 
-  @Transient
-  public getPackageIds() {
-    def refdata_ids = RefdataCategory.lookupOrCreate('Combo.Type', 'KBComponent.Ids');
-    def status_active = RefdataCategory.lookupOrCreate(Combo.RD_STATUS, Combo.STATUS_ACTIVE)
-    def result = Identifier.executeQuery("select i.namespace.value, i.value, i.namespace.family, i.namespace.name from Identifier as i, Combo as c where c.fromComponent = ? and c.type = ? and c.toComponent = i and c.status = ?", [pkg, refdata_ids, status_active], [readOnly: true]);
-    result
-  }
 
   @Transient
-  public getTitleClass() {
+  getTitleClass() {
     def result = KBComponent.get(title.id)?.class.getSimpleName()
     result
   }

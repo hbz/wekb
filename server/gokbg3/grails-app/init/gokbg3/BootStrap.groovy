@@ -4,9 +4,9 @@ import grails.util.Environment
 import grails.core.GrailsClass
 import grails.core.GrailsApplication
 import grails.converters.JSON
+import org.gokb.LanguagesService
 
 import javax.servlet.http.HttpServletRequest
-
 import grails.plugin.springsecurity.acl.*
 
 import org.gokb.DomainClassExtender
@@ -22,8 +22,6 @@ import org.elasticsearch.action.admin.indices.create.CreateIndexResponse
 class BootStrap {
 
     GrailsApplication grailsApplication
-    def aclUtilService
-    def gokbAclService
     def cleanupService
     def ComponentStatisticService
     def concurrencyManagerService
@@ -408,16 +406,18 @@ class BootStrap {
         }
     }
 
-
     def destroy = {
     }
 
 
     def refdataCats() {
-        RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, KBComponent.STATUS_CURRENT, '0').save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, KBComponent.STATUS_DELETED, '3').save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, KBComponent.STATUS_EXPECTED, '1').save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, KBComponent.STATUS_RETIRED, '2').save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS,
+            [(KBComponent.STATUS_CURRENT)  : '0',
+             (KBComponent.STATUS_EXPECTED) : '1',
+             (KBComponent.STATUS_RETIRED)  : '2',
+             (KBComponent.STATUS_DELETED)  : '3'
+            ]
+        )
 
         RefdataCategory.lookupOrCreate(KBComponent.RD_EDIT_STATUS, KBComponent.EDIT_STATUS_APPROVED).save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(KBComponent.RD_EDIT_STATUS, KBComponent.EDIT_STATUS_IN_PROGRESS).save(flush: true, failOnError: true)
@@ -995,9 +995,10 @@ class BootStrap {
         RefdataCategory.lookupOrCreate('Job.Type', 'PlatformCleanup').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate('Job.Type', 'RecalculateStatistics').save(flush: true, failOnError: true)
 
+        log.debug("Deleting any null refdata values")
+        RefdataValue.executeUpdate('delete from RefdataValue where value is null')
 
-        log.debug("Deleting any null refdata values");
-        RefdataValue.executeUpdate('delete from RefdataValue where value is null');
+        LanguagesService.initialize()
     }
 
     def sourceObjects() {
