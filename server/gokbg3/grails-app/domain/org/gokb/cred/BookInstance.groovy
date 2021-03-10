@@ -43,8 +43,8 @@ class BookInstance extends TitleInstance {
     dateFirstInPrint column: 'bk_dateFirstInPrint'
     dateFirstOnline column: 'bk_dateFirstOnline'
     summaryOfContent column: 'bk_summaryOfContent'
-    firstAuthor column: 'bk_firstAuthor'
-    firstEditor column: 'bk_firstEditor'
+    firstAuthor column: 'bk_firstAuthor', type: 'text'
+    firstEditor column: 'bk_firstEditor', type: 'text'
   }
 
   static constraints = {
