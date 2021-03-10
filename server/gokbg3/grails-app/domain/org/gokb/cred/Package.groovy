@@ -416,7 +416,8 @@ select tipp.id,
       [code: 'exportPackage', label: 'TSV Export'],
       [code: 'kbartExport', label: 'KBART Export'],
       [code: 'verifyTitleList', label: 'Verify Title List'],
-      [code: 'packageUrlUpdate', label: 'Trigger Update']
+      [code: 'packageUrlUpdate', label: 'Trigger Update (Changed Titles)'],
+      [code: 'packageUrlUpdateAllTitles', label: 'Trigger Update (all Titles)']
       // [code:'method::registerWebhook', label:'Register Web Hook']
     ]
   }

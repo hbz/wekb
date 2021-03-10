@@ -30,6 +30,7 @@ class WorkflowController {
     'method::RRTransfer':[actionType:'workflow', view:'revReqTransfer'],
     'method::RRClose':[actionType:'simple' ],
     'packageUrlUpdate':[actionType:'process', method: 'triggerSourceUpdate'],
+    'packageUrlUpdateAllTitles':[actionType:'process', method: 'triggerSourceUpdateAllTitles'],
     'title::reconcile':[actionType:'workflow', view:'titleReconcile' ],
     'title::merge':[actionType:'workflow', view:'titleMerge' ],
     'tipp::retire':[actionType:'workflow', view:'tippRetire' ],
@@ -2273,6 +2274,57 @@ class WorkflowController {
       }
     }
     log.debug('triggerSourceUpdate() done - redirecting')
+    redirect(url: request.getHeader('referer'));
+  }
+
+  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  private def triggerSourceUpdateAllTitles(packages_to_update) {
+    log.info("triggerSourceUpdateAllTitles for Packages ${packages_to_update}..")
+    def user = springSecurityService.currentUser
+    def pars = [:]
+    def denied = false
+
+    if (packages_to_update.size() > 1) {
+      flash.error = "Please select a single Package to update!"
+    }
+    else {
+      packages_to_update.each { ptv ->
+        def pkgObj = Package.get(ptv.id)
+        Boolean curated_pkg = false;
+        def is_curator = null;
+
+        if (pkgObj && pkgObj.source?.url) {
+          if ( pkgObj.curatoryGroups && pkgObj.curatoryGroups?.size() > 0 ) {
+            is_curator = user.curatoryGroups?.id.intersect(pkgObj.curatoryGroups?.id)
+            curated_pkg = true;
+          }
+
+          if (pkgObj?.isEditable() && (is_curator || !curated_pkg  || user.authorities.contains(Role.findByAuthority('ROLE_SUPERUSER')))) {
+            def result = packageService.updateFromSource(pkgObj, user, true)
+
+            if (result == 'OK') {
+              flash.success = "Update successfully started!"
+            }
+            else if (result == 'ALREADY_RUNNING') {
+              flash.warning = "Another update is already running. Please try again later."
+            }
+            else {
+              flash.error = "There have been errors running the job. Please check Source & Package info."
+            }
+          }
+          else {
+            flash.error = "Insufficient permissions to update this Package!"
+          }
+        }
+        else if (!pkgObj){
+          flash.error = "Unable to reference provided Package!"
+        }
+        else {
+          flash.error = "Please check the Package Source for validity!"
+        }
+      }
+    }
+    log.debug('triggerSourceUpdateAllTitles() done - redirecting')
     redirect(url: request.getHeader('referer'));
   }
 }
