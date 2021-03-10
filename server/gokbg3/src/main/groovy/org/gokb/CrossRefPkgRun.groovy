@@ -86,39 +86,36 @@ class CrossRefPkgRun {
                      message: messageService.resolveCode('crossRef.package.error.apiRole', [], locale)]
         )
         job?.endTime = new Date()
-
         return jsonResult
       }
+
       // validate and upsert header pkg
       if (!(rjson?.packageHeader?.name)) {
         globalError([code   : 400,
                      message: messageService.resolveCode('crossRef.package.error', [], locale)]
         )
         job?.endTime = new Date()
-
         return jsonResult
       }
+
       // Package Validation
       pkg_validation = Package.validateDTO(rjson.packageHeader, locale)
-
       if (!pkg_validation.valid) {
         globalError([code   : 403,
                      message: messageService.resolveCode('crossRef.package.error.validation.global', null, locale),
                      errors : pkg_validation.errors]
         )
         job?.endTime = new Date()
-
         return jsonResult
       }
+
       // upsert Package
       def proxy = packageService.upsertDTO(rjson.packageHeader, user)
-
       if (!proxy) {
         globalError([code   : 400,
                      message: messageService.resolveCode('crossRef.package.error', null, locale),
         ])
         job?.endTime = new Date()
-
         return jsonResult
       }
 
@@ -146,7 +143,6 @@ class CrossRefPkgRun {
         idx++
         def currentTippError = [index: idx]
         log.info("Crossreferencing #$idx title ${json_tipp.name ?: json_tipp.title.name}")
-
         if ((json_tipp.package == null) && (pkg.id)) {
           json_tipp.package = [internalId: pkg.id]
         }
@@ -155,7 +151,6 @@ class CrossRefPkgRun {
           currentTippError.put('package', ['message': messageService.resolveCode('crossRef.package.tipps.error.pkgId', [json_tipp.title.name], request_locale), baddata: json_tipp.package])
           invalidTipps << json_tipp
         }
-
         if (!invalidTipps.contains(json_tipp)) {
           // validate and upsert TitleInstance
           Map titleErrorMap = handleTitle(json_tipp)
@@ -163,7 +158,6 @@ class CrossRefPkgRun {
             currentTippError.put('title', titleErrorMap)
           }
         }
-
         if (!invalidTipps.contains(json_tipp)) {
           // validate and upsert PlatformInstance
           Map pltErrorMap = handlePlt(json_tipp)
@@ -171,7 +165,6 @@ class CrossRefPkgRun {
             currentTippError.put('platform', pltErrorMap)
           }
         }
-
         if (!invalidTipps.contains(json_tipp)) {
           // validate and upsert TIPP
           Map tippErrorMap = handleTIPP(json_tipp)
@@ -179,7 +172,6 @@ class CrossRefPkgRun {
             currentTippError.put('tipp', tippErrorMap)
           }
         }
-
         if (invalidTipps.contains(json_tipp)) {
           reviewRequestService.raise(
             pkg,
