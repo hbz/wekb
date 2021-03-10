@@ -87,7 +87,6 @@ class TitleLookupService {
         }
         // Add the id.
         result['ids'] << the_id
-
         def match_type = "other_matches"
 
         // Flag class one is present.
@@ -568,13 +567,12 @@ class TitleLookupService {
               log.debug("Skipping name match")
             }
             else {
+              log.debug("TI ${the_title} matched by title name.")
               the_title = string_match
             }
           }
 
           if (the_title) {
-            log.debug("TI ${the_title} matched by secondary ID.")
-
             if (metadata.title != the_title.name) {
               log.debug("bucket match but \"${metadata.title}\" != \"${the_title.name}\" so add as a variant");
 
@@ -949,30 +947,22 @@ class TitleLookupService {
 
     // If we have a title then lets set the publisher and ids...
     if (the_title) {
-
       // Make sure we're all saved before looking up the publisher
       if (the_title.validate()) {
-
         // addIdentifiers(results.ids, the_title)
-
         // addPublisher(metadata.publisher_name, the_title)
-
         if (the_title.name.startsWith("Unknown Title")) {
           the_title.status = RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, 'Expected')
         }
-
         log.debug("${the_title.ids}")
-
         if (title_created) {
           the_title = the_title.save(flush: true)
         }
         else {
           the_title = the_title.merge(flush: true)
         }
-
         if (rr_map) {
           log.info("New RR for title ${the_title}")
-
           reviewRequestService.raise(
             the_title,
             rr_map.review,
@@ -985,19 +975,14 @@ class TitleLookupService {
         }
 
         if (results.other_types.size() > 0) {
-
           def additionalInfo = [:]
           def combo_ids = [the_title.id]
-
           additionalInfo.otherComponents = []
-
           results.other_types.each { tlm ->
             additionalInfo.otherComponents.add([oid: "${tlm.logEntityId}", name: "${tlm.name ?: tlm.displayName}"])
             combo_ids.add(tlm.id)
           }
-
           additionalInfo.cstring = combo_ids.sort().join('_')
-
           reviewRequestService.raise(
               the_title,
               "Identifier match.",
@@ -1013,16 +998,12 @@ class TitleLookupService {
         log.error("title validation failed for ${the_title}!")
       }
     }
-
     the_title
   }
 
   private TitleInstance addPublisher(publisher_name, ti, user = null, project = null) {
-
-
     if ((publisher_name != null) &&
         (publisher_name.trim().length() > 0)) {
-
       log.debug("Add publisher \"${publisher_name}\"")
       Org publisher = Org.findByName(publisher_name)
       def norm_pub_name = Org.generateNormname(publisher_name);
@@ -1030,7 +1011,6 @@ class TitleLookupService {
 
       if (!publisher) {
         // Lookup using norm name.
-
         log.debug("Using normname \"${norm_pub_name}\" for lookup")
         publisher = Org.findByNormname(norm_pub_name)
       }
@@ -1045,26 +1025,20 @@ class TitleLookupService {
           log.error("Unable to match unique pub");
         }
       }
-
       // Found a publisher.
       if (publisher) {
         log.debug("Found publisher ${publisher}");
         def orgs = ti.getPublisher()
-
         log.debug("Check for dupes in ${orgs}")
-
         // Has the publisher ever existed in the list against this title.
         if (!orgs.contains(publisher)) {
-
           // First publisher added?
           boolean not_first = orgs.size() > 0
-
           // Added a publisher?
           ti.publisher.add(publisher)
         }
       }
     }
-
     ti
   }
 
@@ -1124,19 +1098,12 @@ class TitleLookupService {
                   found = true
                 }
               }
-
-
             }
-
             // Only add if we havn't found anything.
             if (!found) {
-
               log.debug("Adding new combo for publisher ${publisher} (${propName}) to title ${ti} (${tiPropName})")
-
               RefdataValue type = RefdataCategory.lookupOrCreate(Combo.RD_TYPE, ti.getComboTypeValue('publisher'))
-
               def combo = null
-
               if (propName == "toComponent") {
                 combo = new Combo(
                     type: (type),
@@ -1157,13 +1124,10 @@ class TitleLookupService {
                     toComponent: ti
                 )
               }
-
               if (combo) {
                 combo.save(flush: true, failOnError: true)
-
                 // Add the combo to our list to avoid adding duplicates.
                 publisher_combos.add(combo)
-
                 log.debug "Added publisher ${publisher.name} for '${ti.name}'" +
                     (combo.startDate ? ' from ' + combo.startDate : '') +
                     (combo.endDate ? ' to ' + combo.endDate : '')
@@ -1171,12 +1135,10 @@ class TitleLookupService {
               else {
                 log.error("Could not create publisher Combo..")
               }
-
             }
             else {
               log.debug "Publisher ${publisher.name} already set against '${ti.name}'"
             }
-
           }
           else {
             log.debug "Could not find org name: ${pub_to_add.name}, with normname: ${norm_pub_name}"
@@ -1187,9 +1149,9 @@ class TitleLookupService {
     ti
   }
 
+
   private TitleInstance addIdentifiers(ids, ti) {
     ids.each { new_id ->
-
       def existing_combo = Combo.executeQuery("from Combo where fromComponent = ? and toComponent = ?", [ti, new_id])
       if (existing_combo.size() == 0) {
         ti.ids.add(new_id)
@@ -1202,21 +1164,18 @@ class TitleLookupService {
     ti
   }
 
+
   private TitleInstance attemptBucketMatch(String title) {
     def t = null;
     if (title && (title.length() > 0)) {
       def nname = GOKbTextUtils.norm2(title);
-
       def bucket_hash = GOKbTextUtils.generateComponentHash([nname]);
-
-      // def component_hash = GOKbTextUtils.generateComponentHash([nname, componentDiscriminator]);
-
       t = TitleInstance.findByBucketHash(bucket_hash);
       log.debug("Result of findByBucketHash(\"${bucket_hash}\") for title ${title} : ${t}");
     }
-
-    return t;
+    return t
   }
+
 
   private TitleInstance attemptComponentMatch(def metadata, String className) {
     def t = null;
@@ -1230,7 +1189,6 @@ class TitleLookupService {
     else {
       cl = Class.forName('org.gokb.cred.TitleInstance')
     }
-
     if (metadata.title && (metadata.title.length() > 0)) {
       def nname = GOKbTextUtils.norm2(metadata.title);
 
@@ -1307,7 +1265,6 @@ class TitleLookupService {
         }
         break
     }
-
     ti
   }
 
