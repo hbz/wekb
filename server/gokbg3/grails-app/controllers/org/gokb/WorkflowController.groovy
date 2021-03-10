@@ -30,6 +30,7 @@ class WorkflowController {
     'method::RRTransfer':[actionType:'workflow', view:'revReqTransfer'],
     'method::RRClose':[actionType:'simple' ],
     'packageUrlUpdate':[actionType:'process', method: 'triggerSourceUpdate'],
+    'packageUrlUpdateAllTitles':[actionType:'process', method: 'triggerSourceUpdateAllTitles'],
     'title::reconcile':[actionType:'workflow', view:'titleReconcile' ],
     'title::merge':[actionType:'workflow', view:'titleMerge' ],
     'tipp::retire':[actionType:'workflow', view:'tippRetire' ],
@@ -2225,8 +2226,12 @@ class WorkflowController {
     redirect(url: request.getHeader('referer'));
   }
 
+  private def triggerSourceUpdateAllTitles(packages_to_update) {
+    triggerSourceUpdate(packages_to_update, true)
+  }
+
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  private def triggerSourceUpdate(packages_to_update) {
+  private def triggerSourceUpdate(packages_to_update, boolean allTitles=false) {
     log.info("triggerSourceUpdate for Packages ${packages_to_update}..")
     def user = springSecurityService.currentUser
     def pars = [:]
@@ -2248,7 +2253,7 @@ class WorkflowController {
           }
 
           if (pkgObj?.isEditable() && (is_curator || !curated_pkg  || user.authorities.contains(Role.findByAuthority('ROLE_SUPERUSER')))) {
-            def result = packageService.updateFromSource(pkgObj, user)
+            def result = packageService.updateFromSource(pkgObj, user, allTitles)
 
             if (result == 'OK') {
               flash.success = "Update successfully started!"
