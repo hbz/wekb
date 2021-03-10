@@ -8,12 +8,6 @@
 	<dd>
 	  ${d?.lastUpdated?:''}
 	</dd>
-	<sec:ifAnyGranted roles="ROLE_SUPERUSER">
-		<dt><g:annotatedLabel owner="${d}" property="lastUpdatedBy">Last updated by</g:annotatedLabel></dt>
-		<dd>
-			${d?.lastUpdatedBy ? d?.lastUpdatedBy.displayName?: d?.lastUpdatedBy.username : ''}
-		</dd>
-	</sec:ifAnyGranted>
 	<dt><g:annotatedLabel owner="${d}" property="uuid">UUID</g:annotatedLabel></dt>
 	<dd>
           ${d?.uuid?:''}

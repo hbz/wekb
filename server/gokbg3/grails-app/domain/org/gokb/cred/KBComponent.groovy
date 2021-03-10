@@ -11,8 +11,6 @@ import grails.plugins.orm.auditable.Auditable
 import grails.plugins.orm.auditable.AuditEventType
 import org.gokb.GOKbTextUtils
 
-import java.text.SimpleDateFormat
-
 /**
  * Abstract base class for GoKB Components.
  */
@@ -85,12 +83,12 @@ where cp.owner = :c
   protected grails.core.GrailsApplication grailsApplication
 
   @Transient
-  public setSpringSecurityService(sss) {
+  setSpringSecurityService(sss) {
     this.springSecurityService = sss
   }
 
   @Transient
-  public setGrailsApplication(ga) {
+  setGrailsApplication(ga) {
     this.grailsApplication = ga
   }
 
@@ -319,6 +317,7 @@ where cp.owner = :c
 
   /**
    * Last updated by
+   * TODO: remove
    */
   User lastUpdatedBy
 
