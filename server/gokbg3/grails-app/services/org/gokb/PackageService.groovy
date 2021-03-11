@@ -1620,14 +1620,14 @@ class PackageService {
     input.close()
   }
 
-  def synchronized updateFromSource(Package p, def user = null) {
+  def synchronized updateFromSource(Package p, def user = null, ignoreLastChanged = false) {
     log.debug("updateFromSource")
     def result = null
     boolean started = false
     if (running == false) {
       running = true
       log.debug("UpdateFromSource started")
-      result = startSourceUpdate(p, user) ? 'OK' : 'ERROR'
+      result = startSourceUpdate(p, user, ignoreLastChanged) ? 'OK' : 'ERROR'
       running = false
     }
     else {
@@ -1642,7 +1642,7 @@ class PackageService {
    * Bad configurations will result in failure.
    * The autoUpdate frequency in the source is ignored: the update starts immediately.
    */
-  private boolean startSourceUpdate(Package p, def user = null) {
+  private boolean startSourceUpdate(Package p, def user = null, boolean ignoreLastChanged = false) {
     log.debug("Source update start..")
     boolean error = false
     def ygorBaseUrl = grailsApplication.config.gokb.ygorUrl
@@ -1670,13 +1670,16 @@ class PackageService {
 
     if (tokenValue && ygorBaseUrl) {
       def path = "/enrichment/processGokbPackage?pkgId=${p.id}&updateToken=${tokenValue}"
+      if(ignoreLastChanged){
+          path = "/enrichment/processGokbPackage?pkgId=${p.id}&ignoreLastChanged=true&updateToken=${tokenValue}"
+      }
       updateTrigger = new RESTClient(ygorBaseUrl + path)
 
       try {
-        log.debug("GET ygor/enrichment/processGokbPackage?pkgId=${p.id}&updateToken=${tokenValue}")
+        log.debug("GET ygor"+path)
         updateTrigger.request(GET) { request ->
           response.success = { resp, data ->
-            log.debug("GET ygor/enrichment/processGokbPackage?pkgId=${p.id}&updateToken=${tokenValue} => success")
+            log.debug("GET ygor${path} => success")
             // wait for ygor to finish the enrichment
             boolean processing = true
             respData = data
@@ -1739,7 +1742,7 @@ class PackageService {
             }
           }
           response.failure = { resp ->
-            log.error("GET ygor/enrichment/processGokbPackage?pkgId=${p.id}&updateToken=${tokenValue} => failure")
+            log.error("GET ygor${path} => failure")
             log.error("ygor response: ${resp.responseBase}")
             error = true
           }
