@@ -11,8 +11,6 @@ import grails.plugins.orm.auditable.Auditable
 import grails.plugins.orm.auditable.AuditEventType
 import org.gokb.GOKbTextUtils
 
-import java.text.SimpleDateFormat
-
 /**
  * Abstract base class for GoKB Components.
  */
@@ -31,6 +29,8 @@ abstract class KBComponent implements Auditable {
   static final String EDIT_STATUS_APPROVED = "Approved"
   static final String EDIT_STATUS_IN_PROGRESS = "In Progress"
   static final String EDIT_STATUS_REJECTED = "Rejected"
+
+  static final String RD_LANGUAGE = "KBComponent.Language"
 
   static final String CURRENT_PRICE_HQL = '''
 select cp
@@ -83,12 +83,12 @@ where cp.owner = :c
   protected grails.core.GrailsApplication grailsApplication
 
   @Transient
-  public setSpringSecurityService(sss) {
+  setSpringSecurityService(sss) {
     this.springSecurityService = sss
   }
 
   @Transient
-  public setGrailsApplication(ga) {
+  setGrailsApplication(ga) {
     this.grailsApplication = ga
   }
 
@@ -317,6 +317,7 @@ where cp.owner = :c
 
   /**
    * Last updated by
+   * TODO: remove
    */
   User lastUpdatedBy
 
@@ -324,6 +325,11 @@ where cp.owner = :c
    * The source for the record (Whatever it is)
    */
   Source source
+
+  /**
+   * Component language. Linked to refdata table. Only applicable for TitleInstance and TitleInstancePackagePlatform.
+   */
+  RefdataValue language
 
   String lastUpdateComment
 
@@ -412,6 +418,7 @@ where cp.owner = :c
     description column: 'kbc_description', type: 'text'
     source column: 'kbc_source_fk'
     status column: 'kbc_status_rv_fk', index: 'kbc_status_idx'
+    language column: 'kbc_language_rv_fk'
     shortcode column: 'kbc_shortcode', index: 'kbc_shortcode_idx'
     // tags joinTable: [name: 'kb_component_tags_value', key: 'kbctgs_kbc_id', column: 'kbctgs_rdv_id']
     dateCreated column: 'kbc_date_created', index: 'kbc_date_created_idx'
@@ -1420,7 +1427,7 @@ where cp.owner = :c
 
       result.num_expunged += KBComponent.executeUpdate("delete KBComponent as c where c.id IN (:component)", [component: batch])
     }
-    result;
+    result
   }
 
   @Transient
@@ -1434,6 +1441,7 @@ where cp.owner = :c
     builder.'name'(name)
     builder.'status'(status?.value)
     builder.'editStatus'(editStatus?.value)
+    builder.'language'(language?.value)
     builder.'shortcode'(shortcode)
 
     // Identifiers

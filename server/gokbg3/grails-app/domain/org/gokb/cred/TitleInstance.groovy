@@ -627,7 +627,7 @@ class TitleInstance extends KBComponent {
    *   type:'Serial' or 'Monograph'
    *}*/
   @Transient
-  public static def validateDTO(JSONObject titleDTO, Locale locale) {
+  static def validateDTO(JSONObject titleDTO, Locale locale) {
     def result = ['valid': true]
     def valErrors = [:]
 
@@ -659,21 +659,25 @@ class TitleInstance extends KBComponent {
 
       String idJsonKey = 'ids'
       def ids_list = titleDTO[idJsonKey]
+
       if (!ids_list) {
         idJsonKey = 'identifiers'
         ids_list = titleDTO[idJsonKey]
       }
+
       def id_errors = Identifier.validateDTOs(ids_list, locale)
+
       if (id_errors.size() > 0) {
         valErrors.put(idJsonKey, id_errors)
         if (titleDTO[idJsonKey].size() == 0) {
-          valErrors.put(message: 'no valid identifiers left')
+          valErrors.put(idJsonKey, [message: 'no valid identifiers left'])
         }
       }
     }
 
     if (titleDTO.medium) {
       RefdataValue medRef = determineMediumRef(titleDTO)
+
       if (medRef) {
         titleDTO.medium = medRef.value
       }
@@ -681,6 +685,11 @@ class TitleInstance extends KBComponent {
         valErrors.put('medium', [message: "cannot parse", baddata: titleDTO.medium])
         titleDTO.remove(titleDTO.medium)
       }
+    }
+
+    def ti_language = titleDTO.language ? RefdataCategory.lookup('KBComponent.Language', titleDTO.language) : null
+    if (ti_language){
+      titleDTO.language = ti_language
     }
 
     if (valErrors.size() > 0) {
@@ -694,7 +703,7 @@ class TitleInstance extends KBComponent {
     result
   }
 
-  public static determineMediumRef(titleObj) {
+  static determineMediumRef(titleObj) {
     if (titleObj.medium) {
       switch (titleObj.medium.toLowerCase()) {
         case "a & i database":
@@ -761,7 +770,7 @@ class TitleInstance extends KBComponent {
   }
 
   @Transient
-  public static TitleInstance upsertDTO(titleLookupService, titleDTO, user = null, fullsync = false) {
+  static TitleInstance upsertDTO(titleLookupService, titleDTO, user = null, fullsync = false) {
     def result = null;
     def type = null
 
@@ -800,6 +809,12 @@ class TitleInstance extends KBComponent {
       if (titleDTO.medium) {
         result.medium = determineMediumRef(titleDTO)
       }
+
+      def ti_language = titleDTO.language ? RefdataCategory.lookup('KBComponent.Language', titleDTO.language) : null
+      if (ti_language){
+        result.language = ti_language
+      }
+
       log.debug("Result of upsertDTO: ${result}");
     }
     result;

@@ -8,8 +8,6 @@ import grails.gorm.transactions.Transactional
 @Transactional
 class ComponentStatisticService {
 
-  def executorService
-
   public static components = ["TitleInstance", "Org", "Package"]
   public static boolean running = false;
 
