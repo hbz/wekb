@@ -136,10 +136,6 @@ class RestMappingService {
                   result[p.name]['value'] = obj[p.name].value
                 }
 
-                if (p.name == 'targetNamespace') {
-                  result[p.name]['value'] = obj[p.name].value
-                }
-
                 if (embed_active.contains(p.name)) {
                   result['_embedded'][p.name] = getEmbeddedJson(obj[p.name], user)
                 }
