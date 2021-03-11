@@ -132,8 +132,8 @@ class RestMappingService {
                   'id'  : obj[p.name].id
                 ]
 
-                if (p.name == 'namespace') {
-                  result['namespace']['value'] = obj['namespace'].value
+                if (p.type == IdentifierNamespace) {
+                  result[p.name]['value'] = obj[p.name].value
                 }
 
                 if (p.name == 'targetNamespace') {
