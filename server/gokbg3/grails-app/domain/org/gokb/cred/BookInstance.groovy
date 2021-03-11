@@ -48,22 +48,24 @@ class BookInstance extends TitleInstance {
   }
 
   static constraints = {
-    editionNumber(validator: { val, obj ->
+    editionNumber (nullable:true, blank:false)
+    /*editionNumber(validator: { val, obj ->
       if (obj.hasChanged('editionNumber') && val) {
         if (!(val ==~ "^\\d+\$")) {
           return ["typeMismatch.java.lang.Integer"]
         }
       }
-    })
+    })*/
     editionDifferentiator(nullable: true, blank: false)
     editionStatement(nullable: true, blank: false)
-    volumeNumber(validator: { val, obj ->
+    volumeNumber (nullable:true, blank:false)
+    /*volumeNumber(validator: { val, obj ->
       if (obj.hasChanged('volumeNumber') && val) {
         if (!(val ==~ "^\\d+\$")) {
           return ["typeMismatch.java.lang.Integer"]
         }
       }
-    })
+    })*/
     dateFirstInPrint(nullable: true, blank: false)
     dateFirstOnline(nullable: true, blank: false)
     summaryOfContent(nullable: true, blank: false)
