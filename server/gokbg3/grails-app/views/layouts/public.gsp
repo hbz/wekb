@@ -70,14 +70,7 @@
 
     <g:layoutBody />
 
-    <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                </div>
-            </div>
-        </div>
-    </footer>
+    <g:render template="/layouts/footer"   />
 
 </body>
 
