@@ -13,6 +13,8 @@
             ${message(code:"default.error.exception")}
           </div>
 
+          <br>
+
           <button class="btn btn-default" onclick="window.history.back()">${message(code: 'default.button.back')}</button>
         </div>
       </div>

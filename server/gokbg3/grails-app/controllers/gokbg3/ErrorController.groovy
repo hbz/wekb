@@ -73,7 +73,7 @@ class ErrorController {
       withFormat {
         html {
           log.debug("Rendering HTML 404 (${request.forwardURI})")
-          forward (uri:'notFound', params:[status:404])
+          render view:'notFound' , model: resp
         }
         json {
           response.setStatus(404)
