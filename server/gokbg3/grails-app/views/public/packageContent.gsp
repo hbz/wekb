@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name='layout' content='public' />
-<title>GOKb: Packages</title>
+<title><g:message code="gokb.appname" default="we:kb"/>: Packages</title>
 </head>
 
 <body>
@@ -26,7 +26,7 @@
         <div style="clear:both;">
 
           <g:link controller="packages" action="kbart" id="${params.id}">KBart File</g:link> &nbsp;
-          <g:link controller="packages" action="packageTSVExport" id="${params.id}">GOKb File</g:link>
+          <g:link controller="packages" action="packageTSVExport" id="${params.id}"><g:message code="gokb.appname" default="we:kb"/> File</g:link>
         </div>
         <div style="margin-top:10px;">
           <g:link controller="resource" action="show" id="${pkg.uuid}">Switch to editing view (Login required)</g:link>

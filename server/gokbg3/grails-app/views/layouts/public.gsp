@@ -16,7 +16,7 @@
     <asset:stylesheet src="gokb/fontawesome.css" />
     <asset:stylesheet src="gokb/application.css"/>
 
-    <title><g:layoutTitle default="GOKb: Welcome" /></title>
+    <title><g:message code="gokb.appname" default="we:kb"/></title>
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
@@ -43,7 +43,7 @@
          </button>
          <!-- navbar-brand is hidden on larger screens, but visible when the menu is collapsed -->
          <a class="navbar-brand" href="${grailsApplication.config.server.contextPath ?: ''}/" style="font-weight:bold;">
-             <g:message code="gokb.appname" default="GOKb"/> v<g:meta name="info.app.version" />
+             <g:message code="gokb.appname" default="we:kb"/> v<g:meta name="info.app.version" />
           <g:if test="${grailsApplication.config.gokb.instance?.description}">
             – ${grailsApplication.config.gokb.instance?.description}
           </g:if>

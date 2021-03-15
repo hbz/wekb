@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta name="layout" content="sb-admin" />
-    <title>GOKb Direct Ingest Service</title>
+    <title><g:message code="gokb.appname" default="we:kb"/> Direct Ingest Service</title>
   </head>
   <body>
     <h1 class="page-header">Direct File Ingest</h1>

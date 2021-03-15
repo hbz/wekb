@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="layout" content="sb-admin" />
-<title>GOKb: Group</title>
+<title><g:message code="gokb.appname" default="we:kb"/>: Group</title>
 </head>
 <body>
   <h1 class="page-header">${group?.name}</h1>

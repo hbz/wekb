@@ -4,7 +4,7 @@
     <meta name="layout" content="main"/>
     <asset:stylesheet src="gokb/application.css"/>
 <asset:javascript src="gokb/application.js" />
-    <title>GOKbo : Show Rules</title>
+    <title><g:message code="gokb.appname" default="we:kb"/>o : Show Rules</title>
   </head>
   <body>
 

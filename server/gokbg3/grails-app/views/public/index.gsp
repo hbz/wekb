@@ -46,7 +46,7 @@
 <html>
 <head>
 <meta name='layout' content='public' />
-<title>GOKb: Packages</title>
+<title><g:message code="gokb.appname" default="we:kb"/>: Packages</title>
 </head>
 
 <body>

@@ -115,7 +115,7 @@ class PublicController {
 
     def export_date = dateFormatService.formatDate(new Date());
 
-    def filename = "GOKb Export : ${pkg.name} : ${export_date}.tsv"
+    def filename = "we:kb Export : ${pkg.name} : ${export_date}.tsv"
 
     try {
       response.setContentType('text/tab-separated-values');
@@ -241,7 +241,7 @@ class PublicController {
 
 
           // As per spec header at top of file / section
-          writer.write("GOKb Export : ${pkg.provider?.name} : ${pkg.name} : ${export_date}\n");
+          writer.write("we:kb Export : ${pkg.provider?.name} : ${pkg.name} : ${export_date}\n");
 
           writer.write('TIPP ID	TIPP URL	Title ID	Title	TIPP Status	[TI] Publisher	[TI] Imprint	[TI] Published From	[TI] Published to	[TI] Medium	[TI] OA Status	'+
                      '[TI] Continuing series	[TI] ISSN	[TI] EISSN	Package	Package ID	Package URL	Platform	'+

@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="layout" content="sb-admin" />
-<title>GOKb: Identifier Review</title>
+<title><g:message code="gokb.appname" default="we:kb"/>: Identifier Review</title>
 </head>
 <body>
   <h1 class="page-header">Identifier Review</h1>

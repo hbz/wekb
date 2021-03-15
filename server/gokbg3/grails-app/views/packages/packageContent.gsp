@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name='layout' content='public' />
-<title>GOKb: Packages</title>
+<title><g:message code="gokb.appname" default="we:kb"/>: Packages</title>
 </head>
 
 <body>
@@ -18,7 +18,7 @@
            <span class="icon-bar"></span>
          </button>
          <!-- navbar-brand is hidden on larger screens, but visible when the menu is collapsed -->
-         <a class="navbar-brand" href="index.html">GOKb</a>
+         <a class="navbar-brand" href="index.html"><g:message code="gokb.appname" default="we:kb"/></a>
        </div>
 
        <div class="collapse navbar-collapse" id="primary-nav">
