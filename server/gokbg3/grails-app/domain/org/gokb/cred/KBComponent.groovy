@@ -1552,41 +1552,50 @@ where cp.owner = :c
   /**
    * Set a price formatted as "nnnn.nn" or "nnnn.nn CUR"
    */
-  public void setPrice(String type, String price, Date startDate = null, Date endDate = null) {
+  public void setPrice(String type, String price, String currency, Date startDate = null, Date endDate = null) {
     Float f = null;
     RefdataValue rdv_type = null;
     RefdataValue rdv_currency = null;
 
     if (price) {
       Date today = todayNoTime()
-      Date start = startDate ?: today
+      Date start = startDate
       Date end = endDate
 
-      String[] price_components = price.trim().split(' ');
-      f = Float.parseFloat(price_components[0])
+      f = Float.parseFloat(price)
       rdv_type = RefdataCategory.lookupOrCreate('Price.type', type ?: 'list').save(flush: true, failOnError: true)
 
-      if (price_components.length == 2) {
-        rdv_currency = RefdataCategory.lookupOrCreate('Currency', price_components[1].trim()).save(flush: true, failOnError: true)
+      if (currency) {
+        rdv_currency = RefdataCategory.lookupOrCreate('Currency', currency.trim()).save(flush: true, failOnError: true)
       }
 
-      ComponentPrice cp = new ComponentPrice(
-        owner: this,
-        priceType: rdv_type,
-        currency: rdv_currency,
-        startDate: start,
-        endDate: end,
-        price: f)
-      prices = prices ?: []
-      // does this price exist already?
-      if (!prices.contains(cp)) {
+      ComponentPrice existPrice = ComponentPrice.findWhere(owner: this, priceType: rdv_type, currency: rdv_currency, price: f)
+
+      if(existPrice){
+        if(start != null) {
+          existPrice.startDate = start
+        }
+        if(start != null) {
+          existPrice.endDate = end
+        }
+        existPrice.save()
+        save()
+      }else {
+        ComponentPrice cp = new ComponentPrice(
+                owner: this,
+                priceType: rdv_type,
+                currency: rdv_currency,
+                price: f,
+                startDate: start ?: today,
+                endDate: end)
+        cp.save()
         // set the end date for the current price(s)
         ComponentPrice.executeUpdate('update ComponentPrice set endDate=:start where owner=:tipp and (endDate is null or endDate>:start) and priceType=:type and currency=:currency' , [start: cp.startDate, tipp: this, type: cp.priceType, currency:cp.currency])
-        cp.save()
         // enter the new price
         prices << cp
         save()
       }
+
     }
   }
 
