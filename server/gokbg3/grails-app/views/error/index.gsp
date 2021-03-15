@@ -12,6 +12,8 @@
           <div style="font-size:2.5em;margin-top:100px;" class="alert alert-default">
             ${message(code:"default.error.exception")}
           </div>
+
+          <button class="btn btn-default" onclick="window.history.back()">${message(code: 'default.button.back')}</button>
         </div>
       </div>
     </div>

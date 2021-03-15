@@ -11,7 +11,7 @@ class ErrorController {
   def springSecurityService
 
   def index() {
-    
+
   }
 
   def serverError() {
@@ -30,7 +30,7 @@ class ErrorController {
     else {
       withFormat {
         html {
-          forward (uri:'/error')
+          render view:'error' , model: resp
         }
         json {
           response.setStatus(500)
@@ -51,7 +51,7 @@ class ErrorController {
     else {
       withFormat {
         html {
-          forward (uri:'/error')
+          render view:'error' , model: resp
         }
         json {
           response.setStatus(405)
