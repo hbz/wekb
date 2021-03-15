@@ -1,5 +1,4 @@
 import com.k_int.UserPasswordEncoderListener
-import com.k_int.utils.DatabaseMessageSource;
 import org.grails.spring.context.support.PluginAwareResourceBundleMessageSource;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver
 
