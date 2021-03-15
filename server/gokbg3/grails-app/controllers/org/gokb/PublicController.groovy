@@ -57,6 +57,8 @@ class PublicController {
         result.titleCount = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_current])[0]
         result.tipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY+' order by tipp.id',[result.pkgId, tipp_combo_rdv, status_current],[offset:params.offset?params.long('offset'):0,max:10])
         log.debug("Tipp qry done ${result.tipps?.size()}");
+      }else {
+        redirect(controller: 'error', action: 'notFound')
       }
     }
     result
@@ -102,7 +104,14 @@ class PublicController {
       mutableParams.tempFQ = ' -pkg_scope:\"Master File\" -\"open access\" ';
 
     result =  ESSearchService.search(mutableParams)
-    result.transforms = grailsApplication.config.packageTransforms
+
+    Calendar calendar = Calendar.getInstance()
+    result.componentsOfStatistic = ["TitleInstance", "Org", "Package", "Platform", "CuratoryGroup", "TitleInstancePackagePlatform"]
+
+    result.countComponent = [:]
+    result.componentsOfStatistic.each {String component ->
+      result.countComponent."${component}" = ComponentStatistic.executeQuery("select numTotal from ComponentStatistic where componentType = ? and year = ? and month = ?", [component, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)], [readOnly: true])[0]
+    }
 
     result
   }
