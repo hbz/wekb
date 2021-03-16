@@ -57,6 +57,8 @@ class PublicController {
         result.titleCount = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_current])[0]
         result.tipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY+' order by tipp.id',[result.pkgId, tipp_combo_rdv, status_current],[offset:params.offset?params.long('offset'):0,max:10])
         log.debug("Tipp qry done ${result.tipps?.size()}");
+      }else {
+        redirect(controller: 'error', action: 'notFound')
       }
     }
     result
@@ -102,7 +104,14 @@ class PublicController {
       mutableParams.tempFQ = ' -pkg_scope:\"Master File\" -\"open access\" ';
 
     result =  ESSearchService.search(mutableParams)
-    result.transforms = grailsApplication.config.packageTransforms
+
+    Calendar calendar = Calendar.getInstance()
+    result.componentsOfStatistic = ["TitleInstance", "Org", "Package", "Platform", "CuratoryGroup", "TitleInstancePackagePlatform"]
+
+    result.countComponent = [:]
+    result.componentsOfStatistic.each {String component ->
+      result.countComponent."${component}" = ComponentStatistic.executeQuery("select numTotal from ComponentStatistic where componentType = :component and year = :year and month = :month", [component: component, year: calendar.get(Calendar.YEAR), month: calendar.get(Calendar.MONTH)], [readOnly: true])[0]
+    }
 
     result
   }
@@ -115,7 +124,7 @@ class PublicController {
 
     def export_date = dateFormatService.formatDate(new Date());
 
-    def filename = "GOKb Export : ${pkg.name} : ${export_date}.tsv"
+    def filename = "we:kb Export : ${pkg.name} : ${export_date}.tsv"
 
     try {
       response.setContentType('text/tab-separated-values');
@@ -241,7 +250,7 @@ class PublicController {
 
 
           // As per spec header at top of file / section
-          writer.write("GOKb Export : ${pkg.provider?.name} : ${pkg.name} : ${export_date}\n");
+          writer.write("we:kb Export : ${pkg.provider?.name} : ${pkg.name} : ${export_date}\n");
 
           writer.write('TIPP ID	TIPP URL	Title ID	Title	TIPP Status	[TI] Publisher	[TI] Imprint	[TI] Published From	[TI] Published to	[TI] Medium	[TI] OA Status	'+
                      '[TI] Continuing series	[TI] ISSN	[TI] EISSN	Package	Package ID	Package URL	Platform	'+

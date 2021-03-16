@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta name="layout" content="main"/>
-    <title>GOKb : Coreference Service</title>
+    <title><g:message code="gokb.appname" default="we:kb"/> : Coreference Service</title>
   </head>
   <body>
 

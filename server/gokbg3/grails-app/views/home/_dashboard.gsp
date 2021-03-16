@@ -4,10 +4,10 @@
 <html>
   <head>
     <meta name='layout' content='sb-admin'/>
-    <title>GOKb: Welcome</title>
+    <title><g:message code="gokb.appname" default="we:kb"/>: Welcome</title>
   </head>
   <body>
-    <h1 class="page-header">Welcome to GOKb</h1>
+    <h1 class="page-header">Welcome to <g:message code="gokb.appname" default="we:kb"/></h1>
     <!-- Full rows -->
     <g:if test="${widgets}">
 

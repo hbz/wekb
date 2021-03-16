@@ -13,7 +13,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title><g:layoutTitle default="GOKb" /></title>
+  <title><g:message code="gokb.appname" default="we:kb"/></title>
 
   <link rel="shortcut icon" href="${resource(dir: 'images', file: 'favicon.ico')}" type="image/x-icon">
   <g:layoutHead />
@@ -55,7 +55,7 @@
             <span  class="icon-bar"></span>
         </button>
         <g:link uri="/" class="navbar-brand" style="font-weight:bold;">
-          <g:message code="gokb.appname" default="GOKb"/> v<g:meta name="info.app.version" />
+          <g:message code="gokb.appname" default="we:kb"/> v<g:meta name="info.app.version" />
           <g:if test="${grailsApplication.config.gokb.instance?.description}">
             – ${grailsApplication.config.gokb.instance?.description}
           </g:if>

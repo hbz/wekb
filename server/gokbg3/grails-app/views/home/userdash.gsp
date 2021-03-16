@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta name='layout' content='sb-admin'/>
-    <title>GOKb: User Dashboard</title>
+    <title><g:message code="gokb.appname" default="we:kb"/>: User Dashboard</title>
   </head>
   <body>
     <h1 class="page-header">${request.user?.displayName ?: request.user?.username}</h1>

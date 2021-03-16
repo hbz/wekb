@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta name="layout" content="sb-admin"/>
-    <title>GOKb: My Profile</title>
+    <title><g:message code="gokb.appname" default="we:kb"/>: My Profile</title>
   </head>
   <body>  
   <g:if test="${flash.message}">

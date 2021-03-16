@@ -135,7 +135,7 @@
 
       </sec:ifLoggedIn>
       <sec:ifNotLoggedIn>
-        <li class="${params?.controller == "public" && params?.action == 'public' ? 'active' : ''}"><g:link controller="public"><i class="fa fa-home fa-fw"></i> GOKb</g:link></li>
+        <li class="${params?.controller == "public" && params?.action == 'public' ? 'active' : ''}"><g:link controller="public"><i class="fa fa-home fa-fw"></i> <g:message code="gokb.appname" default="we:kb"/></g:link></li>
         <li class="${params?.controller == "register" ? 'active' : ''}"><g:link controller="register" action="forgotPassword"><i class="fa fa-edit fa-fw"></i> Forgot Password</g:link></li>
         <li class="${params?.controller == "login" ? 'active' : ''}"><g:link controller="login"><i class="fa fa-sign-in fa-fw"></i> Sign in</g:link></li>
       </sec:ifNotLoggedIn>
