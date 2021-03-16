@@ -4,7 +4,7 @@
 <meta name="layout" content="sb-admin" />
 <asset:stylesheet src="gokb/application.css" />
 <asset:javascript src="gokb/application.js" />
-<title>GOKb: Deprecate Org Transfer</title>
+<title><g:message code="gokb.appname" default="we:kb"/>: Deprecate Org Transfer</title>
 </head>
 <body>
 

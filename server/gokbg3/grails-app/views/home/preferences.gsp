@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta name="layout" content="sb-admin"/>
-    <title>GOKb: My Preferences</title>
+    <title><g:message code="gokb.appname" default="we:kb"/>: My Preferences</title>
   </head>
   <body>  
   <h1 class="page-header">My Preferences</h1>

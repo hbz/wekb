@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="layout" content="sb-admin" />
-<title>GOKb: Move TIPP</title>
+<title><g:message code="gokb.appname" default="we:kb"/>: Move TIPP</title>
 </head>
 <body>
 

@@ -1374,7 +1374,7 @@ class PackageService {
           def sanitize = { it ? "${it}".trim() : "" }
 
           // As per spec header at top of file / section
-          writer.write("GOKb Export : ${pkg.provider?.name} : ${pkg.name} : ${export_date}\n");
+          writer.write("we:kb Export : ${pkg.provider?.name} : ${pkg.name} : ${export_date}\n");
 
           writer.write('TIPP ID\t' +
               'TIPP URL\t' +

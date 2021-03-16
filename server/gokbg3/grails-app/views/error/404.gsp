@@ -7,5 +7,7 @@
 	</head>
 	<body>
 		<g:renderException exception="${exception}" />
+
+	<button class="btn btn-default" onclick="window.history.back()">${message(code: 'default.button.back')}</button>
 	</body>
 </html>

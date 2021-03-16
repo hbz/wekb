@@ -1629,10 +1629,10 @@ class WorkflowController{
     def combo_pkg_tipps = RefdataCategory.lookup('Combo.Type', 'Package.Tipps')
     def export_date = dateFormatService.formatDate(new Date())
     if (packages_to_export.size() == 1){
-      filename = "GOKb Export : ${packages_to_export[0].provider?.name} : ${packages_to_export[0].name} : ${export_date}.tsv"
+      filename = "we:kb Export : ${packages_to_export[0].provider?.name} : ${packages_to_export[0].name} : ${export_date}.tsv"
     }
     else{
-      filename = "GOKb Export : multiple_packages : ${export_date}.tsv"
+      filename = "we:kb Export : multiple_packages : ${export_date}.tsv"
     }
 
     try{
@@ -1692,10 +1692,10 @@ class WorkflowController{
     def combo_pkg_tipps = RefdataCategory.lookup('Combo.Type', 'Package.Tipps')
     def export_date = dateFormatService.formatDate(new Date())
     if (packages_to_export.size() == 1){
-      filename = "GOKb Export : ${packages_to_export[0].provider?.name} : ${packages_to_export[0].name} : ${export_date}.tsv"
+      filename = "we:kb Export : ${packages_to_export[0].provider?.name} : ${packages_to_export[0].name} : ${export_date}.tsv"
     }
     else{
-      filename = "GOKb Export : multiple_packages : ${export_date}.tsv"
+      filename = "we:kb Export : multiple_packages : ${export_date}.tsv"
     }
 
     try{
