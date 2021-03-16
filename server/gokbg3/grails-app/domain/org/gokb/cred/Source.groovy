@@ -109,8 +109,9 @@ class Source extends KBComponent {
     }
   }
 
+
   /**
-   *  Render this package as GoKBXML
+   *  Render this source as GoKBXML
    */
   @Transient
   def toGoKBXml(builder, attr) {
@@ -152,9 +153,12 @@ class Source extends KBComponent {
     }
     if (frequency != null) {
       Date today = new Date()
-      Date due = getUpdateDay(intervals.get(frequency))
-      if (today == due){
-        return true
+      def interval = intervals.get(frequency)
+      if (interval != null){
+        Date due = getUpdateDay(interval)
+        if (today == due){
+          return true
+        }
       }
     }
     return false
