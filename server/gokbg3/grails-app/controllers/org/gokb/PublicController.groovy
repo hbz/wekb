@@ -110,7 +110,7 @@ class PublicController {
 
     result.countComponent = [:]
     result.componentsOfStatistic.each {String component ->
-      result.countComponent."${component}" = ComponentStatistic.executeQuery("select numTotal from ComponentStatistic where componentType = ? and year = ? and month = ?", [component, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)], [readOnly: true])[0]
+      result.countComponent."${component}" = ComponentStatistic.executeQuery("select numTotal from ComponentStatistic where componentType = :component and year = :year and month = :month", [component: component, year: calendar.get(Calendar.YEAR), month: calendar.get(Calendar.MONTH)], [readOnly: true])[0]
     }
 
     result
