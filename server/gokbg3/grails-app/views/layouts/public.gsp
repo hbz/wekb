@@ -43,7 +43,7 @@
          </button>
          <!-- navbar-brand is hidden on larger screens, but visible when the menu is collapsed -->
          <a class="navbar-brand" href="${grailsApplication.config.server.contextPath ?: ''}/" style="font-weight:bold;">
-             <g:message code="gokb.appname" default="GOKb"/> v<g:meta name="info.app.version" />
+             <g:message code="gokb.appname" default="we:kb"/> v<g:meta name="info.app.version" />
           <g:if test="${grailsApplication.config.gokb.instance?.description}">
             – ${grailsApplication.config.gokb.instance?.description}
           </g:if>
