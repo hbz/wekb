@@ -82,7 +82,7 @@
                             <label for="${facet.key}" class="form-label"><g:message code="facet.so.${facet.key}"
                                                                                     default="${facet.key}"/></label>
 
-                            <select name="${facet.key}" class="form-select" aria-label="Default select example">
+                            <select name="${facet.key}" class="form-select wekb-multiselect" multiple aria-label="Default select example">
                                 <option value="">Select <g:message code="facet.so.${facet.key}"
                                                           default="${facet.key}"/></option>
                                 <g:each in="${facet.value?.sort { it.display }}" var="v">
@@ -175,6 +175,44 @@
 </div>
 
 </div> <!-- /.container -->
+<g:javascript>
+    // When DOM is ready.
+    $(document).ready(function(){
 
+        var form_selects = $(".wekb-multiselect");
+
+        form_selects.each(function() {
+
+            var conf = {
+                allowClear: true,
+                width:'resolve',
+                minimumInputLength: 0,
+/*                ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
+                    url: gokb.config.lookupURI,
+                    dataType: 'json',
+                    data: function (term, page) {
+                        return {
+                            format:'json',
+                            q: term,
+                            baseClass:$(this).data('domain'),
+                            filter1:$(this).data('filter1'),
+                            addEmpty:'Y'
+                        };
+                    },
+                    results: function (data, page) {
+                        // console.log("resultsFn");
+                        return {results: data.values};
+                    }
+                }*/
+            };
+
+            var me = $(this);
+
+
+            me.select2(conf);
+        });
+
+    });
+</g:javascript>
 </body>
 </html>
