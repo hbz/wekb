@@ -60,6 +60,11 @@
 
       <sec:ifLoggedIn>
         <ul class="nav navbar-nav navbar-right">
+          <g:if test="${grailsApplication.config.gokb.ygorUrl}">
+            <li><a  style="font-weight:bold;" href ="${grailsApplication.config.gokb.ygorUrl}">Ygor</a></li>
+          </g:if>
+
+          <li><span style="width:15px"></span></li>
           <li class="dropdown">
           	<a class="dropdown-toggle" data-toggle="dropdown" href="#" style="font-weight:bold;">
             	<i class="fa fa-user fa-fw"></i>

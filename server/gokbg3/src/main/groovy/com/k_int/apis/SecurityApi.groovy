@@ -108,7 +108,7 @@ class SecurityApi <T> extends A_Api<T> {
   public static boolean hasPermission(Class<T> clazz, Permission p, boolean defaultTo = true) {
     
     // Super users can do everything...
-    if (SpringSecurityUtils.ifAnyGranted('ROLE_SUPERUSER')) return true
+    //if (SpringSecurityUtils.ifAnyGranted('ROLE_SUPERUSER')) return true
     
     def domain_record_info = KBDomainInfo.findByDcName(clazz.name)
 
