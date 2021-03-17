@@ -149,7 +149,7 @@ class HomeController {
       result."${widget_name}"."data" = wData.values()
     }
 
-    log.debug("${result}")
+    //log.debug("${result}")
     ["widgets" : result]
   }
 
@@ -167,12 +167,6 @@ class HomeController {
     result.recentlyViewed = History.findAllByOwner(user,[max: 20, sort: "activityDate", order: "desc"])
     result.recentReviewRequests = ReviewRequest.findAllByRaisedByAndStatus(user,needs_review_status,[max: 10, sort: "dateCreated", order: "desc"])
 
-    result
-  }
-
-  def showRules() {
-    def result=[:]
-    result.rules = grailsApplication.config.validationRules
     result
   }
 

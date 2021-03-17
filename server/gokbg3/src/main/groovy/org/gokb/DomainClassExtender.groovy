@@ -27,7 +27,7 @@ package org.gokb
 import grails.util.GrailsNameUtils
 import groovy.util.logging.*
 
-import org.grails.core.GrailsClass
+
 import grails.core.GrailsClass
 import org.gokb.cred.*
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta name="layout" content="main"/>
+    <meta name="layout" content="public"/>
     <title><g:message code="gokb.appname" default="we:kb"/> API</title>
   </head>
   <body>
