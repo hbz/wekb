@@ -24,9 +24,9 @@
         <g:each in="${d.getCombosByPropertyNameAndStatus('publisher',params.publisher_status)}" var="p">
           <tr>
             <td><g:link controller="resource" action="show" id="${p.toComponent.class.name}:${p.toComponent.id}"> ${p.toComponent.name} </g:link></td>
-            <td><g:xEditableRefData owner="${p}" field="status" config='Combo.Status' /></td>
-            <td><g:xEditable class="ipe" owner="${p}" field="startDate" type="date" /></td>
-            <td><g:xEditable class="ipe" owner="${p}" field="endDate" type="date" /></td>
+            <td><gokb:xEditableRefData owner="${p}" field="status" config='Combo.Status' /></td>
+            <td><gokb:xEditable class="ipe" owner="${p}" field="startDate" type="date" /></td>
+            <td><gokb:xEditable class="ipe" owner="${p}" field="endDate" type="date" /></td>
             <td><g:if test="${d.isEditable()}"><g:link controller="ajaxSupport" action="deleteCombo" id="${p.id}"  onclick="return confirm('Are you sure you want to delete this link?')">Delete</g:link></g:if></td>
           </tr>
         </g:each>
@@ -43,7 +43,7 @@
           <input type="hidden" name="fragment" value="#publishers" />
           <dt class="dt-label">Organization</dt>
           <dd>
-            <g:simpleReferenceTypedown class="form-control select-ml" name="__relatedObject" baseClass="org.gokb.cred.Org" style="display:block;" />
+            <gokb:simpleReferenceTypedown class="form-control select-ml" name="__relatedObject" baseClass="org.gokb.cred.Org" style="display:block;" />
           </dd>
           <dt></dt>
           <dd>

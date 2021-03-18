@@ -5,13 +5,13 @@
 			<g:annotatedLabel owner="${d}" property="name">Name</g:annotatedLabel>
 		</dt>
 		<dd>
-			<g:xEditable class="ipe" owner="${d}" field="name" />
+			<gokb:xEditable class="ipe" owner="${d}" field="name" />
 		</dd>
 		<dt>
 			<g:annotatedLabel owner="${d}" property="status">Status</g:annotatedLabel>
 		</dt>
 		<dd>
-			<g:xEditableRefData owner="${d}" field="status"
+			<gokb:xEditableRefData owner="${d}" field="status"
 				config="KBComponent.Status" />
 		</dd>
 
@@ -19,31 +19,31 @@
 			<g:annotatedLabel owner="${d}" property="source">Source</g:annotatedLabel>
 		</dt>
 		<dd>
-			<g:manyToOneReferenceTypedown owner="${d}" field="source"
+			<gokb:manyToOneReferenceTypedown owner="${d}" field="source"
 				baseClass="org.gokb.cred.Source">
 				${d.source?.name}
-			</g:manyToOneReferenceTypedown>
+			</gokb:manyToOneReferenceTypedown>
 		</dd>
 
 		<dt>
 			<g:annotatedLabel owner="${d}" property="accessUrl">Access URL</g:annotatedLabel>
 		</dt>
 		<dd>
-			<g:xEditable owner="${d}" field="accessUrl" />
+			<gokb:xEditable owner="${d}" field="accessUrl" />
 		</dd>
 
 		<dt>
 			<g:annotatedLabel owner="${d}" property="dataUrl">Data URL</g:annotatedLabel>
 		</dt>
 		<dd>
-			<g:xEditable owner="${d}" field="dataUrl" />
+			<gokb:xEditable owner="${d}" field="dataUrl" />
 		</dd>
 
 		<dt>
 			<g:annotatedLabel owner="${d}" property="defaultSupplyMethod">Default Supply Method</g:annotatedLabel>
 		</dt>
 		<dd>
-			<g:xEditableRefData owner="${d}" field="defaultSupplyMethod"
+			<gokb:xEditableRefData owner="${d}" field="defaultSupplyMethod"
 				config="Source.DataSupplyMethod" />
 		</dd>
 
@@ -51,7 +51,7 @@
       <g:annotatedLabel owner="${d}" property="defaultDataFormat">Default Data Format</g:annotatedLabel>
     </dt>
     <dd>
-      <g:xEditableRefData owner="${d}" field="defaultDataFormat"
+      <gokb:xEditableRefData owner="${d}" field="defaultDataFormat"
         config="Source.DataFormat" />
     </dd>
 
@@ -118,10 +118,10 @@
 					</dt>
 					<dd>
                                         
-                                                           <g:manyToOneReferenceTypedown owner="${d}" field="provider"
+                                                           <gokb:manyToOneReferenceTypedown owner="${d}" field="provider"
                                                                 baseClass="org.gokb.cred.Org">
                                                                 ${d.provider?.name}
-                                                        </g:manyToOneReferenceTypedown>
+                                                        </gokb:manyToOneReferenceTypedown>
 					</dd>
 
 					<dd>

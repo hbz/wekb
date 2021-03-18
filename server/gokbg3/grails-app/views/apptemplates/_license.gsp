@@ -5,13 +5,13 @@
 			<g:annotatedLabel owner="${d}" property="licenseURL">License URL</g:annotatedLabel>
 		</dt>
 		<dd>
-			<g:xEditable class="ipe" owner="${d}" field="url" />
+			<gokb:xEditable class="ipe" owner="${d}" field="url" />
 		</dd>
 		<dt>
 			<g:annotatedLabel owner="${d}" property="licenseType">License Type</g:annotatedLabel>
 		</dt>
 		<dd>
-			<g:xEditableRefData owner="${d}" field="type" config='License.Type' />
+			<gokb:xEditableRefData owner="${d}" field="type" config='License.Type' />
 		</dd>
 
     <dt><g:annotatedLabel owner="${d}" property="curatoryGroups">Curatory Groups</g:annotatedLabel></dt>

@@ -36,7 +36,7 @@
 					<dt>Url</dt>
 					<dd>
 						<div class="input-group">
-							<g:simpleReferenceTypedown name="existingHook" class="form-control" baseClass="org.gokb.cred.WebHookEndpoint" filter1="${request.user?.id}" />
+							<gokb:simpleReferenceTypedown name="existingHook" class="form-control" baseClass="org.gokb.cred.WebHookEndpoint" filter1="${request.user?.id}" />
 							<div class="input-group-btn" >
 								<button type="submit" class="btn btn-default btn-sm">Link</button>
 							</div>

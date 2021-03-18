@@ -22,11 +22,11 @@
                     <tbody>
                     <g:each in="${d.prices}" var="somePrice">
                         <tr>
-                            <td><g:xEditableRefData owner="${somePrice}" field="priceType" config='Price.type'/></td>
-                            <td><g:xEditable owner="${somePrice}" field="price"/></td>
-                            <td><g:xEditableRefData owner="${somePrice}" field="currency" config='Currency'/></td>
-                            <td><g:xEditable owner="${somePrice}" field="startDate" type="date"/></td>
-                            <td><g:xEditable owner="${somePrice}" field="endDate" type="date"/></td>
+                            <td><gokb:xEditableRefData owner="${somePrice}" field="priceType" config='Price.type'/></td>
+                            <td><gokb:xEditable owner="${somePrice}" field="price"/></td>
+                            <td><gokb:xEditableRefData owner="${somePrice}" field="currency" config='Currency'/></td>
+                            <td><gokb:xEditable owner="${somePrice}" field="startDate" type="date"/></td>
+                            <td><gokb:xEditable owner="${somePrice}" field="endDate" type="date"/></td>
                             <td>
                                 <g:if test="${editable && showActions}">
                                     <g:link controller="ajaxSupport" class="confirm-click"
@@ -53,7 +53,7 @@
                             <input type="hidden" name="__recip" value="owner"/>
                             <dt class="dt-label">Price Type</dt>
                             <dd>
-                                <g:simpleReferenceTypedown class="form-control"
+                                <gokb:simpleReferenceTypedown class="form-control"
                                                            name="priceType"
                                                            baseClass="org.gokb.cred.RefdataValue"
                                                            filter1="Price.type"/>
@@ -64,7 +64,7 @@
                             </dd>
                             <dt class="dt-label">Currency</dt>
                             <dd>
-                                <g:simpleReferenceTypedown class="form-control" name="currency"
+                                <gokb:simpleReferenceTypedown class="form-control" name="currency"
                                                            baseClass="org.gokb.cred.RefdataValue"
                                                            filter1="Currency"/>
                             </dd>

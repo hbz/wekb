@@ -38,7 +38,7 @@
             <input type="hidden" name="__context" value="${d.getClassName()}:${d.id}"/>
             <input type="hidden" name="__property" value="curatoryGroups"/>
               <div class="input-group" style="width:100%;">
-                <g:simpleReferenceTypedown class="form-control" name="__relatedObject" baseClass="org.gokb.cred.CuratoryGroup" filter1="Current"/>
+                <gokb:simpleReferenceTypedown class="form-control" name="__relatedObject" baseClass="org.gokb.cred.CuratoryGroup" filter1="Current"/>
                 <span class="input-group-btn" style="padding: 0px 10px;vertical-align:top;">
                   <button type="submit" class="btn btn-default">Link</button>
                 </span>

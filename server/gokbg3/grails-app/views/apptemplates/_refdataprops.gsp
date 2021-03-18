@@ -6,7 +6,7 @@
 			</g:annotatedLabel>
 		</dt>
 		<dd>
-			<g:xEditableRefData owner="${d}" field="${entry.value.name}"
+			<gokb:xEditableRefData owner="${d}" field="${entry.value.name}"
 				config="${entry.key}" />
 		</dd>
 	</g:if>

@@ -10,14 +10,14 @@
     <g:annotatedLabel owner="${d}" property="description">Category Name / Description</g:annotatedLabel>
   </dt>
   <dd>
-    <g:xEditable class="ipe" owner="${d}" field="desc" />
+    <gokb:xEditable class="ipe" owner="${d}" field="desc" />
   </dd>
 
   <dt>
     <g:annotatedLabel owner="${d}" property="label">Label</g:annotatedLabel>
   </dt>
   <dd>
-    <g:xEditable class="ipe" owner="${d}" field="label" />
+    <gokb:xEditable class="ipe" owner="${d}" field="label" />
   </dd>
 
 
@@ -39,14 +39,14 @@
           <g:each in="${d.values}" var="v">
             <tr>
               <td>
-                <g:xEditable class="ipe" owner="${v}" field="value" />
+                <gokb:xEditable class="ipe" owner="${v}" field="value" />
               </td>
-              <td><g:manyToOneReferenceTypedown owner="${v}"
+              <td><gokb:manyToOneReferenceTypedown owner="${v}"
                   field="useInstead" baseClass="org.gokb.cred.RefdataValue"
                   filter1="${d.desc}">
                   ${v.useInstead?.value}
-                </g:manyToOneReferenceTypedown></td>
-              <td><g:xEditable class="ipe" owner="${v}" field="sortKey" /></td>
+                </gokb:manyToOneReferenceTypedown></td>
+              <td><gokb:xEditable class="ipe" owner="${v}" field="sortKey" /></td>
               <td></td>
             </tr>
           </g:each>

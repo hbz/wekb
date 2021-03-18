@@ -36,14 +36,14 @@
         <g:annotatedLabel owner="${d}" property="name">TIPP Name</g:annotatedLabel>
     </dt>
     <dd>
-        <g:xEditable class="ipe" owner="${d}" field="name"/>
+        <gokb:xEditable class="ipe" owner="${d}" field="name"/>
     </dd>
 
     <dt>
         <g:annotatedLabel owner="${d}" property="status">Status</g:annotatedLabel>
     </dt>
     <dd>
-        <g:xEditableRefData owner="${d}" field="status"
+        <gokb:xEditableRefData owner="${d}" field="status"
                             config="KBComponent.Status"/>
     </dd>
 
@@ -51,14 +51,14 @@
         <g:annotatedLabel owner="${d}" property="reference">Reference</g:annotatedLabel>
     </dt>
     <dd>
-        <g:xEditable class="ipe" owner="${d}" field="reference"/>
+        <gokb:xEditable class="ipe" owner="${d}" field="reference"/>
     </dd>
 
     <dt>
         <g:annotatedLabel owner="${d}" property="editStatus">Edit Status</g:annotatedLabel>
     </dt>
     <dd>
-        <g:xEditableRefData owner="${d}" field="editStatus"
+        <gokb:xEditableRefData owner="${d}" field="editStatus"
                             config='KBComponent.EditStatus'/>
     </dd>
 
@@ -66,14 +66,14 @@
         <g:annotatedLabel owner="${d}" property="language">Language</g:annotatedLabel>
     </dt>
     <dd>
-        <g:xEditableRefData owner="${d}" field="language" config="${org.gokb.cred.KBComponent.RD_LANGUAGE}"/>
+        <gokb:xEditableRefData owner="${d}" field="language" config="${org.gokb.cred.KBComponent.RD_LANGUAGE}"/>
     </dd>
 
     <dt>
         <g:annotatedLabel owner="${d}" property="accessStartDate">Access Start Date</g:annotatedLabel>
     </dt>
     <dd>
-        <g:xEditable class="ipe" owner="${d}" type="date"
+        <gokb:xEditable class="ipe" owner="${d}" type="date"
                      field="accessStartDate"/>
     </dd>
 
@@ -81,7 +81,7 @@
         <g:annotatedLabel owner="${d}" property="accessEndDate">Access End Date</g:annotatedLabel>
     </dt>
     <dd>
-        <g:xEditable class="ipe" owner="${d}" type="date"
+        <gokb:xEditable class="ipe" owner="${d}" type="date"
                      field="accessEndDate"/>
     </dd>
 
@@ -89,14 +89,14 @@
         <g:annotatedLabel owner="${d}" property="publisherName">Publisher Name</g:annotatedLabel>
     </dt>
     <dd>
-        <g:xEditable class="ipe" owner="${d}" field="publisherName"/>
+        <gokb:xEditable class="ipe" owner="${d}" field="publisherName"/>
     </dd>
 
     <dt>
         <g:annotatedLabel owner="${d}" property="dateFirstInPrint">Date first in print</g:annotatedLabel>
     </dt>
     <dd>
-        <g:xEditable class="ipe" owner="${d}" type="date"
+        <gokb:xEditable class="ipe" owner="${d}" type="date"
                      field="dateFirstInPrint"/>
     </dd>
 
@@ -104,7 +104,7 @@
         <g:annotatedLabel owner="${d}" property="dateFirstOnline">Date first online</g:annotatedLabel>
     </dt>
     <dd>
-        <g:xEditable class="ipe" owner="${d}" type="date"
+        <gokb:xEditable class="ipe" owner="${d}" type="date"
                      field="dateFirstOnline"/>
     </dd>
 
@@ -112,63 +112,63 @@
         <g:annotatedLabel owner="${d}" property="firstAuthor">First Author</g:annotatedLabel>
     </dt>
     <dd>
-        <g:xEditable class="ipe" owner="${d}" field="firstAuthor"/>
+        <gokb:xEditable class="ipe" owner="${d}" field="firstAuthor"/>
     </dd>
 
     <dt>
         <g:annotatedLabel owner="${d}" property="publicationType">Publication Type</g:annotatedLabel>
     </dt>
     <dd>
-        <g:xEditableRefData owner="${d}" field="publicationType" config='TitleInstancePackagePlatform.PublicationType'/>
+        <gokb:xEditableRefData owner="${d}" field="publicationType" config='TitleInstancePackagePlatform.PublicationType'/>
     </dd>
 
     <dt>
         <g:annotatedLabel owner="${d}" property="publisherName">Publisher</g:annotatedLabel>
     </dt>
     <dd>
-        <g:xEditable class="ipe" owner="${d}" field="publisherName"/>
+        <gokb:xEditable class="ipe" owner="${d}" field="publisherName"/>
     </dd>
 
     <dt>
         <g:annotatedLabel owner="${d}" property="volumeNumber">Volume Number</g:annotatedLabel>
     </dt>
     <dd>
-        <g:xEditable class="ipe" owner="${d}" field="volumeNumber"/>
+        <gokb:xEditable class="ipe" owner="${d}" field="volumeNumber"/>
     </dd>
 
     <dt>
         <g:annotatedLabel owner="${d}" property="editionStatement">Edition statement</g:annotatedLabel>
     </dt>
     <dd>
-        <g:xEditable class="ipe" owner="${d}" field="editionStatement"/>
+        <gokb:xEditable class="ipe" owner="${d}" field="editionStatement"/>
     </dd>
 
     <dt>
         <g:annotatedLabel owner="${d}" property="parentPublicationTitleId">Parent publication title ID</g:annotatedLabel>
     </dt>
     <dd>
-        <g:xEditable class="ipe" owner="${d}" field="parentPublicationTitleId"/>
+        <gokb:xEditable class="ipe" owner="${d}" field="parentPublicationTitleId"/>
     </dd>
 
     <dt>
         <g:annotatedLabel owner="${d}" property="precedingPublicationTitleId">Preceding publication title ID</g:annotatedLabel>
     </dt>
     <dd>
-        <g:xEditable class="ipe" owner="${d}" field="precedingPublicationTitleId"/>
+        <gokb:xEditable class="ipe" owner="${d}" field="precedingPublicationTitleId"/>
     </dd>
 
     <dt>
         <g:annotatedLabel owner="${d}" property="medium">Medium</g:annotatedLabel>
     </dt>
     <dd>
-        <g:xEditableRefData owner="${d}" field="medium" config='TitleInstancePackagePlatform.Medium'/>
+        <gokb:xEditableRefData owner="${d}" field="medium" config='TitleInstancePackagePlatform.Medium'/>
     </dd>
 
     <dt>
         <g:annotatedLabel owner="${d}" property="lastChangedExternal">Last external change</g:annotatedLabel>
     </dt>
     <dd>
-        <g:xEditable class="ipe" owner="${d}" field="lastChangedExternal" type='date'/>
+        <gokb:xEditable class="ipe" owner="${d}" field="lastChangedExternal" type='date'/>
     </dd>
 
 </dl>
@@ -219,7 +219,7 @@
                     <g:annotatedLabel owner="${d}" property="url">Host Platform URL</g:annotatedLabel>
                 </dt>
                 <dd>
-                    <g:xEditable class="ipe" owner="${d}" field="url"/>
+                    <gokb:xEditable class="ipe" owner="${d}" field="url"/>
                     <g:if test="${d.url}">
                         &nbsp;<a href="${d.url}" target="new"><i class="fas fa-external-link-alt"></i></a>
                     </g:if>
@@ -229,14 +229,14 @@
                     <g:annotatedLabel owner="${d}" property="format">Format</g:annotatedLabel>
                 </dt>
                 <dd>
-                    <g:xEditableRefData owner="${d}" field="format"
+                    <gokb:xEditableRefData owner="${d}" field="format"
                                         config="TitleInstancePackagePlatform.Format"/>
                 </dd>
                 <dt>
                     <g:annotatedLabel owner="${d}" property="paymentType">Payment Type</g:annotatedLabel>
                 </dt>
                 <dd>
-                    <g:xEditableRefData owner="${d}" field="paymentType"
+                    <gokb:xEditableRefData owner="${d}" field="paymentType"
                                         config="TitleInstancePackagePlatform.PaymentType"/>
                 </dd>
             </dl>
@@ -268,19 +268,19 @@
                     <g:if test="${d.coverageStatements?.size() > 0}">
                         <g:each var="cs" in="${d.coverageStatements.sort { it.startDate }}">
                             <tr>
-                                <td><g:xEditable class="ipe" owner="${cs}" type="date"
+                                <td><gokb:xEditable class="ipe" owner="${cs}" type="date"
                                                  field="startDate"/></td>
-                                <td><g:xEditable class="ipe" owner="${cs}"
+                                <td><gokb:xEditable class="ipe" owner="${cs}"
                                                  field="startVolume"/></td>
-                                <td><g:xEditable class="ipe" owner="${cs}"
+                                <td><gokb:xEditable class="ipe" owner="${cs}"
                                                  field="startIssue"/></td>
-                                <td><g:xEditable class="ipe" owner="${cs}" type="date"
+                                <td><gokb:xEditable class="ipe" owner="${cs}" type="date"
                                                  field="endDate"/></td>
-                                <td><g:xEditable class="ipe" owner="${cs}" field="endVolume"/></td>
-                                <td><g:xEditable class="ipe" owner="${cs}" field="endIssue"/></td>
-                                <td><g:xEditable class="ipe" owner="${cs}" field="embargo"/></td>
-                                <td><g:xEditable class="ipe" owner="${cs}" field="coverageNote"/></td>
-                                <td><g:xEditableRefData owner="${cs}" field="coverageDepth"
+                                <td><gokb:xEditable class="ipe" owner="${cs}" field="endVolume"/></td>
+                                <td><gokb:xEditable class="ipe" owner="${cs}" field="endIssue"/></td>
+                                <td><gokb:xEditable class="ipe" owner="${cs}" field="embargo"/></td>
+                                <td><gokb:xEditable class="ipe" owner="${cs}" field="coverageNote"/></td>
+                                <td><gokb:xEditableRefData owner="${cs}" field="coverageDepth"
                                                         config="TIPPCoverageStatement.CoverageDepth"/>
                                 </td>
                                 <td><g:if test="${editable}"><g:link controller="ajaxSupport"
@@ -340,7 +340,7 @@
                             </dd>
                             <dt class="dt-label">Coverage Depth</dt>
                             <dd>
-                                <g:simpleReferenceTypedown name="coverageDepth" baseClass="org.gokb.cred.RefdataValue"
+                                <gokb:simpleReferenceTypedown name="coverageDepth" baseClass="org.gokb.cred.RefdataValue"
                                                            filter1="TIPPCoverageStatement.CoverageDepth"/>
                             </dd>
                             <dt class="dt-label">Coverage Note</dt>
@@ -360,13 +360,13 @@
                 <g:annotatedLabel owner="${d}" property="coverageNote">Coverage Note</g:annotatedLabel>
             </dt>
             <dd>
-                <g:xEditable class="ipe" owner="${d}" field="coverageNote"/>
+                <gokb:xEditable class="ipe" owner="${d}" field="coverageNote"/>
             </dd>
             <dt>
                 <g:annotatedLabel owner="${d}" property="coverageDepth">Coverage Depth</g:annotatedLabel>
             </dt>
             <dd>
-                <g:xEditableRefData owner="${d}" field="coverageDepth"
+                <gokb:xEditableRefData owner="${d}" field="coverageDepth"
                                     config='TitleInstancePackagePlatform.CoverageDepth'/>
             </dd>
         </dl>
@@ -414,7 +414,7 @@
           <g:annotatedLabel owner="${d}" property="subjectArea">Subject Area</g:annotatedLabel>
         </dt>
         <dd>
-          <g:xEditable owner="${d}" field="subjectArea"/>
+          <gokb:xEditable owner="${d}" field="subjectArea"/>
         </dd>
       </dl>
     </div>
@@ -426,7 +426,7 @@
           <g:annotatedLabel owner="${d}" property="series">Series</g:annotatedLabel>
         </dt>
         <dd>
-          <g:xEditable owner="${d}" field="series"/>
+          <gokb:xEditable owner="${d}" field="series"/>
         </dd>
       </dl>
     </div>

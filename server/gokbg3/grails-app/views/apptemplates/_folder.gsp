@@ -2,7 +2,7 @@
   <dl class="dl-horizontal">
 
     <dt><g:annotatedLabel owner="${d}" property="name">Folder Name</g:annotatedLabel></dt>
-    <dd><g:xEditable class="ipe" owner="${d}" field="name" /></dd>
+    <dd><gokb:xEditable class="ipe" owner="${d}" field="name" /></dd>
 
     <g:if test="${d.id != null}">
 

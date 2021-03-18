@@ -10,7 +10,7 @@
       </div>
     </g:if>
     <g:else>
-      <g:xEditable class="ipe" owner="${d}" field="name"/>
+      <gokb:xEditable class="ipe" owner="${d}" field="name"/>
     </g:else>
   </dd>
 
@@ -18,8 +18,8 @@
     <g:annotatedLabel owner="${d}" property="source">Source</g:annotatedLabel>
   </dt>
   <dd>
-    <g:manyToOneReferenceTypedown owner="${d}" field="source"
-                                  baseClass="org.gokb.cred.Source">${d.source?.name}</g:manyToOneReferenceTypedown>
+    <gokb:manyToOneReferenceTypedown owner="${d}" field="source"
+                                  baseClass="org.gokb.cred.Source">${d.source?.name}</gokb:manyToOneReferenceTypedown>
   </dd>
 
   <dt>
@@ -27,7 +27,7 @@
   </dt>
   <dd>
     <sec:ifAnyGranted roles="ROLE_SUPERUSER">
-      <g:xEditableRefData owner="${d}" field="status" config='KBComponent.Status'/>
+      <gokb:xEditableRefData owner="${d}" field="status" config='KBComponent.Status'/>
     </sec:ifAnyGranted>
     <sec:ifNotGranted roles="ROLE_SUPERUSER">
       ${d.status?.value ?: 'Not Set'}
@@ -38,7 +38,7 @@
     <g:annotatedLabel owner="${d}" property="reasonRetired">Status Reason</g:annotatedLabel>
   </dt>
   <dd>
-    <g:xEditableRefData owner="${d}" field="reasonRetired"
+    <gokb:xEditableRefData owner="${d}" field="reasonRetired"
                         config='TitleInstance.ReasonRetired'/>
   </dd>
 
@@ -46,7 +46,7 @@
     <g:annotatedLabel owner="${d}" property="editStatus">Edit Status</g:annotatedLabel>
   </dt>
   <dd>
-    <g:xEditableRefData owner="${d}" field="editStatus"
+    <gokb:xEditableRefData owner="${d}" field="editStatus"
                         config='KBComponent.EditStatus'/>
   </dd>
 
@@ -54,7 +54,7 @@
     <g:annotatedLabel owner="${d}" property="language">Language</g:annotatedLabel>
   </dt>
   <dd>
-    <g:xEditableRefData owner="${d}" field="language" config="${org.gokb.cred.KBComponent.RD_LANGUAGE}"/>
+    <gokb:xEditableRefData owner="${d}" field="language" config="${org.gokb.cred.KBComponent.RD_LANGUAGE}"/>
   </dd>
 
   <dt>
@@ -68,10 +68,10 @@
     <g:annotatedLabel owner="${d}" property="imprint">Imprint</g:annotatedLabel>
   </dt>
   <dd>
-    <g:manyToOneReferenceTypedown owner="${d}" field="imprint"
+    <gokb:manyToOneReferenceTypedown owner="${d}" field="imprint"
                                   baseClass="org.gokb.cred.Imprint">
       ${d.imprint?.name}
-    </g:manyToOneReferenceTypedown>
+    </gokb:manyToOneReferenceTypedown>
     &nbsp;
   </dd>
 
@@ -79,14 +79,14 @@
     <g:annotatedLabel owner="${d}" property="publishedFrom">Published From</g:annotatedLabel>
   </dt>
   <dd>
-    <g:xEditable class="ipe" owner="${d}" type="date" field="publishedFrom"/>
+    <gokb:xEditable class="ipe" owner="${d}" type="date" field="publishedFrom"/>
   </dd>
 
   <dt>
     <g:annotatedLabel owner="${d}" property="publishedTo">Published To</g:annotatedLabel>
   </dt>
   <dd>
-    <g:xEditable class="ipe" owner="${d}" type="date" field="publishedTo"/>
+    <gokb:xEditable class="ipe" owner="${d}" type="date" field="publishedTo"/>
   </dd>
 
   <g:if test="${d?.id != null && d.titleHistory}">
@@ -138,7 +138,7 @@
             <g:annotatedLabel owner="${d}" property="medium">Medium</g:annotatedLabel>
           </dt>
           <dd>
-            <g:xEditableRefData owner="${d}" field="medium"
+            <gokb:xEditableRefData owner="${d}" field="medium"
                                 config='TitleInstance.Medium'/>
           </dd>
 
@@ -146,7 +146,7 @@
             <g:annotatedLabel owner="${d}" property="OAStatus">OA Status</g:annotatedLabel>
           </dt>
           <dd>
-            <g:xEditableRefData owner="${d}" field="OAStatus"
+            <gokb:xEditableRefData owner="${d}" field="OAStatus"
                                 config='TitleInstance.OAStatus'/>
           </dd>
 
@@ -154,7 +154,7 @@
             <g:annotatedLabel owner="${d}" property="continuingSeries">Continuing Series</g:annotatedLabel>
           </dt>
           <dd>
-            <g:xEditableRefData owner="${d}" field="continuingSeries"
+            <gokb:xEditableRefData owner="${d}" field="continuingSeries"
                                 config='TitleInstance.ContinuingSeries'/>
           </dd>
         </dl>
@@ -197,13 +197,13 @@
                               class="input-xxlarge" style="width: 500px;"></select></td>
                 </tr>
                 <tr>
-                  <td><g:simpleReferenceTypedown class="form-control" name="fromTitle"
+                  <td><gokb:simpleReferenceTypedown class="form-control" name="fromTitle"
                                                  baseClass="org.gokb.cred.TitleInstance"/> <br/>
                     <button class="btn btn-sm" type="button"
                             onClick="AddTitle(document.AddHistoryForm.fromTitle, document.AddHistoryForm.beforeTitles)">Add</button>
                     <button class="btn btn-sm" type="button" onClick="removeTitle('beforeTitles')">Remove</button></td>
                   <td></td>
-                  <td><g:simpleReferenceTypedown class="form-control" name="ToTitle"
+                  <td><gokb:simpleReferenceTypedown class="form-control" name="ToTitle"
                                                  baseClass="org.gokb.cred.TitleInstance"/> <br/>
                     <button class="btn btn-sm" type="button"
                             onClick="AddTitle(document.AddHistoryForm.ToTitle, document.AddHistoryForm.afterTitles)">Add</button>
@@ -312,9 +312,9 @@
             <tr>
               <td><g:link controller="resource" action="show"
                           id="${p.toComponent.class.name}:${p.toComponent.id}">${p.toComponent.name}</g:link></td>
-              <td><g:xEditableRefData owner="${p}" field="status" config='Combo.Status'/></td>
-              <td><g:xEditable class="ipe" owner="${p}" field="startDate" type="date"/></td>
-              <td><g:xEditable class="ipe" owner="${p}" field="endDate" type="date"/></td>
+              <td><gokb:xEditableRefData owner="${p}" field="status" config='Combo.Status'/></td>
+              <td><gokb:xEditable class="ipe" owner="${p}" field="startDate" type="date"/></td>
+              <td><gokb:xEditable class="ipe" owner="${p}" field="endDate" type="date"/></td>
               <td><g:link controller="ajaxSupport" action="deleteCombo" id="${p.id}">Delete</g:link></td>
             </tr>
           </g:each>
@@ -327,7 +327,7 @@
         <input type="hidden" name="__property" value="publisher"/>
         <td>Add Publisher:</td>
         <dd>
-          <g:simpleReferenceTypedown class="form-control input-xxlarge" name="__relatedObject"
+          <gokb:simpleReferenceTypedown class="form-control input-xxlarge" name="__relatedObject"
                                      baseClass="org.gokb.cred.Org"/><button type="submit"
                                                                             class="btn btn-default btn-primary btn-sm ">Add</button>
         </dd>

@@ -44,7 +44,7 @@
 							<div class="form-group">
 								<label for="allocUser" class="col-sm-2 control-label">To User</label>
 								<div class="col-sm-8">
-									<g:simpleReferenceTypedown class="form-control" id="allocUser" name="allocToUser" baseClass="org.gokb.cred.User" />
+									<gokb:simpleReferenceTypedown class="form-control" id="allocUser" name="allocToUser" baseClass="org.gokb.cred.User" />
 								</div>
 							</div>
 							<div class="form-group">

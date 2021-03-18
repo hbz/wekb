@@ -15,13 +15,13 @@
           <g:annotatedLabel owner="${d}" property="cause">Cause</g:annotatedLabel>
         </dt>
         <dd style="max-width:60%">
-          <g:xEditable class="ipe" owner="${d}" field="descriptionOfCause" />
+          <gokb:xEditable class="ipe" owner="${d}" field="descriptionOfCause" />
         </dd>
         <dt>
           <g:annotatedLabel owner="${d}" property="reviewRequest">Review Request</g:annotatedLabel>
         </dt>
         <dd>
-          <g:xEditable class="ipe" owner="${d}" field="reviewRequest" />
+          <gokb:xEditable class="ipe" owner="${d}" field="reviewRequest" />
         </dd>
         <g:if test="${d.id}">
           <sec:ifAnyGranted roles="ROLE_SUPERUSER">
@@ -62,7 +62,7 @@
           <g:annotatedLabel owner="${d}" property="status">Request Status</g:annotatedLabel>
         </dt>
         <dd>
-          <g:xEditableRefData owner="${d}" field="status"
+          <gokb:xEditableRefData owner="${d}" field="status"
             config='ReviewRequest.Status' />
         </dd>
 
@@ -71,10 +71,10 @@
         </dt>
 
         <dd>
-          <g:manyToOneReferenceTypedown owner="${d}"
+          <gokb:manyToOneReferenceTypedown owner="${d}"
             field="componentToReview" baseClass="org.gokb.cred.KBComponent">
             ${d.componentToReview?.displayName?:''}
-          </g:manyToOneReferenceTypedown>
+          </gokb:manyToOneReferenceTypedown>
         </dd>
         <g:if test="${d.additional?.otherComponents}">
 

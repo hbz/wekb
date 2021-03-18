@@ -4,14 +4,14 @@
           <g:annotatedLabel owner="${d}" property="name">Name</g:annotatedLabel>
   </dt>
   <dd>
-          <g:xEditable class="ipe" owner="${d}" field="name" />
+          <gokb:xEditable class="ipe" owner="${d}" field="name" />
   </dd>
   <dt>
           <g:annotatedLabel owner="${d}" property="status">Status</g:annotatedLabel>
   </dt>
   <dd>
     <sec:ifAnyGranted roles="ROLE_SUPERUSER">
-      <g:xEditableRefData owner="${d}" field="status" config='KBComponent.Status' />
+      <gokb:xEditableRefData owner="${d}" field="status" config='KBComponent.Status' />
     </sec:ifAnyGranted>
     <sec:ifNotGranted roles="ROLE_SUPERUSER">
       ${d.status?.value ?: 'Not Set'}
@@ -21,25 +21,25 @@
           <g:annotatedLabel owner="${d}" property="reference">Reference</g:annotatedLabel>
   </dt>
   <dd>
-          <g:xEditable class="ipe" owner="${d}" field="reference" />
+          <gokb:xEditable class="ipe" owner="${d}" field="reference" />
   </dd>
   <dt>
     <g:annotatedLabel owner="${d}" property="source">Source</g:annotatedLabel>
   </dt>
   <dd>
-    <g:manyToOneReferenceTypedown owner="${d}" field="source" baseClass="org.gokb.cred.Source">${d.source?.name}</g:manyToOneReferenceTypedown>
+    <gokb:manyToOneReferenceTypedown owner="${d}" field="source" baseClass="org.gokb.cred.Source">${d.source?.name}</gokb:manyToOneReferenceTypedown>
   </dd>
   <dt>
     <g:annotatedLabel owner="${d}" property="titleNamespace">Title Namespace</g:annotatedLabel>
   </dt>
   <dd>
-    <g:manyToOneReferenceTypedown owner="${d}" field="titleNamespace" baseClass="org.gokb.cred.IdentifierNamespace">${(d.titleNamespace?.name)?:d.titleNamespace?.value}</g:manyToOneReferenceTypedown>
+    <gokb:manyToOneReferenceTypedown owner="${d}" field="titleNamespace" baseClass="org.gokb.cred.IdentifierNamespace">${(d.titleNamespace?.name)?:d.titleNamespace?.value}</gokb:manyToOneReferenceTypedown>
   </dd>
   <dt>
     <g:annotatedLabel owner="${d}" property="packageNamespace">Package Namespace</g:annotatedLabel>
   </dt>
   <dd>
-    <g:manyToOneReferenceTypedown owner="${d}" field="packageNamespace" baseClass="org.gokb.cred.IdentifierNamespace">${(d.packageNamespace?.name)?:d.packageNamespace?.value}</g:manyToOneReferenceTypedown>
+    <gokb:manyToOneReferenceTypedown owner="${d}" field="packageNamespace" baseClass="org.gokb.cred.IdentifierNamespace">${(d.packageNamespace?.name)?:d.packageNamespace?.value}</gokb:manyToOneReferenceTypedown>
   </dd>
 </dl>
 <div id="content">
@@ -110,13 +110,13 @@
             <g:annotatedLabel owner="${d}" property="mission">Mission</g:annotatedLabel>
           </dt>
           <dd>
-            <g:xEditableRefData owner="${d}" field="mission" config='Org.Mission' />
+            <gokb:xEditableRefData owner="${d}" field="mission" config='Org.Mission' />
           </dd>
           <dt>
             <g:annotatedLabel owner="${d}" property="homepage">Homepage</g:annotatedLabel>
           </dt>
           <dd>
-            <g:xEditable class="ipe" owner="${d}" field="homepage" />
+            <gokb:xEditable class="ipe" owner="${d}" field="homepage" />
           </dd>
             <dt class="dt-label">
               <g:annotatedLabel owner="${d}" property="roles">Roles</g:annotatedLabel>
@@ -137,7 +137,7 @@
                   <g:form controller="ajaxSupport" action="addToStdCollection" class="form-inline">
                     <input type="hidden" name="__context" value="${d.class.name}:${d.id}" />
                     <input type="hidden" name="__property" value="roles" />
-                    <g:simpleReferenceTypedown class="form-inline" style="display:inline-block;" name="__relatedObject"
+                    <gokb:simpleReferenceTypedown class="form-inline" style="display:inline-block;" name="__relatedObject"
                             baseClass="org.gokb.cred.RefdataValue" filter1="Org.Role" />
                     <input type="submit" value="Add..." class="btn btn-default btn-primary" />
                   </g:form>
@@ -176,7 +176,7 @@
                 <g:annotatedLabel owner="${d}" property="successor">Successor</g:annotatedLabel>
               </dt>
               <dd>
-                <g:manyToOneReferenceTypedown owner="${d}" field="successor" baseClass="org.gokb.cred.Org">${d.successor?.name}</g:manyToOneReferenceTypedown>
+                <gokb:manyToOneReferenceTypedown owner="${d}" field="successor" baseClass="org.gokb.cred.Org">${d.successor?.name}</gokb:manyToOneReferenceTypedown>
               </dd>
               <dt>
                 <g:annotatedLabel owner="${d}" property="successor">Predecessor(s)</g:annotatedLabel>
@@ -196,7 +196,7 @@
                 <g:annotatedLabel owner="${d}" property="parent">Parent Org</g:annotatedLabel>
               </dt>
               <dd>
-                <g:manyToOneReferenceTypedown owner="${d}" field="parent" baseClass="org.gokb.cred.Org">${d.parent?.name}</g:manyToOneReferenceTypedown>
+                <gokb:manyToOneReferenceTypedown owner="${d}" field="parent" baseClass="org.gokb.cred.Org">${d.parent?.name}</gokb:manyToOneReferenceTypedown>
               </dd>
 
               <g:if test="${d.children?.size() > 0}">
@@ -233,9 +233,9 @@
                     <g:each in="${d.getCombosByPropertyName('ownedImprints')}" var="p">
                       <tr>
                         <td><g:link controller="resource" action="show" id="${p.toComponent.class.name}:${p.toComponent.id}"> ${p.toComponent.name} </g:link></td>
-                        <td><g:xEditableRefData owner="${p}" field="status" config='Combo.Status' /></td>
-                        <td><g:xEditable class="ipe" owner="${p}" field="startDate" type="date" /></td>
-                        <td><g:xEditable class="ipe" owner="${p}" field="endDate" type="date" /></td>
+                        <td><gokb:xEditableRefData owner="${p}" field="status" config='Combo.Status' /></td>
+                        <td><gokb:xEditable class="ipe" owner="${p}" field="startDate" type="date" /></td>
+                        <td><gokb:xEditable class="ipe" owner="${p}" field="endDate" type="date" /></td>
                         <td><g:link controller="ajaxSupport" action="deleteCombo" id="${p.id}">Delete</g:link></td>
                       </tr>
                     </g:each>
@@ -327,7 +327,7 @@
                       </dd>
                       <dt class="dt-label">Country</dt>
                       <dd>
-                        <g:simpleReferenceTypedown class="form-control" name="country"
+                        <gokb:simpleReferenceTypedown class="form-control" name="country"
                           baseClass="org.gokb.cred.RefdataValue"
                           filter1="Country" />
                       </dd>

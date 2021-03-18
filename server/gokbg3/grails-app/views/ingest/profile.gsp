@@ -23,7 +23,7 @@
                 <g:annotatedLabel owner="${ip}" property="status">Status</g:annotatedLabel>
               </dt>
               <dd>
-                <g:xEditableRefData owner="${ip}" field="status" config='KBComponent.Status' />
+                <gokb:xEditableRefData owner="${ip}" field="status" config='KBComponent.Status' />
               </dd>
               <dt>
                 <g:annotatedLabel owner="${ip}" property="packageName">Package Name</g:annotatedLabel>
@@ -35,7 +35,7 @@
                 <g:annotatedLabel owner="${ip}" property="providerNamespace">Provider Namespace</g:annotatedLabel>
               </dt>
               <dd>
-                <g:manyToOneReferenceTypedown owner="${ip}" field="providerNamespace" baseClass="org.gokb.cred.IdentifierNamespace">${ip.providerNamespace?.value}</g:manyToOneReferenceTypedown>
+                <gokb:manyToOneReferenceTypedown owner="${ip}" field="providerNamespace" baseClass="org.gokb.cred.IdentifierNamespace">${ip.providerNamespace?.value}</gokb:manyToOneReferenceTypedown>
               </dd>
               <dt>
                 <g:annotatedLabel owner="${ip}" property="packageType">Data Format</g:annotatedLabel>
@@ -47,7 +47,7 @@
                 <g:annotatedLabel owner="${ip}" property="platformUrl">URL</g:annotatedLabel>
               </dt>
               <dd>
-                <g:xEditable class="ipe" owner="${ip}" field="platformUrl" />
+                <gokb:xEditable class="ipe" owner="${ip}" field="platformUrl" />
               </dd>
             </dl>
           </div>

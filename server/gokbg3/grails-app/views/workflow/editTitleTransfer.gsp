@@ -113,12 +113,12 @@
           <dl class="dl-horizontal clearfix">
             <dt>New Package</dt>
             <dd>
-              <g:simpleReferenceTypedown class="form-control" name="Package"
+              <gokb:simpleReferenceTypedown class="form-control" name="Package"
                 baseClass="org.gokb.cred.Package" />
             </dd>
             <dt>New Platform</dt>
             <dd>
-              <g:simpleReferenceTypedown class="form-control" name="Platform"
+              <gokb:simpleReferenceTypedown class="form-control" name="Platform"
                 baseClass="org.gokb.cred.Platform" />
             </dd>
             <dt></dt>

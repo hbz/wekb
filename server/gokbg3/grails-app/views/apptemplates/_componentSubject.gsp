@@ -55,7 +55,7 @@
 
     
     <input type="hidden" name="type" value="${org.gokb.cred.RefdataCategory.getOID('Combo.Type',d.getComboTypeValue(property))}"/>
-    Add To List : <g:simpleReferenceTypedown class="form-control" name="${comboprop}" baseClass="${targetClass}"/> 
+    Add To List : <gokb:simpleReferenceTypedown class="form-control" name="${comboprop}" baseClass="${targetClass}"/>
     <button type="submit" class="btn btn-default btn-primary btn-sm ">Add</button>
   </g:form>
 

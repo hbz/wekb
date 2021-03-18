@@ -13,7 +13,7 @@
       <g:link controller="packages" action="packageTSVExport" id="${params.id}"><g:message code="gokb.appname" default="we:kb"/> File</g:link>
     </g:if>
     <g:else>
-      <g:xEditable class="ipe" owner="${d}" field="name" />
+      <gokb:xEditable class="ipe" owner="${d}" field="name" />
     </g:else>
   </dd>
     </dd>
@@ -22,14 +22,14 @@
       <g:annotatedLabel owner="${d}" property="provider">Provider</g:annotatedLabel>
     </dt>
     <dd>
-      <g:manyToOneReferenceTypedown owner="${d}" field="provider" baseClass="org.gokb.cred.Org">${d.provider?.name}</g:manyToOneReferenceTypedown>
+      <gokb:manyToOneReferenceTypedown owner="${d}" field="provider" baseClass="org.gokb.cred.Org">${d.provider?.name}</gokb:manyToOneReferenceTypedown>
     </dd>
 
     <dt>
       <g:annotatedLabel owner="${d}" property="source">Source</g:annotatedLabel>
     </dt>
     <dd>
-      <g:manyToOneReferenceTypedown owner="${d}" field="source" baseClass="org.gokb.cred.Source">${d.source?.name}</g:manyToOneReferenceTypedown>
+      <gokb:manyToOneReferenceTypedown owner="${d}" field="source" baseClass="org.gokb.cred.Source">${d.source?.name}</gokb:manyToOneReferenceTypedown>
     </dd>
     <g:if test="${d}">
       <dt>
@@ -37,7 +37,7 @@
       </dt>
       <dd>
         <sec:ifAnyGranted roles="ROLE_SUPERUSER">
-          <g:xEditableRefData owner="${d}" field="status" config='KBComponent.Status' />
+          <gokb:xEditableRefData owner="${d}" field="status" config='KBComponent.Status' />
         </sec:ifAnyGranted>
         <sec:ifNotGranted roles="ROLE_SUPERUSER">
           ${d.status?.value ?: 'Not Set'}
@@ -58,28 +58,28 @@
     </g:if>
     <dt> <g:annotatedLabel owner="${d}" property="listStatus">List Status</g:annotatedLabel> </dt>
     <dd>
-      <g:xEditableRefData owner="${d}" field="listStatus" config='Package.ListStatus' />
+      <gokb:xEditableRefData owner="${d}" field="listStatus" config='Package.ListStatus' />
     </dd>
     <dt>
       <g:annotatedLabel owner="${d}" property="userListVerifier">List Verifier</g:annotatedLabel>
     </dt>
     <dd>
-      <g:manyToOneReferenceTypedown owner="${d}" field="userListVerifier" baseClass="org.gokb.cred.User">${d.userListVerifier?.displayName ?: d.userListVerifier?.username}</g:manyToOneReferenceTypedown>
+      <gokb:manyToOneReferenceTypedown owner="${d}" field="userListVerifier" baseClass="org.gokb.cred.User">${d.userListVerifier?.displayName ?: d.userListVerifier?.username}</gokb:manyToOneReferenceTypedown>
     </dd>
     <dt> <g:annotatedLabel owner="${d}" property="listVerifierDate">List Verifier Date</g:annotatedLabel> </dt>
-    <dd> <g:xEditable class="ipe" owner="${d}" type="date" field="listVerifiedDate" /> </dd>
+    <dd> <gokb:xEditable class="ipe" owner="${d}" type="date" field="listVerifiedDate" /> </dd>
 
     <dt> <g:annotatedLabel owner="${d}" property="lastUpdateComment">Last Update Comment</g:annotatedLabel> </dt>
-    <dd> <g:xEditable class="ipe" owner="${d}" field="lastUpdateComment" /> </dd>
+    <dd> <gokb:xEditable class="ipe" owner="${d}" field="lastUpdateComment" /> </dd>
 
     <dt> <g:annotatedLabel owner="${d}" property="editStatus">Edit Status</g:annotatedLabel> </dt>
-    <dd> <g:xEditableRefData owner="${d}" field="editStatus" config='KBComponent.EditStatus' /> </dd>
+    <dd> <gokb:xEditableRefData owner="${d}" field="editStatus" config='KBComponent.EditStatus' /> </dd>
 
     <dt> <g:annotatedLabel owner="${d}" property="description">Description</g:annotatedLabel> </dt>
-    <dd> <g:xEditable class="ipe" owner="${d}" field="description" /> </dd>
+    <dd> <gokb:xEditable class="ipe" owner="${d}" field="description" /> </dd>
 
     <dt> <g:annotatedLabel owner="${d}" property="descriptionURL">URL</g:annotatedLabel> </dt>
-    <dd> <g:xEditable class="ipe" owner="${d}" field="descriptionURL" /> </dd>
+    <dd> <gokb:xEditable class="ipe" owner="${d}" field="descriptionURL" /> </dd>
 
   </dl>
 
@@ -129,16 +129,16 @@
             <g:annotatedLabel owner="${d}" property="globalNote">Global Range</g:annotatedLabel>
           </dt>
           <dd>
-            <g:xEditable class="ipe" owner="${d}" field="globalNote" />
+            <gokb:xEditable class="ipe" owner="${d}" field="globalNote" />
           </dd>
           <dt>
             <g:annotatedLabel owner="${d}" property="nominalPlatform">Nominal Platform</g:annotatedLabel>
           </dt>
           <dd>
-            <g:manyToOneReferenceTypedown owner="${d}" field="nominalPlatform"
+            <gokb:manyToOneReferenceTypedown owner="${d}" field="nominalPlatform"
               name="${comboprop}" baseClass="org.gokb.cred.Platform">
               ${d.nominalPlatform?.name ?: ''}
-            </g:manyToOneReferenceTypedown>
+            </gokb:manyToOneReferenceTypedown>
           </dd>
         </dl>
       </div>
@@ -165,11 +165,11 @@
                     <dl class="dl-horizontal">
                       <dt class="dt-label">Title</dt>
                       <dd>
-                        <g:simpleReferenceTypedown class="form-control select-m" name="title" baseClass="org.gokb.cred.TitleInstance" />
+                        <gokb:simpleReferenceTypedown class="form-control select-m" name="title" baseClass="org.gokb.cred.TitleInstance" />
                       </dd>
                       <dt class="dt-label">Platform</dt>
                       <dd>
-                        <g:simpleReferenceTypedown class="form-control select-m" name="hostPlatform" baseClass="org.gokb.cred.Platform" filter1="Current" />
+                        <gokb:simpleReferenceTypedown class="form-control select-m" name="hostPlatform" baseClass="org.gokb.cred.Platform" filter1="Current" />
                       </dd>
                       <dt class="dt-label">URL</dt>
                       <dd>
@@ -218,7 +218,7 @@
               <g:annotatedLabel owner="${d}" property="successor">Successor</g:annotatedLabel>
             </dt>
             <dd>
-              <g:manyToOneReferenceTypedown owner="${d}" field="successor" baseClass="org.gokb.cred.Package">${d.successor?.name}</g:manyToOneReferenceTypedown>
+              <gokb:manyToOneReferenceTypedown owner="${d}" field="successor" baseClass="org.gokb.cred.Package">${d.successor?.name}</gokb:manyToOneReferenceTypedown>
             </dd>
             <dt>
               <g:annotatedLabel owner="${d}" property="successor">Predecessor(s)</g:annotatedLabel>
@@ -238,7 +238,7 @@
               <g:annotatedLabel owner="${d}" property="parent">Parent</g:annotatedLabel>
             </dt>
             <dd>
-              <g:manyToOneReferenceTypedown owner="${d}" field="parent" baseClass="org.gokb.cred.Package">${d.parent?.name}</g:manyToOneReferenceTypedown>
+              <gokb:manyToOneReferenceTypedown owner="${d}" field="parent" baseClass="org.gokb.cred.Package">${d.parent?.name}</gokb:manyToOneReferenceTypedown>
             </dd>
 
             <g:if test="${d.children?.size() > 0}">

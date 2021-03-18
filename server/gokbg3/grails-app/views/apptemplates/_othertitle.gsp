@@ -10,7 +10,7 @@
       </div>
     </g:if>
     <g:else>
-      <g:xEditable class="ipe" owner="${d}" field="name" />
+      <gokb:xEditable class="ipe" owner="${d}" field="name" />
     </g:else>
   </dd>
 
@@ -27,14 +27,14 @@
     <g:annotatedLabel owner="${d}" property="status">Status</g:annotatedLabel>
   </dt>
   <dd>
-    <g:xEditableRefData owner="${d}" field="status" config='KBComponent.Status' />
+    <gokb:xEditableRefData owner="${d}" field="status" config='KBComponent.Status' />
   </dd>
 
   <dt>
     <g:annotatedLabel owner="${d}" property="reasonRetired">Status Reason</g:annotatedLabel>
   </dt>
   <dd>
-    <g:xEditableRefData owner="${d}" field="reasonRetired"
+    <gokb:xEditableRefData owner="${d}" field="reasonRetired"
       config='TitleInstance.ReasonRetired' />
   </dd>
 
@@ -42,7 +42,7 @@
     <g:annotatedLabel owner="${d}" property="editStatus">Edit Status</g:annotatedLabel>
   </dt>
   <dd>
-    <g:xEditableRefData owner="${d}" field="editStatus"
+    <gokb:xEditableRefData owner="${d}" field="editStatus"
       config='KBComponent.EditStatus' />
   </dd>
 
@@ -50,7 +50,7 @@
     <g:annotatedLabel owner="${d}" property="language">Language</g:annotatedLabel>
   </dt>
   <dd>
-    <g:xEditableRefData owner="${d}" field="language" config="${org.gokb.cred.KBComponent.RD_LANGUAGE}"/>
+    <gokb:xEditableRefData owner="${d}" field="language" config="${org.gokb.cred.KBComponent.RD_LANGUAGE}"/>
   </dd>
 
   <dt>
@@ -122,7 +122,7 @@
             <g:annotatedLabel owner="${d}" property="medium">Medium</g:annotatedLabel>
           </dt>
           <dd>
-            <g:xEditableRefData owner="${d}" field="medium"
+            <gokb:xEditableRefData owner="${d}" field="medium"
               config='TitleInstance.Medium' />
           </dd>
 
@@ -130,7 +130,7 @@
             <g:annotatedLabel owner="${d}" property="OAStatus">OA Status</g:annotatedLabel>
           </dt>
           <dd>
-            <g:xEditableRefData owner="${d}" field="OAStatus"
+            <gokb:xEditableRefData owner="${d}" field="OAStatus"
               config='TitleInstance.OAStatus' />
           </dd>
 
@@ -138,7 +138,7 @@
             <g:annotatedLabel owner="${d}" property="continuingSeries">Continuing Series</g:annotatedLabel>
           </dt>
           <dd>
-            <g:xEditableRefData owner="${d}" field="continuingSeries"
+            <gokb:xEditableRefData owner="${d}" field="continuingSeries"
               config='TitleInstance.ContinuingSeries' />
           </dd>
         </dl>
@@ -181,13 +181,13 @@
                     class="input-xxlarge" style="width: 500px;" ></select></td>
                 </tr>
                 <tr>
-                  <td><g:simpleReferenceTypedown class="form-control" name="fromTitle"
+                  <td><gokb:simpleReferenceTypedown class="form-control" name="fromTitle"
                       baseClass="org.gokb.cred.TitleInstance" /> <br />
                     <button type="button"
                       onClick="AddTitle(document.AddHistoryForm.fromTitle, document.AddHistoryForm.beforeTitles)">Add</button>
                     <button type="button" onClick="removeTitle('beforeTitles')">Remove</button></td>
                   <td></td>
-                  <td><g:simpleReferenceTypedown class="form-control" name="ToTitle"
+                  <td><gokb:simpleReferenceTypedown class="form-control" name="ToTitle"
                       baseClass="org.gokb.cred.TitleInstance" /> <br />
                     <button type="button"
                       onClick="AddTitle(document.AddHistoryForm.ToTitle, document.AddHistoryForm.afterTitles)">Add</button>

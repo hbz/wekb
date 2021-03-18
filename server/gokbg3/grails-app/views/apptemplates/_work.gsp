@@ -2,9 +2,9 @@
 
   <dl class="dl-horizontal">
     <dt> <g:annotatedLabel owner="${d}" property="name">Name</g:annotatedLabel> </dt>
-    <dd> <g:xEditable class="ipe" owner="${d}" field="name" /> </dd>
+    <dd> <gokb:xEditable class="ipe" owner="${d}" field="name" /> </dd>
     <dt> <g:annotatedLabel owner="${d}" property="status">Status</g:annotatedLabel> </dt>
-    <dd> <g:xEditableRefData owner="${d}" field="status" config="KBComponent.Status" /> </dd>
+    <dd> <gokb:xEditableRefData owner="${d}" field="status" config="KBComponent.Status" /> </dd>
     <dt> <g:annotatedLabel owner="${d}" property="status">Instances</g:annotatedLabel> </dt>
     <g:if test="${d.id != null && d.instances}">
       <dd> 

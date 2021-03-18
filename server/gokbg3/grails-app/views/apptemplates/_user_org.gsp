@@ -1,7 +1,7 @@
 <dl class="dl-horizontal">
 
   <dt><g:annotatedLabel owner="${d}" property="name">Name</g:annotatedLabel></dt>
-  <dd><g:xEditable class="ipe" owner="${d}" field="displayName" /></dd>
+  <dd><gokb:xEditable class="ipe" owner="${d}" field="displayName" /></dd>
 
   <g:if test="${d.id != null}">
   <g:set var="userIsOrgAdmin" value="${d.members.find { it.party == request.user && it.role?.value == 'Administrator' && it.status?.value == 'Approved'}}" />
@@ -24,13 +24,13 @@
             <td>${m.party}</td>
             <td>
               <g:if test="${ user.isAdmin() || userIsOrgAdmin }">
-                <g:xEditableRefData owner="${m}" field="status" config='MembershipStatus' />
+                <gokb:xEditableRefData owner="${m}" field="status" config='MembershipStatus' />
               </g:if>
               <g:else>${m.status?.value}</g:else>
             </td>
             <td>
               <g:if test="${ user.isAdmin() || userIsOrgAdmin }">
-                <g:xEditableRefData owner="${m}" field="role" config='MembershipRole' />
+                <gokb:xEditableRefData owner="${m}" field="role" config='MembershipRole' />
               </g:if>
               <g:else>${m.role?.value}</g:else>
             </td>
@@ -56,18 +56,18 @@
             <input type="hidden" name="__newObjectClass" value="org.gokb.cred.UserOrganisationMembership"/>
             <tr>
               <td>
-                <g:simpleReferenceTypedown class="form-control"
+                <gokb:simpleReferenceTypedown class="form-control"
                                           name="party"
                                           baseClass="org.gokb.cred.User"/>
               </td>
               <td>
-                <g:simpleReferenceTypedown class="form-control"
+                <gokb:simpleReferenceTypedown class="form-control"
                                           name="status"
                                           baseClass="org.gokb.cred.RefdataValue"
                                           filter1="MembershipStatus"/>
               </td>
               <td>
-                <g:simpleReferenceTypedown class="form-control"
+                <gokb:simpleReferenceTypedown class="form-control"
                                           name="role"
                                           baseClass="org.gokb.cred.RefdataValue"
                                           filter1="MembershipRole"/>

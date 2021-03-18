@@ -5,11 +5,11 @@
     <dd>${d.username}</dd>
   
     <dt><g:annotatedLabel owner="${d}" property="displayName">Display Name</g:annotatedLabel></dt>
-    <dd><g:xEditable class="ipe" owner="${d}" field="displayName"/></dd>
+    <dd><gokb:xEditable class="ipe" owner="${d}" field="displayName"/></dd>
     <g:if test="${d == request.user}">
       <dt><g:annotatedLabel owner="${d}" property="email">Email</g:annotatedLabel></dt>
       <dd>
-        <g:xEditable class="ipe" owner="${d}" field="email"/>
+        <gokb:xEditable class="ipe" owner="${d}" field="email"/>
       </dd>
     </g:if>
     <dt><g:annotatedLabel owner="${d}" property="curatoryGroups">Curatory Groups</g:annotatedLabel></dt>

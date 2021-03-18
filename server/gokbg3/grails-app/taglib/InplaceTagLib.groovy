@@ -1,16 +1,10 @@
-import groovy.json.JsonBuilder
-import java.net.Authenticator.RequestorType;
-
-import com.k_int.kbplus.*
 import org.gokb.cred.*;
 import com.k_int.ClassUtils
 
-import grails.core.GrailsClass
-import grails.core.GrailsApplication
-
-import org.hibernate.proxy.HibernateProxy
 
 class InplaceTagLib {
+
+  static namespace = 'gokb'
 
   def genericOIDService
   def springSecurityService

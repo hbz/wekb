@@ -48,10 +48,10 @@
                     class="input-xxlarge" style="width: 500px;" ></select></td>
                 </tr>
                 <tr>
-                  <td><g:simpleReferenceTypedown class="form-control" name="fromTitle" baseClass="org.gokb.cred.TitleInstance" /> <br />
+                  <td><gokb:simpleReferenceTypedown class="form-control" name="fromTitle" baseClass="org.gokb.cred.TitleInstance" /> <br />
                     <button class="btn btn-default" type="button" onClick="AddTitle(document.AddHistoryForm.fromTitle, document.AddHistoryForm.beforeTitles)">Add</button></td>
                   <td></td>
-                  <td><g:simpleReferenceTypedown class="form-control" name="ToTitle" baseClass="org.gokb.cred.TitleInstance" /> <br />
+                  <td><gokb:simpleReferenceTypedown class="form-control" name="ToTitle" baseClass="org.gokb.cred.TitleInstance" /> <br />
                     <button class="btn btn-default" type="button" onClick="AddTitle(document.AddHistoryForm.ToTitle, document.AddHistoryForm.afterTitles)">Add</button></td>
                 </tr>
               </table>

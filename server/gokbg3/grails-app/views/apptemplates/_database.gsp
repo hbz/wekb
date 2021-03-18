@@ -10,7 +10,7 @@
       </div>
     </g:if>
     <g:else>
-      <g:xEditable class="ipe" owner="${d}" field="name" />
+      <gokb:xEditable class="ipe" owner="${d}" field="name" />
     </g:else>
   </dd>
 
@@ -19,7 +19,7 @@
   </dt>
   <dd>
     <sec:ifAnyGranted roles="ROLE_SUPERUSER">
-      <g:xEditableRefData owner="${d}" field="status" config='KBComponent.Status' />
+      <gokb:xEditableRefData owner="${d}" field="status" config='KBComponent.Status' />
     </sec:ifAnyGranted>
     <sec:ifNotGranted roles="ROLE_SUPERUSER">
       ${d.status?.value ?: 'Not Set'}
@@ -30,7 +30,7 @@
     <g:annotatedLabel owner="${d}" property="reasonRetired">Status Reason</g:annotatedLabel>
   </dt>
   <dd>
-    <g:xEditableRefData owner="${d}" field="reasonRetired"
+    <gokb:xEditableRefData owner="${d}" field="reasonRetired"
       config='TitleInstance.ReasonRetired' />
   </dd>
 
@@ -38,7 +38,7 @@
     <g:annotatedLabel owner="${d}" property="editStatus">Edit Status</g:annotatedLabel>
   </dt>
   <dd>
-    <g:xEditableRefData owner="${d}" field="editStatus"
+    <gokb:xEditableRefData owner="${d}" field="editStatus"
       config='KBComponent.EditStatus' />
   </dd>
 
@@ -46,7 +46,7 @@
     <g:annotatedLabel owner="${d}" property="language">Language</g:annotatedLabel>
   </dt>
   <dd>
-    <g:xEditableRefData owner="${d}" field="language" config="${org.gokb.cred.KBComponent.RD_LANGUAGE}"/>
+    <gokb:xEditableRefData owner="${d}" field="language" config="${org.gokb.cred.KBComponent.RD_LANGUAGE}"/>
   </dd>
 
   <dt>
@@ -60,10 +60,10 @@
     <g:annotatedLabel owner="${d}" property="imprint">Imprint</g:annotatedLabel>
   </dt>
   <dd>
-    <g:manyToOneReferenceTypedown owner="${d}" field="imprint"
+    <gokb:manyToOneReferenceTypedown owner="${d}" field="imprint"
       baseClass="org.gokb.cred.Imprint">
       ${d.imprint?.name}
-    </g:manyToOneReferenceTypedown>
+    </gokb:manyToOneReferenceTypedown>
     &nbsp;
   </dd>
 
@@ -71,14 +71,14 @@
     <g:annotatedLabel owner="${d}" property="publishedFrom">Published From</g:annotatedLabel>
   </dt>
   <dd>
-    <g:xEditable class="ipe" owner="${d}" type="date" field="publishedFrom" />
+    <gokb:xEditable class="ipe" owner="${d}" type="date" field="publishedFrom" />
   </dd>
 
   <dt>
     <g:annotatedLabel owner="${d}" property="publishedTo">Published To</g:annotatedLabel>
   </dt>
   <dd>
-    <g:xEditable class="ipe" owner="${d}" type="date" field="publishedTo" />
+    <gokb:xEditable class="ipe" owner="${d}" type="date" field="publishedTo" />
   </dd>
 
   <g:if test="${d?.id != null && d.titleHistory}">
@@ -146,7 +146,7 @@
           </dt>
           <dd>
             <g:if test="${d.id != null}">
-              <g:xEditableRefData owner="${d}" field="medium"
+              <gokb:xEditableRefData owner="${d}" field="medium"
                 config='TitleInstance.Medium' />
             </g:if>
             <g:else>
@@ -158,7 +158,7 @@
             <g:annotatedLabel owner="${d}" property="OAStatus">OA Status</g:annotatedLabel>
           </dt>
           <dd>
-            <g:xEditableRefData owner="${d}" field="OAStatus"
+            <gokb:xEditableRefData owner="${d}" field="OAStatus"
               config='TitleInstance.OAStatus' />
           </dd>
         </dl>
@@ -198,13 +198,13 @@
                     class="input-xxlarge" style="width:100%"></select></td>
                 </tr>
                 <tr>
-                  <td><g:simpleReferenceTypedown class="form-control" name="fromTitle"
+                  <td><gokb:simpleReferenceTypedown class="form-control" name="fromTitle"
                       baseClass="org.gokb.cred.TitleInstance" /> <br />
                     <button class="btn btn-sm" type="button"
                       onClick="AddTitle(document.AddHistoryForm.fromTitle, document.AddHistoryForm.beforeTitles)">Add</button>
                     <button class="btn btn-sm" type="button" onClick="removeTitle('beforeTitles')">Remove</button></td>
                   <td></td>
-                  <td><g:simpleReferenceTypedown class="form-control" name="ToTitle"
+                  <td><gokb:simpleReferenceTypedown class="form-control" name="ToTitle"
                       baseClass="org.gokb.cred.TitleInstance" /> <br />
                     <button class="btn btn-sm" type="button"
                       onClick="AddTitle(document.AddHistoryForm.ToTitle, document.AddHistoryForm.afterTitles)">Add</button>

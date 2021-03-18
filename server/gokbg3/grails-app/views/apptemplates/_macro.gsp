@@ -3,14 +3,14 @@
 		<g:annotatedLabel owner="${d}" property="name">Name</g:annotatedLabel>
 	</dt>
 	<dd>
-		<g:xEditable class="ipe" owner="${d}" field="name" />
+		<gokb:xEditable class="ipe" owner="${d}" field="name" />
 	</dd>
 	<g:if test="${d?.id != null}">
 	  <dt>
 	    <g:annotatedLabel owner="${d}" property="description">Description</g:annotatedLabel>
 	  </dt>
 	  <dd class="multiline" >
-	    <g:xEditable class="ipe" owner="${d}" field="description" />
+	    <gokb:xEditable class="ipe" owner="${d}" field="description" />
 	  </dd>
 		<dt>
 			<g:annotatedLabel owner="${d}" property="tags">Tags</g:annotatedLabel>
@@ -32,7 +32,7 @@
 					<input type="hidden" name="__context"
 						value="${d.class.name}:${d.id}" />
 					<input type="hidden" name="__property" value="tags" />
-					<g:simpleReferenceTypedown class="form-control allow-add"
+					<gokb:simpleReferenceTypedown class="form-control allow-add"
 						name="__relatedObject" baseClass="org.gokb.cred.RefdataValue"
 						filter1="Macro.Tags" />
 					<input type="submit" value="Add..."
@@ -44,7 +44,7 @@
 	    <g:annotatedLabel owner="${d}" property="status">Status</g:annotatedLabel>
 	  </dt>
 	  <dd>
-	    <g:xEditableRefData owner="${d}" field="status"
+	    <gokb:xEditableRefData owner="${d}" field="status"
 	      config="KBComponent.Status" />
 	  </dd>
 
@@ -52,7 +52,7 @@
 			<g:annotatedLabel owner="${d}" property="refineTransformations">Refine Transformations</g:annotatedLabel>
 		</dt>
 		<dd class="multiline json refine-transform preformatted" >
-			<g:xEditable class="ipe" owner="${d}" field="refineTransformations" data-tpl="tpl" />
+			<gokb:xEditable class="ipe" owner="${d}" field="refineTransformations" data-tpl="tpl" />
 		</dd>
 	</g:if>
 </dl>

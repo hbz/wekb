@@ -36,7 +36,7 @@
 					<dt>With Platform:</dt>
 					<dd>
 						<div class="input-group">
-							<g:simpleReferenceTypedown class="form-control" style="max-width:350px;"
+							<gokb:simpleReferenceTypedown class="form-control" style="max-width:350px;"
 								name="newplatform" baseClass="org.gokb.cred.Platform" filter1="Current"/>
 							<div class="input-group-btn">
 								<button type="submit" class="btn btn-default">Update</button>

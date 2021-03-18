@@ -3,7 +3,7 @@
 		<g:annotatedLabel owner="${d}" property="shortcode"><g:message code="gokb.appname" default="we:kb"/> Shortcode</g:annotatedLabel>
 	</dt>
 	<dd>
-		<g:xEditable class="ipe" owner="${d}" field="shortcode" />
+		<gokb:xEditable class="ipe" owner="${d}" field="shortcode" />
 	</dd>
 
 	<g:if test="${ d.ids?.size() > 0 }">
@@ -26,7 +26,7 @@
 				${ d.getNiceName() } Name</g:annotatedLabel>
 		</dt>
 		<dd>
-			<g:xEditable class="ipe" owner="${d}" field="name" />
+			<gokb:xEditable class="ipe" owner="${d}" field="name" />
 		</dd>
 	</g:if>
 
