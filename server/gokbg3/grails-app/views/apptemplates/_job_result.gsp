@@ -1,19 +1,19 @@
 <g:set var="json" value="${d.resultJson}" />
 <dl class="dl-horizontal">
   <dt>
-    <g:annotatedLabel owner="${d}" property="uuid">Internal ID</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="uuid">Internal ID</gokb:annotatedLabel>
   </dt>
   <dd>
     ${d.uuid}
   </dd>
   <dt>
-    <g:annotatedLabel owner="${d}" property="description">Description</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="description">Description</gokb:annotatedLabel>
   </dt>
   <dd>
     ${d.description}
   </dd>
   <dt>
-    <g:annotatedLabel owner="${d}" property="linkedItemId">Linked Component</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="linkedItemId">Linked Component</gokb:annotatedLabel>
   </dt>
   <dd>
     <g:set var="item" value="${ d.linkedItemId ? org.gokb.cred.KBComponent.get(d.linkedItemId) : null }" />
@@ -22,25 +22,25 @@
     </g:if>
   </dd>
   <dt>
-    <g:annotatedLabel owner="${d}" property="startTime">Start Time</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="startTime">Start Time</gokb:annotatedLabel>
   </dt>
   <dd>
     ${d.startTime}
   </dd>
   <dt>
-    <g:annotatedLabel owner="${d}" property="endTime">End Time</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="endTime">End Time</gokb:annotatedLabel>
   </dt>
   <dd>
     ${d.endTime}
   </dd>
   <dt>
-    <g:annotatedLabel owner="${d}" property="resultJson">Result Message</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="resultJson">Result Message</gokb:annotatedLabel>
   </dt>
   <dd>
     ${json?.message}
   </dd>
   <dt>
-    <g:annotatedLabel owner="${d}" property="resultJson">Errors</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="resultJson">Errors</gokb:annotatedLabel>
   </dt>
   <dd>
     <g:if test="${json?.errors?.global}">

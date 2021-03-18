@@ -1,7 +1,7 @@
 <g:set var="editable" value="${ d.isEditable() && ((d.curatoryGroups ? (request.curator != null && request.curator.size() > 0) : true) || (params.curationOverride == 'true' && request.user.isAdmin())) }" />
 <dl class="dl-horizontal">
   <dt>
-    <g:annotatedLabel owner="${d}" property="name">Name</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="name">Name</g:annotatedLabel>
   </dt>
   <dd>
     <gokb:xEditable class="ipe" owner="${d}" field="name" />

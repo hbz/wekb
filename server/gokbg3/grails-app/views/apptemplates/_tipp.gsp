@@ -2,7 +2,7 @@
        value="${d.isEditable() && ((request.curator != null ? request.curator.size() > 0 ? true : false : true) || (params.curationOverride == 'true' && request.user.isAdmin()))}"/>
 <dl class="dl-horizontal">
     <dt>
-        <g:annotatedLabel owner="${d}" property="title">Title</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="title">Title</gokb:annotatedLabel>
     </dt>
     <dd style="max-width:60%">
         <g:link controller="resource" action="show"
@@ -13,7 +13,7 @@
     </dd>
 
     <dt>
-        <g:annotatedLabel owner="${d}" property="package">Package</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="package">Package</gokb:annotatedLabel>
     </dt>
     <dd>
         <g:link controller="resource" action="show"
@@ -23,7 +23,7 @@
     </dd>
 
     <dt>
-        <g:annotatedLabel owner="${d}" property="platform">Platform</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="platform">Platform</gokb:annotatedLabel>
     </dt>
     <dd>
         <g:link controller="resource" action="show"
@@ -33,14 +33,14 @@
     </dd>
 
     <dt>
-        <g:annotatedLabel owner="${d}" property="name">TIPP Name</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="name">TIPP Name</gokb:annotatedLabel>
     </dt>
     <dd>
         <gokb:xEditable class="ipe" owner="${d}" field="name"/>
     </dd>
 
     <dt>
-        <g:annotatedLabel owner="${d}" property="status">Status</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="status">Status</gokb:annotatedLabel>
     </dt>
     <dd>
         <gokb:xEditableRefData owner="${d}" field="status"
@@ -48,14 +48,14 @@
     </dd>
 
     <dt>
-        <g:annotatedLabel owner="${d}" property="reference">Reference</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="reference">Reference</gokb:annotatedLabel>
     </dt>
     <dd>
         <gokb:xEditable class="ipe" owner="${d}" field="reference"/>
     </dd>
 
     <dt>
-        <g:annotatedLabel owner="${d}" property="editStatus">Edit Status</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="editStatus">Edit Status</gokb:annotatedLabel>
     </dt>
     <dd>
         <gokb:xEditableRefData owner="${d}" field="editStatus"
@@ -63,14 +63,14 @@
     </dd>
 
     <dt>
-        <g:annotatedLabel owner="${d}" property="language">Language</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="language">Language</gokb:annotatedLabel>
     </dt>
     <dd>
         <gokb:xEditableRefData owner="${d}" field="language" config="${org.gokb.cred.KBComponent.RD_LANGUAGE}"/>
     </dd>
 
     <dt>
-        <g:annotatedLabel owner="${d}" property="accessStartDate">Access Start Date</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="accessStartDate">Access Start Date</gokb:annotatedLabel>
     </dt>
     <dd>
         <gokb:xEditable class="ipe" owner="${d}" type="date"
@@ -78,7 +78,7 @@
     </dd>
 
     <dt>
-        <g:annotatedLabel owner="${d}" property="accessEndDate">Access End Date</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="accessEndDate">Access End Date</gokb:annotatedLabel>
     </dt>
     <dd>
         <gokb:xEditable class="ipe" owner="${d}" type="date"
@@ -86,14 +86,14 @@
     </dd>
 
     <dt>
-        <g:annotatedLabel owner="${d}" property="publisherName">Publisher Name</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="publisherName">Publisher Name</gokb:annotatedLabel>
     </dt>
     <dd>
         <gokb:xEditable class="ipe" owner="${d}" field="publisherName"/>
     </dd>
 
     <dt>
-        <g:annotatedLabel owner="${d}" property="dateFirstInPrint">Date first in print</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="dateFirstInPrint">Date first in print</gokb:annotatedLabel>
     </dt>
     <dd>
         <gokb:xEditable class="ipe" owner="${d}" type="date"
@@ -101,7 +101,7 @@
     </dd>
 
     <dt>
-        <g:annotatedLabel owner="${d}" property="dateFirstOnline">Date first online</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="dateFirstOnline">Date first online</gokb:annotatedLabel>
     </dt>
     <dd>
         <gokb:xEditable class="ipe" owner="${d}" type="date"
@@ -109,28 +109,28 @@
     </dd>
 
     <dt>
-        <g:annotatedLabel owner="${d}" property="firstAuthor">First Author</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="firstAuthor">First Author</gokb:annotatedLabel>
     </dt>
     <dd>
         <gokb:xEditable class="ipe" owner="${d}" field="firstAuthor"/>
     </dd>
 
     <dt>
-        <g:annotatedLabel owner="${d}" property="publicationType">Publication Type</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="publicationType">Publication Type</gokb:annotatedLabel>
     </dt>
     <dd>
         <gokb:xEditableRefData owner="${d}" field="publicationType" config='TitleInstancePackagePlatform.PublicationType'/>
     </dd>
 
     <dt>
-        <g:annotatedLabel owner="${d}" property="publisherName">Publisher</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="publisherName">Publisher</gokb:annotatedLabel>
     </dt>
     <dd>
         <gokb:xEditable class="ipe" owner="${d}" field="publisherName"/>
     </dd>
 
     <dt>
-        <g:annotatedLabel owner="${d}" property="volumeNumber">Volume Number</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="volumeNumber">Volume Number</g:annotatedLabel>
     </dt>
     <dd>
         <gokb:xEditable class="ipe" owner="${d}" field="volumeNumber"/>

@@ -1,12 +1,12 @@
 <dl class="dl-horizontal">
 	<dt>
-		<g:annotatedLabel owner="${d}" property="name">Name</g:annotatedLabel>
+		<gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel>
 	</dt>
 	<dd>
 		<gokb:xEditable class="ipe" owner="${d}" field="name" />
 	</dd>
 	<dt>
-		<g:annotatedLabel owner="${d}" property="website">Website</g:annotatedLabel>
+		<gokb:annotatedLabel owner="${d}" property="website">Website</gokb:annotatedLabel>
 	</dt>
 	<dd>
 		<gokb:xEditable class="ipe" owner="${d}" field="website" />
@@ -16,19 +16,19 @@
 
 	</dd>
 	<dt>
-		<g:annotatedLabel owner="${d}" property="email">Email</g:annotatedLabel>
+		<gokb:annotatedLabel owner="${d}" property="email">Email</gokb:annotatedLabel>
 	</dt>
 	<dd>
 		<gokb:xEditable class="ipe" owner="${d}" field="email" />
 	</dd>
 	<dt>
-		<g:annotatedLabel owner="${d}" property="phoneNumber">Phone Number</g:annotatedLabel>
+		<gokb:annotatedLabel owner="${d}" property="phoneNumber">Phone Number</gokb:annotatedLabel>
 	</dt>
 	<dd>
 		<gokb:xEditable class="ipe" owner="${d}" field="phoneNumber" />
 	</dd>
 	<dt>
-		<g:annotatedLabel owner="${d}" property="otherDetails">Other Details</g:annotatedLabel>
+		<gokb:annotatedLabel owner="${d}" property="otherDetails">Other Details</g:annotatedLabel>
 	</dt>
 	<dd>
 		<gokb:xEditable class="ipe" owner="${d}" field="otherDetails" />

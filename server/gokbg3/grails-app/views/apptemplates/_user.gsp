@@ -1,23 +1,23 @@
 <g:set var="editable" value="${ d.isEditable() || d.isAdministerable() }" />
 <g:if test="${d.id != null}">
   <dl class="dl-horizontal">
-    <dt><g:annotatedLabel owner="${d}" property="username">User Name</g:annotatedLabel></dt>
+    <dt><gokb:annotatedLabel owner="${d}" property="username">User Name</gokb:annotatedLabel></dt>
     <dd>${d.username}</dd>
   
-    <dt><g:annotatedLabel owner="${d}" property="displayName">Display Name</g:annotatedLabel></dt>
+    <dt><gokb:annotatedLabel owner="${d}" property="displayName">Display Name</gokb:annotatedLabel></dt>
     <dd><gokb:xEditable class="ipe" owner="${d}" field="displayName"/></dd>
     <g:if test="${d == request.user}">
-      <dt><g:annotatedLabel owner="${d}" property="email">Email</g:annotatedLabel></dt>
+      <dt><gokb:annotatedLabel owner="${d}" property="email">Email</gokb:annotatedLabel></dt>
       <dd>
         <gokb:xEditable class="ipe" owner="${d}" field="email"/>
       </dd>
     </g:if>
-    <dt><g:annotatedLabel owner="${d}" property="curatoryGroups">Curatory Groups</g:annotatedLabel></dt>
+    <dt><gokb:annotatedLabel owner="${d}" property="curatoryGroups">Curatory Groups</gokb:annotatedLabel></dt>
     <dd>
        <g:render template="/apptemplates/curatory_groups" model="${[d:d]}" />
     </dd>
 
-    <dt><g:annotatedLabel owner="${d}" property="org">Organisations</g:annotatedLabel></dt>
+    <dt><gokb:annotatedLabel owner="${d}" property="org">Organisations</gokb:annotatedLabel></dt>
     <dd>
       <ul>
         <g:each in="${d.getGroupMemberships()}" var="oum">
@@ -26,7 +26,7 @@
       </ul>
     </dd>
 
-    <dt><g:annotatedLabel owner="${d}" property="last_alert_check">Last Alert Check</g:annotatedLabel></dt>
+    <dt><gokb:annotatedLabel owner="${d}" property="last_alert_check">Last Alert Check</gokb:annotatedLabel></dt>
     <dd>
       <g:if test="${d.last_alert_check}"><g:formatDate format="${session.sessionPreferences?.globalDateFormat}" date="${d.last_alert_check}" /></g:if>
       <g:else>Never</g:else>

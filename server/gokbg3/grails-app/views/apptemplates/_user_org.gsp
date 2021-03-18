@@ -1,13 +1,13 @@
 <dl class="dl-horizontal">
 
-  <dt><g:annotatedLabel owner="${d}" property="name">Name</g:annotatedLabel></dt>
+  <dt><gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel></dt>
   <dd><gokb:xEditable class="ipe" owner="${d}" field="displayName" /></dd>
 
   <g:if test="${d.id != null}">
   <g:set var="userIsOrgAdmin" value="${d.members.find { it.party == request.user && it.role?.value == 'Administrator' && it.status?.value == 'Approved'}}" />
-  <dt><g:annotatedLabel owner="${d}" property="owner">Owner</g:annotatedLabel></dt>
+  <dt><gokb:annotatedLabel owner="${d}" property="owner">Owner</gokb:annotatedLabel></dt>
   <dd>${d.owner}</dd>
-  <dt><g:annotatedLabel owner="${d}" property="name">Members</g:annotatedLabel></dt>
+  <dt><gokb:annotatedLabel owner="${d}" property="name">Members</gokb:annotatedLabel></dt>
   <dd>
     <table id="uomembers"class="table table-bordered table-striped">
       <thead>
@@ -85,7 +85,7 @@
 
 
   <g:if test="${org.gokb.cred.Folder.isTypeReadable()}">
-    <dt><g:annotatedLabel owner="${d}" property="name">Folders / Collections</g:annotatedLabel></dt>
+    <dt><gokb:annotatedLabel owner="${d}" property="name">Folders / Collections</gokb:annotatedLabel></dt>
     <dd>
       <table class="table table-bordered table-striped">
         <thead>
@@ -120,7 +120,7 @@
   </g:if>
 
   <g:if test="${grailsApplication.config.feature.directUpload}">
-    <dt><g:annotatedLabel owner="${d}" property="name">Load Title List</g:annotatedLabel> (<a href="https://github.com/k-int/gokb-phase1/wiki/Title-List-Upload-Format">Format</a>)</dt>
+    <dt><gokb:annotatedLabel owner="${d}" property="name">Load Title List</gokb:annotatedLabel> (<a href="https://github.com/k-int/gokb-phase1/wiki/Title-List-Upload-Format">Format</a>)</dt>
     <dd class="container">
       <g:form controller="folderUpload" action="processSubmission" method="post" enctype="multipart/form-data">
         <input type="hidden" name="ownerOrg" value="${d.id}"/>

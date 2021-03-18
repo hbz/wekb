@@ -1,5 +1,5 @@
 <dl class="dl-horizontal">
-  <dt> <g:annotatedLabel owner="${d}" property="name">Name</g:annotatedLabel> </dt>
+  <dt> <gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel> </dt>
   <dd> <gokb:xEditable class="ipe" owner="${d}" field="name" /> </dd>
 </dl>
 
@@ -12,26 +12,26 @@
   <div id="my-tab-content" class="tab-content">
     <div class="tab-pane active" id="details">
       <dl class="dl-horizontal">
-        <dt> <g:annotatedLabel owner="${d}" property="status">Status</g:annotatedLabel> </dt>
+        <dt> <gokb:annotatedLabel owner="${d}" property="status">Status</gokb:annotatedLabel> </dt>
         <dd> <gokb:xEditableRefData owner="${d}" field="status" config='KBComponent.Status' /> </dd>
-        <dt> <g:annotatedLabel owner="${d}" property="canEdit">Editable</g:annotatedLabel> </dt>
+        <dt> <gokb:annotatedLabel owner="${d}" property="canEdit">Editable</gokb:annotatedLabel> </dt>
         <dd> <gokb:xEditableRefData owner="${d}" field="canEdit" config='YN' /> </dd>
-        <dt> <g:annotatedLabel owner="${d}" property="guid">GUID</g:annotatedLabel> </dt>
+        <dt> <gokb:annotatedLabel owner="${d}" property="guid">GUID</gokb:annotatedLabel> </dt>
         <dd> ${d.guid} </dd>
-        <dt> <g:annotatedLabel owner="${d}" property="md5">MD5</g:annotatedLabel> </dt>
+        <dt> <gokb:annotatedLabel owner="${d}" property="md5">MD5</gokb:annotatedLabel> </dt>
         <dd> ${d.md5} </dd>
-        <dt> <g:annotatedLabel owner="${d}" property="uploadFilename">Upload Filename</g:annotatedLabel> </dt>
+        <dt> <gokb:annotatedLabel owner="${d}" property="uploadFilename">Upload Filename</gokb:annotatedLabel> </dt>
         <dd> ${d.uploadName} </dd>
-        <dt> <g:annotatedLabel owner="${d}" property="mime">Upload Mime Type</g:annotatedLabel> </dt>
+        <dt> <gokb:annotatedLabel owner="${d}" property="mime">Upload Mime Type</gokb:annotatedLabel> </dt>
         <dd> ${d.uploadMimeType} </dd>
-        <dt> <g:annotatedLabel owner="${d}" property="filesize">Filesize</g:annotatedLabel> </dt>
+        <dt> <gokb:annotatedLabel owner="${d}" property="filesize">Filesize</gokb:annotatedLabel> </dt>
         <dd> ${d.filesize} </dd>
-        <dt> <g:annotatedLabel owner="${d}" property="doctype">Doctype</g:annotatedLabel> </dt>
+        <dt> <gokb:annotatedLabel owner="${d}" property="doctype">Doctype</gokb:annotatedLabel> </dt>
         <dd> ${d.doctype} </dd>
-        <dt> <g:annotatedLabel owner="${d}" property="fileData">File</g:annotatedLabel> </dt>
+        <dt> <gokb:annotatedLabel owner="${d}" property="fileData">File</gokb:annotatedLabel> </dt>
         <dd> <g:link controller="workflow" action="download" id="${d.guid}">  Download file </g:link></dd>
 
-        <dt> <g:annotatedLabel owner="${d}" property="attachedTo">Attached To</g:annotatedLabel> </dt>
+        <dt> <gokb:annotatedLabel owner="${d}" property="attachedTo">Attached To</gokb:annotatedLabel> </dt>
         <dd>
           <table class="table table-striped table-bordered">
             <thead>

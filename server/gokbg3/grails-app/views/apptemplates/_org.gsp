@@ -1,13 +1,13 @@
 <g:set var="editable" value="${ d.isEditable() && ((d.curatoryGroups ? (request.curator != null && request.curator.size() > 0) : true) || (params.curationOverride == 'true' && request.user.isAdmin())) }" />
 <dl class="dl-horizontal">
   <dt>
-          <g:annotatedLabel owner="${d}" property="name">Name</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel>
   </dt>
   <dd>
           <gokb:xEditable class="ipe" owner="${d}" field="name" />
   </dd>
   <dt>
-          <g:annotatedLabel owner="${d}" property="status">Status</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="status">Status</gokb:annotatedLabel>
   </dt>
   <dd>
     <sec:ifAnyGranted roles="ROLE_SUPERUSER">
@@ -18,25 +18,25 @@
     </sec:ifNotGranted>
   </dd>
   <dt>
-          <g:annotatedLabel owner="${d}" property="reference">Reference</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="reference">Reference</gokb:annotatedLabel>
   </dt>
   <dd>
           <gokb:xEditable class="ipe" owner="${d}" field="reference" />
   </dd>
   <dt>
-    <g:annotatedLabel owner="${d}" property="source">Source</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="source">Source</gokb:annotatedLabel>
   </dt>
   <dd>
     <gokb:manyToOneReferenceTypedown owner="${d}" field="source" baseClass="org.gokb.cred.Source">${d.source?.name}</gokb:manyToOneReferenceTypedown>
   </dd>
   <dt>
-    <g:annotatedLabel owner="${d}" property="titleNamespace">Title Namespace</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="titleNamespace">Title Namespace</gokb:annotatedLabel>
   </dt>
   <dd>
     <gokb:manyToOneReferenceTypedown owner="${d}" field="titleNamespace" baseClass="org.gokb.cred.IdentifierNamespace">${(d.titleNamespace?.name)?:d.titleNamespace?.value}</gokb:manyToOneReferenceTypedown>
   </dd>
   <dt>
-    <g:annotatedLabel owner="${d}" property="packageNamespace">Package Namespace</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="packageNamespace">Package Namespace</gokb:annotatedLabel>
   </dt>
   <dd>
     <gokb:manyToOneReferenceTypedown owner="${d}" field="packageNamespace" baseClass="org.gokb.cred.IdentifierNamespace">${(d.packageNamespace?.name)?:d.packageNamespace?.value}</gokb:manyToOneReferenceTypedown>
@@ -107,19 +107,19 @@
       <div class="tab-pane active" id="orgdetails">
         <dl class="dl-horizontal">
           <dt>
-            <g:annotatedLabel owner="${d}" property="mission">Mission</g:annotatedLabel>
+            <gokb:annotatedLabel owner="${d}" property="mission">Mission</gokb:annotatedLabel>
           </dt>
           <dd>
             <gokb:xEditableRefData owner="${d}" field="mission" config='Org.Mission' />
           </dd>
           <dt>
-            <g:annotatedLabel owner="${d}" property="homepage">Homepage</g:annotatedLabel>
+            <gokb:annotatedLabel owner="${d}" property="homepage">Homepage</gokb:annotatedLabel>
           </dt>
           <dd>
             <gokb:xEditable class="ipe" owner="${d}" field="homepage" />
           </dd>
             <dt class="dt-label">
-              <g:annotatedLabel owner="${d}" property="roles">Roles</g:annotatedLabel>
+              <gokb:annotatedLabel owner="${d}" property="roles">Roles</gokb:annotatedLabel>
             </dt>
             <dd>
               <g:if test="${d.id != null}">
@@ -152,7 +152,7 @@
         <div class="tab-pane" id="identifiers">
           <dl>
             <dt>
-              <g:annotatedLabel owner="${d}" property="ids">Identifiers</g:annotatedLabel>
+              <gokb:annotatedLabel owner="${d}" property="ids">Identifiers</gokb:annotatedLabel>
             </dt>
             <dd>
               <g:render template="/apptemplates/combosByType"
@@ -161,7 +161,7 @@
                           [expr:'toComponent.value', colhead:'ID', action:'link']]]}" />
               <g:if test="${editable}">
                 <h4>
-                  <g:annotatedLabel owner="${d}" property="addIdentifier">Add new Identifier</g:annotatedLabel>
+                  <gokb:annotatedLabel owner="${d}" property="addIdentifier">Add new Identifier</gokb:annotatedLabel>
                 </h4>
                 <g:render template="/apptemplates/addIdentifier" model="${[d:d, hash:'#identifiers']}"/>
               </g:if>
@@ -173,13 +173,13 @@
           <g:if test="${d.id != null}">
             <dl class="dl-horizontal">
               <dt>
-                <g:annotatedLabel owner="${d}" property="successor">Successor</g:annotatedLabel>
+                <gokb:annotatedLabel owner="${d}" property="successor">Successor</gokb:annotatedLabel>
               </dt>
               <dd>
                 <gokb:manyToOneReferenceTypedown owner="${d}" field="successor" baseClass="org.gokb.cred.Org">${d.successor?.name}</gokb:manyToOneReferenceTypedown>
               </dd>
               <dt>
-                <g:annotatedLabel owner="${d}" property="successor">Predecessor(s)</g:annotatedLabel>
+                <gokb:annotatedLabel owner="${d}" property="successor">Predecessor(s)</gokb:annotatedLabel>
               </dt>
               <dd>
                 <ul>
@@ -193,7 +193,7 @@
                 </ul>
               </dd>
               <dt>
-                <g:annotatedLabel owner="${d}" property="parent">Parent Org</g:annotatedLabel>
+                <gokb:annotatedLabel owner="${d}" property="parent">Parent Org</gokb:annotatedLabel>
               </dt>
               <dd>
                 <gokb:manyToOneReferenceTypedown owner="${d}" field="parent" baseClass="org.gokb.cred.Org">${d.parent?.name}</gokb:manyToOneReferenceTypedown>
@@ -201,7 +201,7 @@
 
               <g:if test="${d.children?.size() > 0}">
                 <dt>
-                  <g:annotatedLabel owner="${d}" property="children">Subsidiaries</g:annotatedLabel>
+                  <gokb:annotatedLabel owner="${d}" property="children">Subsidiaries</gokb:annotatedLabel>
                 </dt>
                 <dd>
                   <ul>
@@ -216,7 +216,7 @@
                 </dd>
               </g:if>
               <dt>
-                <g:annotatedLabel owner="${d}" property="imprints">Imprints</g:annotatedLabel>
+                <gokb:annotatedLabel owner="${d}" property="imprints">Imprints</gokb:annotatedLabel>
               </dt>
               <dd>
                 <table class="table table-striped table-bordered">
@@ -252,7 +252,7 @@
         <div class="tab-pane" id="addprops">
           <dl>
             <dt>
-              <g:annotatedLabel owner="${d}" property="addprops">Additional Properties</g:annotatedLabel>
+              <gokb:annotatedLabel owner="${d}" property="addprops">Additional Properties</gokb:annotatedLabel>
             </dt>
             <dd>
               <g:render template="/apptemplates/addprops" model="${[d:d]}" />
@@ -263,7 +263,7 @@
         <div class="tab-pane" id="review">
           <dl>
             <dt>
-              <g:annotatedLabel owner="${d}" property="reviewrequests">Review Requests</g:annotatedLabel>
+              <gokb:annotatedLabel owner="${d}" property="reviewrequests">Review Requests</gokb:annotatedLabel>
             </dt>
             <dd>
               <g:render template="/apptemplates/revreqtab" model="${[d:d]}" />
@@ -274,7 +274,7 @@
         <div class="tab-pane" id="offices">
           <dl>
             <dt>
-                    <g:annotatedLabel owner="${d}" property="offices">Offices</g:annotatedLabel>
+                    <gokb:annotatedLabel owner="${d}" property="offices">Offices</gokb:annotatedLabel>
             </dt>
             <dd>
               <g:render template="/apptemplates/comboList"
@@ -349,7 +349,7 @@
         <div class="tab-pane" id="licenses">
           <dl>
             <dt>
-              <g:annotatedLabel owner="${d}" property="licenses">Licenses</g:annotatedLabel>
+              <gokb:annotatedLabel owner="${d}" property="licenses">Licenses</gokb:annotatedLabel>
             </dt>
             <dd>
               <g:render template="/apptemplates/comboList"
@@ -361,7 +361,7 @@
         <div class="tab-pane" id="platforms">
           <dl>
             <dt>
-              <g:annotatedLabel owner="${d}" property="platforms">Platforms</g:annotatedLabel>
+              <gokb:annotatedLabel owner="${d}" property="platforms">Platforms</gokb:annotatedLabel>
             </dt>
             <dd>
               <g:render template="/apptemplates/comboList"
@@ -381,7 +381,7 @@
         <div class="tab-pane" id="packages">
           <dl>
             <dt>
-              <g:annotatedLabel owner="${d}" property="packages">Packages</g:annotatedLabel>
+              <gokb:annotatedLabel owner="${d}" property="packages">Packages</gokb:annotatedLabel>
             </dt>
             <dd>
               <g:render template="/apptemplates/comboList"

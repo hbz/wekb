@@ -1,30 +1,30 @@
 <dl>
 	<dt>
-		<g:annotatedLabel owner="${d}" property="id">Internal ID</g:annotatedLabel>
+		<gokb:annotatedLabel owner="${d}" property="id">Internal ID</gokb:annotatedLabel>
 	</dt>
 	<dd>
 		${d.id}
 	</dd>
 	<dt>
-		<g:annotatedLabel owner="${d}" property="description">Description</g:annotatedLabel>
+		<gokb:annotatedLabel owner="${d}" property="description">Description</gokb:annotatedLabel>
 	</dt>
 	<dd>
 		${d.description}
 	</dd>
 	<dt>
-		<g:annotatedLabel owner="${d}" property="scope">Scope</g:annotatedLabel>
+		<gokb:annotatedLabel owner="${d}" property="scope">Scope</gokb:annotatedLabel>
 	</dt>
 	<dd>
 		${d.scope}
 	</dd>
 	<dt>
-		<g:annotatedLabel owner="${d}" property="fingerprint">Rule Fingerprint</g:annotatedLabel>
+		<gokb:annotatedLabel owner="${d}" property="fingerprint">Rule Fingerprint</gokb:annotatedLabel>
 	</dt>
 	<dd>
 		${d.fingerprint}
 	</dd>
 	<dt>
-		<g:annotatedLabel owner="${d}" property="rules">Rule Text</g:annotatedLabel>
+		<gokb:annotatedLabel owner="${d}" property="rules">Rule Text</gokb:annotatedLabel>
 	</dt>
 	<dd>
 		${d.ruleJson}

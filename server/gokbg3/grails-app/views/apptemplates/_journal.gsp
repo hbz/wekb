@@ -1,6 +1,6 @@
 <dl class="dl-horizontal">
   <dt>
-    <g:annotatedLabel owner="${d}" property="name">Title</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="name">Title</gokb:annotatedLabel>
   </dt>
   <dd style="max-width:60%">
     <g:if test="${displayobj?.id != null}">
@@ -15,7 +15,7 @@
   </dd>
 
   <dt>
-    <g:annotatedLabel owner="${d}" property="source">Source</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="source">Source</gokb:annotatedLabel>
   </dt>
   <dd>
     <gokb:manyToOneReferenceTypedown owner="${d}" field="source"
@@ -23,7 +23,7 @@
   </dd>
 
   <dt>
-    <g:annotatedLabel owner="${d}" property="status">Status</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="status">Status</gokb:annotatedLabel>
   </dt>
   <dd>
     <sec:ifAnyGranted roles="ROLE_SUPERUSER">
@@ -35,7 +35,7 @@
   </dd>
 
   <dt>
-    <g:annotatedLabel owner="${d}" property="reasonRetired">Status Reason</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="reasonRetired">Status Reason</gokb:annotatedLabel>
   </dt>
   <dd>
     <gokb:xEditableRefData owner="${d}" field="reasonRetired"
@@ -43,7 +43,7 @@
   </dd>
 
   <dt>
-    <g:annotatedLabel owner="${d}" property="editStatus">Edit Status</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="editStatus">Edit Status</gokb:annotatedLabel>
   </dt>
   <dd>
     <gokb:xEditableRefData owner="${d}" field="editStatus"
@@ -51,14 +51,14 @@
   </dd>
 
   <dt>
-    <g:annotatedLabel owner="${d}" property="language">Language</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="language">Language</gokb:annotatedLabel>
   </dt>
   <dd>
     <gokb:xEditableRefData owner="${d}" field="language" config="${org.gokb.cred.KBComponent.RD_LANGUAGE}"/>
   </dd>
 
   <dt>
-    <g:annotatedLabel owner="${d}" property="currentPubisher">Latest Publisher</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="currentPubisher">Latest Publisher</gokb:annotatedLabel>
   </dt>
   <dd>
     <g:if test="${d.currentPublisher}">
@@ -69,7 +69,7 @@
   </dd>
 
   <dt>
-    <g:annotatedLabel owner="${d}" property="imprint">Imprint</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="imprint">Imprint</gokb:annotatedLabel>
   </dt>
   <dd>
     <gokb:manyToOneReferenceTypedown owner="${d}" field="imprint"
@@ -80,14 +80,14 @@
   </dd>
 
   <dt>
-    <g:annotatedLabel owner="${d}" property="publishedFrom">Published From</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="publishedFrom">Published From</gokb:annotatedLabel>
   </dt>
   <dd>
     <gokb:xEditable class="ipe" owner="${d}" type="date" field="publishedFrom"/>
   </dd>
 
   <dt>
-    <g:annotatedLabel owner="${d}" property="publishedTo">Published To</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="publishedTo">Published To</gokb:annotatedLabel>
   </dt>
   <dd>
     <gokb:xEditable class="ipe" owner="${d}" type="date" field="publishedTo"/>
@@ -95,7 +95,7 @@
 
   <g:if test="${d?.id != null && d.titleHistory}">
     <dt>
-      <g:annotatedLabel owner="${d}" property="titleHistory">Title History</g:annotatedLabel>
+      <gokb:annotatedLabel owner="${d}" property="titleHistory">Title History</gokb:annotatedLabel>
     </dt>
     <dd>
       <g:render template="/apptemplates/fullth" model="${[d: d]}"/>
@@ -172,7 +172,7 @@
 
       <dl class="dl-horizontal">
         <dt>
-          <g:annotatedLabel owner="${d}" property="medium">Medium</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="medium">Medium</gokb:annotatedLabel>
         </dt>
         <dd>
           <g:if test="${d.id != null}">
@@ -185,7 +185,7 @@
         </dd>
 
         <dt>
-          <g:annotatedLabel owner="${d}" property="OAStatus">OA Status</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="OAStatus">OA Status</gokb:annotatedLabel>
         </dt>
         <dd>
           <gokb:xEditableRefData owner="${d}" field="OAStatus"
@@ -193,7 +193,7 @@
         </dd>
 
         <dt>
-          <g:annotatedLabel owner="${d}" property="continuingSeries">Continuing Series</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="continuingSeries">Continuing Series</gokb:annotatedLabel>
         </dt>
         <dd>
           <gokb:xEditableRefData owner="${d}" field="continuingSeries"
@@ -273,7 +273,7 @@
     <div class="tab-pane" id="availability">
       <g:if test="${d.id}">
         <dt>
-          <g:annotatedLabel owner="${d}" property="availability">Package Availability</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="availability">Package Availability</g:annotatedLabel>
         </dt>
         <dd>
           <g:link class="display-inline" controller="search" action="index"

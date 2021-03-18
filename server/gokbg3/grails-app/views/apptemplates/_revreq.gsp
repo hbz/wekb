@@ -1,24 +1,24 @@
      <dl class="dl-horizontal">
         <dt>
-          <g:annotatedLabel owner="${d}" property="id">Internal ID</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="id">Internal ID</gokb:annotatedLabel>
         </dt>
         <dd>
           ${d.id?:'New record'}&nbsp;
         </dd>
         <dt>
-          <g:annotatedLabel owner="${d}" property="type">Type</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="type">Type</gokb:annotatedLabel>
         </dt>
         <dd>
           ${d.stdDesc ?  d.stdDesc.value : 'None'}
         </dd>
         <dt>
-          <g:annotatedLabel owner="${d}" property="cause">Cause</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="cause">Cause</gokb:annotatedLabel>
         </dt>
         <dd style="max-width:60%">
           <gokb:xEditable class="ipe" owner="${d}" field="descriptionOfCause" />
         </dd>
         <dt>
-          <g:annotatedLabel owner="${d}" property="reviewRequest">Review Request</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="reviewRequest">Review Request</gokb:annotatedLabel>
         </dt>
         <dd>
           <gokb:xEditable class="ipe" owner="${d}" field="reviewRequest" />
@@ -26,7 +26,7 @@
         <g:if test="${d.id}">
           <sec:ifAnyGranted roles="ROLE_SUPERUSER">
             <dt>
-              <g:annotatedLabel owner="${d}" property="allocationLog">Allocation Log</g:annotatedLabel>
+              <gokb:annotatedLabel owner="${d}" property="allocationLog">Allocation Log</gokb:annotatedLabel>
             </dt>
             <dd>
               <table class="table table-bordered table-striped">
@@ -59,7 +59,7 @@
     <div class="tab-pane active" id="rrdets">
       <dl class="dl-horizontal">
         <dt>
-          <g:annotatedLabel owner="${d}" property="status">Request Status</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="status">Request Status</gokb:annotatedLabel>
         </dt>
         <dd>
           <gokb:xEditableRefData owner="${d}" field="status"
@@ -67,7 +67,7 @@
         </dd>
 
         <dt>
-          <g:annotatedLabel owner="${d}" property="target">Component</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="target">Component</gokb:annotatedLabel>
         </dt>
 
         <dd>
@@ -79,7 +79,7 @@
         <g:if test="${d.additional?.otherComponents}">
 
           <dt>
-            <g:annotatedLabel owner="${d}" property="otherOids">Other Relevant Components</g:annotatedLabel>
+            <gokb:annotatedLabel owner="${d}" property="otherOids">Other Relevant Components</gokb:annotatedLabel>
           </dt>
           <dd>
             <ul>
@@ -94,7 +94,7 @@
         <g:if test="${d.additional?.skippedItems}">
 
           <dt>
-            <g:annotatedLabel owner="${d}" property="skippedItems">Skipped Items</g:annotatedLabel>
+            <gokb:annotatedLabel owner="${d}" property="skippedItems">Skipped Items</gokb:annotatedLabel>
           </dt>
           <dd>
             <ul>
@@ -108,7 +108,7 @@
         </g:if>
         <sec:ifAnyGranted roles="ROLE_SUPERUSER">
           <dt>
-            <g:annotatedLabel owner="${d}" property="allocatedTo">Allocated To</g:annotatedLabel>
+            <gokb:annotatedLabel owner="${d}" property="allocatedTo">Allocated To</gokb:annotatedLabel>
           </dt>
           <dd>
             ${d.allocatedTo ? d.allocatedTo.displayName ?: d.allocatedTo.username : 'N/A'}
@@ -116,7 +116,7 @@
 
           <g:if test="${d.id != null}">
             <dt>
-              <g:annotatedLabel owner="${d}" property="dateCreated">Request Timestamp</g:annotatedLabel>
+              <gokb:annotatedLabel owner="${d}" property="dateCreated">Request Timestamp</gokb:annotatedLabel>
             </dt>
             <dd>
               ${d.dateCreated}&nbsp;
@@ -125,7 +125,7 @@
         </sec:ifAnyGranted>
 
         <dt>
-          <g:annotatedLabel owner="${d}" property="allocatedTo">Allocated Groups</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="allocatedTo">Allocated Groups</gokb:annotatedLabel>
         </dt>
         <dd>
           <g:each in="${d.allocatedGroups}" var="ag">

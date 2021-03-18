@@ -45,7 +45,7 @@
       <g:set var="comboprop" value="toComponent"/>
     </g:else>
     <h4>
-      <g:annotatedLabel owner="${d}" property="${property}">Add new Entry</g:annotatedLabel>
+      <gokb:annotatedLabel owner="${d}" property="${property}">Add new Entry</gokb:annotatedLabel>
     </h4>
     <dl class="dl-horizontal">
       <g:form controller="ajaxSupport" action="addToCollection" class="form-inline">

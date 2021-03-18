@@ -2,13 +2,13 @@
 
 	<dl class="dl-horizontal">
 		<dt>
-			<g:annotatedLabel owner="${d}" property="name">Name</g:annotatedLabel>
+			<gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel>
 		</dt>
 		<dd>
 			<gokb:xEditable class="ipe" owner="${d}" field="name" />
 		</dd>
 		<dt>
-			<g:annotatedLabel owner="${d}" property="status">Status</g:annotatedLabel>
+			<gokb:annotatedLabel owner="${d}" property="status">Status</gokb:annotatedLabel>
 		</dt>
 		<dd>
 			<gokb:xEditableRefData owner="${d}" field="status"
@@ -16,7 +16,7 @@
 		</dd>
 
 		<dt>
-			<g:annotatedLabel owner="${d}" property="source">Source</g:annotatedLabel>
+			<gokb:annotatedLabel owner="${d}" property="source">Source</gokb:annotatedLabel>
 		</dt>
 		<dd>
 			<gokb:manyToOneReferenceTypedown owner="${d}" field="source"
@@ -26,21 +26,21 @@
 		</dd>
 
 		<dt>
-			<g:annotatedLabel owner="${d}" property="accessUrl">Access URL</g:annotatedLabel>
+			<gokb:annotatedLabel owner="${d}" property="accessUrl">Access URL</gokb:annotatedLabel>
 		</dt>
 		<dd>
 			<gokb:xEditable owner="${d}" field="accessUrl" />
 		</dd>
 
 		<dt>
-			<g:annotatedLabel owner="${d}" property="dataUrl">Data URL</g:annotatedLabel>
+			<gokb:annotatedLabel owner="${d}" property="dataUrl">Data URL</gokb:annotatedLabel>
 		</dt>
 		<dd>
 			<gokb:xEditable owner="${d}" field="dataUrl" />
 		</dd>
 
 		<dt>
-			<g:annotatedLabel owner="${d}" property="defaultSupplyMethod">Default Supply Method</g:annotatedLabel>
+			<gokb:annotatedLabel owner="${d}" property="defaultSupplyMethod">Default Supply Method</gokb:annotatedLabel>
 		</dt>
 		<dd>
 			<gokb:xEditableRefData owner="${d}" field="defaultSupplyMethod"
@@ -48,7 +48,7 @@
 		</dd>
 
     <dt>
-      <g:annotatedLabel owner="${d}" property="defaultDataFormat">Default Data Format</g:annotatedLabel>
+      <gokb:annotatedLabel owner="${d}" property="defaultDataFormat">Default Data Format</gokb:annotatedLabel>
     </dt>
     <dd>
       <gokb:xEditableRefData owner="${d}" field="defaultDataFormat"
@@ -57,7 +57,7 @@
 
     
 	    <dt>
-	      <g:annotatedLabel owner="${d}" property="sourceFile">Source file</g:annotatedLabel>
+	      <gokb:annotatedLabel owner="${d}" property="sourceFile">Source file</gokb:annotatedLabel>
 	    </dt>
 	    <dd>
 	      <g:if test="${ d.sourceFile }" >
@@ -78,14 +78,14 @@
 		<div class="tab-pane active" id="projdetails">
 			<dl class="dl-horizontal">
 				<dt>
-					<g:annotatedLabel owner="${d}" property="createdBy">Created By</g:annotatedLabel>
+					<gokb:annotatedLabel owner="${d}" property="createdBy">Created By</gokb:annotatedLabel>
 				</dt>
 				<dd>
 					${ d.createdBy?.displayName ?: d.createdBy?.username }
 				</dd>
 				
         <dt>
-          <g:annotatedLabel owner="${d}" property="projectStatus">Project Status</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="projectStatus">Project Status</gokb:annotatedLabel>
         </dt>
         <dd>
           ${d.projectStatus.name ?: ''}
@@ -93,12 +93,12 @@
 
         <g:if test="${ d.projectStatus == org.gokb.refine.RefineProject.Status.CHECKED_OUT }" >
 					<dt>
-						<g:annotatedLabel owner="${d}" property="checkedOutBy">Checked Out By</g:annotatedLabel>
+						<gokb:annotatedLabel owner="${d}" property="checkedOutBy">Checked Out By</gokb:annotatedLabel>
 					</dt>
 				</g:if>
 				<g:else>
 				  <dt>
-            <g:annotatedLabel owner="${d}" property="lastCheckedOutBy">Last Checked Out By</g:annotatedLabel>
+            <gokb:annotatedLabel owner="${d}" property="lastCheckedOutBy">Last Checked Out By</gokb:annotatedLabel>
           </dt>
 				</g:else>
         <dd>
@@ -106,7 +106,7 @@
         </dd>
 
 				<dt>
-					<g:annotatedLabel owner="${d}" property="lastModifiedBy">Last Modified By</g:annotatedLabel>
+					<gokb:annotatedLabel owner="${d}" property="lastModifiedBy">Last Modified By</gokb:annotatedLabel>
 				</dt>
 				<dd>
 					${ d.modifiedBy?.displayName ?: d.modifiedBy?.username }
@@ -114,7 +114,7 @@
 
 				<g:if test="${d.id != null}">
 					<dt>
-						<g:annotatedLabel owner="${d}" property="provider">Provider</g:annotatedLabel>
+						<gokb:annotatedLabel owner="${d}" property="provider">Provider</gokb:annotatedLabel>
 					</dt>
 					<dd>
                                         
@@ -128,7 +128,7 @@
 						${d.provider?.name ?: 'Not yet set'}
 					</dd>
 					<dt>
-						<g:annotatedLabel owner="${d}" property="lastValidationResult">Last validation result</g:annotatedLabel>
+						<gokb:annotatedLabel owner="${d}" property="lastValidationResult">Last validation result</gokb:annotatedLabel>
 					</dt>
 					<dd>
 						${d.lastValidationResult ?: 'Not yet validated'}

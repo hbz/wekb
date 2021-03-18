@@ -1,20 +1,20 @@
 <dl class="dl-horizontal">
   <dt>
-    <g:annotatedLabel owner="${d}" property="id">Internal Id</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="id">Internal Id</gokb:annotatedLabel>
   </dt>
   <dd>
     ${d.id?:'New record'}
   </dd>
 
   <dt>
-    <g:annotatedLabel owner="${d}" property="description">Category Name / Description</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="description">Category Name / Description</gokb:annotatedLabel>
   </dt>
   <dd>
     <gokb:xEditable class="ipe" owner="${d}" field="desc" />
   </dd>
 
   <dt>
-    <g:annotatedLabel owner="${d}" property="label">Label</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="label">Label</gokb:annotatedLabel>
   </dt>
   <dd>
     <gokb:xEditable class="ipe" owner="${d}" field="label" />
@@ -23,7 +23,7 @@
 
   <g:if test="${d.id != null}">
     <dt>
-      <g:annotatedLabel owner="${d}" property="values">Values</g:annotatedLabel>
+      <gokb:annotatedLabel owner="${d}" property="values">Values</gokb:annotatedLabel>
     </dt>
     <dd>
       <table class="table table-bordered">
@@ -56,7 +56,7 @@
         <hr />
 
         <h4>
-          <g:annotatedLabel owner="${d}" property="addRD">Add refdata value</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="addRD">Add refdata value</gokb:annotatedLabel>
         </h4>
         <dl class="dl-horizontal">
           <g:form controller="ajaxSupport" action="addToCollection"
