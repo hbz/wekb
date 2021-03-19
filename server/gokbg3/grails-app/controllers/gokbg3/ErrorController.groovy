@@ -16,7 +16,7 @@ class ErrorController {
 
   def serverError() {
     def resp = [code: 500, message:'Server Error']
-    def exception = request.exception?.cause ?: null
+    def exception = request.getAttribute('exception') ?: request.getAttribute('javax.servlet.error.exception')
 
     if ( exception && Environment.current == Environment.DEVELOPMENT ) {
       resp.exception = exception
@@ -30,7 +30,7 @@ class ErrorController {
     else {
       withFormat {
         html {
-          render view:'error' , model: resp
+          render view:'error' , model: [exception: exception]
         }
         json {
           response.setStatus(500)
