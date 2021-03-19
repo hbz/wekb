@@ -1,4 +1,4 @@
-<g:set var="editable" value="${ d.isEditable() && ((d.curatoryGroups ? (request.curator != null && request.curator.size() > 0) : true) || (params.curationOverride == 'true' && request.user.isAdmin())) }" />
+<g:set var="editable" value="${editable}" />
   <dl class="dl-horizontal">
   <dt>
     <gokb:annotatedLabel owner="${d}" property="name">Package Name</gokb:annotatedLabel>
@@ -13,7 +13,7 @@
       <g:link controller="packages" action="packageTSVExport" id="${params.id}"><g:message code="gokb.appname" default="we:kb"/> File</g:link>
     </g:if>
     <g:else>
-      <gokb:xEditable class="ipe" owner="${d}" field="name" />
+      <gokb:xEditable class="ipe" owner="${d}" field="name" editable="${editable}"/>
     </g:else>
   </dd>
     </dd>
@@ -22,14 +22,14 @@
       <gokb:annotatedLabel owner="${d}" property="provider">Provider</gokb:annotatedLabel>
     </dt>
     <dd>
-      <gokb:manyToOneReferenceTypedown owner="${d}" field="provider" baseClass="org.gokb.cred.Org">${d.provider?.name}</gokb:manyToOneReferenceTypedown>
+      <gokb:manyToOneReferenceTypedown owner="${d}" field="provider" baseClass="org.gokb.cred.Org" editable="${editable}">${d.provider?.name}</gokb:manyToOneReferenceTypedown>
     </dd>
 
     <dt>
       <gokb:annotatedLabel owner="${d}" property="source">Source</gokb:annotatedLabel>
     </dt>
     <dd>
-      <gokb:manyToOneReferenceTypedown owner="${d}" field="source" baseClass="org.gokb.cred.Source">${d.source?.name}</gokb:manyToOneReferenceTypedown>
+      <gokb:manyToOneReferenceTypedown owner="${d}" field="source" baseClass="org.gokb.cred.Source" editable="${editable}">${d.source?.name}</gokb:manyToOneReferenceTypedown>
     </dd>
     <g:if test="${d}">
       <dt>
@@ -58,28 +58,28 @@
     </g:if>
     <dt> <gokb:annotatedLabel owner="${d}" property="listStatus">List Status</gokb:annotatedLabel> </dt>
     <dd>
-      <gokb:xEditableRefData owner="${d}" field="listStatus" config='Package.ListStatus' />
+      <gokb:xEditableRefData owner="${d}" field="listStatus" config='Package.ListStatus' editable="${editable}"/>
     </dd>
     <dt>
       <gokb:annotatedLabel owner="${d}" property="userListVerifier">List Verifier</gokb:annotatedLabel>
     </dt>
     <dd>
-      <gokb:manyToOneReferenceTypedown owner="${d}" field="userListVerifier" baseClass="org.gokb.cred.User">${d.userListVerifier?.displayName ?: d.userListVerifier?.username}</gokb:manyToOneReferenceTypedown>
+      <gokb:manyToOneReferenceTypedown owner="${d}" field="userListVerifier" baseClass="org.gokb.cred.User" editable="${editable}">${d.userListVerifier?.displayName ?: d.userListVerifier?.username}</gokb:manyToOneReferenceTypedown>
     </dd>
     <dt> <gokb:annotatedLabel owner="${d}" property="listVerifierDate">List Verifier Date</gokb:annotatedLabel> </dt>
-    <dd> <gokb:xEditable class="ipe" owner="${d}" type="date" field="listVerifiedDate" /> </dd>
+    <dd> <gokb:xEditable class="ipe" owner="${d}" type="date" field="listVerifiedDate" editable="${editable}"/> </dd>
 
     <dt> <gokb:annotatedLabel owner="${d}" property="lastUpdateComment">Last Update Comment</gokb:annotatedLabel> </dt>
-    <dd> <gokb:xEditable class="ipe" owner="${d}" field="lastUpdateComment" /> </dd>
+    <dd> <gokb:xEditable class="ipe" owner="${d}" field="lastUpdateComment" editable="${editable}"/> </dd>
 
     <dt> <gokb:annotatedLabel owner="${d}" property="editStatus">Edit Status</gokb:annotatedLabel> </dt>
-    <dd> <gokb:xEditableRefData owner="${d}" field="editStatus" config='KBComponent.EditStatus' /> </dd>
+    <dd> <gokb:xEditableRefData owner="${d}" field="editStatus" config='KBComponent.EditStatus' editable="${editable}"/> </dd>
 
     <dt> <gokb:annotatedLabel owner="${d}" property="description">Description</gokb:annotatedLabel> </dt>
-    <dd> <gokb:xEditable class="ipe" owner="${d}" field="description" /> </dd>
+    <dd> <gokb:xEditable class="ipe" owner="${d}" field="description" editable="${editable}"/> </dd>
 
     <dt> <gokb:annotatedLabel owner="${d}" property="descriptionURL">URL</gokb:annotatedLabel> </dt>
-    <dd> <gokb:xEditable class="ipe" owner="${d}" field="descriptionURL" /> </dd>
+    <dd> <gokb:xEditable class="ipe" owner="${d}" field="descriptionURL" editable="${editable}"/> </dd>
 
   </dl>
 
@@ -129,14 +129,14 @@
             <gokb:annotatedLabel owner="${d}" property="globalNote">Global Range</gokb:annotatedLabel>
           </dt>
           <dd>
-            <gokb:xEditable class="ipe" owner="${d}" field="globalNote" />
+            <gokb:xEditable class="ipe" owner="${d}" field="globalNote" editable="${editable}"/>
           </dd>
           <dt>
             <gokb:annotatedLabel owner="${d}" property="nominalPlatform">Nominal Platform</gokb:annotatedLabel>
           </dt>
           <dd>
             <gokb:manyToOneReferenceTypedown owner="${d}" field="nominalPlatform"
-              name="${comboprop}" baseClass="org.gokb.cred.Platform">
+              name="${comboprop}" baseClass="org.gokb.cred.Platform" editable="${editable}">
               ${d.nominalPlatform?.name ?: ''}
             </gokb:manyToOneReferenceTypedown>
           </dd>
