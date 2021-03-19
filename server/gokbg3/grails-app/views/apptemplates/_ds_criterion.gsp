@@ -1,16 +1,16 @@
 <dl class="dl-horizontal">
-  <dt> <g:annotatedLabel owner="${d}" property="explanation">Title</g:annotatedLabel> </dt>
-  <dd> <g:xEditable class="ipe" owner="${d}" field="title" /> </dd>
+  <dt> <gokb:annotatedLabel owner="${d}" property="explanation">Title</gokb:annotatedLabel> </dt>
+  <dd> <gokb:xEditable class="ipe" owner="${d}" field="title" /> </dd>
 
-  <dt> <g:annotatedLabel owner="${d}" property="description">Description</g:annotatedLabel> </dt>
-  <dd> <g:xEditable class="ipe" owner="${d}" field="description" /> </dd>
+  <dt> <gokb:annotatedLabel owner="${d}" property="description">Description</gokb:annotatedLabel> </dt>
+  <dd> <gokb:xEditable class="ipe" owner="${d}" field="description" /> </dd>
 
-  <dt> <g:annotatedLabel owner="${d}" property="explanation">Explanation</g:annotatedLabel> </dt>
-  <dd> <g:xEditable class="ipe" owner="${d}" field="explanation" /> </dd>
+  <dt> <gokb:annotatedLabel owner="${d}" property="explanation">Explanation</gokb:annotatedLabel> </dt>
+  <dd> <gokb:xEditable class="ipe" owner="${d}" field="explanation" /> </dd>
 
-  <dt> <g:annotatedLabel owner="${d}" property="owner">Category</g:annotatedLabel> </dt>
+  <dt> <gokb:annotatedLabel owner="${d}" property="owner">Category</gokb:annotatedLabel> </dt>
   <dd>
-    <g:manyToOneReferenceTypedown owner="${d}" field="owner" baseClass="org.gokb.cred.DSCategory">${d.owner?.description}</g:manyToOneReferenceTypedown>
+    <gokb:manyToOneReferenceTypedown owner="${d}" field="owner" baseClass="org.gokb.cred.DSCategory">${d.owner?.description}</gokb:manyToOneReferenceTypedown>
   </dd>
   <g:if test="${d.id}">
 

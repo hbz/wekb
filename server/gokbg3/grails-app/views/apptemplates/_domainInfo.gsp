@@ -1,29 +1,29 @@
 <dl class="dl-horizontal">
 	<dt>
-		<g:annotatedLabel owner="${d}" property="domainClassName">Domain Class Name</g:annotatedLabel>
+		<gokb:annotatedLabel owner="${d}" property="domainClassName">Domain Class Name</gokb:annotatedLabel>
 	</dt>
 	<dd>
-		<g:xEditable class="ipe" owner="${d}" field="dcName" />
+		<gokb:xEditable class="ipe" owner="${d}" field="dcName" />
 	</dd>
 	<dt>
-		<g:annotatedLabel owner="${d}" property="displayName">Display Name</g:annotatedLabel>
+		<gokb:annotatedLabel owner="${d}" property="displayName">Display Name</gokb:annotatedLabel>
 	</dt>
 	<dd>
-		<g:xEditable class="ipe" owner="${d}" field="displayName" />
-	</dd>
-
-	<dt>
-		<g:annotatedLabel owner="${d}" property="dcSortOrder">Sort Order</g:annotatedLabel>
-	</dt>
-	<dd>
-		<g:xEditable class="ipe" owner="${d}" field="dcSortOrder" />
+		<gokb:xEditable class="ipe" owner="${d}" field="displayName" />
 	</dd>
 
 	<dt>
-		<g:annotatedLabel owner="${d}" property="type">Type/Category</g:annotatedLabel>
+		<gokb:annotatedLabel owner="${d}" property="dcSortOrder">Sort Order</gokb:annotatedLabel>
 	</dt>
 	<dd>
-		<g:xEditableRefData owner="${d}" field="type" config='DCType' />
+		<gokb:xEditable class="ipe" owner="${d}" field="dcSortOrder" />
+	</dd>
+
+	<dt>
+		<gokb:annotatedLabel owner="${d}" property="type">Type/Category</gokb:annotatedLabel>
+	</dt>
+	<dd>
+		<gokb:xEditableRefData owner="${d}" field="type" config='DCType' />
 	</dd>
 </dl>
 

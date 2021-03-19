@@ -13,20 +13,20 @@
 
 	        <dt>Show Info Icon :</dt>
 	        <dd>
-	          <g:xEditableRefData owner="${user}" field="showInfoIcon"
+	          <gokb:xEditableRefData owner="${user}" field="showInfoIcon"
 	            config="YN" />
 	        </dd>
 
 	        <dt>Show Quick View :</dt>
 	        <dd>
-	          <g:xEditableRefData owner="${user}" field="showQuickView" config="YN" />
+	          <gokb:xEditableRefData owner="${user}" field="showQuickView" config="YN" />
 	        </dd>
 
 	        <dt>Default Page Size :</dt>
-	        <dd><g:xEditable owner="${user}" field="defaultPageSize" /></dd>
+	        <dd><gokb:xEditable owner="${user}" field="defaultPageSize" /></dd>
 
 	        <dt>Send Alert Emails :</dt>
-	        <dd><g:xEditableRefData owner="${user}" field="send_alert_emails" config="YN" /></dd>
+	        <dd><gokb:xEditableRefData owner="${user}" field="send_alert_emails" config="YN" /></dd>
 	      </dl>
       </div>
     </div>

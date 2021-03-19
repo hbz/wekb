@@ -1,6 +1,6 @@
 <dl class="dl-horizontal">
   <dt>
-    <g:annotatedLabel owner="${d}" property="name">Title</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="name">Title</gokb:annotatedLabel>
   </dt>
   <dd style="max-width:60%">
     <g:if test="${displayobj?.id != null}">
@@ -10,16 +10,16 @@
       </div>
     </g:if>
     <g:else>
-      <g:xEditable class="ipe" owner="${d}" field="name" />
+      <gokb:xEditable class="ipe" owner="${d}" field="name" />
     </g:else>
   </dd>
 
   <dt>
-    <g:annotatedLabel owner="${d}" property="status">Status</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="status">Status</gokb:annotatedLabel>
   </dt>
   <dd>
     <sec:ifAnyGranted roles="ROLE_SUPERUSER">
-      <g:xEditableRefData owner="${d}" field="status" config='KBComponent.Status' />
+      <gokb:xEditableRefData owner="${d}" field="status" config='KBComponent.Status' />
     </sec:ifAnyGranted>
     <sec:ifNotGranted roles="ROLE_SUPERUSER">
       ${d.status?.value ?: 'Not Set'}
@@ -27,63 +27,63 @@
   </dd>
 
   <dt>
-    <g:annotatedLabel owner="${d}" property="reasonRetired">Status Reason</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="reasonRetired">Status Reason</gokb:annotatedLabel>
   </dt>
   <dd>
-    <g:xEditableRefData owner="${d}" field="reasonRetired"
+    <gokb:xEditableRefData owner="${d}" field="reasonRetired"
       config='TitleInstance.ReasonRetired' />
   </dd>
 
   <dt>
-    <g:annotatedLabel owner="${d}" property="editStatus">Edit Status</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="editStatus">Edit Status</gokb:annotatedLabel>
   </dt>
   <dd>
-    <g:xEditableRefData owner="${d}" field="editStatus"
+    <gokb:xEditableRefData owner="${d}" field="editStatus"
       config='KBComponent.EditStatus' />
   </dd>
 
   <dt>
-    <g:annotatedLabel owner="${d}" property="language">Language</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="language">Language</gokb:annotatedLabel>
   </dt>
   <dd>
-    <g:xEditableRefData owner="${d}" field="language" config="${org.gokb.cred.KBComponent.RD_LANGUAGE}"/>
+    <gokb:xEditableRefData owner="${d}" field="language" config="${org.gokb.cred.KBComponent.RD_LANGUAGE}"/>
   </dd>
 
   <dt>
-    <g:annotatedLabel owner="${d}" property="currentPubisher">Latest Publisher</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="currentPubisher">Latest Publisher</gokb:annotatedLabel>
   </dt>
   <dd>
     ${d.currentPublisher}&nbsp;
   </dd>
 
   <dt>
-    <g:annotatedLabel owner="${d}" property="imprint">Imprint</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="imprint">Imprint</gokb:annotatedLabel>
   </dt>
   <dd>
-    <g:manyToOneReferenceTypedown owner="${d}" field="imprint"
+    <gokb:manyToOneReferenceTypedown owner="${d}" field="imprint"
       baseClass="org.gokb.cred.Imprint">
       ${d.imprint?.name}
-    </g:manyToOneReferenceTypedown>
+    </gokb:manyToOneReferenceTypedown>
     &nbsp;
   </dd>
 
   <dt>
-    <g:annotatedLabel owner="${d}" property="publishedFrom">Published From</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="publishedFrom">Published From</gokb:annotatedLabel>
   </dt>
   <dd>
-    <g:xEditable class="ipe" owner="${d}" type="date" field="publishedFrom" />
+    <gokb:xEditable class="ipe" owner="${d}" type="date" field="publishedFrom" />
   </dd>
 
   <dt>
-    <g:annotatedLabel owner="${d}" property="publishedTo">Published To</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="publishedTo">Published To</gokb:annotatedLabel>
   </dt>
   <dd>
-    <g:xEditable class="ipe" owner="${d}" type="date" field="publishedTo" />
+    <gokb:xEditable class="ipe" owner="${d}" type="date" field="publishedTo" />
   </dd>
 
   <g:if test="${d?.id != null && d.titleHistory}">
     <dt>
-      <g:annotatedLabel owner="${d}" property="titleHistory">Title History</g:annotatedLabel>
+      <gokb:annotatedLabel owner="${d}" property="titleHistory">Title History</gokb:annotatedLabel>
     </dt>
     <dd>
 
@@ -142,11 +142,11 @@
         <dl class="dl-horizontal">
 
           <dt>
-            <g:annotatedLabel owner="${d}" property="medium">Medium</g:annotatedLabel>
+            <gokb:annotatedLabel owner="${d}" property="medium">Medium</gokb:annotatedLabel>
           </dt>
           <dd>
             <g:if test="${d.id != null}">
-              <g:xEditableRefData owner="${d}" field="medium"
+              <gokb:xEditableRefData owner="${d}" field="medium"
                 config='TitleInstance.Medium' />
             </g:if>
             <g:else>
@@ -155,10 +155,10 @@
           </dd>
 
           <dt>
-            <g:annotatedLabel owner="${d}" property="OAStatus">OA Status</g:annotatedLabel>
+            <gokb:annotatedLabel owner="${d}" property="OAStatus">OA Status</gokb:annotatedLabel>
           </dt>
           <dd>
-            <g:xEditableRefData owner="${d}" field="OAStatus"
+            <gokb:xEditableRefData owner="${d}" field="OAStatus"
               config='TitleInstance.OAStatus' />
           </dd>
         </dl>
@@ -198,13 +198,13 @@
                     class="input-xxlarge" style="width:100%"></select></td>
                 </tr>
                 <tr>
-                  <td><g:simpleReferenceTypedown class="form-control" name="fromTitle"
+                  <td><gokb:simpleReferenceTypedown class="form-control" name="fromTitle"
                       baseClass="org.gokb.cred.TitleInstance" /> <br />
                     <button class="btn btn-sm" type="button"
                       onClick="AddTitle(document.AddHistoryForm.fromTitle, document.AddHistoryForm.beforeTitles)">Add</button>
                     <button class="btn btn-sm" type="button" onClick="removeTitle('beforeTitles')">Remove</button></td>
                   <td></td>
-                  <td><g:simpleReferenceTypedown class="form-control" name="ToTitle"
+                  <td><gokb:simpleReferenceTypedown class="form-control" name="ToTitle"
                       baseClass="org.gokb.cred.TitleInstance" /> <br />
                     <button class="btn btn-sm" type="button"
                       onClick="AddTitle(document.AddHistoryForm.ToTitle, document.AddHistoryForm.afterTitles)">Add</button>
@@ -230,7 +230,7 @@
     <div class="tab-pane" id="availability">
       <g:if test="${d.id}">
         <dt>
-          <g:annotatedLabel owner="${d}" property="availability">Package Availability</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="availability">Package Availability</gokb:annotatedLabel>
         </dt>
         <dd>
           <g:link class="display-inline" controller="search" action="index"
@@ -248,7 +248,7 @@
     <div class="tab-pane" id="identifiers">
       <dl>
         <dt>
-          <g:annotatedLabel owner="${d}" property="ids">Identifiers</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="ids">Identifiers</gokb:annotatedLabel>
         </dt>
         <dd>
           <g:render template="/apptemplates/combosByType"
@@ -257,7 +257,7 @@
                       [expr:'toComponent.value', colhead:'ID', action:'link']]]}" />
           <g:if test="${d.isEditable()}">
             <h4>
-              <g:annotatedLabel owner="${d}" property="addIdentifier">Add new Identifier</g:annotatedLabel>
+              <gokb:annotatedLabel owner="${d}" property="addIdentifier">Add new Identifier</gokb:annotatedLabel>
             </h4>
             <g:render template="/apptemplates/addIdentifier" model="${[d:d, hash:'#identifiers']}"/>
           </g:if>

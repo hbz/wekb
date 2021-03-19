@@ -2,19 +2,19 @@
 <g:if test="${d.id != null}">
 	<dl class="dl-horizontal">
 		<dt>
-			<g:annotatedLabel owner="${d}" property="licenseURL">License URL</g:annotatedLabel>
+			<gokb:annotatedLabel owner="${d}" property="licenseURL">License URL</gokb:annotatedLabel>
 		</dt>
 		<dd>
-			<g:xEditable class="ipe" owner="${d}" field="url" />
+			<gokb:xEditable class="ipe" owner="${d}" field="url" />
 		</dd>
 		<dt>
-			<g:annotatedLabel owner="${d}" property="licenseType">License Type</g:annotatedLabel>
+			<gokb:annotatedLabel owner="${d}" property="licenseType">License Type</gokb:annotatedLabel>
 		</dt>
 		<dd>
-			<g:xEditableRefData owner="${d}" field="type" config='License.Type' />
+			<gokb:xEditableRefData owner="${d}" field="type" config='License.Type' />
 		</dd>
 
-    <dt><g:annotatedLabel owner="${d}" property="curatoryGroups">Curatory Groups</g:annotatedLabel></dt>
+    <dt><gokb:annotatedLabel owner="${d}" property="curatoryGroups">Curatory Groups</gokb:annotatedLabel></dt>
     <dd>
        <g:render template="/apptemplates/curatory_groups" model="${[d:d]}" />
     </dd>

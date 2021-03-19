@@ -71,11 +71,7 @@ class ResourceController {
             request.curator = null
           }
 
-          def new_history_entry = new History(controller:params.controller,
-          action:params.action,
-          actionid:oid,
-          owner:user,
-          title:"View ${displayobj.toString()}").save()
+          result.editable = displayobj.isEditable() ?: (params.curationOverride == 'true' && user.isAdmin())
 
           result.displayobjclassname = displayobj.class.name
           result.__oid = "${result.displayobjclassname}:${displayobj.id}"
@@ -91,7 +87,7 @@ class ResourceController {
           result.displayobjclassname_short = displayobj.class.simpleName
 
           result.isComponent = (displayobj instanceof KBComponent)
-          result.acl = gokbAclService.readAclSilently(displayobj)
+          //result.acl = gokbAclService.readAclSilently(displayobj)
 
           def oid_components = oid.split(':');
           def qry_params = [result.displayobjclassname,Long.parseLong(oid_components[1])];

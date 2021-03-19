@@ -55,8 +55,8 @@
 	<input type="hidden" name="__refdataName" value="role" />
     
     <input type="hidden" name="type" value="${org.gokb.cred.RefdataCategory.getOID('Combo.Type',d.getComboTypeValue(property))}"/>
-    Add Person : <g:simpleReferenceTypedown class="form-control" name="${comboprop}" baseClass="${targetClass}"/> 
-    In Role : <g:simpleReferenceTypedown class="form-control" name="__refdataValue" baseClass="org.gokb.cred.RefdataValue" filter1="SPR"/> 
+    Add Person : <gokb:simpleReferenceTypedown class="form-control" name="${comboprop}" baseClass="${targetClass}"/>
+    In Role : <gokb:simpleReferenceTypedown class="form-control" name="__refdataValue" baseClass="org.gokb.cred.RefdataValue" filter1="SPR"/>
     <button type="submit" class="btn btn-default btn-primary btn-sm ">Add</button>
   </g:form>
 

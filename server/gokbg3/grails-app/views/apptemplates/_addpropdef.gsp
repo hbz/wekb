@@ -1,6 +1,6 @@
 <dl class="dl-horizontal">
-	<dt><g:annotatedLabel owner="${d}" property="id">Internal Id</g:annotatedLabel></dt>
+	<dt><gokb:annotatedLabel owner="${d}" property="id">Internal Id</gokb:annotatedLabel></dt>
 	<dd>${d.id?:'New record'}</dd>
-	<dt><g:annotatedLabel owner="${d}" property="propertyName">Property Name</g:annotatedLabel></dt>
-	<dd><g:xEditable owner="${d}" field="propertyName"/></dd>
+	<dt><gokb:annotatedLabel owner="${d}" property="propertyName">Property Name</gokb:annotatedLabel></dt>
+	<dd><gokb:xEditable owner="${d}" field="propertyName"/></dd>
 </dl>

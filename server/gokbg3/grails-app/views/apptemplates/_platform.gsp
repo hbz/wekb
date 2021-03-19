@@ -1,17 +1,17 @@
 <g:set var="editable" value="${ d.isEditable() && ((d.curatoryGroups ? (request.curator != null && request.curator.size() > 0) : true) || (params.curationOverride == 'true' && request.user.isAdmin())) }" />
 <dl class="dl-horizontal">
   <dt>
-    <g:annotatedLabel owner="${d}" property="name">Name</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel>
   </dt>
   <dd>
-    <g:xEditable class="ipe" owner="${d}" field="name" />
+    <gokb:xEditable class="ipe" owner="${d}" field="name" />
   </dd>
   <dt>
-    <g:annotatedLabel owner="${d}" property="status">Status</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="status">Status</gokb:annotatedLabel>
   </dt>
   <dd>
     <g:if test="${d.isDeletable()}">
-      <g:xEditableRefData owner="${d}" field="status"
+      <gokb:xEditableRefData owner="${d}" field="status"
         config='KBComponent.Status' />
     </g:if>
     <g:else>
@@ -19,17 +19,17 @@
     </g:else>
   </dd>
 
-  <dt> <g:annotatedLabel owner="${d}" property="source">Source</g:annotatedLabel> </dt>
-  <dd> <g:manyToOneReferenceTypedown owner="${d}" field="source" baseClass="org.gokb.cred.Source"> ${d.source?.name} </g:manyToOneReferenceTypedown> </dd>
+  <dt> <gokb:annotatedLabel owner="${d}" property="source">Source</gokb:annotatedLabel> </dt>
+  <dd> <gokb:manyToOneReferenceTypedown owner="${d}" field="source" baseClass="org.gokb.cred.Source"> ${d.source?.name} </gokb:manyToOneReferenceTypedown> </dd>
 
-  <dt> <g:annotatedLabel owner="${d}" property="source">Provider</g:annotatedLabel> </dt>
-  <dd> <g:manyToOneReferenceTypedown owner="${d}" field="provider" baseClass="org.gokb.cred.Org"> ${d.provider?.name} </g:manyToOneReferenceTypedown> </dd>
+  <dt> <gokb:annotatedLabel owner="${d}" property="source">Provider</gokb:annotatedLabel> </dt>
+  <dd> <gokb:manyToOneReferenceTypedown owner="${d}" field="provider" baseClass="org.gokb.cred.Org"> ${d.provider?.name} </gokb:manyToOneReferenceTypedown> </dd>
 
   <dt>
-    <g:annotatedLabel owner="${d}" property="editStatus">Edit Status</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="editStatus">Edit Status</gokb:annotatedLabel>
   </dt>
   <dd>
-    <g:xEditableRefData owner="${d}" field="editStatus"
+    <gokb:xEditableRefData owner="${d}" field="editStatus"
       config='KBComponent.EditStatus' />
   </dd>
 
@@ -67,10 +67,10 @@
 
       <dl class="dl-horizontal">
         <dt>
-          <g:annotatedLabel owner="${d}" property="primaryURL">Primary URL</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="primaryURL">Primary URL</gokb:annotatedLabel>
         </dt>
         <dd>
-          <g:xEditable class="ipe" owner="${d}" field="primaryUrl">${d.primaryUrl}</g:xEditable>
+          <gokb:xEditable class="ipe" owner="${d}" field="primaryUrl">${d.primaryUrl}</gokb:xEditable>
           <g:if test="${d.primaryUrl}">
             <g:if test="${d.primaryUrl.startsWith('http')}">
               &nbsp; <a href="${d.primaryUrl}" target="new"><i class="fas fa-external-link-alt"></i></a>
@@ -82,32 +82,32 @@
         </dd>
 
         <dt>
-          <g:annotatedLabel owner="${d}" property="software">Software</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="software">Software</gokb:annotatedLabel>
         </dt>
         <dd>
-          <g:xEditableRefData owner="${d}" field="software"
+          <gokb:xEditableRefData owner="${d}" field="software"
             config='Platform.Software' />
         </dd>
 
         <dt>
-          <g:annotatedLabel owner="${d}" property="service">Service</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="service">Service</gokb:annotatedLabel>
         </dt>
         <dd>
-          <g:xEditableRefData owner="${d}" field="service"
+          <gokb:xEditableRefData owner="${d}" field="service"
             config='Platform.Service' />
         </dd>
 
-        <dt> <g:annotatedLabel owner="${d}" property="authentication">Authentication</g:annotatedLabel> </dt>
-        <dd> <g:xEditableRefData owner="${d}" field="authentication" config='Platform.AuthMethod' /> </dd>
+        <dt> <gokb:annotatedLabel owner="${d}" property="authentication">Authentication</gokb:annotatedLabel> </dt>
+        <dd> <gokb:xEditableRefData owner="${d}" field="authentication" config='Platform.AuthMethod' /> </dd>
 
-        <dt> <g:annotatedLabel owner="${d}" property="ipAuthentication">IP Auth Supported</g:annotatedLabel> </dt>
-        <dd> <g:xEditableRefData owner="${d}" field="ipAuthentication" config='YN' /> </dd>
+        <dt> <gokb:annotatedLabel owner="${d}" property="ipAuthentication">IP Auth Supported</gokb:annotatedLabel> </dt>
+        <dd> <gokb:xEditableRefData owner="${d}" field="ipAuthentication" config='YN' /> </dd>
 
-        <dt> <g:annotatedLabel owner="${d}" property="shibbolethAuthentication">Shibboleth Supported</g:annotatedLabel> </dt>
-        <dd> <g:xEditableRefData owner="${d}" field="shibbolethAuthentication" config='YN' /> </dd>
+        <dt> <gokb:annotatedLabel owner="${d}" property="shibbolethAuthentication">Shibboleth Supported</gokb:annotatedLabel> </dt>
+        <dd> <gokb:xEditableRefData owner="${d}" field="shibbolethAuthentication" config='YN' /> </dd>
 
-        <dt> <g:annotatedLabel owner="${d}" property="passwordAuthentication">User/Pass Supported</g:annotatedLabel> </dt>
-        <dd> <g:xEditableRefData owner="${d}" field="passwordAuthentication" config='YN' /> </dd>
+        <dt> <gokb:annotatedLabel owner="${d}" property="passwordAuthentication">User/Pass Supported</gokb:annotatedLabel> </dt>
+        <dd> <gokb:xEditableRefData owner="${d}" field="passwordAuthentication" config='YN' /> </dd>
 
 
       </dl>
@@ -126,7 +126,7 @@
     <div class="tab-pane" id="packages">
       <dl>
         <dt>
-          <g:annotatedLabel owner="${d}" property="packages">Packages</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="packages">Packages</gokb:annotatedLabel>
         </dt>
         <dd>
           <g:link class="display-inline" controller="search" action="index"

@@ -16,7 +16,7 @@
     <g:each in="${fth}" var="theevent" status="i1">
       <tr>
         <td>
-          <g:xEditable class="ipe" owner="${theevent}" type="date" field="eventDate" />
+          <gokb:xEditable class="ipe" owner="${theevent}" type="date" field="eventDate" />
         </td>
         <td>
           <ul>

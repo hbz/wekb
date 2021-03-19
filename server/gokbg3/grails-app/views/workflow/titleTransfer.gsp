@@ -41,7 +41,7 @@
 					<div class="col-md-6">
 						<h3>Transfer to:</h3>
 						<label>New Publisher:</label>
-						<g:simpleReferenceTypedown class="form-control" name="title" baseClass="org.gokb.cred.Org" filter1="Current"/>
+						<gokb:simpleReferenceTypedown class="form-control" name="title" baseClass="org.gokb.cred.Org" filter1="Current"/>
 					</div>
 
 				</div>

@@ -1,8 +1,8 @@
 <div id="content">
   <dl class="dl-horizontal">
 
-    <dt><g:annotatedLabel owner="${d}" property="name">Folder Name</g:annotatedLabel></dt>
-    <dd><g:xEditable class="ipe" owner="${d}" field="name" /></dd>
+    <dt><gokb:annotatedLabel owner="${d}" property="name">Folder Name</gokb:annotatedLabel></dt>
+    <dd><gokb:xEditable class="ipe" owner="${d}" field="name" /></dd>
 
     <g:if test="${d.id != null}">
 

@@ -3,7 +3,7 @@
   <g:if test="${d.id != null}">
     <dl>
       <dt>
-        <g:annotatedLabel owner="${d}" property="alternateNames">Alternate Names</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="alternateNames">Alternate Names</gokb:annotatedLabel>
       </dt>
       <dd>
         <table class="table table-striped table-bordered">
@@ -24,9 +24,9 @@
                 <td>
                   ${v.variantName}
                 </td>
-                <td><g:xEditableRefData owner="${v}" field="status" config='KBComponentVariantName.Status' /></td>
-                <td><g:xEditableRefData owner="${v}" field="variantType" config='KBComponentVariantName.VariantType' /></td>
-                <td><g:xEditableRefData owner="${v}" field="locale" config='KBComponentVariantName.Locale' /></td>
+                <td><gokb:xEditableRefData owner="${v}" field="status" config='KBComponentVariantName.Status' /></td>
+                <td><gokb:xEditableRefData owner="${v}" field="variantType" config='KBComponentVariantName.VariantType' /></td>
+                <td><gokb:xEditableRefData owner="${v}" field="locale" config='KBComponentVariantName.Locale' /></td>
                 <td>
                   <g:if test="${ editable && showActions }">
                               <g:link controller="ajaxSupport" action="authorizeVariant" id="${v.id}">Make Authorized</g:link>,
@@ -41,7 +41,7 @@
 
         <g:if test="${editable}">
           <h4>
-            <g:annotatedLabel owner="${d}" property="addVariantName">Add Variant Name</g:annotatedLabel>
+            <gokb:annotatedLabel owner="${d}" property="addVariantName">Add Variant Name</gokb:annotatedLabel>
           </h4>
           <dl class="dl-horizontal">
             <g:form controller="ajaxSupport" action="addToCollection"
@@ -58,13 +58,13 @@
               </dd>
               <dt class="dt-label">Locale</dt>
               <dd>
-                <g:simpleReferenceTypedown class="form-control" name="locale"
+                <gokb:simpleReferenceTypedown class="form-control" name="locale"
                   baseClass="org.gokb.cred.RefdataValue"
                   filter1="KBComponentVariantName.Locale" />
               </dd>
               <dt class="dt-label">Variant Type</dt>
               <dd>
-                <g:simpleReferenceTypedown class="form-control" name="variantType"
+                <gokb:simpleReferenceTypedown class="form-control" name="variantType"
                   baseClass="org.gokb.cred.RefdataValue"
                   filter1="KBComponentVariantName.VariantType" />
               </dd>

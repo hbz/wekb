@@ -41,7 +41,6 @@ class UserProfileService {
       log.debug("Deleting dependent entities ..")
       DSAppliedCriterion.executeUpdate("delete from DSAppliedCriterion where user = :utd", [utd: user_to_delete])
       ComponentLike.executeUpdate("delete from ComponentLike where user = :utd", [utd: user_to_delete])
-      History.executeUpdate("delete from History where owner = :utd", [utd: user_to_delete])
       UserOrganisationMembership.executeUpdate("delete from UserOrganisationMembership where party = :utd", [utd: user_to_delete])
       SavedSearch.executeUpdate("delete from SavedSearch where owner = :utd", [utd: user_to_delete])
       UserRole.removeAll(user_to_delete)

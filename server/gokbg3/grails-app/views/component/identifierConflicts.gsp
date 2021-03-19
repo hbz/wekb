@@ -13,7 +13,7 @@
           <div class="input-group">
             <dt class="dt-label">Identifier Namespace</dt>
             <dd>
-              <g:simpleReferenceTypedown class="form-control" name="id" baseClass="org.gokb.cred.IdentifierNamespace" value="${namespace ? 'org.gokb.cred.IdentifierNamespace:' + namespace.id : ''}" />
+              <gokb:simpleReferenceTypedown class="form-control" name="id" baseClass="org.gokb.cred.IdentifierNamespace" value="${namespace ? 'org.gokb.cred.IdentifierNamespace:' + namespace.id : ''}" />
             </dd>
             <dt class="dt-label">Conflict type</dt>
             <dd>

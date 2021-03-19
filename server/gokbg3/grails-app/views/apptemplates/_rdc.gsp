@@ -1,29 +1,29 @@
 <dl class="dl-horizontal">
   <dt>
-    <g:annotatedLabel owner="${d}" property="id">Internal Id</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="id">Internal Id</gokb:annotatedLabel>
   </dt>
   <dd>
     ${d.id?:'New record'}
   </dd>
 
   <dt>
-    <g:annotatedLabel owner="${d}" property="description">Category Name / Description</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="description">Category Name / Description</gokb:annotatedLabel>
   </dt>
   <dd>
-    <g:xEditable class="ipe" owner="${d}" field="desc" />
+    <gokb:xEditable class="ipe" owner="${d}" field="desc" />
   </dd>
 
   <dt>
-    <g:annotatedLabel owner="${d}" property="label">Label</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="label">Label</gokb:annotatedLabel>
   </dt>
   <dd>
-    <g:xEditable class="ipe" owner="${d}" field="label" />
+    <gokb:xEditable class="ipe" owner="${d}" field="label" />
   </dd>
 
 
   <g:if test="${d.id != null}">
     <dt>
-      <g:annotatedLabel owner="${d}" property="values">Values</g:annotatedLabel>
+      <gokb:annotatedLabel owner="${d}" property="values">Values</gokb:annotatedLabel>
     </dt>
     <dd>
       <table class="table table-bordered">
@@ -39,14 +39,14 @@
           <g:each in="${d.values}" var="v">
             <tr>
               <td>
-                <g:xEditable class="ipe" owner="${v}" field="value" />
+                <gokb:xEditable class="ipe" owner="${v}" field="value" />
               </td>
-              <td><g:manyToOneReferenceTypedown owner="${v}"
+              <td><gokb:manyToOneReferenceTypedown owner="${v}"
                   field="useInstead" baseClass="org.gokb.cred.RefdataValue"
                   filter1="${d.desc}">
                   ${v.useInstead?.value}
-                </g:manyToOneReferenceTypedown></td>
-              <td><g:xEditable class="ipe" owner="${v}" field="sortKey" /></td>
+                </gokb:manyToOneReferenceTypedown></td>
+              <td><gokb:xEditable class="ipe" owner="${v}" field="sortKey" /></td>
               <td></td>
             </tr>
           </g:each>
@@ -56,7 +56,7 @@
         <hr />
 
         <h4>
-          <g:annotatedLabel owner="${d}" property="addRD">Add refdata value</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="addRD">Add refdata value</gokb:annotatedLabel>
         </h4>
         <dl class="dl-horizontal">
           <g:form controller="ajaxSupport" action="addToCollection"

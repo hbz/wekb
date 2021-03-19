@@ -10,6 +10,7 @@ import org.springframework.security.access.annotation.Secured
 import org.springframework.security.acls.domain.BasePermission
 import org.springframework.security.acls.model.ObjectIdentity
 import org.springframework.security.acls.model.Permission
+import wekb.AdminService
 
 import java.util.concurrent.CancellationException
 
@@ -25,6 +26,7 @@ class AdminController {
   def titleAugmentService
   ConcurrencyManagerService concurrencyManagerService
   CleanupService cleanupService
+  AdminService adminService
 
   @Deprecated
   def tidyOrgData() {
@@ -520,190 +522,7 @@ class AdminController {
   @Secured(['ROLE_SUPERUSER', 'IS_AUTHENTICATED_FULLY'])
   def setupAcl() {
 
-    def default_dcs = ["BookInstance", "JournalInstance", "TitleInstancePackagePlatform", "DatabaseInstance", "Office", "Imprint", "Package", "ReviewRequest", "Org", "Platform", "Source", "KBComponentVariantName", "TitleInstancePlatform", "TIPPCoverageStatement"]
-
-    default_dcs.each { dcd ->
-
-      def dc_org = KBDomainInfo.findByDcName("org.gokb.cred.${dcd}")
-
-      aclUtilService.addPermission(dc_org, 'ROLE_USER', BasePermission.READ)
-
-      aclUtilService.addPermission(dc_org, 'ROLE_CONTRIBUTOR', BasePermission.READ)
-      aclUtilService.addPermission(dc_org, 'ROLE_CONTRIBUTOR', BasePermission.WRITE)
-      aclUtilService.addPermission(dc_org, 'ROLE_CONTRIBUTOR', BasePermission.CREATE)
-
-      aclUtilService.addPermission(dc_org, 'ROLE_EDITOR', BasePermission.READ)
-      aclUtilService.addPermission(dc_org, 'ROLE_EDITOR', BasePermission.WRITE)
-      aclUtilService.addPermission(dc_org, 'ROLE_EDITOR', BasePermission.CREATE)
-      aclUtilService.addPermission(dc_org, 'ROLE_EDITOR', BasePermission.DELETE)
-
-      aclUtilService.addPermission(dc_org, 'ROLE_ADMIN', BasePermission.READ)
-      aclUtilService.addPermission(dc_org, 'ROLE_ADMIN', BasePermission.WRITE)
-      aclUtilService.addPermission(dc_org, 'ROLE_ADMIN', BasePermission.CREATE)
-      aclUtilService.addPermission(dc_org, 'ROLE_ADMIN', BasePermission.DELETE)
-      aclUtilService.addPermission(dc_org, 'ROLE_ADMIN', BasePermission.ADMINISTRATION)
-    }
-
-    def dc_cmb = KBDomainInfo.findByDcName("org.gokb.cred.Combo")
-
-    aclUtilService.addPermission(dc_cmb, 'ROLE_CONTRIBUTOR', BasePermission.CREATE)
-    aclUtilService.addPermission(dc_cmb, 'ROLE_CONTRIBUTOR', BasePermission.DELETE)
-
-    aclUtilService.addPermission(dc_cmb, 'ROLE_EDITOR', BasePermission.CREATE)
-    aclUtilService.addPermission(dc_cmb, 'ROLE_EDITOR', BasePermission.DELETE)
-
-    aclUtilService.addPermission(dc_cmb, 'ROLE_ADMIN', BasePermission.CREATE)
-    aclUtilService.addPermission(dc_cmb, 'ROLE_ADMIN', BasePermission.DELETE)
-
-    def dc_tit = KBDomainInfo.findByDcName("org.gokb.cred.TitleInstance")
-
-    aclUtilService.addPermission(dc_tit, 'ROLE_USER', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_tit, 'ROLE_CONTRIBUTOR', BasePermission.READ)
-    aclUtilService.addPermission(dc_tit, 'ROLE_CONTRIBUTOR', BasePermission.WRITE)
-
-    aclUtilService.addPermission(dc_tit, 'ROLE_EDITOR', BasePermission.READ)
-    aclUtilService.addPermission(dc_tit, 'ROLE_EDITOR', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_tit, 'ROLE_EDITOR', BasePermission.DELETE)
-
-    aclUtilService.addPermission(dc_tit, 'ROLE_ADMIN', BasePermission.READ)
-    aclUtilService.addPermission(dc_tit, 'ROLE_ADMIN', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_tit, 'ROLE_ADMIN', BasePermission.DELETE)
-    aclUtilService.addPermission(dc_tit, 'ROLE_ADMIN', BasePermission.ADMINISTRATION)
-
-    def dc_id = KBDomainInfo.findByDcName('org.gokb.cred.Identifier')
-
-    aclUtilService.addPermission(dc_id, 'ROLE_USER', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_id, 'ROLE_CONTRIBUTOR', BasePermission.READ)
-    aclUtilService.addPermission(dc_id, 'ROLE_CONTRIBUTOR', BasePermission.CREATE)
-    aclUtilService.addPermission(dc_id, 'ROLE_CONTRIBUTOR', BasePermission.DELETE)
-
-    aclUtilService.addPermission(dc_id, 'ROLE_EDITOR', BasePermission.READ)
-    aclUtilService.addPermission(dc_id, 'ROLE_EDITOR', BasePermission.CREATE)
-    aclUtilService.addPermission(dc_id, 'ROLE_EDITOR', BasePermission.DELETE)
-
-    aclUtilService.addPermission(dc_id, 'ROLE_ADMIN', BasePermission.READ)
-    aclUtilService.addPermission(dc_id, 'ROLE_ADMIN', BasePermission.CREATE)
-    aclUtilService.addPermission(dc_id, 'ROLE_ADMIN', BasePermission.DELETE)
-    aclUtilService.addPermission(dc_id, 'ROLE_ADMIN', BasePermission.ADMINISTRATION)
-
-    def dc_cg = KBDomainInfo.findByDcName('org.gokb.cred.CuratoryGroup')
-
-    aclUtilService.addPermission(dc_cg, 'ROLE_CONTRIBUTOR', BasePermission.READ)
-    aclUtilService.addPermission(dc_cg, 'ROLE_CONTRIBUTOR', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_cg, 'ROLE_CONTRIBUTOR', BasePermission.CREATE)
-
-    aclUtilService.addPermission(dc_cg, 'ROLE_EDITOR', BasePermission.READ)
-    aclUtilService.addPermission(dc_cg, 'ROLE_EDITOR', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_cg, 'ROLE_EDITOR', BasePermission.CREATE)
-
-    aclUtilService.addPermission(dc_cg, 'ROLE_ADMIN', BasePermission.READ)
-    aclUtilService.addPermission(dc_cg, 'ROLE_ADMIN', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_cg, 'ROLE_ADMIN', BasePermission.CREATE)
-    aclUtilService.addPermission(dc_cg, 'ROLE_ADMIN', BasePermission.DELETE)
-    aclUtilService.addPermission(dc_cg, 'ROLE_ADMIN', BasePermission.ADMINISTRATION)
-
-    def dc_uo = KBDomainInfo.findByDcName('org.gokb.cred.UserOrganisation')
-
-    aclUtilService.addPermission(dc_uo, 'ROLE_CONTRIBUTOR', BasePermission.READ)
-    aclUtilService.addPermission(dc_uo, 'ROLE_CONTRIBUTOR', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_uo, 'ROLE_CONTRIBUTOR', BasePermission.CREATE)
-
-    aclUtilService.addPermission(dc_uo, 'ROLE_EDITOR', BasePermission.READ)
-    aclUtilService.addPermission(dc_uo, 'ROLE_EDITOR', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_uo, 'ROLE_EDITOR', BasePermission.CREATE)
-
-    aclUtilService.addPermission(dc_uo, 'ROLE_ADMIN', BasePermission.READ)
-    aclUtilService.addPermission(dc_uo, 'ROLE_ADMIN', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_uo, 'ROLE_ADMIN', BasePermission.CREATE)
-    aclUtilService.addPermission(dc_uo, 'ROLE_ADMIN', BasePermission.DELETE)
-    aclUtilService.addPermission(dc_uo, 'ROLE_ADMIN', BasePermission.ADMINISTRATION)
-
-    def dc_rdc = KBDomainInfo.findByDcName('org.gokb.cred.RefdataCategory')
-
-    aclUtilService.addPermission(dc_rdc, 'ROLE_CONTRIBUTOR', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_rdc, 'ROLE_EDITOR', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_rdc, 'ROLE_ADMIN', BasePermission.READ)
-    aclUtilService.addPermission(dc_rdc, 'ROLE_ADMIN', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_rdc, 'ROLE_ADMIN', BasePermission.CREATE)
-    aclUtilService.addPermission(dc_rdc, 'ROLE_ADMIN', BasePermission.DELETE)
-    aclUtilService.addPermission(dc_rdc, 'ROLE_ADMIN', BasePermission.ADMINISTRATION)
-
-    def dc_rdv = KBDomainInfo.findByDcName('org.gokb.cred.RefdataValue')
-
-    aclUtilService.addPermission(dc_rdv, 'ROLE_USER', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_rdv, 'ROLE_CONTRIBUTOR', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_rdv, 'ROLE_EDITOR', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_rdv, 'ROLE_ADMIN', BasePermission.READ)
-    aclUtilService.addPermission(dc_rdv, 'ROLE_ADMIN', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_rdv, 'ROLE_ADMIN', BasePermission.CREATE)
-    aclUtilService.addPermission(dc_rdv, 'ROLE_ADMIN', BasePermission.DELETE)
-    aclUtilService.addPermission(dc_rdv, 'ROLE_ADMIN', BasePermission.ADMINISTRATION)
-
-    def dc_ns = KBDomainInfo.findByDcName('org.gokb.cred.IdentifierNamespace')
-
-    aclUtilService.addPermission(dc_ns, 'ROLE_USER', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_ns, 'ROLE_CONTRIBUTOR', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_ns, 'ROLE_EDITOR', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_ns, 'ROLE_ADMIN', BasePermission.READ)
-    aclUtilService.addPermission(dc_ns, 'ROLE_ADMIN', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_ns, 'ROLE_ADMIN', BasePermission.CREATE)
-    aclUtilService.addPermission(dc_ns, 'ROLE_ADMIN', BasePermission.DELETE)
-    aclUtilService.addPermission(dc_ns, 'ROLE_ADMIN', BasePermission.ADMINISTRATION)
-
-    def dc_usr = KBDomainInfo.findByDcName('org.gokb.cred.User')
-
-    aclUtilService.addPermission(dc_usr, 'ROLE_ADMIN', BasePermission.READ)
-    aclUtilService.addPermission(dc_usr, 'ROLE_ADMIN', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_usr, 'ROLE_ADMIN', BasePermission.ADMINISTRATION)
-
-    def dc_kbd = KBDomainInfo.findByDcName('org.gokb.cred.KBDomainInfo')
-
-    aclUtilService.addPermission(dc_kbd, 'ROLE_ADMIN', BasePermission.READ)
-
-    // DecisionSupport
-
-    def dc_dsc = KBDomainInfo.findByDcName('org.gokb.cred.DSCriterion')
-
-    aclUtilService.addPermission(dc_dsc, 'ROLE_EDITOR', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_dsc, 'ROLE_ADMIN', BasePermission.READ)
-    aclUtilService.addPermission(dc_dsc, 'ROLE_ADMIN', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_dsc, 'ROLE_ADMIN', BasePermission.CREATE)
-    aclUtilService.addPermission(dc_dsc, 'ROLE_ADMIN', BasePermission.DELETE)
-    aclUtilService.addPermission(dc_dsc, 'ROLE_ADMIN', BasePermission.ADMINISTRATION)
-
-    def dc_dscat = KBDomainInfo.findByDcName('org.gokb.cred.DSCategory')
-
-    aclUtilService.addPermission(dc_dscat, 'ROLE_EDITOR', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_dscat, 'ROLE_ADMIN', BasePermission.READ)
-    aclUtilService.addPermission(dc_dscat, 'ROLE_ADMIN', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_dscat, 'ROLE_ADMIN', BasePermission.CREATE)
-    aclUtilService.addPermission(dc_dscat, 'ROLE_ADMIN', BasePermission.DELETE)
-    aclUtilService.addPermission(dc_dscat, 'ROLE_ADMIN', BasePermission.ADMINISTRATION)
-
-    def dc_kbc = KBDomainInfo.findByDcName('org.gokb.cred.KBComponent')
-
-    aclUtilService.addPermission(dc_kbc, 'ROLE_USER', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_kbc, 'ROLE_CONTRIBUTOR', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_kbc, 'ROLE_EDITOR', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_kbc, 'ROLE_ADMIN', BasePermission.READ)
-    aclUtilService.addPermission(dc_kbc, 'ROLE_ADMIN', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_kbc, 'ROLE_ADMIN', BasePermission.DELETE)
-    aclUtilService.addPermission(dc_kbc, 'ROLE_ADMIN', BasePermission.ADMINISTRATION)
+    adminService.setupDefaultAcl()
 
     render(view: "logViewer", model: logViewer())
   }

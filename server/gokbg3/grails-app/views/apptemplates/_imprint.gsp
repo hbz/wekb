@@ -1,25 +1,25 @@
 <dl class="dl-horizontal">
   <dt>
-          <g:annotatedLabel owner="${d}" property="name">Imprint Name</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="name">Imprint Name</gokb:annotatedLabel>
   </dt>
   <dd>
-          <g:xEditable class="ipe" owner="${d}" field="name" />
+          <gokb:xEditable class="ipe" owner="${d}" field="name" />
   </dd>
   <dt>
-    <g:annotatedLabel owner="${d}" property="org">Represented Org</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="org">Represented Org</gokb:annotatedLabel>
   </dt>
   <dd>
-    <g:manyToOneReferenceTypedown owner="${d}" field="org" baseClass="org.gokb.cred.Org">${d.org?.name}</g:manyToOneReferenceTypedown>
+    <gokb:manyToOneReferenceTypedown owner="${d}" field="org" baseClass="org.gokb.cred.Org">${d.org?.name}</gokb:manyToOneReferenceTypedown>
   </dd>
   <dt>
-    <g:annotatedLabel owner="${d}" property="currentOwner">Current Owner</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="currentOwner">Current Owner</gokb:annotatedLabel>
   </dt>
   <dd>
     ${d.currentOwner}&nbsp;
   </dd>
 
   <dt class="dt-label">
-    <g:annotatedLabel owner="${d}" property="owners">Owners</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="owners">Owners</gokb:annotatedLabel>
   </dt>
 
   <dd>
@@ -37,9 +37,9 @@
         <g:each in="${d.getCombosByPropertyName('owners')}" var="p">
           <tr>
             <td><g:link controller="resource" action="show" id="${p.fromComponent.class.name}:${p.fromComponent.id}"> ${p.fromComponent.name} </g:link></td>
-            <td><g:xEditableRefData owner="${p}" field="status" config='Combo.Status' /></td>
-            <td><g:xEditable class="ipe" owner="${p}" field="startDate" type="date" /></td>
-            <td><g:xEditable class="ipe" owner="${p}" field="endDate" type="date" /></td>
+            <td><gokb:xEditableRefData owner="${p}" field="status" config='Combo.Status' /></td>
+            <td><gokb:xEditable class="ipe" owner="${p}" field="startDate" type="date" /></td>
+            <td><gokb:xEditable class="ipe" owner="${p}" field="endDate" type="date" /></td>
             <td><g:link controller="ajaxSupport" action="deleteCombo" id="${p.id}">Delete</g:link></td>
           </tr>
         </g:each>
@@ -52,7 +52,7 @@
       <input type="hidden" name="__property" value="owners" />
       <dt class="dt-label">Add Owner:</td>
       <dd>
-        <g:simpleReferenceTypedown class="form-inline select-ml" name="__relatedObject" baseClass="org.gokb.cred.Org" filter1="Current"/>&nbsp;<button type="submit" class="btn btn-default btn-primary">Add</button>
+        <gokb:simpleReferenceTypedown class="form-inline select-ml" name="__relatedObject" baseClass="org.gokb.cred.Org" filter1="Current"/>&nbsp;<button type="submit" class="btn btn-default btn-primary">Add</button>
       </dd>
     </g:form>
   </g:if>

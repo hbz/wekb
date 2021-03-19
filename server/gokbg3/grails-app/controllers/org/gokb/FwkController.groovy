@@ -22,6 +22,8 @@ class FwkController {
       result.objectclass = obj.getClass().getSimpleName()
       result.label = obj.name ?: obj.id
 
+      result.name = obj.name ?: obj.id
+
       def qry_params = [ocn: obj.getClass().getSimpleName(), oid: params.id];
       def related_combos = null
       def oid_string = "[id:${params.id}]%"
@@ -303,6 +305,8 @@ class FwkController {
       def qry_params = [oid_components[0],Long.parseLong(oid_components[1])];
       result.ownerClass = oid_components[0]
       result.ownerId = oid_components[1]
+
+      result.name = obj.name ?: obj.id
 
       result.max = params.max ?: 20;
       result.offset = params.offset ?: 0;

@@ -1,18 +1,18 @@
 
 <form class="form" role="form">
   <div class="form-group">
-    <label for="code"><g:annotatedLabel owner="${d}" property="code">Category Code</g:annotatedLabel></label>
-    <g:xEditable owner="${d}" field="code" class="form-control" />
+    <label for="code"><gokb:annotatedLabel owner="${d}" property="code">Category Code</gokb:annotatedLabel></label>
+    <gokb:xEditable owner="${d}" field="code" class="form-control" />
   </div>
 
   <div class="form-group">
-    <label for="description"><g:annotatedLabel owner="${d}" property="description">Category Description</g:annotatedLabel></label>
-    <g:xEditable owner="${d}" field="description" class="form-control" />
+    <label for="description"><gokb:annotatedLabel owner="${d}" property="description">Category Description</gokb:annotatedLabel></label>
+    <gokb:xEditable owner="${d}" field="description" class="form-control" />
   </div>
 
   <div class="form-group">
-    <label for="colour"><g:annotatedLabel owner="${d}" property="colour">Colour</g:annotatedLabel></label>
-    <g:xEditable owner="${d}" field="colour" class="form-control" />
+    <label for="colour"><gokb:annotatedLabel owner="${d}" property="colour">Colour</gokb:annotatedLabel></label>
+    <gokb:xEditable owner="${d}" field="colour" class="form-control" />
   </div>
 </form>
 
@@ -29,9 +29,9 @@
     <tbody>
       <g:each in="${d.criterion}" var="c"> 
         <tr>
-          <td><g:xEditable owner="${c}" field="title" class="form-control" /></td>
-          <td><g:xEditable owner="${c}" field="description" class="form-control" /></td>
-          <td><g:xEditable owner="${c}" field="explanation" class="form-control" /></td>
+          <td><gokb:xEditable owner="${c}" field="title" class="form-control" /></td>
+          <td><gokb:xEditable owner="${c}" field="description" class="form-control" /></td>
+          <td><gokb:xEditable owner="${c}" field="explanation" class="form-control" /></td>
           <td style="vertical-align:middle;"><g:if test="${c.isDeletable()}"><g:link controller="ajaxSupport" action="delete" params="[__context:c.class.name+''+Long.toString(c.id)]">Delete</g:link></g:if></td>
         </tr>
       </g:each>

@@ -27,7 +27,7 @@
         <input type="hidden" name="__context" value="${d.class.name}:${d.id}"/>
         <input type="hidden" name="__newObjectClass" value="org.gokb.cred.KBComponentAdditionalProperty"/>
         <input type="hidden" name="__addToColl" value="additionalProperties"/>
-        <td><g:simpleReferenceTypedown class="form-control" name="propertyDefn" baseClass="org.gokb.cred.AdditionalPropertyDefinition"/></td>
+        <td><gokb:simpleReferenceTypedown class="form-control" name="propertyDefn" baseClass="org.gokb.cred.AdditionalPropertyDefinition" editable="${d.isEditable()}"/></td>
         <td><input type="text" class="form-control" name="apValue"/></td>
         <td><button type="submit" class="btn btn-default btn-primary">Add</button></td>
       </g:form>

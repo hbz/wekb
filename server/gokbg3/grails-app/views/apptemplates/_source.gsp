@@ -4,74 +4,74 @@
 <g:if test="${d.id != null}">
 	<dl class="dl-horizontal">
 		<dt>
-			<g:annotatedLabel owner="${d}" property="url">URL</g:annotatedLabel>
+			<gokb:annotatedLabel owner="${d}" property="url">URL</gokb:annotatedLabel>
 		</dt>
 		<dd>
-			<g:xEditable class="ipe" owner="${d}" field="url" />
+			<gokb:xEditable class="ipe" owner="${d}" field="url" />
 			<g:if test="${d.url}">
 				&nbsp;<a href="${d.url}" target="new">Follow Link</a>
 			</g:if>
 		</dd>
 
 		<dt>
-			<g:annotatedLabel owner="${d}" property="frequency">Frequency</g:annotatedLabel>
+			<gokb:annotatedLabel owner="${d}" property="frequency">Frequency</gokb:annotatedLabel>
 		</dt>
 		<dd>
-			<g:xEditableRefData owner="${d}" field="frequency" config='Source.Frequency' />
+			<gokb:xEditableRefData owner="${d}" field="frequency" config='Source.Frequency' />
 		</dd>
 
 		<dt>
-			<g:annotatedLabel owner="${d}" property="defaultSupplyMethod">Default Supply Method</g:annotatedLabel>
+			<gokb:annotatedLabel owner="${d}" property="defaultSupplyMethod">Default Supply Method</gokb:annotatedLabel>
 		</dt>
 		<dd>
-			<g:xEditableRefData owner="${d}" field="defaultSupplyMethod"
+			<gokb:xEditableRefData owner="${d}" field="defaultSupplyMethod"
 				config="Source.DataSupplyMethod" />
 		</dd>
 		<dt>
-			<g:annotatedLabel owner="${d}" property="defaultDataFormat">Default Data Format</g:annotatedLabel>
+			<gokb:annotatedLabel owner="${d}" property="defaultDataFormat">Default Data Format</gokb:annotatedLabel>
 		</dt>
 		<dd>
-			<g:xEditableRefData owner="${d}" field="defaultDataFormat"
+			<gokb:xEditableRefData owner="${d}" field="defaultDataFormat"
 				config="Source.DataFormat" />
 		</dd>
 		<dt>
-			<g:annotatedLabel owner="${d}" property="responsibleParty">Responsible Party</g:annotatedLabel>
+			<gokb:annotatedLabel owner="${d}" property="responsibleParty">Responsible Party</gokb:annotatedLabel>
 		</dt>
 		<dd>
-			<g:manyToOneReferenceTypedown owner="${d}" field="responsibleParty"
+			<gokb:manyToOneReferenceTypedown owner="${d}" field="responsibleParty"
 				baseClass="org.gokb.cred.Org">
 				${d.responsibleParty?.name?:''}
-			</g:manyToOneReferenceTypedown>
+			</gokb:manyToOneReferenceTypedown>
 		</dd>
 		<dt>
-			<g:annotatedLabel owner="${d}" property="zdbMatch">Automated Updates</g:annotatedLabel>
+			<gokb:annotatedLabel owner="${d}" property="zdbMatch">Automated Updates</gokb:annotatedLabel>
 		</dt>
 		<dd>
-			<g:xEditableBoolean owner="${d}" field="automaticUpdates" />
+			<gokb:xEditableBoolean owner="${d}" field="automaticUpdates" />
 		</dd>
 		<dt>
-			<g:annotatedLabel owner="${d}" property="targetNamespace">Title ID Namespace</g:annotatedLabel>
+			<gokb:annotatedLabel owner="${d}" property="targetNamespace">Title ID Namespace</gokb:annotatedLabel>
 		</dt>
 		<dd>
-			<g:manyToOneReferenceTypedown owner="${d}" field="targetNamespace" baseClass="org.gokb.cred.IdentifierNamespace">${ d.targetNamespace }</g:manyToOneReferenceTypedown>
+			<gokb:manyToOneReferenceTypedown owner="${d}" field="targetNamespace" baseClass="org.gokb.cred.IdentifierNamespace">${ d.targetNamespace }</gokb:manyToOneReferenceTypedown>
 		</dd>
 		<dt>
-			<g:annotatedLabel owner="${d}" property="ezbMatch">EZB Matching Enabled</g:annotatedLabel>
+			<gokb:annotatedLabel owner="${d}" property="ezbMatch">EZB Matching Enabled</gokb:annotatedLabel>
 		</dt>
 		<dd>
-			<g:xEditableBoolean owner="${d}" field="ezbMatch" />
+			<gokb:xEditableBoolean owner="${d}" field="ezbMatch" />
 		</dd>
 		<dt>
-			<g:annotatedLabel owner="${d}" property="zdbMatch">ZDB Matching Enabled</g:annotatedLabel>
+			<gokb:annotatedLabel owner="${d}" property="zdbMatch">ZDB Matching Enabled</gokb:annotatedLabel>
 		</dt>
 		<dd>
-			<g:xEditableBoolean owner="${d}" field="zdbMatch" />
+			<gokb:xEditableBoolean owner="${d}" field="zdbMatch" />
 		</dd>
 		<dt>
-			<g:annotatedLabel owner="${d}" property="lastRun">Last Run</g:annotatedLabel>
+			<gokb:annotatedLabel owner="${d}" property="lastRun">Last Run</gokb:annotatedLabel>
 		</dt>
 		<dd>
-			<g:xEditable class="ipe" owner="${d}" type="date" field="lastRun" />
+			<gokb:xEditable class="ipe" owner="${d}" type="date" field="lastRun" />
 		</dd>
 	</dl>
 </g:if>

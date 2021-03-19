@@ -1,25 +1,25 @@
 <dl class="dl-horizontal">
 
-  <dt><g:annotatedLabel owner="${d}" property="name">Curatory Group Name</g:annotatedLabel></dt>
-  <dd><g:xEditable class="ipe" owner="${d}" field="name" /></dd>
+  <dt><gokb:annotatedLabel owner="${d}" property="name">Curatory Group Name</gokb:annotatedLabel></dt>
+  <dd><gokb:xEditable class="ipe" owner="${d}" field="name" /></dd>
 
   <g:if test="${d.id != null}">
 
-	  <dt><g:annotatedLabel owner="${d}" property="status">Status</g:annotatedLabel></dt>
-	  <dd><g:xEditableRefData owner="${d}" field="status" config='KBComponent.Status' /></dd>
+	  <dt><gokb:annotatedLabel owner="${d}" property="status">Status</gokb:annotatedLabel></dt>
+	  <dd><gokb:xEditableRefData owner="${d}" field="status" config='KBComponent.Status' /></dd>
 
-	  <dt><g:annotatedLabel owner="${d}" property="editStatus">Edit Status</g:annotatedLabel></dt>
-	  <dd><g:xEditableRefData owner="${d}" field="editStatus" config='KBComponent.EditStatus' /></dd>
+	  <dt><gokb:annotatedLabel owner="${d}" property="editStatus">Edit Status</gokb:annotatedLabel></dt>
+	  <dd><gokb:xEditableRefData owner="${d}" field="editStatus" config='KBComponent.EditStatus' /></dd>
 		<sec:ifAnyGranted roles="ROLE_ADMIN">
 			<dt>
-				<g:annotatedLabel owner="${d}" property="owner">Owner</g:annotatedLabel>
+				<gokb:annotatedLabel owner="${d}" property="owner">Owner</gokb:annotatedLabel>
 			</dt>
 			<dd>
-				<g:manyToOneReferenceTypedown owner="${d}" field="owner" baseClass="org.gokb.cred.User">${d.owner?.username}</g:manyToOneReferenceTypedown>
+				<gokb:manyToOneReferenceTypedown owner="${d}" field="owner" baseClass="org.gokb.cred.User">${d.owner?.username}</gokb:manyToOneReferenceTypedown>
 			</dd>
 		</sec:ifAnyGranted>
 		<g:if test="${ user.isAdmin() || d.owner == user }">
-	  	<dt><g:annotatedLabel owner="${d}" property="users">Members</g:annotatedLabel></dt>
+	  	<dt><gokb:annotatedLabel owner="${d}" property="users">Members</gokb:annotatedLabel></dt>
 			<dd>
 				<g:if test="${ d.users }" >
 					<ul>

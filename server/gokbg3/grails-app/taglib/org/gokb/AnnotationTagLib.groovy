@@ -15,6 +15,7 @@ import com.k_int.ClassUtils
  */
 
 class AnnotationTagLib {
+  static namespace = 'gokb'
   static defaultEncodeAs = 'raw'
   def springSecurityService
 
