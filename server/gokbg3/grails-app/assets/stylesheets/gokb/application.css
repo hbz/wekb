@@ -15,11 +15,29 @@
 *= require fontawesome
 *= encoding UTF-8
 */
+.navbar {
+  margin-bottom: 0;
+}
 .navbar-brand{
   padding: 3px 15px;
 }
-
-
+.wekb-numberChartHero {
+  padding-top: 48px;
+  padding-bottom: 48px;
+  margin-bottom: 30px;
+  color: inherit;
+  background-color: #fafafa;
+}
+.wekb-numberChartHero .mekb-title{
+  font-size: 11px;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+}
+.mekb-bigFont {
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.125;
+}
 .threeColGrid > div:nth-child(4n+5) {
     clear: left;
 }

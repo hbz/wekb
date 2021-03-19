@@ -1,4 +1,4 @@
-%{--
+
  <footer class="footer footer-default">
     <div class="container">
         <!-- Example row of columns -->
@@ -21,4 +21,4 @@
             </div>
         </div>
     </div>
- </footer>--}%
+ </footer>

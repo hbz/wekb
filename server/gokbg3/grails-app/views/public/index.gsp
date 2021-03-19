@@ -47,18 +47,8 @@
 
 <body>
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-                <div class="well form-horizontal">
-                    <g:each in="${componentsOfStatistic}" var="component">
-                            ${component}: ${countComponent."${component}"}
-                    </g:each>
-                </div>
-        </div>
-    </div>
-</div>
 
+<g:render template="number-chart-hero"   />
 <div class="container">
     <div class="row">
         <div class="col-md-12">
