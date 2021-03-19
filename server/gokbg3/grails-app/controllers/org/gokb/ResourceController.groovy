@@ -71,12 +71,6 @@ class ResourceController {
             request.curator = null
           }
 
-          def new_history_entry = new History(controller:params.controller,
-          action:params.action,
-          actionid:oid,
-          owner:user,
-          title:"View ${displayobj.toString()}").save()
-
           result.displayobjclassname = displayobj.class.name
           result.__oid = "${result.displayobjclassname}:${displayobj.id}"
 
