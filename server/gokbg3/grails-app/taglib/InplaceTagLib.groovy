@@ -37,6 +37,14 @@ class InplaceTagLib {
       tl_editable = owner.fromComponent.isEditable()
     }
 
+    if ( !tl_editable && owner?.class?.name == 'org.gokb.cred.Combo' ) {
+      tl_editable = owner.fromComponent.isEditable()
+    }
+
+    if ( !tl_editable && attrs.editable) {
+      tl_editable = attrs.editable
+    }
+
     // If not editable then we should output as value only and return the value.
     if (!tl_editable) {
       def content = (owner?."${attrs.field}" ? renderObjectValue (owner."${attrs.field}") : body()?.trim() )
@@ -147,9 +155,7 @@ class InplaceTagLib {
   def xEditableRefData = { attrs, body ->
 
     User user = springSecurityService.currentUser
-    boolean isAdmin = user.getAuthorities().find { Role role ->
-      "ROLE_ADMIN".equalsIgnoreCase(role.authority)
-    }
+    boolean isAdmin = user.hasRole("ROLE_ADMIN")
 
     // The check editable should output the read only version so we should just exit
     // if read only.
@@ -158,7 +164,8 @@ class InplaceTagLib {
     def owner = ClassUtils.deproxy( attrs.remove("owner") )
 
     // out << "editable many to one: <div id=\"${attrs.id}\" class=\"xEditableManyToOne\" data-type=\"select2\" data-config=\"${attrs.config}\" />"
-    def data_link = createLink(controller:'ajaxSupport', action: 'getRefdata', params:[id:attrs.remove("config"),format:'json'])
+    def config = attrs.remove("config")
+    def data_link = createLink(controller:'ajaxSupport', action: 'getRefdata', params:[id:config ,format:'json'])
     def update_link = createLink(controller:'ajaxSupport', action: 'genericSetRel')
     def oid = owner.id != null ? "${owner.class.name}:${owner.id}" : ''
     def id = attrs.remove("id") ?: "${oid}:${attrs.field}"
@@ -197,9 +204,9 @@ class InplaceTagLib {
     // We want to add a link to the category edit page IF the annotation is editable.
 
     if ( isAdmin ) {
-      RefdataCategory rdc = RefdataCategory.findByDesc(attrs.config)
+      RefdataCategory rdc = RefdataCategory.findByDesc(config)
       if ( rdc ) {
-        out << '&nbsp;<a href="'+createLink(controller:'resource', action: 'show', id:'org.gokb.cred.RefdataCategory:'+rdc.id)+'">Refdata</a><br/>'
+        out << '&nbsp;<a href="'+createLink(controller:'resource', action: 'show', id:'org.gokb.cred.RefdataCategory:'+rdc.id)+'"title="Jump to RefdataCategory"><i class="fas fa-eye"></i></a><br/>'
       }
     }
 
@@ -208,11 +215,10 @@ class InplaceTagLib {
 
   def xEditableBoolean = { attrs, body ->
 
-    User user = springSecurityService.currentUser
-    boolean isAdmin = user.getAuthorities().find { Role role ->
-      "ROLE_ADMIN".equalsIgnoreCase(role.authority)
+   /* User user = springSecurityService.currentUser
+    boolean isAdmin = user.hasRole("ROLE_ADMIN")
     }
-
+*/
     // The check editable should output the read only version so we should just exit
     // if read only.
     if (!checkEditable(attrs, body, out)) return;
