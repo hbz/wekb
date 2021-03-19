@@ -1,6 +1,6 @@
 <dl class="dl-horizontal">
 	<dt>
-		<g:annotatedLabel owner="${d}" property="shortcode"><g:message code="gokb.appname" default="we:kb"/> Shortcode</g:annotatedLabel>
+		<gokb:annotatedLabel owner="${d}" property="shortcode"><g:message code="gokb.appname" default="we:kb"/> Shortcode</gokb:annotatedLabel>
 	</dt>
 	<dd>
 		<gokb:xEditable class="ipe" owner="${d}" field="shortcode" />
@@ -8,7 +8,7 @@
 
 	<g:if test="${ d.ids?.size() > 0 }">
 		<dt>
-			<g:annotatedLabel owner="${d}" property="identifiers">Identifiers</g:annotatedLabel>
+			<gokb:annotatedLabel owner="${d}" property="identifiers">Identifiers</gokb:annotatedLabel>
 		</dt>
 		<dd>
 			<ul>
@@ -22,8 +22,8 @@
 	</g:if>
 	<g:if test="${!d.id || (d.id && d.name)}">
 		<dt>
-			<g:annotatedLabel owner="${d}" property="name">
-				${ d.getNiceName() } Name</g:annotatedLabel>
+			<gokb:annotatedLabel owner="${d}" property="name">
+				${ d.getNiceName() } Name</gokb:annotatedLabel>
 		</dt>
 		<dd>
 			<gokb:xEditable class="ipe" owner="${d}" field="name" />
@@ -33,7 +33,7 @@
 	<g:if test="${d.id != null}">
 		<g:if test="${ d.hasProperty('tags') && d.tags?.size() > 0 }">
 			<dt>
-				<g:annotatedLabel owner="${d}" property="tags">Tags</g:annotatedLabel>
+				<gokb:annotatedLabel owner="${d}" property="tags">Tags</gokb:annotatedLabel>
 			</dt>
 			<dd>
 				&nbsp;

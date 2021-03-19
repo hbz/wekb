@@ -1,19 +1,19 @@
 <dl class="dl-horizontal">
 	<dt>
-		<g:annotatedLabel owner="${d}" property="name">Name</g:annotatedLabel>
+		<gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel>
 	</dt>
 	<dd>
 		<gokb:xEditable class="ipe" owner="${d}" field="name" />
 	</dd>
 	<g:if test="${d?.id != null}">
 	  <dt>
-	    <g:annotatedLabel owner="${d}" property="description">Description</g:annotatedLabel>
+	    <gokb:annotatedLabel owner="${d}" property="description">Description</gokb:annotatedLabel>
 	  </dt>
 	  <dd class="multiline" >
 	    <gokb:xEditable class="ipe" owner="${d}" field="description" />
 	  </dd>
 		<dt>
-			<g:annotatedLabel owner="${d}" property="tags">Tags</g:annotatedLabel>
+			<gokb:annotatedLabel owner="${d}" property="tags">Tags</gokb:annotatedLabel>
 		</dt>
 		<dd>
 			<ul>
@@ -41,7 +41,7 @@
 			</g:if>
 		</dd>
 	  <dt>
-	    <g:annotatedLabel owner="${d}" property="status">Status</g:annotatedLabel>
+	    <gokb:annotatedLabel owner="${d}" property="status">Status</gokb:annotatedLabel>
 	  </dt>
 	  <dd>
 	    <gokb:xEditableRefData owner="${d}" field="status"
@@ -49,7 +49,7 @@
 	  </dd>
 
 		<dt>
-			<g:annotatedLabel owner="${d}" property="refineTransformations">Refine Transformations</g:annotatedLabel>
+			<gokb:annotatedLabel owner="${d}" property="refineTransformations">Refine Transformations</gokb:annotatedLabel>
 		</dt>
 		<dd class="multiline json refine-transform preformatted" >
 			<gokb:xEditable class="ipe" owner="${d}" field="refineTransformations" data-tpl="tpl" />

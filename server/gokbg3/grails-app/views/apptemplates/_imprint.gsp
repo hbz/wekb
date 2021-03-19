@@ -1,25 +1,25 @@
 <dl class="dl-horizontal">
   <dt>
-          <g:annotatedLabel owner="${d}" property="name">Imprint Name</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="name">Imprint Name</gokb:annotatedLabel>
   </dt>
   <dd>
           <gokb:xEditable class="ipe" owner="${d}" field="name" />
   </dd>
   <dt>
-    <g:annotatedLabel owner="${d}" property="org">Represented Org</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="org">Represented Org</gokb:annotatedLabel>
   </dt>
   <dd>
     <gokb:manyToOneReferenceTypedown owner="${d}" field="org" baseClass="org.gokb.cred.Org">${d.org?.name}</gokb:manyToOneReferenceTypedown>
   </dd>
   <dt>
-    <g:annotatedLabel owner="${d}" property="currentOwner">Current Owner</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="currentOwner">Current Owner</gokb:annotatedLabel>
   </dt>
   <dd>
     ${d.currentOwner}&nbsp;
   </dd>
 
   <dt class="dt-label">
-    <g:annotatedLabel owner="${d}" property="owners">Owners</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="owners">Owners</gokb:annotatedLabel>
   </dt>
 
   <dd>

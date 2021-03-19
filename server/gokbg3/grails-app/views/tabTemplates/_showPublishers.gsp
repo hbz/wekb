@@ -1,6 +1,6 @@
 <dl>
   <dt>
-    <g:annotatedLabel owner="${d}" property="publishers">Publishers</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="publishers">Publishers</gokb:annotatedLabel>
   </dt>
   <div style="margin:5px 0px;">
     <g:form method="POST" controller="${controllerName}" action="${actionName}" fragment="publishers" params="${params.findAll{k, v -> k != 'publisher_status'}}">
@@ -34,7 +34,7 @@
     </table>
     <g:if test="${d.isEditable()}">
       <h4>
-        <g:annotatedLabel owner="${d}" property="addPublisher">Add new Publisher</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="addPublisher">Add new Publisher</gokb:annotatedLabel>
       </h4>
       <dl class="dl-horizontal">
         <g:form controller="ajaxSupport" action="addToStdCollection">

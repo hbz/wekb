@@ -43,11 +43,11 @@
                   <button type="submit" class="btn btn-default">Link</button>
                 </span>
               </div>
-              <p>
                 <g:if test="${CuratoryGroup.isTypeCreatable(false)}">
+                  <p>
                   <g:link controller="create" params="${["tmpl": "org.gokb.cred.CuratoryGroup"]}">New Curatory Group</g:link>
+                  </p>
                 </g:if>
-              </p>
           </td>
         </g:form>
       </tr>

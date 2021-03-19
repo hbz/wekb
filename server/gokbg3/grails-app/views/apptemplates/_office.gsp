@@ -28,49 +28,49 @@
 		<gokb:xEditable class="ipe" owner="${d}" field="phoneNumber" />
 	</dd>
 	<dt>
-		<gokb:annotatedLabel owner="${d}" property="otherDetails">Other Details</g:annotatedLabel>
+		<gokb:annotatedLabel owner="${d}" property="otherDetails">Other Details</gokb:annotatedLabel>
 	</dt>
 	<dd>
 		<gokb:xEditable class="ipe" owner="${d}" field="otherDetails" />
 	</dd>
 	<dt>
-		<g:annotatedLabel owner="${d}" property="address1">Address Line 1</g:annotatedLabel>
+		<gokb:annotatedLabel owner="${d}" property="address1">Address Line 1</gokb:annotatedLabel>
 	</dt>
 	<dd>
 		<gokb:xEditable class="ipe" owner="${d}" field="addressLine1" />
 	</dd>
 	<dt>
-		<g:annotatedLabel owner="${d}" property="address2">Address Line 2</g:annotatedLabel>
+		<gokb:annotatedLabel owner="${d}" property="address2">Address Line 2</gokb:annotatedLabel>
 	</dt>
 	<dd>
 		<gokb:xEditable class="ipe" owner="${d}" field="addressLine2" />
 	</dd>
 	<dt>
-		<g:annotatedLabel owner="${d}" property="city">City</g:annotatedLabel>
+		<gokb:annotatedLabel owner="${d}" property="city">City</gokb:annotatedLabel>
 	</dt>
 	<dd>
 		<gokb:xEditable class="ipe" owner="${d}" field="city" />
 	</dd>
 	<dt>
-		<g:annotatedLabel owner="${d}" property="zipCode">Zip/Postcode</g:annotatedLabel>
+		<gokb:annotatedLabel owner="${d}" property="zipCode">Zip/Postcode</gokb:annotatedLabel>
 	</dt>
 	<dd>
 		<gokb:xEditable class="ipe" owner="${d}" field="zipPostcode" />
 	</dd>
 	<dt>
-		<g:annotatedLabel owner="${d}" property="state">State</g:annotatedLabel>
+		<gokb:annotatedLabel owner="${d}" property="state">State</gokb:annotatedLabel>
 	</dt>
 	<dd>
 		<gokb:xEditable class="ipe" owner="${d}" field="state" />
 	</dd>
 	<dt>
-		<g:annotatedLabel owner="${d}" property="region">Province/County</g:annotatedLabel>
+		<gokb:annotatedLabel owner="${d}" property="region">Province/County</gokb:annotatedLabel>
 	</dt>
 	<dd>
 		<gokb:xEditable class="ipe" owner="${d}" field="region" />
 	</dd>
 	<dt>
-		<g:annotatedLabel owner="${d}" property="owner">Owner Org</g:annotatedLabel>
+		<gokb:annotatedLabel owner="${d}" property="owner">Owner Org</gokb:annotatedLabel>
 	</dt>
 	<dd>
 		<gokb:manyToOneReferenceTypedown owner="${d}" field="org"
@@ -79,7 +79,7 @@
 		</gokb:manyToOneReferenceTypedown>
 	</dd>
 
-  <dt><g:annotatedLabel owner="${d}" property="curatoryGroups">Curatory Groups</g:annotatedLabel></dt>
+  <dt><gokb:annotatedLabel owner="${d}" property="curatoryGroups">Curatory Groups</gokb:annotatedLabel></dt>
   <dd>
      <g:render template="/apptemplates/curatory_groups" model="${[d:d]}" />
   </dd>
@@ -87,7 +87,7 @@
 
 	<g:if test="${d.id != null}">
 		<dt>
-			<g:annotatedLabel owner="${d}" property="country">Country</g:annotatedLabel>
+			<gokb:annotatedLabel owner="${d}" property="country">Country</gokb:annotatedLabel>
 		</dt>
 		<dd>
 			<gokb:xEditableRefData owner="${d}" field="country" config='Country' />

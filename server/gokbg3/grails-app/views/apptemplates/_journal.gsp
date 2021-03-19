@@ -273,7 +273,7 @@
     <div class="tab-pane" id="availability">
       <g:if test="${d.id}">
         <dt>
-          <gokb:annotatedLabel owner="${d}" property="availability">Package Availability</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="availability">Package Availability</gokb:annotatedLabel>
         </dt>
         <dd>
           <g:link class="display-inline" controller="search" action="index"
@@ -285,7 +285,7 @@
 
     <div class="tab-pane" id="tipls">
       <dt>
-        <g:annotatedLabel owner="${d}" property="tipls">Platforms</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="tipls">Platforms</gokb:annotatedLabel>
       </dt>
 
       <div style="margin:5px 0px;">
@@ -328,7 +328,7 @@
     <div class="tab-pane" id="identifiers">
       <dl>
         <dt>
-          <g:annotatedLabel owner="${d}" property="ids">Identifiers</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="ids">Identifiers</gokb:annotatedLabel>
         </dt>
         <dd>
           <g:render template="/apptemplates/combosByType"
@@ -337,7 +337,7 @@
                         [expr: 'toComponent.value', colhead: 'ID', action: 'link']]]}"/>
           <g:if test="${d.isEditable()}">
             <h4>
-              <g:annotatedLabel owner="${d}" property="addIdentifier">Add new Identifier</g:annotatedLabel>
+              <gokb:annotatedLabel owner="${d}" property="addIdentifier">Add new Identifier</gokb:annotatedLabel>
             </h4>
             <g:render template="/apptemplates/addIdentifier" model="${[d: d, hash: '#identifiers']}"/>
           </g:if>
@@ -349,7 +349,7 @@
     <div class="tab-pane" id="addprops">
       <dl>
         <dt>
-          <g:annotatedLabel owner="${d}" property="customProperties">Custom Fields</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="customProperties">Custom Fields</gokb:annotatedLabel>
         </dt>
         <dd>
           <g:render template="/apptemplates/addprops"

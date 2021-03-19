@@ -130,42 +130,42 @@
     </dd>
 
     <dt>
-        <gokb:annotatedLabel owner="${d}" property="volumeNumber">Volume Number</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="volumeNumber">Volume Number</gokb:annotatedLabel>
     </dt>
     <dd>
         <gokb:xEditable class="ipe" owner="${d}" field="volumeNumber"/>
     </dd>
 
     <dt>
-        <g:annotatedLabel owner="${d}" property="editionStatement">Edition statement</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="editionStatement">Edition statement</gokb:annotatedLabel>
     </dt>
     <dd>
         <gokb:xEditable class="ipe" owner="${d}" field="editionStatement"/>
     </dd>
 
     <dt>
-        <g:annotatedLabel owner="${d}" property="parentPublicationTitleId">Parent publication title ID</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="parentPublicationTitleId">Parent publication title ID</gokb:annotatedLabel>
     </dt>
     <dd>
         <gokb:xEditable class="ipe" owner="${d}" field="parentPublicationTitleId"/>
     </dd>
 
     <dt>
-        <g:annotatedLabel owner="${d}" property="precedingPublicationTitleId">Preceding publication title ID</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="precedingPublicationTitleId">Preceding publication title ID</gokb:annotatedLabel>
     </dt>
     <dd>
         <gokb:xEditable class="ipe" owner="${d}" field="precedingPublicationTitleId"/>
     </dd>
 
     <dt>
-        <g:annotatedLabel owner="${d}" property="medium">Medium</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="medium">Medium</gokb:annotatedLabel>
     </dt>
     <dd>
         <gokb:xEditableRefData owner="${d}" field="medium" config='TitleInstancePackagePlatform.Medium'/>
     </dd>
 
     <dt>
-        <g:annotatedLabel owner="${d}" property="lastChangedExternal">Last external change</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="lastChangedExternal">Last external change</gokb:annotatedLabel>
     </dt>
     <dd>
         <gokb:xEditable class="ipe" owner="${d}" field="lastChangedExternal" type='date'/>
@@ -216,7 +216,7 @@
 
             <dl class="dl-horizontal">
                 <dt>
-                    <g:annotatedLabel owner="${d}" property="url">Host Platform URL</g:annotatedLabel>
+                    <gokb:annotatedLabel owner="${d}" property="url">Host Platform URL</gokb:annotatedLabel>
                 </dt>
                 <dd>
                     <gokb:xEditable class="ipe" owner="${d}" field="url"/>
@@ -226,14 +226,14 @@
 
                 </dd>
                 <dt>
-                    <g:annotatedLabel owner="${d}" property="format">Format</g:annotatedLabel>
+                    <gokb:annotatedLabel owner="${d}" property="format">Format</gokb:annotatedLabel>
                 </dt>
                 <dd>
                     <gokb:xEditableRefData owner="${d}" field="format"
                                         config="TitleInstancePackagePlatform.Format"/>
                 </dd>
                 <dt>
-                    <g:annotatedLabel owner="${d}" property="paymentType">Payment Type</g:annotatedLabel>
+                    <gokb:annotatedLabel owner="${d}" property="paymentType">Payment Type</gokb:annotatedLabel>
                 </dt>
                 <dd>
                     <gokb:xEditableRefData owner="${d}" field="paymentType"
@@ -246,7 +246,7 @@
     <div class="tab-pane" id="tippcoverage">
         <dl class="dl-horizontal">
             <dt>
-                <g:annotatedLabel owner="${d}" property="coverage">Coverage</g:annotatedLabel>
+                <gokb:annotatedLabel owner="${d}" property="coverage">Coverage</gokb:annotatedLabel>
             </dt>
             <dd>
                 <table class="table table-striped">
@@ -357,13 +357,13 @@
                 </g:if>
             </dd>
             <dt>
-                <g:annotatedLabel owner="${d}" property="coverageNote">Coverage Note</g:annotatedLabel>
+                <gokb:annotatedLabel owner="${d}" property="coverageNote">Coverage Note</gokb:annotatedLabel>
             </dt>
             <dd>
                 <gokb:xEditable class="ipe" owner="${d}" field="coverageNote"/>
             </dd>
             <dt>
-                <g:annotatedLabel owner="${d}" property="coverageDepth">Coverage Depth</g:annotatedLabel>
+                <gokb:annotatedLabel owner="${d}" property="coverageDepth">Coverage Depth</gokb:annotatedLabel>
             </dt>
             <dd>
                 <gokb:xEditableRefData owner="${d}" field="coverageDepth"
@@ -376,7 +376,7 @@
     <div class="tab-pane" id="identifiers">
         <dl>
             <dt>
-                <g:annotatedLabel owner="${d}" property="ids">Identifiers</g:annotatedLabel>
+                <gokb:annotatedLabel owner="${d}" property="ids">Identifiers</gokb:annotatedLabel>
             </dt>
             <dd>
                 <g:render template="/apptemplates/combosByType"
@@ -385,7 +385,7 @@
                                   [expr: 'toComponent.value', colhead: 'ID', action: 'link']]]}"/>
                 <g:if test="${d.isEditable()}">
                     <h4>
-                        <g:annotatedLabel owner="${d}" property="addIdentifier">Add new Identifier</g:annotatedLabel>
+                        <gokb:annotatedLabel owner="${d}" property="addIdentifier">Add new Identifier</gokb:annotatedLabel>
                     </h4>
                     <g:render template="/apptemplates/addIdentifier" model="${[d: d, hash: '#identifiers']}"/>
                 </g:if>
@@ -411,7 +411,7 @@
     <div class="tab-pane" id="subjectArea">
       <dl class="dl-horizontal">
         <dt>
-          <g:annotatedLabel owner="${d}" property="subjectArea">Subject Area</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="subjectArea">Subject Area</gokb:annotatedLabel>
         </dt>
         <dd>
           <gokb:xEditable owner="${d}" field="subjectArea"/>
@@ -423,7 +423,7 @@
 
       <dl class="dl-horizontal">
         <dt>
-          <g:annotatedLabel owner="${d}" property="series">Series</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="series">Series</gokb:annotatedLabel>
         </dt>
         <dd>
           <gokb:xEditable owner="${d}" field="series"/>

@@ -1,17 +1,17 @@
 
 <form class="form" role="form">
   <div class="form-group">
-    <label for="code"><g:annotatedLabel owner="${d}" property="code">Category Code</g:annotatedLabel></label>
+    <label for="code"><gokb:annotatedLabel owner="${d}" property="code">Category Code</gokb:annotatedLabel></label>
     <gokb:xEditable owner="${d}" field="code" class="form-control" />
   </div>
 
   <div class="form-group">
-    <label for="description"><g:annotatedLabel owner="${d}" property="description">Category Description</g:annotatedLabel></label>
+    <label for="description"><gokb:annotatedLabel owner="${d}" property="description">Category Description</gokb:annotatedLabel></label>
     <gokb:xEditable owner="${d}" field="description" class="form-control" />
   </div>
 
   <div class="form-group">
-    <label for="colour"><g:annotatedLabel owner="${d}" property="colour">Colour</g:annotatedLabel></label>
+    <label for="colour"><gokb:annotatedLabel owner="${d}" property="colour">Colour</gokb:annotatedLabel></label>
     <gokb:xEditable owner="${d}" field="colour" class="form-control" />
   </div>
 </form>

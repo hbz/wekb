@@ -52,7 +52,7 @@
         <option value="CREATE">CREATE</option>
       </select>
     </dd>
-    <dt>To</dt><dd><gokb:simpleReferenceTypedown class="form-control" class="form-control" name="grantee" baseClass="org.gokb.cred.User" /></dd>
+    <dt>To</dt><dd><gokb:simpleReferenceTypedown class="form-control" name="grantee" baseClass="org.gokb.cred.User" /></dd>
     <dt></dt><dd><button type="submit" class="btn btn-default btn-primary btn-sm ">Add</button></dd>
   </g:form>
   Grant Role:

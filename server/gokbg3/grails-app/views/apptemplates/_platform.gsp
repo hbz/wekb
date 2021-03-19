@@ -1,13 +1,13 @@
 <g:set var="editable" value="${ d.isEditable() && ((d.curatoryGroups ? (request.curator != null && request.curator.size() > 0) : true) || (params.curationOverride == 'true' && request.user.isAdmin())) }" />
 <dl class="dl-horizontal">
   <dt>
-    <gokb:annotatedLabel owner="${d}" property="name">Name</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel>
   </dt>
   <dd>
     <gokb:xEditable class="ipe" owner="${d}" field="name" />
   </dd>
   <dt>
-    <g:annotatedLabel owner="${d}" property="status">Status</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="status">Status</gokb:annotatedLabel>
   </dt>
   <dd>
     <g:if test="${d.isDeletable()}">
@@ -19,14 +19,14 @@
     </g:else>
   </dd>
 
-  <dt> <g:annotatedLabel owner="${d}" property="source">Source</g:annotatedLabel> </dt>
+  <dt> <gokb:annotatedLabel owner="${d}" property="source">Source</gokb:annotatedLabel> </dt>
   <dd> <gokb:manyToOneReferenceTypedown owner="${d}" field="source" baseClass="org.gokb.cred.Source"> ${d.source?.name} </gokb:manyToOneReferenceTypedown> </dd>
 
-  <dt> <g:annotatedLabel owner="${d}" property="source">Provider</g:annotatedLabel> </dt>
+  <dt> <gokb:annotatedLabel owner="${d}" property="source">Provider</gokb:annotatedLabel> </dt>
   <dd> <gokb:manyToOneReferenceTypedown owner="${d}" field="provider" baseClass="org.gokb.cred.Org"> ${d.provider?.name} </gokb:manyToOneReferenceTypedown> </dd>
 
   <dt>
-    <g:annotatedLabel owner="${d}" property="editStatus">Edit Status</g:annotatedLabel>
+    <gokb:annotatedLabel owner="${d}" property="editStatus">Edit Status</gokb:annotatedLabel>
   </dt>
   <dd>
     <gokb:xEditableRefData owner="${d}" field="editStatus"
@@ -67,7 +67,7 @@
 
       <dl class="dl-horizontal">
         <dt>
-          <g:annotatedLabel owner="${d}" property="primaryURL">Primary URL</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="primaryURL">Primary URL</gokb:annotatedLabel>
         </dt>
         <dd>
           <gokb:xEditable class="ipe" owner="${d}" field="primaryUrl">${d.primaryUrl}</gokb:xEditable>
@@ -82,7 +82,7 @@
         </dd>
 
         <dt>
-          <g:annotatedLabel owner="${d}" property="software">Software</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="software">Software</gokb:annotatedLabel>
         </dt>
         <dd>
           <gokb:xEditableRefData owner="${d}" field="software"
@@ -90,23 +90,23 @@
         </dd>
 
         <dt>
-          <g:annotatedLabel owner="${d}" property="service">Service</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="service">Service</gokb:annotatedLabel>
         </dt>
         <dd>
           <gokb:xEditableRefData owner="${d}" field="service"
             config='Platform.Service' />
         </dd>
 
-        <dt> <g:annotatedLabel owner="${d}" property="authentication">Authentication</g:annotatedLabel> </dt>
+        <dt> <gokb:annotatedLabel owner="${d}" property="authentication">Authentication</gokb:annotatedLabel> </dt>
         <dd> <gokb:xEditableRefData owner="${d}" field="authentication" config='Platform.AuthMethod' /> </dd>
 
-        <dt> <g:annotatedLabel owner="${d}" property="ipAuthentication">IP Auth Supported</g:annotatedLabel> </dt>
+        <dt> <gokb:annotatedLabel owner="${d}" property="ipAuthentication">IP Auth Supported</gokb:annotatedLabel> </dt>
         <dd> <gokb:xEditableRefData owner="${d}" field="ipAuthentication" config='YN' /> </dd>
 
-        <dt> <g:annotatedLabel owner="${d}" property="shibbolethAuthentication">Shibboleth Supported</g:annotatedLabel> </dt>
+        <dt> <gokb:annotatedLabel owner="${d}" property="shibbolethAuthentication">Shibboleth Supported</gokb:annotatedLabel> </dt>
         <dd> <gokb:xEditableRefData owner="${d}" field="shibbolethAuthentication" config='YN' /> </dd>
 
-        <dt> <g:annotatedLabel owner="${d}" property="passwordAuthentication">User/Pass Supported</g:annotatedLabel> </dt>
+        <dt> <gokb:annotatedLabel owner="${d}" property="passwordAuthentication">User/Pass Supported</gokb:annotatedLabel> </dt>
         <dd> <gokb:xEditableRefData owner="${d}" field="passwordAuthentication" config='YN' /> </dd>
 
 
@@ -126,7 +126,7 @@
     <div class="tab-pane" id="packages">
       <dl>
         <dt>
-          <g:annotatedLabel owner="${d}" property="packages">Packages</g:annotatedLabel>
+          <gokb:annotatedLabel owner="${d}" property="packages">Packages</gokb:annotatedLabel>
         </dt>
         <dd>
           <g:link class="display-inline" controller="search" action="index"

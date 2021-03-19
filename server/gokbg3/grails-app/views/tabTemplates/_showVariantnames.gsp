@@ -3,7 +3,7 @@
   <g:if test="${d.id != null}">
     <dl>
       <dt>
-        <g:annotatedLabel owner="${d}" property="alternateNames">Alternate Names</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="alternateNames">Alternate Names</gokb:annotatedLabel>
       </dt>
       <dd>
         <table class="table table-striped table-bordered">
@@ -41,7 +41,7 @@
 
         <g:if test="${editable}">
           <h4>
-            <g:annotatedLabel owner="${d}" property="addVariantName">Add Variant Name</g:annotatedLabel>
+            <gokb:annotatedLabel owner="${d}" property="addVariantName">Add Variant Name</gokb:annotatedLabel>
           </h4>
           <dl class="dl-horizontal">
             <g:form controller="ajaxSupport" action="addToCollection"
