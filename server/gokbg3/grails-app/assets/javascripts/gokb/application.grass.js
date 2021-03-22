@@ -8,7 +8,7 @@
 //=require bootstrap
 //=require bootbox.min
 //=require bootstrap-editable
-//=require select2-4.0.13.min
+//=require select2
 //=require metisMenu.min
 //=require show-more
 //=require sb-admin-2
