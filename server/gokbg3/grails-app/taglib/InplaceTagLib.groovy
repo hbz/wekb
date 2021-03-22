@@ -1,3 +1,4 @@
+import grails.plugin.springsecurity.SpringSecurityUtils
 import org.gokb.cred.*;
 import com.k_int.ClassUtils
 
@@ -19,7 +20,7 @@ class InplaceTagLib {
     boolean cur = request.curator != null ? request.curator.size() > 0 : true
 
     // Default editable value.
-    boolean tl_editable = owner?.isEditable()
+    boolean tl_editable = owner?.isEditable() ?: (params.curationOverride == 'true' && user.isAdmin())
 
     if (owner?.class?.name == 'org.gokb.cred.User') {
       tl_editable = user.equals(owner)
@@ -41,8 +42,16 @@ class InplaceTagLib {
       tl_editable = owner.fromComponent.isEditable()
     }
 
-    if ( !tl_editable && attrs.editable) {
+    if (!tl_editable && attrs.editable) {
       tl_editable = attrs.editable
+    }
+
+    if (attrs.overWriteEditable != null) {
+      tl_editable = attrs.overWriteEditable
+    }
+
+    if ( !tl_editable && SpringSecurityUtils.ifAnyGranted('ROLE_SUPERUSER')) {
+      tl_editable = true
     }
 
     // If not editable then we should output as value only and return the value.

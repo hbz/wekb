@@ -1,4 +1,4 @@
-<g:set var="editable" value="${editable}" />
+<g:set var="editable" value="${editableDisplayObjc}" />
   <dl class="dl-horizontal">
   <dt>
     <gokb:annotatedLabel owner="${d}" property="name">Package Name</gokb:annotatedLabel>

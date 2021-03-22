@@ -1,4 +1,4 @@
-<g:set var="editable" value="${ d.isEditable() && ((request.curator != null ? request.curator.size() > 0 : true) || (params.curationOverride == "true" && request.user.isAdmin())) }" />
+<g:set var="editable" value="${ editableDisplayObjc && ((d.curatoryGroups ? (request.curator != null && request.curator.size() > 0) : true) || (params.curationOverride == "true" && request.user.isAdmin())) }" />
 <div class="tab-pane" id="altnames">
   <g:if test="${d.id != null}">
     <dl>
@@ -24,9 +24,9 @@
                 <td>
                   ${v.variantName}
                 </td>
-                <td><gokb:xEditableRefData owner="${v}" field="status" config='KBComponentVariantName.Status' /></td>
-                <td><gokb:xEditableRefData owner="${v}" field="variantType" config='KBComponentVariantName.VariantType' /></td>
-                <td><gokb:xEditableRefData owner="${v}" field="locale" config='KBComponentVariantName.Locale' /></td>
+                <td><gokb:xEditableRefData owner="${v}" field="status" config='KBComponentVariantName.Status' overWriteEditable="${editable}"/></td>
+                <td><gokb:xEditableRefData owner="${v}" field="variantType" config='KBComponentVariantName.VariantType' overWriteEditable="${editable}"/></td>
+                <td><gokb:xEditableRefData owner="${v}" field="locale" config='KBComponentVariantName.Locale' overWriteEditable="${editable}"/></td>
                 <td>
                   <g:if test="${ editable && showActions }">
                               <g:link controller="ajaxSupport" action="authorizeVariant" id="${v.id}">Make Authorized</g:link>,

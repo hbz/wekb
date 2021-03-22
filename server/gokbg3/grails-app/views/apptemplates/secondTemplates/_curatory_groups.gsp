@@ -1,11 +1,7 @@
 <%@page import="org.gokb.cred.CuratoryGroup"%>
-%{--
-<g:set var="cur_editable" value="${ CuratoryGroup.isTypeAdministerable() || ( ( d.isEditable() && d.class.name != 'org.gokb.cred.User' ) && ((d.curatoryGroups?.size() == 0) || (request.curator?.size() > 0) || (params.curationOverride == "true"))) }" />
-<g:set var="editable" value="${d.isAdministerable() || d == user || (d.isEditable() && ((d.curatoryGroups ? (request.curator != null && request.curator.size() > 0) : true) || (params.curationOverride == 'true')) ) }" />
---}%
 
-<g:set var="cur_editable" value="${ CuratoryGroup.isTypeAdministerable() || (( d.isEditable() && d.class.name != 'org.gokb.cred.User' ) && ((d.curatoryGroups?.size() == 0) || (request.curator?.size() > 0) || (params.curationOverride == "true" && request.user.isAdmin()))) }" />
-<g:set var="editable" value="${ d == user || d.isEditable() ||  (params.curationOverride == 'true' && request.user.isAdmin())  }" />
+<g:set var="cur_editable" value="${ CuratoryGroup.isTypeAdministerable() || ( (editableDisplayObjc && d.class.name != 'org.gokb.cred.User' ) && ((d.curatoryGroups?.size() == 0) || (request.curator?.size() > 0) || (params.curationOverride == "true" && request.user.isAdmin()))) }" />
+<g:set var="editable" value="${d.isAdministerable() || d == user || (editableDisplayObjc && ((d.curatoryGroups ? (request.curator != null && request.curator.size() > 0) : true) || (params.curationOverride == 'true' && request.user.isAdmin())) ) }" />
 
 <table class="table table-bordered" style="max-width:100%">
   <thead>
