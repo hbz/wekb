@@ -124,7 +124,7 @@
                         <h4>Curatory Groups</h4>
 
                         <div style="background-color:#ffffff">
-                            <g:render template="/apptemplates/curatory_groups"
+                            <g:render template="/apptemplates/secondTemplates/curatory_groups"
                                       model="${[d: displayobj, editable: false]}"/>
                         </div>
                     </div>
@@ -134,7 +134,7 @@
             <g:if test="${displaytemplate != null}">
                 <!-- Using display template ${displaytemplate.rendername} -->
                 <g:if test="${displaytemplate.type == 'staticgsp'}">
-                    <g:render template="/apptemplates/${displaytemplate.rendername}"
+                    <g:render template="/apptemplates/mainTemplates/${displaytemplate.rendername}"
                               model="${[d: displayobj, rd: refdata_properties, dtype: displayobjclassname_short]}"/>
                 </g:if>
             </g:if>
@@ -146,7 +146,7 @@
     </div>
 </div>
 
-<g:render template="/apptemplates/messages"
+<g:render template="/apptemplates/secondTemplates/messages"
           model="${["preMessage": preMsg]}"/>
 
 <div id="infoModal" class="qmodal modal fade modal-wide" role="dialog">

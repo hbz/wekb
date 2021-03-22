@@ -1,6 +1,12 @@
 <%@page import="org.gokb.cred.CuratoryGroup"%>
-<g:set var="cur_editable" value="${ CuratoryGroup.isTypeAdministerable(false) || ( ( d.isEditable() && d.class.name != 'org.gokb.cred.User' ) && ((d.curatoryGroups?.size() == 0) || (request.curator?.size() > 0) || (params.curationOverride == "true"))) }" />
+%{--
+<g:set var="cur_editable" value="${ CuratoryGroup.isTypeAdministerable() || ( ( d.isEditable() && d.class.name != 'org.gokb.cred.User' ) && ((d.curatoryGroups?.size() == 0) || (request.curator?.size() > 0) || (params.curationOverride == "true"))) }" />
 <g:set var="editable" value="${d.isAdministerable() || d == user || (d.isEditable() && ((d.curatoryGroups ? (request.curator != null && request.curator.size() > 0) : true) || (params.curationOverride == 'true')) ) }" />
+--}%
+
+<g:set var="cur_editable" value="${ CuratoryGroup.isTypeAdministerable() || (( d.isEditable() && d.class.name != 'org.gokb.cred.User' ) && ((d.curatoryGroups?.size() == 0) || (request.curator?.size() > 0) || (params.curationOverride == "true" && request.user.isAdmin()))) }" />
+<g:set var="editable" value="${ d == user || d.isEditable() ||  (params.curationOverride == 'true' && request.user.isAdmin())  }" />
+
 <table class="table table-bordered" style="max-width:100%">
   <thead>
     <tr>
@@ -43,7 +49,7 @@
                   <button type="submit" class="btn btn-default">Link</button>
                 </span>
               </div>
-                <g:if test="${CuratoryGroup.isTypeCreatable(false)}">
+                <g:if test="${CuratoryGroup.isTypeCreatable()}">
                   <p>
                   <g:link controller="create" params="${["tmpl": "org.gokb.cred.CuratoryGroup"]}">New Curatory Group</g:link>
                   </p>

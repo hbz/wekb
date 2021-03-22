@@ -1,4 +1,4 @@
-<g:render template="/apptemplates/kbcomponent"
+<g:render template="/apptemplates/mainTemplates/kbcomponent"
 	model="${[d:displayobj, rd:refdata_properties, dtype:'KBComponent']}" />
 
 <g:if test="${d.id != null}">

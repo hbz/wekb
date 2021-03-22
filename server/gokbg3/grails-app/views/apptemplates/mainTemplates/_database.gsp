@@ -87,7 +87,7 @@
     </dt>
     <dd>
 
-      <g:render template="/apptemplates/fullth" model="${[d:d]}" />
+      <g:render template="/apptemplates/secondTemplates/fullth" model="${[d:d]}" />
     </dd>
   </g:if>
 </dl>
@@ -251,7 +251,7 @@
           <gokb:annotatedLabel owner="${d}" property="ids">Identifiers</gokb:annotatedLabel>
         </dt>
         <dd>
-          <g:render template="/apptemplates/combosByType"
+          <g:render template="/apptemplates/secondTemplates/combosByType"
             model="${[d:d, property:'ids', fragment:'identifiers', cols:[
                       [expr:'toComponent.namespace.value', colhead:'Namespace'],
                       [expr:'toComponent.value', colhead:'ID', action:'link']]]}" />
@@ -259,24 +259,24 @@
             <h4>
               <gokb:annotatedLabel owner="${d}" property="addIdentifier">Add new Identifier</gokb:annotatedLabel>
             </h4>
-            <g:render template="/apptemplates/addIdentifier" model="${[d:d, hash:'#identifiers']}"/>
+            <g:render template="/apptemplates/secondTemplates/addIdentifier" model="${[d:d, hash:'#identifiers']}"/>
           </g:if>
         </dd>
       </dl>
     </div>
 
     <div class="tab-pane" id="addprops">
-      <g:render template="/apptemplates/addprops"
+      <g:render template="/apptemplates/secondTemplates/addprops"
         model="${[d:d]}" />
     </div>
 
     <div class="tab-pane" id="review">
-      <g:render template="/apptemplates/revreqtab"
+      <g:render template="/apptemplates/secondTemplates/revreqtab"
         model="${[d:d]}" />
     </div>
   </div>
   <g:if test="${d.id}">
-    <g:render template="/apptemplates/componentStatus" model="${[d:displayobj, rd:refdata_properties, dtype:'KBComponent']}" />
+    <g:render template="/apptemplates/secondTemplates/componentStatus" model="${[d:displayobj, rd:refdata_properties, dtype:'KBComponent']}" />
   </g:if>
 </div>
 

@@ -140,18 +140,18 @@
       model="${[d:displayobj, showActions:true]}" />
 
     <div class="tab-pane" id="ds">
-      <g:render template="/apptemplates/dstab" model="${[d:d]}" />
+      <g:render template="/apptemplates/secondTemplates/dstab" model="${[d:d]}" />
     </div>
 
     <div class="tab-pane" id="review">
-      <g:render template="/apptemplates/revreqtab"
+      <g:render template="/apptemplates/secondTemplates/revreqtab"
         model="${[d:d]}" />
     </div>
 
 
   </div>
   <g:if test="${d.id}">
-    <g:render template="/apptemplates/componentStatus"
+    <g:render template="/apptemplates/secondTemplates/componentStatus"
       model="${[d:displayobj, rd:refdata_properties, dtype:'KBComponent']}" />
   </g:if>
 

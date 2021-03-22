@@ -14,7 +14,7 @@
     </g:if>
     <dt><gokb:annotatedLabel owner="${d}" property="curatoryGroups">Curatory Groups</gokb:annotatedLabel></dt>
     <dd>
-       <g:render template="/apptemplates/curatory_groups" model="${[d:d]}" />
+       <g:render template="/apptemplates/secondTemplates/curatory_groups" model="${[d:d]}" />
     </dd>
 
     <dt><gokb:annotatedLabel owner="${d}" property="org">Organisations</gokb:annotatedLabel></dt>
