@@ -14,10 +14,10 @@
 			<gokb:xEditableRefData owner="${d}" field="type" config='License.Type' />
 		</dd>
 
-    <dt><gokb:annotatedLabel owner="${d}" property="curatoryGroups">Curatory Groups</gokb:annotatedLabel></dt>
+    %{--<dt><gokb:annotatedLabel owner="${d}" property="curatoryGroups">Curatory Groups</gokb:annotatedLabel></dt>
     <dd>
        <g:render template="/apptemplates/secondTemplates/curatory_groups" model="${[d:d]}" />
-    </dd>
+    </dd>--}%
 
 	</dl>
 

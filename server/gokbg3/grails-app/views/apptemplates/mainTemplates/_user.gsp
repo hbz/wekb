@@ -6,16 +6,16 @@
   
     <dt><gokb:annotatedLabel owner="${d}" property="displayName">Display Name</gokb:annotatedLabel></dt>
     <dd><gokb:xEditable class="ipe" owner="${d}" field="displayName"/></dd>
-    <g:if test="${d == request.user}">
+    <g:if test="${d == request.user || request.user.isAdmin()}">
       <dt><gokb:annotatedLabel owner="${d}" property="email">Email</gokb:annotatedLabel></dt>
       <dd>
         <gokb:xEditable class="ipe" owner="${d}" field="email"/>
       </dd>
     </g:if>
-    <dt><gokb:annotatedLabel owner="${d}" property="curatoryGroups">Curatory Groups</gokb:annotatedLabel></dt>
+    %{--<dt><gokb:annotatedLabel owner="${d}" property="curatoryGroups">Curatory Groups</gokb:annotatedLabel></dt>
     <dd>
        <g:render template="/apptemplates/secondTemplates/curatory_groups" model="${[d:d]}" />
-    </dd>
+    </dd>--}%
 
     <dt><gokb:annotatedLabel owner="${d}" property="org">Organisations</gokb:annotatedLabel></dt>
     <dd>
