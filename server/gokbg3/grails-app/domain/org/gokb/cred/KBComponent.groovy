@@ -1409,7 +1409,7 @@ abstract class KBComponent implements Auditable{
   /**
    * Set a price formatted as "nnnn.nn" or "nnnn.nn CUR"
    */
-  setPrice(String type, String price, String currency, Date startDate = null, Date endDate = null){
+  void setPrice(String type, String price, String currency, Date startDate = null, Date endDate = null){
     Float f = null
     RefdataValue rdv_type = null
     RefdataValue rdv_currency = null
