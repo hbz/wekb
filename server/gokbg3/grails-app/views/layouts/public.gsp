@@ -42,7 +42,7 @@
            <span class="icon-bar"></span>
          </button>
          <!-- navbar-brand is hidden on larger screens, but visible when the menu is collapsed -->
-         <a class="navbar-brand navbar-image" href="${grailsApplication.config.server.contextPath ?: ''}/" >
+         <a class="navbar-brand navbar-image mekb-logo" href="${grailsApplication.config.server.contextPath ?: ''}/" >
              <img  alt="Logo wekb"  src="${resource(dir: 'images', file: 'logo.svg')}"/>
          </a>
        </div>
