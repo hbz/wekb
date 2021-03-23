@@ -114,10 +114,10 @@
           <table class="table table-striped">
             <thead>
               <tr>
-                <th>Package name</th>
+                <th>Package Name</th>
                 <th>Provider</th>
-                <th>Title count</th>
-                <th>Last updated</th>
+                <th>Title Count</th>
+                <th>Last Updated</th>
               </tr>
             </thead>
             <tbody>

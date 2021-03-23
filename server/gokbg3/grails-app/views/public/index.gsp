@@ -111,12 +111,12 @@
             <table class="table table-striped well">
                 <thead>
                 <tr>
-                    <th>Package name</th>
+                    <th>Package Name</th>
                     <th>Provider</th>
                     <th>Curatory Groups</th>
                     <th>Content Type</th>
-                    <th>Title count</th>
-                    <th>Last updated</th>
+                    <th>Title Count</th>
+                    <th>Last Updated</th>
                 </tr>
                 </thead>
                 <tbody>
