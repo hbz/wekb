@@ -677,7 +677,7 @@ class TitleInstancePackagePlatform extends KBComponent {
         changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.dateFirstOnline, tipp, 'dateFirstOnline')
         changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.lastChangedExternal, tipp, 'lastChangedExternal')
         changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.medium, tipp, 'medium', RCConstants.TITLEINSTANCE_MEDIUM)
-        changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.publicationType, tipp, 'publicationType', 'RCConstants.TIPP_PUBLICATION_TYPE')
+        changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.publicationType, tipp, 'publicationType', RCConstants.TIPP_PUBLICATION_TYPE)
         changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.language, tipp, 'language')
 
         if (tipp_dto.coverageStatements && !tipp_dto.coverage) {

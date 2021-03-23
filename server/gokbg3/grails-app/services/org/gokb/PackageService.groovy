@@ -416,19 +416,19 @@ class PackageService {
         def has_book = pkg_obj.tipps.title.find { it.medium == rdv_book }
 
         if (has_db && !has_journal && !has_book) {
-          pkg_obj.contentType = RefdataCategory.lookup('RCConstants.PACKAGE_CONTENT_TYPE', 'Database')
+          pkg_obj.contentType = RefdataCategory.lookup(RCConstants.PACKAGE_CONTENT_TYPE, 'Database')
           result.db++
         }
         else if (has_journal && !has_db && !has_book) {
-          pkg_obj.contentType = RefdataCategory.lookup('RCConstants.PACKAGE_CONTENT_TYPE', 'Journal')
+          pkg_obj.contentType = RefdataCategory.lookup(RCConstants.PACKAGE_CONTENT_TYPE, 'Journal')
           result.journal++
         }
         else if (has_book && !has_db && !has_journal) {
-          pkg_obj.contentType = RefdataCategory.lookup('RCConstants.PACKAGE_CONTENT_TYPE', 'Book')
+          pkg_obj.contentType = RefdataCategory.lookup(RCConstants.PACKAGE_CONTENT_TYPE, 'Book')
           result.book++
         }
         else if (has_book && has_journal) {
-          pkg_obj.contentType = RefdataCategory.lookup('RCConstants.PACKAGE_CONTENT_TYPE', 'Mixed')
+          pkg_obj.contentType = RefdataCategory.lookup(RCConstants.PACKAGE_CONTENT_TYPE, 'Mixed')
           result.mixed++
         }
         else if (!has_book && !has_journal && !has_db) {

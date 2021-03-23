@@ -37,7 +37,7 @@ class ComponentController {
 
           RefdataValue status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
           RefdataValue combo_type = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'KBComponent.Ids')
-          RefdataValue combo_status = RefdataCategory.lookup('RCConstants.COMBO_STATUS', 'Active')
+          RefdataValue combo_status = RefdataCategory.lookup(RCConstants.COMBO_STATUS, 'Active')
 
           if (params.ctype == 'st') {
 
