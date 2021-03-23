@@ -141,16 +141,18 @@
                             </g:else>
                         </td>
                         <td>${hit.source.contentType}</td>
-                        <td>${hit.source.titleCount}<g:if test="${hit.source.listStatus != 'Checked'}">*</g:if></td>
+                        <td>${hit.source.titleCount}
+%{--                        <g:if test="${hit.source.listStatus != 'Checked'}">*</g:if>--}%
+                        </td>
                         <td>${hit.source.lastUpdatedDisplay}</td>
                     </tr>
                 </g:each>
                 </tbody>
             </table>
 
-            <div style="font-size:0.8em;">
+%{--            <div style="font-size:0.8em;">
                 <b>*</b> The editing status of this package is marked as 'In Progress'. The number of titles in this package should therefore not be taken as final.
-            </div>
+            </div>--}%
 
             <g:if test="${resultsTotal ?: 0 > 0}">
                 <div class="pagination">
