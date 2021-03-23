@@ -425,7 +425,7 @@ class IntegrationController {
       log.debug("Role Processing: ${jsonOrg.roles}");
       jsonOrg.roles.each { r ->
         log.debug("Adding role ${r}");
-        def role = RefdataCategory.lookup("RCConstants.ORG_ROLE", r)
+        def role = RefdataCategory.lookup(RCConstants.ORG_ROLE, r)
 
         if (role) {
           located_or_new_org.addToRoles(role)
