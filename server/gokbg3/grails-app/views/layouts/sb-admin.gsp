@@ -49,7 +49,7 @@
             <span class="icon-bar"></span>
             <span  class="icon-bar"></span>
         </button>
-        <g:link uri="/" class="navbar-brand" >
+        <g:link uri="/" class="navbar-brand mekb-logo" >
           <img  alt="Logo wekb"  src="${resource(dir: 'images', file: 'logo.svg')}"/>
         </g:link>
       </div>
