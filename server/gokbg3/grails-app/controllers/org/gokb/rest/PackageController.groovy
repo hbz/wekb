@@ -3,7 +3,7 @@ package org.gokb.rest
 import com.k_int.ClassUtils
 import com.k_int.ConcurrencyManagerService
 import com.k_int.ConcurrencyManagerService.Job
-
+import de.wekb.helper.RCConstants
 import grails.converters.*
 import grails.core.GrailsClass
 import grails.gorm.transactions.*

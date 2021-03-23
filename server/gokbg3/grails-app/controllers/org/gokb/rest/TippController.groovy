@@ -1,5 +1,6 @@
 package org.gokb.rest
 
+import de.wekb.helper.RCConstants
 import grails.converters.*
 import grails.core.GrailsClass
 import grails.gorm.transactions.*

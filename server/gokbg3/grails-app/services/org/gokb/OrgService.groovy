@@ -1,5 +1,6 @@
 package org.gokb
 
+import de.wekb.helper.RCConstants
 import grails.gorm.transactions.Transactional
 
 import org.gokb.cred.*

@@ -2,6 +2,7 @@ package org.gokb
 
 import com.k_int.ConcurrencyManagerService.Job
 import com.k_int.ClassUtils
+import de.wekb.helper.RCConstants
 import grails.gorm.transactions.Transactional
 
 import grails.io.IOUtils

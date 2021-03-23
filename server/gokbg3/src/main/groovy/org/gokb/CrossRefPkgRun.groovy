@@ -2,6 +2,7 @@ package org.gokb
 
 import com.k_int.ClassUtils
 import com.k_int.ConcurrencyManagerService.Job
+import de.wekb.helper.RCConstants
 import gokbg3.MessageService
 import grails.converters.JSON
 import grails.plugin.springsecurity.SpringSecurityService

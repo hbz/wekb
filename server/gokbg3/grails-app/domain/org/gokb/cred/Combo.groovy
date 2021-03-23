@@ -1,4 +1,6 @@
 package org.gokb.cred
+
+import de.wekb.helper.RCConstants
 import grails.plugins.orm.auditable.Auditable
 import javax.persistence.Transient
 import org.gokb.DomainClassExtender

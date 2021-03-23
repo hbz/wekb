@@ -1,5 +1,6 @@
 package org.gokb
 
+import de.wekb.helper.RCConstants
 import org.gokb.cred.*;
 import grails.converters.JSON
 import groovy.time.TimeCategory

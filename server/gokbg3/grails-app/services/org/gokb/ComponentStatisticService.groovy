@@ -1,5 +1,6 @@
 package org.gokb
 
+import de.wekb.helper.RCConstants
 import org.gokb.cred.*
 
 import com.k_int.ClassUtils

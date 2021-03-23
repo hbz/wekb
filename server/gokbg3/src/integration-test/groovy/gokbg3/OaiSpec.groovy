@@ -1,6 +1,7 @@
 package gokbg3
 
 import com.sun.corba.se.impl.orb.PrefixParserData
+import de.wekb.helper.RCConstants
 import grails.testing.mixin.integration.Integration
 import grails.transaction.*
 import spock.lang.Specification

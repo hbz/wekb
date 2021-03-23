@@ -1,5 +1,6 @@
 package org.gokb
 
+import de.wekb.helper.RCConstants
 import org.springframework.security.access.annotation.Secured
 import grails.util.GrailsNameUtils
 import grails.converters.JSON

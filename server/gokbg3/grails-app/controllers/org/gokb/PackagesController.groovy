@@ -1,5 +1,6 @@
 package org.gokb
 
+import de.wekb.helper.RCConstants
 import grails.converters.*
 import grails.gorm.transactions.*
 import org.springframework.security.acls.model.NotFoundException

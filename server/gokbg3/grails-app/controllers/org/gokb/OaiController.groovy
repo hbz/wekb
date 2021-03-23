@@ -1,6 +1,6 @@
 package org.gokb
 
-
+import de.wekb.helper.RCConstants
 import org.gokb.cred.*
 import groovy.xml.MarkupBuilder
 import groovy.xml.StreamingMarkupBuilder

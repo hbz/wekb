@@ -1,5 +1,6 @@
 package gokbg3.rest
 
+import de.wekb.helper.RCConstants
 import grails.plugins.rest.client.RestBuilder
 import grails.plugins.rest.client.RestResponse
 import grails.testing.mixin.integration.Integration

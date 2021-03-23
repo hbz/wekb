@@ -1,5 +1,6 @@
 package org.gokb
 
+import de.wekb.helper.RCConstants
 import grails.converters.*
 import org.springframework.security.acls.model.NotFoundException
 import org.springframework.security.access.annotation.Secured;

@@ -2,6 +2,7 @@ package org.gokb
 
 import com.k_int.ConcurrencyManagerService
 import com.k_int.ConcurrencyManagerService.Job
+import de.wekb.helper.RCConstants
 import grails.converters.JSON
 import org.gokb.cred.*
 import org.hibernate.criterion.CriteriaSpecification

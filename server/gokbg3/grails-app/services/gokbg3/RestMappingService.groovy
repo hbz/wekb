@@ -1,6 +1,7 @@
 package gokbg3
 
 import com.k_int.ClassUtils
+import de.wekb.helper.RCConstants
 
 import java.time.LocalDateTime
 

@@ -1,5 +1,7 @@
 package org.gokb.cred
 
+import de.wekb.helper.RCConstants
+
 import javax.persistence.Transient
 
 class TIPPCoverageStatement {

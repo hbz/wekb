@@ -2,7 +2,7 @@ package org.gokb.rest
 
 import com.k_int.ConcurrencyManagerService
 import com.k_int.ConcurrencyManagerService.Job
-
+import de.wekb.helper.RCConstants
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
 import org.gokb.cred.CuratoryGroup

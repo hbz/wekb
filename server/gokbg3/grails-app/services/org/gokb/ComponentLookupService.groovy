@@ -1,5 +1,6 @@
 package org.gokb
 
+import de.wekb.helper.RCConstants
 import grails.util.GrailsNameUtils
 import groovyx.net.http.URIBuilder
 

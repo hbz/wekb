@@ -1,5 +1,7 @@
 package org.gokb
 
+import de.wekb.helper.RCConstants
+
 import java.util.Map;
 import java.util.Set;
 import java.util.GregorianCalendar;

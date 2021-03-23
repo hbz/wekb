@@ -1,5 +1,6 @@
 package org.gokb.rest
 
+import de.wekb.helper.RCConstants
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
 import org.gokb.cred.RefdataCategory

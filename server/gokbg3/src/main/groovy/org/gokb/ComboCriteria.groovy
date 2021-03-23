@@ -4,6 +4,7 @@ import grails.orm.HibernateCriteriaBuilder
 import org.gokb.cred.*
 import grails.util.GrailsClassUtils
 import org.hibernate.criterion.CriteriaSpecification
+import de.wekb.helper.RCConstants
 
 class ComboCriteria {
 
