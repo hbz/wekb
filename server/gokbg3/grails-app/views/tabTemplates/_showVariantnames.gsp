@@ -1,5 +1,5 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
-<g:set var="editable" value="${ editableDisplayObjc && ((d.curatoryGroups ? (request.curator != null && request.curator.size() > 0) : true) || (params.curationOverride == "true" && request.user.isAdmin())) }" />
+<g:set var="editable" value="${ editableDisplayObjc && ((d.respondsTo('getCuratoryGroups') ? (request.curator != null && request.curator.size() > 0) : true) || (params.curationOverride == "true" && request.user.isAdmin())) }" />
 <div class="tab-pane" id="altnames">
   <g:if test="${d.id != null}">
     <dl>

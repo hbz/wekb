@@ -47,7 +47,7 @@
           </td>
         </g:each>
         <td>
-          <g:if test="${d.isEditable() && (d.respondsTo('curatoryGroups') ? (!d.curatoryGroups ? true : cur) : true) && !noaction}">
+          <g:if test="${d.isEditable() && (d.respondsTo('curatoryGroups') ? (!d.respondsTo('getCuratoryGroups') ? true : cur) : true) && !noaction}">
             <span>
               <g:if test="${row.status?.value == 'Deleted'}">
                 <g:link
