@@ -68,29 +68,35 @@
                     <h2>Technical Details</h2>
                     <div class="ui inverted link list">
                         <%-- App version --%>
-                        <g:if test="${grailsApplication.metadata['info.app.version']}">
-                            <a target="_blank" class="item" href="https://github.com/hbz/laser-gokb/releases">
-                                Version: ${grailsApplication.metadata['info.app.version']}
-                            </a>
-                        </g:if>
+                        <div class="item">
+                            <g:if test="${grailsApplication.metadata['info.app.version']}">
+                                <a target="_blank" class="item" href="https://github.com/hbz/laser-gokb/releases">
+                                    Version: ${grailsApplication.metadata['info.app.version']}
+                                </a>
+                            </g:if>
+                        </div>
                         <%-- Git branch --%>
-                        <g:if test="${grailsApplication.metadata['build.git.branch']}">
-                            <a target="_blank" class="item" href="https://github.com/hbz/laser-gokb/tree/${grailsApplication.metadata['git.branch']}">
-                                Branch: ${grailsApplication.metadata['build.git.branch']}
-                            </a>
-                        </g:if>
-
+                        <div class="item">
+                            <g:if test="${grailsApplication.metadata['build.git.branch']}">
+                                <a target="_blank" class="item" href="https://github.com/hbz/laser-gokb/tree/${grailsApplication.metadata['git.branch']}">
+                                    Branch: ${grailsApplication.metadata['build.git.branch']}
+                                </a>
+                            </g:if>
+                        </div>
                         <%-- Git Commit --%>
-                        <g:if test="${grailsApplication.metadata['git.commit.id']}">
-                            <a target="_blank" class="item" href="https://github.com/hbz/laser-gokb/tree/${grailsApplication.metadata['build.git.revision']}">
-                                Git Commit: ${grailsApplication.metadata['build.git.revision']}
-                            </a>
-                        </g:if>
+                        <div class="item">
+                            <g:if test="${grailsApplication.metadata['git.commit.id']}">
+                                <a target="_blank" class="item" href="https://github.com/hbz/laser-gokb/tree/${grailsApplication.metadata['build.git.revision']}">
+                                    Git Commit: ${grailsApplication.metadata['build.git.revision']}
+                                </a>
+                            </g:if>
+                        </div>
                         <%-- Timestamp --%>
-                        <g:if test="${grailsApplication.metadata['build.time']}">
-                                Build: ${grailsApplication.metadata['build.time']}
-                        </g:if>
-
+                        <div class="item">
+                            <g:if test="${grailsApplication.metadata['build.time']}">
+                                    Build: ${grailsApplication.metadata['build.time']}
+                            </g:if>
+                        </div>
                     </div>
                 </div>
              </div>
