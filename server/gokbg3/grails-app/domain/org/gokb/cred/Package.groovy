@@ -45,6 +45,9 @@ class Package extends KBComponent {
   @RefdataAnnotation(cat = RCConstants.PACKAGE_GLOBAL)
   RefdataValue global
 
+  @RefdataAnnotation(cat = RCConstants.PACKAGE_OPEN_ACCESS)
+  RefdataValue openAccess
+
   RefineProject lastProject
   String globalNote
   String listVerifier
@@ -52,7 +55,7 @@ class Package extends KBComponent {
   Date listVerifiedDate
   String descriptionURL
 
-  private static refdataDefaults = [
+/*  private static refdataDefaults = [
     "scope"      : "Front File",
     "listStatus" : "Checked",
     "breakable"  : "Unknown",
@@ -60,7 +63,7 @@ class Package extends KBComponent {
     "fixed"      : "Unknown",
     "paymentType": "Unknown",
     "global"     : "Global"
-  ]
+  ]*/
 
   static manyByCombo = [
     tipps         : TitleInstancePackagePlatform,
@@ -100,6 +103,7 @@ class Package extends KBComponent {
     listVerifier column: 'pkg_list_verifier'
     userListVerifier column: 'pkg_list_verifier_user_fk'
     descriptionURL column: 'pkg_descr_url'
+    openAccess column: 'pkg_open_access'
   }
 
   static constraints = {
@@ -112,6 +116,7 @@ class Package extends KBComponent {
     paymentType(nullable: true, blank: false)
     global(nullable: true, blank: false)
     globalNote(nullable: true, blank: true)
+    openAccess (nullable: true, blank: true)
     lastProject(nullable: true, blank: false)
     descriptionURL(nullable: true, blank: true)
     name(validator: { val, obj ->
@@ -495,6 +500,7 @@ select tipp.id,
         'global'(global?.value)
         'globalNote'(globalNote)
         'contentType'(contentType?.value)
+        'openAccess'(openAccess?.value)
 
         if (nominalPlatform) {
           builder.'nominalPlatform'([id: nominalPlatform.id, uuid: nominalPlatform.uuid]) {

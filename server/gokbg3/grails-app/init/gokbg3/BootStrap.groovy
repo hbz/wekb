@@ -457,7 +457,7 @@ class BootStrap {
         RefdataCategory.lookupOrCreate(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, "Selected Articles").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, "Abstracts").save(flush: true, failOnError: true)
 
-        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "Aggregator").save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "Unknown").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "Back File").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "Front File").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "Master File").save(flush: true, failOnError: true)
@@ -473,10 +473,8 @@ class BootStrap {
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_FIXED, "Yes").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_FIXED, "Unknown").save(flush: true, failOnError: true)
 
-        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_PAYMENT_TYPE, "Complimentary").save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_PAYMENT_TYPE, "Limited Promotion").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_PAYMENT_TYPE, "Paid").save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_PAYMENT_TYPE, "Opt Out Promotion").save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_PAYMENT_TYPE, "Mixed").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_PAYMENT_TYPE, "Uncharged").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_PAYMENT_TYPE, "Unknown").save(flush: true, failOnError: true)
 
@@ -492,6 +490,15 @@ class BootStrap {
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_CONTENT_TYPE, "Journal").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_CONTENT_TYPE, "Book").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_CONTENT_TYPE, "Database").save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_CONTENT_TYPE, "Other").save(flush: true, failOnError: true)
+
+        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_OPEN_ACCESS, "Blue OA").save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_OPEN_ACCESS, "Gold OA").save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_OPEN_ACCESS, "Green OA").save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_OPEN_ACCESS, "Hybrid").save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_OPEN_ACCESS, "Empty").save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_OPEN_ACCESS, "White OA").save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_OPEN_ACCESS, "Yellow OA").save(flush: true, failOnError: true)
 
         RefdataCategory.lookupOrCreate(RCConstants.PLATFORM_AUTH_METHOD, "IP").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PLATFORM_AUTH_METHOD, "Shibboleth").save(flush: true, failOnError: true)

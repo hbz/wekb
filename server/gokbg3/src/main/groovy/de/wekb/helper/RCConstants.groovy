@@ -53,6 +53,7 @@ class RCConstants {
     public static final String PACKAGE_LINK_TYPE = "Package.LinkType"
     public static final String PACKAGE_LIST_STATUS = "Package.ListStatus"
     public static final String PACKAGE_PAYMENT_TYPE = "Package.PaymentType"
+    public static final String PACKAGE_OPEN_ACCESS = "Package.OpenAccess"
     public static final String PACKAGE_SCOPE = "Package.Scope"
 
     public static final String PLATFORM_AUTHENTICATION = "Platform.Authentication"

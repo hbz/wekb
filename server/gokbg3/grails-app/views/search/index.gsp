@@ -137,7 +137,7 @@
 					<g:if test="${displaytemplate != null}">
 						<g:if test="${displaytemplate.type=='staticgsp'}">
 							<h4><g:render template="/apptemplates/secondTemplates/component_heading" model="${[d:displayobj]}" /></h4>
-							<g:render template="/apptemplates/${displaytemplate.rendername}"
+							<g:render template="/apptemplates/mainTemplates/${displaytemplate.rendername}"
 								model="${[d:displayobj, rd:refdata_properties, dtype:displayobjclassname_short]}" />
 	
 						</g:if>

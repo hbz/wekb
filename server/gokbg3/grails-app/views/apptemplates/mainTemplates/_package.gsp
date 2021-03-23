@@ -32,6 +32,16 @@
     <dd>
       <gokb:manyToOneReferenceTypedown owner="${d}" field="source" baseClass="org.gokb.cred.Source" >${d.source?.name}</gokb:manyToOneReferenceTypedown>
     </dd>
+
+    <dt>
+      <gokb:annotatedLabel owner="${d}" property="nominalPlatform">Nominal Platform</gokb:annotatedLabel>
+    </dt>
+    <dd>
+      <gokb:manyToOneReferenceTypedown owner="${d}" field="nominalPlatform"
+                                       name="${comboprop}" baseClass="org.gokb.cred.Platform" >
+        ${d.nominalPlatform?.name ?: ''}
+      </gokb:manyToOneReferenceTypedown>
+    </dd>
     <g:if test="${d}">
       <dt>
         <gokb:annotatedLabel owner="${d}" property="status">Status</gokb:annotatedLabel>
@@ -57,10 +67,6 @@
         </g:link>
       </dd>
     </g:if>
-    <dt> <gokb:annotatedLabel owner="${d}" property="listStatus">List Status</gokb:annotatedLabel> </dt>
-    <dd>
-      <gokb:xEditableRefData owner="${d}" field="listStatus" config="${RCConstants.PACKAGE_LIST_STATUS}" />
-    </dd>
     %{--<dt>
       <gokb:annotatedLabel owner="${d}" property="userListVerifier">List Verifier</gokb:annotatedLabel>
     </dt>
@@ -82,13 +88,23 @@
     <dt> <gokb:annotatedLabel owner="${d}" property="descriptionURL">URL</gokb:annotatedLabel> </dt>
     <dd> <gokb:xEditable class="ipe" owner="${d}" field="descriptionURL" /> </dd>
 
+    <dt>
+      <gokb:annotatedLabel owner="${d}" property="globalNote">Global Range</gokb:annotatedLabel>
+    </dt>
+    <dd>
+      <gokb:xEditable class="ipe" owner="${d}" field="globalNote" />
+    </dd>
+
+    <g:render template="/apptemplates/secondTemplates/refdataprops"
+              model="${[d:(d), rd:(rd), dtype:(dtype), notShowProps: [RCConstants.PACKAGE_LIST_STATUS, RCConstants.PACKAGE_FIXED]]}" />
+
+
   </dl>
 
   <div id="content">
     <ul id="tabs" class="nav nav-tabs">
-      <li role="presentation" class="active"><a href="#packagedetails" data-toggle="tab">Package Details</a></li>
       <g:if test="${d.id}">
-        <li role="presentation"><a href="#titledetails" data-toggle="tab">Titles/TIPPs <span class="badge badge-warning"> ${d.currentTitleCount}/ ${d.currentTippCount} </span></a></li>
+        <li role="presentation" class="active"><a href="#titledetails" data-toggle="tab">Titles/TIPPs <span class="badge badge-warning"> ${d.currentTitleCount}/ ${d.currentTippCount} </span></a></li>
         <li role="presentation"><a href="#identifiers" data-toggle="tab">Identifiers <span class="badge badge-warning"> ${d?.getCombosByPropertyNameAndStatus('ids','Active')?.size() ?: '0'} </span></a></li>
 
         <li role="presentation"><a href="#altnames" data-toggle="tab">Alternate Names
@@ -122,29 +138,7 @@
 
     <div id="my-tab-content" class="tab-content">
 
-      <div class="tab-pane active" id="packagedetails">
-        <dl class="dl-horizontal">
-          <g:render template="/apptemplates/secondTemplates/refdataprops"
-            model="${[d:(d), rd:(rd), dtype:(dtype)]}" />
-          <dt>
-            <gokb:annotatedLabel owner="${d}" property="globalNote">Global Range</gokb:annotatedLabel>
-          </dt>
-          <dd>
-            <gokb:xEditable class="ipe" owner="${d}" field="globalNote" />
-          </dd>
-          <dt>
-            <gokb:annotatedLabel owner="${d}" property="nominalPlatform">Nominal Platform</gokb:annotatedLabel>
-          </dt>
-          <dd>
-            <gokb:manyToOneReferenceTypedown owner="${d}" field="nominalPlatform"
-              name="${comboprop}" baseClass="org.gokb.cred.Platform" >
-              ${d.nominalPlatform?.name ?: ''}
-            </gokb:manyToOneReferenceTypedown>
-          </dd>
-        </dl>
-      </div>
-
-      <div class="tab-pane" id="titledetails">
+      <div class="tab-pane active" id="titledetails">
         <g:if test="${params.controller != 'create'}">
           <dl>
             <dt><gokb:annotatedLabel owner="${d}" property="tipps">Titles/TIPPs</gokb:annotatedLabel></dt>
