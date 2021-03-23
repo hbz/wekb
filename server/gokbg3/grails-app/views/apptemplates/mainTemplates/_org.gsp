@@ -111,7 +111,7 @@
             <gokb:annotatedLabel owner="${d}" property="mission">Mission</gokb:annotatedLabel>
           </dt>
           <dd>
-            <gokb:xEditableRefData owner="${d}" field="mission" config=${RCConstants.ORG_MISSION}" />
+            <gokb:xEditableRefData owner="${d}" field="mission" config="${RCConstants.ORG_MISSION}" />
           </dd>
           <dt>
             <gokb:annotatedLabel owner="${d}" property="homepage">Homepage</gokb:annotatedLabel>
