@@ -120,7 +120,7 @@
         <gokb:annotatedLabel owner="${d}" property="publicationType">Publication Type</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditableRefData owner="${d}" field="publicationType" config='"${RCConstants.TIPP_PUBLICATION_TYPE}"'/>
+        <gokb:xEditableRefData owner="${d}" field="publicationType" config="${RCConstants.TIPP_PUBLICATION_TYPE}"/>
     </dd>
 
     <dt>
@@ -162,7 +162,7 @@
         <gokb:annotatedLabel owner="${d}" property="medium">Medium</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditableRefData owner="${d}" field="medium" config='"${RCConstants.TIPP_MEDIUM}"'/>
+        <gokb:xEditableRefData owner="${d}" field="medium" config="${RCConstants.TIPP_MEDIUM}"/>
     </dd>
 
     <dt>

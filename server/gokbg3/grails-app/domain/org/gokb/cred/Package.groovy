@@ -28,15 +28,23 @@ class Package extends KBComponent {
   // Consistent?: N
 
   // Refdata
-  @RefdataAnnotation(cat = RCConstants.PACKAGE_CONTENT_TYPE)
+  @RefdataAnnotation(cat = RCConstants.PACKAGE_SCOPE)
   RefdataValue scope
+  @RefdataAnnotation(cat = RCConstants.PACKAGE_LIST_STATUS)
   RefdataValue listStatus
+  @RefdataAnnotation(cat = RCConstants.PACKAGE_CONTENT_TYPE)
   RefdataValue contentType
+  @RefdataAnnotation(cat = RCConstants.PACKAGE_BREAKABLE)
   RefdataValue breakable
+  @RefdataAnnotation(cat = RCConstants.PACKAGE_CONSISTENT)
   RefdataValue consistent
+  @RefdataAnnotation(cat = RCConstants.PACKAGE_FIXED)
   RefdataValue fixed
+  @RefdataAnnotation(cat = RCConstants.PACKAGE_PAYMENT_TYPE)
   RefdataValue paymentType
+  @RefdataAnnotation(cat = RCConstants.PACKAGE_GLOBAL)
   RefdataValue global
+
   RefineProject lastProject
   String globalNote
   String listVerifier

@@ -32,7 +32,7 @@
   </dt>
   <dd>
     <gokb:xEditableRefData owner="${d}" field="reasonRetired"
-      config='"${RCConstants.TITLEINSTANCE_REASON_RETIRED}"' />
+      config="${RCConstants.TITLEINSTANCE_REASON_RETIRED}" />
   </dd>
 
   <dt>
@@ -160,7 +160,7 @@
           </dt>
           <dd>
             <gokb:xEditableRefData owner="${d}" field="OAStatus"
-              config='"${RCConstants.TITLEINSTANCE_OA_STATUS}"' />
+              config="${RCConstants.TITLEINSTANCE_OA_STATUS}" />
           </dd>
         </dl>
     </div>
