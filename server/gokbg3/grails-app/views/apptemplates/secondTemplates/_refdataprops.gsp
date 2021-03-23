@@ -7,7 +7,7 @@
 		</dt>
 		<dd>
 			<gokb:xEditableRefData owner="${d}" field="${entry.value.name}"
-				config="${entry.key}" editable="${editable}"/>
+				config="${entry.key}" />
 		</dd>
 	</g:if>
 </g:each>

@@ -105,12 +105,24 @@ class PublicController {
 
     result =  ESSearchService.search(mutableParams)
 
-    Calendar calendar = Calendar.getInstance()
-    result.componentsOfStatistic = ["TitleInstance", "Org", "Package", "Platform", "CuratoryGroup", "TitleInstancePackagePlatform"]
+
+    def query_params = [forbiddenStatus : RefdataCategory.lookup(KBComponent.RD_STATUS, KBComponent.STATUS_DELETED)]
+
+    List providerRoles = [RefdataCategory.lookupOrCreate('Org.Role', 'Content Provider'), RefdataCategory.lookupOrCreate('Org.Role', 'Platform Provider'), RefdataCategory.lookupOrCreate('Org.Role', 'Publisher')]
+
+    def query_params2 = [forbiddenStatus : RefdataCategory.lookup(KBComponent.RD_STATUS, KBComponent.STATUS_DELETED), roles: providerRoles]
+
+    result.componentsOfStatistic = ["Provider", "Package", "Platform", "CuratoryGroup", "TitleInstancePackagePlatform"]
 
     result.countComponent = [:]
-    result.componentsOfStatistic.each {String component ->
-      result.countComponent."${component}" = ComponentStatistic.executeQuery("select numTotal from ComponentStatistic where componentType = :component and year = :year and month = :month", [component: component, year: calendar.get(Calendar.YEAR), month: calendar.get(Calendar.MONTH)], [readOnly: true])[0]
+    result.componentsOfStatistic.each { component ->
+      if(component == "Provider"){
+        result.countComponent."${component}" = Org.executeQuery("select count(o.id) from Org as o join o.roles rdv where rdv in (:roles) and o.status != :forbiddenStatus", query_params2, [readOnly: true])[0]
+      }else {
+        def fetch_all = "select count(o.id) from ${component} as o where status != :forbiddenStatus"
+        result.countComponent."${component}" = KBComponent.executeQuery(fetch_all.toString(), query_params, [readOnly: true])[0]
+      }
+
     }
 
     result

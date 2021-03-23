@@ -379,7 +379,7 @@
                 <gokb:annotatedLabel owner="${d}" property="ids">Identifiers</gokb:annotatedLabel>
             </dt>
             <dd>
-                <g:render template="/apptemplates/combosByType"
+                <g:render template="/apptemplates/secondTemplates/combosByType"
                           model="${[d: d, property: 'ids', fragment: 'identifiers', combo_status: 'Active', cols: [
                                   [expr: 'toComponent.namespace.value', colhead: 'Namespace'],
                                   [expr: 'toComponent.value', colhead: 'ID', action: 'link']]]}"/>
@@ -387,7 +387,7 @@
                     <h4>
                         <gokb:annotatedLabel owner="${d}" property="addIdentifier">Add new Identifier</gokb:annotatedLabel>
                     </h4>
-                    <g:render template="/apptemplates/addIdentifier" model="${[d: d, hash: '#identifiers']}"/>
+                    <g:render template="/apptemplates/secondTemplates/addIdentifier" model="${[d: d, hash: '#identifiers']}"/>
                 </g:if>
             </dd>
         </dl>
@@ -396,16 +396,16 @@
 
     <g:if test="${d.isEditable()}">
         <div class="tab-pane" id="addprops">
-            <g:render template="/apptemplates/addprops"
+            <g:render template="/apptemplates/secondTemplates/addprops"
                       model="${[d: d]}"/>
         </div>
 
         <div class="tab-pane" id="review">
-            <g:render template="/apptemplates/revreqtab" model="${[d: d]}"/>
+            <g:render template="/apptemplates/secondTemplates/revreqtab" model="${[d: d]}"/>
         </div>
     </g:if>
     <div class="tab-pane" id="review">
-      <g:render template="/apptemplates/revreqtab" model="${[d:d]}" />
+      <g:render template="/apptemplates/secondTemplates/revreqtab" model="${[d:d]}" />
     </div>
 
     <div class="tab-pane" id="subjectArea">
@@ -432,6 +432,6 @@
     </div>
     <g:render template="/tabTemplates/showPrices" model="${[d: displayobj, showActions: true]}"/>
 </div>
-<g:render template="/apptemplates/componentStatus"
+<g:render template="/apptemplates/secondTemplates/componentStatus"
           model="${[d: displayobj, rd: refdata_properties, dtype: 'KBComponent']}"/>
 

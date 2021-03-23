@@ -1,4 +1,4 @@
-<g:set var="editable" value="${editable}" />
+<g:set var="editable" value="${editableDisplayObjc}" />
   <dl class="dl-horizontal">
   <dt>
     <gokb:annotatedLabel owner="${d}" property="name">Package Name</gokb:annotatedLabel>
@@ -13,7 +13,7 @@
       <g:link controller="packages" action="packageTSVExport" id="${params.id}"><g:message code="gokb.appname" default="we:kb"/> File</g:link>
     </g:if>
     <g:else>
-      <gokb:xEditable class="ipe" owner="${d}" field="name" editable="${editable}"/>
+      <gokb:xEditable class="ipe" owner="${d}" field="name" />
     </g:else>
   </dd>
     </dd>
@@ -22,14 +22,14 @@
       <gokb:annotatedLabel owner="${d}" property="provider">Provider</gokb:annotatedLabel>
     </dt>
     <dd>
-      <gokb:manyToOneReferenceTypedown owner="${d}" field="provider" baseClass="org.gokb.cred.Org" editable="${editable}">${d.provider?.name}</gokb:manyToOneReferenceTypedown>
+      <gokb:manyToOneReferenceTypedown owner="${d}" field="provider" baseClass="org.gokb.cred.Org" >${d.provider?.name}</gokb:manyToOneReferenceTypedown>
     </dd>
 
     <dt>
       <gokb:annotatedLabel owner="${d}" property="source">Source</gokb:annotatedLabel>
     </dt>
     <dd>
-      <gokb:manyToOneReferenceTypedown owner="${d}" field="source" baseClass="org.gokb.cred.Source" editable="${editable}">${d.source?.name}</gokb:manyToOneReferenceTypedown>
+      <gokb:manyToOneReferenceTypedown owner="${d}" field="source" baseClass="org.gokb.cred.Source" >${d.source?.name}</gokb:manyToOneReferenceTypedown>
     </dd>
     <g:if test="${d}">
       <dt>
@@ -58,28 +58,28 @@
     </g:if>
     <dt> <gokb:annotatedLabel owner="${d}" property="listStatus">List Status</gokb:annotatedLabel> </dt>
     <dd>
-      <gokb:xEditableRefData owner="${d}" field="listStatus" config='Package.ListStatus' editable="${editable}"/>
+      <gokb:xEditableRefData owner="${d}" field="listStatus" config='Package.ListStatus' />
     </dd>
     <dt>
       <gokb:annotatedLabel owner="${d}" property="userListVerifier">List Verifier</gokb:annotatedLabel>
     </dt>
     <dd>
-      <gokb:manyToOneReferenceTypedown owner="${d}" field="userListVerifier" baseClass="org.gokb.cred.User" editable="${editable}">${d.userListVerifier?.displayName ?: d.userListVerifier?.username}</gokb:manyToOneReferenceTypedown>
+      <gokb:manyToOneReferenceTypedown owner="${d}" field="userListVerifier" baseClass="org.gokb.cred.User" >${d.userListVerifier?.displayName ?: d.userListVerifier?.username}</gokb:manyToOneReferenceTypedown>
     </dd>
     <dt> <gokb:annotatedLabel owner="${d}" property="listVerifierDate">List Verifier Date</gokb:annotatedLabel> </dt>
-    <dd> <gokb:xEditable class="ipe" owner="${d}" type="date" field="listVerifiedDate" editable="${editable}"/> </dd>
+    <dd> <gokb:xEditable class="ipe" owner="${d}" type="date" field="listVerifiedDate" /> </dd>
 
     <dt> <gokb:annotatedLabel owner="${d}" property="lastUpdateComment">Last Update Comment</gokb:annotatedLabel> </dt>
-    <dd> <gokb:xEditable class="ipe" owner="${d}" field="lastUpdateComment" editable="${editable}"/> </dd>
+    <dd> <gokb:xEditable class="ipe" owner="${d}" field="lastUpdateComment" /> </dd>
 
     <dt> <gokb:annotatedLabel owner="${d}" property="editStatus">Edit Status</gokb:annotatedLabel> </dt>
-    <dd> <gokb:xEditableRefData owner="${d}" field="editStatus" config='KBComponent.EditStatus' editable="${editable}"/> </dd>
+    <dd> <gokb:xEditableRefData owner="${d}" field="editStatus" config='KBComponent.EditStatus' /> </dd>
 
     <dt> <gokb:annotatedLabel owner="${d}" property="description">Description</gokb:annotatedLabel> </dt>
-    <dd> <gokb:xEditable class="ipe" owner="${d}" field="description" editable="${editable}"/> </dd>
+    <dd> <gokb:xEditable class="ipe" owner="${d}" field="description" /> </dd>
 
     <dt> <gokb:annotatedLabel owner="${d}" property="descriptionURL">URL</gokb:annotatedLabel> </dt>
-    <dd> <gokb:xEditable class="ipe" owner="${d}" field="descriptionURL" editable="${editable}"/> </dd>
+    <dd> <gokb:xEditable class="ipe" owner="${d}" field="descriptionURL" /> </dd>
 
   </dl>
 
@@ -123,20 +123,20 @@
 
       <div class="tab-pane active" id="packagedetails">
         <dl class="dl-horizontal">
-          <g:render template="/apptemplates/refdataprops"
+          <g:render template="/apptemplates/secondTemplates/refdataprops"
             model="${[d:(d), rd:(rd), dtype:(dtype)]}" />
           <dt>
             <gokb:annotatedLabel owner="${d}" property="globalNote">Global Range</gokb:annotatedLabel>
           </dt>
           <dd>
-            <gokb:xEditable class="ipe" owner="${d}" field="globalNote" editable="${editable}"/>
+            <gokb:xEditable class="ipe" owner="${d}" field="globalNote" />
           </dd>
           <dt>
             <gokb:annotatedLabel owner="${d}" property="nominalPlatform">Nominal Platform</gokb:annotatedLabel>
           </dt>
           <dd>
             <gokb:manyToOneReferenceTypedown owner="${d}" field="nominalPlatform"
-              name="${comboprop}" baseClass="org.gokb.cred.Platform" editable="${editable}">
+              name="${comboprop}" baseClass="org.gokb.cred.Platform" >
               ${d.nominalPlatform?.name ?: ''}
             </gokb:manyToOneReferenceTypedown>
           </dd>
@@ -197,7 +197,7 @@
             <gokb:annotatedLabel owner="${d}" property="ids">Identifiers</gokb:annotatedLabel>
           </dt>
           <dd>
-            <g:render template="/apptemplates/combosByType"
+            <g:render template="/apptemplates/secondTemplates/combosByType"
               model="${[d:d, property:'ids', fragment:'identifiers', propagateDelete: "true", cols:[
                         [expr:'toComponent.namespace.value', colhead:'Namespace'],
                         [expr:'toComponent.value', colhead:'ID', action:'link']]]}" />
@@ -205,7 +205,7 @@
               <h4>
                 <gokb:annotatedLabel owner="${d}" property="addIdentifier">Add new Identifier</gokb:annotatedLabel>
               </h4>
-              <g:render template="/apptemplates/addIdentifier" model="${[d:d, hash:'#identifiers']}"/>
+              <g:render template="/apptemplates/secondTemplates/addIdentifier" model="${[d:d, hash:'#identifiers']}"/>
             </g:if>
           </dd>
         </dl>
@@ -262,7 +262,7 @@
       </div>
 
       <div class="tab-pane" id="ds">
-        <g:render template="/apptemplates/dstab" model="${[d:d]}" />
+        <g:render template="/apptemplates/secondTemplates/dstab" model="${[d:d]}" />
       </div>
 
       <div class="tab-pane" id="activity">
@@ -287,7 +287,7 @@
       </div>
 
       <div class="tab-pane" id="review">
-        <g:render template="/apptemplates/revreqtab" model="${[d:d]}" />
+        <g:render template="/apptemplates/secondTemplates/revreqtab" model="${[d:d]}" />
 
         <div class="connected-rr">
           <h3>Review Requests for connected Titles</h3>
@@ -309,12 +309,12 @@
       </div>
 
       <div class="tab-pane" id="pkgCosts">
-        <g:render template="/apptemplates/componentCosts" model="${[d:d]}" />
+        <g:render template="/apptemplates/secondTemplates/componentCosts" model="${[d:d]}" />
       </div>
 
     </div>
     <g:if test="${d.id}">
-      <g:render template="/apptemplates/componentStatus"
+      <g:render template="/apptemplates/secondTemplates/componentStatus"
         model="${[d:displayobj, rd:refdata_properties, dtype:'KBComponent']}" />
     </g:if>
   </div>
@@ -331,7 +331,7 @@
             data: {id: "${d.id}", restrict: tipp_restrict},
             beforeSend: function() {
               $('#rr-loaded').empty();
-              $('#rr-loaded').after('<div id="rr-loading" style="height:50px;vertical-align:middle;text-align:center;"><span>Loading list <asset:image src="img/loading.gif" /></span></div>');
+              $('#rr-loaded').after('<div id="rr-loading" style="height:50px;vertical-align:middle;text-align:center;"><span>Loading list <asset:image src="loading.gif" /></span></div>');
             },
             complete: function() {
               $('#rr-loading').remove();
@@ -351,7 +351,7 @@
             data: {id: "${d.id}", getAll: true, restrict: tipp_restrict},
             beforeSend: function() {
               $('#rr-loaded').empty();
-              $('#rr-loaded').after('<div id="rr-loading" style="height:50px;vertical-align:middle;text-align:center;"><span>Loading list <asset:image src="img/loading.gif" /></span></div>');
+              $('#rr-loaded').after('<div id="rr-loading" style="height:50px;vertical-align:middle;text-align:center;"><span>Loading list <asset:image src="loading.gif" /></span></div>');
             },
             complete: function() {
               $('#rr-loading').remove();

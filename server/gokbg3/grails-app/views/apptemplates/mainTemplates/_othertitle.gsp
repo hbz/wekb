@@ -215,7 +215,7 @@
         <gokb:annotatedLabel owner="${d}" property="availability">Availability</gokb:annotatedLabel>
       </dt>
       <dd>
-        <g:render template="/apptemplates/tippdisplay" model="${[d:d.tipps]}" />
+        <g:render template="/apptemplates/secondTemplates/tippdisplay" model="${[d:d.tipps]}" />
       </dd>
 
     </div>
@@ -231,7 +231,7 @@
           <gokb:annotatedLabel owner="${d}" property="ids">Identifiers</gokb:annotatedLabel>
         </dt>
         <dd>
-          <g:render template="/apptemplates/combosByType"
+          <g:render template="/apptemplates/secondTemplates/combosByType"
             model="${[d:d, property:'ids', fragment:'identifiers', cols:[
                       [expr:'toComponent.namespace.value', colhead:'Namespace'],
                       [expr:'toComponent.value', colhead:'ID', action:'link']]]}" />
@@ -239,24 +239,24 @@
             <h4>
               <gokb:annotatedLabel owner="${d}" property="addIdentifier">Add new Identifier</gokb:annotatedLabel>
             </h4>
-            <g:render template="/apptemplates/addIdentifier" model="${[d:d, hash:'#identifiers']}"/>
+            <g:render template="/apptemplates/secondTemplates/addIdentifier" model="${[d:d, hash:'#identifiers']}"/>
           </g:if>
         </dd>
       </dl>
     </div>
 
     <div class="tab-pane" id="addprops">
-      <g:render template="/apptemplates/addprops"
+      <g:render template="/apptemplates/secondTemplates/addprops"
         model="${[d:d]}" />
     </div>
 
     <div class="tab-pane" id="review">
-      <g:render template="/apptemplates/revreqtab"
+      <g:render template="/apptemplates/secondTemplates/revreqtab"
         model="${[d:d]}" />
     </div>
 
     <div class="tab-pane" id="ds">
-      <g:render template="/apptemplates/dstab" model="${[d:d]}" />
+      <g:render template="/apptemplates/secondTemplates/dstab" model="${[d:d]}" />
     </div>
 
     <div class="tab-pane" id="people">
@@ -267,7 +267,7 @@
 		</dt>
 		<dd>
 		  <!-- this bit could be better  -->
-		  <g:render template="/apptemplates/componentPerson"
+		  <g:render template="/apptemplates/secondTemplates/componentPerson"
 				    model="${[d:d, property:'people', cols:[[expr:'person.name',colhead:'Name', action:'link-person'],
 						                                    [expr:'role.value', colhead: 'Role']], targetClass:'org.gokb.cred.Person',direction:'in']}" />
 		</dd>
@@ -281,7 +281,7 @@
 		</dt>
 		<dd>
 		  <!-- this bit could be better  -->
-		  <g:render template="/apptemplates/componentSubject"
+		  <g:render template="/apptemplates/secondTemplates/componentSubject"
 				    model="${[d:d, property:'subjects', cols:[[expr:'subject.name',colhead:'Subject Heading',action:'link-subject'],
 						                                      [expr:'subject.clsmrk', colhead: 'Classification']],targetClass:'org.gokb.cred.Subject',direction:'in']}" />
 		</dd>
@@ -289,7 +289,7 @@
 	</div>
 
   </div>
-  <g:render template="/apptemplates/componentStatus"
+  <g:render template="/apptemplates/secondTemplates/componentStatus"
     model="${[d:displayobj, rd:refdata_properties, dtype:'KBComponent']}" />
 </div>
 

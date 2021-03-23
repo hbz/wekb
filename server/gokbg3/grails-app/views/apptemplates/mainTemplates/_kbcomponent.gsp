@@ -46,7 +46,7 @@
 				</ul>
 			</dd>
 		</g:if>
-		<g:render template="/apptemplates/refdataprops"
+		<g:render template="/apptemplates/secondTemplates/refdataprops"
 			model="${[d:(d), rd:(rd), dtype:(dtype)]}" />
 	</g:if>
 </dl>

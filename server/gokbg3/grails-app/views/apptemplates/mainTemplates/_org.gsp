@@ -155,7 +155,7 @@
               <gokb:annotatedLabel owner="${d}" property="ids">Identifiers</gokb:annotatedLabel>
             </dt>
             <dd>
-              <g:render template="/apptemplates/combosByType"
+              <g:render template="/apptemplates/secondTemplates/combosByType"
                 model="${[d:d, property:'ids', fragment:'identifiers', cols:[
                           [expr:'toComponent.namespace.value', colhead:'Namespace'],
                           [expr:'toComponent.value', colhead:'ID', action:'link']]]}" />
@@ -163,7 +163,7 @@
                 <h4>
                   <gokb:annotatedLabel owner="${d}" property="addIdentifier">Add new Identifier</gokb:annotatedLabel>
                 </h4>
-                <g:render template="/apptemplates/addIdentifier" model="${[d:d, hash:'#identifiers']}"/>
+                <g:render template="/apptemplates/secondTemplates/addIdentifier" model="${[d:d, hash:'#identifiers']}"/>
               </g:if>
             </dd>
           </dl>
@@ -255,7 +255,7 @@
               <gokb:annotatedLabel owner="${d}" property="addprops">Additional Properties</gokb:annotatedLabel>
             </dt>
             <dd>
-              <g:render template="/apptemplates/addprops" model="${[d:d]}" />
+              <g:render template="/apptemplates/secondTemplates/addprops" model="${[d:d]}" />
             </dd>
           </dl>
         </div>
@@ -266,7 +266,7 @@
               <gokb:annotatedLabel owner="${d}" property="reviewrequests">Review Requests</gokb:annotatedLabel>
             </dt>
             <dd>
-              <g:render template="/apptemplates/revreqtab" model="${[d:d]}" />
+              <g:render template="/apptemplates/secondTemplates/revreqtab" model="${[d:d]}" />
             </dd>
           </dl>
         </div>
@@ -277,7 +277,7 @@
                     <gokb:annotatedLabel owner="${d}" property="offices">Offices</gokb:annotatedLabel>
             </dt>
             <dd>
-              <g:render template="/apptemplates/comboList"
+              <g:render template="/apptemplates/secondTemplates/comboList"
                       model="${[d:d, property:'offices', noadd:true, cols:[[expr:'name',colhead:'Office Name', action:'link']],targetClass:'org.gokb.cred.Office',direction:'in',propagateDelete: 'true']}" />
 
               <g:if test="${d.isEditable()}">
@@ -352,7 +352,7 @@
               <gokb:annotatedLabel owner="${d}" property="licenses">Licenses</gokb:annotatedLabel>
             </dt>
             <dd>
-              <g:render template="/apptemplates/comboList"
+              <g:render template="/apptemplates/secondTemplates/comboList"
                         model="${[d:d, property:'heldLicenses', cols:[[expr:'name',colhead:'License Name']],targetClass:'org.gokb.cred.License']}" />
             </dd>
           </dl>
@@ -364,7 +364,7 @@
               <gokb:annotatedLabel owner="${d}" property="platforms">Platforms</gokb:annotatedLabel>
             </dt>
             <dd>
-              <g:render template="/apptemplates/comboList"
+              <g:render template="/apptemplates/secondTemplates/comboList"
                         model="${[d:d, property:'providedPlatforms', cols:[[expr:'name',colhead:'Platform Name',targetClass:'org.gokb.cred.Platform', action:'link'],[expr:'primaryUrl',colhead:'Primary URL',targetClass:'org.gokb.cred.Platform']]]}" />
             </dd>
           </dl>
@@ -384,14 +384,14 @@
               <gokb:annotatedLabel owner="${d}" property="packages">Packages</gokb:annotatedLabel>
             </dt>
             <dd>
-              <g:render template="/apptemplates/comboList"
+              <g:render template="/apptemplates/secondTemplates/comboList"
                         model="${[d:d, property:'providedPackages', cols:[[expr:'name',colhead:'Package Name', action:'link']],targetClass:'org.gokb.cred.Package']}" />
             </dd>
           </dl>
         </div>
     </div>
     <g:if test="${d.id}">
-      <g:render template="/apptemplates/componentStatus"
+      <g:render template="/apptemplates/secondTemplates/componentStatus"
                 model="${[d:displayobj, rd:refdata_properties, dtype:'KBComponent']}" />
     </g:if>
 </div>

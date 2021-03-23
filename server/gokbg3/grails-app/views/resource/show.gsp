@@ -4,7 +4,7 @@
     <meta name="layout" content="sb-admin"/>
     <title><g:message code="gokb.appname" default="we:kb"/>: ${displayobj.getNiceName() ?: 'Component'}
     <g:if test="${displayobj}">
-        &lt;${editable ? 'Editable' : (response.status == 403 ? 'Not Accessible' : 'Read Only')}&gt;
+        &lt;${editableDisplayObjc ? 'Editable' : (response.status == 403 ? 'Not Accessible' : 'Read Only')}&gt;
         &lt;${displayobj.isCreatable() ? 'Creatable' : 'Not Creatable'}&gt;
     </g:if>
     <g:else>
@@ -23,7 +23,7 @@
                     ${displayobj.getNiceName() ?: 'Component'} : ${displayobj.id}
                     <g:if test="${response.status != 403}">
                         <g:if test="${displayobj.respondsTo('getDisplayName') && displayobj.getDisplayName()}">- <strong>${displayobj.getDisplayName()}</strong></g:if>
-                        <g:if test="${!editable}"><small><i>&lt;Read only&gt;</i></small></g:if>
+                        <g:if test="${!editableDisplayObjc}"><small><i>&lt;Read only&gt;</i></small></g:if>
                     </g:if>
                     <g:else>
                         <small><i>&lt;Not Accessible&gt;</i></small>
@@ -70,7 +70,7 @@
         </g:if>
         <g:elseif test="${displayobj != null}">
             <div class="col-xs-3 pull-right well" style="min-width:320px;">
-                <g:if test="${!((request.curator != null ? request.curator.size() > 0 : true) || (params.curationOverride == "true" && request.user.isAdmin()))}">
+                <g:if test="${!((request.curator != null ? request.curator.size() > 0 : true))}">
                     <div class="alert alert-info" style="font-weight:bold;">
                         <h4>Info</h4>
 
@@ -83,18 +83,30 @@
                             <p>As an admin you can still edit, but please contact a curator before making major changes.</p>
 
                             <p>
-                                <g:link class="btn btn-danger"
-                                        controller="${params.controller}"
-                                        action="${params.action}"
-                                        id="${displayobj.className}:${displayobj.id}"
-                                        params="${(request.param ?: [:]) + ["curationOverride": true]}">
-                                    Enable admin override
-                                </g:link>
+                                <g:if test="${params.curationOverride == 'true'}">
+                                    <g:link class="btn btn-success"
+                                            controller="${params.controller}"
+                                            action="${params.action}"
+                                            id="${displayobj.className}:${displayobj.id}"
+                                            params="${(request.param ?: [:])}">
+                                        Disable admin override
+                                    </g:link>
+                                </g:if>
+                                <g:else>
+                                    <g:link class="btn btn-danger"
+                                            controller="${params.controller}"
+                                            action="${params.action}"
+                                            id="${displayobj.className}:${displayobj.id}"
+                                            params="${(request.param ?: [:]) + ["curationOverride": true]}">
+                                        Enable admin override
+                                    </g:link>
+                                </g:else>
                             </p>
                         </div>
                     </sec:ifAnyGranted>
                 </g:if>
-                <g:elseif test="${displayobj.respondsTo('availableActions')}">
+
+                <g:if test="${displayobj.respondsTo('availableActions') && editableDisplayObjc}">
 
                     <g:form controller="workflow" action="action" method="post" class='action-form'>
                         <h4>Available actions</h4>
@@ -116,7 +128,7 @@
                             </span>
                         </div>
                     </g:form>
-                </g:elseif>
+                </g:if>
 
 
                 <g:if test="${displayobj.respondsTo('getCuratoryGroups')}">
@@ -124,8 +136,8 @@
                         <h4>Curatory Groups</h4>
 
                         <div style="background-color:#ffffff">
-                            <g:render template="/apptemplates/curatory_groups"
-                                      model="${[d: displayobj, editable: false]}"/>
+                            <g:render template="/apptemplates/secondTemplates/curatory_groups"
+                                      model="${[d: displayobj]}"/>
                         </div>
                     </div>
                 </g:if>
@@ -134,7 +146,7 @@
             <g:if test="${displaytemplate != null}">
                 <!-- Using display template ${displaytemplate.rendername} -->
                 <g:if test="${displaytemplate.type == 'staticgsp'}">
-                    <g:render template="/apptemplates/${displaytemplate.rendername}"
+                    <g:render template="/apptemplates/mainTemplates/${displaytemplate.rendername}"
                               model="${[d: displayobj, rd: refdata_properties, dtype: displayobjclassname_short]}"/>
                 </g:if>
             </g:if>
@@ -146,7 +158,7 @@
     </div>
 </div>
 
-<g:render template="/apptemplates/messages"
+<g:render template="/apptemplates/secondTemplates/messages"
           model="${["preMessage": preMsg]}"/>
 
 <div id="infoModal" class="qmodal modal fade modal-wide" role="dialog">

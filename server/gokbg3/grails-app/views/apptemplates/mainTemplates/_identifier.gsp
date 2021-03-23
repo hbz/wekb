@@ -7,7 +7,7 @@
 
   <dt> <gokb:annotatedLabel owner="${d}" property="identifiedComponents">Identified Components</gokb:annotatedLabel> </dt>
   <dd>
-    <g:render template="/apptemplates/combosByType"
+    <g:render template="/apptemplates/secondTemplates/combosByType"
       model="${[d:d, property:'identifiedComponents', combo_status: null, cols:[
                 [expr:'fromComponent.name', colhead:'Name', action:'link'],
                 [expr:'fromComponent.status.value', colhead: 'Status']]]}" />
