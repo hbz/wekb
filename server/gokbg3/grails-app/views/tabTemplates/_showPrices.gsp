@@ -1,4 +1,4 @@
-<%@ page import="de.wekb.helper.RCConstants; " %>
+<%@ page import="de.wekb.helper.RCConstants " %>
 <g:set var="editable" value="${d.isEditable()}"/>
 <div class="tab-pane" id="prices">
     <g:if test="${d.id != null}">

@@ -1,4 +1,4 @@
-<%@ page import="de.wekb.helper.RCConstants;" %>
+<%@ page import="de.wekb.helper.RCConstants" %>
 <dl class="dl-horizontal">
 
   <dt><gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel></dt>

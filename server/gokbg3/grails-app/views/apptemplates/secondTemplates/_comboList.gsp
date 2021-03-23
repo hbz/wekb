@@ -1,4 +1,4 @@
-<%@ page import="de.wekb.helper.RCConstants; " %>
+<%@ page import="de.wekb.helper.RCConstants"%>
 <g:set var="ctxoid" value="${org.gokb.cred.KBComponent.deproxy(d).class.name}:${d.id}"/>
 
 <table class="table table-striped table-bordered">
