@@ -462,7 +462,7 @@ class TitleInstancePackagePlatform extends KBComponent {
     }
 
     if (tipp_dto.publicationType) {
-      RefdataValue[] pubTypes = RefdataCategory.lookup("${RCConstants.TIPP_PUBLICATION_TYPE}")
+      RefdataValue[] pubTypes = RefdataCategory.lookup(RCConstants.TIPP_PUBLICATION_TYPE)
       if (!pubTypes*.value.contains(tipp_dto.publicationType))
         errors.put('publicationType', [message: "unknown", baddata: tipp_dto.remove('publicationType')])
     }
