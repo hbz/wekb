@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <dl class="dl-horizontal">
   <dt> <gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel> </dt>
   <dd> <gokb:xEditable class="ipe" owner="${d}" field="name" /> </dd>
@@ -13,9 +14,9 @@
     <div class="tab-pane active" id="details">
       <dl class="dl-horizontal">
         <dt> <gokb:annotatedLabel owner="${d}" property="status">Status</gokb:annotatedLabel> </dt>
-        <dd> <gokb:xEditableRefData owner="${d}" field="status" config='KBComponent.Status' /> </dd>
+        <dd> <gokb:xEditableRefData owner="${d}" field="status" config="${RCConstants.KBCOMPONENT_STATUS}" /> </dd>
         <dt> <gokb:annotatedLabel owner="${d}" property="canEdit">Editable</gokb:annotatedLabel> </dt>
-        <dd> <gokb:xEditableRefData owner="${d}" field="canEdit" config='YN' /> </dd>
+        <dd> <gokb:xEditableRefData owner="${d}" field="canEdit" config="${RCConstants.YN}" /> </dd>
         <dt> <gokb:annotatedLabel owner="${d}" property="guid">GUID</gokb:annotatedLabel> </dt>
         <dd> ${d.guid} </dd>
         <dt> <gokb:annotatedLabel owner="${d}" property="md5">MD5</gokb:annotatedLabel> </dt>

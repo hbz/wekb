@@ -1,5 +1,6 @@
 package org.gokb
 
+import de.wekb.helper.RCConstants
 import org.gokb.cred.*
 
 import com.k_int.ClassUtils
@@ -29,7 +30,7 @@ class TitleLookupService {
     // Get the class 1 identifier namespaces.
     Set<String> class_one_ids = grailsApplication.config.identifiers.class_ones
     def xcheck = grailsApplication.config.identifiers.cross_checks
-    RefdataValue status_deleted = RefdataCategory.lookup(Combo.RD_STATUS, Combo.STATUS_DELETED)
+    RefdataValue status_deleted = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_DELETED)
 
     // Return the list of class 1 identifiers we have found or created, as well as the
     // list of matches
@@ -375,7 +376,7 @@ class TitleLookupService {
         log.debug("Title class one identifier lookup yielded ${matches.size()} matches - ${matches}.")
         def all_matched = []
         def partial = []
-        RefdataValue status_deleted = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Deleted')
+        RefdataValue status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
 
         matches.each { mti ->
 
@@ -599,7 +600,7 @@ class TitleLookupService {
                   review: "'${metadata.title}' added as a variant of '${the_title.name}'.",
                   cause: "Title was matched via secondary id, but had a different name.",
                   additionalInfo: additionalInfo,
-                  type: RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'Name Mismatch')
+                  type: RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Name Mismatch')
                 ]
               }
 
@@ -648,7 +649,7 @@ class TitleLookupService {
                 review:  "New TI created.",
                 cause:  "No matched components via IDs, but a title with a similar name already exists.",
                 additionalInfo: additionalInfo,
-                type: RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'Name Similarity')
+                type: RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Name Similarity')
               ]
             }
           }
@@ -673,7 +674,7 @@ class TitleLookupService {
             review:  "Identifier type mismatch.",
             cause:  "Ingest file ${data['suppliedNS']} matched an existing ${data['foundNS']}.",
             additionalInfo: additionalInfo,
-            type: RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'Namespace Mismatch')
+            type: RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Namespace Mismatch')
           ]
         }
 
@@ -708,7 +709,7 @@ class TitleLookupService {
             log.debug("Found new Title ${metadata.title} for previously unknown title ${matches[0]} (${matches[0].name})")
             the_title = matches[0]
             the_title.name = metadata.title
-            the_title.status = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Current')
+            the_title.status = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current')
           }
           else {
             if (matches[0].name.equals(metadata.title) || matches[0].normname?.equals(KBComponent.generateNormname(metadata.title))) {
@@ -746,7 +747,7 @@ class TitleLookupService {
                   review: "Identifier mismatch",
                   cause: "Title ${the_title} matched, but ingest identifiers ${id_mm} differ from existing ones in the same namespaces.",
                   additionalInfo: additionalInfo,
-                  type: RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'Minor Identifier Mismatch')
+                  type: RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Minor Identifier Mismatch')
                 ]
               }
             }
@@ -806,7 +807,7 @@ class TitleLookupService {
                   review: "New TI created.",
                   cause: "TitleInstance ${matches[0].id} ${matches[0].name ? '(' + matches[0].name + ')' : ''} was matched on one identifier, but at least one other ingest identifier differs from existing ones in the same namespace.",
                   additionalInfo: additionalInfo,
-                  type: RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'Major Identifier Mismatch')
+                  type: RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Major Identifier Mismatch')
                 ]
               }
               else {
@@ -822,7 +823,7 @@ class TitleLookupService {
         // Multiple matches.
         log.debug("Title class one identifier lookup yielded ${matches.size()} matches - ${matches}.")
         def all_matched = []
-        RefdataValue status_deleted = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Deleted')
+        RefdataValue status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
 
         matches.each { mti ->
 
@@ -885,7 +886,7 @@ class TitleLookupService {
               review: "New TI created.",
               cause: "Multiple TitleInstances were matched on one identifier, but none matched for all given IDs.",
               additionalInfo: additionalInfo,
-              type: RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'Multiple Matches')
+              type: RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Multiple Matches')
             ]
 
             break;
@@ -936,7 +937,7 @@ class TitleLookupService {
                 review: "Check titles for duplicates.",
                 cause: "Multiple titles were matched on all identifiers.",
                 additionalInfo: additionalInfo,
-                type: RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'Ambiguous Matches')
+                type: RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Ambiguous Matches')
               ]
 
             }
@@ -952,7 +953,7 @@ class TitleLookupService {
         // addIdentifiers(results.ids, the_title)
         // addPublisher(metadata.publisher_name, the_title)
         if (the_title.name.startsWith("Unknown Title")) {
-          the_title.status = RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, 'Expected')
+          the_title.status = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Expected')
         }
         log.debug("${the_title.ids}")
         if (title_created) {
@@ -990,7 +991,7 @@ class TitleLookupService {
               user,
               project,
               (additionalInfo as JSON).toString(),
-              RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'Type Mismatch')
+              RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Type Mismatch')
           )
         }
       }
@@ -1007,7 +1008,7 @@ class TitleLookupService {
       log.debug("Add publisher \"${publisher_name}\"")
       Org publisher = Org.findByName(publisher_name)
       def norm_pub_name = Org.generateNormname(publisher_name);
-      def status_deleted = RefdataCategory.lookup("KBComponent.Status", "Deleted")
+      def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, "Deleted")
 
       if (!publisher) {
         // Lookup using norm name.
@@ -1062,7 +1063,7 @@ class TitleLookupService {
           }
 
           def norm_pub_name = KBComponent.generateNormname(pub_to_add.name)
-          def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+          def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
 
           if (!publisher) {
             publisher = Org.findByNormname(norm_pub_name)
@@ -1102,12 +1103,12 @@ class TitleLookupService {
             // Only add if we havn't found anything.
             if (!found) {
               log.debug("Adding new combo for publisher ${publisher} (${propName}) to title ${ti} (${tiPropName})")
-              RefdataValue type = RefdataCategory.lookupOrCreate(Combo.RD_TYPE, ti.getComboTypeValue('publisher'))
+              RefdataValue type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, ti.getComboTypeValue('publisher'))
               def combo = null
               if (propName == "toComponent") {
                 combo = new Combo(
                     type: (type),
-                    status: pub_to_add.status ? RefdataCategory.lookupOrCreate(Combo.RD_STATUS, pub_to_add.status) : DomainClassExtender.getComboStatusActive(),
+                    status: pub_to_add.status ? RefdataCategory.lookupOrCreate(RCConstants.COMBO_STATUS, pub_to_add.status) : DomainClassExtender.getComboStatusActive(),
                     startDate: pub_add_sd,
                     endDate: pub_add_ed,
                     toComponent: publisher,
@@ -1117,7 +1118,7 @@ class TitleLookupService {
               else {
                 combo = new Combo(
                     type: (type),
-                    status: pub_to_add.status ? RefdataCategory.lookupOrCreate(Combo.RD_STATUS, pub_to_add.status) : DomainClassExtender.getComboStatusActive(),
+                    status: pub_to_add.status ? RefdataCategory.lookupOrCreate(RCConstants.COMBO_STATUS, pub_to_add.status) : DomainClassExtender.getComboStatusActive(),
                     startDate: pub_add_sd,
                     endDate: pub_add_ed,
                     fromComponent: publisher,
@@ -1180,7 +1181,7 @@ class TitleLookupService {
   private TitleInstance attemptComponentMatch(def metadata, String className) {
     def t = null;
     def descriminator = null;
-    def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+    def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
     Class cl = null;
 
     if (className) {
@@ -1340,8 +1341,8 @@ class TitleLookupService {
       Set<String> class_one_ids = grailsApplication.config.identifiers.class_ones
 
       def start_time = System.currentTimeMillis();
-      def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
-      def combo_id_type = RefdataCategory.lookup('Combo.Type', 'KBComponent.Ids')
+      def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
+      def combo_id_type = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'KBComponent.Ids')
 
       def bindvars = []
       StringWriter sw = new StringWriter()
@@ -1432,7 +1433,7 @@ class TitleLookupService {
 
   def getComponentsForIdentifier(identifier) {
 
-    def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+    def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
     // was identifier.identifiedComponents
     KBComponent.executeQuery('select DISTINCT c.fromComponent from Combo as c where c.toComponent = :id and c.type.value = :tp and c.fromComponent.status <> :del', [id: identifier, tp: 'KBComponent.Ids', del: status_deleted]);
   }

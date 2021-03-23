@@ -1,4 +1,6 @@
 package org.gokb.cred
+
+import de.wekb.helper.RCConstants
 import org.apache.commons.lang.builder.HashCodeBuilder
 class DataFile extends KBComponent {
 
@@ -52,7 +54,7 @@ class DataFile extends KBComponent {
   static def refdataFind(params) {
     def result = [];
     def ql = null;
-    def editable = RefdataCategory.lookupOrCreate('YN', 'Yes').save()
+    def editable = RefdataCategory.lookupOrCreate(RCConstants.YN, 'Yes').save()
 
     ql = DataFile.findAllByNameIlikeAndCanEdit("${params.q}%",editable,params)
     if ( ql ) {

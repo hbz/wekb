@@ -1,5 +1,6 @@
 package org.gokb
 
+import de.wekb.helper.RCConstants
 import org.gokb.cred.*;
 import grails.converters.JSON
 import groovy.time.TimeCategory
@@ -88,7 +89,7 @@ class FwkController {
       events = AuditLogEvent.executeQuery("select e from org.gokb.cred.AuditLogEvent as e where (e.className= :ocn and e.persistedObjectId= :oid) OR (e.persistedObjectId IN (:comboids) AND (e.propertyName = 'fromComponent' OR e.propertyName = 'toComponent') AND (e.newValue NOT LIKE :oidt OR e.newValue IS NULL) AND (e.oldValue NOT LIKE :oidt OR e.oldValue IS NULL)) order by id desc",qry_params,['max':max,'offset':offset]);
     }
     else {
-      def combo_rdc = RefdataCategory.findByLabel('Combo.Type')
+      def combo_rdc = RefdataCategory.findByLabel(RCConstants.COMBO_TYPE)
       def criteria = AuditLogEvent.createCriteria()
 
       events = criteria.list ('max':max, 'offset':offset) {

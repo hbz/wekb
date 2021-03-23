@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <g:set var="ctxoid" value="${org.gokb.cred.KBComponent.deproxy(d).class.name}:${d.id}"/>
 <g:set var="pstring" value="${property + '_status'}" />
 <g:set var="pstatus" value="${params[pstring] ?: (combo_status ?: 'Active')}" />
@@ -36,7 +37,7 @@
               <g:link controller="resource" action="show" id="${linkedoid}">${groovy.util.Eval.x(row, 'x.' + c.expr)}</g:link>
             </g:if>
             <g:elseif test="${c.action=='editRefData'}">
-              <gokb:xEditableRefData owner="${row}" field="${c.expr}" config='Combo.Status' />
+              <gokb:xEditableRefData owner="${row}" field="${c.expr}" config="${RCConstants.COMBO_STATUS}" />
             </g:elseif>
             <g:else>
               <span class="${row.status?.value == 'Deleted' ? 'text-deleted' : ''}" title="${row.status?.value == 'Deleted' ? 'This link has been marked as Deleted.' : ''}">
@@ -46,13 +47,13 @@
           </td>
         </g:each>
         <td>
-          <g:if test="${d.isEditable() && (d.respondsTo('curatoryGroups') ? (!d.curatoryGroups ? true : cur) : true) && !noaction}">
+          <g:if test="${d.isEditable() && (d.respondsTo('curatoryGroups') ? (!d.respondsTo('getCuratoryGroups') ? true : cur) : true) && !noaction}">
             <span>
               <g:if test="${row.status?.value == 'Deleted'}">
                 <g:link
                   controller='ajaxSupport'
                   action='genericSetRel'
-                  params="${['pk':'org.gokb.cred.Combo:'+row.id,'name':'status', 'fragment':fragment, value: 'org.gokb.cred.RefdataValue:' + org.gokb.cred.RefdataCategory.lookup('Combo.Status', 'Active').id ]}"
+                  params="${['pk':'org.gokb.cred.Combo:'+row.id,'name':'status', 'fragment':fragment, value: 'org.gokb.cred.RefdataValue:' + org.gokb.cred.RefdataCategory.lookup(RCConstants.COMBO_STATUS, 'Active').id ]}"
                   class="confirm-click btn-delete"
                   title="Reactivate deleted link"
                   data-confirm-message="Are you sure you wish to remove this ${row.toComponent.niceName}?" >Reactivate</g:link>

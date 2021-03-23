@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <g:set var="ctxoid" value="${org.gokb.cred.KBComponent.deproxy(d).class.name}:${d.id}"/>
 
 <table class="table table-striped table-bordered">
@@ -54,7 +55,7 @@
     <input type="hidden" name="__recip" value="${recip}"/>
 	<input type="hidden" name="__refdataName" value="role" />
     
-    <input type="hidden" name="type" value="${org.gokb.cred.RefdataCategory.getOID('Combo.Type',d.getComboTypeValue(property))}"/>
+    <input type="hidden" name="type" value="${org.gokb.cred.RefdataCategory.getOID(RCConstants.COMBO_TYPE,d.getComboTypeValue(property))}"/>
     Add Person : <gokb:simpleReferenceTypedown class="form-control" name="${comboprop}" baseClass="${targetClass}"/>
     In Role : <gokb:simpleReferenceTypedown class="form-control" name="__refdataValue" baseClass="org.gokb.cred.RefdataValue" filter1="SPR"/>
     <button type="submit" class="btn btn-default btn-primary btn-sm ">Add</button>

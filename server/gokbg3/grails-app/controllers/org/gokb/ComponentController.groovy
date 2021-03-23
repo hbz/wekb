@@ -1,5 +1,6 @@
 package org.gokb
 
+import de.wekb.helper.RCConstants
 import org.gokb.cred.*
 import org.springframework.security.access.annotation.Secured;
 import grails.converters.JSON
@@ -34,9 +35,9 @@ class ComponentController {
         KBComponent.withNewSession { session ->
           log.debug("fetching results for ${ns} ..")
 
-          RefdataValue status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
-          RefdataValue combo_type = RefdataCategory.lookup('Combo.Type', 'KBComponent.Ids')
-          RefdataValue combo_status = RefdataCategory.lookup('Combo.Status', 'Active')
+          RefdataValue status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
+          RefdataValue combo_type = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'KBComponent.Ids')
+          RefdataValue combo_status = RefdataCategory.lookup(RCConstants.COMBO_STATUS, 'Active')
 
           if (params.ctype == 'st') {
 

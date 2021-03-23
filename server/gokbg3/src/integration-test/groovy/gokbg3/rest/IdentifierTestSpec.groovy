@@ -1,5 +1,6 @@
 package gokbg3.rest
 
+import de.wekb.helper.RCConstants
 import grails.plugins.rest.client.RestBuilder
 import grails.plugins.rest.client.RestResponse
 import grails.testing.mixin.integration.Integration
@@ -31,19 +32,19 @@ class IdentifierTestSpec extends AbstractAuthSpec {
       value: 'test_NS_book',
       name: 'name_NS_book',
       targetType:
-        RefdataCategory.lookup('IdentifierNamespace.TargetType', 'Book')
+        RefdataCategory.lookup(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE, 'Book')
     ).save(flush:true)
     ns_typeOther = IdentifierNamespace.findByValue('test_NS_other')
       ?: new IdentifierNamespace(
       value: 'test_NS_other',
       name: 'name_NS_other',
-      targetType: RefdataCategory.lookup('IdentifierNamespace.TargetType', 'Other')
+      targetType: RefdataCategory.lookup(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE, 'Other')
     ).save(flush:true)
     ns_typeTitle = IdentifierNamespace.findByValue('test_NS_title')
       ?: new IdentifierNamespace(
       value: 'test_NS_title',
       name: 'name_NS_title',
-      targetType: RefdataCategory.lookup('IdentifierNamespace.TargetType', 'Title')
+      targetType: RefdataCategory.lookup(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE, 'Title')
     ).save(flush:true)
     ns_eissn = IdentifierNamespace.findByValue('eissn')
     test_id = Identifier.findByValue("1234-4567") ?: new Identifier(value: "1234-4567", namespace: ns_eissn).save(flush:true)

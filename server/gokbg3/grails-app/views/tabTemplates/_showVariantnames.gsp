@@ -1,4 +1,5 @@
-<g:set var="editable" value="${ editableDisplayObjc && ((d.curatoryGroups ? (request.curator != null && request.curator.size() > 0) : true) || (params.curationOverride == "true" && request.user.isAdmin())) }" />
+<%@ page import="de.wekb.helper.RCConstants" %>
+<g:set var="editable" value="${ editableDisplayObjc && ((d.respondsTo('getCuratoryGroups') ? (request.curator != null && request.curator.size() > 0) : true) || (params.curationOverride == "true" && request.user.isAdmin())) }" />
 <div class="tab-pane" id="altnames">
   <g:if test="${d.id != null}">
     <dl>
@@ -24,9 +25,9 @@
                 <td>
                   ${v.variantName}
                 </td>
-                <td><gokb:xEditableRefData owner="${v}" field="status" config='KBComponentVariantName.Status' overWriteEditable="${editable}"/></td>
-                <td><gokb:xEditableRefData owner="${v}" field="variantType" config='KBComponentVariantName.VariantType' overWriteEditable="${editable}"/></td>
-                <td><gokb:xEditableRefData owner="${v}" field="locale" config='KBComponentVariantName.Locale' overWriteEditable="${editable}"/></td>
+                <td><gokb:xEditableRefData owner="${v}" field="status" config="${RCConstants.KBCOMPONENT_VARIANTNAME_STATUS}" overWriteEditable="${editable}"/></td>
+                <td><gokb:xEditableRefData owner="${v}" field="variantType" config="${RCConstants.KBCOMPONENT_VARIANTNAME_VARIANT_TYPE}" overWriteEditable="${editable}"/></td>
+                <td><gokb:xEditableRefData owner="${v}" field="locale" config="${RCConstants.KBCOMPONENT_VARIANTNAME_LOCAL}" overWriteEditable="${editable}"/></td>
                 <td>
                   <g:if test="${ editable && showActions }">
                               <g:link controller="ajaxSupport" action="authorizeVariant" id="${v.id}">Make Authorized</g:link>,
@@ -60,13 +61,13 @@
               <dd>
                 <gokb:simpleReferenceTypedown class="form-control" name="locale"
                   baseClass="org.gokb.cred.RefdataValue"
-                  filter1="KBComponentVariantName.Locale" />
+                  filter1="${RCConstants.KBCOMPONENT_VARIANTNAME_LOCAL}" />
               </dd>
               <dt class="dt-label">Variant Type</dt>
               <dd>
                 <gokb:simpleReferenceTypedown class="form-control" name="variantType"
                   baseClass="org.gokb.cred.RefdataValue"
-                  filter1="KBComponentVariantName.VariantType" />
+                  filter1="${RCConstants.KBCOMPONENT_VARIANTNAME_VARIANT_TYPE}" />
               </dd>
               <dt></dt>
               <dd>

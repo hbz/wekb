@@ -1,6 +1,6 @@
 package org.gokb.rest
 
-
+import de.wekb.helper.RCConstants
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
 import grails.plugin.springsecurity.annotation.Secured
@@ -85,14 +85,14 @@ class ReviewsController {
           def new_status = null
 
           if (reqBody.status instanceof Integer) {
-            def rdc = RefdataCategory.findByDesc("ReviewRequest.Status")
+            def rdc = RefdataCategory.findByDesc(RCConstants.REVIEW_REQUEST_STATUS)
             def rdv = RefdataValue.get(reqBody.status)
 
             if (rdv?.owner == rdc) {
               new_status = rdv
             }
           } else {
-            new_status = RefdataCategory.lookup("ReviewRequest.Status", reqBody.status)
+            new_status = RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STATUS, reqBody.status)
           }
 
           if (new_status) {
@@ -107,14 +107,14 @@ class ReviewsController {
           def rdv_desc = null
 
           if (reqBody.stdDesc instanceof Integer) {
-            def rdc = RefdataCategory.findByDesc("ReviewRequest.StdDesc")
+            def rdc = RefdataCategory.findByDesc(RCConstants.REVIEW_REQUEST_STD_DESC)
             def rdv = RefdataValue.get(reqBody.stdDesc)
 
             if (rdv?.owner == rdc) {
               rdv_desc = rdv
             }
           } else {
-            rdv_desc = RefdataCategory.lookup("ReviewRequest.StdDesc", reqBody.stdDesc)
+            rdv_desc = RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STD_DESC, reqBody.stdDesc)
           }
 
           if (rdv_desc) {
@@ -263,7 +263,7 @@ class ReviewsController {
       if (reqBody.stdDesc || reqBody.type) {
         def desc = null
         def reqDesc = reqBody?.stdDesc ?: reqBody.type
-        def cat = RefdataCategory.findByLabel('ReviewRequest.StdDesc')
+        def cat = RefdataCategory.findByLabel(RCConstants.REVIEW_REQUEST_STD_DESC)
 
         if (reqDesc instanceof Integer) {
           def rdv = RefdataValue.get(reqBody.stdDesc)
@@ -273,7 +273,7 @@ class ReviewsController {
           }
         }
         else {
-          desc = RefdataCategory.lookup('ReviewRequest.StdDesc', reqDesc)
+          desc = RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STD_DESC, reqDesc)
         }
 
         if (desc) {
@@ -326,7 +326,7 @@ class ReviewsController {
       def curator = isUserCurator(obj, user)
 
       if ( curator || user.isAdmin() ) {
-        obj.status = RefdataCategory.lookup('ReviewRequest.Status','Deleted')
+        obj.status = RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STATUS,'Deleted')
       }
       else {
         result.result = 'ERROR'

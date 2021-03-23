@@ -1,4 +1,5 @@
-     <dl class="dl-horizontal">
+<%@ page import="de.wekb.helper.RCConstants" %>
+<dl class="dl-horizontal">
         <dt>
           <gokb:annotatedLabel owner="${d}" property="id">Internal ID</gokb:annotatedLabel>
         </dt>
@@ -63,7 +64,7 @@
         </dt>
         <dd>
           <gokb:xEditableRefData owner="${d}" field="status"
-            config='ReviewRequest.Status' />
+            config="${RCConstants.REVIEW_REQUEST_STATUS}" />
         </dd>
 
         <dt>

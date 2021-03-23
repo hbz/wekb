@@ -1,5 +1,7 @@
 package org.gokb.cred
 
+import de.wekb.helper.RCConstants
+
 import javax.persistence.Transient
 import groovy.util.logging.*
 
@@ -46,7 +48,7 @@ class TitleInstancePlatform extends KBComponent {
   @Transient
   public static def ensure(title, platform, url) {
     if ( ( title != null ) && ( platform != null ) && ( url?.trim()?.length() > 0 ) ) {
-      def status_current = RefdataCategory.lookup('KBComponent.Status', 'Current')
+      def status_current = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Current')
       def r = TitleInstancePlatform.executeQuery('''select tipl
               from TitleInstancePlatform as tipl,
               Combo as titleCombo,
@@ -61,10 +63,10 @@ class TitleInstancePlatform extends KBComponent {
       if ( r.size() == 0 ) {
         def tipl = new TitleInstancePlatform(url:url).save(flush:true, failOnError:true)
 
-        def plt_combo_type = RefdataCategory.lookup('Combo.Type', 'Platform.HostedTitles')
+        def plt_combo_type = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Platform.HostedTitles')
         def plt_combo = new Combo(toComponent:tipl, fromComponent:platform, type:plt_combo_type).save(flush:true, failOnError:true);
 
-        def ti_combo_type = RefdataCategory.lookup('Combo.Type', 'TitleInstance.Tipls')
+        def ti_combo_type = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'TitleInstance.Tipls')
         def ti_combo = new Combo(toComponent:tipl, fromComponent:title, type:ti_combo_type).save(flush:true, failOnError:true);
 
         return tipl

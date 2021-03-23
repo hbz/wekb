@@ -1,5 +1,6 @@
 package org.gokb
 
+import de.wekb.helper.RCConstants
 import grails.converters.*
 import org.springframework.security.acls.model.NotFoundException
 import org.springframework.security.access.annotation.Secured;
@@ -47,8 +48,8 @@ class PublicController {
       }
       
       if (result.pkg) {
-        def tipp_combo_rdv = RefdataCategory.lookupOrCreate('Combo.Type','Package.Tipps')
-        def status_current = RefdataCategory.lookupOrCreate('KBComponent.Status','Current')
+        def tipp_combo_rdv = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE,'Package.Tipps')
+        def status_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS,'Current')
         
         result.pkgId = result.pkg.id
         result.pkgName = result.pkg.name
@@ -106,11 +107,11 @@ class PublicController {
     result =  ESSearchService.search(mutableParams)
 
 
-    def query_params = [forbiddenStatus : RefdataCategory.lookup(KBComponent.RD_STATUS, KBComponent.STATUS_DELETED)]
+    def query_params = [forbiddenStatus : RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED)]
 
-    List providerRoles = [RefdataCategory.lookupOrCreate('Org.Role', 'Content Provider'), RefdataCategory.lookupOrCreate('Org.Role', 'Platform Provider'), RefdataCategory.lookupOrCreate('Org.Role', 'Publisher')]
+    List providerRoles = [RefdataCategory.lookupOrCreate(RCConstants.ORG_MISSION, 'Content Provider'), RefdataCategory.lookupOrCreate(RCConstants.ORG_MISSION, 'Platform Provider'), RefdataCategory.lookupOrCreate(RCConstants.ORG_MISSION, 'Publisher')]
 
-    def query_params2 = [forbiddenStatus : RefdataCategory.lookup(KBComponent.RD_STATUS, KBComponent.STATUS_DELETED), roles: providerRoles]
+    def query_params2 = [forbiddenStatus : RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED), roles: providerRoles]
 
     result.componentsOfStatistic = ["Provider", "Package", "Platform", "CuratoryGroup", "TitleInstancePackagePlatform"]
 
@@ -178,8 +179,8 @@ class PublicController {
 
           // scroll(ScrollMode.FORWARD_ONLY)
           def session = sessionFactory.getCurrentSession()
-          def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
-          def combo_pkg_tipps = RefdataCategory.lookup('Combo.Type', 'Package.Tipps')
+          def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
+          def combo_pkg_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
           def query = session.createQuery("select tipp.id from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=:p and c.toComponent=tipp  and tipp.status <> :sd and c.type = :ct order by tipp.id")
           query.setReadOnly(true)
           query.setParameter('p',pkg.getId(), StandardBasicTypes.LONG)
@@ -271,8 +272,8 @@ class PublicController {
                      'Embargo	Coverage note	Host Platform URL	Format	Payment Type\n');
 
           def session = sessionFactory.getCurrentSession()
-          def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
-          def combo_pkg_tipps = RefdataCategory.lookup('Combo.Type', 'Package.Tipps')
+          def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
+          def combo_pkg_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
           def query = session.createQuery("select tipp.id from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=:p and c.toComponent=tipp  and tipp.status <> :sd and c.type = :ct order by tipp.id")
           query.setReadOnly(true)
           query.setParameter('p',pkg.getId(), StandardBasicTypes.LONG)

@@ -1,5 +1,6 @@
 package org.gokb
 
+import de.wekb.helper.RCConstants
 import grails.gorm.transactions.Transactional
 
 import org.gokb.cred.*
@@ -12,7 +13,7 @@ class OrgService {
 
   def restLookup(orgDTO, def user = null) {
     log.info("Upsert org with header ${orgDTO}");
-    def status_deleted = RefdataCategory.lookupOrCreate('KBComponent.Status','Deleted')
+    def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS,'Deleted')
     def result = [to_create:true]
     def normname = Org.generateNormname(orgDTO.name)
 
@@ -122,7 +123,7 @@ class OrgService {
 
   def upsert(orgDTO, def user = null) {
     log.info("Upsert org with header ${orgDTO}");
-    def status_deleted = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Deleted')
+    def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
     def org_normname = Org.generateNormname(orgDTO.name)
 
     log.debug("Checking by normname ${org_normname} ..")

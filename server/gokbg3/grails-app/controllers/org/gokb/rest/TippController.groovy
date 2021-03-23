@@ -1,5 +1,6 @@
 package org.gokb.rest
 
+import de.wekb.helper.RCConstants
 import grails.converters.*
 import grails.core.GrailsClass
 import grails.gorm.transactions.*
@@ -270,7 +271,7 @@ class TippController {
       changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'coverageNote', c.coverageNote)
       changed |= com.k_int.ClassUtils.setDateIfPresent(parsedStart, tipp, 'startDate')
       changed |= com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tipp, 'endDate')
-      changed |= com.k_int.ClassUtils.setRefdataIfPresent(c.coverageDepth, tipp, 'coverageDepth', 'TitleInstancePackagePlatform.CoverageDepth')
+      changed |= com.k_int.ClassUtils.setRefdataIfPresent(c.coverageDepth, tipp, 'coverageDepth', RCConstants.TIPP_COVERAGE_DEPTH)
 
       def cs_match = false
       def startAsDate = (parsedStart ? Date.from(parsedStart.atZone(ZoneId.systemDefault()).toInstant()) : null)
@@ -306,7 +307,7 @@ class TippController {
         def cov_depth = null
 
         if (c.coverageDepth instanceof String) {
-          cov_depth = RefdataCategory.lookup('TIPPCoverageStatement.CoverageDepth', c.coverageDepth)
+          cov_depth = RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, c.coverageDepth)
         }
         else if (c.coverageDepth instanceof Integer) {
           cov_depth = RefdataValue.get(c.coverageDepth)
@@ -316,12 +317,12 @@ class TippController {
             cov_depth = RefdataValue.get(c.coverageDepth.id)
           }
           else {
-            cov_depth = RefdataCategory.lookup('TIPPCoverageStatement.CoverageDepth', (c.coverageDepth.name ?: c.coverageDepth.value))
+            cov_depth = RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, (c.coverageDepth.name ?: c.coverageDepth.value))
           }
         }
 
         if (!cov_depth) {
-          cov_depth = RefdataCategory.lookup('TIPPCoverageStatement.CoverageDepth', "Fulltext")
+          cov_depth = RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, "Fulltext")
         }
 
         tipp.addToCoverageStatements('startVolume': c.startVolume,  \

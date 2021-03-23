@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <div>
   <table class="table table-bordered">
     <thead>
@@ -18,7 +19,7 @@
             <g:link controller="resource" action="show" id="org.gokb.cred.ReviewRequest:${rr.id}">${rr.reviewRequest}</g:link>
           </td>
           <td>
-            <gokb:xEditableRefData owner="${rr}" field="status" config='ReviewRequest.Status' />
+            <gokb:xEditableRefData owner="${rr}" field="status" config="${RCConstants.REVIEW_REQUEST_STATUS}" />
           </td>
           <td>
             ${rr.dateCreated}

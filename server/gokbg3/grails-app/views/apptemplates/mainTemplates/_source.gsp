@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <g:render template="/apptemplates/mainTemplates/kbcomponent"
 	model="${[d:displayobj, rd:refdata_properties, dtype:'KBComponent']}" />
 
@@ -17,7 +18,7 @@
 			<gokb:annotatedLabel owner="${d}" property="frequency">Frequency</gokb:annotatedLabel>
 		</dt>
 		<dd>
-			<gokb:xEditableRefData owner="${d}" field="frequency" config='Source.Frequency' />
+			<gokb:xEditableRefData owner="${d}" field="frequency" config="${RCConstants.SOURCE_FREQUENCY}" />
 		</dd>
 
 		<dt>
@@ -25,14 +26,14 @@
 		</dt>
 		<dd>
 			<gokb:xEditableRefData owner="${d}" field="defaultSupplyMethod"
-				config="Source.DataSupplyMethod" />
+				config="${RCConstants.SOURCE_DATA_SUPPLY_METHOD}" />
 		</dd>
 		<dt>
 			<gokb:annotatedLabel owner="${d}" property="defaultDataFormat">Default Data Format</gokb:annotatedLabel>
 		</dt>
 		<dd>
 			<gokb:xEditableRefData owner="${d}" field="defaultDataFormat"
-				config="Source.DataFormat" />
+				config="${RCConstants.SOURCE_DATA_FORMAT}" />
 		</dd>
 		<dt>
 			<gokb:annotatedLabel owner="${d}" property="responsibleParty">Responsible Party</gokb:annotatedLabel>

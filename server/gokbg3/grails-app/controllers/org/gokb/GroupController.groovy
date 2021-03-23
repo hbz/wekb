@@ -1,5 +1,6 @@
 package org.gokb
 
+import de.wekb.helper.RCConstants
 import org.springframework.security.access.annotation.Secured;
 import grails.util.GrailsNameUtils
 
@@ -43,8 +44,8 @@ class GroupController {
       def rr_sort= params.rr_sort ?: 'dateCreated'
       def rr_sort_order = params.rr_sort_order?:'asc'
 
-      def closedStat = RefdataCategory.lookupOrCreate('ReviewRequest.Status', 'Closed')
-      def delStat = RefdataCategory.lookupOrCreate('ReviewRequest.Status', 'Deleted')
+      def closedStat = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STATUS, 'Closed')
+      def delStat = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STATUS, 'Deleted')
       def cg_components = KBComponent.executeQuery("select c.id from KBComponent as c where exists ( select oc from c.outgoingCombos as oc where oc.toComponent.id = :group )",[group:result.group.id])
    
       log.debug("Got ${cg_components.size()} connected components")
@@ -66,7 +67,7 @@ class GroupController {
 
       def pkg_sort= params.pkg_sort?:'name'
       def pkg_sort_order = params.pkg_sort_order?:'asc'
-      def pkg_curgroup_rdv = RefdataCategory.lookup('Combo.Type', 'Package.CuratoryGroups')
+      def pkg_curgroup_rdv = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.CuratoryGroups')
 
       def cg_packages_hql = " from Package as p where exists ( select c from p.outgoingCombos as c where c.toComponent = :cg and c.type = :ct)"
 

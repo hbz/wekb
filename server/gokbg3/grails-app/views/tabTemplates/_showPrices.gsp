@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants; " %>
 <g:set var="editable" value="${d.isEditable()}"/>
 <div class="tab-pane" id="prices">
     <g:if test="${d.id != null}">
@@ -22,9 +23,9 @@
                     <tbody>
                     <g:each in="${d.prices}" var="somePrice">
                         <tr>
-                            <td><gokb:xEditableRefData owner="${somePrice}" field="priceType" config='Price.type'/></td>
+                            <td><gokb:xEditableRefData owner="${somePrice}" field="priceType" config="${RCConstants.PRICE_TYPE}"/></td>
                             <td><gokb:xEditable owner="${somePrice}" field="price"/></td>
-                            <td><gokb:xEditableRefData owner="${somePrice}" field="currency" config='Currency'/></td>
+                            <td><gokb:xEditableRefData owner="${somePrice}" field="currency" config="${RCConstants.CURRENCY}"/></td>
                             <td><gokb:xEditable owner="${somePrice}" field="startDate" type="date"/></td>
                             <td><gokb:xEditable owner="${somePrice}" field="endDate" type="date"/></td>
                             <td>
@@ -56,7 +57,7 @@
                                 <gokb:simpleReferenceTypedown class="form-control"
                                                            name="priceType"
                                                            baseClass="org.gokb.cred.RefdataValue"
-                                                           filter1="Price.type"/>
+                                                           filter1="${RCConstants.PRICE_TYPE}"/>
                             </dd>
                             <dt class="dt-label">Price</dt>
                             <dd>
@@ -66,7 +67,7 @@
                             <dd>
                                 <gokb:simpleReferenceTypedown class="form-control" name="currency"
                                                            baseClass="org.gokb.cred.RefdataValue"
-                                                           filter1="Currency"/>
+                                                           filter1="${RCConstants.CURRENCY}"/>
                             </dd>
                             <dt class="dt-label">Start Date</dt>
                             <dd>

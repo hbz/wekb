@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <g:set var="editable" value="${editableDisplayObjc}" />
   <dl class="dl-horizontal">
   <dt>
@@ -37,7 +38,7 @@
       </dt>
       <dd>
         <sec:ifAnyGranted roles="ROLE_SUPERUSER">
-          <gokb:xEditableRefData owner="${d}" field="status" config='KBComponent.Status' />
+          <gokb:xEditableRefData owner="${d}" field="status" config="${RCConstants.KBCOMPONENT_STATUS}" />
         </sec:ifAnyGranted>
         <sec:ifNotGranted roles="ROLE_SUPERUSER">
           ${d.status?.value ?: 'Not Set'}
@@ -58,22 +59,22 @@
     </g:if>
     <dt> <gokb:annotatedLabel owner="${d}" property="listStatus">List Status</gokb:annotatedLabel> </dt>
     <dd>
-      <gokb:xEditableRefData owner="${d}" field="listStatus" config='Package.ListStatus' />
+      <gokb:xEditableRefData owner="${d}" field="listStatus" config="${RCConstants.PACKAGE_LIST_STATUS}" />
     </dd>
-    <dt>
+    %{--<dt>
       <gokb:annotatedLabel owner="${d}" property="userListVerifier">List Verifier</gokb:annotatedLabel>
     </dt>
     <dd>
       <gokb:manyToOneReferenceTypedown owner="${d}" field="userListVerifier" baseClass="org.gokb.cred.User" >${d.userListVerifier?.displayName ?: d.userListVerifier?.username}</gokb:manyToOneReferenceTypedown>
     </dd>
     <dt> <gokb:annotatedLabel owner="${d}" property="listVerifierDate">List Verifier Date</gokb:annotatedLabel> </dt>
-    <dd> <gokb:xEditable class="ipe" owner="${d}" type="date" field="listVerifiedDate" /> </dd>
+    <dd> <gokb:xEditable class="ipe" owner="${d}" type="date" field="listVerifiedDate" /> </dd>--}%
 
     <dt> <gokb:annotatedLabel owner="${d}" property="lastUpdateComment">Last Update Comment</gokb:annotatedLabel> </dt>
     <dd> <gokb:xEditable class="ipe" owner="${d}" field="lastUpdateComment" /> </dd>
 
     <dt> <gokb:annotatedLabel owner="${d}" property="editStatus">Edit Status</gokb:annotatedLabel> </dt>
-    <dd> <gokb:xEditableRefData owner="${d}" field="editStatus" config='KBComponent.EditStatus' /> </dd>
+    <dd> <gokb:xEditableRefData owner="${d}" field="editStatus" config="${RCConstants.KBCOMPONENT_EDIT_STATUS}" /> </dd>
 
     <dt> <gokb:annotatedLabel owner="${d}" property="description">Description</gokb:annotatedLabel> </dt>
     <dd> <gokb:xEditable class="ipe" owner="${d}" field="description" /> </dd>
