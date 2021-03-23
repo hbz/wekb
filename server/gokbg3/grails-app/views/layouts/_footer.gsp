@@ -3,7 +3,7 @@
     <div class="container">
         <!-- Example row of columns -->
         <div class="row">
-            <div class="col-sm-3">
+            <div class="col-sm-4">
                 <p xmlns:dct="http://purl.org/dc/terms/" xmlns:vcard="http://www.w3.org/2001/vcard-rdf/3.0#">
                     <a rel="license"
                        href="http://creativecommons.org/publicdomain/zero/1.0/">
@@ -22,76 +22,78 @@
                         Germany</span>.
                 </p>
             </div>
-            <div class="col-sm-3">
-                <h2>Contact</h2>
-                <div class="ui inverted link list">
-                    <div class="item">
-                        <i class="fa fa-envelope-open fa-fw"></i><a class="content" href="mailto:laser@hbz-nrw.de">E-Mail Address</a>
-                    </div>
-                    <div class="item">
-                        <i class="fa fa-map-signs fa-fw"></i><a target="_blank" class="content" href="https://www.hbz-nrw.de/ueber-uns/kontakt/anreise">Location / Access</a>
-                    </div>
-                    <div class="item">
-                        <i class="fa fa-file  fa-fw"></i><a target="_blank" class="content" href="https://www.hbz-nrw.de/impressum">Imprint</a>
-                    </div>
-                    <div class="item">
-                        <i class="fa fa-lock  fa-fw"></i><a target="_blank" class="content" href="https://www.hbz-nrw.de/datenschutz">Pivacy Policy</a>
+             <div class="col-sm-8">
+                <div class="col-sm-4">
+                    <h2>Contact</h2>
+                    <div class="ui inverted link list">
+                        <div class="item">
+                            <i class="fa fa-envelope-open fa-fw"></i><a class="content" href="mailto:laser@hbz-nrw.de">E-Mail Address</a>
+                        </div>
+                        <div class="item">
+                            <i class="fa fa-map-signs fa-fw"></i><a target="_blank" class="content" href="https://www.hbz-nrw.de/ueber-uns/kontakt/anreise">Location / Access</a>
+                        </div>
+                        <div class="item">
+                            <i class="fa fa-file  fa-fw"></i><a target="_blank" class="content" href="https://www.hbz-nrw.de/impressum">Imprint</a>
+                        </div>
+                        <div class="item">
+                            <i class="fa fa-lock  fa-fw"></i><a target="_blank" class="content" href="https://www.hbz-nrw.de/datenschutz">Pivacy Policy</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-sm-3">
-                <h2>Accessibility</h2>
-                <div class="ui inverted link list">
-                    <div class="item">
-                        <i class="fa fa-blind fa-fw"></i>
-                        <a target="_blank" class="content" href="https://www.hbz-nrw.de/barrierefreiheit">
-                            Declaration on Accessibility
-                        </a>
+                <div class="col-sm-4">
+                    <h2>Accessibility</h2>
+                    <div class="ui inverted link list">
+                        <div class="item">
+                            <i class="fa fa-blind fa-fw"></i>
+                            <a target="_blank" class="content" href="https://www.hbz-nrw.de/barrierefreiheit">
+                                Declaration on Accessibility
+                            </a>
+                        </div>
+    %{--                    <div class="item">
+                            <i class="fa fa-blind fa-fw"></i>
+                            <g:link controller="public" action="wcagFeedbackForm" class="content">
+
+                            </g:link>
+                        </div>
+
+                        <div class="item">
+                            <i class="fa fa-blind fa-fw"></i>
+                            <g:link controller="public" action="wcagEasyLanguage" class="content">
+
+                            </g:link>
+                        </div>--}%
                     </div>
-%{--                    <div class="item">
-                        <i class="fa fa-blind fa-fw"></i>
-                        <g:link controller="public" action="wcagFeedbackForm" class="content">
+                </div>
+                <div class="col-sm-4">
+                    <h2>Technical Details</h2>
+                    <div class="ui inverted link list">
+                        <%-- App version --%>
+                        <g:if test="${grailsApplication.metadata['info.app.version']}">
+                            <a target="_blank" class="item" href="https://github.com/hbz/laser-gokb/releases">
+                                Version: ${grailsApplication.metadata['info.app.version']}
+                            </a>
+                        </g:if>
+                        <%-- Git branch --%>
+                        <g:if test="${grailsApplication.metadata['build.git.branch']}">
+                            <a target="_blank" class="item" href="https://github.com/hbz/laser-gokb/tree/${grailsApplication.metadata['git.branch']}">
+                                Branch: ${grailsApplication.metadata['build.git.branch']}
+                            </a>
+                        </g:if>
 
-                        </g:link>
+                        <%-- Git Commit --%>
+                        <g:if test="${grailsApplication.metadata['git.commit.id']}">
+                            <a target="_blank" class="item" href="https://github.com/hbz/laser-gokb/tree/${grailsApplication.metadata['build.git.revision']}">
+                                Git Commit: ${grailsApplication.metadata['build.git.revision']}
+                            </a>
+                        </g:if>
+                        <%-- Timestamp --%>
+                        <g:if test="${grailsApplication.metadata['build.time']}">
+                                Build: ${grailsApplication.metadata['build.time']}
+                        </g:if>
+
                     </div>
-
-                    <div class="item">
-                        <i class="fa fa-blind fa-fw"></i>
-                        <g:link controller="public" action="wcagEasyLanguage" class="content">
-
-                        </g:link>
-                    </div>--}%
                 </div>
-            </div>
-            <div class="col-sm-3">
-                <h2>Technical Details</h2>
-                <div class="ui inverted link list">
-                    <%-- App version --%>
-                    <g:if test="${grailsApplication.metadata['info.app.version']}">
-                        <a target="_blank" class="item" href="https://github.com/hbz/laser-gokb/releases">
-                            Version: ${grailsApplication.metadata['info.app.version']}
-                        </a>
-                    </g:if>
-                    <%-- Git branch --%>
-                    <g:if test="${grailsApplication.metadata['build.git.branch']}">
-                        <a target="_blank" class="item" href="https://github.com/hbz/laser-gokb/tree/${grailsApplication.metadata['git.branch']}">
-                            Branch: ${grailsApplication.metadata['build.git.branch']}
-                        </a>
-                    </g:if>
-
-                    <%-- Git Commit --%>
-                    <g:if test="${grailsApplication.metadata['git.commit.id']}">
-                        <a target="_blank" class="item" href="https://github.com/hbz/laser-gokb/tree/${grailsApplication.metadata['build.git.revision']}">
-                            Git Commit: ${grailsApplication.metadata['build.git.revision']}
-                        </a>
-                    </g:if>
-                    <%-- Timestamp --%>
-                    <g:if test="${grailsApplication.metadata['build.time']}">
-                            Build: ${grailsApplication.metadata['build.time']}
-                    </g:if>
-
-                </div>
-            </div>
+             </div>
         </div>
     </div>
  </footer>
