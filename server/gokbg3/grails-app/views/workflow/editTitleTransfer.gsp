@@ -4,7 +4,7 @@
 <meta name="layout" content="sb-admin" />
 <asset:stylesheet src="gokb/application.css" />
 <asset:javascript src="gokb/application.js" />
-<title>GOKb: Title Transfer</title>
+<title><g:message code="gokb.appname" default="we:kb"/>: Title Transfer</title>
 </head>
 <body>
   <g:form controller="workflow" action="editTitleTransfer"
@@ -113,12 +113,12 @@
           <dl class="dl-horizontal clearfix">
             <dt>New Package</dt>
             <dd>
-              <g:simpleReferenceTypedown class="form-control" name="Package"
+              <gokb:simpleReferenceTypedown class="form-control" name="Package"
                 baseClass="org.gokb.cred.Package" />
             </dd>
             <dt>New Platform</dt>
             <dd>
-              <g:simpleReferenceTypedown class="form-control" name="Platform"
+              <gokb:simpleReferenceTypedown class="form-control" name="Platform"
                 baseClass="org.gokb.cred.Platform" />
             </dd>
             <dt></dt>

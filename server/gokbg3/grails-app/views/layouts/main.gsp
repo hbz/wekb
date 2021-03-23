@@ -1,15 +1,10 @@
 <!DOCTYPE html>
-<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]-->
-<!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]-->
-<!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
-<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!-->
 <html lang="en" class="no-js">
 <!--<![endif]-->
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title><g:layoutTitle default="GOKb" /></title>
+  <title><g:message code="gokb.appname" default="we:kb"/></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon"
     href="${resource(dir: 'images', file: 'favicon.ico')}"
@@ -28,7 +23,7 @@
   <div class="navbar navbar-default navbar-fixed-top">
     <div class="container-fuid">
       <div class="navbar-header">
-        <g:link controller="home" action="index" class="navbar-brand">GOKb ${params} ${error}</g:link>
+        <g:link controller="home" action="index" class="navbar-brand"><g:message code="gokb.appname" default="we:kb"/> ${params} ${error}</g:link>
       </div>
       <div class="navbar-collapse collapse" id="navbar-main">
         <ul class="nav navbar-nav navbar-right">
@@ -141,7 +136,7 @@
   <div class="navbar navbar-default navbar-fixed-bottom">
     <div class="container-fluid">
       <ul class="nav navbar-nav">
-        <li><g:link controller="home" action="about">GOKb <g:meta
+        <li><g:link controller="home" action="about"><g:message code="gokb.appname" default="we:kb"/> <g:meta
               name="app.version" /> / build <g:meta name="app.buildNumber" />
           </g:link></li>
       </ul>

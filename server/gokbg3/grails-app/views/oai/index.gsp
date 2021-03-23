@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="layout" content="public" />
-<title>GOKb: OAI Interface</title>
+<title><g:message code="gokb.appname" default="we:kb"/>: OAI Interface</title>
 </head>
 <body>
 

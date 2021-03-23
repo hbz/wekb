@@ -28,7 +28,7 @@ class CreateController {
     result.newclassname=params.tmpl
     if ( params.tmpl ) {
       def newclass = grailsApplication.getArtefact("Domain",result.newclassname);
-      if ( newclass ) {
+      if ( newclass && newclass.getClazz()?.isTypeCreatable()) {
         log.debug("Got new class");
         try {
           result.displayobj = newclass.newInstance()
@@ -46,6 +46,8 @@ class CreateController {
         catch ( Exception e ) {
           log.error("Problem",e);
         }
+      }else {
+        log.info("No Permission for ${result.newclassname} in CreateControler::index... ${params}");
       }
     }
 

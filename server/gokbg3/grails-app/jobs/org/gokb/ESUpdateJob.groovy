@@ -1,7 +1,5 @@
 package org.gokb
 
-import org.gokb.FTUpdateService
-
 class ESUpdateJob {
 
   // Allow only one run at a time.
@@ -16,12 +14,12 @@ class ESUpdateJob {
 
   def execute() {
     if ( grailsApplication.config.gokb.ftupdate_enabled ) {
-      log.debug ("Beginning scheduled es update job.")
-      FTUpdateService.updateFTIndexes();
-      log.debug ("ESUpdateJob completed.")
+      log.info ("Beginning scheduled es update job.")
+      FTUpdateService.updateFTIndexes()
+      log.info ("ESUpdateJob completed.")
     }
     else {
-      log.debug("FTUpdate is not enabled - set config.ftupdate_enabled = true in config to enable");
+      log.info("FTUpdate is not enabled - set config.ftupdate_enabled = true in config to enable")
     }
   }
 }

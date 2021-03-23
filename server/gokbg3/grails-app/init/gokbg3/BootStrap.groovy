@@ -35,9 +35,6 @@ class BootStrap {
         log.info("\n\n\n **WARNING** \n\n\n - Automatic create of component identifiers index is no longer part of the domain model");
         log.info("Create manually with create index norm_id_value_idx on kbcomponent(kbc_normname(64),id_namespace_fk,class)");
 
-        ContentItem.withTransaction() {
-            def appname = ContentItem.findByKeyAndLocale('gokb.appname', 'default') ?: new ContentItem(key: 'gokb.appname', locale: 'default', content: 'GOKb').save(flush: true, failOnError: true)
-        }
 
         KBComponent.withTransaction() {
             cleanUpMissingDomains()
@@ -990,6 +987,7 @@ class BootStrap {
         RefdataCategory.lookupOrCreate('Job.Type', 'CleanupDeletedComponents').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate('Job.Type', 'CleanupRejectedComponents').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate('Job.Type', 'TIPPCleanup').save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate('Job.Type', 'IdentifierCleanup').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate('Job.Type', 'DeleteTIWithoutHistory').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate('Job.Type', 'RejectTIWithoutIdentifier').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate('Job.Type', 'PlatformCleanup').save(flush: true, failOnError: true)

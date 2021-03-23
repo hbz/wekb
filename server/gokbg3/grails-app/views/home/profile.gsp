@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta name="layout" content="sb-admin"/>
-    <title>GOKb: My Profile</title>
+    <title><g:message code="gokb.appname" default="we:kb"/>: My Profile</title>
   </head>
   <body>  
   <g:if test="${flash.message}">
@@ -22,7 +22,7 @@
         <div class="pull-right well">
           <g:link controller="home" action="sendAlerts"><button class="btn btn-success">Send Alerts Update</button></g:link>
         </div>
-        <g:render template="/apptemplates/user" model="${ ["d":user] }"></g:render>
+        <g:render template="/apptemplates/mainTemplates/user" model="${ ["d":user] }"></g:render>
       </div>
 
       <div class="panel-heading">

@@ -57,11 +57,19 @@ class UserDetailsInterceptor {
           
           // Add to the session.
           session.menus = menus
-          
+
+          def default_dcs = ["org.gokb.cred.Package", "org.gokb.cred.Platform", "org.gokb.cred.TitleInstance", "org.gokb.cred.BookInstance", "org.gokb.cred.DatabaseInstance", "org.gokb.cred.JournalInstance", "org.gokb.cred.OtherInstance", "org.gokb.cred.TitleInstancePackagePlatform", "org.gokb.cred.Office", "org.gokb.cred.Org", "org.gokb.cred.Source"]
+
+          boolean userIsAdmin = user.isAdmin()
+
           // Step 1 : List all domains available to this user order by type, grouped into type
           def domains = KBDomainInfo.createCriteria().list {
-            
-            ilike ('dcName', 'org.gokb%')
+
+            if(userIsAdmin) {
+              ilike('dcName', 'org.gokb%')
+            }else{
+              inList('dcName', default_dcs)
+            }
             
             createAlias ("type", "menueType")
             
@@ -86,11 +94,20 @@ class UserDetailsInterceptor {
                 searches_for_this_domain.each { key, val ->
                   
                   // Add a menu item.
-                  menus["search"]["${d.type.value}"] << [
-                    text : val.title,
-                    link : ['controller' : 'search', 'action' : 'index', 'params' : [qbe:'g:'+ key]],
-                    attr : ['title' : "Search ${val.title}"]
-                  ]
+                  if(userIsAdmin && !(d.dcName in default_dcs)){
+                    menus["admin"]["search"] << [
+                            text : val.title,
+                            link : ['controller' : 'search', 'action' : 'index', 'params' : [qbe:'g:'+ key]],
+                            attr : ['title' : "Search ${val.title}"]
+                    ]
+                  }else {
+                    menus["search"]["${d.type.value}"] << [
+                            text : val.title,
+                            link : ['controller' : 'search', 'action' : 'index', 'params' : [qbe:'g:'+ key]],
+                            attr : ['title' : "Search ${val.title}"]
+                    ]
+                  }
+
                 }
               }
               // Add if creatable.
@@ -98,11 +115,20 @@ class UserDetailsInterceptor {
                 def display_template = displayTemplateService.getTemplateInfo(d.dcName)
 
                 if ( display_template  && !display_template.noCreate) {
-                  menus["create"]["${d.type.value}"] << [
-                    text : d.displayName,
-                    link : ['controller' : 'create', 'action' : 'index', 'params' : [tmpl:d.dcName]],
-                    attr : ['title' : "New ${d.displayName}"]
-                  ]
+
+                  if(userIsAdmin && !(d.dcName in default_dcs)){
+                    menus["admin"]["create"] << [
+                            text: d.displayName,
+                            link: ['controller': 'create', 'action': 'index', 'params': [tmpl: d.dcName]],
+                            attr: ['title': "New ${d.displayName}"]
+                    ]
+                  }else {
+                    menus["create"]["${d.type.value}"] << [
+                            text: d.displayName,
+                            link: ['controller': 'create', 'action': 'index', 'params': [tmpl: d.dcName]],
+                            attr: ['title': "New ${d.displayName}"]
+                    ]
+                  }
                 }
               }
             }

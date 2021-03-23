@@ -57,6 +57,8 @@ class PublicController {
         result.titleCount = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_current])[0]
         result.tipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY+' order by tipp.id',[result.pkgId, tipp_combo_rdv, status_current],[offset:params.offset?params.long('offset'):0,max:10])
         log.debug("Tipp qry done ${result.tipps?.size()}");
+      }else {
+        redirect(controller: 'error', action: 'notFound')
       }
     }
     result
@@ -102,7 +104,26 @@ class PublicController {
       mutableParams.tempFQ = ' -pkg_scope:\"Master File\" -\"open access\" ';
 
     result =  ESSearchService.search(mutableParams)
-    result.transforms = grailsApplication.config.packageTransforms
+
+
+    def query_params = [forbiddenStatus : RefdataCategory.lookup(KBComponent.RD_STATUS, KBComponent.STATUS_DELETED)]
+
+    List providerRoles = [RefdataCategory.lookupOrCreate('Org.Role', 'Content Provider'), RefdataCategory.lookupOrCreate('Org.Role', 'Platform Provider'), RefdataCategory.lookupOrCreate('Org.Role', 'Publisher')]
+
+    def query_params2 = [forbiddenStatus : RefdataCategory.lookup(KBComponent.RD_STATUS, KBComponent.STATUS_DELETED), roles: providerRoles]
+
+    result.componentsOfStatistic = ["Provider", "Package", "Platform", "CuratoryGroup", "TitleInstancePackagePlatform"]
+
+    result.countComponent = [:]
+    result.componentsOfStatistic.each { component ->
+      if(component == "Provider"){
+        result.countComponent."${component}" = Org.executeQuery("select count(o.id) from Org as o join o.roles rdv where rdv in (:roles) and o.status != :forbiddenStatus", query_params2, [readOnly: true])[0]
+      }else {
+        def fetch_all = "select count(o.id) from ${component} as o where status != :forbiddenStatus"
+        result.countComponent."${component}" = KBComponent.executeQuery(fetch_all.toString(), query_params, [readOnly: true])[0]
+      }
+
+    }
 
     result
   }
@@ -115,7 +136,7 @@ class PublicController {
 
     def export_date = dateFormatService.formatDate(new Date());
 
-    def filename = "GOKb Export : ${pkg.name} : ${export_date}.tsv"
+    def filename = "we:kb Export : ${pkg.name} : ${export_date}.tsv"
 
     try {
       response.setContentType('text/tab-separated-values');
@@ -241,7 +262,7 @@ class PublicController {
 
 
           // As per spec header at top of file / section
-          writer.write("GOKb Export : ${pkg.provider?.name} : ${pkg.name} : ${export_date}\n");
+          writer.write("we:kb Export : ${pkg.provider?.name} : ${pkg.name} : ${export_date}\n");
 
           writer.write('TIPP ID	TIPP URL	Title ID	Title	TIPP Status	[TI] Publisher	[TI] Imprint	[TI] Published From	[TI] Published to	[TI] Medium	[TI] OA Status	'+
                      '[TI] Continuing series	[TI] ISSN	[TI] EISSN	Package	Package ID	Package URL	Platform	'+

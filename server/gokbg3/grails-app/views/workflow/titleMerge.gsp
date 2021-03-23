@@ -4,7 +4,7 @@
     <meta name="layout" content="sb-admin" />
     <asset:stylesheet src="gokb/application.css" />
     <asset:javascript src="gokb/application.js" />
-    <title>GOKb: Title Merge</title>
+    <title><g:message code="gokb.appname" default="we:kb"/>: Title Merge</title>
   </head>
   <body>
     <h1 class="page-header">Title Merge</h1>
@@ -28,7 +28,7 @@
             </div>
             <div class="col-md-6">
               <h3>Title to replace them:</h3>
-              <g:simpleReferenceTypedown class="form-control" name="newTitle" baseClass="org.gokb.cred.TitleInstance" />
+              <gokb:simpleReferenceTypedown class="form-control" name="newTitle" baseClass="org.gokb.cred.TitleInstance" />
               <div style="margin-top:50px;">
                 <button type="submit" class="btn btn-default pull-right">Next</button>
               </div>

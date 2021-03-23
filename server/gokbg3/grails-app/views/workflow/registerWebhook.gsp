@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="layout" content="sb-admin" />
-<title>GOKb: Package - Register Webhook</title>
+<title><g:message code="gokb.appname" default="we:kb"/>: Package - Register Webhook</title>
 </head>
 <body>
 	<g:form controller="workflow" action="processCreateWebHook"	method="get" class="webhook-form">
@@ -36,7 +36,7 @@
 					<dt>Url</dt>
 					<dd>
 						<div class="input-group">
-							<g:simpleReferenceTypedown name="existingHook" class="form-control" baseClass="org.gokb.cred.WebHookEndpoint" filter1="${request.user?.id}" />
+							<gokb:simpleReferenceTypedown name="existingHook" class="form-control" baseClass="org.gokb.cred.WebHookEndpoint" filter1="${request.user?.id}" />
 							<div class="input-group-btn" >
 								<button type="submit" class="btn btn-default btn-sm">Link</button>
 							</div>

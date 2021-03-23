@@ -4,11 +4,11 @@
     <meta name="layout" content="sb-admin"/>
     <asset:stylesheet src="gokb/application.css"/>
     <asset:javascript src="gokb/application.js" />
-    <title>GOKb: Master Lists</title>
+    <title><g:message code="gokb.appname" default="we:kb"/>: Master Lists</title>
   </head>
   <body>
 	  <h1 class="page-header">
-	    Master lists for <g:render template="/apptemplates/component_heading" model="${[d:o]}" />
+	    Master lists for <g:render template="/apptemplates/secondTemplates/component_heading" model="${[d:o]}" />
 	  </h1>
     <div id="mainarea" class="panel panel-default">
       <div class="panel-body">
