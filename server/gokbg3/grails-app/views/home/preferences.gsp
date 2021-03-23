@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <!DOCTYPE html>
 <html>
   <head>
@@ -14,19 +15,19 @@
 	        <dt>Show Info Icon :</dt>
 	        <dd>
 	          <gokb:xEditableRefData owner="${user}" field="showInfoIcon"
-	            config=""${RCConstants.YN}"" />
+	            config="${RCConstants.YN}" />
 	        </dd>
 
 	        <dt>Show Quick View :</dt>
 	        <dd>
-	          <gokb:xEditableRefData owner="${user}" field="showQuickView" config=""${RCConstants.YN}"" />
+	          <gokb:xEditableRefData owner="${user}" field="showQuickView" config="${RCConstants.YN}" />
 	        </dd>
 
 	        <dt>Default Page Size :</dt>
 	        <dd><gokb:xEditable owner="${user}" field="defaultPageSize" /></dd>
 
 	        <dt>Send Alert Emails :</dt>
-	        <dd><gokb:xEditableRefData owner="${user}" field="send_alert_emails" config=""${RCConstants.YN}"" /></dd>
+	        <dd><gokb:xEditableRefData owner="${user}" field="send_alert_emails" config="${RCConstants.YN}" /></dd>
 	      </dl>
       </div>
     </div>

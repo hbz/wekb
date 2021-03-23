@@ -45,7 +45,7 @@
 		</dt>
 		<dd>
 			<gokb:xEditableRefData owner="${d}" field="defaultSupplyMethod"
-				config=""${RCConstants.SOURCE_DATA_SUPPLY_METHOD}"" />
+				config="${RCConstants.SOURCE_DATA_SUPPLY_METHOD}" />
 		</dd>
 
     <dt>
@@ -53,7 +53,7 @@
     </dt>
     <dd>
       <gokb:xEditableRefData owner="${d}" field="defaultDataFormat"
-        config=""${RCConstants.SOURCE_DATA_FORMAT}"" />
+        config="${RCConstants.SOURCE_DATA_FORMAT}" />
     </dd>
 
     

@@ -1,4 +1,4 @@
-<%@ page import="org.gokb.cred.RefdataCategory" %>
+<%@ page import="de.wekb.helper.RCConstants; org.gokb.cred.RefdataCategory" %>
 <%@page expressionCodec="none" %>
 
 <div class="navbar-default sidebar" role="navigation">

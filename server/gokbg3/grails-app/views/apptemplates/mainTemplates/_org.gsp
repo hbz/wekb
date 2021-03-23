@@ -139,7 +139,7 @@
                     <input type="hidden" name="__context" value="${d.class.name}:${d.id}" />
                     <input type="hidden" name="__property" value="roles" />
                     <gokb:simpleReferenceTypedown class="form-inline" style="display:inline-block;" name="__relatedObject"
-                            baseClass="org.gokb.cred.RefdataValue" filter1=""${RCConstants.ORG_ROLE}"" />
+                            baseClass="org.gokb.cred.RefdataValue" filter1="${RCConstants.ORG_ROLE}" />
                     <input type="submit" value="Add..." class="btn btn-default btn-primary" />
                   </g:form>
                 </g:if>

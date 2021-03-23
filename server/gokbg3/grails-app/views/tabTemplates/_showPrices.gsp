@@ -57,7 +57,7 @@
                                 <gokb:simpleReferenceTypedown class="form-control"
                                                            name="priceType"
                                                            baseClass="org.gokb.cred.RefdataValue"
-                                                           filter1=""${RCConstants.PRICE_TYPE}""/>
+                                                           filter1="${RCConstants.PRICE_TYPE}"/>
                             </dd>
                             <dt class="dt-label">Price</dt>
                             <dd>

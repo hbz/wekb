@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <g:render template="/apptemplates/mainTemplates/kbcomponent" model="${[d:displayobj, rd:refdata_properties, dtype:'KBComponent']}" />
 <g:if test="${d.id != null}">
 	<dl class="dl-horizontal">
@@ -11,7 +12,7 @@
 			<gokb:annotatedLabel owner="${d}" property="licenseType">License Type</gokb:annotatedLabel>
 		</dt>
 		<dd>
-			<gokb:xEditableRefData owner="${d}" field="type" config=${RCConstants.LICENSE_TYPE}" />
+			<gokb:xEditableRefData owner="${d}" field="type" config="${de.wekb.helper.RCConstants.LICENSE_TYPE}" />
 		</dd>
 
     %{--<dt><gokb:annotatedLabel owner="${d}" property="curatoryGroups">Curatory Groups</gokb:annotatedLabel></dt>
