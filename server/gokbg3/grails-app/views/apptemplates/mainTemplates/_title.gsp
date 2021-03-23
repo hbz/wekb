@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <dl class="dl-horizontal">
   <dt>
     <gokb:annotatedLabel owner="${d}" property="name">Title</gokb:annotatedLabel>
@@ -27,7 +28,7 @@
   </dt>
   <dd>
     <sec:ifAnyGranted roles="ROLE_SUPERUSER">
-      <gokb:xEditableRefData owner="${d}" field="status" config='KBComponent.Status'/>
+      <gokb:xEditableRefData owner="${d}" field="status" config="${RCConstants.KBCOMPONENT_STATUS}"/>
     </sec:ifAnyGranted>
     <sec:ifNotGranted roles="ROLE_SUPERUSER">
       ${d.status?.value ?: 'Not Set'}
@@ -39,7 +40,7 @@
   </dt>
   <dd>
     <gokb:xEditableRefData owner="${d}" field="reasonRetired"
-                        config='TitleInstance.ReasonRetired'/>
+                        config='"${RCConstants.TITLEINSTANCE_REASON_RETIRED}"'/>
   </dd>
 
   <dt>
@@ -47,7 +48,7 @@
   </dt>
   <dd>
     <gokb:xEditableRefData owner="${d}" field="editStatus"
-                        config='KBComponent.EditStatus'/>
+                        config="${RCConstants.KBCOMPONENT_EDIT_STATUS}"/>
   </dd>
 
   <dt>
@@ -139,7 +140,7 @@
           </dt>
           <dd>
             <gokb:xEditableRefData owner="${d}" field="medium"
-                                config='TitleInstance.Medium'/>
+                                config="${RCConstants.TITLEINSTANCE_MEDIUM}"/>
           </dd>
 
           <dt>
@@ -147,7 +148,7 @@
           </dt>
           <dd>
             <gokb:xEditableRefData owner="${d}" field="OAStatus"
-                                config='TitleInstance.OAStatus'/>
+                                config='"${RCConstants.TITLEINSTANCE_OA_STATUS}"'/>
           </dd>
 
           <dt>
@@ -312,7 +313,7 @@
             <tr>
               <td><g:link controller="resource" action="show"
                           id="${p.toComponent.class.name}:${p.toComponent.id}">${p.toComponent.name}</g:link></td>
-              <td><gokb:xEditableRefData owner="${p}" field="status" config='Combo.Status'/></td>
+              <td><gokb:xEditableRefData owner="${p}" field="status" config="${RCConstants.COMBO_STATUS}"/></td>
               <td><gokb:xEditable class="ipe" owner="${p}" field="startDate" type="date"/></td>
               <td><gokb:xEditable class="ipe" owner="${p}" field="endDate" type="date"/></td>
               <td><g:link controller="ajaxSupport" action="deleteCombo" id="${p.id}">Delete</g:link></td>

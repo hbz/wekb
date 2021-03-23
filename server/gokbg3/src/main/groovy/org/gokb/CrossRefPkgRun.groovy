@@ -66,15 +66,15 @@ class CrossRefPkgRun {
     int total = 0
 
     try {
-      status_current = RefdataCategory.lookup('KBComponent.Status', 'Current')
-      status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
-      status_retired = RefdataCategory.lookup('KBComponent.Status', 'Retired')
-      status_expected = RefdataCategory.lookup('KBComponent.Status', 'Expected')
-      rr_deleted = RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'Status Deleted')
-      rr_nonCurrent = RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'Platform Noncurrent')
-      rr_TIPPs_retired = RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'TIPPs Retired')
-      rr_TIPPs_invalid = RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'Invalid TIPPs')
-      status_ip = RefdataCategory.lookup('Package.ListStatus', 'In Progress')
+      status_current = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Current')
+      status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
+      status_retired = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Retired')
+      status_expected = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Expected')
+      rr_deleted = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Status Deleted')
+      rr_nonCurrent = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Platform Noncurrent')
+      rr_TIPPs_retired = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'TIPPs Retired')
+      rr_TIPPs_invalid = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Invalid TIPPs')
+      status_ip = RefdataCategory.lookup(RCConstants.PACKAGE_LIST_STATUS, 'In Progress')
 
       springSecurityService.reauthenticate(user.username)
       user = User.get(user.id)

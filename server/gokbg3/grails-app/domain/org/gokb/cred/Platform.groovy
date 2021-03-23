@@ -59,7 +59,7 @@ class Platform extends KBComponent {
     name(validator: { val, obj ->
       if (obj.hasChanged('name')) {
         if (val && val.trim()) {
-          def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+          def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
           def dupes = Platform.findAllByNameIlikeAndStatusNotEqual(val, status_deleted);
           if (dupes?.size() > 0 && dupes.any {it != obj}) {
             return ['notUnique']
@@ -164,7 +164,7 @@ class Platform extends KBComponent {
     def status_filter = null
 
     if (params.filter1) {
-      status_filter = RefdataCategory.lookup('KBComponent.Status', params.filter1)
+      status_filter = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, params.filter1)
     }
 
     def ql = null;
@@ -198,7 +198,7 @@ class Platform extends KBComponent {
     log.debug("platform::retire");
     // Call the delete method on the superClass.
     log.debug("Updating platform status to retired");
-    this.status = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Retired');
+    this.status = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Retired');
     this.save();
 
     // Delete the tipps too as a TIPP should not exist without the associated,
@@ -215,7 +215,7 @@ class Platform extends KBComponent {
       // So Package.deproxy(t) or t.deproxy() should work...
       def tipp = Package.deproxy(t)
       log.debug("Retiring tipp ${tipp.id}");
-      tipp.status = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Retired');
+      tipp.status = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Retired');
       tipp.save()
     }
   }
@@ -244,8 +244,8 @@ class Platform extends KBComponent {
 
     def result = false;
     Boolean skip = false;
-    def status_current = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Current')
-    def status_deleted = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Deleted')
+    def status_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current')
+    def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
     def name_candidates = []
     def url_candidates = [];
     def changed = false
@@ -374,7 +374,7 @@ class Platform extends KBComponent {
           user,
           project,
           null,
-          RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'New Platform')
+          RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'New Platform')
         )
       }
     }

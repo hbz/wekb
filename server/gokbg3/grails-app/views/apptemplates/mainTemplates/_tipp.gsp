@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants;" %>
 <g:set var="editable"
        value="${d.isEditable() && ((request.curator != null ? request.curator.size() > 0 ? true : false : true) || (params.curationOverride == 'true' && request.user.isAdmin()))}"/>
 <dl class="dl-horizontal">
@@ -44,7 +45,7 @@
     </dt>
     <dd>
         <gokb:xEditableRefData owner="${d}" field="status"
-                            config="KBComponent.Status"/>
+                            config="${RCConstants.KBCOMPONENT_STATUS}"/>
     </dd>
 
     <dt>
@@ -59,7 +60,7 @@
     </dt>
     <dd>
         <gokb:xEditableRefData owner="${d}" field="editStatus"
-                            config='KBComponent.EditStatus'/>
+                            config="${RCConstants.KBCOMPONENT_EDIT_STATUS}"/>
     </dd>
 
     <dt>
@@ -119,7 +120,7 @@
         <gokb:annotatedLabel owner="${d}" property="publicationType">Publication Type</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditableRefData owner="${d}" field="publicationType" config='TitleInstancePackagePlatform.PublicationType'/>
+        <gokb:xEditableRefData owner="${d}" field="publicationType" config='"${RCConstants.TIPP_PUBLICATION_TYPE}"'/>
     </dd>
 
     <dt>
@@ -161,7 +162,7 @@
         <gokb:annotatedLabel owner="${d}" property="medium">Medium</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditableRefData owner="${d}" field="medium" config='TitleInstancePackagePlatform.Medium'/>
+        <gokb:xEditableRefData owner="${d}" field="medium" config='"${RCConstants.TIPP_MEDIUM}"'/>
     </dd>
 
     <dt>
@@ -230,14 +231,14 @@
                 </dt>
                 <dd>
                     <gokb:xEditableRefData owner="${d}" field="format"
-                                        config="TitleInstancePackagePlatform.Format"/>
+                                        config="${RCConstants.TIPP_FORMAT}"/>
                 </dd>
                 <dt>
                     <gokb:annotatedLabel owner="${d}" property="paymentType">Payment Type</gokb:annotatedLabel>
                 </dt>
                 <dd>
                     <gokb:xEditableRefData owner="${d}" field="paymentType"
-                                        config="TitleInstancePackagePlatform.PaymentType"/>
+                                        config="${RCConstants.TIPP_PAYMENT_TYPE}"/>
                 </dd>
             </dl>
         </g:if>
@@ -281,7 +282,7 @@
                                 <td><gokb:xEditable class="ipe" owner="${cs}" field="embargo"/></td>
                                 <td><gokb:xEditable class="ipe" owner="${cs}" field="coverageNote"/></td>
                                 <td><gokb:xEditableRefData owner="${cs}" field="coverageDepth"
-                                                        config="TIPPCoverageStatement.CoverageDepth"/>
+                                                        config="${RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH}"/>
                                 </td>
                                 <td><g:if test="${editable}"><g:link controller="ajaxSupport"
                                                                      action="deleteCoverageStatement"
@@ -341,7 +342,7 @@
                             <dt class="dt-label">Coverage Depth</dt>
                             <dd>
                                 <gokb:simpleReferenceTypedown name="coverageDepth" baseClass="org.gokb.cred.RefdataValue"
-                                                           filter1="TIPPCoverageStatement.CoverageDepth"/>
+                                                           filter1="${RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH}"/>
                             </dd>
                             <dt class="dt-label">Coverage Note</dt>
                             <dd>
@@ -367,7 +368,7 @@
             </dt>
             <dd>
                 <gokb:xEditableRefData owner="${d}" field="coverageDepth"
-                                    config='TitleInstancePackagePlatform.CoverageDepth'/>
+                                    config="${RCConstants.TIPP_COVERAGE_DEPTH}"/>
             </dd>
         </dl>
     </div>

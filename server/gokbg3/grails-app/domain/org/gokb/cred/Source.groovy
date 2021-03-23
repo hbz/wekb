@@ -52,7 +52,7 @@ class Source extends KBComponent {
     name(validator: { val, obj ->
       if (obj.hasChanged('name')) {
         if (val && val.trim()) {
-          def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+          def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
           def dupes = Source.findAllByNameIlikeAndStatusNotEqual(val, status_deleted);
 
           if (dupes.size() > 0 && dupes.any {it != obj}) {
@@ -74,7 +74,7 @@ class Source extends KBComponent {
     def status_filter = null
 
     if(params.filter1) {
-      status_filter = RefdataCategory.lookup('KBComponent.Status', params.filter1)
+      status_filter = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, params.filter1)
     }
 
     def ql = null;

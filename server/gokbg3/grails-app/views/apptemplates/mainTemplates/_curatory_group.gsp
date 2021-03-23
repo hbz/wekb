@@ -6,10 +6,10 @@
   <g:if test="${d.id != null}">
 
 	  <dt><gokb:annotatedLabel owner="${d}" property="status">Status</gokb:annotatedLabel></dt>
-	  <dd><gokb:xEditableRefData owner="${d}" field="status" config='KBComponent.Status' /></dd>
+	  <dd><gokb:xEditableRefData owner="${d}" field="status" config="${RCConstants.KBCOMPONENT_STATUS}" /></dd>
 
 	  <dt><gokb:annotatedLabel owner="${d}" property="editStatus">Edit Status</gokb:annotatedLabel></dt>
-	  <dd><gokb:xEditableRefData owner="${d}" field="editStatus" config='KBComponent.EditStatus' /></dd>
+	  <dd><gokb:xEditableRefData owner="${d}" field="editStatus" config="${RCConstants.KBCOMPONENT_EDIT_STATUS}" /></dd>
 		<sec:ifAnyGranted roles="ROLE_ADMIN">
 			<dt>
 				<gokb:annotatedLabel owner="${d}" property="owner">Owner</gokb:annotatedLabel>

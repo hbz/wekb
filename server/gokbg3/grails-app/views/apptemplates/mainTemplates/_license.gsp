@@ -11,7 +11,7 @@
 			<gokb:annotatedLabel owner="${d}" property="licenseType">License Type</gokb:annotatedLabel>
 		</dt>
 		<dd>
-			<gokb:xEditableRefData owner="${d}" field="type" config='License.Type' />
+			<gokb:xEditableRefData owner="${d}" field="type" config=${RCConstants.LICENSE_TYPE}" />
 		</dd>
 
     %{--<dt><gokb:annotatedLabel owner="${d}" property="curatoryGroups">Curatory Groups</gokb:annotatedLabel></dt>

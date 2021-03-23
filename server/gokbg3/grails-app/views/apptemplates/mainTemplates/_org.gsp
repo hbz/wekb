@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <g:set var="editable" value="${ d.isEditable() && ((d.curatoryGroups ? (request.curator != null && request.curator.size() > 0) : true) || (params.curationOverride == 'true' && request.user.isAdmin())) }" />
 <dl class="dl-horizontal">
   <dt>
@@ -11,7 +12,7 @@
   </dt>
   <dd>
     <sec:ifAnyGranted roles="ROLE_SUPERUSER">
-      <gokb:xEditableRefData owner="${d}" field="status" config='KBComponent.Status' />
+      <gokb:xEditableRefData owner="${d}" field="status" config="${RCConstants.KBCOMPONENT_STATUS}" />
     </sec:ifAnyGranted>
     <sec:ifNotGranted roles="ROLE_SUPERUSER">
       ${d.status?.value ?: 'Not Set'}
@@ -80,7 +81,7 @@
         <li>
           <a href="#review" data-toggle="tab">
             Review Tasks (Open/Total)
-            <span class="badge badge-warning"> ${d.reviewRequests?.findAll { it.status == org.gokb.cred.RefdataCategory.lookup('ReviewRequest.Status','Open') }?.size() ?: '0'}/${d.reviewRequests.size()} </span>
+            <span class="badge badge-warning"> ${d.reviewRequests?.findAll { it.status == org.gokb.cred.RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STATUS,'Open') }?.size() ?: '0'}/${d.reviewRequests.size()} </span>
           </a>
         </li>
         <li>
@@ -110,7 +111,7 @@
             <gokb:annotatedLabel owner="${d}" property="mission">Mission</gokb:annotatedLabel>
           </dt>
           <dd>
-            <gokb:xEditableRefData owner="${d}" field="mission" config='Org.Mission' />
+            <gokb:xEditableRefData owner="${d}" field="mission" config=${RCConstants.ORG_MISSION}" />
           </dd>
           <dt>
             <gokb:annotatedLabel owner="${d}" property="homepage">Homepage</gokb:annotatedLabel>
@@ -138,7 +139,7 @@
                     <input type="hidden" name="__context" value="${d.class.name}:${d.id}" />
                     <input type="hidden" name="__property" value="roles" />
                     <gokb:simpleReferenceTypedown class="form-inline" style="display:inline-block;" name="__relatedObject"
-                            baseClass="org.gokb.cred.RefdataValue" filter1="Org.Role" />
+                            baseClass="org.gokb.cred.RefdataValue" filter1=""${RCConstants.ORG_ROLE}"" />
                     <input type="submit" value="Add..." class="btn btn-default btn-primary" />
                   </g:form>
                 </g:if>
@@ -233,7 +234,7 @@
                     <g:each in="${d.getCombosByPropertyName('ownedImprints')}" var="p">
                       <tr>
                         <td><g:link controller="resource" action="show" id="${p.toComponent.class.name}:${p.toComponent.id}"> ${p.toComponent.name} </g:link></td>
-                        <td><gokb:xEditableRefData owner="${p}" field="status" config='Combo.Status' /></td>
+                        <td><gokb:xEditableRefData owner="${p}" field="status" config="${RCConstants.COMBO_STATUS}" /></td>
                         <td><gokb:xEditable class="ipe" owner="${p}" field="startDate" type="date" /></td>
                         <td><gokb:xEditable class="ipe" owner="${p}" field="endDate" type="date" /></td>
                         <td><g:link controller="ajaxSupport" action="deleteCombo" id="${p.id}">Delete</g:link></td>
@@ -329,7 +330,7 @@
                       <dd>
                         <gokb:simpleReferenceTypedown class="form-control" name="country"
                           baseClass="org.gokb.cred.RefdataValue"
-                          filter1="Country" />
+                          filter1="${RCConstants.COUNTRY}" />
                       </dd>
                       <dt class="dt-label"></dt>
                       <dd>

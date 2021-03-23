@@ -66,7 +66,7 @@ class ComboCriteria {
               eq (
                 "type",
                 RefdataCategory.lookupOrCreate (
-                  "Combo.Type",
+                  RCConstants.COMBO_TYPE,
                   the_class.getComboTypeValueFor (the_class, prop)
                 )
               )
@@ -84,7 +84,7 @@ class ComboCriteria {
               eq (
                 "type",
                 RefdataCategory.lookupOrCreate (
-                  "Combo.Type",
+                  RCConstants.COMBO_TYPE,
                   the_class.getComboTypeValueFor (the_class, prop)
                 )
               )
@@ -124,7 +124,7 @@ class ComboCriteria {
               eq (
                 "type",
                 RefdataCategory.lookupOrCreate (
-                "Combo.Type",
+                RCConstants.COMBO_TYPE,
                 the_class.getComboTypeValueFor (the_class, propertyName)
                 )
               )
@@ -141,7 +141,7 @@ class ComboCriteria {
               eq (
                 "type",
                 RefdataCategory.lookupOrCreate (
-                  "Combo.Type",
+                  RCConstants.COMBO_TYPE,
                   the_class.getComboTypeValueFor (the_class, propertyName)
                 )
               )

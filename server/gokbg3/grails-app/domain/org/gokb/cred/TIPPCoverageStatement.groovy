@@ -52,7 +52,7 @@ class TIPPCoverageStatement {
     this.owner?.lastUpdateComment = "Coverage Statement ${this.id} updated"
 
     if (!coverageDepth) {
-      coverageDepth = RefdataCategory.lookup('TIPPCoverageStatement.CoverageDepth', 'Fulltext')
+      coverageDepth = RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, 'Fulltext')
     }
   }
 
@@ -60,7 +60,7 @@ class TIPPCoverageStatement {
     this.owner?.lastUpdateComment = "Coverage Statement ${this.id} created"
 
     if (!coverageDepth) {
-      coverageDepth = RefdataCategory.lookup('TIPPCoverageStatement.CoverageDepth', 'Fulltext')
+      coverageDepth = RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, 'Fulltext')
     }
   }
 

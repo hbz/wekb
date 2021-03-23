@@ -39,7 +39,7 @@ class AdminController {
 
       def result = [:]
 
-      def publisher_combo_type = RefdataCategory.lookupOrCreate('Combo.Type', 'TitleInstance.Publisher');
+      def publisher_combo_type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'TitleInstance.Publisher');
 
       result.nonMasterOrgs = Org.executeQuery('''
       select org
@@ -95,7 +95,7 @@ class AdminController {
     }.startOrQueue()
 
     j.description = "Tidy Orgs Data"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'TidyOrgsData')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'TidyOrgsData')
 
     render(view: "logViewer", model: logViewer())
   }
@@ -138,7 +138,7 @@ class AdminController {
     }.startOrQueue()
 
     j.description = "Regenerate License Summaries"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'RegenerateLicenseSummaries')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'RegenerateLicenseSummaries')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -151,7 +151,7 @@ class AdminController {
     }.startOrQueue()
 
     j.description = "Ensure UUIDs for components"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'EnsureUUIDs')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'EnsureUUIDs')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -164,7 +164,7 @@ class AdminController {
     }.startOrQueue()
 
     j.description = "Ensure TIPLs for all TIPPs"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'EnsureTIPLs')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'EnsureTIPLs')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -176,7 +176,7 @@ class AdminController {
     }.startOrQueue()
 
     j.description = "Generate missing TIPPCoverageStatements"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'GenerateTIPPCoverage')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'GenerateTIPPCoverage')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -188,7 +188,7 @@ class AdminController {
     }.startOrQueue()
 
     j.description = "Mark insonsistent date ranges"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'MarkInconsDateRanges')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'MarkInconsDateRanges')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -241,7 +241,7 @@ class AdminController {
     }.startOrQueue()
 
     j.description = "Update Free Text Indexes"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'UpdateFreeTextIndexes')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'UpdateFreeTextIndexes')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -254,7 +254,7 @@ class AdminController {
     }.startOrQueue()
 
     j.description = "Reset Free Text Indexes"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'ResetFreeTextIndexes')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'ResetFreeTextIndexes')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -267,7 +267,7 @@ class AdminController {
     }.startOrQueue()
 
     j.description = "Master List Update"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'MasterListUpdate')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'MasterListUpdate')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -288,7 +288,7 @@ class AdminController {
     }.startOrQueue()
 
     j.description = "Enrichment Service"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'EnrichmentService')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'EnrichmentService')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -301,7 +301,7 @@ class AdminController {
     }.startOrQueue()
 
     j.description = "Generate Package Types"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'GeneratePackageTypes')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'GeneratePackageTypes')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -374,7 +374,7 @@ class AdminController {
     }.startOrQueue()
 
     j.description = "Housekeeping"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'Housekeeping')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'Housekeeping')
     j.startTime = new Date()
 
     log.debug "Triggering housekeeping task. Started job #${j.uuid}"
@@ -390,7 +390,7 @@ class AdminController {
     log.debug "Triggering cleanup task. Started job #${j.uuid}"
 
     j.description = "Cleanup Deleted Components"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'CleanupDeletedComponents')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'CleanupDeletedComponents')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -404,7 +404,7 @@ class AdminController {
     log.debug "Triggering cleanup task. Started job #${j.uuid}"
 
     j.description = "Cleanup Rejected Components"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'CleanupRejectedComponents')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'CleanupRejectedComponents')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -419,7 +419,7 @@ class AdminController {
     log.debug("Triggering cleanup orphaned TIPPs task. Started job #${j.uuid}")
 
     j.description = "TIPP Cleanup"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'TIPPCleanup')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'TIPPCleanup')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -434,7 +434,7 @@ class AdminController {
     log.debug("Triggering cleanup orphaned Identifiers task. Started job #${j.uuid}")
 
     j.description = "Identifier Cleanup"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'IdentifierCleanup')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'IdentifierCleanup')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -449,7 +449,7 @@ class AdminController {
     log.debug("Reject wrong titles. Started job #${j.uuid}")
 
     j.description = "Set status of TitleInstances without package+history to 'Deleted'"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'DeleteTIWithoutHistory')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'DeleteTIWithoutHistory')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -463,7 +463,7 @@ class AdminController {
     log.debug("Reject wrong titles. Started job #${j.uuid}")
 
     j.description = "Set status of TitleInstances without identifiers+tipps to 'Rejected'"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'RejectTIWithoutIdentifier')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'RejectTIWithoutIdentifier')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -477,7 +477,7 @@ class AdminController {
     log.debug("Triggering cleanup task. Started job #${j.uuid}")
 
     j.description = "Platform Cleanup"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'PlatformCleanup')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'PlatformCleanup')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -513,7 +513,7 @@ class AdminController {
 
     log.debug "Triggering statistics rewrite, job #${j.uuid}"
     j.description = "Recalculate Statistics"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'RecalculateStatistics')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'RecalculateStatistics')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())

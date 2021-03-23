@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants; " %>
 <g:set var="ctxoid" value="${org.gokb.cred.KBComponent.deproxy(d).class.name}:${d.id}"/>
 
 <table class="table table-striped table-bordered">
@@ -52,7 +53,7 @@
         <input type="hidden" name="__context" value="${ctxoid}"/>
         <input type="hidden" name="__newObjectClass" value="org.gokb.cred.Combo"/>
         <input type="hidden" name="__recip" value="${recip}"/>
-        <input type="hidden" name="type" value="${org.gokb.cred.RefdataCategory.getOID('Combo.Type',d.getComboTypeValue(property))}"/>
+        <input type="hidden" name="type" value="${org.gokb.cred.RefdataCategory.getOID(RCConstants.COMBO_TYPE,d.getComboTypeValue(property))}"/>
         <dt class="dt-label">Add To List: </dt>
         <dd>
           <gokb:simpleReferenceTypedown class="form-inline select-ml" style="display:inline-block;" name="${comboprop}" baseClass="${targetClass}"/>

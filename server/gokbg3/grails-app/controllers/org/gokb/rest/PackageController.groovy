@@ -368,12 +368,12 @@ class PackageController {
       def new_val = null
 
       if (reqBody.listStatus instanceof String) {
-        new_val = RefdataCategory.lookup('Package.ListStatus', reqBody.listStatus)
+        new_val = RefdataCategory.lookup(RCConstants.PACKAGE_LIST_STATUS, reqBody.listStatus)
       }
       else if (reqBody.listStatus instanceof Integer) {
         def rdv = RefdataValue.get(reqBody.listStatus)
 
-        if (rdv.owner == RefdataCategory.findByLabel('Package.ListStatus')) {
+        if (rdv.owner == RefdataCategory.findByLabel(RCConstants.PACKAGE_LIST_STATUS)) {
           new_val = rdv
         }
 
@@ -398,7 +398,7 @@ class PackageController {
 
       if (prov) {
         if (!obj.hasErrors() && errors.size() == 0 && prov != obj.provider) {
-          def combo_type = RefdataCategory.lookup('Combo.Type', 'Package.Provider')
+          def combo_type = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Provider')
           def current_combo = Combo.findByFromComponentAndType(obj, combo_type)
 
           if (current_combo) {
@@ -430,7 +430,7 @@ class PackageController {
 
       if (plt) {
         if (!obj.hasErrors() && errors.size() == 0 && plt != obj.nominalPlatform) {
-          def combo_type = RefdataCategory.lookup('Combo.Type', 'Package.NominalPlatform')
+          def combo_type = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.NominalPlatform')
           def current_combo = Combo.findByFromComponentAndType(obj, combo_type)
 
           if (current_combo) {
@@ -1075,10 +1075,10 @@ class PackageController {
 
                   def tipps_to_delete = existing_tipps.clone()
                   def num_removed_tipps = 0;
-                  def status_current = RefdataCategory.lookup('KBComponent.Status', 'Current')
-                  def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
-                  def status_retired = RefdataCategory.lookup('KBComponent.Status', 'Retired')
-                  def status_expected = RefdataCategory.lookup('KBComponent.Status', 'Expected')
+                  def status_current = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Current')
+                  def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
+                  def status_retired = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Retired')
+                  def status_expected = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Expected')
 
                   def tipp_upsert_start_time = System.currentTimeMillis()
                   def tipp_fails = 0
@@ -1086,7 +1086,7 @@ class PackageController {
                   if (json?.size() > 0) {
                     Package.withNewSession {
                       def pkg_new = Package.get(the_pkg.id)
-                      def status_ip = RefdataCategory.lookup('Package.ListStatus', 'In Progress')
+                      def status_ip = RefdataCategory.lookup(RCConstants.PACKAGE_LIST_STATUS, 'In Progress')
 
                       if (pkg_new.status == status_current && pkg_new?.listStatus != status_ip) {
                         pkg_new.listStatus = status_ip
@@ -1217,7 +1217,7 @@ class PackageController {
                           user,
                           null,
                           null,
-                          RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'TIPPs Retired')
+                          RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'TIPPs Retired')
                         )
                       }
                     }
@@ -1259,7 +1259,7 @@ class PackageController {
                       user,
                       null,
                       (additionalInfo as JSON).toString(),
-                      RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'Invalid TIPPs')
+                      RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Invalid TIPPs')
                     )
                   }
                 }
@@ -1292,7 +1292,7 @@ class PackageController {
         log.debug("Starting job ${background_job}..")
 
         background_job.description = "Package CrossRef (${obj.name})"
-        background_job.type = RefdataCategory.lookupOrCreate('Job.Type', 'PackageCrossRef')
+        background_job.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'PackageCrossRef')
         background_job.startOrQueue()
         background_job.startTime = new Date()
 

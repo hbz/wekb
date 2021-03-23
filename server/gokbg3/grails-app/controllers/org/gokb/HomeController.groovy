@@ -159,8 +159,8 @@ class HomeController {
     def result=[:]
 
     User user = springSecurityService.currentUser
-    def active_status = RefdataCategory.lookupOrCreate('Activity.Status', 'Active')
-    def needs_review_status = RefdataCategory.lookupOrCreate('ReviewRequest.Status', 'Needs Review')
+    def active_status = RefdataCategory.lookupOrCreate(RCConstants.ACTIVITY_STATUS, 'Active')
+    def needs_review_status = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STATUS, 'Needs Review')
 
     result.openActivities = Activity.findAllByOwnerAndStatus(user,active_status)
     result.recentlyClosedActivities = Activity.findAllByOwnerAndStatusNotEqual(user,active_status,[max: 10, sort: "lastUpdated", order: "desc"])

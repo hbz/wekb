@@ -2,6 +2,7 @@ package org.gokb
 
 import com.k_int.ConcurrencyManagerService.Job
 import com.k_int.ESSearchService
+import de.wekb.helper.RCConstants
 import grails.gorm.DetachedCriteria
 import grails.gorm.transactions.Transactional
 import org.elasticsearch.action.delete.DeleteRequest
@@ -39,7 +40,7 @@ class CleanupService {
               log.debug("Move the publisher entries to ${newTarget}")
 
               // Unsaved components can't have combo relations
-              final RefdataValue type = RefdataCategory.lookupOrCreate(Combo.RD_TYPE, Org.getComboTypeValueFor(TitleInstance, "publisher"))
+              final RefdataValue type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, Org.getComboTypeValueFor(TitleInstance, "publisher"))
               final String direction = Org.isComboReverseFor(TitleInstance, 'publisher') ? 'from' : 'to'
               final String opp_dir = direction == 'to' ? 'from' : 'to'
               String hql_query = "from Combo where type=:type and ${direction}Component=:original"
@@ -185,7 +186,7 @@ class CleanupService {
 
     log.debug("Process delete candidates");
 
-    def status_deleted = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Deleted')
+    def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
 
     def delete_candidates = KBComponent.executeQuery('select kbc.id from KBComponent as kbc where kbc.status=:deletedStatus and kbc.duplicateOf IS NULL',[deletedStatus: status_deleted])
 
@@ -202,7 +203,7 @@ class CleanupService {
 
     log.debug("Process rejected candidates");
 
-    def status_rejected = RefdataCategory.lookupOrCreate('KBComponent.EditStatus', 'Rejected')
+    def status_rejected = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_EDIT_STATUS, 'Rejected')
 
     def delete_candidates = KBComponent.executeQuery('select kbc.id from KBComponent as kbc where kbc.editStatus=:rejectedStatus',[rejectedStatus: status_rejected])
 
@@ -218,8 +219,8 @@ class CleanupService {
   def deleteNoUrlPlatforms(Job j = null) {
     log.debug("Delete platforms without URL")
 
-    def status_deleted = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Deleted')
-    def status_current = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Current')
+    def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
+    def status_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current')
 
     def delete_candidates = Platform.executeQuery('from Platform as plt where plt.primaryUrl IS NULL and plt.status <> ?', [status_deleted])
 
@@ -247,7 +248,7 @@ class CleanupService {
           }
           else {
             log.debug("New Combo already exists, or would link item to itself.. deleting instead!")
-            oc.status = RefdataCategory.lookup(Combo.RD_STATUS, Combo.STATUS_DELETED)
+            oc.status = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_DELETED)
             oc.save(flush:true)
           }
         }
@@ -261,7 +262,7 @@ class CleanupService {
           }
           else {
             log.debug("New Combo already exists, or would link item to itself.. deleting instead!")
-            oc.status = RefdataCategory.lookup(Combo.RD_STATUS, Combo.STATUS_DELETED)
+            oc.status = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_DELETED)
             oc.save(flush:true)
           }
         }
@@ -323,10 +324,10 @@ class CleanupService {
 
     def ctr = 0
     def new_tipl = 0
-    def status_deleted = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Deleted')
-    def combo_status_active = RefdataCategory.lookupOrCreate(Combo.RD_STATUS, Combo.STATUS_ACTIVE)
-    def combo_tipp = RefdataCategory.lookup(Combo.RD_TYPE, 'TitleInstance.Tipps')
-    def combo_tipl = RefdataCategory.lookup(Combo.RD_TYPE, 'TitleInstance.Tipls')
+    def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
+    def combo_status_active = RefdataCategory.lookupOrCreate(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE)
+    def combo_tipp = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'TitleInstance.Tipps')
+    def combo_tipl = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'TitleInstance.Tipls')
 
     try {
 
@@ -358,10 +359,10 @@ class CleanupService {
           if ( tipls?.size() == 0 ) {
             final_tipl = new TitleInstancePlatform(url:tipp.url).save()
 
-            def plt_combo_type = RefdataCategory.lookupOrCreate('Combo.Type', 'Platform.HostedTitles')
+            def plt_combo_type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Platform.HostedTitles')
             def plt_combo = new Combo(toComponent:final_tipl, fromComponent:tipp.hostPlatform, type:plt_combo_type, status:combo_status_active).save();
 
-            def ti_combo_type = RefdataCategory.lookupOrCreate('Combo.Type', 'TitleInstance.Tipls')
+            def ti_combo_type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'TitleInstance.Tipls')
             def ti_combo = new Combo(toComponent:final_tipl, fromComponent:tipp.title, type:ti_combo_type, status:combo_status_active).save();
 
             new_tipl++
@@ -405,7 +406,7 @@ class CleanupService {
 
   private def checkForTipl(title, platform, url) {
     if ( ( title != null ) && ( platform != null ) && ( url?.trim()?.length() > 0 ) ) {
-      def status_current = RefdataCategory.lookup('KBComponent.Status', 'Current')
+      def status_current = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Current')
       def result = TitleInstancePlatform.executeQuery('''select tipl
               from TitleInstancePlatform as tipl,
               Combo as titleCombo,
@@ -464,7 +465,7 @@ class CleanupService {
     log.debug("Beginning duplicate identifier tidyup.")
 
     // Lookup the Ids refdata element name.
-    final long id_combo_type_id = RefdataCategory.lookup('Combo.Type', 'KBComponent.Ids').id
+    final long id_combo_type_id = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'KBComponent.Ids').id
 
     def start_time = System.currentTimeMillis()
 
@@ -581,7 +582,7 @@ class CleanupService {
         }
 
         try {
-          t.addToCoverageStatements(startDate: t.startDate, startVolume: t.startVolume, startIssue: t.startIssue, endDate: t.endDate, endVolume: t.endVolume, endIssue: t.endIssue, coverageDepth: RefdataCategory.lookup('TIPPCoverageStatement.CoverageDepth', t.coverageDepth.value),coverageNote: t.coverageNote, embargo: t.embargo)
+          t.addToCoverageStatements(startDate: t.startDate, startVolume: t.startVolume, startIssue: t.startIssue, endDate: t.endDate, endVolume: t.endVolume, endIssue: t.endIssue, coverageDepth: RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, t.coverageDepth.value),coverageNote: t.coverageNote, embargo: t.embargo)
 
           t.save(flush:true, failOnError:true);
         }
@@ -683,8 +684,8 @@ class CleanupService {
     def ctr = 0
     def tick=TitleInstance.withNewSession {
       Date now = new Date()
-      def deleted_status = RefdataCategory.lookup('KBComponent.Status', KBComponent.STATUS_DELETED)
-      def tipps_combo = RefdataCategory.lookup('Combo.Type', 'TitleInstance.Tipps')
+      def deleted_status = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED)
+      def tipps_combo = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'TitleInstance.Tipps')
 
       def res = TitleInstance.executeUpdate("update TitleInstance as title set title.status = :ds, lastUpdateComment = 'Deleted via title cleanup', lastUpdated = :now where status <> :ds and (title.id not in " +
               "(select fromComponent.id from Combo where type = :tc)" +
@@ -702,9 +703,9 @@ class CleanupService {
     log.debug("GOKb mark titles without IDs & TIPPs for deletion")
     def ctr = 0
     def tick=TitleInstance.withNewSession {
-      def rejected_status = RefdataCategory.lookup('KBComponent.EditStatus', KBComponent.EDIT_STATUS_REJECTED)
-      def tipps_combo = RefdataCategory.lookup('Combo.Type', 'TitleInstance.Tipps')
-      def ids_combo = RefdataCategory.lookup('Combo.Type', 'KBComponent.Ids')
+      def rejected_status = RefdataCategory.lookup(RCConstants.KBCOMPONENT_EDIT_STATUS, KBComponent.EDIT_STATUS_REJECTED)
+      def tipps_combo = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'TitleInstance.Tipps')
+      def ids_combo = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'KBComponent.Ids')
 
       def res = TitleInstance.executeUpdate("update TitleInstance as title set title.editStatus = :ds where title.editStatus <> :ds and title.id not in " +
               "(select fromComponent.id from Combo where type = :tc)" +

@@ -27,7 +27,7 @@
     <gokb:annotatedLabel owner="${d}" property="status">Status</gokb:annotatedLabel>
   </dt>
   <dd>
-    <gokb:xEditableRefData owner="${d}" field="status" config='KBComponent.Status' />
+    <gokb:xEditableRefData owner="${d}" field="status" config="${RCConstants.KBCOMPONENT_STATUS}" />
   </dd>
 
   <dt>
@@ -35,7 +35,7 @@
   </dt>
   <dd>
     <gokb:xEditableRefData owner="${d}" field="reasonRetired"
-      config='TitleInstance.ReasonRetired' />
+      config='"${RCConstants.TITLEINSTANCE_REASON_RETIRED}"' />
   </dd>
 
   <dt>
@@ -43,7 +43,7 @@
   </dt>
   <dd>
     <gokb:xEditableRefData owner="${d}" field="editStatus"
-      config='KBComponent.EditStatus' />
+      config="${RCConstants.KBCOMPONENT_EDIT_STATUS}" />
   </dd>
 
   <dt>
@@ -123,7 +123,7 @@
           </dt>
           <dd>
             <gokb:xEditableRefData owner="${d}" field="medium"
-              config='TitleInstance.Medium' />
+              config="${RCConstants.TITLEINSTANCE_MEDIUM}" />
           </dd>
 
           <dt>
@@ -131,7 +131,7 @@
           </dt>
           <dd>
             <gokb:xEditableRefData owner="${d}" field="OAStatus"
-              config='TitleInstance.OAStatus' />
+              config='"${RCConstants.TITLEINSTANCE_OA_STATUS}"' />
           </dd>
 
           <dt>

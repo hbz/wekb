@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <html>
   <head>
     <meta name="layout" content="sb-admin" />
@@ -30,7 +31,7 @@
                   <td>${p.source}</td>
                   <td>${p.platformUrl}</td>
                   <td>${p.packageType}</td>
-                  <td><gokb:xEditableRefData owner="${p}" field="status" config='KBComponent.Status' /></td>
+                  <td><gokb:xEditableRefData owner="${p}" field="status" config="${RCConstants.KBCOMPONENT_STATUS}" /></td>
                 </tr>
               </g:each>
             </tbody>
@@ -56,7 +57,7 @@
             </div>
             <div class="form-group">
               <label class="control-label" for='packageType'>Data Format:</label>
-              <gokb:simpleReferenceTypedown class="form-control" name="packageType" baseClass="org.gokb.cred.RefdataValue" filter1="ingest.filetype"/>
+              <gokb:simpleReferenceTypedown class="form-control" name="packageType" baseClass="org.gokb.cred.RefdataValue" filter1="${RCConstants.INGEST_FILE_TYPE}"/>
             </div>
             <div class="form-group">
               <label class="control-label" for='providerNamespace'>Provider Namespace:</label>

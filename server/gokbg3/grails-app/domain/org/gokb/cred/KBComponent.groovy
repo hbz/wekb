@@ -19,7 +19,7 @@ import org.gokb.GOKbTextUtils
 @grails.gorm.dirty.checking.DirtyCheck
 abstract class KBComponent implements Auditable {
 
-  static final String RD_STATUS = "KBComponent.Status"
+  static final String RD_STATUS = RCConstants.KBCOMPONENT_STATUS
   static final String STATUS_CURRENT = "Current"
   static final String STATUS_DELETED = "Deleted"
   static final String STATUS_EXPECTED = "Expected"
@@ -520,7 +520,7 @@ where cp.owner = :c
       createAlias('tc.namespace', 'tcNamespace')
 
       and {
-        eq 'ogcOwner.desc', 'Combo.Type'
+        eq 'ogcOwner.desc', RCConstants.COMBO_TYPE
         eq 'ogcType.value', 'KBComponent.Ids'
 
         eq 'tc.value', idvalue
@@ -562,7 +562,7 @@ where cp.owner = :c
 //        // Found an identifier.. Get all components where that identifier is linked via
 //        // the ids combo map.
 //        def crit = KBComponent.createCriteria()
-//        def combotype = RefdataCategory.lookupOrCreate('Combo.Type','KBComponent.Ids');
+//        def combotype = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE,'KBComponent.Ids');
 //
 //        def lr = crit.list {
 //          outgoingCombos {
@@ -606,7 +606,7 @@ where cp.owner = :c
 
     if (idvalue != null) {
       def crit = Identifier.createCriteria()
-      // def combotype = RefdataCategory.lookupOrCreate('Combo.Type','KBComponent.Ids');
+      // def combotype = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE,'KBComponent.Ids');
 
       def lr = crit.list {
         or {
@@ -750,7 +750,7 @@ where cp.owner = :c
           type {
             and {
               owner {
-                eq("desc", 'Combo.Type')
+                eq("desc", RCConstants.COMBO_TYPE)
               }
               not { 'in'("value", comboPropTypes) }
             }
@@ -780,7 +780,7 @@ where cp.owner = :c
           type {
             and {
               owner {
-                eq("desc", 'Combo.Type')
+                eq("desc", RCConstants.COMBO_TYPE)
               }
               not { 'in'("value", comboPropTypes) }
             }
@@ -858,9 +858,9 @@ where cp.owner = :c
 
     if (this.getId() != null) {
       // Unsaved components can't have combo relations
-      RefdataValue type = RefdataCategory.lookupOrCreate(Combo.RD_TYPE, getComboTypeValue(propertyName))
+      RefdataValue type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, getComboTypeValue(propertyName))
 
-      if (status && status != "null") status_ref = RefdataCategory.lookupOrCreate(Combo.RD_STATUS, status);
+      if (status && status != "null") status_ref = RefdataCategory.lookupOrCreate(RCConstants.COMBO_STATUS, status);
 
       hql_query = "from Combo where type=? "
       hql_params += type
@@ -1432,8 +1432,8 @@ where cp.owner = :c
 
   @Transient
   def addCoreGOKbXmlFields(builder, attr) {
-    def refdata_ids = RefdataCategory.lookupOrCreate('Combo.Type', 'KBComponent.Ids')
-    def status_active = RefdataCategory.lookupOrCreate(Combo.RD_STATUS, Combo.STATUS_ACTIVE)
+    def refdata_ids = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'KBComponent.Ids')
+    def status_active = RefdataCategory.lookupOrCreate(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE)
     def cids = Identifier.executeQuery("select i.namespace.value, i.namespace.name, i.value, i.namespace.family from Identifier as i, Combo as c where c.fromComponent = ? and c.type = ? and c.toComponent = i and c.status = ?", [this, refdata_ids, status_active], [readOnly: true])
     String cName = this.class.name
 
@@ -1563,10 +1563,10 @@ where cp.owner = :c
       Date end = endDate
 
       f = Float.parseFloat(price)
-      rdv_type = RefdataCategory.lookupOrCreate('Price.type', type ?: 'list').save(flush: true, failOnError: true)
+      rdv_type = RefdataCategory.lookupOrCreate(RCConstants.PRICE_TYPE, type ?: 'list').save(flush: true, failOnError: true)
 
       if (currency) {
-        rdv_currency = RefdataCategory.lookupOrCreate('Currency', currency.trim()).save(flush: true, failOnError: true)
+        rdv_currency = RefdataCategory.lookupOrCreate(RCConstants.CURRENCY, currency.trim()).save(flush: true, failOnError: true)
       }
 
       ComponentPrice existPrice = ComponentPrice.findWhere(owner: this, priceType: rdv_type, currency: rdv_currency, price: f)

@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <div id="content">
 
 	<dl class="dl-horizontal">
@@ -12,7 +13,7 @@
 		</dt>
 		<dd>
 			<gokb:xEditableRefData owner="${d}" field="status"
-				config="KBComponent.Status" />
+				config="${RCConstants.KBCOMPONENT_STATUS}" />
 		</dd>
 
 		<dt>
@@ -44,7 +45,7 @@
 		</dt>
 		<dd>
 			<gokb:xEditableRefData owner="${d}" field="defaultSupplyMethod"
-				config="Source.DataSupplyMethod" />
+				config=""${RCConstants.SOURCE_DATA_SUPPLY_METHOD}"" />
 		</dd>
 
     <dt>
@@ -52,7 +53,7 @@
     </dt>
     <dd>
       <gokb:xEditableRefData owner="${d}" field="defaultDataFormat"
-        config="Source.DataFormat" />
+        config=""${RCConstants.SOURCE_DATA_FORMAT}"" />
     </dd>
 
     

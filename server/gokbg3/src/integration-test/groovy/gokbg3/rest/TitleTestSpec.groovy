@@ -1,5 +1,6 @@
 package gokbg3.rest
 
+import de.wekb.helper.RCConstants
 import grails.converters.JSON
 import grails.plugins.rest.client.RestBuilder
 import grails.plugins.rest.client.RestResponse
@@ -33,7 +34,7 @@ class TitleTestSpec extends AbstractAuthSpec {
     def new_org = Org.findByName('TestOrg') ?: new Org(name: 'TestOrg').save(flush:true)
     def test_ti = JournalInstance.findByName("TestJournal") ?: new JournalInstance(name: "TestJournal").save(flush:true)
     def old_id = Identifier.findByValue('2345-2323') ?: new Identifier(value: '2345-2323', namespace: ns_eissn).save(flush:true)
-    def combo = new Combo(fromComponent: test_ti, toComponent: old_id, type: RefdataCategory.lookup('Combo.Type','KBComponent.Ids')).save(flush:true)
+    def combo = new Combo(fromComponent: test_ti, toComponent: old_id, type: RefdataCategory.lookup(RCConstants.COMBO_TYPE,'KBComponent.Ids')).save(flush:true)
     def test_prev = JournalInstance.findByName("TestPrevJournal") ?: new JournalInstance(name: "TestPrevJournal").save(flush:true)
     def test_next = JournalInstance.findByName("TestNextJournal") ?: new JournalInstance(name: "TestNextJournal").save(flush:true)
     def test_upd_history = JournalInstance.findByName("TestUpdateJournalHistory") ?: new JournalInstance(name: "TestUpdateJournalHistory").save(flush:true)

@@ -72,7 +72,7 @@ class PackageService {
    */
   private RefdataValue getMasterScope() {
     // The Scope.
-    RefdataCategory.lookupOrCreate("Package.Scope", "GOKb Master")
+    RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "GOKb Master")
   }
 
   /**
@@ -400,9 +400,9 @@ class PackageService {
     }
 
     def msg_list = []
-    def rdv_journal = RefdataCategory.lookup("TitleInstance.Medium", "Journal")
-    def rdv_book = RefdataCategory.lookup("TitleInstance.Medium", "Book")
-    def rdv_db = RefdataCategory.lookup("TitleInstance.Medium", "Database")
+    def rdv_journal = RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Journal")
+    def rdv_book = RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Book")
+    def rdv_db = RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Database")
     def ctr = 0
 
     for (pkg in pkg_list) {
@@ -415,19 +415,19 @@ class PackageService {
         def has_book = pkg_obj.tipps.title.find { it.medium == rdv_book }
 
         if (has_db && !has_journal && !has_book) {
-          pkg_obj.contentType = RefdataCategory.lookup('Package.ContentType', 'Database')
+          pkg_obj.contentType = RefdataCategory.lookup('RCConstants.PACKAGE_CONTENT_TYPE', 'Database')
           result.db++
         }
         else if (has_journal && !has_db && !has_book) {
-          pkg_obj.contentType = RefdataCategory.lookup('Package.ContentType', 'Journal')
+          pkg_obj.contentType = RefdataCategory.lookup('RCConstants.PACKAGE_CONTENT_TYPE', 'Journal')
           result.journal++
         }
         else if (has_book && !has_db && !has_journal) {
-          pkg_obj.contentType = RefdataCategory.lookup('Package.ContentType', 'Book')
+          pkg_obj.contentType = RefdataCategory.lookup('RCConstants.PACKAGE_CONTENT_TYPE', 'Book')
           result.book++
         }
         else if (has_book && has_journal) {
-          pkg_obj.contentType = RefdataCategory.lookup('Package.ContentType', 'Mixed')
+          pkg_obj.contentType = RefdataCategory.lookup('RCConstants.PACKAGE_CONTENT_TYPE', 'Mixed')
           result.mixed++
         }
         else if (!has_book && !has_journal && !has_db) {
@@ -460,10 +460,10 @@ class PackageService {
   @Transactional
   def compareLists(listOne, listTwo, def full = true, Date date = null, Job j = null) {
     def result = [:]
-    def status_current = RefdataCategory.lookup('KBComponent.Status', 'Current')
-    def status_retired = RefdataCategory.lookup('KBComponent.Status', 'Retired')
-    def status_expected = RefdataCategory.lookup('KBComponent.Status', 'Expected')
-    def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+    def status_current = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Current')
+    def status_retired = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Retired')
+    def status_expected = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Expected')
+    def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
     def tipp_status = [status_current]
     Date checkDate = date ?: new Date()
     def tipp_params = [:]
@@ -661,7 +661,7 @@ class PackageService {
   def restLookup(packageHeaderDTO, def user = null) {
     log.info("Upsert org with header ${packageHeaderDTO}");
     def result = [to_create: true];
-    def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+    def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
     def normname = Package.generateNormname(packageHeaderDTO.name)
 
     log.debug("Checking by normname ${normname} ..")
@@ -806,7 +806,7 @@ class PackageService {
   @Transactional
   public Package upsertDTO(packageHeaderDTO, def user = null) {
     log.info("Upsert package with header ${packageHeaderDTO}");
-    def status_deleted = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Deleted')
+    def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
     def pkg_normname = Package.generateNormname(packageHeaderDTO.name)
 
     log.debug("Checking by normname ${pkg_normname} ..")
@@ -1230,8 +1230,8 @@ class PackageService {
               'gokb_title_uid\n');
 
           def session = sessionFactory.getCurrentSession()
-          def combo_tipps = RefdataCategory.lookup('Combo.Type', 'Package.Tipps')
-          def status_current = RefdataCategory.lookup('KBComponent.Status', 'Current')
+          def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
+          def status_current = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Current')
           def query = session.createQuery("select tipp.id from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=:p and c.toComponent=tipp  and tipp.status = :sc and c.type = :ct order by tipp.id")
           query.setReadOnly(true)
           query.setParameter('p', pkg.getId(), StandardBasicTypes.LONG)
@@ -1419,8 +1419,8 @@ class PackageService {
               '\n');
 
           def session = sessionFactory.getCurrentSession()
-          def combo_tipps = RefdataCategory.lookup('Combo.Type', 'Package.Tipps')
-          def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+          def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
+          def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
           def query = session.createQuery("select tipp.id from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=:p and c.toComponent=tipp  and tipp.status <> :sd and c.type = :ct order by tipp.id")
           query.setReadOnly(true)
           query.setParameter('p', pkg.getId(), StandardBasicTypes.LONG)

@@ -1,10 +1,11 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <div id="content">
 
   <dl class="dl-horizontal">
     <dt> <gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel> </dt>
     <dd> <gokb:xEditable class="ipe" owner="${d}" field="name" /> </dd>
     <dt> <gokb:annotatedLabel owner="${d}" property="status">Status</gokb:annotatedLabel> </dt>
-    <dd> <gokb:xEditableRefData owner="${d}" field="status" config="KBComponent.Status" /> </dd>
+    <dd> <gokb:xEditableRefData owner="${d}" field="status" config="${RCConstants.KBCOMPONENT_STATUS}" /> </dd>
     <dt> <gokb:annotatedLabel owner="${d}" property="status">Instances</gokb:annotatedLabel> </dt>
     <g:if test="${d.id != null && d.instances}">
       <dd> 

@@ -41,9 +41,9 @@ class PackageTestSpec extends AbstractAuthSpec {
     testTitle = JournalInstance.findByName("PackTestTitle") ?: new JournalInstance(name: "PackTestTitle").save(flush: true)
     testPlt = Platform.findByName("PackTestPlt") ?: new Platform(name: "PackTestPlt").save(flush: true)
     testOrg = Org.findByName("PackTestOrg") ?: new Org(name: "PackTestOrg").save(flush: true)
-    def http = RefdataCategory.lookup('Source.DataSupplyMethod', 'HTTP Url').save(flush: true)
-    def kbart = RefdataCategory.lookup('Source.DataFormat', 'KBART').save(flush: true)
-    def freq = RefdataCategory.lookup('Source.Frequency', 'Weekly').save(flush: true)
+    def http = RefdataCategory.lookup(RCConstants.SOURCE_DATA_SUPPLY_METHOD, 'HTTP Url').save(flush: true)
+    def kbart = RefdataCategory.lookup(RCConstants.SOURCE_DATA_FORMAT, 'KBART').save(flush: true)
+    def freq = RefdataCategory.lookup(RCConstants.SOURCE_FREQUENCY, 'Weekly').save(flush: true)
     testSource = Source.findByName("PackTestSource") ?: new Source(
       name: "PackTestSource",
       url: "https://org/package",

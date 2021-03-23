@@ -63,7 +63,7 @@
         </dt>
         <dd>
           <gokb:xEditableRefData owner="${d}" field="status"
-            config='ReviewRequest.Status' />
+            config="${RCConstants.REVIEW_REQUEST_STATUS}" />
         </dd>
 
         <dt>
