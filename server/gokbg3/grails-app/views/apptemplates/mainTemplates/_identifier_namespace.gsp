@@ -16,5 +16,5 @@
   <dd> <gokb:xEditable class="ipe" owner="${d}" field="pattern" /> </dd>
 
   <dt> <gokb:annotatedLabel owner="${d}" property="targetType">Target Type</gokb:annotatedLabel> </dt>
-  <dd> <gokb:xEditableRefData owner="${d}" field="targetType" config="${RCConstants.IDENTIFIER_NAMESPACE_TYPE}" /> </dd>
+  <dd> <gokb:xEditableRefData owner="${d}" field="targetType" config="${RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE}" /> </dd>
 </dl>

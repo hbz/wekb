@@ -271,7 +271,7 @@ class IdentifierController {
   }
 
   private void fillTargetMap() {
-    RefdataValue.findAllByOwner(RefdataCategory.findByLabel(RCConstants.IDENTIFIER_NAMESPACE_TYPE))
+    RefdataValue.findAllByOwner(RefdataCategory.findByLabel(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE))
       .each { refVal ->
         targetTypeMap.put((refVal.value), refVal)
       }

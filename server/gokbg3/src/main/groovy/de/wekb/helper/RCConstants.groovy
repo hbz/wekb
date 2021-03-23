@@ -21,7 +21,7 @@ class RCConstants {
 
     public static final String DC_TYPE = "DCType"
 
-    public static final String IDENTIFIER_NAMESPACE_TYPE = "IdentifierNamespace.TargetType"
+    public static final String IDENTIFIER_NAMESPACE_TARGET_TYPE = "IdentifierNamespace.TargetType"
 
     public static final String INGEST_FILE_TYPE = "ingest.filetype"
 

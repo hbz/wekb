@@ -23,7 +23,7 @@ class SourcesTestSpec extends AbstractAuthSpec {
     IdentifierNamespace titleNS = IdentifierNamespace.findByName("TestSourceTitleNS") ?: new IdentifierNamespace(
       value: "testsourcetitlenamespace",
       name: "TestSourceTitleNS",
-      targetType: RefdataCategory.lookup(RCConstants.IDENTIFIER_NAMESPACE_TYPE, 'Title'))
+      targetType: RefdataCategory.lookup(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE, 'Title'))
     Source quelle = Source.findByName("TestSource") ?: new Source(name: "TestSource", targetNamespace: titleNS)
   }
 
