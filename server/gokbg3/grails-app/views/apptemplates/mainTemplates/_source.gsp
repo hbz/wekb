@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <g:render template="/apptemplates/mainTemplates/kbcomponent"
 	model="${[d:displayobj, rd:refdata_properties, dtype:'KBComponent']}" />
 

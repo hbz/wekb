@@ -871,7 +871,7 @@ class WorkflowController{
       // Retire the tipp if
       if (params["oldtipp_close:${tipp_map_entry.key}"] == 'on'){
         log.debug("Retiring old tipp")
-        current_tipp.status = RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, KBComponent.STATUS_RETIRED)
+        current_tipp.status = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_RETIRED)
         if (params["oldtipp_review:${tipp_map_entry.key}"] == 'on'){
           reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title change has affected this tipp [new tipps have been generated]. The user chose to retire this tipp', request.user)
         }
@@ -1129,7 +1129,7 @@ class WorkflowController{
       log.debug("Checking close flags..${params}")
       if (params["oldtipp_close:${tipp_map_entry.key}"] == 'on'){
         log.debug("Retiring old tipp")
-        current_tipp.status = RefdataCategory.lookup(KBComponent.RD_STATUS, KBComponent.STATUS_RETIRED)
+        current_tipp.status = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_RETIRED)
         if (params["oldtipp_review:${tipp_map_entry.key}"] == 'on'){
           reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title transfer has affected this tipp [new tipps have been generated]. The user chose to retire this tipp', request.user)
         }

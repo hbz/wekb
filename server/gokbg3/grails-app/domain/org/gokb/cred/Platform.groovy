@@ -1,5 +1,7 @@
 package org.gokb.cred
 
+import de.wekb.helper.RCConstants
+
 import javax.persistence.Transient
 import groovy.util.logging.*
 import org.gokb.GOKbTextUtils
@@ -160,7 +162,7 @@ class Platform extends KBComponent {
 
   static def refdataFind(params) {
     def result = [];
-    def status_deleted = RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, KBComponent.STATUS_DELETED)
+    def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED)
     def status_filter = null
 
     if (params.filter1) {

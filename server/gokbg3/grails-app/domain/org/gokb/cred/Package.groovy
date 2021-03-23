@@ -28,6 +28,7 @@ class Package extends KBComponent {
   // Consistent?: N
 
   // Refdata
+  @RefdataAnnotation(cat = RCConstants.PACKAGE_CONTENT_TYPE)
   RefdataValue scope
   RefdataValue listStatus
   RefdataValue contentType
@@ -159,7 +160,7 @@ class Package extends KBComponent {
 
   static def refdataFind(params) {
     def result = [];
-    def status_deleted = RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, KBComponent.STATUS_DELETED)
+    def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED)
     def status_filter = null
 
     if (params.filter1) {

@@ -67,7 +67,7 @@
         <gokb:annotatedLabel owner="${d}" property="language">Language</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditableRefData owner="${d}" field="language" config="${org.gokb.cred.KBComponent.RD_LANGUAGE}"/>
+        <gokb:xEditableRefData owner="${d}" field="language" config="${RCConstants.KBCOMPONENT_LANGUAGE}"/>
     </dd>
 
     <dt>

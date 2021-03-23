@@ -410,7 +410,7 @@ class BootStrap {
 
 
     def refdataCats() {
-        RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS,
+        RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS,
             [(KBComponent.STATUS_CURRENT)  : '0',
              (KBComponent.STATUS_EXPECTED) : '1',
              (KBComponent.STATUS_RETIRED)  : '2',
@@ -418,9 +418,9 @@ class BootStrap {
             ]
         )
 
-        RefdataCategory.lookupOrCreate(KBComponent.RD_EDIT_STATUS, KBComponent.EDIT_STATUS_APPROVED).save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(KBComponent.RD_EDIT_STATUS, KBComponent.EDIT_STATUS_IN_PROGRESS).save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(KBComponent.RD_EDIT_STATUS, KBComponent.EDIT_STATUS_REJECTED).save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_EDIT_STATUS, KBComponent.EDIT_STATUS_APPROVED).save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_EDIT_STATUS, KBComponent.EDIT_STATUS_IN_PROGRESS).save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_EDIT_STATUS, KBComponent.EDIT_STATUS_REJECTED).save(flush: true, failOnError: true)
 
         RefdataCategory.lookupOrCreate(RCConstants.TIPP_FORMAT, "Digitised").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.TIPP_FORMAT, "Electronic").save(flush: true, failOnError: true)

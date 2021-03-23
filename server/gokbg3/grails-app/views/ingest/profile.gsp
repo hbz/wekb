@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <html>
   <head>
     <meta name="layout" content="sb-admin" />

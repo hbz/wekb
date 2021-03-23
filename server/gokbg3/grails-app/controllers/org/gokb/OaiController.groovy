@@ -587,7 +587,7 @@ class OaiController {
 
           if (val instanceof String) {
             query += 'o.status != ?'
-            def qry_rdc = RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, val)
+            def qry_rdc = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, val)
             query_params.add(qry_rdc)
             wClause = true
           }

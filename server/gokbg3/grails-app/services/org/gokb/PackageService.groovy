@@ -372,7 +372,7 @@ class PackageService {
         c.add(
             "status",
             "eq",
-            RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, KBComponent.STATUS_CURRENT))
+            RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_CURRENT))
       }
     }.each {
 

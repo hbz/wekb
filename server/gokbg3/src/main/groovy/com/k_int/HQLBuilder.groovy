@@ -1,5 +1,6 @@
 package com.k_int
 
+import de.wekb.helper.RCConstants
 import groovy.util.logging.*
 import org.gokb.cred.*;
 import grails.util.GrailsClassUtils

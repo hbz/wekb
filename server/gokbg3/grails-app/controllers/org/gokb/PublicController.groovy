@@ -106,11 +106,11 @@ class PublicController {
     result =  ESSearchService.search(mutableParams)
 
 
-    def query_params = [forbiddenStatus : RefdataCategory.lookup(KBComponent.RD_STATUS, KBComponent.STATUS_DELETED)]
+    def query_params = [forbiddenStatus : RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED)]
 
     List providerRoles = [RefdataCategory.lookupOrCreate(RCConstants.ORG_MISSION, 'Content Provider'), RefdataCategory.lookupOrCreate(RCConstants.ORG_MISSION, 'Platform Provider'), RefdataCategory.lookupOrCreate(RCConstants.ORG_MISSION, 'Publisher')]
 
-    def query_params2 = [forbiddenStatus : RefdataCategory.lookup(KBComponent.RD_STATUS, KBComponent.STATUS_DELETED), roles: providerRoles]
+    def query_params2 = [forbiddenStatus : RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED), roles: providerRoles]
 
     result.componentsOfStatistic = ["Provider", "Package", "Platform", "CuratoryGroup", "TitleInstancePackagePlatform"]
 

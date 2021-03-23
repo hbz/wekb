@@ -952,7 +952,7 @@ class TitleLookupService {
         // addIdentifiers(results.ids, the_title)
         // addPublisher(metadata.publisher_name, the_title)
         if (the_title.name.startsWith("Unknown Title")) {
-          the_title.status = RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, 'Expected')
+          the_title.status = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Expected')
         }
         log.debug("${the_title.ids}")
         if (title_created) {

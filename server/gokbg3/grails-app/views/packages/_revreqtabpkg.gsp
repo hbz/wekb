@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <h4>Showing <b>${d.restriction}</b> Requests (${d.reviewRequests?.size() ?: '0'})</h4>
 
 <table class="table table-bordered">

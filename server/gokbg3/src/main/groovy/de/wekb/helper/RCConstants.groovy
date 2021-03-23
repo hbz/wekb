@@ -28,7 +28,9 @@ class RCConstants {
     public static final String JOB_TYPE = "Job.Type"
 
     public static final String KBCOMPONENT_EDIT_STATUS = "KBComponent.EditStatus"
+    public static final String KBCOMPONENT_LANGUAGE = "KBComponent.Language"
     public static final String KBCOMPONENT_STATUS   = "KBComponent.Status"
+
 
     public static final String KBCOMPONENT_VARIANTNAME_VARIANT_TYPE = "KBComponentVariantName.VariantType"
     public static final String KBCOMPONENT_VARIANTNAME_LOCAL = "KBComponentVariantName.Locale"

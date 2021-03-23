@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <g:set var="editable" value="${editableDisplayObjc}" />
   <dl class="dl-horizontal">
   <dt>

@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <div>
   <table class="table table-bordered">
     <thead>

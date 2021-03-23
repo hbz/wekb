@@ -66,7 +66,7 @@ class ComponentStatisticService {
         if ( !existing_stats || existing_stats.size() == 0 || ( offset == 0 && i == to_substract ) || force_update ) {
 
           def query_params = [enddate: period_end_date,
-                              forbiddenStatus : RefdataCategory.lookup(KBComponent.RD_STATUS, KBComponent.STATUS_DELETED)]
+                              forbiddenStatus : RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED)]
           def fetch_all = "select count(o.id) from ${c} as o where dateCreated < :enddate and status != :forbiddenStatus"
           def stats_total_count = KBComponent.executeQuery(fetch_all.toString(), query_params, [readOnly: true])[0]
 

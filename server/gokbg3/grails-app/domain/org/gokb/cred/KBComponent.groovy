@@ -1,5 +1,6 @@
 package org.gokb.cred
 
+import de.wekb.helper.RCConstants
 import grails.util.GrailsNameUtils
 import groovy.util.logging.*
 
@@ -19,18 +20,15 @@ import org.gokb.GOKbTextUtils
 @grails.gorm.dirty.checking.DirtyCheck
 abstract class KBComponent implements Auditable {
 
-  static final String RD_STATUS = RCConstants.KBCOMPONENT_STATUS
   static final String STATUS_CURRENT = "Current"
   static final String STATUS_DELETED = "Deleted"
   static final String STATUS_EXPECTED = "Expected"
   static final String STATUS_RETIRED = "Retired"
 
-  static final String RD_EDIT_STATUS = "KBComponent.EditStatus"
   static final String EDIT_STATUS_APPROVED = "Approved"
   static final String EDIT_STATUS_IN_PROGRESS = "In Progress"
   static final String EDIT_STATUS_REJECTED = "Rejected"
 
-  static final String RD_LANGUAGE = "KBComponent.Language"
 
   static final String CURRENT_PRICE_HQL = '''
 select cp
@@ -634,7 +632,7 @@ where cp.owner = :c
    */
   static def refdataFind(params) {
     def result = [];
-    def status_deleted = RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, KBComponent.STATUS_DELETED)
+    def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED)
     def ql = null;
     ql = Class.forName(params.baseClass).findAllByNameIlikeAndStatusNotEqual("${params.q}%", status_deleted, params)
 //    ql = KBComponent.findAllByNameIlike("${params.q}%",params)
@@ -796,45 +794,45 @@ where cp.owner = :c
 
   public void deleteSoft(context) {
     // Set the status to deleted.
-    setStatus(RefdataCategory.lookupOrCreate(RD_STATUS, STATUS_DELETED))
+    setStatus(RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, STATUS_DELETED))
     save(flush: true, failOnError: true)
   }
 
   public void retire(def context = null) {
     log.debug("KBComponent::retire");
     // Set the status to retired.
-    setStatus(RefdataCategory.lookupOrCreate(RD_STATUS, STATUS_RETIRED))
+    setStatus(RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, STATUS_RETIRED))
     save(flush: true, failOnError: true)
   }
 
   public void setActive(context) {
-    setStatus(RefdataCategory.lookupOrCreate(RD_STATUS, STATUS_CURRENT))
+    setStatus(RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, STATUS_CURRENT))
     save(flush: true, failOnError: true)
   }
 
   public void setExpected(context) {
-    setStatus(RefdataCategory.lookupOrCreate(RD_STATUS, STATUS_EXPECTED))
+    setStatus(RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, STATUS_EXPECTED))
     save(flush: true, failOnError: true)
   }
 
   @Transient
   public boolean isRetired() {
-    return (getStatus() == RefdataCategory.lookupOrCreate(RD_STATUS, STATUS_RETIRED))
+    return (getStatus() == RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, STATUS_RETIRED))
   }
 
   @Transient
   public boolean isDeleted() {
-    return (getStatus() == RefdataCategory.lookupOrCreate(RD_STATUS, STATUS_DELETED))
+    return (getStatus() == RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, STATUS_DELETED))
   }
 
   @Transient
   public boolean isCurrent() {
-    return (getStatus() == RefdataCategory.lookupOrCreate(RD_STATUS, STATUS_CURRENT))
+    return (getStatus() == RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, STATUS_CURRENT))
   }
 
   @Transient
   public boolean isExpected() {
-    return (getStatus() == RefdataCategory.lookupOrCreate(RD_STATUS, STATUS_EXPECTED))
+    return (getStatus() == RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, STATUS_EXPECTED))
   }
 
   /**
