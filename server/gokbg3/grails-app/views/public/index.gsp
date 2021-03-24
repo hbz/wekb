@@ -14,7 +14,7 @@
         <g:form controller="public" class="form" role="form" action="index" method="get" params="${params}">
             <div class="row">
                 <div class="col-sm-4">
-                    <div class="form-group input-group-lg">
+                    <div class="form-group input-group-md">
                         <label for="q">Search for packages...</label>
                         <input type="text" class="form-control" placeholder="Find package like..." value="${params.q}"
                                name="q">
@@ -24,7 +24,7 @@
 
                 <g:each in="${facets?.sort { it.key }}" var="facet">
                     <div class="col-sm-4">
-                        <div class="form-group input-group-lg">
+                        <div class="form-group input-group-md">
                             <g:if test="${facet.key != 'type'}">
                                 <label for="${facet.key}" class=""><g:message code="facet.so.${facet.key}" default="${facet.key}"/></label>
                                 <select name="${facet.key}" class="form-control  wekb-multiselect" multiple aria-label="Default select example">
@@ -49,8 +49,12 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="form-group">
-                        <a class="btn btn-default" style="margin-right: 20px" href="${grailsApplication.config.server.contextPath ?: ''}"/>Reset</a>
-                        <button class="btn btn-primary" type="submit" value="yes" name="search">Search</button>
+                        <div class="btn-group">
+                            <a class="btn btn-default"  href="${grailsApplication.config.server.contextPath ?: ''}"/>Reset</a>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-primary" type="submit" value="yes" name="search">Search</button>
+                        </div>
                     </div>
                 </div>
             </div>

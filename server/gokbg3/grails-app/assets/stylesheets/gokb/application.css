@@ -60,8 +60,8 @@ ul.select2-choices:after {
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
 }
-.wekb-filter .input-group-lg > .form-control {
-  height: 45px;
+.wekb-filter .input-group-md > .form-control {
+  height: 35px;
 }
 .wekb-filter .select2-container .select2-choices .select2-search-field input,
 .wekb-filter .select2-container .select2-choices
