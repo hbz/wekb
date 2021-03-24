@@ -1,54 +1,13 @@
 <!DOCTYPE html>
-<%
-    def addFacet = { params, facet, val ->
-        def newparams = [:]
-        newparams.putAll(params)
-
-        newparams.remove('offset');
-        newparams.remove('max');
-
-        def current = newparams[facet]
-        if (current == null) {
-            newparams[facet] = val
-        } else if (current instanceof String[]) {
-            newparams.remove(current)
-            newparams[facet] = current as List
-            newparams[facet].add(val);
-        } else {
-            newparams[facet] = [current, val]
-        }
-        newparams
-    }
-
-    def removeFacet = { params, facet, val ->
-        def newparams = [:]
-        newparams.putAll(params)
-        def current = newparams[facet]
-
-        newparams.remove('offset');
-        newparams.remove('max');
-
-        if (current == null) {
-        } else if (current instanceof String[]) {
-            newparams.remove(current)
-            newparams[facet] = current as List
-            newparams[facet].remove(val);
-        } else if (current?.equals(val.toString())) {
-            newparams.remove(facet);
-        }
-        newparams
-    }
-%>
 <html>
 <head>
     <meta name='layout' content='public'/>
-    <title>GOKb: Packages</title>
+    <title><g:message code="gokb.appname" default="we:kb"/>: Packages</title>
 </head>
 
 <body>
 
-
-<g:render template="number-chart-hero"   />
+<g:render template="number-chart-hero"/>
 <div class="container">
     <h1>Filter</h1>
     <div class="well well-lg wekb-filter">
@@ -63,6 +22,39 @@
     %{--                    Showing results ${firstrec} to ${lastrec} of ${resultsTotal}--}%
                 </div>
 
+                    <g:each in="${facets?.sort { it.key }}" var="facet">
+                        <g:if test="${facet.key != 'type'}">
+
+                            <label for="${facet.key}" class="form-label"><g:message code="facet.so.${facet.key}"
+                                                                                    default="${facet.key}"/></label>
+
+                            <select name="${facet.key}" class="form-select wekb-multiselect" multiple
+                                    aria-label="Default select example">
+                                <option value="">Select <g:message code="facet.so.${facet.key}"
+                                                                   default="${facet.key}"/></option>
+                                <g:each in="${facet.value?.sort { it.display }}" var="v">
+                                    <g:set var="fname" value="facet:${facet.key + ':' + v.term}"/>
+                                    <g:set var="kbc"
+                                           value="${v.term.startsWith('org.gokb.cred') ? org.gokb.cred.KBComponent.get(v.term.split(':')[1].toLong()) : null}"/>
+                                    <g:if test="${params.list(facet.key).contains(v.term.toString())}">
+                                        <option value="${v.term}"
+                                                selected="selected">${kbc?.name ?: v.display} (${v.count})</option>
+                                    </g:if>
+                                    <g:else>
+                                        <option value="${v.term}">${kbc?.name ?: v.display} (${v.count})</option>
+                                    </g:else>
+                                </g:each>
+                            </select>
+
+                        </g:if>
+                    </g:each>
+
+
+                    <br>
+                    <br>
+
+                    <button class="btn btn-primary" type="submit" value="yes" name="search"><span
+                            class="fa fa-search" aria-hidden="true">Search</span></button>
                 <g:each in="${facets?.sort { it.key }}" var="facet">
                     <div class="col-sm-4">
                         <div class="form-group input-group-lg">
@@ -107,12 +99,12 @@
             <table class="table table-striped">
                 <thead>
                 <tr>
-                    <th>Package Name</th>
-                    <th>Provider</th>
-                    <th>Curatory Group</th>
-                    <th>Content Type</th>
-                    <th>Title Count</th>
-                    <th>Last Updated</th>
+                    <g:sortableColumn property="sortname" title="Package Name"/>
+                    <g:sortableColumn property="cpname" title="Provider"/>
+                    <g:sortableColumn property="curatoryGroups" title="Curatory Groups"/>
+                    <g:sortableColumn property="contentType" title="Content Type"/>
+                    <g:sortableColumn property="titleCount" title="Title Count"/>
+                    <g:sortableColumn property="lastUpdatedDisplay" title="Last Updated"/>
                 </tr>
                 </thead>
                 <tbody>
@@ -121,16 +113,17 @@
                         <td>
                             <g:link controller="public" action="packageContent"
                                     id="${hit.id}">${hit.source.name}</g:link>
-                        <!-- <g:link controller="public" action="kbart" id="${hit.id}">(Download Kbart File)</g:link>-->
+                            <!-- <g:link controller="public" action="kbart"
+                                         id="${hit.id}">(Download Kbart File)</g:link>-->
 
                         </td>
                         <td>${hit.source.cpname}</td>
                         <td>
                             <g:if test="${hit.source.curatoryGroups?.size() > 0}">
-                                    <g:each in="${hit.source.curatoryGroups}" var="cg" status="i">
-                                        <g:if test="${i > 0}"><br></g:if>
-                                        ${cg}
-                                    </g:each>
+                                <g:each in="${hit.source.curatoryGroups}" var="cg" status="i">
+                                    <g:if test="${i > 0}"><br></g:if>
+                                    ${cg}
+                                </g:each>
                             </g:if>
                             <g:else>
                                 <div>No Curators</div>
@@ -138,7 +131,7 @@
                         </td>
                         <td>${hit.source.contentType}</td>
                         <td>${hit.source.titleCount}
-%{--                        <g:if test="${hit.source.listStatus != 'Checked'}">*</g:if>--}%
+                        %{--                        <g:if test="${hit.source.listStatus != 'Checked'}">*</g:if>--}%
                         </td>
                         <td>${hit.source.lastUpdatedDisplay}</td>
                     </tr>
@@ -146,9 +139,9 @@
                 </tbody>
             </table>
 
-%{--            <div style="font-size:0.8em;">
-                <b>*</b> The editing status of this package is marked as 'In Progress'. The number of titles in this package should therefore not be taken as final.
-            </div>--}%
+        %{--            <div style="font-size:0.8em;">
+                        <b>*</b> The editing status of this package is marked as 'In Progress'. The number of titles in this package should therefore not be taken as final.
+                    </div>--}%
 
             <g:if test="${resultsTotal ?: 0 > 0}">
                 <div class="pagination">
@@ -165,17 +158,34 @@
 </div> <!-- /.container -->
 <g:javascript>
     // When DOM is ready.
-    $(document).ready(function(){
+    $(document).ready(function () {
 
         var form_selects = $(".wekb-multiselect");
 
-        form_selects.each(function() {
+        form_selects.each(function () {
 
             var conf = {
                 placeholder: "Please select",
                 allowClear: true,
                 width:'off',
                 minimumInputLength: 0,
+                /*                ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
+                                    url: gokb.config.lookupURI,
+                                    dataType: 'json',
+                                    data: function (term, page) {
+                                        return {
+                                            format:'json',
+                                            q: term,
+                                            baseClass:$(this).data('domain'),
+                                            filter1:$(this).data('filter1'),
+                                            addEmpty:'Y'
+                                        };
+                                    },
+                                    results: function (data, page) {
+                                        // console.log("resultsFn");
+                                        return {results: data.values};
+                                    }
+                                }*/
             };
 
             var me = $(this);

@@ -291,7 +291,7 @@
 
   </div>
   <g:render template="/apptemplates/secondTemplates/componentStatus"
-    model="${[d:displayobj, rd:refdata_properties, dtype:'KBComponent']}" />
+    model="${[d:displayobj]}" />
 </div>
 
 

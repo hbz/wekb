@@ -1,5 +1,5 @@
 <g:each var="entry" in="${rd.sort{it.value.title}}">
-	<g:if test="${ entry.key.startsWith(dtype + '.' ) && !(entry.key in notShowProps)}">
+	<g:if test="${ (dtype ? entry.key.startsWith(dtype + '.' ) : true) && !(entry.key in notShowProps)}">
 		<dt>
 			<gokb:annotatedLabel owner="${d}" property="${ entry.value.title }">
 				${ entry.value.title }
