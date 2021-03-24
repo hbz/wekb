@@ -85,7 +85,7 @@
                         </div>
                         <%-- Git Commit --%>
                         <div class="item">
-                            <g:if test="${grailsApplication.metadata['git.commit.id']}">
+                            <g:if test="${grailsApplication.metadata['build.git.revision']}">
                                 <a target="_blank" class="item" href="https://github.com/hbz/laser-gokb/tree/${grailsApplication.metadata['build.git.revision']}">
                                     Git Commit: ${grailsApplication.metadata['build.git.revision']}
                                 </a>
