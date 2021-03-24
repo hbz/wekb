@@ -51,11 +51,11 @@
 <g:render template="number-chart-hero"   />
 <div class="container">
     <h1>Filter</h1>
-    <div class="well well-lg">
+    <div class="well well-lg wekb-filter">
         <g:form controller="public" class="form" role="form" action="index" method="get" params="${params}">
             <div class="row">
                 <div class="col-sm-4">
-                    <div class="form-group">
+                    <div class="form-group input-group-lg">
                         <label for="q">Search for packages...</label>
                         <input type="text" class="form-control" placeholder="Find package like..." value="${params.q}"
                                    name="q">
@@ -65,7 +65,7 @@
 
                 <g:each in="${facets?.sort { it.key }}" var="facet">
                     <div class="col-sm-4">
-                        <div class="form-group">
+                        <div class="form-group input-group-lg">
                             <g:if test="${facet.key != 'type'}">
                                 <label for="${facet.key}" class=""><g:message code="facet.so.${facet.key}" default="${facet.key}"/></label>
                                 <select name="${facet.key}" class="form-control  wekb-multiselect" multiple aria-label="Default select example">
@@ -89,8 +89,10 @@
             </div>
             <div class="row">
                 <div class="col-sm-12">
-%{--                    <button class="btn btn-default" type="submit" value="yes" name="search">Back</button>--}%
-                    <button class="btn btn-primary pull-right" type="submit" value="yes" name="search">Search</button>
+                    <div class="form-group">
+                        <a class="btn btn-default" style="margin-right: 20px" href="${grailsApplication.config.server.contextPath ?: ''}"/>Reset</a>
+                        <button class="btn btn-primary" type="submit" value="yes" name="search">Search</button>
+                    </div>
                 </div>
             </div>
         </g:form>
