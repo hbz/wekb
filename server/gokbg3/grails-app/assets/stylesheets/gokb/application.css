@@ -15,15 +15,14 @@
 *= require fontawesome
 *= encoding UTF-8
 */
-.wekb-footer h2{
-  font-size:22px;
-}
-.ten-columns > .col-sm-2 {
-  width: 20%;
-}
+
+/** PUBLIC START **/
+/* Logo */
 .navbar-brand.mekb-logo{
   padding: 3px 15px;
 }
+
+/* Number Hero */
 .wekb-numberChartHero {
   margin-top: -21px;
   padding-top: 48px;
@@ -42,6 +41,31 @@
   font-weight: 600;
   line-height: 1.125;
 }
+/* New grid for 5 columns */
+.ten-columns > .col-sm-2 {
+  width: 20%;
+}
+/* Arrow for multiple select2 boxes */
+ul.select2-choices {
+  padding-right: 30px !important;
+}
+
+ul.select2-choices:after {
+  content: "";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-top: 5px solid #333;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+}
+/* Footer on public sites */
+.wekb-footer h2{
+  font-size:22px;
+}
+
+/** PUBLIC END **/
 .threeColGrid > div:nth-child(4n+5) {
     clear: left;
 }
