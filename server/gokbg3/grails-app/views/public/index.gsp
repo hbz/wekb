@@ -63,7 +63,8 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <table class="table table-striped well">
+            <h1>Results <span class="label label-default">${resultsTotal}</span></h1>
+            <table class="table table-striped">
                 <thead>
                 <tr>
                     <g:sortableColumn property="sortname" title="Package Name"/>
