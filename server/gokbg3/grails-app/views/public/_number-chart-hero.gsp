@@ -9,7 +9,7 @@
                        <g:message code="public.index.component.${component.toLowerCase()}"/>
                     </div>
                     <div class="mekb-bigFont">
-                        <g:formatNumber number="${countComponent."${component}"}" type="number" format="###.###"/> </div>
+                        <g:formatNumber number="${countComponent."${component.toLowerCase()}"}" type="number" format="###.###"/> </div>
                 </div>
             </g:each>
         </div>
