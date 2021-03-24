@@ -1,5 +1,5 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
-<g:set var="editable" value="${editableDisplayObjc}" />
+
   <dl class="dl-horizontal">
   <dt>
     <gokb:annotatedLabel owner="${d}" property="name">Package Name</gokb:annotatedLabel>
@@ -116,9 +116,6 @@
         </g:if>
         <li role="presentation"><a href="#activity" data-toggle="tab">Activity</a></li>
         <li role="presentation"><a href="#review" data-toggle="tab">Review Requests</a></li>
-        <g:if test="${grailsApplication.config.gokb.costInfo}">
-          <li role="presentation"><a href="#pkgCosts" data-toggle="tab">Package Cost Info</a></li>
-        </g:if>
       </g:if>
       <g:else>
         <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Titles/TIPPs </span></li>
@@ -130,9 +127,6 @@
         </g:if>
         <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Activity </span></li>
         <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Review Requests </span></li>
-        <g:if test="${grailsApplication.config.gokb.costInfo}">
-          <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Package Cost Info </span></li>
-        </g:if>
       </g:else>
     </ul>
 
@@ -193,7 +187,7 @@
           </dt>
           <dd>
             <g:render template="/apptemplates/secondTemplates/combosByType"
-              model="${[d:d, property:'ids', fragment:'identifiers', propagateDelete: "true", cols:[
+              model="${[d:d, property:'ids', fragment:'identifiers', cols:[
                         [expr:'toComponent.namespace.value', colhead:'Namespace'],
                         [expr:'toComponent.value', colhead:'ID', action:'link']]]}" />
             <g:if test="${editable}">
@@ -303,14 +297,10 @@
         </div>
       </div>
 
-      <div class="tab-pane" id="pkgCosts">
-        <g:render template="/apptemplates/secondTemplates/componentCosts" model="${[d:d]}" />
-      </div>
-
     </div>
     <g:if test="${d.id}">
       <g:render template="/apptemplates/secondTemplates/componentStatus"
-        model="${[d:displayobj, rd:refdata_properties, dtype:'KBComponent']}" />
+        model="${[d:d]}" />
     </g:if>
   </div>
 

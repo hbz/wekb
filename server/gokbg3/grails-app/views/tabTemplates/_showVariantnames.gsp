@@ -1,5 +1,4 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
-<g:set var="editable" value="${ editableDisplayObjc && ((d.respondsTo('getCuratoryGroups') ? (request.curator != null && request.curator.size() > 0) : true) || (params.curationOverride == "true" && request.user.isAdmin())) }" />
 <div class="tab-pane" id="altnames">
   <g:if test="${d.id != null}">
     <dl>
@@ -14,7 +13,7 @@
               <th>Status</th>
               <th>Variant Type</th>
               <th>Locale</th>
-                        <g:if test="${ showActions }">
+                        <g:if test="${ editable && showActions }">
                         <th>Actions</th>
                         </g:if>
             </tr>
@@ -28,13 +27,13 @@
                 <td><gokb:xEditableRefData owner="${v}" field="status" config="${RCConstants.KBCOMPONENT_VARIANTNAME_STATUS}" overWriteEditable="${editable}"/></td>
                 <td><gokb:xEditableRefData owner="${v}" field="variantType" config="${RCConstants.KBCOMPONENT_VARIANTNAME_VARIANT_TYPE}" overWriteEditable="${editable}"/></td>
                 <td><gokb:xEditableRefData owner="${v}" field="locale" config="${RCConstants.KBCOMPONENT_VARIANTNAME_LOCAL}" overWriteEditable="${editable}"/></td>
-                <td>
                   <g:if test="${ editable && showActions }">
+                    <td>
                               <g:link controller="ajaxSupport" action="authorizeVariant" id="${v.id}">Make Authorized</g:link>,
                               <g:link controller="ajaxSupport" class="confirm-click" data-confirm-message="Are you sure you wish to delete this Variant?"
                                 action="deleteVariant" id="${v.id}" >Delete</g:link>
+                    </td>
                   </g:if>
-                </td>
               </tr>
             </g:each>
           </tbody>

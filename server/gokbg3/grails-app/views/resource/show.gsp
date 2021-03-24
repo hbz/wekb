@@ -4,7 +4,7 @@
     <meta name="layout" content="sb-admin"/>
     <title><g:message code="gokb.appname" default="we:kb"/>: ${displayobj.getNiceName() ?: 'Component'}
     <g:if test="${displayobj}">
-        &lt;${editableDisplayObjc ? 'Editable' : (response.status == 403 ? 'Not Accessible' : 'Read Only')}&gt;
+        &lt;${editable ? 'Editable' : (response.status == 403 ? 'Not Accessible' : 'Read Only')}&gt;
         &lt;${displayobj.isCreatable() ? 'Creatable' : 'Not Creatable'}&gt;
     </g:if>
     <g:else>
@@ -23,7 +23,7 @@
                     ${displayobj.getNiceName() ?: 'Component'} : ${displayobj.id}
                     <g:if test="${response.status != 403}">
                         <g:if test="${displayobj.respondsTo('getDisplayName') && displayobj.getDisplayName()}">- <strong>${displayobj.getDisplayName()}</strong></g:if>
-                        <g:if test="${!editableDisplayObjc}"><small><i>&lt;Read only&gt;</i></small></g:if>
+                        <g:if test="${!editable}"><small><i>&lt;Read only&gt;</i></small></g:if>
                     </g:if>
                     <g:else>
                         <small><i>&lt;Not Accessible&gt;</i></small>
@@ -106,7 +106,7 @@
                     </sec:ifAnyGranted>
                 </g:if>
 
-                <g:if test="${displayobj.respondsTo('availableActions') && editableDisplayObjc}">
+                <g:if test="${displayobj.respondsTo('availableActions') && editable}">
 
                     <g:form controller="workflow" action="action" method="post" class='action-form'>
                         <h4>Available actions</h4>

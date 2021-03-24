@@ -71,7 +71,7 @@ class ResourceController {
             request.curator = null
           }
 
-          result.editableDisplayObjc = displayobj.isEditable() ?: (params.curationOverride == 'true' && user.isAdmin())
+          result.editable = displayobj.isEditable() ?: (params.curationOverride == 'true' && user.isAdmin())
 
           result.displayobjclassname = displayobj.class.name
           result.__oid = "${result.displayobjclassname}:${displayobj.id}"
