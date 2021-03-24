@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <dl class="dl-horizontal">
 	<dt>
 		<gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel>
@@ -90,7 +91,7 @@
 			<gokb:annotatedLabel owner="${d}" property="country">Country</gokb:annotatedLabel>
 		</dt>
 		<dd>
-			<gokb:xEditableRefData owner="${d}" field="country" config='Country' />
+			<gokb:xEditableRefData owner="${d}" field="country" config="${RCConstants.COUNTRY}" />
 		</dd>
 	</g:if>
 </dl>

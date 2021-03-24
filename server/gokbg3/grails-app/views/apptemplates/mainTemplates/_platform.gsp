@@ -1,4 +1,5 @@
-<g:set var="editable" value="${ d.isEditable() && ((d.curatoryGroups ? (request.curator != null && request.curator.size() > 0) : true) || (params.curationOverride == 'true' && request.user.isAdmin())) }" />
+<%@ page import="de.wekb.helper.RCConstants" %>
+<g:set var="editable" value="${ d.isEditable() && ((d.respondsTo('getCuratoryGroups') ? (request.curator != null && request.curator.size() > 0) : true) || (params.curationOverride == 'true' && request.user.isAdmin())) }" />
 <dl class="dl-horizontal">
   <dt>
     <gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel>
@@ -12,7 +13,7 @@
   <dd>
     <g:if test="${d.isDeletable()}">
       <gokb:xEditableRefData owner="${d}" field="status"
-        config='KBComponent.Status' />
+        config="${RCConstants.KBCOMPONENT_STATUS}" />
     </g:if>
     <g:else>
       ${d.status}
@@ -30,7 +31,7 @@
   </dt>
   <dd>
     <gokb:xEditableRefData owner="${d}" field="editStatus"
-      config='KBComponent.EditStatus' />
+      config="${RCConstants.KBCOMPONENT_EDIT_STATUS}" />
   </dd>
 
 </dl>
@@ -47,7 +48,7 @@
       </g:if>
       <li><a href="#review" data-toggle="tab">Review Tasks (Open/Total)<span
           class="badge badge-warning">
-            ${d.reviewRequests?.findAll { it.status == org.gokb.cred.RefdataCategory.lookup('ReviewRequest.Status','Open') }?.size() ?: '0'}/${d.reviewRequests.size()}
+            ${d.reviewRequests?.findAll { it.status == org.gokb.cred.RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STATUS,'Open') }?.size() ?: '0'}/${d.reviewRequests.size()}
         </span></a></li>
     </g:if>
     <g:else>
@@ -86,7 +87,7 @@
         </dt>
         <dd>
           <gokb:xEditableRefData owner="${d}" field="software"
-            config='Platform.Software' />
+            config="${RCConstants.PLATFORM_SOFTWARE}" />
         </dd>
 
         <dt>
@@ -94,20 +95,20 @@
         </dt>
         <dd>
           <gokb:xEditableRefData owner="${d}" field="service"
-            config='Platform.Service' />
+            config="${RCConstants.PLATFORM_SERVICE}" />
         </dd>
 
         <dt> <gokb:annotatedLabel owner="${d}" property="authentication">Authentication</gokb:annotatedLabel> </dt>
-        <dd> <gokb:xEditableRefData owner="${d}" field="authentication" config='Platform.AuthMethod' /> </dd>
+        <dd> <gokb:xEditableRefData owner="${d}" field="authentication" config="${RCConstants.PLATFORM_AUTH_METHOD}" /> </dd>
 
         <dt> <gokb:annotatedLabel owner="${d}" property="ipAuthentication">IP Auth Supported</gokb:annotatedLabel> </dt>
-        <dd> <gokb:xEditableRefData owner="${d}" field="ipAuthentication" config='YN' /> </dd>
+        <dd> <gokb:xEditableRefData owner="${d}" field="ipAuthentication" config="${RCConstants.YN}" /> </dd>
 
         <dt> <gokb:annotatedLabel owner="${d}" property="shibbolethAuthentication">Shibboleth Supported</gokb:annotatedLabel> </dt>
-        <dd> <gokb:xEditableRefData owner="${d}" field="shibbolethAuthentication" config='YN' /> </dd>
+        <dd> <gokb:xEditableRefData owner="${d}" field="shibbolethAuthentication" config="${RCConstants.YN}" /> </dd>
 
         <dt> <gokb:annotatedLabel owner="${d}" property="passwordAuthentication">User/Pass Supported</gokb:annotatedLabel> </dt>
-        <dd> <gokb:xEditableRefData owner="${d}" field="passwordAuthentication" config='YN' /> </dd>
+        <dd> <gokb:xEditableRefData owner="${d}" field="passwordAuthentication" config="${RCConstants.YN}" /> </dd>
 
 
       </dl>

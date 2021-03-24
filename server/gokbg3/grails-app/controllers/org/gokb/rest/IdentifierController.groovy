@@ -1,5 +1,6 @@
 package org.gokb.rest
 
+import de.wekb.helper.RCConstants
 import grails.converters.*
 import grails.core.GrailsClass
 import grails.gorm.transactions.*
@@ -270,7 +271,7 @@ class IdentifierController {
   }
 
   private void fillTargetMap() {
-    RefdataValue.findAllByOwner(RefdataCategory.findByLabel('IdentifierNamespace.TargetType'))
+    RefdataValue.findAllByOwner(RefdataCategory.findByLabel(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE))
       .each { refVal ->
         targetTypeMap.put((refVal.value), refVal)
       }

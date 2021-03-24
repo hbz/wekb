@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <dl class="dl-horizontal">
   <dt>
     <gokb:annotatedLabel owner="${d}" property="name">Title</gokb:annotatedLabel>
@@ -35,7 +36,7 @@
   </dt>
   <dd>
     <sec:ifAnyGranted roles="ROLE_SUPERUSER">
-      <gokb:xEditableRefData owner="${d}" field="status" config='KBComponent.Status' />
+      <gokb:xEditableRefData owner="${d}" field="status" config="${RCConstants.KBCOMPONENT_STATUS}" />
     </sec:ifAnyGranted>
     <sec:ifNotGranted roles="ROLE_SUPERUSER">
       ${d.status?.value ?: 'Not Set'}
@@ -47,7 +48,7 @@
   </dt>
   <dd>
     <gokb:xEditableRefData owner="${d}" field="reasonRetired"
-      config='TitleInstance.ReasonRetired' />
+      config="${RCConstants.TITLEINSTANCE_REASON_RETIRED}" />
   </dd>
 
   <dt>
@@ -55,14 +56,14 @@
   </dt>
   <dd>
     <gokb:xEditableRefData owner="${d}" field="editStatus"
-      config='KBComponent.EditStatus' />
+      config="${RCConstants.KBCOMPONENT_EDIT_STATUS}" />
   </dd>
 
   <dt>
     <gokb:annotatedLabel owner="${d}" property="language">Language</gokb:annotatedLabel>
   </dt>
   <dd>
-    <gokb:xEditableRefData owner="${d}" field="language" config="${org.gokb.cred.KBComponent.RD_LANGUAGE}"/>
+    <gokb:xEditableRefData owner="${d}" field="language" config="${RCConstants.KBCOMPONENT_LANGUAGE}"/>
   </dd>
 
   <dt>
@@ -147,7 +148,7 @@
       </span></a></li>
       <li><a href="#review" data-toggle="tab">Review Tasks (Open/Total)
         <span class="badge badge-warning">
-          ${d.reviewRequests?.findAll { it.status == org.gokb.cred.RefdataCategory.lookup('ReviewRequest.Status','Open') }?.size() ?: '0'}/${d.reviewRequests.size()}
+          ${d.reviewRequests?.findAll { it.status == org.gokb.cred.RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STATUS,'Open') }?.size() ?: '0'}/${d.reviewRequests.size()}
         </span>
       </a></li>
       <g:if test="${grailsApplication.config.gokb.decisionSupport?.active}" >
@@ -184,7 +185,7 @@
         <dd>
           <g:if test="${d.id != null}">
             <gokb:xEditableRefData owner="${d}" field="medium"
-              config='TitleInstance.Medium' />
+              config="${RCConstants.TITLEINSTANCE_MEDIUM}" />
           </g:if>
           <g:else>
             Book
@@ -196,7 +197,7 @@
         </dt>
         <dd>
           <gokb:xEditableRefData owner="${d}" field="OAStatus"
-            config='TitleInstance.OAStatus' />
+            config="${RCConstants.TITLEINSTANCE_OA_STATUS}" />
         </dd>
 
         <dt>
@@ -271,7 +272,7 @@
               <tr>
                 <td><g:link controller="resource" action="show" id="${tipl.tiplHostPlatform.class.name}:${tipl.tiplHostPlatform.id}"> ${tipl.tiplHostPlatform.name} </g:link></td>
                 <td>${tipl.url}</td>
-                <td><gokb:xEditableRefData owner="${tipl}" field="status" config='KBComponent.Status' /></td>
+                <td><gokb:xEditableRefData owner="${tipl}" field="status" config="${RCConstants.KBCOMPONENT_STATUS}" /></td>
               </tr>
             </g:each>
           </tbody>

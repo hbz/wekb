@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <dl class="dl-horizontal">
 	<dt>
 		<gokb:annotatedLabel owner="${d}" property="domainClassName">Domain Class Name</gokb:annotatedLabel>
@@ -23,7 +24,7 @@
 		<gokb:annotatedLabel owner="${d}" property="type">Type/Category</gokb:annotatedLabel>
 	</dt>
 	<dd>
-		<gokb:xEditableRefData owner="${d}" field="type" config='DCType' />
+		<gokb:xEditableRefData owner="${d}" field="type" config="${RCConstants.DC_TYPE}" />
 	</dd>
 </dl>
 

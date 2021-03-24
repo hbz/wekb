@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <!DOCTYPE html>
 <html>
   <head>
@@ -15,7 +16,7 @@
             </div>
             <div class="panel-body">
               <g:link class="display-inline" controller="search" action="index"
-                params="[qbe:'g:reviewRequests', qp_allocatedto:'org.gokb.cred.User:' + Long.toString(request.user.id), qp_status:'org.gokb.cred.RefdataValue:' + Long.toString(org.gokb.cred.RefdataCategory.lookupOrCreate('ReviewRequest.Status', 'Open').id), inline:true, hide:['qp_project', 'qp_allocatedto']]"
+                params="[qbe:'g:reviewRequests', qp_allocatedto:'org.gokb.cred.User:' + Long.toString(request.user.id), qp_status:'org.gokb.cred.RefdataValue:' + Long.toString(org.gokb.cred.RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STATUS, 'Open').id), inline:true, hide:['qp_project', 'qp_allocatedto']]"
                 id="">Your Review Tasks</g:link>
             </div>
           </div>

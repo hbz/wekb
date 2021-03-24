@@ -4,6 +4,7 @@ import grails.orm.HibernateCriteriaBuilder
 import org.gokb.cred.*
 import grails.util.GrailsClassUtils
 import org.hibernate.criterion.CriteriaSpecification
+import de.wekb.helper.RCConstants
 
 class ComboCriteria {
 
@@ -66,7 +67,7 @@ class ComboCriteria {
               eq (
                 "type",
                 RefdataCategory.lookupOrCreate (
-                  "Combo.Type",
+                  RCConstants.COMBO_TYPE,
                   the_class.getComboTypeValueFor (the_class, prop)
                 )
               )
@@ -84,7 +85,7 @@ class ComboCriteria {
               eq (
                 "type",
                 RefdataCategory.lookupOrCreate (
-                  "Combo.Type",
+                  RCConstants.COMBO_TYPE,
                   the_class.getComboTypeValueFor (the_class, prop)
                 )
               )
@@ -124,7 +125,7 @@ class ComboCriteria {
               eq (
                 "type",
                 RefdataCategory.lookupOrCreate (
-                "Combo.Type",
+                RCConstants.COMBO_TYPE,
                 the_class.getComboTypeValueFor (the_class, propertyName)
                 )
               )
@@ -141,7 +142,7 @@ class ComboCriteria {
               eq (
                 "type",
                 RefdataCategory.lookupOrCreate (
-                  "Combo.Type",
+                  RCConstants.COMBO_TYPE,
                   the_class.getComboTypeValueFor (the_class, propertyName)
                 )
               )

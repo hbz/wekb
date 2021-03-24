@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <dl>
   <dt>
     <gokb:annotatedLabel owner="${d}" property="publishers">Publishers</gokb:annotatedLabel>
@@ -24,7 +25,7 @@
         <g:each in="${d.getCombosByPropertyNameAndStatus('publisher',params.publisher_status)}" var="p">
           <tr>
             <td><g:link controller="resource" action="show" id="${p.toComponent.class.name}:${p.toComponent.id}"> ${p.toComponent.name} </g:link></td>
-            <td><gokb:xEditableRefData owner="${p}" field="status" config='Combo.Status' /></td>
+            <td><gokb:xEditableRefData owner="${p}" field="status" config="${RCConstants.COMBO_STATUS}" /></td>
             <td><gokb:xEditable class="ipe" owner="${p}" field="startDate" type="date" /></td>
             <td><gokb:xEditable class="ipe" owner="${p}" field="endDate" type="date" /></td>
             <td><g:if test="${d.isEditable()}"><g:link controller="ajaxSupport" action="deleteCombo" id="${p.id}"  onclick="return confirm('Are you sure you want to delete this link?')">Delete</g:link></g:if></td>

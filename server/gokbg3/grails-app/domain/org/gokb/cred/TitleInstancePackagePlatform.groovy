@@ -1,5 +1,7 @@
 package org.gokb.cred
 
+import de.wekb.helper.RCConstants
+
 import javax.persistence.Transient
 import com.k_int.ClassUtils
 import org.gokb.GOKbTextUtils
@@ -255,20 +257,20 @@ class TitleInstancePackagePlatform extends KBComponent {
 //     result.title = tipp_fields.title
 //     result.hostPlatform = tipp_fields.hostPlatform
 //     result.pkg = tipp_fields.pkg
-    def tipp_status = tipp_fields.status ? RefdataCategory.lookup('KBComponent.Status', tipp_fields.status) : null
-    def tipp_editstatus = tipp_fields.editStatus ? RefdataCategory.lookup('KBComponent.EditStatus', tipp_fields.editStatus) : null
+    def tipp_status = tipp_fields.status ? RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, tipp_fields.status) : null
+    def tipp_editstatus = tipp_fields.editStatus ? RefdataCategory.lookup(RCConstants.KBCOMPONENT_EDIT_STATUS, tipp_fields.editStatus) : null
     def tipp_language = tipp_fields.language ? RefdataCategory.lookup('KBComponent.Language', tipp_fields.language) : null
     def result = new TitleInstancePackagePlatform(uuid: tipp_fields.uuid, status: tipp_status, editStatus: tipp_editstatus, name: tipp_fields.name, language: tipp_language).save(failOnError: true)
 
     if (result) {
 
-      def pkg_combo_type = RefdataCategory.lookupOrCreate('Combo.Type', 'Package.Tipps')
+      def pkg_combo_type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Package.Tipps')
       new Combo(toComponent: result, fromComponent: tipp_fields.pkg, type: pkg_combo_type).save(flush: true, failOnError: true)
 
-      def plt_combo_type = RefdataCategory.lookupOrCreate('Combo.Type', 'Platform.HostedTipps')
+      def plt_combo_type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Platform.HostedTipps')
       new Combo(toComponent: result, fromComponent: tipp_fields.hostPlatform, type: plt_combo_type).save(flush: true, failOnError: true)
 
-      def ti_combo_type = RefdataCategory.lookupOrCreate('Combo.Type', 'TitleInstance.Tipps')
+      def ti_combo_type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'TitleInstance.Tipps')
       new Combo(toComponent: result, fromComponent: tipp_fields.title, type: ti_combo_type).save(flush: true, failOnError: true)
 
       TitleInstancePlatform.ensure(tipp_fields.title, tipp_fields.hostPlatform, tipp_fields.url)
@@ -407,7 +409,7 @@ class TitleInstancePackagePlatform extends KBComponent {
           try {
             def candidate = RefdataValue.get(coverage.coverageDepth)
 
-            if (!candidate && candidate.owner.label == "TIPPCoverageStatement.CoverageDepth") {
+            if (!candidate && candidate.owner.label == RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH) {
               if (!errors.coverageDepth) {
                 errors.coverageDepth = []
               }
@@ -423,7 +425,7 @@ class TitleInstancePackagePlatform extends KBComponent {
             try {
               def candidate = RefdataValue.get(coverage.coverageDepth.id)
 
-              if (!candidate && candidate.owner.label == "TIPPCoverageStatement.CoverageDepth") {
+              if (!candidate && candidate.owner.label == RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH) {
                 if (!errors.coverageDepth) {
                   errors.coverageDepth = []
                 }
@@ -454,13 +456,13 @@ class TitleInstancePackagePlatform extends KBComponent {
     }
 
     if (tipp_dto.medium) {
-      RefdataValue[] media = RefdataCategory.lookup("TitleInstance.Medium")
+      RefdataValue[] media = RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM)
       if (!media*.value.contains(tipp_dto.medium))
         errors.put('medium', [message: "unknown", baddata: tipp_dto.remove('medium')])
     }
 
     if (tipp_dto.publicationType) {
-      RefdataValue[] pubTypes = RefdataCategory.lookup("TitleInstancePackagePlatform.PublicationType")
+      RefdataValue[] pubTypes = RefdataCategory.lookup(RCConstants.TIPP_PUBLICATION_TYPE)
       if (!pubTypes*.value.contains(tipp_dto.publicationType))
         errors.put('publicationType', [message: "unknown", baddata: tipp_dto.remove('publicationType')])
     }
@@ -543,8 +545,8 @@ class TitleInstancePackagePlatform extends KBComponent {
       log.debug("Title lookup: ${ti}")
     }
 
-    def status_current = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Current')
-    def status_retired = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Retired')
+    def status_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current')
+    def status_retired = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Retired')
     def trimmed_url = tipp_dto.url ? tipp_dto.url.trim() : null
     def curator = pkg?.curatoryGroups?.size() > 0 ? (user.adminStatus || user.curatoryGroups?.id.intersect(pkg?.curatoryGroups?.id)) : true
 
@@ -652,7 +654,7 @@ class TitleInstancePackagePlatform extends KBComponent {
             payment_statement = tipp_dto.paymentType
           }
 
-          def payment_ref = RefdataCategory.lookup("TitleInstancePackagePlatform.PaymentType", payment_statement)
+          def payment_ref = RefdataCategory.lookup(RCConstants.TIPP_PAYMENT_TYPE, payment_statement)
 
           if (payment_ref) tipp.paymentType = payment_ref
         }
@@ -674,8 +676,8 @@ class TitleInstancePackagePlatform extends KBComponent {
         changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.dateFirstInPrint, tipp, 'dateFirstInPrint')
         changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.dateFirstOnline, tipp, 'dateFirstOnline')
         changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.lastChangedExternal, tipp, 'lastChangedExternal')
-        changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.medium, tipp, 'medium', 'TitleInstance.Medium')
-        changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.publicationType, tipp, 'publicationType', 'TitleInstancePackagePlatform.PublicationType')
+        changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.medium, tipp, 'medium', RCConstants.TITLEINSTANCE_MEDIUM)
+        changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.publicationType, tipp, 'publicationType', RCConstants.TIPP_PUBLICATION_TYPE)
         changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.language, tipp, 'language')
 
         if (tipp_dto.coverageStatements && !tipp_dto.coverage) {
@@ -700,7 +702,7 @@ class TitleInstancePackagePlatform extends KBComponent {
           changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'coverageNote', c.coverageNote)
           changed |= com.k_int.ClassUtils.setDateIfPresent(parsedStart, tipp, 'startDate')
           changed |= com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tipp, 'endDate')
-          changed |= com.k_int.ClassUtils.setRefdataIfPresent(c.coverageDepth, tipp, 'coverageDepth', 'TitleInstancePackagePlatform.CoverageDepth')
+          changed |= com.k_int.ClassUtils.setRefdataIfPresent(c.coverageDepth, tipp, 'coverageDepth', RCConstants.TIPP_COVERAGE_DEPTH)
 
           def cs_match = false
           def conflict = false
@@ -720,7 +722,7 @@ class TitleInstancePackagePlatform extends KBComponent {
               changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'coverageNote', c.coverageNote)
               changed |= com.k_int.ClassUtils.setDateIfPresent(parsedStart, tcs, 'startDate')
               changed |= com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tcs, 'endDate')
-              changed |= com.k_int.ClassUtils.setRefdataIfPresent(c.coverageDepth, tipp, 'coverageDepth', 'TIPPCoverageStatement.CoverageDepth')
+              changed |= com.k_int.ClassUtils.setRefdataIfPresent(c.coverageDepth, tipp, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH)
 
               cs_match = true
             } else if (!cs_match) {
@@ -754,7 +756,7 @@ class TitleInstancePackagePlatform extends KBComponent {
                 changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'coverageNote', c.coverageNote)
                 changed |= com.k_int.ClassUtils.setDateIfPresent(parsedStart, tcs, 'startDate')
                 changed |= com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tcs, 'endDate')
-                changed |= com.k_int.ClassUtils.setRefdataIfPresent(c.coverageDepth, tipp, 'coverageDepth', 'TIPPCoverageStatement.CoverageDepth')
+                changed |= com.k_int.ClassUtils.setRefdataIfPresent(c.coverageDepth, tipp, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH)
               }
             } else {
               log.debug("Matched new coverage ${c} on multiple existing coverages!")
@@ -770,14 +772,14 @@ class TitleInstancePackagePlatform extends KBComponent {
             def cov_depth = null
 
             if (c.coverageDepth instanceof String) {
-              cov_depth = RefdataCategory.lookup('TIPPCoverageStatement.CoverageDepth', c.coverageDepth) ?: RefdataCategory.lookup('TIPPCoverageStatement.CoverageDepth', "Fulltext")
+              cov_depth = RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, c.coverageDepth) ?: RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, "Fulltext")
             } else if (c.coverageDepth instanceof Integer) {
               cov_depth = RefdataValue.get(c.coverageDepth)
             } else if (c.coverageDepth instanceof Map) {
               if (c.coverageDepth.id) {
                 cov_depth = RefdataValue.get(c.coverageDepth.id)
               } else {
-                cov_depth = RefdataCategory.lookup('TIPPCoverageStatement.CoverageDepth', (c.coverageDepth.name ?: c.coverageDepth.value))
+                cov_depth = RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, (c.coverageDepth.name ?: c.coverageDepth.value))
               }
             }
 
@@ -957,8 +959,8 @@ class TitleInstancePackagePlatform extends KBComponent {
 
   @Transient
   getTitleIds() {
-    def refdata_ids = RefdataCategory.lookupOrCreate('Combo.Type', 'KBComponent.Ids');
-    def status_active = RefdataCategory.lookupOrCreate(Combo.RD_STATUS, Combo.STATUS_ACTIVE)
+    def refdata_ids = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'KBComponent.Ids');
+    def status_active = RefdataCategory.lookupOrCreate(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE)
     def result = Identifier.executeQuery("select i.namespace.value, i.value, i.namespace.family, i.namespace.name from Identifier as i, Combo as c where c.fromComponent = ? and c.type = ? and c.toComponent = i and c.status = ?", [title, refdata_ids, status_active], [readOnly: true]);
     result
   }

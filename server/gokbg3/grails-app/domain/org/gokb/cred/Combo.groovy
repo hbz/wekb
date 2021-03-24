@@ -1,4 +1,6 @@
 package org.gokb.cred
+
+import de.wekb.helper.RCConstants
 import grails.plugins.orm.auditable.Auditable
 import javax.persistence.Transient
 import org.gokb.DomainClassExtender
@@ -13,9 +15,7 @@ class Combo implements Auditable {
 
   @Transient
   private def springSecurityService
-  
-  static final String RD_STATUS = "Combo.Status"
-  static final String RD_TYPE = "Combo.Type"
+
   static final String STATUS_ACTIVE = "Active"
   static final String STATUS_SUPERSEDED = "Superseded"
   static final String STATUS_DELETED = "Deleted"
@@ -83,7 +83,7 @@ class Combo implements Auditable {
     if (endDate == null) endDate = new Date ()
 
     // Expire this combo...
-    setStatus (RefdataCategory.lookupOrCreate(Combo.RD_STATUS, (replaced ? Combo.STATUS_SUPERSEDED : Combo.STATUS_EXPIRED)))
+    setStatus (RefdataCategory.lookupOrCreate(RCConstants.COMBO_STATUS, (replaced ? Combo.STATUS_SUPERSEDED : Combo.STATUS_EXPIRED)))
     setEndDate(endDate)
     save()
     endDate

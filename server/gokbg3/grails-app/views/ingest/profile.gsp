@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <html>
   <head>
     <meta name="layout" content="sb-admin" />
@@ -23,7 +24,7 @@
                 <gokb:annotatedLabel owner="${ip}" property="status">Status</gokb:annotatedLabel>
               </dt>
               <dd>
-                <gokb:xEditableRefData owner="${ip}" field="status" config='KBComponent.Status' />
+                <gokb:xEditableRefData owner="${ip}" field="status" config="${RCConstants.KBCOMPONENT_STATUS}" />
               </dd>
               <dt>
                 <gokb:annotatedLabel owner="${ip}" property="packageName">Package Name</gokb:annotatedLabel>

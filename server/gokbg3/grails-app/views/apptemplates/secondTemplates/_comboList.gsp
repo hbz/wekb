@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants"%>
 <g:set var="ctxoid" value="${org.gokb.cred.KBComponent.deproxy(d).class.name}:${d.id}"/>
 
 <table class="table table-striped table-bordered">
@@ -22,7 +23,7 @@
           </td>
         </g:each>
         <td>
-          <g:if test="${d.isEditable() && (d.respondsTo('curatoryGroups') ? (!d.curatoryGroups ? true : cur) : true)}">
+          <g:if test="${d.isEditable() && (d.respondsTo('curatoryGroups') ? (!d.respondsTo('getCuratoryGroups') ? true : cur) : true)}">
             <g:link controller='ajaxSupport'
                     action='unlinkManyToMany'
                     params="${[__context:ctxoid,__property:property,__itemToRemove:rowoid, propagate:propagateDelete]}">Unlink</g:link>
@@ -52,7 +53,7 @@
         <input type="hidden" name="__context" value="${ctxoid}"/>
         <input type="hidden" name="__newObjectClass" value="org.gokb.cred.Combo"/>
         <input type="hidden" name="__recip" value="${recip}"/>
-        <input type="hidden" name="type" value="${org.gokb.cred.RefdataCategory.getOID('Combo.Type',d.getComboTypeValue(property))}"/>
+        <input type="hidden" name="type" value="${org.gokb.cred.RefdataCategory.getOID(RCConstants.COMBO_TYPE,d.getComboTypeValue(property))}"/>
         <dt class="dt-label">Add To List: </dt>
         <dd>
           <gokb:simpleReferenceTypedown class="form-inline select-ml" style="display:inline-block;" name="${comboprop}" baseClass="${targetClass}"/>

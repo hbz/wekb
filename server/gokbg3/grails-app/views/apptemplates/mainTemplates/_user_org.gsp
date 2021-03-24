@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <dl class="dl-horizontal">
 
   <dt><gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel></dt>
@@ -24,13 +25,13 @@
             <td>${m.party}</td>
             <td>
               <g:if test="${ user.isAdmin() || userIsOrgAdmin }">
-                <gokb:xEditableRefData owner="${m}" field="status" config='MembershipStatus' />
+                <gokb:xEditableRefData owner="${m}" field="status" config="${RCConstants.MEMBERSHIP_STATUS}" />
               </g:if>
               <g:else>${m.status?.value}</g:else>
             </td>
             <td>
               <g:if test="${ user.isAdmin() || userIsOrgAdmin }">
-                <gokb:xEditableRefData owner="${m}" field="role" config='MembershipRole' />
+                <gokb:xEditableRefData owner="${m}" field="role" config="${RCConstants.MEMBERSHIP_ROLE}" />
               </g:if>
               <g:else>${m.role?.value}</g:else>
             </td>
@@ -64,13 +65,13 @@
                 <gokb:simpleReferenceTypedown class="form-control"
                                           name="status"
                                           baseClass="org.gokb.cred.RefdataValue"
-                                          filter1="MembershipStatus"/>
+                                          filter1="${RCConstants.MEMBERSHIP_STATUS}"/>
               </td>
               <td>
                 <gokb:simpleReferenceTypedown class="form-control"
                                           name="role"
                                           baseClass="org.gokb.cred.RefdataValue"
-                                          filter1="MembershipRole"/>
+                                          filter1="${RCConstants.MEMBERSHIP_ROLE}"/>
               </td>
               <td><button class="btn btn-success">Add</button></td>
             </tr>

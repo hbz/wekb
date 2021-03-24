@@ -23,7 +23,7 @@
             <g:set var="preMsg" value="${flash.error ? 'There were errors when attempting to create the new component.' : ''}" />
             <g:render template="/apptemplates/secondTemplates/messages"
                       model="${ ["preMessage" : preMsg ]}" />
-            <g:render template="/apptemplates/${displaytemplate.rendername}"
+            <g:render template="/apptemplates/mainTemplates/${displaytemplate.rendername}"
                       model="${[d:displayobj, rd:refdata_properties, dtype:displayobjclassname_short]}" />
             <button id="save-btn" class="btn btn-default pull-right btn-sm">Create and Edit &gt;&gt;</button>
           </g:else>

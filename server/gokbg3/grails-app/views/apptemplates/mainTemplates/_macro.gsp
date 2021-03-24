@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <dl class="dl-horizontal">
 	<dt>
 		<gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel>
@@ -45,7 +46,7 @@
 	  </dt>
 	  <dd>
 	    <gokb:xEditableRefData owner="${d}" field="status"
-	      config="KBComponent.Status" />
+	      config="${RCConstants.KBCOMPONENT_STATUS}" />
 	  </dd>
 
 		<dt>
