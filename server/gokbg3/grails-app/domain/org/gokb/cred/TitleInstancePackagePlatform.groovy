@@ -103,7 +103,7 @@ class TitleInstancePackagePlatform extends KBComponent {
       'editionStatement'      : "editionStatement",
       'firstEditor'           : "firstEditor",
       'parentPublicationTitleId'   : "parentPublicationTitleId",
-      'precedingPublicationId': "precedingPublicationId",
+      'precedingPublicationTitleId': "precedingPublicationTitleId",
       'lastChangedExternal'   : "lastChangedExternal",
       'medium'                : "medium",
       'language'              : "language"
@@ -185,7 +185,7 @@ class TitleInstancePackagePlatform extends KBComponent {
     editionStatement column: 'tipp_edition_statement'
     firstEditor column: 'tipp_first_editor'
     parentPublicationTitleId column: 'tipp_parent_publication_id'
-    precedingPublicationId column: 'tipp_preceding_publication_id'
+    precedingPublicationTitleId column: 'tipp_preceding_publication_id'
     lastChangedExternal column: 'tipp_last_change_ext'
     medium column: 'tipp_medium_rv_fk'
   }

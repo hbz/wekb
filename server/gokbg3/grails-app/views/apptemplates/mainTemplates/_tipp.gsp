@@ -1,15 +1,19 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
-<g:set var="editable"
-       value="${d.isEditable() && ((request.curator != null ? request.curator.size() > 0 ? true : false : true) || (params.curationOverride == 'true' && request.user.isAdmin()))}"/>
+%{--<g:set var="editable"
+       value="${d.isEditable() && ((request.curator != null ? request.curator.size() > 0 ? true : false : true) || (params.curationOverride == 'true' && request.user.isAdmin()))}"/>--}%
 <dl class="dl-horizontal">
     <dt>
         <gokb:annotatedLabel owner="${d}" property="title">Title</gokb:annotatedLabel>
     </dt>
     <dd style="max-width:60%">
+<g:if test="${controllerName != 'public'}">
         <g:link controller="resource" action="show"
                 id="${d.title?.class?.name + ':' + d.title?.id}">
             ${(d.title?.name) ?: 'Empty'}
         </g:link>
+</g:if><g:else>
+    ${(d.title?.name) ?: 'Empty'}
+</g:else>
         <g:if test="${d.title}">(${d.title.niceName})</g:if>
     </dd>
 
@@ -17,20 +21,30 @@
         <gokb:annotatedLabel owner="${d}" property="package">Package</gokb:annotatedLabel>
     </dt>
     <dd>
+<g:if test="${controllerName != 'public'}">
         <g:link controller="resource" action="show"
                 id="${d.pkg?.class?.name + ':' + d.pkg?.id}">
             ${(d.pkg?.name) ?: 'Empty'}
         </g:link>
+</g:if>
+<g:else>
+    ${(d.pkg?.name) ?: 'Empty'}
+</g:else>
     </dd>
 
     <dt>
         <gokb:annotatedLabel owner="${d}" property="platform">Platform</gokb:annotatedLabel>
     </dt>
     <dd>
-        <g:link controller="resource" action="show"
-                id="${d.hostPlatform?.class?.name + ':' + d.hostPlatform?.id}">
+        <g:if test="${controllerName != 'public'}">
+            <g:link controller="resource" action="show"
+                    id="${d.hostPlatform?.class?.name + ':' + d.hostPlatform?.id}">
+                ${(d.hostPlatform?.name) ?: 'Empty'}
+            </g:link>
+        </g:if>
+        <g:else>
             ${(d.hostPlatform?.name) ?: 'Empty'}
-        </g:link>
+        </g:else>
     </dd>
 
     <dt>
@@ -45,7 +59,18 @@
     </dt>
     <dd>
         <gokb:xEditableRefData owner="${d}" field="status"
-                            config="${RCConstants.KBCOMPONENT_STATUS}"/>
+                               config="${RCConstants.KBCOMPONENT_STATUS}"/>
+    </dd>
+
+    <dt>
+        <gokb:annotatedLabel owner="${d}" property="url">Host Platform URL</gokb:annotatedLabel>
+    </dt>
+    <dd>
+        <gokb:xEditable class="ipe" owner="${d}" field="url"/>
+        <g:if test="${d.url}">
+            &nbsp;<a href="${d.url}" target="new"><i class="fas fa-external-link-alt"></i></a>
+        </g:if>
+
     </dd>
 
     <dt>
@@ -60,7 +85,7 @@
     </dt>
     <dd>
         <gokb:xEditableRefData owner="${d}" field="editStatus"
-                            config="${RCConstants.KBCOMPONENT_EDIT_STATUS}"/>
+                               config="${RCConstants.KBCOMPONENT_EDIT_STATUS}"/>
     </dd>
 
     <dt>
@@ -75,7 +100,7 @@
     </dt>
     <dd>
         <gokb:xEditable class="ipe" owner="${d}" type="date"
-                     field="accessStartDate"/>
+                        field="accessStartDate"/>
     </dd>
 
     <dt>
@@ -83,7 +108,7 @@
     </dt>
     <dd>
         <gokb:xEditable class="ipe" owner="${d}" type="date"
-                     field="accessEndDate"/>
+                        field="accessEndDate"/>
     </dd>
 
     <dt>
@@ -98,7 +123,7 @@
     </dt>
     <dd>
         <gokb:xEditable class="ipe" owner="${d}" type="date"
-                     field="dateFirstInPrint"/>
+                        field="dateFirstInPrint"/>
     </dd>
 
     <dt>
@@ -106,7 +131,7 @@
     </dt>
     <dd>
         <gokb:xEditable class="ipe" owner="${d}" type="date"
-                     field="dateFirstOnline"/>
+                        field="dateFirstOnline"/>
     </dd>
 
     <dt>
@@ -145,14 +170,16 @@
     </dd>
 
     <dt>
-        <gokb:annotatedLabel owner="${d}" property="parentPublicationTitleId">Parent publication title ID</gokb:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}"
+                             property="parentPublicationTitleId">Parent publication title ID</gokb:annotatedLabel>
     </dt>
     <dd>
         <gokb:xEditable class="ipe" owner="${d}" field="parentPublicationTitleId"/>
     </dd>
 
     <dt>
-        <gokb:annotatedLabel owner="${d}" property="precedingPublicationTitleId">Preceding publication title ID</gokb:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}"
+                             property="precedingPublicationTitleId">Preceding publication title ID</gokb:annotatedLabel>
     </dt>
     <dd>
         <gokb:xEditable class="ipe" owner="${d}" field="precedingPublicationTitleId"/>
@@ -172,79 +199,62 @@
         <gokb:xEditable class="ipe" owner="${d}" field="lastChangedExternal" type='date'/>
     </dd>
 
+    <dt>
+        <gokb:annotatedLabel owner="${d}" property="format">Format</gokb:annotatedLabel>
+    </dt>
+    <dd>
+        <gokb:xEditableRefData owner="${d}" field="format"
+                               config="${RCConstants.TIPP_FORMAT}"/>
+    </dd>
+    <dt>
+        <gokb:annotatedLabel owner="${d}" property="paymentType">Payment Type</gokb:annotatedLabel>
+    </dt>
+    <dd>
+        <gokb:xEditableRefData owner="${d}" field="paymentType"
+                               config="${RCConstants.TIPP_PAYMENT_TYPE}"/>
+    </dd>
+
 </dl>
 
 <ul id="tabs" class="nav nav-tabs">
-    <li class="active"><a href="#tippdetails" data-toggle="tab">TIPP Details</a></li>
-    <li>
+    <li class="active">
         <a href="#tippcoverage" data-toggle="tab">Coverage</a>
     </li>
     <li><a href="#identifiers" data-toggle="tab">Identifiers <span
             class="badge badge-warning">${d?.getCombosByPropertyNameAndStatus('ids', 'Active')?.size() ?: '0'}</span>
     </a>
     </li>
-    <g:if test="${d.isEditable()}">
-        <li>
-            <a href="#addprops" data-toggle="tab">Additional Properties
-                <span class="badge badge-warning">${d.additionalProperties?.size() ?: '0'}</span>
-            </a>
-        </li>
+
+    <li>
+        <a href="#addprops" data-toggle="tab">Additional Properties
+            <span class="badge badge-warning">${d.additionalProperties?.size() ?: '0'}</span>
+        </a>
+    </li>
+    <g:if test="${controllerName != 'public'}">
         <li>
             <a href="#review" data-toggle="tab">Review Requests
                 <span class="badge badge-warning">${d.reviewRequests?.size() ?: '0'}</span>
             </a>
         </li>
     </g:if>
+
     <li>
-      <a href="#subjectArea" data-toggle="tab">Subject Area</a>
+        <a href="#subjectArea" data-toggle="tab">Subject Area</a>
     </li>
     <li>
-      <a href="#series" data-toggle="tab">Series</a>
+        <a href="#series" data-toggle="tab">Series</a>
     </li>
     <li>
-      <a href="#prices" data-toggle="tab">Prices
-        <span class="badge badge-warning"> ${d.prices?.size() ?: '0'}</span>
-      </a>
+        <a href="#prices" data-toggle="tab">Prices
+            <span class="badge badge-warning">${d.prices?.size() ?: '0'}</span>
+        </a>
     </li>
 </ul>
 
 
 <div id="my-tab-content" class="tab-content">
 
-    <div class="tab-pane active" id="tippdetails">
-
-        <g:if test="${d.id != null}">
-
-            <dl class="dl-horizontal">
-                <dt>
-                    <gokb:annotatedLabel owner="${d}" property="url">Host Platform URL</gokb:annotatedLabel>
-                </dt>
-                <dd>
-                    <gokb:xEditable class="ipe" owner="${d}" field="url"/>
-                    <g:if test="${d.url}">
-                        &nbsp;<a href="${d.url}" target="new"><i class="fas fa-external-link-alt"></i></a>
-                    </g:if>
-
-                </dd>
-                <dt>
-                    <gokb:annotatedLabel owner="${d}" property="format">Format</gokb:annotatedLabel>
-                </dt>
-                <dd>
-                    <gokb:xEditableRefData owner="${d}" field="format"
-                                        config="${RCConstants.TIPP_FORMAT}"/>
-                </dd>
-                <dt>
-                    <gokb:annotatedLabel owner="${d}" property="paymentType">Payment Type</gokb:annotatedLabel>
-                </dt>
-                <dd>
-                    <gokb:xEditableRefData owner="${d}" field="paymentType"
-                                        config="${RCConstants.TIPP_PAYMENT_TYPE}"/>
-                </dd>
-            </dl>
-        </g:if>
-    </div>
-
-    <div class="tab-pane" id="tippcoverage">
+    <div class="tab-pane active" id="tippcoverage">
         <dl class="dl-horizontal">
             <dt>
                 <gokb:annotatedLabel owner="${d}" property="coverage">Coverage</gokb:annotatedLabel>
@@ -270,19 +280,19 @@
                         <g:each var="cs" in="${d.coverageStatements.sort { it.startDate }}">
                             <tr>
                                 <td><gokb:xEditable class="ipe" owner="${cs}" type="date"
-                                                 field="startDate"/></td>
+                                                    field="startDate"/></td>
                                 <td><gokb:xEditable class="ipe" owner="${cs}"
-                                                 field="startVolume"/></td>
+                                                    field="startVolume"/></td>
                                 <td><gokb:xEditable class="ipe" owner="${cs}"
-                                                 field="startIssue"/></td>
+                                                    field="startIssue"/></td>
                                 <td><gokb:xEditable class="ipe" owner="${cs}" type="date"
-                                                 field="endDate"/></td>
+                                                    field="endDate"/></td>
                                 <td><gokb:xEditable class="ipe" owner="${cs}" field="endVolume"/></td>
                                 <td><gokb:xEditable class="ipe" owner="${cs}" field="endIssue"/></td>
                                 <td><gokb:xEditable class="ipe" owner="${cs}" field="embargo"/></td>
                                 <td><gokb:xEditable class="ipe" owner="${cs}" field="coverageNote"/></td>
                                 <td><gokb:xEditableRefData owner="${cs}" field="coverageDepth"
-                                                        config="${RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH}"/>
+                                                           config="${RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH}"/>
                                 </td>
                                 <td><g:if test="${editable}"><g:link controller="ajaxSupport"
                                                                      action="deleteCoverageStatement"
@@ -341,8 +351,9 @@
                             </dd>
                             <dt class="dt-label">Coverage Depth</dt>
                             <dd>
-                                <gokb:simpleReferenceTypedown name="coverageDepth" baseClass="org.gokb.cred.RefdataValue"
-                                                           filter1="${RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH}"/>
+                                <gokb:simpleReferenceTypedown name="coverageDepth"
+                                                              baseClass="org.gokb.cred.RefdataValue"
+                                                              filter1="${RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH}"/>
                             </dd>
                             <dt class="dt-label">Coverage Note</dt>
                             <dd>
@@ -368,7 +379,7 @@
             </dt>
             <dd>
                 <gokb:xEditableRefData owner="${d}" field="coverageDepth"
-                                    config="${RCConstants.TIPP_COVERAGE_DEPTH}"/>
+                                       config="${RCConstants.TIPP_COVERAGE_DEPTH}"/>
             </dd>
         </dl>
     </div>
@@ -384,55 +395,55 @@
                           model="${[d: d, property: 'ids', fragment: 'identifiers', combo_status: 'Active', cols: [
                                   [expr: 'toComponent.namespace.value', colhead: 'Namespace'],
                                   [expr: 'toComponent.value', colhead: 'ID', action: 'link']]]}"/>
-                <g:if test="${d.isEditable()}">
+                <g:if test="${editable}">
                     <h4>
-                        <gokb:annotatedLabel owner="${d}" property="addIdentifier">Add new Identifier</gokb:annotatedLabel>
+                        <gokb:annotatedLabel owner="${d}"
+                                             property="addIdentifier">Add new Identifier</gokb:annotatedLabel>
                     </h4>
-                    <g:render template="/apptemplates/secondTemplates/addIdentifier" model="${[d: d, hash: '#identifiers']}"/>
+                    <g:render template="/apptemplates/secondTemplates/addIdentifier"
+                              model="${[d: d, hash: '#identifiers']}"/>
                 </g:if>
             </dd>
         </dl>
 
     </div>
 
-    <g:if test="${d.isEditable()}">
-        <div class="tab-pane" id="addprops">
-            <g:render template="/apptemplates/secondTemplates/addprops"
-                      model="${[d: d]}"/>
-        </div>
 
+    <div class="tab-pane" id="addprops">
+        <g:render template="/apptemplates/secondTemplates/addprops"
+                  model="${[d: d]}"/>
+    </div>
+
+    <g:if test="${controllerName != 'public'}">
         <div class="tab-pane" id="review">
             <g:render template="/apptemplates/secondTemplates/revreqtab" model="${[d: d]}"/>
         </div>
     </g:if>
-    <div class="tab-pane" id="review">
-      <g:render template="/apptemplates/secondTemplates/revreqtab" model="${[d:d]}" />
-    </div>
 
     <div class="tab-pane" id="subjectArea">
-      <dl class="dl-horizontal">
-        <dt>
-          <gokb:annotatedLabel owner="${d}" property="subjectArea">Subject Area</gokb:annotatedLabel>
-        </dt>
-        <dd>
-          <gokb:xEditable owner="${d}" field="subjectArea"/>
-        </dd>
-      </dl>
+        <dl class="dl-horizontal">
+            <dt>
+                <gokb:annotatedLabel owner="${d}" property="subjectArea">Subject Area</gokb:annotatedLabel>
+            </dt>
+            <dd>
+                <gokb:xEditable owner="${d}" field="subjectArea"/>
+            </dd>
+        </dl>
     </div>
 
     <div class="tab-pane" id="series">
 
-      <dl class="dl-horizontal">
-        <dt>
-          <gokb:annotatedLabel owner="${d}" property="series">Series</gokb:annotatedLabel>
-        </dt>
-        <dd>
-          <gokb:xEditable owner="${d}" field="series"/>
-        </dd>
-      </dl>
+        <dl class="dl-horizontal">
+            <dt>
+                <gokb:annotatedLabel owner="${d}" property="series">Series</gokb:annotatedLabel>
+            </dt>
+            <dd>
+                <gokb:xEditable owner="${d}" field="series"/>
+            </dd>
+        </dl>
     </div>
-    <g:render template="/tabTemplates/showPrices" model="${[d: displayobj, showActions: true]}"/>
+    <g:render template="/tabTemplates/showPrices" model="${[d: d]}"/>
 </div>
 <g:render template="/apptemplates/secondTemplates/componentStatus"
-          model="${[d: displayobj, rd: refdata_properties, dtype: 'KBComponent']}"/>
+          model="${[d: d]}"/>
 

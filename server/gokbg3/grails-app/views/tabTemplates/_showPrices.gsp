@@ -1,5 +1,4 @@
 <%@ page import="de.wekb.helper.RCConstants " %>
-<g:set var="editable" value="${d.isEditable()}"/>
 <div class="tab-pane" id="prices">
     <g:if test="${d.id != null}">
         <dl>
@@ -15,7 +14,7 @@
                         <th>Currency</th>
                         <th>Start Date</th>
                         <th>End Date</th>
-                        <g:if test="${showActions}">
+                        <g:if test="${editable}">
                             <th>Actions</th>
                         </g:if>
                     </tr>
@@ -29,7 +28,7 @@
                             <td><gokb:xEditable owner="${somePrice}" field="startDate" type="date"/></td>
                             <td><gokb:xEditable owner="${somePrice}" field="endDate" type="date"/></td>
                             <td>
-                                <g:if test="${editable && showActions}">
+                                <g:if test="${editable}">
                                     <g:link controller="ajaxSupport" class="confirm-click"
                                             data-confirm-message="Are you sure you wish to delete this Price?"
                                             action="deletePrice" id="${somePrice.id}">Delete</g:link>
