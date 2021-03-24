@@ -64,9 +64,14 @@ ul.select2-choices:after {
   height: 35px;
 }
 .wekb-filter .select2-container .select2-choices .select2-search-field input,
-.wekb-filter .select2-container .select2-choices
-{
+.wekb-filter .select2-container .select2-choices {
   border-radius: 0px;
+}
+.select2-container {
+  margin-bottom: 10px;
+}
+.wekb-filter .select2-container-multi .select2-choices .select2-search-choice  {
+  background: #e7e7e7;
 }
 /* Footer on public sites */
 .wekb-footer h2{
