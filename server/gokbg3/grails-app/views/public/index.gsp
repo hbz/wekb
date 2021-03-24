@@ -17,44 +17,11 @@
                     <div class="form-group input-group-lg">
                         <label for="q">Search for packages...</label>
                         <input type="text" class="form-control" placeholder="Find package like..." value="${params.q}"
-                                   name="q">
-                     </div>
-    %{--                    Showing results ${firstrec} to ${lastrec} of ${resultsTotal}--}%
+                               name="q">
+                    </div>
+                    %{--                    Showing results ${firstrec} to ${lastrec} of ${resultsTotal}--}%
                 </div>
 
-                    <g:each in="${facets?.sort { it.key }}" var="facet">
-                        <g:if test="${facet.key != 'type'}">
-
-                            <label for="${facet.key}" class="form-label"><g:message code="facet.so.${facet.key}"
-                                                                                    default="${facet.key}"/></label>
-
-                            <select name="${facet.key}" class="form-select wekb-multiselect" multiple
-                                    aria-label="Default select example">
-                                <option value="">Select <g:message code="facet.so.${facet.key}"
-                                                                   default="${facet.key}"/></option>
-                                <g:each in="${facet.value?.sort { it.display }}" var="v">
-                                    <g:set var="fname" value="facet:${facet.key + ':' + v.term}"/>
-                                    <g:set var="kbc"
-                                           value="${v.term.startsWith('org.gokb.cred') ? org.gokb.cred.KBComponent.get(v.term.split(':')[1].toLong()) : null}"/>
-                                    <g:if test="${params.list(facet.key).contains(v.term.toString())}">
-                                        <option value="${v.term}"
-                                                selected="selected">${kbc?.name ?: v.display} (${v.count})</option>
-                                    </g:if>
-                                    <g:else>
-                                        <option value="${v.term}">${kbc?.name ?: v.display} (${v.count})</option>
-                                    </g:else>
-                                </g:each>
-                            </select>
-
-                        </g:if>
-                    </g:each>
-
-
-                    <br>
-                    <br>
-
-                    <button class="btn btn-primary" type="submit" value="yes" name="search"><span
-                            class="fa fa-search" aria-hidden="true">Search</span></button>
                 <g:each in="${facets?.sort { it.key }}" var="facet">
                     <div class="col-sm-4">
                         <div class="form-group input-group-lg">
@@ -90,13 +57,13 @@
         </g:form>
     </div>
 </div>
+</div>
 
 
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <h1>Results <span class="label label-default">${resultsTotal}</span></h1>
-            <table class="table table-striped">
+            <table class="table table-striped well">
                 <thead>
                 <tr>
                     <g:sortableColumn property="sortname" title="Package Name"/>
