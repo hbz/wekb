@@ -514,7 +514,7 @@ class BootStrap {
 
         ["A & I Database", "Audio", "Book", "Database", "Dataset", "Film", "Image", "Journal",
          "Other", "Published Score", "Article", "Software", "Statistics", "Market Data", "Standards",
-         "Biography", "Legal Text", "Cartography", "Miscellaneous", "Other"].each { med ->
+         "Biography", "Legal Text", "Cartography", "Miscellaneous"].each { med ->
             RefdataCategory.lookupOrCreate(RCConstants.TITLEINSTANCE_MEDIUM, med).save(flush: true, failOnError: true)
             RefdataCategory.lookupOrCreate(RCConstants.TIPP_MEDIUM, med).save(flush: true, failOnError: true)
         }

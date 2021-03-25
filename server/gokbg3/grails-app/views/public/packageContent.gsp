@@ -10,10 +10,10 @@
 
 <div class="container">
 
-    <div class="row"><div class="box">
+    <div class="row">
+        <div class="box">
 
-        <div class="col-lg-12 ">
-            <div class="well">
+        <div class="col-lg-12 well">
 
                 <g:if test="${flash.error}">
                     <div class="alert alert-warning" style="font-weight:bold;">
@@ -26,27 +26,8 @@
 
                     <h1>Package: <span style="font-weight:bolder;">${pkgName}</span></h1>
 
-                    <div class="col-xs-3 pull-right well" style="min-width:320px;">
-                        <h2>Curated By</h2>
-                        <ul>
-                            <g:each in="${pkg.curatoryGroups}" var="cg">
-                                <li>${cg.name}</li>
-                            </g:each>
-                        </ul>
-
-                        <div style="margin-top:10px;">
-                            <g:link controller="resource" action="show"
-                                    id="${pkg.uuid}">Switch to editing view (Login required)</g:link>
-                        </div>
-                        <br>
-                        <div style="clear:both;">
-
-                            <g:link controller="packages" action="kbart" id="${params.id}">KBart File</g:link> &nbsp;
-                            <g:link controller="packages" action="packageTSVExport" id="${params.id}"><g:message
-                                    code="gokb.appname" default="we:kb"/> File</g:link>
-                        </div>
-
-                    </div>
+                    <g:render template="rightBox"
+                              model="${[d: pkg]}"/>
 
                     <dl class="dl-horizontal">
                         <dt>
@@ -211,10 +192,9 @@
                     </div>
 
                 </g:if>
-
-            </div>
         </div>
-    </div></div>
+    </div>
+    </div>
 
 </div>
 </body>

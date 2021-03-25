@@ -41,6 +41,7 @@ class CreateController {
             result.refdata_properties = classExaminationService.getRefdataPropertyNames(result.newclassname)
             result.displayobjclassname_short = result.displayobj.class.simpleName
             result.isComponent = (result.displayobj instanceof KBComponent)
+            result.editable = true
           }
         }
         catch ( Exception e ) {
