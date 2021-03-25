@@ -34,6 +34,8 @@
 
 </head>
 
+<wekb:serviceInjection />
+
 <body class="theme-${ grailsApplication.config.gokb.theme }">
 
   <div id="wrapper">

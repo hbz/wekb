@@ -7,6 +7,8 @@
 
 <body>
 
+<wekb:serviceInjection />
+
 <g:render template="number-chart-hero"/>
 <div class="container">
     <h1>Filter</h1>
@@ -107,7 +109,11 @@
                         <td>${hit.source.titleCount}
                         %{--                        <g:if test="${hit.source.listStatus != 'Checked'}">*</g:if>--}%
                         </td>
-                        <td>${hit.source.lastUpdatedDisplay}</td>
+                        <td>
+                            <g:if test="${hit.source.lastUpdatedDisplay}">
+                            <g:formatDate format="${message(code: 'default.date.format')}" date="${dateFormatService.parseDate(hit.source.lastUpdatedDisplay)}"/>
+                            </g:if>
+                        </td>
                     </tr>
                 </g:each>
                 </tbody>
