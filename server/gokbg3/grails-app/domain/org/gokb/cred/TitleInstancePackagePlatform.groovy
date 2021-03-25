@@ -157,6 +157,9 @@ class TitleInstancePackagePlatform extends KBComponent {
     paymentType column: 'tipp_payment_type'
     accessStartDate column: 'tipp_access_start_date'
     accessEndDate column: 'tipp_access_end_date'
+    series column: 'series', type: 'text'
+    url column: 'url', type: 'text'
+    subjectArea column: 'subject_area', type: 'text'
   }
 
   static constraints = {
