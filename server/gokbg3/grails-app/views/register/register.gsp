@@ -1,7 +1,7 @@
 <html>
 <head>
-  <meta name='layout' content='sb-admin'/>
-  <title><g:message code='spring.security.ui.register.title'/></title>
+  <meta name='layout' content='public'/>
+  <title><g:message code="gokb.appname" default="we:kb"/>: <g:message code='spring.security.ui.register.title'/></title>
 </head>
 
 <body>
