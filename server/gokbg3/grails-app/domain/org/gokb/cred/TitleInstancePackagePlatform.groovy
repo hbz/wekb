@@ -188,6 +188,9 @@ class TitleInstancePackagePlatform extends KBComponent {
     precedingPublicationTitleId column: 'tipp_preceding_publication_id'
     lastChangedExternal column: 'tipp_last_change_ext'
     medium column: 'tipp_medium_rv_fk'
+    series column: 'series', type: 'text'
+    url column: 'url', type: 'text'
+    subjectArea column: 'subject_area', type: 'text'
   }
 
   static constraints = {
