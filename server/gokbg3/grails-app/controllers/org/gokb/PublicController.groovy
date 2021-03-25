@@ -46,6 +46,7 @@ class PublicController {
         newParams.order = params.order ? "${params.order}" : 'asc'
         newParams.offset = params.offset ?: 0
         newParams.max = params.max ?:  10
+        newParams.id = params.id
 
         result.titleCount = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_current])[0]
         result.tipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_current], newParams)
