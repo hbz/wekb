@@ -179,15 +179,18 @@ class TitleInstancePackagePlatform extends KBComponent {
     paymentType column: 'tipp_payment_type'
     accessStartDate column: 'tipp_access_start_date'
     accessEndDate column: 'tipp_access_end_date'
-    firstAuthor column: 'tipp_first_author'
+    firstAuthor column: 'tipp_first_author', type: 'text'
     publicationType column: 'tipp_publication_type_rv_fk'
     volumeNumber column: 'tipp_volume_number'
     editionStatement column: 'tipp_edition_statement'
-    firstEditor column: 'tipp_first_editor'
+    firstEditor column: 'tipp_first_editor', type: 'text'
     parentPublicationTitleId column: 'tipp_parent_publication_id'
     precedingPublicationTitleId column: 'tipp_preceding_publication_id'
     lastChangedExternal column: 'tipp_last_change_ext'
     medium column: 'tipp_medium_rv_fk'
+    series column: 'series', type: 'text'
+    url column: 'url', type: 'text'
+    subjectArea column: 'subject_area', type: 'text'
   }
 
   static constraints = {
