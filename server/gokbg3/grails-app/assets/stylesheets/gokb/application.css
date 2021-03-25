@@ -60,13 +60,18 @@ ul.select2-choices:after {
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
 }
-.wekb-filter .input-group-lg > .form-control {
-  height: 45px;
+.wekb-filter .input-group-md > .form-control {
+  height: 35px;
 }
 .wekb-filter .select2-container .select2-choices .select2-search-field input,
-.wekb-filter .select2-container .select2-choices
-{
+.wekb-filter .select2-container .select2-choices {
   border-radius: 0px;
+}
+.select2-container {
+  margin-bottom: 10px;
+}
+.wekb-filter .select2-container-multi .select2-choices .select2-search-choice  {
+  background: #e7e7e7;
 }
 /* Footer on public sites */
 .wekb-footer h2{
@@ -76,7 +81,6 @@ ul.select2-choices:after {
   background-color: #000000;
   padding: 60px 40px;
   color: rgba(255,255,255,1.00);
-  margin-bottom: 20px;
   border-bottom-right-radius: 6px;
   border-top-left-radius: 0px;
   border-bottom-left-radius: 6px;

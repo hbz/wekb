@@ -14,20 +14,21 @@
         <g:form controller="public" class="form" role="form" action="index" method="get" params="${params}">
             <div class="row">
                 <div class="col-sm-4">
-                    <div class="form-group input-group-lg">
+                    <div class="form-group input-group-md">
                         <label for="q">Search for packages...</label>
-                        <input type="text" class="form-control" placeholder="Find package like..." value="${params.q}"
+                      <input type="text" class="form-control" placeholder="Find package like..." value="${params.q}"
                                name="q">
+
                     </div>
-                    %{--                    Showing results ${firstrec} to ${lastrec} of ${resultsTotal}--}%
+                    %{--Showing results ${firstrec} to ${lastrec} of ${resultsTotal}--}%
                 </div>
 
                 <g:each in="${facets?.sort { it.key }}" var="facet">
                     <div class="col-sm-4">
-                        <div class="form-group input-group-lg">
+                        <div class="">
                             <g:if test="${facet.key != 'type'}">
                                 <label for="${facet.key}" class=""><g:message code="facet.so.${facet.key}" default="${facet.key}"/></label>
-                                <select name="${facet.key}" class="form-control  wekb-multiselect" multiple aria-label="Default select example">
+                                <select name="${facet.key}" class="wekb-multiselect" multiple aria-label="Default select example">
                                     <g:each in="${facet.value?.sort { it.display }}" var="v">
                                         <g:set var="fname" value="facet:${facet.key + ':' + v.term}"/>
                                         <g:set var="kbc"
@@ -49,8 +50,13 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="form-group">
-                        <a class="btn btn-default" style="margin-right: 20px" href="${grailsApplication.config.server.contextPath ?: ''}"/>Reset</a>
-                        <button class="btn btn-primary" type="submit" value="yes" name="search">Search</button>
+                        <div class="btn-group pull-right">
+                            <button class="btn btn-primary " type="submit" value="yes" name="search">Search</button>
+                        </div>
+                        <div class="btn-group pull-right" style="margin-right: 5px;">
+                            <a class="btn btn-default "  href="${grailsApplication.config.server.contextPath ?: ''}"/>Reset</a>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -63,7 +69,8 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <table class="table table-striped well">
+            <h1>Results <span class="label label-default">${resultsTotal}</span></h1>
+            <table class="table table-striped">
                 <thead>
                 <tr>
                     <g:sortableColumn property="sortname" title="Package Name"/>
@@ -134,7 +141,7 @@
             var conf = {
                 placeholder: "Please select",
                 allowClear: true,
-                width:'off',
+                width:'100%',
                 minimumInputLength: 0,
                 /*                ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
                                     url: gokb.config.lookupURI,
