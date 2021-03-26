@@ -45,7 +45,7 @@
                 <h3 class="modal-title">Not yet registered for a <g:message code="gokb.appname" default="we:kb"/>: account?</h3>
             </div>
 
-            <div class="modal-body">Contact us at laser@hbz-nrw.de so that we can set up an account for you and provide you with your initial login information.</div>
+            <div class="modal-body">Contact us at <a href="mailto:laser@hbz-nrw.de">laser@hbz-nrw.de</a> so that we can set up an account for you and provide you with your initial login information.</div>
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
