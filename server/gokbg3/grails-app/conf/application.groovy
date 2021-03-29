@@ -23,6 +23,10 @@ grails {
     }
 }
 
+// database migration plugin
+
+grails.plugin.databasemigration.updateOnStart = true
+
 grails.plugin.springsecurity.filterChain.chainMap = [
         [pattern: '/login/auth',          filters: 'none'],
         [pattern: '/assets/**',           filters: 'none'],
