@@ -9,6 +9,7 @@ import org.apache.tika.Tika
 import org.apache.tika.metadata.Metadata
 import org.gokb.cred.*
 import grails.converters.JSON
+import wekb.AccessService
 
 class ResourceController {
 
@@ -18,6 +19,7 @@ class ResourceController {
   def gokbAclService
   def aclUtilService
   def displayTemplateService
+  AccessService accessService
 
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   def index() {
@@ -71,7 +73,7 @@ class ResourceController {
             request.curator = null
           }
 
-          result.editable = displayobj.isEditable() ?: (params.curationOverride == 'true' && user.isAdmin())
+          result.editable = accessService.checkEditableObject(newclass, params)
 
           result.displayobjclassname = displayobj.class.name
           result.__oid = "${result.displayobjclassname}:${displayobj.id}"

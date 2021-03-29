@@ -17,7 +17,7 @@ dependencies {
 }
 
 task uberjar(type: Jar) {
-in    from files(sourceSets.main.output.classesDir)
+    from files(sourceSets.main.output.classesDir)
     from configurations.runtime.asFileTree.files.collect { zipTree(it) }
 
     manifest {
