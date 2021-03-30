@@ -38,11 +38,13 @@ grails.plugin.databasemigration.updateOnStart = true
 all dbCreate to dbCreate: none
 
 
-## **Using by changes on Domain Classes**
+## **Create changelog after changes on Domain Classes**
 1. `grails prod dbm-gorm-diff changelog-2021-03-29.groovy`
 2. check changelog-2021-03-29.groovy if all changes are included
 3. include changelog-2021-03-29.groovy in changelog.groovy
-4. to test the changelog use `run app` or `grails prod dbm-update`
+
+## **Update database with new changelogs**
+1. use `run app` or `grails prod dbm-update`
 
 
 

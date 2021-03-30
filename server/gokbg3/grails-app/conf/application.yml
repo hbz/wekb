@@ -124,7 +124,7 @@ hibernate:
 environments:
     development:
         dataSource:
-            dbCreate: none // update
+            dbCreate: none # update
             url: jdbc:postgresql://pghost:5432/gokbg3dev
             username: knowint
             password: knowint
@@ -170,7 +170,7 @@ environments:
                 enabled: false
     test:
         dataSource:
-            dbCreate: none // create-drop
+            dbCreate: none # create-drop
             url: jdbc:postgresql://pghost:5432/gokbg3test
             username: knowint
             password: knowint
@@ -214,7 +214,7 @@ environments:
             disabled: true
     production:
         dataSource:
-            dbCreate: none //update
+            dbCreate: none #update
             url: jdbc:postgresql://localhost:5432/gokbg3
             username: gokb
             password: knowint
