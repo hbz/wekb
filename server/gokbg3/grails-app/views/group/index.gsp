@@ -42,7 +42,6 @@
               </g:link>
             </td>
             <td>${pkg.status?.value}</td>
-            <td>${pkg.listVerifiedDate}</td>
             <td>${pkg.lastUpdated}</td>
             <td style="white-space:nowrap;">${pkg.scope?.value}</td>
             <td style="white-space:nowrap;">${pkg.listStatus?.value}</td>

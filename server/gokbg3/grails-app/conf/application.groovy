@@ -24,7 +24,6 @@ grails {
 }
 
 // database migration plugin
-
 grails.plugin.databasemigration.updateOnStart = true
 
 grails.plugin.springsecurity.filterChain.chainMap = [
@@ -221,11 +220,11 @@ globalSearchTemplates = [
         [
           type:'lookup',
           baseClass:'org.gokb.cred.RefdataValue',
-          filter1:'Package.Global',
+          filter1:'Package.Scope',
           prompt:'Availability',
-          qparam:'qp_global',
+          qparam:'qp_scope',
           placeholder:'Availability',
-          contextTree:['ctxtp':'qry', 'comparator' : 'eq', 'prop':'global'],
+          contextTree:['ctxtp':'qry', 'comparator' : 'eq', 'prop':'scope'],
         ],
         [
           type:'lookup',
@@ -280,7 +279,7 @@ globalSearchTemplates = [
         [heading:'Name', property:'name',sort:'name', link:[controller:'resource',action:'show',id:'x.r.class.name+\':\'+x.r.id'] ],
         [heading:'Nominal Platform', property:'nominalPlatform?.name'],
         [heading:'Content Type', property:'contentType?.value', sort:'contentType'],
-        [heading:'Availability', property:'global', sort:'global'],
+        [heading:'Availability', property:'scope', sort:'scope'],
         [heading:'List Status', property:'listStatus?.value',sort:'listStatus'],
         [heading:'Last Updated', property:'lastUpdated',sort:'lastUpdated'],
         [heading:'Status', property:'status?.value',sort:'status'],

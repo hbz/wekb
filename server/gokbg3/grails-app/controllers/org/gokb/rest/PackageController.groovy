@@ -164,8 +164,6 @@ class PackageController {
           def jsonMap = obj.jsonMapping
 
           jsonMap.immutable = [
-            'userListVerifier',
-            'listVerifiedDate',
             'listStatus'
           ]
 
@@ -277,8 +275,6 @@ class PackageController {
         ]
 
         jsonMap.immutable = [
-          'userListVerifier',
-          'listVerifiedDate',
           'listStatus'
         ]
 
@@ -379,10 +375,6 @@ class PackageController {
 
         if (new_val && new_val != obj.listStatus) {
           obj.listStatus = new_val
-        }
-
-        if (new_val && new_val.value == 'Checked') {
-          obj.listVerifiedDate = new Date()
         }
       }
     }

@@ -206,9 +206,7 @@ class IntegrationControllerSpec extends Specification {
             "breakable" : "No",
             "consistent" : "Yes",
             "editStatus" : "In Progress",
-            "fixed" : "No",
-            "global" : "Consortium",
-            "globalNote": "Testing Consortium",
+            "scope" : "Consortium",
             "identifiers" : [
               [
                 "type" : "isil",

@@ -62,16 +62,6 @@
                             </dd>
                         </g:if>
 
-
-                    %{--<dt>
-                      <gokb:annotatedLabel owner="${pkg}" property="userListVerifier">List Verifier</gokb:annotatedLabel>
-                    </dt>
-                    <dd>
-                      <gokb:manyToOneReferenceTypedown owner="${pkg}" field="userListVerifier" baseClass="org.gokb.cred.User" >${pkg.userListVerifier?.displayName ?: pkg.userListVerifier?.username}</gokb:manyToOneReferenceTypedown>
-                    </dd>
-                    <dt> <gokb:annotatedLabel owner="${pkg}" property="listVerifierDate">List Verifier Date</gokb:annotatedLabel> </dt>
-                    <dd> <gokb:xEditable class="ipe" owner="${pkg}" type="date" field="listVerifiedDate" /> </dd>--}%
-
                         <dt> <gokb:annotatedLabel owner="${pkg}" property="lastUpdateComment">Last Update Comment</gokb:annotatedLabel> </dt>
                         <dd> <gokb:xEditable class="ipe" owner="${pkg}" field="lastUpdateComment" /> </dd>
 
@@ -93,7 +83,7 @@
 
 
                         <g:render template="/apptemplates/secondTemplates/refdataprops"
-                                  model="${[d: pkg, rd: refdata_properties, dtype: pkg.class.simpleName, notShowProps: [RCConstants.PACKAGE_LIST_STATUS, RCConstants.PACKAGE_FIXED]]}"/>
+                                  model="${[d: pkg, rd: refdata_properties, dtype: pkg.class.simpleName, notShowProps: [RCConstants.PACKAGE_LIST_STATUS]]}"/>
 
                     </dl>
 

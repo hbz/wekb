@@ -469,21 +469,26 @@ class BootStrap {
         RefdataCategory.lookupOrCreate(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, "Selected Articles").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, "Abstracts").save(flush: true, failOnError: true)
 
-        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "Unknown").save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "Back File").save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "Front File").save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "Master File").save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "Global").save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "Consortium").save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "National").save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "Individual").save(flush: true, failOnError: true)
+
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_LIST_STATUS, "Checked").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_LIST_STATUS, "In Progress").save(flush: true, failOnError: true)
+
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_BREAKABLE, "No").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_BREAKABLE, "Yes").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_BREAKABLE, "Unknown").save(flush: true, failOnError: true)
+
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_CONSISTENT, "No").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_CONSISTENT, "Yes").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_CONSISTENT, "Unknown").save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_FIXED, "No").save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_FIXED, "Yes").save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_FIXED, "Unknown").save(flush: true, failOnError: true)
+
+        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_FILE, "Back File").save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_FILE, "Front File").save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_FILE, "Master File").save(flush: true, failOnError: true)
+
 
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_PAYMENT_TYPE, "Paid").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_PAYMENT_TYPE, "Mixed").save(flush: true, failOnError: true)
