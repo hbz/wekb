@@ -144,6 +144,8 @@ class GlobalSearchTemplatesService {
                 baseclass: 'org.gokb.cred.CuratoryGroup',
                 title    : 'Curatory Groups',
                 group    : 'Secondary',
+                defaultSort : 'name',
+                defaultOrder: 'asc',
                 qbeConfig: [
                         qbeForm   : [
                                 [
@@ -582,6 +584,8 @@ class GlobalSearchTemplatesService {
                 baseclass: 'org.gokb.cred.IdentifierNamespace',
                 title    : 'Namespaces',
                 group    : 'Tertiary',
+                defaultSort : 'name',
+                defaultOrder: 'asc',
                 qbeConfig: [
                         qbeForm   : [
                                 [
@@ -1168,7 +1172,7 @@ class GlobalSearchTemplatesService {
                 baseclass   : 'org.gokb.cred.User',
                 title       : 'Users',
                 group       : 'Admin',
-                defaultSort : 'id',
+                defaultSort : 'username',
                 defaultOrder: 'asc',
                 qbeConfig   : [
                         qbeForm   : [
