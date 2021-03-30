@@ -132,7 +132,7 @@
         <div class="tab-pane active" id="titledetails">
             <g:if test="${params.controller != 'create'}">
                 <g:link class="display-inline" controller="search" action="index"
-                        params="[qbe: 'g:3tipps', qp_plat_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_cp', 'qp_pub_id', 'qp_plat', 'qp_plat_id']]"
+                        params="[qbe: 'g:tipps', qp_plat_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_cp', 'qp_pub_id', 'qp_plat', 'qp_plat_id']]"
                         id="">TIPPs on this Platform</g:link>
             </g:if>
             <g:else>
@@ -147,7 +147,7 @@
                 </dt>
                 <dd>
                     <g:link class="display-inline" controller="search" action="index"
-                            params="[qbe: 'g:1packages', qp_platform_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_platform', 'qp_platform_id']]"
+                            params="[qbe: 'g:packages', qp_platform_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_platform', 'qp_platform_id']]"
                             id="">TIPPs on this Platform</g:link>
                 </dd>
             </dl>

@@ -8,6 +8,7 @@ import org.springframework.security.acls.model.Permission
 
 import grails.util.GrailsClassUtils
 import org.gokb.cred.*
+import wekb.GlobalSearchTemplatesService
 
 class SearchController {
 
@@ -16,6 +17,7 @@ class SearchController {
   def classExaminationService
   def gokbAclService
   def displayTemplateService
+  GlobalSearchTemplatesService globalSearchTemplatesService
 
 
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
@@ -79,7 +81,7 @@ class SearchController {
         // Global template, look in config
         def global_qbe_template_shortcode = params.qbe.substring(2,params.qbe.length());
         // log.debug("Looking up global template ${global_qbe_template_shortcode}");
-        result.qbetemplate = grailsApplication.config.globalSearchTemplates[global_qbe_template_shortcode]
+        result.qbetemplate = globalSearchTemplatesService.getGlobalSearchTemplate(global_qbe_template_shortcode)
         // log.debug("Using template: ${result.qbetemplate}");
       }
 

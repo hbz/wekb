@@ -374,7 +374,7 @@
         <div class="tab-pane" id="titles">
           <g:if test="${d.id}">
             <g:link class="display-inline" controller="search" action="index"
-                    params="[qbe:'g:1titles', refOid: d.getLogEntityId(), inline:true, qp_pub_id:d.id, hide:['qp_pub','qp_pub_id']]"
+                    params="[qbe:'g:titles', refOid: d.getLogEntityId(), inline:true, qp_pub_id:d.id, hide:['qp_pub','qp_pub_id']]"
                     id="">Titles published</g:link>
           </g:if>
         </div>
