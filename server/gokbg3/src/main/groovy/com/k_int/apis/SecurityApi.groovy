@@ -65,7 +65,9 @@ class SecurityApi <T> extends A_Api<T> {
       allowed = !(component.respondsTo('isSystemComponent') && component.isSystemComponent())
       if (allowed) {
 
-        if(component.respondsTo('getCuratoryGroups')){
+        allowed = SecurityApi.isTypeEditable (component.getClass(), defaultTo)
+
+        /*if(component.respondsTo('getCuratoryGroups')){
           User user = springSecurityService.currentUser
 
           if(user.curatoryGroups?.id.intersect(component.curatoryGroups?.id).size() > 0)
@@ -76,7 +78,7 @@ class SecurityApi <T> extends A_Api<T> {
           }
         }else {
           allowed = SecurityApi.isTypeEditable(component.getClass(), defaultTo)
-        }
+        }*/
       }
     }
     else {

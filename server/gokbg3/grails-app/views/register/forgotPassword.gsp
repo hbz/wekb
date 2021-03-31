@@ -44,7 +44,7 @@
             <button type="submit" value="Submit" class="btn btn-success">Send Password Recovery Email...</button>
           </div>
 
-          <p><b>Not yet registered for a <g:message code="gokb.appname" default="we:kb"/>: account? Contact us at laser@hbz-nrw.de so that we can set up an account for you and provide you with your initial login information. </b></p>
+          <p><b>Not yet registered for a <g:message code="gokb.appname" default="we:kb"/>: account? Contact us at <a href="mailto:laser@hbz-nrw.de">laser@hbz-nrw.de</a> so that we can set up an account for you and provide you with your initial login information. </b></p>
 
         </g:else>
 

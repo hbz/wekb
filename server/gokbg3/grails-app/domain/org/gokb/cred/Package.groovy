@@ -24,7 +24,6 @@ class Package extends KBComponent {
   // Breakable?: Y
   // Parent?: N // SO: This should not be needed really now. We should be able to test children for empty set.
   // Global?: Y
-  // Fixed?: Y
   // Consistent?: N
 
   // Refdata
@@ -38,21 +37,18 @@ class Package extends KBComponent {
   RefdataValue breakable
   @RefdataAnnotation(cat = RCConstants.PACKAGE_CONSISTENT)
   RefdataValue consistent
-  @RefdataAnnotation(cat = RCConstants.PACKAGE_FIXED)
-  RefdataValue fixed
   @RefdataAnnotation(cat = RCConstants.PACKAGE_PAYMENT_TYPE)
   RefdataValue paymentType
-  @RefdataAnnotation(cat = RCConstants.PACKAGE_GLOBAL)
-  RefdataValue global
 
   @RefdataAnnotation(cat = RCConstants.PACKAGE_OPEN_ACCESS)
   RefdataValue openAccess
 
+  @RefdataAnnotation(cat = RCConstants.PACKAGE_FILE)
+  RefdataValue file
+
   RefineProject lastProject
   String globalNote
-  String listVerifier
-  User userListVerifier
-  Date listVerifiedDate
+
   String descriptionURL
 
 /*  private static refdataDefaults = [
@@ -60,9 +56,7 @@ class Package extends KBComponent {
     "listStatus" : "Checked",
     "breakable"  : "Unknown",
     "consistent" : "Unknown",
-    "fixed"      : "Unknown",
-    "paymentType": "Unknown",
-    "global"     : "Global"
+    "paymentType": "Unknown"
   ]*/
 
   static manyByCombo = [
@@ -96,14 +90,11 @@ class Package extends KBComponent {
     scope column: 'pkg_scope_rv_fk'
     breakable column: 'pkg_breakable_rv_fk'
     consistent column: 'pkg_consistent_rv_fk'
-    fixed column: 'pkg_fixed_rv_fk'
     paymentType column: 'pkg_payment_type_rv_fk'
-    global column: 'pkg_global_rv_fk'
     globalNote column: 'pkg_global_note'
-    listVerifier column: 'pkg_list_verifier'
-    userListVerifier column: 'pkg_list_verifier_user_fk'
     descriptionURL column: 'pkg_descr_url'
     openAccess column: 'pkg_open_access'
+    file column: 'pkg_file'
   }
 
   static constraints = {
@@ -112,11 +103,10 @@ class Package extends KBComponent {
     listStatus(nullable: true, blank: false)
     breakable(nullable: true, blank: false)
     consistent(nullable: true, blank: false)
-    fixed(nullable: true, blank: false)
     paymentType(nullable: true, blank: false)
-    global(nullable: true, blank: false)
     globalNote(nullable: true, blank: true)
     openAccess (nullable: true, blank: true)
+    file (nullable: true, blank: true)
     lastProject(nullable: true, blank: false)
     descriptionURL(nullable: true, blank: true)
     name(validator: { val, obj ->
@@ -156,6 +146,8 @@ class Package extends KBComponent {
       'titleCount'         : false,
       'paymentType'        : false,
       'listStatus'         : "refdata",
+      'file'               : "refdata",
+      'openAccess'         : "refdata",
       'contentType'        : "refdata",
       'scope'              : "refdata"
     ],
@@ -495,12 +487,11 @@ select tipp.id,
         'listStatus'(listStatus?.value)
         'breakable'(breakable?.value)
         'consistent'(consistent?.value)
-        'fixed'(fixed?.value)
         'paymentType'(paymentType?.value)
-        'global'(global?.value)
         'globalNote'(globalNote)
         'contentType'(contentType?.value)
         'openAccess'(openAccess?.value)
+        'file'(file?.value)
 
         if (nominalPlatform) {
           builder.'nominalPlatform'([id: nominalPlatform.id, uuid: nominalPlatform.uuid]) {
@@ -514,8 +505,6 @@ select tipp.id,
             'name'(provider.name)
           }
         }
-
-        'listVerifiedDate'(listVerifiedDate ? dateFormatService.formatIsoTimestamp(listVerifiedDate) : null)
 
         builder.'curatoryGroups' {
           curatoryGroups.each { cg ->

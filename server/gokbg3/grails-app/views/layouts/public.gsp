@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
     <meta charset="utf-8">
@@ -28,6 +27,8 @@
     <![endif]-->
 
 </head>
+
+<wekb:serviceInjection />
 
 <body id="page-body" class="theme-${ grailsApplication.config.gokb.theme }">
 
