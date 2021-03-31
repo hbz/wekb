@@ -11,10 +11,10 @@
     type="image/x-icon">
   
   <g:layoutHead />
-  <asset:javascript src="gokb/application.grass.js" />
-  <asset:stylesheet src="gokb/sb-admin-2.css"/>
+  <asset:javascript src="application.grass.js" />
+  <asset:stylesheet src="sb-admin-2.css"/>
   <asset:stylesheet src="gokb/themes/${ grailsApplication.config.gokb.theme }/theme.css"/>
-  <asset:stylesheet src="gokb/application.css"/>
+  <asset:stylesheet src="application.css"/>
   <asset:script type="text/javascript" src="//cdn.jsdelivr.net/webshim/1.12.4/extras/modernizr-custom.js"></asset:script>
   <asset:script type="text/javascript" src="//cdn.jsdelivr.net/webshim/1.12.4/polyfiller.js"></asset:script>
 </head>

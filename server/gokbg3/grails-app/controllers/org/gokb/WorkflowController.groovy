@@ -8,6 +8,7 @@ import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
+import wekb.GlobalSearchTemplatesService
 
 
 class WorkflowController{
@@ -17,6 +18,7 @@ class WorkflowController{
   def reviewRequestService
   def packageService
   def dateFormatService
+  GlobalSearchTemplatesService globalSearchTemplatesService
 
   def actionConfig = [
       'method::deleteSoft'     : [actionType: 'simple'],
@@ -66,7 +68,7 @@ class WorkflowController{
             // Global template, look in config
             def global_qbe_template_shortcode = params.qbe.substring(2, params.qbe.length())
             // log.debug("Looking up global template ${global_qbe_template_shortcode}")
-            qresult.qbetemplate = grailsApplication.config.globalSearchTemplates[global_qbe_template_shortcode]
+            qresult.qbetemplate = globalSearchTemplatesService.getGlobalSearchTemplate(global_qbe_template_shortcode)
             // log.debug("Using template: ${result.qbetemplate}")
           }
 

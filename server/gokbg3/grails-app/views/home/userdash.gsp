@@ -26,7 +26,7 @@
             </div>
             <div class="panel-body">
               <g:link class="display-inline" controller="search" action="index"
-                params="[qbe:'g:UserWatchedComponents', inline:true]"
+                params="[qbe:'g:userWatchedComponents', inline:true]"
                 id="">User Watched Components</g:link>
             </div>
           </div>
@@ -36,7 +36,7 @@
             </div>
             <div class="panel-body">
               <g:link class="display-inline" controller="search" action="index"
-                params="[qbe:'g:JobResult', inline:true]"
+                params="[qbe:'g:jobResults', inline:true]"
                 id="">Finished Upload Jobs</g:link>
             </div>
           </div>

@@ -224,6 +224,20 @@ class CreateController {
                 }
               }
 
+              if (result.newobj.respondsTo("getCuratoryGroups")) {
+                log.debug("Set CuratoryGroups..");
+                if(user.isAdmin() || user.getSuperUserStatus()) {
+                  flash.message = "Object was not assigned to a curator group because you are admin or superuser!!!!"
+
+                }else {
+                  user.curatoryGroups.each { CuratoryGroup cg ->
+                    result.newobj.curatoryGroups.add(cg)
+                  }
+                }
+
+                  result.newobj.save(flush:true)
+              }
+
               result.uri = createLink([controller: 'resource', action:'show', id:"${params.cls}:${result.newobj.id}"])
             }
           }

@@ -130,7 +130,7 @@
             <dt><gokb:annotatedLabel owner="${d}" property="tipps">Titles/TIPPs</gokb:annotatedLabel></dt>
             <dd>
               <g:link class="display-inline" controller="search" action="index"
-                params="[qbe:'g:3tipps', qp_pkg_id:d.id, inline:true, refOid: d.getLogEntityId(), hide:['qp_pkg_id', 'qp_cp', 'qp_pkg', 'qp_pub_id']]"
+                params="[qbe:'g:tipps', qp_pkg_id:d.id, inline:true, refOid: d.getLogEntityId(), hide:['qp_pkg_id', 'qp_cp', 'qp_pkg', 'qp_pub_id']]"
                 id="">Titles in this package</g:link>
               <g:if test="${ editable && params.controller != 'create' }">
                 <div class="panel-body">

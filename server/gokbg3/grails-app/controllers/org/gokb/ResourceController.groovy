@@ -73,7 +73,7 @@ class ResourceController {
             request.curator = null
           }
 
-          result.editable = accessService.checkEditableObject(newclass, params)
+          result.editable = accessService.checkEditableObject(displayobj, params)
 
           result.displayobjclassname = displayobj.class.name
           result.__oid = "${result.displayobjclassname}:${displayobj.id}"
