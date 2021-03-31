@@ -118,8 +118,6 @@ class User extends Party {
     } else {
       log.error( "Error loading admin role (ROLE_ADMIN)" )
     }
-
-    adminRole.save()
     false
   }
 
@@ -131,8 +129,6 @@ class User extends Party {
     } else {
       log.error( "Error loading admin role (ROLE_EDITOR)" )
     }
-
-    role.save()
     false
   }
 
@@ -144,8 +140,6 @@ class User extends Party {
     } else {
       log.error( "Error loading admin role (ROLE_SUPERUSER)" )
     }
-
-    role.save()
     false
   }
 
@@ -157,8 +151,6 @@ class User extends Party {
     } else {
       log.error( "Error loading admin role (ROLE_EDITOR)" )
     }
-
-    role.save()
     false
   }
 
@@ -170,8 +162,6 @@ class User extends Party {
     } else {
       log.error( "Error loading admin role (ROLE_CONTRIBUTOR)" )
     }
-
-    role.save()
     false
   }
 
@@ -183,8 +173,6 @@ class User extends Party {
     } else {
       log.error( "Error loading admin role (ROLE_API)" )
     }
-
-    role.save()
     false
   }
 
