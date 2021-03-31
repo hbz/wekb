@@ -1884,8 +1884,6 @@ class WorkflowController{
 
       if (pkgObj?.isEditable() && (is_curator || !curated_pkg || user.authorities.contains(Role.findByAuthority('ROLE_SUPERUSER')))){
         pkgObj.listStatus = RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_LIST_STATUS, 'Checked')
-        pkgObj.userListVerifier = user
-        pkgObj.listVerifiedDate = new Date()
         pkgObj.save(flush: true, failOnError: true)
       }
     }

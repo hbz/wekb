@@ -776,14 +776,9 @@ class PackageService {
    * status:'Current',
    * breakable:'Unknown',
    * consistent:'Unknown',
-   * fixed:'Unknown',
    * paymentType:'Unknown',
-   * global:'Global',
    * nominalPlatform:54678
    * provider:4325
-   * listVerifier:'',
-   * userListVerifier:'benjamin_ahlborn'
-   * listVerifierDate:'2015-06-19T00:00:00Z'
    * source:[
    *   url:'http://www.zeitschriftendatenbank.de'
    *   defaultAccessURL:''
@@ -928,25 +923,9 @@ class PackageService {
     changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.scope, result, 'scope')
     changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.breakable, result, 'breakable')
     changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.consistent, result, 'consistent')
-    changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.fixed, result, 'fixed')
     changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.paymentType, result, 'paymentType')
-    changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.global, result, 'global')
-    changed |= ClassUtils.setStringIfDifferent(result, 'listVerifier', packageHeaderDTO.listVerifier?.toString())
-    // User userListVerifier
-    changed |= ClassUtils.setDateIfPresent(packageHeaderDTO.listVerifiedDate, result, 'listVerifiedDate');
-
-    // ListVerifier
-
-    if (packageHeaderDTO.userListVerifier) {
-      def looked_up_user = User.findByUsername(packageHeaderDTO.userListVerifier)
-      if (looked_up_user && ((result.userListVerifier == null) || (result.userListVerifier?.id != looked_up_user?.id))) {
-        result.userListVerifier = looked_up_user
-        changed = true
-      }
-      else {
-        log.warn("Unable to find username for list verifier ${packageHeaderDTO.userListVerifier}");
-      }
-    }
+    changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.file, result, 'file')
+    changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.openAccess, result, 'openAccess')
 
     // Platform
 
@@ -1764,7 +1743,7 @@ class PackageService {
     StringBuilder name = new StringBuilder()
     if (type == ExportType.KBART) {
       name.append(toCamelCase(pkg.provider?.name ? pkg.provider.name : "unknown Provider")).append('_')
-          .append(toCamelCase(pkg.global.value)).append('_')
+          .append(toCamelCase(pkg.scope.value)).append('_')
           .append(toCamelCase(pkg.name))
     }
     else {

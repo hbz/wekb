@@ -1,5 +1,5 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
-<g:set var="editable" value="${ d.isEditable() && ((d.respondsTo('getCuratoryGroups') ? (request.curator != null && request.curator.size() > 0) : true) || (params.curationOverride == 'true' && request.user.isAdmin())) }" />
+%{--<g:set var="editable" value="${ d.isEditable() && ((d.respondsTo('getCuratoryGroups') ? (request.curator != null && request.curator.size() > 0) : true) || (params.curationOverride == 'true' && request.user.isAdmin())) }" />--}%
 <dl class="dl-horizontal">
   <dt>
           <gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel>

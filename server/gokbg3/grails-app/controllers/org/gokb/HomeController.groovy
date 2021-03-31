@@ -1,6 +1,7 @@
 package org.gokb
 
 import de.wekb.helper.RCConstants
+import org.hibernate.SessionFactory
 import org.springframework.security.access.annotation.Secured
 import grails.util.GrailsNameUtils
 import grails.converters.JSON
@@ -13,7 +14,7 @@ class HomeController {
   def springSecurityService
   def userAlertingService
   def passwordEncoder
-
+  SessionFactory sessionFactory
 
   static stats_cache = null;
   static stats_timestamp = null;
@@ -172,6 +173,13 @@ class HomeController {
 
   @Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
   def about() {
+    def result = [:]
+    def dbmQuery = (sessionFactory.currentSession.createSQLQuery(
+            'SELECT filename, id, dateexecuted from databasechangelog order by orderexecuted desc limit 1'
+    )).list()
+    result.dbmVersion = dbmQuery.size() > 0 ? dbmQuery.first() : ['unkown', 'unkown', 'unkown']
+    result
+
   }
 
   def releaseNotes() {

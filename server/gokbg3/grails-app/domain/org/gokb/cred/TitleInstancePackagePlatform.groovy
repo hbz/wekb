@@ -886,14 +886,13 @@ class TitleInstancePackagePlatform extends KBComponent {
 
             'scope'(scope?.value)
             'listStatus'(listStatus?.value)
+            'openAccess'(openAccess?.value)
+            'file'(file?.value)
             'breakable'(breakable?.value)
             'consistent'(consistent?.value)
-            'fixed'(fixed?.value)
             'paymentType'(paymentType?.value)
-            'global'(global?.value)
             'globalNote'(globalNote)
             'contentType'(contentType?.value)
-            'listVerifiedDate'(listVerifiedDate ? dateFormatService.formatIsoTimestamp(listVerifiedDate) : null)
             'lastUpdated'(lastUpdated ? dateFormatService.formatIsoTimestamp(lastUpdated) : null)
             if (provider) {
               builder.'provider'([id: provider?.id, uuid: provider?.uuid]) {

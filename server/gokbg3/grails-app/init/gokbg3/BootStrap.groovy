@@ -32,7 +32,12 @@ class BootStrap {
 
     def init = { servletContext ->
 
-        log.debug("\n\nInit\n\n")
+        log.info("--------------------------------------------------------------------------------")
+        log.info("\n\nInit\n\n")
+
+        log.info("Database: ${grailsApplication.config.dataSource.url}")
+        log.info("Database datasource dbCreate: ${grailsApplication.config.dataSource.dbCreate}")
+        log.info("Database migration plugin updateOnStart: ${grailsApplication.config.grails.plugin.databasemigration.updateOnStart}")
 
         log.info("\n\n\n **WARNING** \n\n\n - Automatic create of component identifiers index is no longer part of the domain model");
         log.info("Create manually with create index norm_id_value_idx on kbcomponent(kbc_normname(64),id_namespace_fk,class)");
@@ -54,6 +59,7 @@ class BootStrap {
         }
 
         // Global System Roles
+        log.info("Set global system roles")
         KBComponent.withTransaction() {
             def contributorRole = Role.findByAuthority('ROLE_CONTRIBUTOR') ?: new Role(authority: 'ROLE_CONTRIBUTOR', roleType: 'global').save(failOnError: true)
             def userRole = Role.findByAuthority('ROLE_USER') ?: new Role(authority: 'ROLE_USER', roleType: 'global').save(failOnError: true)
@@ -124,7 +130,7 @@ class BootStrap {
 
 
         if (grailsApplication.config.gokb.decisionSupport) {
-            log.debug("Configuring default decision support parameters");
+            log.info("Configuring default decision support parameters");
             DSConfig();
         }
 
@@ -148,7 +154,7 @@ class BootStrap {
         CuratoryGroup.withTransaction() {
             if (grailsApplication.config.gokb.defaultCuratoryGroup != null) {
 
-                log.debug("Ensure curatory group: ${grailsApplication.config.gokb?.defaultCuratoryGroup}");
+                log.info("Ensure curatory group: ${grailsApplication.config.gokb?.defaultCuratoryGroup}");
 
                 def local_cg = CuratoryGroup.findByName(grailsApplication.config.gokb?.defaultCuratoryGroup) ?:
                         new CuratoryGroup(name: grailsApplication.config.gokb?.defaultCuratoryGroup).save(flush: true, failOnError: true);
@@ -234,13 +240,14 @@ class BootStrap {
         // log.info("Default batch loader config");
         // defaultBulkLoaderConfig();
 
-        log.debug("Register users and override default admin password");
+        log.info("Register users and override default admin password");
         registerUsers()
 
-        log.debug("Ensuring ElasticSearch index")
+        log.info("Ensuring ElasticSearch index")
         ensureEsIndices()
 
 
+        log.info("Bootstrap Identifier Cleanup")
         Job hk_job = concurrencyManagerService.createJob {
             cleanupService.housekeeping()
         }.startOrQueue()
@@ -250,7 +257,7 @@ class BootStrap {
 
         hk_job.startTime = new Date()
 
-        log.debug("Checking for missing component statistics")
+        log.info("Checking for missing component statistics")
         ComponentStatisticService.updateCompStats()
 
         log.info("GoKB Init complete");
@@ -297,6 +304,7 @@ class BootStrap {
 
     def cleanUpMissingDomains() {
 
+        log.info("cleanUpMissingDomains()")
         def domains = KBDomainInfo.createCriteria().list { ilike('dcName', 'org.gokb%') }.each { d ->
             try {
 
@@ -314,7 +322,7 @@ class BootStrap {
 
     private void addCustomApis() {
 
-        log.debug("Extend Domain classes.")
+        log.info("addCustomApis()")
         (grailsApplication.getArtefacts("Domain")*.clazz).each { Class<?> c ->
 
             // SO: Changed this to use the APIs 'applicableFor' method that is used to check whether,
@@ -334,7 +342,7 @@ class BootStrap {
 
     def registerDomainClasses() {
 
-        log.debug("Register Domain Classes")
+        log.info("registerDomainClasses()")
 
         AclClass aclClass = AclClass.findByClassName('org.gokb.cred.KBDomainInfo') ?: new AclClass(className: 'org.gokb.cred.KBDomainInfo').save(flush: true)
 
@@ -367,6 +375,7 @@ class BootStrap {
     def alterDefaultMetaclass = {
 
         // Inject helpers to Domain classes.
+        log.info("alterDefaultMetaclass()")
         grailsApplication.domainClasses.each { GrailsClass domainClass ->
 
             // Extend the domain class.
@@ -410,6 +419,9 @@ class BootStrap {
 
 
     def refdataCats() {
+
+        log.info("refdataCats")
+
         RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS,
             [(KBComponent.STATUS_CURRENT)  : '0',
              (KBComponent.STATUS_EXPECTED) : '1',
@@ -457,21 +469,26 @@ class BootStrap {
         RefdataCategory.lookupOrCreate(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, "Selected Articles").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, "Abstracts").save(flush: true, failOnError: true)
 
-        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "Unknown").save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "Back File").save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "Front File").save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "Master File").save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "Global").save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "Consortium").save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "National").save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "Individual").save(flush: true, failOnError: true)
+
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_LIST_STATUS, "Checked").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_LIST_STATUS, "In Progress").save(flush: true, failOnError: true)
+
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_BREAKABLE, "No").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_BREAKABLE, "Yes").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_BREAKABLE, "Unknown").save(flush: true, failOnError: true)
+
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_CONSISTENT, "No").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_CONSISTENT, "Yes").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_CONSISTENT, "Unknown").save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_FIXED, "No").save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_FIXED, "Yes").save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_FIXED, "Unknown").save(flush: true, failOnError: true)
+
+        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_FILE, "Back File").save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_FILE, "Front File").save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_FILE, "Master File").save(flush: true, failOnError: true)
+
 
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_PAYMENT_TYPE, "Paid").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_PAYMENT_TYPE, "Mixed").save(flush: true, failOnError: true)
@@ -1020,6 +1037,7 @@ class BootStrap {
 
 
     def DSConfig() {
+        log.info("DSConfig()")
         [
                 'accessdl': 'Access - Download',
                 'accessol': 'Access - Read Online',
@@ -1141,7 +1159,7 @@ class BootStrap {
 
 
     def ensureEsIndex(String indexName) {
-        log.debug("ensureESIndex for ${indexName}");
+        log.info("ensureESIndex for ${indexName}");
         def esclient = ESWrapperService.getClient()
         IndicesAdminClient adminClient = esclient.admin().indices()
 
