@@ -1,8 +1,11 @@
 package gokbg3
 
-import org.gokb.cred.*;
+import org.gokb.cred.*
+import wekb.GlobalSearchTemplatesService;
 
 class UserDetailsInterceptor {
+
+  GlobalSearchTemplatesService globalSearchTemplatesService
 
   public UserDetailsInterceptor() {
     match(controller: 'admin')
@@ -44,7 +47,7 @@ class UserDetailsInterceptor {
       if (user) {
         log.debug("User details filter... User present");
         request.user = user
-        request.userOptions = user.getUserOptions(grailsApplication)
+        //request.userOptions = user.getUserOptions(grailsApplication)
         
         if (!session.menus) {
         
@@ -89,7 +92,7 @@ class UserDetailsInterceptor {
               if ( tc.isTypeReadable() ) {
       
                 // Find any searches for that domain that the user has access to and add them to the menu section
-                def searches_for_this_domain = grailsApplication.config.globalSearchTemplates.findAll{it.value.baseclass==d.dcName}
+                def searches_for_this_domain = globalSearchTemplatesService.findAllByBaseClass(d.dcName)
                 
                 searches_for_this_domain.each { key, val ->
                   
