@@ -140,7 +140,7 @@
     </dd>
 
     <dt>
-        <gokb:annotatedLabel owner="${d}" property="editionStatement">Edition statement</gokb:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="editionStatement">Edition</gokb:annotatedLabel>
     </dt>
     <dd>
         <gokb:xEditable class="ipe" owner="${d}" field="editionStatement"/>
