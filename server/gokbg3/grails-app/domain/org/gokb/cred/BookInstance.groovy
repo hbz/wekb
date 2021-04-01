@@ -1,16 +1,11 @@
 package org.gokb.cred
 
 import com.k_int.ClassUtils
-import org.gokb.IntegrationController
 import org.grails.web.json.JSONObject
-
 import javax.persistence.Transient
 import org.gokb.GOKbTextUtils
-import org.gokb.DomainClassExtender
 import groovy.util.logging.*
-
 import java.time.LocalDateTime
-
 import static grails.async.Promises.*
 
 
@@ -77,11 +72,12 @@ class BookInstance extends TitleInstance {
   }
 
   @Override
-  public String getNiceName() {
+  String getNiceName() {
     return "Book";
   }
 
   public static final String restPath = "/titles"
+
 
   /**
    * Auditable plugin, on change
@@ -89,38 +85,34 @@ class BookInstance extends TitleInstance {
    * See if properties that might impact the mapping of this instance to a work have changed.
    * If so, fire the appropriate event to cause a remap.
    */
-
   def afterUpdate() {
-
     // Currently, serial items are mapped based on the name of the journal. We may need to add a discriminator property
     if ((hasChanged('name')) ||
       (hasChanged('editionStatement')) ||
       (hasChanged('componentDiscriminator'))) {
       log.debug("Detected an update to properties for ${id} that might change the work mapping. Looking up");
-//       submitRemapWorkTask();
+      // submitRemapWorkTask()
     }
     touchAllDependants()
   }
 
   @Override
   protected def generateComponentHash() {
-
     this.componentDiscriminator = generateBookDiscriminator(['volumeNumber': volumeNumber, 'editionDifferentiator': editionDifferentiator, 'firstAuthor': firstAuthor])
-
     // To try and find instances
     this.componentHash = GOKbTextUtils.generateComponentHash([normname, componentDiscriminator]);
-
     // To find works
     this.bucketHash = GOKbTextUtils.generateComponentHash([normname]);
   }
 
+
   def afterInsert() {
-//     submitRemapWorkTask();
+    // submitRemapWorkTask()
   }
 
-  public static String generateBookDiscriminator(Map relevantFields) {
-    def result = null;
 
+  static String generateBookDiscriminator(Map relevantFields) {
+    def result = null;
     def normVolume = generateNormname(relevantFields.volumeNumber)
     def normEdD = generateNormname(relevantFields.editionDifferentiator)
     def normFirstAuthor = generateNormname(relevantFields.firstAuthor)
@@ -130,6 +122,7 @@ class BookInstance extends TitleInstance {
     }
     result
   }
+
 
   def submitRemapWorkTask() {
     log.debug("BookInstance::submitRemapWorkTask");
@@ -151,10 +144,10 @@ class BookInstance extends TitleInstance {
     }
   }
 
-  public static def validateDTO(JSONObject titleDTO, locale) {
+
+  static def validateDTO(JSONObject titleDTO, locale) {
     def result = TitleInstance.validateDTO(titleDTO, locale)
     def valErrors = [:]
-
     // shortening some db fields with standard size of 255 if needed.
     // does not invalidate the DTO!
     ['firstAuthor', 'firstEditor'].each { key ->
@@ -166,21 +159,18 @@ class BookInstance extends TitleInstance {
         }
       }
     }
-
     if (titleDTO.dateFirstInPrint) {
       LocalDateTime dfip = GOKbTextUtils.completeDateString(titleDTO.dateFirstInPrint, false)
       if (!dfip) {
         valErrors.put('dateFirstInPrint', [message: "Unable to parse", baddata: titleDTO.remove('dateFirstInPrint')])
       }
     }
-
     if (titleDTO.dateFirstOnline) {
       LocalDateTime dfo = GOKbTextUtils.completeDateString(titleDTO.dateFirstOnline, false)
       if (!dfo) {
         valErrors.put('dateFirstOnline', [message: "Unable to parse", baddata: titleDTO.remove('dateFirstOnline')])
       }
     }
-
     if (valErrors.size() > 0) {
       if (result.errors) {
         result.errors.putAll(valErrors)
@@ -192,9 +182,9 @@ class BookInstance extends TitleInstance {
     result
   }
 
-  public boolean addMonographFields(JSONObject titleObj) {
-    def book_changed = false
 
+  boolean addMonographFields(JSONObject titleObj) {
+    def book_changed = false
     ["editionNumber", "editionDifferentiator",
      "editionStatement", "volumeNumber",
      "summaryOfContent", "firstAuthor",
@@ -203,13 +193,10 @@ class BookInstance extends TitleInstance {
         book_changed |= ClassUtils.setStringIfDifferent(this, stringPropertyName, titleObj[stringPropertyName])
       }
     }
-
     def dfip = GOKbTextUtils.completeDateString(titleObj.dateFirstInPrint)
     book_changed |= ClassUtils.setDateIfPresent(dfip, this, 'dateFirstInPrint')
-
     def dfo = GOKbTextUtils.completeDateString(titleObj.dateFirstOnline, false)
     book_changed |= ClassUtils.setDateIfPresent(dfo, this, 'dateFirstOnline')
-
     book_changed
   }
 }
