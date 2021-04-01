@@ -1291,16 +1291,9 @@ class PackageService {
                     sanitize(tipp.name ?: tipp.title.name) + '\t' +
                         print_id + '\t' +
                         online_id + '\t' +
-                        sanitize(tipp.startDate) + '\t' +
-                        sanitize(tipp.startVolume) + '\t' +
-                        sanitize(tipp.startIssue) + '\t' +
-                        sanitize(tipp.endDate) + '\t' +
-                        sanitize(tipp.endVolume) + '\t' +
-                        sanitize(tipp.endIssue) + '\t' +
                         sanitize(tipp.url) + '\t' +
                         (tipp.title.hasProperty('firstAuthor') ? sanitize(tipp.title.firstAuthor) : '') + '\t' +
                         sanitize(tipp.title.getId()) + '\t' +
-                        sanitize(tipp.embargo) + '\t' +
                         sanitize(tipp.coverageDepth).toLowerCase() + '\t' +
                         sanitize(tipp.coverageNote) + '\t' +
                         sanitize(tipp.title.getCurrentPublisher()?.name) + '\t' +
@@ -1486,13 +1479,6 @@ class PackageService {
                         sanitize(tipp.editStatus?.value) + '\t' +
                         sanitize(tipp.accessStartDate) + '\t' +
                         sanitize(tipp.accessEndDate) + '\t' +
-                        sanitize(tipp.startDate) + '\t' +
-                        sanitize(tipp.startVolume) + '\t' +
-                        sanitize(tipp.startIssue) + '\t' +
-                        sanitize(tipp.endDate) + '\t' +
-                        sanitize(tipp.endVolume) + '\t' +
-                        sanitize(tipp.endIssue) + '\t' +
-                        sanitize(tipp.embargo) + '\t' +
                         sanitize(tipp.coverageDepth) + '\t' +
                         sanitize(tipp.coverageNote) + '\t' +
                         sanitize(tipp.hostPlatform?.primaryUrl) + '\t' +

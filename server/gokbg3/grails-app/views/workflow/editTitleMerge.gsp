@@ -129,12 +129,12 @@
                           </th>
                           <th>Package</th>
                           <th>Platform</th>
-                          <th>Start Date</th>
+                          %{--<th>Start Date</th>
                           <th>Start Volume</th>
                           <th>Start Issue</th>
                           <th>End Date</th>
                           <th>End Volume</th>
-                          <th>End Issue</th>
+                          <th>End Issue</th>--}%
                         </tr>
                         <tr>
                           <th colspan="8">URL</th>
@@ -156,12 +156,12 @@
                             </td>
                             <td> ${tipp.pkg.name} </td>
                             <td> ${tipp.hostPlatform.name} </td>
-                            <td> ${tipp.startDate} </td>
+                            %{--<td> ${tipp.startDate} </td>
                             <td> ${tipp.startVolume} </td>
                             <td> ${tipp.startIssue} </td>
                             <td> ${tipp.endDate} </td>
                             <td> ${tipp.endVolume} </td>
-                            <td> ${tipp.endIssue} </td>
+                            <td> ${tipp.endIssue} </td>--}%
                           </tr>
                           <tr>
                             <td colspan="8"> ${tipp.url ?: 'TIPP URL not present'} </td>
@@ -230,12 +230,12 @@
                         </th>
                         <th>Package</th>
                         <th>Platform</th>
-                        <th>Start Date</th>
+                        %{--<th>Start Date</th>
                         <th>Start Volume</th>
                         <th>Start Issue</th>
                         <th>End Date</th>
                         <th>End Volume</th>
-                        <th>End Issue</th>
+                        <th>End Issue</th>--}%
                       </tr>
                       <tr>
                         <th colspan="8">URL</th>
@@ -258,12 +258,12 @@
                             
                             <td> ${tipp.pkg.name} </td>
                             <td> ${tipp.hostPlatform.name} </td>
-                            <td> ${tipp.startDate} </td>
+                            %{--<td> ${tipp.startDate} </td>
                             <td> ${tipp.startVolume} </td>
                             <td> ${tipp.startIssue} </td>
                             <td> ${tipp.endDate} </td>
                             <td> ${tipp.endVolume} </td>
-                            <td> ${tipp.endIssue} </td>
+                            <td> ${tipp.endIssue} </td>--}%
                           </tr>
                           <tr>
                             <td colspan="8"> ${tipp.url ?: 'TIPP URL not present'} </td>

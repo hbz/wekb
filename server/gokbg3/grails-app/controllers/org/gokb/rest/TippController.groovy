@@ -263,14 +263,7 @@ class TippController {
       def parsedStart = GOKbTextUtils.completeDateString(c.startDate)
       def parsedEnd = GOKbTextUtils.completeDateString(c.endDate, false)
 
-      changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'startVolume', c.startVolume)
-      changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'startIssue', c.startIssue)
-      changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'endVolume', c.endVolume)
-      changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'endIssue', c.endIssue)
-      changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'embargo', c.embargo)
       changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'coverageNote', c.coverageNote)
-      changed |= com.k_int.ClassUtils.setDateIfPresent(parsedStart, tipp, 'startDate')
-      changed |= com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tipp, 'endDate')
       changed |= com.k_int.ClassUtils.setRefdataIfPresent(c.coverageDepth, tipp, 'coverageDepth', RCConstants.TIPP_COVERAGE_DEPTH)
 
       def cs_match = false

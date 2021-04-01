@@ -1,5 +1,6 @@
 package org.gokb.cred
 
+import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
 
 import javax.persistence.Transient
@@ -16,39 +17,60 @@ class TitleInstancePackagePlatform extends KBComponent {
 
   def dateFormatService
 
-  Date startDate
-  String startVolume
-  String startIssue
-  String embargo
-  RefdataValue coverageDepth
-  String coverageNote
-  RefdataValue format
-  RefdataValue delayedOA
+
   String delayedOAEmbargo
-  RefdataValue hybridOA
   String hybridOAUrl
-  RefdataValue primary
-  RefdataValue paymentType
-  Date endDate
-  String endVolume
-  String endIssue
-  String url
-  Date accessStartDate
-  Date accessEndDate
   String subjectArea
   String series
   String publisherName
+  String url
+
+  Date accessStartDate
+  Date accessEndDate
+
   Date dateFirstInPrint
   Date dateFirstOnline
+
+  Date lastChangedExternal
+
   String firstAuthor
-  RefdataValue publicationType
+  String firstEditor
+
   String volumeNumber
   String editionStatement
-  String firstEditor
+
+  String coverageNote
+
   String parentPublicationTitleId
   String precedingPublicationTitleId
-  Date lastChangedExternal
+
+
+
+
+
+  @RefdataAnnotation(cat = RCConstants.TIPP_COVERAGE_DEPTH)
+  RefdataValue coverageDepth
+
+  @RefdataAnnotation(cat = RCConstants.TIPP_FORMAT)
+  RefdataValue format
+
+  @RefdataAnnotation(cat = RCConstants.TIPP_DELAYED_OA)
+  RefdataValue delayedOA
+
+  @RefdataAnnotation(cat = RCConstants.TIPP_HYBRIDA_OA)
+  RefdataValue hybridOA
+
+  @RefdataAnnotation(cat = RCConstants.TIPP_MEDIUM)
   RefdataValue medium
+
+  @RefdataAnnotation(cat = RCConstants.TIPP_PRIMARY)
+  RefdataValue primary
+
+  @RefdataAnnotation(cat = RCConstants.TIPP_PAYMENT_TYPE)
+  RefdataValue paymentType
+
+  @RefdataAnnotation(cat = RCConstants.TIPP_PUBLICATION_TYPE)
+  RefdataValue publicationType
 
 
   private static SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd")
@@ -66,19 +88,12 @@ class TitleInstancePackagePlatform extends KBComponent {
     'ignore'       : [
       'format',
       'paymentType',
-      'startIssue',
       'delayedOA',
       'hybridOA',
       'coverageNote',
       'primary',
       'delayedOAEmbargo',
       'coverageDepth',
-      'startVolume',
-      'endDate',
-      'embargo',
-      'startDate',
-      'endIssue',
-      'endVolume',
       'description',
       'hybridOAUrl'
     ],
@@ -161,13 +176,6 @@ class TitleInstancePackagePlatform extends KBComponent {
 
   static mapping = {
     includes KBComponent.mapping
-    startDate column: 'tipp_start_date'
-    startVolume column: 'tipp_start_volume'
-    startIssue column: 'tipp_start_issue'
-    endDate column: 'tipp_end_date'
-    endVolume column: 'tipp_end_volume'
-    endIssue column: 'tipp_end_issue'
-    embargo column: 'tipp_embargo'
     coverageDepth column: 'tipp_coverage_depth'
     coverageNote column: 'tipp_coverage_note', type: 'text'
     format column: 'tipp_format_rv_fk'
@@ -194,13 +202,6 @@ class TitleInstancePackagePlatform extends KBComponent {
   }
 
   static constraints = {
-    startDate(nullable: true, blank: true)
-    startVolume(nullable: true, blank: true)
-    startIssue(nullable: true, blank: true)
-    endDate(nullable: true, blank: true)
-    endVolume(nullable: true, blank: true)
-    endIssue(nullable: true, blank: true)
-    embargo(nullable: true, blank: true)
     coverageDepth(nullable: true, blank: true)
     coverageNote(nullable: true, blank: true)
     format(nullable: true, blank: true)
@@ -697,14 +698,8 @@ class TitleInstancePackagePlatform extends KBComponent {
             new_ids.add(c.id)
           }
 
-          changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'startVolume', c.startVolume)
-          changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'startIssue', c.startIssue)
-          changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'endVolume', c.endVolume)
-          changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'endIssue', c.endIssue)
-          changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'embargo', c.embargo)
+
           changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'coverageNote', c.coverageNote)
-          changed |= com.k_int.ClassUtils.setDateIfPresent(parsedStart, tipp, 'startDate')
-          changed |= com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tipp, 'endDate')
           changed |= com.k_int.ClassUtils.setRefdataIfPresent(c.coverageDepth, tipp, 'coverageDepth', RCConstants.TIPP_COVERAGE_DEPTH)
 
           def cs_match = false
@@ -718,14 +713,16 @@ class TitleInstancePackagePlatform extends KBComponent {
               missing_by_id.remove(tcs)
 
               changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startIssue', c.startIssue)
+              changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endIssue', c.endIssue)
               changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startVolume', c.startVolume)
               changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endVolume', c.endVolume)
-              changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endIssue', c.endIssue)
-              changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'embargo', c.embargo)
-              changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'coverageNote', c.coverageNote)
               changed |= com.k_int.ClassUtils.setDateIfPresent(parsedStart, tcs, 'startDate')
               changed |= com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tcs, 'endDate')
-              changed |= com.k_int.ClassUtils.setRefdataIfPresent(c.coverageDepth, tipp, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH)
+
+              changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'embargo', c.embargo)
+
+              changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'coverageNote', c.coverageNote)
+              changed |= com.k_int.ClassUtils.setRefdataIfPresent(tcs.coverageDepth, tcs, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH)
 
               cs_match = true
             } else if (!cs_match) {
@@ -752,14 +749,16 @@ class TitleInstancePackagePlatform extends KBComponent {
                 conflicting_statements.add(tcs)
               } else if (cs_match) {
                 changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startIssue', c.startIssue)
+                changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endIssue', c.endIssue)
                 changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startVolume', c.startVolume)
                 changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endVolume', c.endVolume)
-                changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endIssue', c.endIssue)
-                changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'embargo', c.embargo)
-                changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'coverageNote', c.coverageNote)
                 changed |= com.k_int.ClassUtils.setDateIfPresent(parsedStart, tcs, 'startDate')
                 changed |= com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tcs, 'endDate')
-                changed |= com.k_int.ClassUtils.setRefdataIfPresent(c.coverageDepth, tipp, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH)
+
+                changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'embargo', c.embargo)
+
+                changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'coverageNote', c.coverageNote)
+                changed |= com.k_int.ClassUtils.setRefdataIfPresent(tcs.coverageDepth, tcs, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH)
               }
             } else {
               log.debug("Matched new coverage ${c} on multiple existing coverages!")

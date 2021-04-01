@@ -214,12 +214,6 @@ class WorkflowController{
                   title_id   : tipp.title.id,
                   package_id : tipp.pkg.id,
                   platform_id: tipp.hostPlatform.id,
-                  startDate  : tipp.startDate ? dateFormatService.formatDate(tipp.startDate) : null,
-                  startVolume: tipp.startVolume,
-                  startIssue : tipp.startIssue,
-                  endDate    : tipp.endDate ? dateFormatService.formatDate(tipp.endDate) : null,
-                  endVolume  : tipp.endVolume,
-                  endIssue   : tipp.endIssue,
                   url        : tipp.url
               ],
               newtipps    : []
@@ -231,13 +225,8 @@ class WorkflowController{
                 title_id   : new_title_obj.id,
                 package_id : tipp.pkg.id,
                 platform_id: tipp.hostPlatform.id,
-                startDate  : tipp.startDate ? dateFormatService.formatDate(tipp.startDate) : null,
-                startVolume: tipp.startVolume,
-                startIssue : tipp.startIssue,
-                endDate    : tipp.endDate ? dateFormatService.formatDate(tipp.endDate) : null,
-                endVolume  : tipp.endVolume,
-                url        : tipp.url,
-                endIssue   : tipp.endIssue]
+                url        : tipp.url
+            ]
             titleChangeData.tipps[tipp.id].newtipps.add(new_tipp_info)
           }
         }
@@ -434,12 +423,6 @@ class WorkflowController{
                       title_id   : tipp.title.id,
                       package_id : tipp.pkg.id,
                       platform_id: tipp.hostPlatform.id,
-                      startDate  : tipp.startDate ? dateFormatService.formatDate(tipp.startDate) : null,
-                      startVolume: tipp.startVolume,
-                      startIssue : tipp.startIssue,
-                      endDate    : tipp.endDate ? dateFormatService.formatDate(tipp.endDate) : null,
-                      endVolume  : tipp.endVolume,
-                      endIssue   : tipp.endIssue,
                       url        : tipp.url
                   ],
                   newtipps    : []
@@ -545,12 +528,6 @@ class WorkflowController{
                     title_id   : old_tipp.title.id,
                     package_id : new_tipp_package.id,
                     platform_id: new_tipp_platform.id,
-                    startDate  : old_tipp.startDate ? dateFormatService.formatDate(old_tipp.startDate) : null,
-                    startVolume: old_tipp.startVolume,
-                    startIssue : old_tipp.startIssue,
-                    endDate    : old_tipp.endDate ? dateFormatService.formatDate(old_tipp.endDate) : null,
-                    endVolume  : old_tipp.endVolume,
-                    endIssue   : old_tipp.endIssue,
                     url        : old_tipp.url]
                 log.debug("new_tipp_info :: ${new_tipp_info}")
                 tipp_info.newtipps.add(new_tipp_info)
@@ -640,12 +617,6 @@ class WorkflowController{
           title       : tipp_object.title,
           pkg         : tipp_object.pkg,
           hostPlatform: tipp_object.hostPlatform,
-          startDate   : tipp_info.value.oldTippValue?.startDate,
-          startVolume : tipp_info.value.oldTippValue?.startVolume,
-          startIssue  : tipp_info.value.oldTippValue?.startIssue,
-          endDate     : tipp_info.value.oldTippValue?.endDate,
-          endVolume   : tipp_info.value.oldTippValue?.endVolume,
-          endIssue    : tipp_info.value.oldTippValue?.endIssue,
           url         : tipp_info.value.oldTippValue?.url
       ])
       int seq = 0
@@ -658,12 +629,6 @@ class WorkflowController{
             title       : KBComponent.get(newtipp_info.title_id),
             pkg         : KBComponent.get(newtipp_info.package_id),
             hostPlatform: KBComponent.get(newtipp_info.platform_id),
-            startDate   : newtipp_info.startDate,
-            startVolume : newtipp_info.startVolume,
-            startIssue  : newtipp_info.startIssue,
-            endDate     : newtipp_info.endDate,
-            endVolume   : newtipp_info.endVolume,
-            endIssue    : newtipp_info.endIssue,
             review      : newtipp_info.review,
             url         : newtipp_info.url
         ])
@@ -782,12 +747,6 @@ class WorkflowController{
           title       : tipp_object.title,
           pkg         : tipp_object.pkg,
           hostPlatform: tipp_object.hostPlatform,
-          startDate   : tipp_info.value.oldTippValue?.startDate,
-          startVolume : tipp_info.value.oldTippValue?.startVolume,
-          startIssue  : tipp_info.value.oldTippValue?.startIssue,
-          endDate     : tipp_info.value.oldTippValue?.endDate,
-          endVolume   : tipp_info.value.oldTippValue?.endVolume,
-          endIssue    : tipp_info.value.oldTippValue?.endIssue,
           url         : tipp_info.value.oldTippValue?.url
       ])
       int seq = 0
@@ -799,12 +758,6 @@ class WorkflowController{
             title       : KBComponent.get(newtipp_info.title_id),
             pkg         : KBComponent.get(newtipp_info.package_id),
             hostPlatform: KBComponent.get(newtipp_info.platform_id),
-            startDate   : newtipp_info.startDate,
-            startVolume : newtipp_info.startVolume,
-            startIssue  : newtipp_info.startIssue,
-            endDate     : newtipp_info.endDate,
-            endVolume   : newtipp_info.endVolume,
-            endIssue    : newtipp_info.endIssue,
             review      : newtipp_info.review,
             url         : newtipp_info.url
         ])
@@ -835,12 +788,6 @@ class WorkflowController{
             package    : ['internalId': new_package.id],
             platform   : ['internalId': new_platform.id],
             title      : ['internalId': current_tipp.title.id],
-            startDate  : newtipp.startDate,
-            startVolume: newtipp.startVolume,
-            startIssue : newtipp.startIssue,
-            endDate    : newtipp.endDate,
-            endVolume  : newtipp.endVolume,
-            endIssue   : newtipp.endIssue,
             url        : newtipp.url
         ], user).save(flush: true, failOnError: true)
 
@@ -860,12 +807,6 @@ class WorkflowController{
       catch (Exception e){
       }
 
-      current_tipp.startDate = parsed_start_date
-      current_tipp.startVolume = tipp_map_entry.value.oldTippValue.startVolume
-      current_tipp.startIssue = tipp_map_entry.value.oldTippValue.startIssue
-      current_tipp.endDate = parsed_end_date
-      current_tipp.endVolume = tipp_map_entry.value.oldTippValue.endVolume
-      current_tipp.endIssue = tipp_map_entry.value.oldTippValue.endIssue
       log.debug("Saving current tipp")
       current_tipp.save()
 
@@ -1076,33 +1017,6 @@ class WorkflowController{
       log.debug("Processing current tipp : ${current_tipp.id}")
       tipp_map_entry.value.newtipps.each{ newtipp ->
         log.debug("Process new tipp : ${newtipp}")
-        if (tipp_map_entry.value.oldTippValue?.startDate){
-          try{
-            current_tipp.startDate = dateFormatService.parseDate(tipp_map_entry.value.oldTippValue?.startDate)
-          }
-          catch (Exception e){
-          }
-        }
-        if (tipp_map_entry.value.oldTippValue?.startVolume){
-          current_tipp.startVolume = tipp_map_entry.value.oldTippValue?.startVolume
-        }
-        if (tipp_map_entry.value.oldTippValue?.startIssue){
-          current_tipp.startIssue = tipp_map_entry.value.oldTippValue?.startIssue
-        }
-
-        if (tipp_map_entry.value.oldTippValue?.endDate){
-          try{
-            current_tipp.endDate = dateFormatService.parseDate(tipp_map_entry.value.oldTippValue?.endDate)
-          }
-          catch (Exception e){
-          }
-        }
-        if (tipp_map_entry.value.oldTippValue?.endVolume){
-          current_tipp.endVolume = tipp_map_entry.value.oldTippValue?.endVolume
-        }
-        if (tipp_map_entry.value.oldTippValue?.endIssue){
-          current_tipp.endIssue = tipp_map_entry.value.oldTippValue?.endIssue
-        }
 
         def new_package = Package.get(newtipp.package_id)
         def new_platform = Platform.get(newtipp.platform_id)
@@ -1112,12 +1026,6 @@ class WorkflowController{
             package    : ['internalId': new_package.id],
             platform   : ['internalId': new_platform.id],
             title      : ['internalId': current_tipp.title.id],
-            startDate  : newtipp.startDate,
-            startVolume: newtipp.startVolume,
-            startIssue : newtipp.startIssue,
-            endDate    : newtipp.endDate,
-            endVolume  : newtipp.endVolume,
-            endIssue   : newtipp.endIssue,
             url        : newtipp.url
         ], user).save(flush: true, failOnError: true)
 
@@ -1151,12 +1059,6 @@ class WorkflowController{
       catch (Exception e){
       }
 
-      current_tipp.startDate = parsed_start_date
-      current_tipp.startVolume = tipp_map_entry.value.oldTippValue.startVolume
-      current_tipp.startIssue = tipp_map_entry.value.oldTippValue.startIssue
-      current_tipp.endDate = parsed_end_date
-      current_tipp.endVolume = tipp_map_entry.value.oldTippValue.endVolume
-      current_tipp.endIssue = tipp_map_entry.value.oldTippValue.endIssue
       log.debug("Saving current tipp")
       current_tipp.save(flush: true, failOnError: true)
     }
