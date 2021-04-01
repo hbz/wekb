@@ -28,16 +28,9 @@ class TitleInstancePackagePlatform extends KBComponent {
   Date accessStartDate
   Date accessEndDate
 
-  Date dateFirstInPrint
-  Date dateFirstOnline
-
   Date lastChangedExternal
 
   String firstAuthor
-  String firstEditor
-
-  String volumeNumber
-  String editionStatement
 
   String coverageNote
 
@@ -45,7 +38,29 @@ class TitleInstancePackagePlatform extends KBComponent {
   String precedingPublicationTitleId
 
 
+  //OtherInstance && BookInstance
+  //not in KBART-File
+  //String summaryOfContent
+  Date dateFirstOnline
 
+  //BookInstance
+  String volumeNumber
+  String editionStatement
+  String firstEditor
+  Date dateFirstInPrint
+  //not in KBART-File
+  //String editionNumber
+  //String editionDifferentiator
+
+  //TitleInstance
+  //not in KBART-File
+  //RefdataValue pureOA
+  //RefdataValue continuingSeries
+  //RefdataValue reasonRetired
+  //RefdataValue OAStatus
+
+  //Date publishedFrom
+  //Date publishedTo
 
 
   @RefdataAnnotation(cat = RCConstants.TIPP_COVERAGE_DEPTH)
