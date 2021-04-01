@@ -171,17 +171,6 @@ class AdminController {
     render(view: "logViewer", model: logViewer())
   }
 
-  def convertTippCoverages() {
-    Job j = concurrencyManagerService.createJob { Job j ->
-      cleanupService.addMissingCoverageObjects(j)
-    }.startOrQueue()
-
-    j.description = "Generate missing TIPPCoverageStatements"
-    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'GenerateTIPPCoverage')
-    j.startTime = new Date()
-
-    render(view: "logViewer", model: logViewer())
-  }
 
   def markInconsistentDates() {
     Job j = concurrencyManagerService.createJob { Job j ->

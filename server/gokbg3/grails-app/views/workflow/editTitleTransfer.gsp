@@ -44,12 +44,12 @@
             <th>Title</th>
             <th>Package</th>
             <th>Platform</th>
-            <th>Start Date</th>
+         %{--   <th>Start Date</th>
             <th>Start Volume</th>
             <th>Start Issue</th>
             <th>End Date</th>
             <th>End Volume</th>
-            <th>End Issue</th>
+            <th>End Issue</th>--}%
             <th>Retire</th>
             <th>Review</th>
           </tr>
@@ -66,19 +66,19 @@
               <td> ${tipp.title.name} </td>
               <td> ${tipp.pkg.name} </td>
               <td> ${tipp.hostPlatform.name} </td>
-              <td> 
+             %{-- <td>
                 <input name="_oldtipp:${tipp.id}:startDate" type="date" value="${tipp.startDate}"/> 
-              </td>
-              <td> <input type="text" name="_oldtipp:${tipp.id}:startVolume" value="${tipp.startVolume}" style="width:40px;"/> </td>
+              </td>--}%
+%{--              <td> <input type="text" name="_oldtipp:${tipp.id}:startVolume" value="${tipp.startVolume}" style="width:40px;"/> </td>
               <td> <input type="text" name="_oldtipp:${tipp.id}:startIssue" value="${tipp.startIssue}" style="width:40px;"/> </td>
               <td> <input name="_oldtipp:${tipp.id}:endDate" type="date" value="${tipp.endDate}"/> </td>
               <td> <input type="text" name="_oldtipp:${tipp.id}:endVolume" value="${tipp.endVolume}" style="width:40px;"/> </td>
-              <td> <input type="text" name="_oldtipp:${tipp.id}:endIssue" value="${tipp.endIssue}" style="width:40px;"/> </td>
+              <td> <input type="text" name="_oldtipp:${tipp.id}:endIssue" value="${tipp.endIssue}" style="width:40px;"/> </td>--}%
               <td> <input name="oldtipp_close:${tipp.id}" type="checkbox" value="on" ${params["oldtipp_close:${tipp.id}"]=='on'?'checked':''} /></td>
               <td> <input name="oldtipp_review:${tipp.id}" type="checkbox" value="on"  ${params["oldtipp_review:${tipp.id}"]=='on'?'checked':''} /></td>
             </tr>
             <tr style="background-color: #FF4D4D;">
-              <td colspan="12">${tipp.url?:'URL Not specified'}</th>
+              <td colspan="12">${tipp.url?:'URL Not specified'}</td>
             </tr>
           </g:if>
           <g:else>
@@ -88,12 +88,12 @@
               <td> ${tipp.title.name} </td>
               <td> ${tipp.pkg.name} </td>
               <td> ${tipp.hostPlatform.name} </td>
-              <td> <input type="date" name="_tippdata:${tipp.parent}:${tipp.seq}:startDate" value="${tipp.startDate}"/> </td>
+              %{--<td> <input type="date" name="_tippdata:${tipp.parent}:${tipp.seq}:startDate" value="${tipp.startDate}"/> </td>
               <td> <input type="text" name="_tippdata:${tipp.parent}:${tipp.seq}:startVolume" value="${tipp.startVolume}" style="width:40px;"/> </td>
               <td> <input type="text" name="_tippdata:${tipp.parent}:${tipp.seq}:startIssue" value="${tipp.startIssue}" style="width:40px;"/> </td>
               <td> <input type="date" name="_tippdata:${tipp.parent}:${tipp.seq}:endDate" value="${tipp.endDate}"/> </td>
               <td> <input type="text" name="_tippdata:${tipp.parent}:${tipp.seq}:endVolume" value="${tipp.endVolume}" style="width:40px;"/> </td>
-              <td> <input type="text" name="_tippdata:${tipp.parent}:${tipp.seq}:endIssue" value="${tipp.endIssue}" style="width:40px;"/> </td>
+              <td> <input type="text" name="_tippdata:${tipp.parent}:${tipp.seq}:endIssue" value="${tipp.endIssue}" style="width:40px;"/> </td>--}%
               <td> <button type="submit" name="remove" value="${tipp.parent}:${tipp.seq}" class="btn btn-warn">Remove</button></td>
               <td> <input name="_tippdata:${tipp.parent}:${tipp.seq}:review" type="checkbox" value="on" ${tipp.review=='on'?'checked':''} /></td>
             </tr>

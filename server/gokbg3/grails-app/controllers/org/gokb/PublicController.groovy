@@ -241,16 +241,9 @@ class PublicController {
                             sanitize( tipp.title.name ) + '\t' +
                             sanitize( tipp.title.getIdentifierValue('ISSN') ) + '\t' +
                             sanitize( tipp.title.getIdentifierValue('eISSN') ) + '\t' +
-                            sanitize( tipp.startDate ) + '\t' +
-                            sanitize( tipp.startVolume ) + '\t' +
-                            sanitize( tipp.startIssue ) + '\t' +
-                            sanitize( tipp.endDate ) + '\t' +
-                            sanitize( tipp.endVolume ) + '\t' +
-                            sanitize( tipp.endIssue ) + '\t' +
                             sanitize( tipp.url ) + '\t' +
                             '\t'+  // First Author
                             sanitize( tipp.title.getId() ) + '\t' +
-                            sanitize( tipp.embargo ) + '\t' +
                             sanitize( tipp.coverageDepth ) + '\t' +
                             sanitize( tipp.coverageNote ) + '\t' +
                             sanitize( tipp.title.getCurrentPublisher()?.name ) + '\t' +
@@ -338,8 +331,7 @@ class PublicController {
                           sanitize( tipp.title.getIdentifierValue('eISSN') ) + '\t' +
                           sanitize( pkg.name ) + '\t' + sanitize( pkg.getId() ) + '\t' + '\t' + sanitize( tipp.hostPlatform.name ) + '\t' +
                           sanitize( tipp.hostPlatform.primaryUrl ) + '\t' + sanitize( tipp.hostPlatform.getId() ) + '\t\t' + sanitize( tipp.status?.value ) + '\t' + sanitize( tipp.accessStartDate )  + '\t' +
-                          sanitize( tipp.accessEndDate ) + '\t' + sanitize( tipp.startDate ) + '\t' + sanitize( tipp.startVolume ) + '\t' + sanitize( tipp.startIssue ) + '\t' + sanitize( tipp.endDate ) + '\t' +
-                          sanitize( tipp.endVolume ) + '\t' + sanitize( tipp.endIssue ) + '\t' + sanitize( tipp.embargo ) + '\t' + sanitize( tipp.coverageNote ) + '\t' + sanitize( tipp.hostPlatform.primaryUrl ) + '\t' +
+                          sanitize( tipp.accessEndDate ) + '\t' + sanitize( tipp.coverageNote ) + '\t' + sanitize( tipp.hostPlatform.primaryUrl ) + '\t' +
                           sanitize( tipp.format?.value ) + '\t' + sanitize( tipp.paymentType?.value ) +
                           '\n');
             tipp.discard();

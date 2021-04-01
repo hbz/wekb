@@ -497,19 +497,6 @@ class TitleInstance extends KBComponent {
                     )
                   }
                 }
-                else {
-
-                  builder.'coverage'(
-                    startDate: (tipp.startDate ? "${tipp.startDate.toInstant().toString()}" : null),
-                    startVolume: tipp.startVolume,
-                    startIssue: tipp.startIssue,
-                    endDate: (tipp.endDate ? "${tipp.endDate.toInstant().toString()}" : null),
-                    endVolume: tipp.endVolume,
-                    endIssue: tipp.endIssue,
-                    coverageDepth: tipp.coverageDepth?.value,
-                    coverageNote: tipp.coverageNote,
-                    embargo: tipp.embargo)
-                }
                 if (tipp.url != null) {
                   'url'(tipp.url)
                 }
