@@ -13,7 +13,7 @@
     <div class="row">
         <div class="box">
 
-        <div class="col-lg-12 well">
+        <div class="col-lg-12 card">
 
                 <g:if test="${flash.error}">
                     <div class="alert alert-warning" style="font-weight:bold;">

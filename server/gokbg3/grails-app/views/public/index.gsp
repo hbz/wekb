@@ -12,7 +12,7 @@
 <g:render template="number-chart-hero"/>
 <div class="container">
     <h1>Filter</h1>
-    <div class="well well-lg wekb-filter">
+    <div class="card wekb-filter">
         <g:form controller="public" class="form" role="form" action="index" method="get" params="${params}">
             <div class="row">
                 <div class="col-sm-4">
@@ -56,7 +56,7 @@
                             <button class="btn btn-primary " type="submit" value="yes" name="search">Search</button>
                         </div>
                         <div class="btn-group pull-right" style="margin-right: 5px;">
-                            <a class="btn btn-default "  href="${grailsApplication.config.server.contextPath ?: ''}"/>Reset</a>
+                            <a class="btn btn-dark"  href="${grailsApplication.config.server.contextPath ?: ''}"/>Reset</a>
                         </div>
 
                     </div>

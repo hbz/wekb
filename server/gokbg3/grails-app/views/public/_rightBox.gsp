@@ -1,4 +1,4 @@
-<div class="col-xs-3 pull-right well" style="min-width:320px;">
+<div class="col-xs-3 pull-right card" style="min-width:320px;">
     <h2>Curated By</h2>
     <ul>
         <g:each in="${d.curatoryGroups}" var="cg">
