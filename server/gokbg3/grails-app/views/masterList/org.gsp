@@ -34,8 +34,6 @@
 	            <th>Titles</th>
 	            <th>Package</th>
 	            <th>Platform</th>
-	            <th>Start</th>
-	            <th>End</th>
 	          </tr>
           </thead>
           <tbody>
@@ -45,8 +43,6 @@
                 <td>${tipp.title.name}</td>
                 <td>${tipp.pkg.name}</td>
                 <td>${tipp.hostPlatform.name}</td>
-                <td>Start Date: ${tipp.startDate}<br/>Start Volume: ${tipp.startVolume}<br/>Start Issue: ${tipp.startIssue}</td>
-                <td>End Date: ${tipp.endDate}<br/>End Volume: ${tipp.endVolume}<br/>End Issue: ${tipp.endIssue}</td>
               </tr>
             </g:each>
           </tbody>

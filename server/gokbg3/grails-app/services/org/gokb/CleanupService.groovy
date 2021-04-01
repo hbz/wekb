@@ -554,54 +554,7 @@ class CleanupService {
     log.debug("Finished cleaning identifiers elapsed = ${System.currentTimeMillis() - start_time}")
   }
 
-  @Transactional
-  def addMissingCoverageObjects(Job j = null) {
-    log.debug("Creating missing coverage statements..")
-    def ctr = 0
-    def errors = 0
 
-    TitleInstancePackagePlatform.withNewSession {
-      def tipp_crit = TitleInstancePackagePlatform.createCriteria()
-      def tipps = tipp_crit.list () {
-        isEmpty('coverageStatements')
-        or {
-          isNotNull('startDate')
-          isNotNull('startVolume')
-          isNotNull('endDate')
-          isNotNull('endVolume')
-          isNotNull('embargo')
-        }
-      }
-
-      for (t in tipps) {
-
-        if ( Thread.currentThread().isInterrupted() ) {
-          log.debug("Job cancelling ..")
-          j.endTime = new Date()
-          break;
-        }
-
-        try {
-          t.addToCoverageStatements(startDate: t.startDate, startVolume: t.startVolume, startIssue: t.startIssue, endDate: t.endDate, endVolume: t.endVolume, endIssue: t.endIssue, coverageDepth: RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, t.coverageDepth.value),coverageNote: t.coverageNote, embargo: t.embargo)
-
-          t.save(flush:true, failOnError:true);
-        }
-        catch (Exception e) {
-          log.error("Error while creating coverage statement", e)
-          errors++
-        }
-
-        if (ctr % 50 == 0) {
-          cleanUpGorm()
-        }
-
-        j.setProgress(ctr++, tipps.size())
-      }
-    }
-    log.debug("Done");
-    j.message("Finished creating ${ctr} new statements (${errors} errors)".toString())
-    j.endTime = new Date()
-  }
 
   def reviewDates(Job j = null) {
     log.debug("Adding Reviews to components with inconsistent dates")

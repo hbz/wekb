@@ -1,5 +1,6 @@
 package org.gokb.cred
 
+import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
 
 import javax.persistence.Transient
@@ -9,14 +10,17 @@ class TIPPCoverageStatement {
   TitleInstancePackagePlatform owner
 
   Date startDate
+  Date endDate
   String startVolume
   String startIssue
-  String embargo
-  String coverageNote
-  RefdataValue coverageDepth
-  Date endDate
   String endVolume
   String endIssue
+
+  String embargo
+  String coverageNote
+
+  @RefdataAnnotation(cat = RCConstants.TIPP_COVERAGE_DEPTH)
+  RefdataValue coverageDepth
 
   static belongsTo = [
     owner: TitleInstancePackagePlatform

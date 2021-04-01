@@ -4,6 +4,7 @@
 
 import com.k_int.TextUtils
 
+println("-- using runtime.groovy config file !!! --")
 kbart2.mappings= [
   // Digital Archival Collections Ingest Format
     DAC : [

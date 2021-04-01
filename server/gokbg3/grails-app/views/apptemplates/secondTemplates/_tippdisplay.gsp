@@ -5,9 +5,6 @@
       <th>Status</th>
       <th>Package</th>
       <th>Platform</th>
-      <th>Start</th>
-      <th>End</th>
-      <th>Embargo</th>
     </tr>
   </thead>
   <tbody>
@@ -31,19 +28,6 @@
               id="${tipp.hostPlatform?.getClassName()+':'+tipp.hostPlatform.id}">
               ${tipp.hostPlatform.name}
             </g:link></g:if><g:else>ERROR: hostPlatform is null</g:else></td>
-          <td>Date: <g:formatDate
-              format="${session.sessionPreferences?.globalDateFormat}"
-              date="${tipp.startDate}" /><br /> Volume: ${tipp.startVolume}<br />
-            Issue: ${tipp.startIssue}
-          </td>
-          <td>Date: <g:formatDate
-              format="${session.sessionPreferences?.globalDateFormat}"
-              date="${tipp.endDate}" /><br /> Volume: ${tipp.endVolume}<br />
-            Issue: ${tipp.endIssue}
-          </td>
-          <td>
-            ${tipp.embargo}
-          </td>
         </tr>
       </g:if>
     </g:each>
