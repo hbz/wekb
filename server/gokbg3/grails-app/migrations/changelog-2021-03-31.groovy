@@ -1,7 +1,7 @@
 
 databaseChangeLog = {
 
-    changeSet(author: "djebeniani (generated)", id: "1617190309675-1") {
+    changeSet(author: "djebeniani (modified)", id: "1617190309675-1") {
         grailsChange {
             change {
 
