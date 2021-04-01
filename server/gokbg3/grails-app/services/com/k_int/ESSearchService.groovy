@@ -468,15 +468,15 @@ class ESSearchService{
       searchSourceBuilder.query(scrollQuery)
       searchSourceBuilder.size(scrollSize)
       SearchRequest searchRequest = new SearchRequest(grailsApplication.config.gokb.es.index)
-      searchRequest.scroll("1m")
-      // ... set scroll interval to 1 minute
+      searchRequest.scroll("5m")
+      // ... set scroll interval to 5 minutes
       searchRequest.source(searchSourceBuilder)
       response = esClient.search(searchRequest)
       result.lastPage = 0
     }
     else{
       SearchScrollRequest scrollRequest = new SearchScrollRequest(params.scrollId)
-      scrollRequest.scroll("15m")
+      scrollRequest.scroll("5m")
       response = esClient.searchScroll(scrollRequest)
       try{
         if (params.lastPage && Integer.valueOf(params.lastPage) > -1){
