@@ -47,41 +47,38 @@ class SourcesController {
     def base = grailsApplication.config.serverURL + "/rest"
     def is_curator = true
     User user = null
-
     if (springSecurityService.isLoggedIn()) {
       user = User.get(springSecurityService.principal?.id)
     }
-
     if (params.oid || params.id) {
       obj = Source.findByUuid(params.id)
-
       if (!obj) {
         obj = Source.get(genericOIDService.oidToId(params.id))
       }
-
-      if (obj?.isReadable()) {
+      if (obj?.isReadable()){
         result = restMappingService.mapObjectToJson(obj, params, user)
-
         // result['_currentTipps'] = obj.currentTippCount
         // result['_linkedOpenRequests'] = obj.getReviews(true,true).size()
-      } else if (!obj) {
+      }
+      else if (!obj){
         result.message = "Object ID could not be resolved!"
         response.setStatus(404)
         result.code = 404
         result.result = 'ERROR'
-      } else {
+      }
+      else {
         result.message = "Access to object was denied!"
         response.setStatus(403)
         result.code = 403
         result.result = 'ERROR'
       }
-    } else {
+    }
+    else {
       result.result = 'ERROR'
       response.setStatus(400)
       result.code = 400
       result.message = 'No object id supplied!'
     }
-
     render result as JSON
   }
 

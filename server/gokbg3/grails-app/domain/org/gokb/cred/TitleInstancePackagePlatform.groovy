@@ -149,7 +149,7 @@ class TitleInstancePackagePlatform extends KBComponent {
     coverageStatements: 'owner'
   ]
 
-  getPersistentId() {
+  def getPersistentId() {
     "${uuid ?: 'gokb:TIPP:' + title?.id + ':' + pkg?.id + ':' + hostPlatform?.id}"
   }
 

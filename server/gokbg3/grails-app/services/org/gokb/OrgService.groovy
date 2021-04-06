@@ -177,22 +177,17 @@ class OrgService {
         }
       }
     }
-
     if (!result) {
       log.debug("No existing Org matched. Creating new Org..")
-
       result = new Org(name: orgDTO.name, normname: org_normname)
-
       created = true
-
       if (orgDTO.uuid && orgDTO.uuid.trim().size() > 0) {
         result.uuid = orgDTO.uuid
       }
-
       result.save(flush: true, failOnError: true)
-    } else if (user && !user.hasRole('ROLE_SUPERUSER') && result.curatoryGroups && result.curatoryGroups?.size() > 0) {
+    }
+    else if (user && !user.hasRole('ROLE_SUPERUSER') && result.curatoryGroups && result.curatoryGroups?.size() > 0) {
       def cur = user.curatoryGroups?.id.intersect(result.curatoryGroups?.id)
-
       if (!cur) {
         log.debug("No curator!")
         return result

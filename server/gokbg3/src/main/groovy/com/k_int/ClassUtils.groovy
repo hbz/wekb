@@ -30,7 +30,7 @@ class ClassUtils {
     return entity
   }
 
-  
+
   /**
    * Attempt automatic parsing.
    */

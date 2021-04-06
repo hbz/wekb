@@ -886,10 +886,8 @@ class PackageService {
             log.debug("Found existing package name for variantName ${it}")
           }
           else {
-
             def variant_normname = GOKbTextUtils.normaliseString(it)
             def variant_candidates = Package.executeQuery("select distinct p from Package as p join p.variantNames as v where v.normVariantName = ? and p.status <> ? ", [variant_normname, status_deleted]);
-
             if (variant_candidates.size() == 1) {
               log.debug("Found existing package variant name for variantName ${it}")
               result = variant_candidates[0]
@@ -901,20 +899,15 @@ class PackageService {
 
     if (!result) {
       log.debug("No existing package matched. Creating new package..")
-
       result = new Package(name: packageHeaderDTO.name, normname: pkg_normname)
-
       created = true
-
       if (packageHeaderDTO.uuid && packageHeaderDTO.uuid.trim().size() > 0) {
         result.uuid = packageHeaderDTO.uuid
       }
-
       result.save(flush: true, failOnError: true)
     }
     else if (user && !user.hasRole('ROLE_SUPERUSER') && result.curatoryGroups && result.curatoryGroups?.size() > 0) {
       def cur = user.curatoryGroups?.id.intersect(result.curatoryGroups?.id)
-
       if (!cur) {
         log.debug("No curator!")
         return result
@@ -948,7 +941,6 @@ class PackageService {
     }
 
     // Platform
-
     if (packageHeaderDTO.nominalPlatform) {
       def platformDTO = [:];
 
@@ -964,7 +956,6 @@ class PackageService {
 
       if (platformDTO) {
         def np = null
-
         if (platformDTO.uuid) {
           np = Platform.findByUuid(platformDTO.uuid)
         }
@@ -974,11 +965,9 @@ class PackageService {
         else if (platformDTO.name) {
           np = Platform.findByName(platformDTO.name)
         }
-
         if (!np && platformDTO.name) {
           np = Platform.upsertDTO(platformDTO)
         }
-
         if (np) {
           if (result.nominalPlatform != np) {
             result.nominalPlatform = np;
@@ -1009,24 +998,18 @@ class PackageService {
       else if (packageHeaderDTO.nominalProvider.name && packageHeaderDTO.nominalProvider.name.trim()) {
         providerDTO = packageHeaderDTO.nominalProvider
       }
-
       log.debug("Trying to set package provider.. ${providerDTO}")
       def prov = null
-
       if (providerDTO?.uuid) {
         prov = Org.findByUuid(providerDTO.uuid)
       }
-
       if (providerDTO && !prov) {
         def norm_prov_name = KBComponent.generateNormname(providerDTO.name)
-
         prov = Org.findByNormname(norm_prov_name)
-
         if (!prov) {
           log.debug("None found by Normname ${norm_prov_name}, trying variants")
           def variant_normname = GOKbTextUtils.normaliseString(providerDTO.name)
           def candidate_orgs = Org.executeQuery("select distinct o from Org as o join o.variantNames as v where v.normVariantName = ? and o.status = ?", [variant_normname, status_deleted]);
-
           if (candidate_orgs.size() == 1) {
             prov = candidate_orgs[0]
           }
@@ -1039,11 +1022,9 @@ class PackageService {
           }
         }
       }
-
       if (prov) {
         if (result.provider != prov) {
           result.provider = prov;
-
           log.debug("Provider ${prov.name} set.")
           changed = true
         }
@@ -1057,7 +1038,6 @@ class PackageService {
     }
 
     // Source
-
     // variantNames are handled in ComponentUpdateService
     // packageHeaderDTO.variantNames?.each {
     //   if ( it.trim().size() > 0 ) {
@@ -1067,7 +1047,6 @@ class PackageService {
     // }
 
     // CuratoryGroups
-
     packageHeaderDTO.curatoryGroups?.each {
       def cg = null
       def cgname = null
@@ -1078,7 +1057,6 @@ class PackageService {
       else if (it instanceof String) {
         String normname = CuratoryGroup.generateNormname(it)
         cgname = it
-
         cg = CuratoryGroup.findByNormname(normname)
       }
       else if (it.id) {
@@ -1087,15 +1065,12 @@ class PackageService {
       else if (it.name) {
         String normname = CuratoryGroup.generateNormname(it.name)
         cgname = it.name
-
         cg = CuratoryGroup.findByNormname(normname)
       }
-
       if (cg) {
         if (result.curatoryGroups.find { it.name == cg.name }) {
         }
         else {
-
           result.curatoryGroups.add(cg)
           changed = true;
         }
@@ -1109,23 +1084,19 @@ class PackageService {
 
     if (packageHeaderDTO.source) {
       def src = null
-
       if (packageHeaderDTO.source instanceof Integer) {
         src = Source.get(packageHeaderDTO.source)
       }
       else if (packageHeaderDTO.source instanceof Map) {
         def sourceMap = packageHeaderDTO.source
-
         if (sourceMap.id) {
           src = Source.get(sourceMap.id)
         }
         else {
           def namespace = null
-
           if (sourceMap.targetNamespace instanceof Integer) {
             namespace = IdentifierNamespace.get(sourceMap.targetNamespace)
           }
-
           if (!result.source || result.source.name != result.name) {
             def source_config = [
                 name           : result.name,
@@ -1136,41 +1107,32 @@ class PackageService {
                 automaticUpdate: (sourceMap.automaticUpdate ?: false),
                 targetNamespace: namespace
             ]
-
             src = new Source(source_config).save(flush: true)
-
             result.curatoryGroups.each { cg ->
               src.curatoryGroups.add(cg)
             }
           }
           else {
             src = result.source
-
             changed |= ClassUtils.setStringIfDifferent(src, 'frequency', sourceMap.frequency)
             changed |= ClassUtils.setStringIfDifferent(src, 'url', sourceMap.url)
             changed |= ClassUtils.setBooleanIfDifferent(src, 'ezbMatch', sourceMap.ezbMatch)
             changed |= ClassUtils.setBooleanIfDifferent(src, 'zdbMatch', sourceMap.zdbMatch)
             changed |= ClassUtils.setBooleanIfDifferent(src, 'automaticUpdate', sourceMap.automaticUpdate)
-
             if (namespace && namespace != src.targetNamespace) {
               src.targetNamespace = namespace
               changed = true
             }
-
             src.save(flush: true)
           }
         }
       }
-
       if (src && result.source != src) {
         result.source = src
         changed = true
       }
     }
-
     result.save(flush: true)
-
-
     result
   }
 

@@ -282,7 +282,7 @@ class ComponentUpdateService {
     hasChanged
   }
 
-  public boolean setAllRefdata(propNames, data, target, boolean createNew = false) {
+  boolean setAllRefdata(propNames, data, target, boolean createNew = false) {
     boolean changed = false
     propNames.each { String prop ->
       changed |= ClassUtils.setRefdataIfPresent(data[prop], target, prop, createNew)
