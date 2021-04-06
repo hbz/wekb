@@ -469,8 +469,16 @@ class TitleLookupService {
                    def project = null,
                    def newTitleClassName = 'org.gokb.cred.JournalInstance',
                    def uuid = null,
-                   def fullsync = false) {
-    return findOrCreateTitle([title: title, publisher_name: publisher_name, identifiers: identifiers, uuid: uuid, fullsync: fullsync], user, project, newTitleClassName, fullsync)
+                   def fullsync = false,
+                   def language = null) {
+    return findOrCreateTitle([
+        title: title,
+        publisher_name: publisher_name,
+        identifiers: identifiers,
+        uuid: uuid,
+        fullsync: fullsync,
+        language: language
+    ], user, project, newTitleClassName, fullsync)
   }
 
   private final findLock = new Object()
@@ -898,6 +906,7 @@ class TitleLookupService {
             if (!the_title.name.equals(metadata.title)) {
               the_title.ensureVariantName(metadata.title)
             }
+
             break;
 
           default:
@@ -948,6 +957,9 @@ class TitleLookupService {
 
     // If we have a title then lets set the publisher and ids...
     if (the_title) {
+      if (metadata.language && RefdataCategory.lookupOrCreate('KBComponent.Language', metadata.language)){
+        the_title.language = metadata.language
+      }
       // Make sure we're all saved before looking up the publisher
       if (the_title.validate()) {
         // addIdentifiers(results.ids, the_title)

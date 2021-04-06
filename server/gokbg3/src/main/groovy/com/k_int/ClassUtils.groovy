@@ -1,11 +1,9 @@
 package com.k_int
 
 import org.hibernate.proxy.HibernateProxy
-import org.hibernate.proxy.LazyInitializer
 import org.hibernate.Hibernate
 import org.gokb.cred.RefdataCategory
 import org.gokb.cred.RefdataValue
-import grails.util.GrailsClassUtils
 import org.gokb.ClassExaminationService
 import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
@@ -13,7 +11,6 @@ import java.time.format.ResolverStyle
 import java.time.LocalDateTime
 import java.time.LocalDate
 import java.time.ZoneId
-import org.gokb.cred.KBComponent
 
 class ClassUtils {
 
@@ -22,26 +19,23 @@ class ClassUtils {
   public static final DateTimeFormatter datetimeformatter = DateTimeFormatter.ofPattern("" + "[uuuu-MM-dd' 'HH:mm:ss.SSS]" + "[uuuu-MM-dd'T'HH:mm:ss'Z']").withResolverStyle(ResolverStyle.STRICT)
 
   @groovy.transform.CompileStatic
-  public static <T> T deproxy(Object proxied) {
-
-    T entity = (T)proxied;
-
+  static <T> T deproxy(Object proxied){
+    T entity = (T)proxied
     if (entity instanceof HibernateProxy) {
-      Hibernate.initialize(entity);
+      Hibernate.initialize(entity)
       entity = (T) ((HibernateProxy) entity)
         .getHibernateLazyInitializer()
-        .getImplementation();
+        .getImplementation()
     }
-
-    return entity;
+    return entity
   }
+
 
   /**
    * Attempt automatic parsing.
    */
-  public static boolean setDateIfPresent(def value, obj, prop) {
+  static boolean setDateIfPresent(def value, obj, prop) {
     LocalDateTime ldt = null
-
     if (value && value.toString().trim()) {
       if (value instanceof LocalDateTime) {
         ldt = value
@@ -76,7 +70,8 @@ class ClassUtils {
     return false
   }
 
-  public static boolean updateDateField(def value, obj, prop) {
+
+  static boolean updateDateField(def value, obj, prop) {
     LocalDateTime ldt = null
 
     if (value && value.toString().trim()) {
@@ -101,7 +96,6 @@ class ClassUtils {
           }
         }
       }
-
       if (ldt) {
         Date instant = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant())
         if (instant != obj[prop]) {
@@ -118,7 +112,8 @@ class ClassUtils {
     return false
   }
 
-  public static boolean setDateIfPresent(String value, obj, prop, SimpleDateFormat sdf) {
+
+  static boolean setDateIfPresent(String value, obj, prop, SimpleDateFormat sdf) {
     //request.JSON.title.publishedFrom, title, 'publishedFrom', sdf)
     boolean result = false;
     if (value && value.toString().trim()) {
@@ -135,15 +130,14 @@ class ClassUtils {
     result
   }
 
-  public static boolean setRefdataIfPresent(value, kbc, prop, cat = null, boolean create = false) {
+
+  static boolean setRefdataIfPresent(value, kbc, prop, cat = null, boolean create = false) {
     boolean result = false
     ClassExaminationService classExaminationService = grails.util.Holders.applicationContext.getBean('classExaminationService')
     def v = null
-
     if (!cat) {
       cat = classExaminationService.deriveCategoryForProperty(kbc.class.name, prop)
     }
-
     if (value instanceof String && value.trim() && cat) {
       if (create) {
         v = RefdataCategory.lookupOrCreate(cat, value)
@@ -160,28 +154,22 @@ class ClassUtils {
           v = candidate
         }
       }
-      catch (Exception e) {
-
-      }
+      catch (Exception e) {}
     }
     else if (value instanceof Map && cat) {
       if (value.id) {
         try {
           def candidate = RefdataCategory.get(value)
-
           if (candidate && candidate.owner == cat) {
             v = candidate
           }
         }
-        catch (Exception e) {
-
-        }
+        catch (Exception e) {}
       }
       else if (value.name || value.value) {
         v = RefdataCategory.lookup(cat, (value.name ?: value.value))
       }
     }
-
     if (v) {
       result = kbc[prop] != v
       kbc[prop] = v
@@ -189,7 +177,8 @@ class ClassUtils {
     result
   }
 
-  public static boolean setStringIfDifferent(obj, prop, value) {
+
+  static boolean setStringIfDifferent(obj, prop, value) {
     if ((obj != null) && (prop != null) && (value) && (value.toString().length() > 0))
       if (obj[prop] != value) {
         obj[prop] = value
@@ -198,7 +187,8 @@ class ClassUtils {
     return false
   }
 
-  public static boolean setBooleanIfDifferent(obj, prop, value) {
+
+  static boolean setBooleanIfDifferent(obj, prop, value) {
     if ((obj != null) && (prop != null) && (value != null)) {
       if (obj[prop] != value) {
         obj[prop] = value

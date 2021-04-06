@@ -840,7 +840,9 @@ class PackageController {
                               user,
                               null,
                               title_class_name,
-                              titleObj.uuid
+                              titleObj.uuid,
+                              false,
+                              titleObj.language
                             )
 
                             if (ti?.id && !ti.hasErrors()) {
