@@ -172,13 +172,4 @@ databaseChangeLog = {
     }
 
 
-    changeSet(author: "djebeniani (generated)", id: "1617261017626-10") {
-        dropColumn(columnName: "series", tableName: "title_instance")
-    }
-
-    changeSet(author: "djebeniani (generated)", id: "1617261017626-11") {
-        dropColumn(columnName: "subject_area", tableName: "title_instance")
-    }
-
-
 }
