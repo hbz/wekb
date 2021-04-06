@@ -1,5 +1,6 @@
 package org.gokb
 
+import de.wekb.helper.RCConstants
 import grails.converters.*
 import grails.gorm.transactions.*
 import org.springframework.security.acls.model.NotFoundException
@@ -74,7 +75,7 @@ class PackagesController {
         }.startOrQueue()
 
         background_job.description = "Package comparison"
-        background_job.type = RefdataCategory.lookup('Job.Type', 'PackageComparison')
+        background_job.type = RefdataCategory.lookup(RCConstants.JOB_TYPE, 'PackageComparison')
         background_job.ownerId = user.id
         result.job_id = background_job.uuid
       }
@@ -140,7 +141,7 @@ class PackagesController {
           def deposit_token = java.util.UUID.randomUUID().toString();
           def temp_file = copyUploadedFile(request.getFile("content"), deposit_token);
           log.debug("Got file content")
-          def format_rdv = RefdataCategory.lookupOrCreate('ingest.filetype', params.fmt).save()
+          def format_rdv = RefdataCategory.lookupOrCreate(RCConstants.INGEST_FILE_TYPE, params.fmt).save()
           def pkg = params.pkg
           def platformUrl = params.platformUrl
           def source = Source.findByName(params.source) ?: new Source(name: params.source).save(flush: true, failOnError: true);
@@ -201,7 +202,7 @@ class PackagesController {
             def deposit_token = java.util.UUID.randomUUID().toString();
             def temp_file = copyUploadedFile(request.getFile("content"), deposit_token);
             log.debug("Got file content")
-            def format_rdv = RefdataCategory.lookupOrCreate('ingest.filetype', params.fmt).save()
+            def format_rdv = RefdataCategory.lookupOrCreate(RCConstants.INGEST_FILE_TYPE, params.fmt).save()
             def pkg = params.pkg
             def platformUrl = params.platformUrl
             // def source = params.source
@@ -299,7 +300,7 @@ class PackagesController {
             }
 
             background_job.description = "Deposit datafile ${upload_filename}(as ${params.fmt} from ${source} ) and create/update package ${pkg}"
-            background_job.type = RefdataCategory.lookupOrCreate('Job.Type', 'DepositDatafile')
+            background_job.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'DepositDatafile')
             background_job.ownerId = user.id
             background_job.startOrQueue()
             jobid = background_job.uuid

@@ -38,27 +38,29 @@ class BookInstance extends TitleInstance {
     dateFirstInPrint column: 'bk_dateFirstInPrint'
     dateFirstOnline column: 'bk_dateFirstOnline'
     summaryOfContent column: 'bk_summaryOfContent'
-    firstAuthor column: 'bk_firstAuthor'
-    firstEditor column: 'bk_firstEditor'
+    firstAuthor column: 'bk_firstAuthor', type: 'text'
+    firstEditor column: 'bk_firstEditor', type: 'text'
   }
 
   static constraints = {
-    editionNumber(validator: { val, obj ->
+    editionNumber (nullable:true, blank:false)
+    /*editionNumber(validator: { val, obj ->
       if (obj.hasChanged('editionNumber') && val) {
         if (!(val ==~ "^\\d+\$")) {
           return ["typeMismatch.java.lang.Integer"]
         }
       }
-    })
+    })*/
     editionDifferentiator(nullable: true, blank: false)
     editionStatement(nullable: true, blank: false)
-    volumeNumber(validator: { val, obj ->
+    volumeNumber (nullable:true, blank:false)
+    /*volumeNumber(validator: { val, obj ->
       if (obj.hasChanged('volumeNumber') && val) {
         if (!(val ==~ "^\\d+\$")) {
           return ["typeMismatch.java.lang.Integer"]
         }
       }
-    })
+    })*/
     dateFirstInPrint(nullable: true, blank: false)
     dateFirstOnline(nullable: true, blank: false)
     summaryOfContent(nullable: true, blank: false)

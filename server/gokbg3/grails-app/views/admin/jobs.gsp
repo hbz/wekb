@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="layout" content="sb-admin" />
-<title>GOKb: Jobs</title>
+<title><g:message code="gokb.appname" default="we:kb"/>: Jobs</title>
 </head>
 <body>
   <h1 class="page-header">

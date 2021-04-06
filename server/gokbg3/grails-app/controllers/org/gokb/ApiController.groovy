@@ -3,6 +3,7 @@ package org.gokb
 import com.k_int.ConcurrencyManagerService
 import com.k_int.ExtendedHibernateDetachedCriteria
 import com.k_int.TsvSuperlifterService
+import de.wekb.helper.RCConstants
 import grails.converters.JSON
 import grails.util.GrailsNameUtils
 import groovy.util.logging.*
@@ -828,8 +829,8 @@ class ApiController {
     match_in = match_in.collect { "${it}".split("\\:")[0] }
 
     def filters = [
-      "!status.id=${RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, KBComponent.STATUS_RETIRED).id}",
-      "!status.id=${RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, KBComponent.STATUS_DELETED).id}"
+            "!status.id=${RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_RETIRED).id}",
+            "!status.id=${RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED).id}"
     ]
     filters += params.list("filters")
 

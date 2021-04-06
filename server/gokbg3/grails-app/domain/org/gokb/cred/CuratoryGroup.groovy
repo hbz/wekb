@@ -1,5 +1,7 @@
 package org.gokb.cred
 
+import de.wekb.helper.RCConstants
+
 class CuratoryGroup extends KBComponent {
 
   static belongsTo = User
@@ -39,7 +41,7 @@ class CuratoryGroup extends KBComponent {
     name (validator: { val, obj ->
       if (obj.hasChanged('name')) {
         if (val && val.trim()) {
-          def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+          def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
           def dupes = CuratoryGroup.findAllByNameIlikeAndStatusNotEqual(val, status_deleted);
 
           if (dupes?.size() > 0 && dupes.any { it != obj }) {
@@ -63,7 +65,7 @@ class CuratoryGroup extends KBComponent {
 
   static def refdataFind(params) {
     def result = [];
-    def status_deleted = RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, KBComponent.STATUS_DELETED)
+    def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED)
     def ql = null;
     ql = CuratoryGroup.findAllByNameIlikeAndStatusNotEqual("${params.q}%", status_deleted ,params)
 

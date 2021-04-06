@@ -1,15 +1,15 @@
 package org.gokb
 
+
+import de.wekb.helper.RCConstants
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
 import grails.plugin.springsecurity.annotation.Secured
 import groovy.json.JsonSlurper
-import org.apache.commons.lang.RandomStringUtils
 import org.springframework.web.servlet.support.RequestContextUtils
 import org.gokb.cred.*
 import au.com.bytecode.opencsv.CSVReader
 import com.k_int.ClassUtils
-import com.k_int.ConcurrencyManagerService
 import com.k_int.ConcurrencyManagerService.Job
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -166,7 +166,7 @@ class IntegrationController {
             if (located_entries?.size() == 0) {
               log.debug("No match on normalised name ${normname}.. Trying variant names");
               def variant_normname = GOKbTextUtils.normaliseString(name)
-              def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+              def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
               located_entries = Org.executeQuery("select distinct o from Org as o join o.variantNames as v where v.normVariantName = ? and o.status <> ?", [variant_normname, status_deleted]);
 
               if (located_entries?.size() == 0) {
@@ -311,7 +311,7 @@ class IntegrationController {
 
           // No match. One more attempt to match on norm_name only.
           def org_by_name = Org.findAllByNormname(orgNormName)
-          def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+          def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
 
           if (org_by_name.size() == 1) {
             located_or_new_org = org_by_name[0]
@@ -384,7 +384,7 @@ class IntegrationController {
 
       if (jsonOrg.mission) {
         log.debug("Mission ${jsonOrg.mission}");
-        located_or_new_org.mission = RefdataCategory.lookup('Org.Mission', jsonOrg.mission);
+        located_or_new_org.mission = RefdataCategory.lookup(RCConstants.ORG_MISSION, jsonOrg.mission);
       }
 
       if (jsonOrg.homepage) {
@@ -411,7 +411,7 @@ class IntegrationController {
         // Located a component.
         if ((located_component != null)) {
           def combo = new Combo(
-              type: RefdataCategory.lookup('Combo.Type', c.linkType),
+              type: RefdataCategory.lookup(RCConstants.COMBO_TYPE, c.linkType),
               fromComponent: located_or_new_org,
               toComponent: located_component,
               startDate: new Date()).save(flush: true, failOnError: true);
@@ -425,7 +425,7 @@ class IntegrationController {
       log.debug("Role Processing: ${jsonOrg.roles}");
       jsonOrg.roles.each { r ->
         log.debug("Adding role ${r}");
-        def role = RefdataCategory.lookup("Org.Role", r)
+        def role = RefdataCategory.lookup(RCConstants.ORG_ROLE, r)
 
         if (role) {
           located_or_new_org.addToRoles(role)
@@ -512,8 +512,8 @@ class IntegrationController {
               'software', 'service'
           ], source_data, located_or_new_source)
 
-          ClassUtils.setRefdataIfPresent(data.defaultSupplyMethod, located_or_new_source, 'defaultSupplyMethod', 'Source.DataSupplyMethod')
-          ClassUtils.setRefdataIfPresent(data.defaultDataFormat, located_or_new_source, 'defaultDataFormat', 'Source.DataFormat')
+          ClassUtils.setRefdataIfPresent(data.defaultSupplyMethod, located_or_new_source, 'defaultSupplyMethod', RCConstants.SOURCE_DATA_SUPPLY_METHOD)
+          ClassUtils.setRefdataIfPresent(data.defaultDataFormat, located_or_new_source, 'defaultDataFormat', RCConstants.SOURCE_DATA_FORMAT)
 
           log.debug("Variant names processing: ${data.variantNames}")
 
@@ -552,7 +552,7 @@ class IntegrationController {
 
         and {
           and {
-            eq 'ogcOwner.desc', 'Combo.Type'
+            eq 'ogcOwner.desc', RCConstants.COMBO_TYPE
             eq 'ogcType.value', 'KBComponent.Ids'
           }
           or {
@@ -673,9 +673,9 @@ class IntegrationController {
     // Identifiers
     log.debug("Identifier processing ${data.identifiers}")
     Set<String> ids = component.ids.collect { "${it.namespace?.value}|${it.value}".toString() }
-    RefdataValue combo_active = RefdataCategory.lookup(Combo.RD_STATUS, Combo.STATUS_ACTIVE)
-    RefdataValue combo_deleted = RefdataCategory.lookup(Combo.RD_STATUS, Combo.STATUS_DELETED)
-    RefdataValue combo_type_id = RefdataCategory.lookup('Combo.Type', 'KBComponent.Ids')
+    RefdataValue combo_active = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE)
+    RefdataValue combo_deleted = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_DELETED)
+    RefdataValue combo_type_id = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'KBComponent.Ids')
 
     data.identifiers.each { ci ->
       String testKey = "${ci.type}|${ci.value}".toString()
@@ -708,7 +708,7 @@ class IntegrationController {
                 user,
                 null,
                 (additionalInfo as JSON).toString(),
-                RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'Removed Identifier')
+                RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Removed Identifier')
             )
           }
           else {
@@ -943,7 +943,7 @@ class IntegrationController {
       }
       log.debug("Starting job ${background_job}..")
       background_job.description = "Package CrossRef (${rjson.packageHeader.name})"
-      background_job.type = RefdataCategory.lookupOrCreate('Job.Type', 'PackageCrossRef')
+      background_job.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'PackageCrossRef')
       background_job.linkedItem = [name: rjson.packageHeader.name,
                                    type: "Package"]
       background_job.message("Starting upsert for Package ${rjson.packageHeader.name}")
@@ -984,7 +984,7 @@ class IntegrationController {
           componentUpdateService.setAllRefdata([
               'software', 'service'
           ], platformJson, p)
-          ClassUtils.setRefdataIfPresent(platformJson.authentication, p, 'authentication', 'Platform.AuthMethod')
+          ClassUtils.setRefdataIfPresent(platformJson.authentication, p, 'authentication', RCConstants.PLATFORM_AUTH_METHOD)
 
           if (platformJson.provider) {
             def prov = null
@@ -1191,7 +1191,7 @@ class IntegrationController {
 
       background_job.startOrQueue()
       background_job.description = "Title CrossRef"
-      background_job.type = RefdataCategory.lookupOrCreate('Job.Type', 'TitleCrossRef')
+      background_job.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'TitleCrossRef')
       background_job.startTime = new Date()
 
       if (async == false) {
@@ -1411,7 +1411,7 @@ class IntegrationController {
         }
 
         def norm_pub_name = KBComponent.generateNormname(pub_to_add.name)
-        def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+        def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
 
         if (!publisher) {
           publisher = Org.findByNormname(norm_pub_name)
@@ -1456,14 +1456,14 @@ class IntegrationController {
 
             log.debug("Adding new combo for publisher ${publisher} (${propName}) to title ${ti} (${tiPropName})")
 
-            RefdataValue type = RefdataCategory.lookupOrCreate(Combo.RD_TYPE, ti.getComboTypeValue('publisher'))
+            RefdataValue type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, ti.getComboTypeValue('publisher'))
 
             def combo = null
 
             if (propName == "toComponent") {
               combo = new Combo(
                   type: (type),
-                  status: pub_to_add.status ? RefdataCategory.lookupOrCreate(Combo.RD_STATUS, pub_to_add.status) : DomainClassExtender.getComboStatusActive(),
+                  status: pub_to_add.status ? RefdataCategory.lookupOrCreate(RCConstants.COMBO_STATUS, pub_to_add.status) : DomainClassExtender.getComboStatusActive(),
                   startDate: pub_add_sd,
                   endDate: pub_add_ed,
                   toComponent: publisher,
@@ -1473,7 +1473,7 @@ class IntegrationController {
             else {
               combo = new Combo(
                   type: (type),
-                  status: pub_to_add.status ? RefdataCategory.lookupOrCreate(Combo.RD_STATUS, pub_to_add.status) : DomainClassExtender.getComboStatusActive(),
+                  status: pub_to_add.status ? RefdataCategory.lookupOrCreate(RCConstants.COMBO_STATUS, pub_to_add.status) : DomainClassExtender.getComboStatusActive(),
                   startDate: pub_add_sd,
                   endDate: pub_add_ed,
                   fromComponent: publisher,

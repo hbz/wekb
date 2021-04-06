@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
     <meta charset="utf-8">
@@ -11,12 +10,12 @@
     <link rel="shortcut icon" href="${resource(dir: 'images', file: 'favicon.ico')}" type="image/x-icon">
     <asset:script> var contextPath="${grailsApplication.config.server.contextPath ?: '/'}"; </asset:script>
     <g:layoutHead />
-
+    <asset:javascript src="gokb/application-public.js" />
     <asset:stylesheet src="gokb/themes/${ grailsApplication.config.gokb.theme }/theme.css"/>
     <asset:stylesheet src="gokb/fontawesome.css" />
     <asset:stylesheet src="gokb/application.css"/>
 
-    <title><g:layoutTitle default="GOKb: Welcome" /></title>
+    <title><g:message code="gokb.appname" default="we:kb"/></title>
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
@@ -28,6 +27,8 @@
     <![endif]-->
 
 </head>
+
+<wekb:serviceInjection />
 
 <body id="page-body" class="theme-${ grailsApplication.config.gokb.theme }">
 
@@ -42,11 +43,8 @@
            <span class="icon-bar"></span>
          </button>
          <!-- navbar-brand is hidden on larger screens, but visible when the menu is collapsed -->
-         <a class="navbar-brand" href="${grailsApplication.config.server.contextPath ?: ''}/" style="font-weight:bold;">
-             <g:message code="gokb.appname" default="GOKb"/> v<g:meta name="info.app.version" />
-          <g:if test="${grailsApplication.config.gokb.instance?.description}">
-            – ${grailsApplication.config.gokb.instance?.description}
-          </g:if>
+         <a class="navbar-brand navbar-image mekb-logo" href="${grailsApplication.config.server.contextPath ?: ''}/" >
+             <img  alt="Logo wekb"  src="${resource(dir: 'images', file: 'logo.svg')}"/>
          </a>
        </div>
 
@@ -70,14 +68,7 @@
 
     <g:layoutBody />
 
-    <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                </div>
-            </div>
-        </div>
-    </footer>
+    <g:render template="/layouts/footer"   />
 
 </body>
 

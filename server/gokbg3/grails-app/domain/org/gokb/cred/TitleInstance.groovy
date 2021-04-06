@@ -1,5 +1,6 @@
 package org.gokb.cred
 
+import de.wekb.helper.RCConstants
 import org.grails.web.json.JSONObject
 
 import java.time.LocalDateTime
@@ -87,11 +88,11 @@ class TitleInstance extends KBComponent {
 
       // Need to compare the existing variant names here. Rather than use the equals method,
       // we are going to compare certain attributes here.
-      RefdataValue title_type = RefdataCategory.lookupOrCreate("KBComponentVariantName.VariantType", "Alternate Title")
+      RefdataValue title_type = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_VARIANTNAME_VARIANT_TYPE, "Alternate Title")
       def locale_rd = null
 
       if (locale) {
-        locale_rd = RefdataValue.findByOwnerAndValue(RefdataCategory.findByDesc("KBComponentVariantName.Locale"), (locale))
+        locale_rd = RefdataValue.findByOwnerAndValue(RefdataCategory.findByDesc(RCConstants.KBCOMPONENT_VARIANTNAME_LOCAL), (locale))
       }
 
       // Each of the variants...
@@ -105,7 +106,7 @@ class TitleInstance extends KBComponent {
           "variantType": (title_type),
           "owner"      : this,
           "locale"     : (locale_rd),
-          "status"     : RefdataCategory.lookupOrCreate('KBComponentVariantName.Status', KBComponent.STATUS_CURRENT),
+          "status"     : RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_VARIANTNAME_STATUS, KBComponent.STATUS_CURRENT),
           "variantName": (title)
         ])
         return true
@@ -221,7 +222,7 @@ class TitleInstance extends KBComponent {
     if (new_publisher != null) {
 
       def current_publisher = getCurrentPublisher()
-      def combo_active = RefdataCategory.lookup(Combo.RD_STATUS, Combo.STATUS_ACTIVE)
+      def combo_active = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE)
 
       if ((current_publisher != null) && (current_publisher.id == new_publisher.id)) {
         // no change... leave it be
@@ -236,7 +237,7 @@ class TitleInstance extends KBComponent {
         }
 
         // Now create a new Combo
-        RefdataValue type = RefdataCategory.lookupOrCreate(Combo.RD_TYPE, getComboTypeValue('publisher'))
+        RefdataValue type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, getComboTypeValue('publisher'))
         Combo combo = new Combo(
           type: (type),
           status: combo_active,
@@ -271,11 +272,11 @@ class TitleInstance extends KBComponent {
    */
   static def refdataFind(params) {
     def result = [];
-    def status_deleted = RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, KBComponent.STATUS_DELETED)
+    def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED)
     def status_filter = null
 
     if (params.filter1) {
-      status_filter = RefdataCategory.lookup('KBComponent.Status', params.filter1)
+      status_filter = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, params.filter1)
     }
 
     def ql = null;
@@ -496,19 +497,6 @@ class TitleInstance extends KBComponent {
                     )
                   }
                 }
-                else {
-
-                  builder.'coverage'(
-                    startDate: (tipp.startDate ? "${tipp.startDate.toInstant().toString()}" : null),
-                    startVolume: tipp.startVolume,
-                    startIssue: tipp.startIssue,
-                    endDate: (tipp.endDate ? "${tipp.endDate.toInstant().toString()}" : null),
-                    endVolume: tipp.endVolume,
-                    endIssue: tipp.endIssue,
-                    coverageDepth: tipp.coverageDepth?.value,
-                    coverageNote: tipp.coverageNote,
-                    embargo: tipp.embargo)
-                }
                 if (tipp.url != null) {
                   'url'(tipp.url)
                 }
@@ -708,58 +696,58 @@ class TitleInstance extends KBComponent {
       switch (titleObj.medium.toLowerCase()) {
         case "a & i database":
         case "abstract- & indexdatenbank":
-          return RefdataCategory.lookup("TitleInstance.Medium", "A & I Database")
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "A & I Database")
         case "audio":
-          return RefdataCategory.lookup("TitleInstance.Medium", "Audio")
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Audio")
         case "database":
         case "fulltext database":
         case "Volltextdatenbank":
-          return RefdataCategory.lookup("TitleInstance.Medium", "Database")
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Database")
         case "dataset":
         case "datenbestand":
-          return RefdataCategory.lookup("TitleInstance.Medium", "Dataset")
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Dataset")
         case "film":
-          return RefdataCategory.lookup("TitleInstance.Medium", "Film")
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Film")
         case "image":
         case "bild":
-          return RefdataCategory.lookup("TitleInstance.Medium", "Image")
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Image")
         case "journal":
         case "zeitschrift":
-          return RefdataCategory.lookup("TitleInstance.Medium", "Journal")
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Journal")
         case "book":
         case "buch":
-          return RefdataCategory.lookup("TitleInstance.Medium", "Book")
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Book")
         case "published score":
         case "musiknoten":
-          return RefdataCategory.lookup("TitleInstance.Medium", "Published Score")
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Published Score")
         case "article":
         case "artikel":
-          return RefdataCategory.lookup("TitleInstance.Medium", "Article")
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Article")
         case "software":
-          return RefdataCategory.lookup("TitleInstance.Medium", "Software")
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Software")
         case "statistics":
         case "statistiken":
-          return RefdataCategory.lookup("TitleInstance.Medium", "Statistics")
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Statistics")
         case "market data":
         case "marktdaten":
-          return RefdataCategory.lookup("TitleInstance.Medium", "Market Data")
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Market Data")
         case "standards":
         case "normen":
-          return RefdataCategory.lookup("TitleInstance.Medium", "Standards")
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Standards")
         case "biography":
         case "biografie":
-          return RefdataCategory.lookup("TitleInstance.Medium", "Biography")
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Biography")
         case "legal text":
         case "gesetzestext/urteil":
-          return RefdataCategory.lookup("TitleInstance.Medium", "Legal Text")
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Legal Text")
         case "cartography":
         case "kartenwerk":
-          return RefdataCategory.lookup("TitleInstance.Medium", "Cartography")
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Cartography")
         case "miscellaneous":
         case "sonstiges":
-          return RefdataCategory.lookup("TitleInstance.Medium", "Miscellaneous")
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Miscellaneous")
         case "other":
-          return RefdataCategory.lookup("TitleInstance.Medium", "Other")
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Other")
         default:
           return null
       }
@@ -882,7 +870,7 @@ class TitleInstance extends KBComponent {
   }
 
   def beforeUpdate() {
-    def deleted_status = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+    def deleted_status = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
 
     if (this.isDirty('status') && this.status == deleted_status) {
       // Delete the tipps too as a TIPP should not exist without the associated

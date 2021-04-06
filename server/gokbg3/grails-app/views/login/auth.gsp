@@ -26,10 +26,32 @@
 
                <!-- input type="checkbox" class="checkbox" name="${securityConfig.rememberMe.parameter}" id="remember_me" checked="checked"-->
                <!-- label for='remember_me'><g:message code='spring.security.ui.login.rememberme'/></label -->
-               <button type="submit">Login</button> <small style="margin-left:20px;"><g:link controller="register" action="forgotPassword"><g:message code="spring.security.ui.login.forgotPassword" /></g:link></small>
+               <button type="submit">Login</button>
+                <small style="margin-left:20px;"><g:link controller="register" action="forgotPassword"><g:message code="spring.security.ui.login.forgotPassword" /></g:link></small>
+
+                <small style="margin-left:20px;"><a data-toggle="modal" data-cache="false"
+                                                    data-target="#infoModal">Not yet registered for a <g:message code="gokb.appname" default="we:kb"/>: account?</a></small>
             </g:form>
       </div>
     </div>
   </div>
+
+<div id="infoModal" class="qmodal modal fade modal-wide" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+
+                <h3 class="modal-title">Not yet registered for a <g:message code="gokb.appname" default="we:kb"/>: account?</h3>
+            </div>
+
+            <div class="modal-body">Contact us at <a href="mailto:laser@hbz-nrw.de">laser@hbz-nrw.de</a> so that we can set up an account for you and provide you with your initial login information.</div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

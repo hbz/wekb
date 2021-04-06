@@ -1,37 +1,22 @@
 package org.gokb
 
-import grails.converters.*
-import org.springframework.security.acls.model.NotFoundException
-import org.springframework.security.access.annotation.Secured;
+import de.wekb.helper.RCConstants
 import org.gokb.cred.*
-import org.springframework.web.multipart.MultipartHttpServletRequest
-import com.k_int.ConcurrencyManagerService;
-import com.k_int.ConcurrencyManagerService.Job
-import java.security.MessageDigest
-import grails.converters.JSON
-
 import org.hibernate.ScrollMode
 import org.hibernate.ScrollableResults
-import org.hibernate.type.*
-import org.hibernate.Hibernate
-import org.hibernate.type.StandardBasicTypes
+
 
 
 
 class PublicController {
 
   def genericOIDService
-  def springSecurityService
-  def concurrencyManagerService
-  def TSVIngestionService
-  def ESWrapperService
   def ESSearchService
   def dateFormatService
   def sessionFactory
+  def classExaminationService
 
   public static String TIPPS_QRY = 'from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=? and c.toComponent=tipp and c.type = ? and tipp.status = ?';
-
-
 
   def packageContent() {
     log.debug("packageContent::${params}")
@@ -47,16 +32,68 @@ class PublicController {
       }
       
       if (result.pkg) {
-        def tipp_combo_rdv = RefdataCategory.lookupOrCreate('Combo.Type','Package.Tipps')
-        def status_current = RefdataCategory.lookupOrCreate('KBComponent.Status','Current')
+        def tipp_combo_rdv = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE,'Package.Tipps')
+        def status_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS,'Current')
         
         result.pkgId = result.pkg.id
         result.pkgName = result.pkg.name
-        log.debug("Tipp qry name: ${result.pkgName}");
-        
+        log.debug("Tipp qry name: ${result.pkgName}")
+
+        result.refdata_properties = classExaminationService.getRefdataPropertyNames(result.pkg.class.name)
+
+        Map newParams = [:]
+        newParams.sort = params.sort ? "${params.sort}" : 'lower(tipp.name)'
+        newParams.order = params.order ? "${params.order}" : 'asc'
+        newParams.offset = params.offset ?: 0
+        newParams.max = params.max ?:  10
+        newParams.id = params.id
+
         result.titleCount = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_current])[0]
-        result.tipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY+' order by tipp.id',[result.pkgId, tipp_combo_rdv, status_current],[offset:params.offset?params.long('offset'):0,max:10])
-        log.debug("Tipp qry done ${result.tipps?.size()}");
+        result.tipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_current], newParams)
+        log.debug("Tipp qry done ${result.tipps?.size()}")
+        result.params = newParams
+      }else {
+        flash.error = "Package not found"
+      }
+    }
+    result
+  }
+
+  def tippContent() {
+    log.debug("tippContent::${params}")
+    def result = [:]
+    if ( params.id ) {
+      def tipp_id_components = params.id.split(':');
+
+      if ( tipp_id_components?.size() == 2 ) {
+        result.tipp = TitleInstancePackagePlatform.get(Long.parseLong(tipp_id_components[1]));
+      }
+      else {
+        result.tipp = TitleInstancePackagePlatform.findByUuid(params.id)
+      }
+
+      if (!result.tipp) {
+        flash.error = "Tipp not found"
+      }
+    }
+    result
+  }
+
+  def platformContent() {
+    log.debug("tippContent::${params}")
+    def result = [:]
+    if ( params.id ) {
+      def platform_id_components = params.id.split(':');
+
+      if ( platform_id_components?.size() == 2 ) {
+        result.platform = Platform.get(Long.parseLong(platform_id_components[1]));
+      }
+      else {
+        result.platform = Platform.findByUuid(params.id)
+      }
+
+      if (!result.platform) {
+        flash.error = "Platform not found"
       }
     }
     result
@@ -69,40 +106,67 @@ class PublicController {
 
     def mutableParams = new HashMap(params)
 
-    if ( mutableParams.max == null )
+    if (mutableParams.max == null ){
       mutableParams.max = 10
-    else
+    }
+    else {
       mutableParams.max = Integer.parseInt(mutableParams.max)
+    }
+
+    if (mutableParams.offset == null ) {
+      mutableParams.offset = 0
+    }
+    else {
+      mutableParams.offset = Integer.parseInt(mutableParams.offset)
+    }
+
+    if (!mutableParams.sort){
+      mutableParams.sort='sortname'
+      mutableParams.order = 'asc'
+    }
 
     mutableParams.componentType = "Package" // Tells ESSearchService what to look for
 
-    if ( mutableParams.offset == null )
-      mutableParams.offset = 0
-    else
-      mutableParams.offset = Integer.parseInt(mutableParams.offset)
-
-    if( ( mutableParams.q == null ) || (mutableParams.q == '') )  
+    if((mutableParams.q == null ) || (mutableParams.q == '') ) {
       mutableParams.q = '*'
+    }
     // params.remove('q');
     // params.isPublic="Yes"
 
     if(mutableParams.lastUpdated){
       mutableParams.lastModified ="[${params.lastUpdated} TO 2100]"
     }
-    if (!mutableParams.sort){
-      mutableParams.sort='sortname'
-      mutableParams.order = 'asc'
-    }
+
     if(mutableParams.search.equals('yes')){
       //when searching make sure results start from first page
       mutableParams.offset = 0
       mutableParams.search = null
     }
+
     if(mutableParams.filter == 'current')
-      mutableParams.tempFQ = ' -pkg_scope:\"Master File\" -\"open access\" ';
+      mutableParams.tempFQ = ' -pkg_scope:\"Master File\" -\"open access\" '
 
     result =  ESSearchService.search(mutableParams)
-    result.transforms = grailsApplication.config.packageTransforms
+
+
+    def query_params = [forbiddenStatus : RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED)]
+
+    List providerRoles = [RefdataCategory.lookup(RCConstants.ORG_ROLE, 'Content Provider'), RefdataCategory.lookup(RCConstants.ORG_ROLE, 'Platform Provider'), RefdataCategory.lookup(RCConstants.ORG_ROLE, 'Publisher')]
+
+    def query_params2 = [forbiddenStatus : RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED), roles: providerRoles]
+
+    result.componentsOfStatistic = ["Provider", "Package", "Platform", "CuratoryGroup", "TitleInstancePackagePlatform"]
+
+    result.countComponent = [:]
+    result.componentsOfStatistic.each { component ->
+      if(component == "Provider"){
+        result.countComponent."${component.toLowerCase()}" = Org.executeQuery("select count(o.id) from Org as o join o.roles rdv where rdv in (:roles) and o.status != :forbiddenStatus", query_params2, [readOnly: true])[0]
+      }else {
+        def fetch_all = "select count(o.id) from ${component} as o where status != :forbiddenStatus"
+        result.countComponent."${component.toLowerCase()}" = KBComponent.executeQuery(fetch_all.toString(), query_params, [readOnly: true])[0]
+      }
+
+    }
 
     result
   }
@@ -115,7 +179,7 @@ class PublicController {
 
     def export_date = dateFormatService.formatDate(new Date());
 
-    def filename = "GOKb Export : ${pkg.name} : ${export_date}.tsv"
+    def filename = "we:kb Export : ${pkg.name} : ${export_date}.tsv"
 
     try {
       response.setContentType('text/tab-separated-values');
@@ -157,8 +221,8 @@ class PublicController {
 
           // scroll(ScrollMode.FORWARD_ONLY)
           def session = sessionFactory.getCurrentSession()
-          def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
-          def combo_pkg_tipps = RefdataCategory.lookup('Combo.Type', 'Package.Tipps')
+          def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
+          def combo_pkg_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
           def query = session.createQuery("select tipp.id from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=:p and c.toComponent=tipp  and tipp.status <> :sd and c.type = :ct order by tipp.id")
           query.setReadOnly(true)
           query.setParameter('p',pkg.getId(), StandardBasicTypes.LONG)
@@ -177,16 +241,9 @@ class PublicController {
                             sanitize( tipp.title.name ) + '\t' +
                             sanitize( tipp.title.getIdentifierValue('ISSN') ) + '\t' +
                             sanitize( tipp.title.getIdentifierValue('eISSN') ) + '\t' +
-                            sanitize( tipp.startDate ) + '\t' +
-                            sanitize( tipp.startVolume ) + '\t' +
-                            sanitize( tipp.startIssue ) + '\t' +
-                            sanitize( tipp.endDate ) + '\t' +
-                            sanitize( tipp.endVolume ) + '\t' +
-                            sanitize( tipp.endIssue ) + '\t' +
                             sanitize( tipp.url ) + '\t' +
                             '\t'+  // First Author
                             sanitize( tipp.title.getId() ) + '\t' +
-                            sanitize( tipp.embargo ) + '\t' +
                             sanitize( tipp.coverageDepth ) + '\t' +
                             sanitize( tipp.coverageNote ) + '\t' +
                             sanitize( tipp.title.getCurrentPublisher()?.name ) + '\t' +
@@ -241,7 +298,7 @@ class PublicController {
 
 
           // As per spec header at top of file / section
-          writer.write("GOKb Export : ${pkg.provider?.name} : ${pkg.name} : ${export_date}\n");
+          writer.write("we:kb Export : ${pkg.provider?.name} : ${pkg.name} : ${export_date}\n");
 
           writer.write('TIPP ID	TIPP URL	Title ID	Title	TIPP Status	[TI] Publisher	[TI] Imprint	[TI] Published From	[TI] Published to	[TI] Medium	[TI] OA Status	'+
                      '[TI] Continuing series	[TI] ISSN	[TI] EISSN	Package	Package ID	Package URL	Platform	'+
@@ -250,8 +307,8 @@ class PublicController {
                      'Embargo	Coverage note	Host Platform URL	Format	Payment Type\n');
 
           def session = sessionFactory.getCurrentSession()
-          def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
-          def combo_pkg_tipps = RefdataCategory.lookup('Combo.Type', 'Package.Tipps')
+          def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
+          def combo_pkg_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
           def query = session.createQuery("select tipp.id from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=:p and c.toComponent=tipp  and tipp.status <> :sd and c.type = :ct order by tipp.id")
           query.setReadOnly(true)
           query.setParameter('p',pkg.getId(), StandardBasicTypes.LONG)
@@ -274,8 +331,7 @@ class PublicController {
                           sanitize( tipp.title.getIdentifierValue('eISSN') ) + '\t' +
                           sanitize( pkg.name ) + '\t' + sanitize( pkg.getId() ) + '\t' + '\t' + sanitize( tipp.hostPlatform.name ) + '\t' +
                           sanitize( tipp.hostPlatform.primaryUrl ) + '\t' + sanitize( tipp.hostPlatform.getId() ) + '\t\t' + sanitize( tipp.status?.value ) + '\t' + sanitize( tipp.accessStartDate )  + '\t' +
-                          sanitize( tipp.accessEndDate ) + '\t' + sanitize( tipp.startDate ) + '\t' + sanitize( tipp.startVolume ) + '\t' + sanitize( tipp.startIssue ) + '\t' + sanitize( tipp.endDate ) + '\t' +
-                          sanitize( tipp.endVolume ) + '\t' + sanitize( tipp.endIssue ) + '\t' + sanitize( tipp.embargo ) + '\t' + sanitize( tipp.coverageNote ) + '\t' + sanitize( tipp.hostPlatform.primaryUrl ) + '\t' +
+                          sanitize( tipp.accessEndDate ) + '\t' + sanitize( tipp.coverageNote ) + '\t' + sanitize( tipp.hostPlatform.primaryUrl ) + '\t' +
                           sanitize( tipp.format?.value ) + '\t' + sanitize( tipp.paymentType?.value ) +
                           '\n');
             tipp.discard();

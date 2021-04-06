@@ -1,6 +1,7 @@
 package gokbg3
 
 import com.k_int.ClassUtils
+import de.wekb.helper.RCConstants
 
 import java.time.LocalDateTime
 
@@ -139,8 +140,8 @@ class RestMappingService {
                   'id'  : obj[p.name].id
                 ]
 
-                if (p.name == 'namespace') {
-                  result['namespace']['value'] = obj['namespace'].value
+                if (p.type == IdentifierNamespace) {
+                  result[p.name]['value'] = obj[p.name].value
                 }
 
                 if (embed_active.contains(p.name)) {
@@ -184,7 +185,7 @@ class RestMappingService {
           def cval = null
 
           if ( (include_list && include_list?.contains(cp)) || (!include_list && jsonMap?.defaultLinks?.contains(cp)) ) {
-            RefdataValue combo_type = RefdataCategory.lookup('Combo.Type', obj.getComboTypeValue(cp))
+            RefdataValue combo_type = RefdataCategory.lookup(RCConstants.COMBO_TYPE, obj.getComboTypeValue(cp))
             def chql = null
             def reverse = obj.isComboReverse(cp)
 
@@ -316,7 +317,7 @@ class RestMappingService {
 
               if (rdv) {
                 if (rdv in cat.values) {
-                  if (catName == 'KBComponent.Status') {
+                  if (catName == RCConstants.KBCOMPONENT_STATUS) {
                     if (rdv.value == 'Deleted') {
                       obj.deleteSoft()
                     }
@@ -363,7 +364,7 @@ class RestMappingService {
 
                 if (rdv) {
                   if (rdv in cat.values) {
-                    if (catName == 'KBComponent.Status') {
+                    if (catName == RCConstants.KBCOMPONENT_STATUS) {
                       if (rdv.value == 'Deleted') {
                         obj.deleteSoft()
                       }
@@ -419,7 +420,7 @@ class RestMappingService {
                   )
                 }
                 else {
-                  if (catName == 'KBComponent.Status') {
+                  if (catName == RCConstants.KBCOMPONENT_STATUS) {
                     if (rdv.value == 'Deleted') {
                       obj.deleteSoft()
                     }
@@ -494,9 +495,9 @@ class RestMappingService {
   @Transactional
   public def updateIdentifiers(obj, ids, boolean remove = true) {
     log.debug("updating ids ${ids}")
-    def combo_deleted = RefdataCategory.lookup(Combo.RD_STATUS, Combo.STATUS_DELETED)
-    def combo_active = RefdataCategory.lookup(Combo.RD_STATUS, Combo.STATUS_ACTIVE)
-    def combo_id_type = RefdataCategory.lookup(Combo.RD_TYPE, "KBComponent.Ids")
+    def combo_deleted = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_DELETED)
+    def combo_active = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE)
+    def combo_id_type = RefdataCategory.lookup(RCConstants.COMBO_TYPE, "KBComponent.Ids")
     def id_combos = obj.getCombosByPropertyName('ids')
     def errors = []
     Set new_ids = []
@@ -620,7 +621,7 @@ class RestMappingService {
     Set new_cgs = []
     def errors = []
     def current_cgs = obj.getCombosByPropertyName('curatoryGroups')
-    RefdataValue combo_type = RefdataCategory.lookup('Combo.Type', obj.getComboTypeValue('curatoryGroups'))
+    RefdataValue combo_type = RefdataCategory.lookup(RCConstants.COMBO_TYPE, obj.getComboTypeValue('curatoryGroups'))
 
     cgs.each { cg ->
       def cg_obj = null
@@ -818,7 +819,7 @@ class RestMappingService {
   public def updatePublisher(obj, new_pubs, boolean remove = true) {
     def errors = []
     def publisher_combos = obj.getCombosByPropertyName('publisher')
-    def combo_type = RefdataCategory.lookup('Combo.Type', 'TitleInstance.Publisher')
+    def combo_type = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'TitleInstance.Publisher')
 
     String propName = obj.isComboReverse('publisher') ? 'fromComponent' : 'toComponent'
     String tiPropName = obj.isComboReverse('publisher') ? 'toComponent' : 'fromComponent'

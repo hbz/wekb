@@ -1,11 +1,14 @@
 package org.gokb
 
+
+import de.wekb.helper.RCConstants
 import org.gokb.cred.*
 import org.springframework.security.access.annotation.Secured
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
+import wekb.GlobalSearchTemplatesService
 
 
 class WorkflowController{
@@ -15,6 +18,7 @@ class WorkflowController{
   def reviewRequestService
   def packageService
   def dateFormatService
+  GlobalSearchTemplatesService globalSearchTemplatesService
 
   def actionConfig = [
       'method::deleteSoft'     : [actionType: 'simple'],
@@ -25,6 +29,7 @@ class WorkflowController{
       'method::RRTransfer'     : [actionType: 'workflow', view: 'revReqTransfer'],
       'method::RRClose'        : [actionType: 'simple'],
       'packageUrlUpdate'       : [actionType: 'process', method: 'triggerSourceUpdate'],
+      'packageUrlUpdateAllTitles':[actionType:'process', method: 'triggerSourceUpdateAllTitles'],
       'title::reconcile'       : [actionType: 'workflow', view: 'titleReconcile'],
       'title::merge'           : [actionType: 'workflow', view: 'titleMerge'],
       'tipp::retire'           : [actionType: 'workflow', view: 'tippRetire'],
@@ -42,6 +47,7 @@ class WorkflowController{
       'org::deprecateDelete'   : [actionType: 'workflow', view: 'deprecateDeleteOrg'],
       'verifyTitleList'        : [actionType: 'process', method: 'verifyTitleList']
   ]
+
 
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   def action(){
@@ -62,7 +68,7 @@ class WorkflowController{
             // Global template, look in config
             def global_qbe_template_shortcode = params.qbe.substring(2, params.qbe.length())
             // log.debug("Looking up global template ${global_qbe_template_shortcode}")
-            qresult.qbetemplate = grailsApplication.config.globalSearchTemplates[global_qbe_template_shortcode]
+            qresult.qbetemplate = globalSearchTemplatesService.getGlobalSearchTemplate(global_qbe_template_shortcode)
             // log.debug("Using template: ${result.qbetemplate}")
           }
 
@@ -130,7 +136,7 @@ class WorkflowController{
               break
             case "setStatus":
               log.debug("SetStatus: ${method_config[1]}")
-              def status_to_set = RefdataCategory.lookup('KBComponent.Status', method_config[1])
+              def status_to_set = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, method_config[1])
               // def ota_ids = result.objects_to_action.collect{ it.id }
               if (status_to_set){
                 def res = KBComponent.executeUpdate("update KBComponent as kbc set kbc.status = :st where kbc IN (:clist)", [st: status_to_set, clist: result.objects_to_action])
@@ -164,10 +170,10 @@ class WorkflowController{
 
     log.debug("startTitleChange(${params})")
 
-    def active_status = RefdataCategory.lookupOrCreate('Activity.Status', 'Active').save()
-    def transfer_type = RefdataCategory.lookupOrCreate('Activity.Type', 'TitleChange').save()
-    def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
-    def combo_ti_tipps = RefdataCategory.lookup('Combo.Type', 'TitleInstance.Tipps')
+    def active_status = RefdataCategory.lookupOrCreate(RCConstants.ACTIVITY_STATUS, 'Active').save()
+    def transfer_type = RefdataCategory.lookupOrCreate(RCConstants.ACTIVITY_TYPE, 'TitleChange').save()
+    def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
+    def combo_ti_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'TitleInstance.Tipps')
 
     def titleChangeData = [:]
     titleChangeData.title_ids = []
@@ -208,12 +214,6 @@ class WorkflowController{
                   title_id   : tipp.title.id,
                   package_id : tipp.pkg.id,
                   platform_id: tipp.hostPlatform.id,
-                  startDate  : tipp.startDate ? dateFormatService.formatDate(tipp.startDate) : null,
-                  startVolume: tipp.startVolume,
-                  startIssue : tipp.startIssue,
-                  endDate    : tipp.endDate ? dateFormatService.formatDate(tipp.endDate) : null,
-                  endVolume  : tipp.endVolume,
-                  endIssue   : tipp.endIssue,
                   url        : tipp.url
               ],
               newtipps    : []
@@ -225,13 +225,8 @@ class WorkflowController{
                 title_id   : new_title_obj.id,
                 package_id : tipp.pkg.id,
                 platform_id: tipp.hostPlatform.id,
-                startDate  : tipp.startDate ? dateFormatService.formatDate(tipp.startDate) : null,
-                startVolume: tipp.startVolume,
-                startIssue : tipp.startIssue,
-                endDate    : tipp.endDate ? dateFormatService.formatDate(tipp.endDate) : null,
-                endVolume  : tipp.endVolume,
-                url        : tipp.url,
-                endIssue   : tipp.endIssue]
+                url        : tipp.url
+            ]
             titleChangeData.tipps[tipp.id].newtipps.add(new_tipp_info)
           }
         }
@@ -264,8 +259,8 @@ class WorkflowController{
     log.debug("startTitleMerge(${params})")
 
     def user = springSecurityService.currentUser
-    def active_status = RefdataCategory.lookupOrCreate('Activity.Status', 'Active').save()
-    def transfer_type = RefdataCategory.lookupOrCreate('Activity.Type', 'TitleMerge').save()
+    def active_status = RefdataCategory.lookupOrCreate(RCConstants.ACTIVITY_STATUS, 'Active').save()
+    def transfer_type = RefdataCategory.lookupOrCreate(RCConstants.ACTIVITY_TYPE, 'TitleMerge').save()
     def first_title = null
 
     def result = [:]
@@ -358,7 +353,7 @@ class WorkflowController{
     }
     else if (params.abandon){
       log.debug("**ABANDON**...")
-      activity_record.status = RefdataCategory.lookupOrCreate('Activity.Status', 'Abandoned')
+      activity_record.status = RefdataCategory.lookupOrCreate(RCConstants.ACTIVITY_STATUS, 'Abandoned')
       activity_record.save(flush: true)
       if (activity_data.oldTitles?.size() > 0){
         redirect(controller: 'resource', action: 'show', id: activity_data.oldTitles[0])
@@ -428,12 +423,6 @@ class WorkflowController{
                       title_id   : tipp.title.id,
                       package_id : tipp.pkg.id,
                       platform_id: tipp.hostPlatform.id,
-                      startDate  : tipp.startDate ? dateFormatService.formatDate(tipp.startDate) : null,
-                      startVolume: tipp.startVolume,
-                      startIssue : tipp.startIssue,
-                      endDate    : tipp.endDate ? dateFormatService.formatDate(tipp.endDate) : null,
-                      endVolume  : tipp.endVolume,
-                      endIssue   : tipp.endIssue,
                       url        : tipp.url
                   ],
                   newtipps    : []
@@ -457,8 +446,8 @@ class WorkflowController{
     def builder = new JsonBuilder()
     builder(titleTransferData)
 
-    def active_status = RefdataCategory.lookupOrCreate('Activity.Status', 'Active').save()
-    def transfer_type = RefdataCategory.lookupOrCreate('Activity.Type', 'TitleTransfer').save()
+    def active_status = RefdataCategory.lookupOrCreate(RCConstants.ACTIVITY_STATUS, 'Active').save()
+    def transfer_type = RefdataCategory.lookupOrCreate(RCConstants.ACTIVITY_TYPE, 'TitleTransfer').save()
 
 
     log.debug("Create activity")
@@ -539,12 +528,6 @@ class WorkflowController{
                     title_id   : old_tipp.title.id,
                     package_id : new_tipp_package.id,
                     platform_id: new_tipp_platform.id,
-                    startDate  : old_tipp.startDate ? dateFormatService.formatDate(old_tipp.startDate) : null,
-                    startVolume: old_tipp.startVolume,
-                    startIssue : old_tipp.startIssue,
-                    endDate    : old_tipp.endDate ? dateFormatService.formatDate(old_tipp.endDate) : null,
-                    endVolume  : old_tipp.endVolume,
-                    endIssue   : old_tipp.endIssue,
                     url        : old_tipp.url]
                 log.debug("new_tipp_info :: ${new_tipp_info}")
                 tipp_info.newtipps.add(new_tipp_info)
@@ -604,7 +587,7 @@ class WorkflowController{
     }
     else if (params.abandon){
       log.debug("**ABANDON**...")
-      activity_record.status = RefdataCategory.lookupOrCreate('Activity.Status', 'Abandoned')
+      activity_record.status = RefdataCategory.lookupOrCreate(RCConstants.ACTIVITY_STATUS, 'Abandoned')
       activity_record.save(flush: true)
       if (activity_data.title_ids?.size() > 0){
         redirect(controller: 'resource', action: 'show', id: 'org.gokb.cred.TitleInstance:' + activity_data.title_ids[0])
@@ -634,12 +617,6 @@ class WorkflowController{
           title       : tipp_object.title,
           pkg         : tipp_object.pkg,
           hostPlatform: tipp_object.hostPlatform,
-          startDate   : tipp_info.value.oldTippValue?.startDate,
-          startVolume : tipp_info.value.oldTippValue?.startVolume,
-          startIssue  : tipp_info.value.oldTippValue?.startIssue,
-          endDate     : tipp_info.value.oldTippValue?.endDate,
-          endVolume   : tipp_info.value.oldTippValue?.endVolume,
-          endIssue    : tipp_info.value.oldTippValue?.endIssue,
           url         : tipp_info.value.oldTippValue?.url
       ])
       int seq = 0
@@ -652,12 +629,6 @@ class WorkflowController{
             title       : KBComponent.get(newtipp_info.title_id),
             pkg         : KBComponent.get(newtipp_info.package_id),
             hostPlatform: KBComponent.get(newtipp_info.platform_id),
-            startDate   : newtipp_info.startDate,
-            startVolume : newtipp_info.startVolume,
-            startIssue  : newtipp_info.startIssue,
-            endDate     : newtipp_info.endDate,
-            endVolume   : newtipp_info.endVolume,
-            endIssue    : newtipp_info.endIssue,
             review      : newtipp_info.review,
             url         : newtipp_info.url
         ])
@@ -747,7 +718,7 @@ class WorkflowController{
     }
     else if (params.abandon){
       log.debug("**ABANDON**...")
-      activity_record.status = RefdataCategory.lookupOrCreate('Activity.Status', 'Abandoned')
+      activity_record.status = RefdataCategory.lookupOrCreate(RCConstants.ACTIVITY_STATUS, 'Abandoned')
       activity_record.save(flush: true)
       if (activity_data.title_ids?.size() > 0){
         redirect(controller: 'resource', action: 'show', id: 'org.gokb.cred.TitleInstance:' + activity_data.title_ids[0])
@@ -776,12 +747,6 @@ class WorkflowController{
           title       : tipp_object.title,
           pkg         : tipp_object.pkg,
           hostPlatform: tipp_object.hostPlatform,
-          startDate   : tipp_info.value.oldTippValue?.startDate,
-          startVolume : tipp_info.value.oldTippValue?.startVolume,
-          startIssue  : tipp_info.value.oldTippValue?.startIssue,
-          endDate     : tipp_info.value.oldTippValue?.endDate,
-          endVolume   : tipp_info.value.oldTippValue?.endVolume,
-          endIssue    : tipp_info.value.oldTippValue?.endIssue,
           url         : tipp_info.value.oldTippValue?.url
       ])
       int seq = 0
@@ -793,12 +758,6 @@ class WorkflowController{
             title       : KBComponent.get(newtipp_info.title_id),
             pkg         : KBComponent.get(newtipp_info.package_id),
             hostPlatform: KBComponent.get(newtipp_info.platform_id),
-            startDate   : newtipp_info.startDate,
-            startVolume : newtipp_info.startVolume,
-            startIssue  : newtipp_info.startIssue,
-            endDate     : newtipp_info.endDate,
-            endVolume   : newtipp_info.endVolume,
-            endIssue    : newtipp_info.endIssue,
             review      : newtipp_info.review,
             url         : newtipp_info.url
         ])
@@ -829,12 +788,6 @@ class WorkflowController{
             package    : ['internalId': new_package.id],
             platform   : ['internalId': new_platform.id],
             title      : ['internalId': current_tipp.title.id],
-            startDate  : newtipp.startDate,
-            startVolume: newtipp.startVolume,
-            startIssue : newtipp.startIssue,
-            endDate    : newtipp.endDate,
-            endVolume  : newtipp.endVolume,
-            endIssue   : newtipp.endIssue,
             url        : newtipp.url
         ], user).save(flush: true, failOnError: true)
 
@@ -854,12 +807,6 @@ class WorkflowController{
       catch (Exception e){
       }
 
-      current_tipp.startDate = parsed_start_date
-      current_tipp.startVolume = tipp_map_entry.value.oldTippValue.startVolume
-      current_tipp.startIssue = tipp_map_entry.value.oldTippValue.startIssue
-      current_tipp.endDate = parsed_end_date
-      current_tipp.endVolume = tipp_map_entry.value.oldTippValue.endVolume
-      current_tipp.endIssue = tipp_map_entry.value.oldTippValue.endIssue
       log.debug("Saving current tipp")
       current_tipp.save()
 
@@ -867,7 +814,7 @@ class WorkflowController{
       // Retire the tipp if
       if (params["oldtipp_close:${tipp_map_entry.key}"] == 'on'){
         log.debug("Retiring old tipp")
-        current_tipp.status = RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, KBComponent.STATUS_RETIRED)
+        current_tipp.status = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_RETIRED)
         if (params["oldtipp_review:${tipp_map_entry.key}"] == 'on'){
           reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title change has affected this tipp [new tipps have been generated]. The user chose to retire this tipp', request.user)
         }
@@ -900,7 +847,7 @@ class WorkflowController{
     }
 
 
-    activity_record.status = RefdataCategory.lookupOrCreate('Activity.Status', 'Complete')
+    activity_record.status = RefdataCategory.lookupOrCreate(RCConstants.ACTIVITY_STATUS, 'Complete')
     activity_record.save(flush: true)
   }
 
@@ -908,9 +855,9 @@ class WorkflowController{
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   def processTitleMerge(activity_record, activity_data, merge_params){
     log.debug("processTitleMerge ${params}\n\n ${activity_data}")
-    def status_deleted = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Deleted')
-    def status_current = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Current')
-    def rr_status_current = RefdataCategory.lookupOrCreate('ReviewRequest.Status', 'Open')
+    def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
+    def status_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current')
+    def rr_status_current = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STATUS, 'Open')
 
     def new_ti = genericOIDService.resolveOID2(activity_data.newTitle)
     def new_he = new_ti.getTitleHistory()
@@ -924,7 +871,7 @@ class WorkflowController{
 
       if (merge_params['merge_ids']){
         log.debug("Looking for new IDs to add")
-        def id_combo_type = RefdataCategory.lookupOrCreate('Combo.Type', 'KBComponent.Ids')
+        def id_combo_type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'KBComponent.Ids')
 
         old_ti.ids.each{ old_id ->
 
@@ -1045,7 +992,7 @@ class WorkflowController{
       old_ti.status = status_deleted
     }
 
-    activity_record.status = RefdataCategory.lookupOrCreate('Activity.Status', 'Complete')
+    activity_record.status = RefdataCategory.lookupOrCreate(RCConstants.ACTIVITY_STATUS, 'Complete')
     activity_record.save(flush: true)
   }
 
@@ -1070,33 +1017,6 @@ class WorkflowController{
       log.debug("Processing current tipp : ${current_tipp.id}")
       tipp_map_entry.value.newtipps.each{ newtipp ->
         log.debug("Process new tipp : ${newtipp}")
-        if (tipp_map_entry.value.oldTippValue?.startDate){
-          try{
-            current_tipp.startDate = dateFormatService.parseDate(tipp_map_entry.value.oldTippValue?.startDate)
-          }
-          catch (Exception e){
-          }
-        }
-        if (tipp_map_entry.value.oldTippValue?.startVolume){
-          current_tipp.startVolume = tipp_map_entry.value.oldTippValue?.startVolume
-        }
-        if (tipp_map_entry.value.oldTippValue?.startIssue){
-          current_tipp.startIssue = tipp_map_entry.value.oldTippValue?.startIssue
-        }
-
-        if (tipp_map_entry.value.oldTippValue?.endDate){
-          try{
-            current_tipp.endDate = dateFormatService.parseDate(tipp_map_entry.value.oldTippValue?.endDate)
-          }
-          catch (Exception e){
-          }
-        }
-        if (tipp_map_entry.value.oldTippValue?.endVolume){
-          current_tipp.endVolume = tipp_map_entry.value.oldTippValue?.endVolume
-        }
-        if (tipp_map_entry.value.oldTippValue?.endIssue){
-          current_tipp.endIssue = tipp_map_entry.value.oldTippValue?.endIssue
-        }
 
         def new_package = Package.get(newtipp.package_id)
         def new_platform = Platform.get(newtipp.platform_id)
@@ -1106,12 +1026,6 @@ class WorkflowController{
             package    : ['internalId': new_package.id],
             platform   : ['internalId': new_platform.id],
             title      : ['internalId': current_tipp.title.id],
-            startDate  : newtipp.startDate,
-            startVolume: newtipp.startVolume,
-            startIssue : newtipp.startIssue,
-            endDate    : newtipp.endDate,
-            endVolume  : newtipp.endVolume,
-            endIssue   : newtipp.endIssue,
             url        : newtipp.url
         ], user).save(flush: true, failOnError: true)
 
@@ -1125,7 +1039,7 @@ class WorkflowController{
       log.debug("Checking close flags..${params}")
       if (params["oldtipp_close:${tipp_map_entry.key}"] == 'on'){
         log.debug("Retiring old tipp")
-        current_tipp.status = RefdataCategory.lookup(KBComponent.RD_STATUS, KBComponent.STATUS_RETIRED)
+        current_tipp.status = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_RETIRED)
         if (params["oldtipp_review:${tipp_map_entry.key}"] == 'on'){
           reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title transfer has affected this tipp [new tipps have been generated]. The user chose to retire this tipp', request.user)
         }
@@ -1145,24 +1059,18 @@ class WorkflowController{
       catch (Exception e){
       }
 
-      current_tipp.startDate = parsed_start_date
-      current_tipp.startVolume = tipp_map_entry.value.oldTippValue.startVolume
-      current_tipp.startIssue = tipp_map_entry.value.oldTippValue.startIssue
-      current_tipp.endDate = parsed_end_date
-      current_tipp.endVolume = tipp_map_entry.value.oldTippValue.endVolume
-      current_tipp.endIssue = tipp_map_entry.value.oldTippValue.endIssue
       log.debug("Saving current tipp")
       current_tipp.save(flush: true, failOnError: true)
     }
 
-    activity_record.status = RefdataCategory.lookupOrCreate('Activity.Status', 'Complete')
+    activity_record.status = RefdataCategory.lookupOrCreate(RCConstants.ACTIVITY_STATUS, 'Complete')
     activity_record.save(flush: true)
   }
 
   @Transactional
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   def processPackageReplacement(){
-    def retired_status = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Retired')
+    def retired_status = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Retired')
     def result = [:]
     result['old'] = []
     result['new'] = ''
@@ -1197,7 +1105,7 @@ class WorkflowController{
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   def processTippRetire(){
     log.debug("processTippRetire ${params}")
-    def retired_status = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Retired')
+    def retired_status = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Retired')
     def result = [:]
 
     params.list('beforeTipps').each{ title_oid ->
@@ -1219,7 +1127,7 @@ class WorkflowController{
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   def processTippMove(){
     log.debug("processTippMove ${params}")
-    def deleted_status = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Deleted')
+    def deleted_status = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
     def user = springSecurityService.currentUser
     def new_package = params.newpackage ? genericOIDService.resolveOID2(params.newpackage) : null
     def new_platform = params.newplatform ? genericOIDService.resolveOID2(params.newplatform) : null
@@ -1307,7 +1215,7 @@ class WorkflowController{
       else{
         log.debug("Found existing variant name: ${current_name_as_variant}")
       }
-      variant.variantType = RefdataCategory.lookupOrCreate('KBComponentVariantName.VariantType', 'Authorized')
+      variant.variantType = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_VARIANTNAME_VARIANT_TYPE, 'Authorized')
       variant.owner.name = variant.variantName
 
       if (variant.owner.validate()){
@@ -1623,14 +1531,14 @@ class WorkflowController{
       return
     }
 
-    def status_current = RefdataCategory.lookup('KBComponent.Status', 'Current')
-    def combo_pkg_tipps = RefdataCategory.lookup('Combo.Type', 'Package.Tipps')
+    def status_current = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Current')
+    def combo_pkg_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
     def export_date = dateFormatService.formatDate(new Date())
     if (packages_to_export.size() == 1){
-      filename = "GOKb Export : ${packages_to_export[0].provider?.name} : ${packages_to_export[0].name} : ${export_date}.tsv"
+      filename = "we:kb Export : ${packages_to_export[0].provider?.name} : ${packages_to_export[0].name} : ${export_date}.tsv"
     }
     else{
-      filename = "GOKb Export : multiple_packages : ${export_date}.tsv"
+      filename = "we:kb Export : multiple_packages : ${export_date}.tsv"
     }
 
     try{
@@ -1686,14 +1594,14 @@ class WorkflowController{
       return
     }
 
-    def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
-    def combo_pkg_tipps = RefdataCategory.lookup('Combo.Type', 'Package.Tipps')
+    def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
+    def combo_pkg_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
     def export_date = dateFormatService.formatDate(new Date())
     if (packages_to_export.size() == 1){
-      filename = "GOKb Export : ${packages_to_export[0].provider?.name} : ${packages_to_export[0].name} : ${export_date}.tsv"
+      filename = "we:kb Export : ${packages_to_export[0].provider?.name} : ${packages_to_export[0].name} : ${export_date}.tsv"
     }
     else{
-      filename = "GOKb Export : multiple_packages : ${export_date}.tsv"
+      filename = "we:kb Export : multiple_packages : ${export_date}.tsv"
     }
 
     try{
@@ -1780,7 +1688,7 @@ class WorkflowController{
             }
             else{
               log.debug("New Combo already exists, or would link item to itself.. deleting instead!")
-              oc.status = RefdataCategory.lookup(Combo.RD_STATUS, Combo.STATUS_DELETED)
+              oc.status = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_DELETED)
               oc.save(flush: true)
             }
           }
@@ -1793,7 +1701,7 @@ class WorkflowController{
             }
             else{
               log.debug("New Combo already exists, or would link item to itself.. deleting instead!")
-              oc.status = RefdataCategory.lookup(Combo.RD_STATUS, Combo.STATUS_DELETED)
+              oc.status = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_DELETED)
               oc.save(flush: true)
             }
           }
@@ -1879,17 +1787,20 @@ class WorkflowController{
       }
 
       if (pkgObj?.isEditable() && (is_curator || !curated_pkg || user.authorities.contains(Role.findByAuthority('ROLE_SUPERUSER')))){
-        pkgObj.listStatus = RefdataCategory.lookupOrCreate('Package.ListStatus', 'Checked')
-        pkgObj.userListVerifier = user
-        pkgObj.listVerifiedDate = new Date()
+        pkgObj.listStatus = RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_LIST_STATUS, 'Checked')
         pkgObj.save(flush: true, failOnError: true)
       }
     }
     redirect(url: request.getHeader('referer'))
   }
 
+  private def triggerSourceUpdateAllTitles(packages_to_update) {
+    triggerSourceUpdate(packages_to_update, true)
+  }
+
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  private def triggerSourceUpdate(packages_to_update){
+
+  private def triggerSourceUpdate(packages_to_update, boolean allTitles=false) {
     log.info("triggerSourceUpdate for Packages ${packages_to_update}..")
     def user = springSecurityService.currentUser
     def pars = [:]
@@ -1910,8 +1821,8 @@ class WorkflowController{
             curated_pkg = true
           }
 
-          if (pkgObj?.isEditable() && (is_curator || !curated_pkg || user.authorities.contains(Role.findByAuthority('ROLE_SUPERUSER')))){
-            def result = packageService.updateFromSource(pkgObj, user)
+          if (pkgObj?.isEditable() && (is_curator || !curated_pkg  || user.authorities.contains(Role.findByAuthority('ROLE_SUPERUSER')))) {
+            def result = packageService.updateFromSource(pkgObj, user, allTitles)
 
             if (result == 'OK'){
               flash.success = "Update successfully started!"

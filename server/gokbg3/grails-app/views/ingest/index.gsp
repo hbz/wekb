@@ -1,7 +1,8 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <html>
   <head>
     <meta name="layout" content="sb-admin" />
-    <title>GOKb Direct Ingest Service</title>
+    <title><g:message code="gokb.appname" default="we:kb"/> Direct Ingest Service</title>
   </head>
   <body>
     <h1 class="page-header">Direct File Ingest</h1>
@@ -30,7 +31,7 @@
                   <td>${p.source}</td>
                   <td>${p.platformUrl}</td>
                   <td>${p.packageType}</td>
-                  <td><g:xEditableRefData owner="${p}" field="status" config='KBComponent.Status' /></td>
+                  <td><gokb:xEditableRefData owner="${p}" field="status" config="${RCConstants.KBCOMPONENT_STATUS}" /></td>
                 </tr>
               </g:each>
             </tbody>
@@ -56,11 +57,11 @@
             </div>
             <div class="form-group">
               <label class="control-label" for='packageType'>Data Format:</label>
-              <g:simpleReferenceTypedown class="form-control" name="packageType" baseClass="org.gokb.cred.RefdataValue" filter1="ingest.filetype"/>
+              <gokb:simpleReferenceTypedown class="form-control" name="packageType" baseClass="org.gokb.cred.RefdataValue" filter1="${RCConstants.INGEST_FILE_TYPE}"/>
             </div>
             <div class="form-group">
               <label class="control-label" for='providerNamespace'>Provider Namespace:</label>
-              <g:simpleReferenceTypedown class="form-control" name="providerNamespace" baseClass="org.gokb.cred.IdentifierNamespace" />
+              <gokb:simpleReferenceTypedown class="form-control" name="providerNamespace" baseClass="org.gokb.cred.IdentifierNamespace" />
             </div>
             <div class="form-group">
               <label class="control-label" for='platformUrl'>Url:</label>
@@ -68,7 +69,7 @@
             </div>
             <div class="form-group">
               <label class="control-label">Source</label>
-              <g:simpleReferenceTypedown class="form-control" name="sourceId" baseClass="org.gokb.cred.Source"/>
+              <gokb:simpleReferenceTypedown class="form-control" name="sourceId" baseClass="org.gokb.cred.Source"/>
             </div>
             <button type="submit">Add Profile</button>
           </g:form>

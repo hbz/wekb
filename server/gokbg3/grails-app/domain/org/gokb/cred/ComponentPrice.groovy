@@ -15,6 +15,9 @@ class ComponentPrice {
   Date endDate
   Float price
 
+  Date dateCreated
+  Date lastUpdated
+
   static mapping = {
     owner column: 'cp_owner_component_fk'
     priceType column: 'cp_type_fk'
@@ -22,6 +25,8 @@ class ComponentPrice {
     startDate column: 'cp_start_date'
     endDate column: 'cp_end_date'
     price column: 'cp_price'
+    dateCreated     column: 'cp_date_created'
+    lastUpdated     column: 'cp_last_updated'
   }
 
   static constraints = {
@@ -31,6 +36,8 @@ class ComponentPrice {
     startDate(nullable: false, blank: true)
     endDate(nullable: true, blank: true)
     price(nullable: true, blank: true)
+    lastUpdated (nullable: true)
+    dateCreated (nullable: true)
   }
 
   @Override

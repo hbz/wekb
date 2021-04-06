@@ -23,6 +23,7 @@
                                 <g:if test="${su || (!user.hasRole('ROLE_SUPERUSER') && !user.hasRole('ROLE_ADMIN'))}">
                                   <s2ui:textFieldRow name='username' labelCodeDefault='Username'/>
                                   <s2ui:passwordFieldRow name='password' labelCodeDefault='Password'/>
+                                    <s2ui:textFieldRow name='email' labelCodeDefault='Mail'/>
                                   <s2ui:checkboxRow name='enabled' labelCodeDefault='Enabled'/>
                                   <s2ui:checkboxRow name='accountExpired' labelCodeDefault='Account Expired'/>
                                   <s2ui:checkboxRow name='accountLocked' labelCodeDefault='Account Locked'/>

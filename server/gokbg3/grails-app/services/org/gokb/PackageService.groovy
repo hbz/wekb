@@ -2,6 +2,7 @@ package org.gokb
 
 import com.k_int.ConcurrencyManagerService.Job
 import com.k_int.ClassUtils
+import de.wekb.helper.RCConstants
 import grails.gorm.transactions.Transactional
 
 import grails.io.IOUtils
@@ -72,7 +73,7 @@ class PackageService {
    */
   private RefdataValue getMasterScope() {
     // The Scope.
-    RefdataCategory.lookupOrCreate("Package.Scope", "GOKb Master")
+    RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "GOKb Master")
   }
 
   /**
@@ -372,7 +373,7 @@ class PackageService {
         c.add(
             "status",
             "eq",
-            RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, KBComponent.STATUS_CURRENT))
+            RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_CURRENT))
       }
     }.each {
 
@@ -400,9 +401,9 @@ class PackageService {
     }
 
     def msg_list = []
-    def rdv_journal = RefdataCategory.lookup("TitleInstance.Medium", "Journal")
-    def rdv_book = RefdataCategory.lookup("TitleInstance.Medium", "Book")
-    def rdv_db = RefdataCategory.lookup("TitleInstance.Medium", "Database")
+    def rdv_journal = RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Journal")
+    def rdv_book = RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Book")
+    def rdv_db = RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Database")
     def ctr = 0
 
     for (pkg in pkg_list) {
@@ -415,19 +416,19 @@ class PackageService {
         def has_book = pkg_obj.tipps.title.find { it.medium == rdv_book }
 
         if (has_db && !has_journal && !has_book) {
-          pkg_obj.contentType = RefdataCategory.lookup('Package.ContentType', 'Database')
+          pkg_obj.contentType = RefdataCategory.lookup(RCConstants.PACKAGE_CONTENT_TYPE, 'Database')
           result.db++
         }
         else if (has_journal && !has_db && !has_book) {
-          pkg_obj.contentType = RefdataCategory.lookup('Package.ContentType', 'Journal')
+          pkg_obj.contentType = RefdataCategory.lookup(RCConstants.PACKAGE_CONTENT_TYPE, 'Journal')
           result.journal++
         }
         else if (has_book && !has_db && !has_journal) {
-          pkg_obj.contentType = RefdataCategory.lookup('Package.ContentType', 'Book')
+          pkg_obj.contentType = RefdataCategory.lookup(RCConstants.PACKAGE_CONTENT_TYPE, 'Book')
           result.book++
         }
         else if (has_book && has_journal) {
-          pkg_obj.contentType = RefdataCategory.lookup('Package.ContentType', 'Mixed')
+          pkg_obj.contentType = RefdataCategory.lookup(RCConstants.PACKAGE_CONTENT_TYPE, 'Mixed')
           result.mixed++
         }
         else if (!has_book && !has_journal && !has_db) {
@@ -460,10 +461,10 @@ class PackageService {
   @Transactional
   def compareLists(listOne, listTwo, def full = true, Date date = null, Job j = null) {
     def result = [:]
-    def status_current = RefdataCategory.lookup('KBComponent.Status', 'Current')
-    def status_retired = RefdataCategory.lookup('KBComponent.Status', 'Retired')
-    def status_expected = RefdataCategory.lookup('KBComponent.Status', 'Expected')
-    def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+    def status_current = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Current')
+    def status_retired = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Retired')
+    def status_expected = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Expected')
+    def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
     def tipp_status = [status_current]
     Date checkDate = date ?: new Date()
     def tipp_params = [:]
@@ -661,7 +662,7 @@ class PackageService {
   def restLookup(packageHeaderDTO, def user = null) {
     log.info("Upsert org with header ${packageHeaderDTO}");
     def result = [to_create: true];
-    def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+    def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
     def normname = Package.generateNormname(packageHeaderDTO.name)
 
     log.debug("Checking by normname ${normname} ..")
@@ -775,14 +776,9 @@ class PackageService {
    * status:'Current',
    * breakable:'Unknown',
    * consistent:'Unknown',
-   * fixed:'Unknown',
    * paymentType:'Unknown',
-   * global:'Global',
    * nominalPlatform:54678
    * provider:4325
-   * listVerifier:'',
-   * userListVerifier:'benjamin_ahlborn'
-   * listVerifierDate:'2015-06-19T00:00:00Z'
    * source:[
    *   url:'http://www.zeitschriftendatenbank.de'
    *   defaultAccessURL:''
@@ -806,7 +802,7 @@ class PackageService {
   @Transactional
   public Package upsertDTO(packageHeaderDTO, def user = null) {
     log.info("Upsert package with header ${packageHeaderDTO}");
-    def status_deleted = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Deleted')
+    def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
     def pkg_normname = Package.generateNormname(packageHeaderDTO.name)
 
     log.debug("Checking by normname ${pkg_normname} ..")
@@ -920,25 +916,9 @@ class PackageService {
     changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.scope, result, 'scope')
     changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.breakable, result, 'breakable')
     changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.consistent, result, 'consistent')
-    changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.fixed, result, 'fixed')
     changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.paymentType, result, 'paymentType')
-    changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.global, result, 'global')
-    changed |= ClassUtils.setStringIfDifferent(result, 'listVerifier', packageHeaderDTO.listVerifier?.toString())
-    // User userListVerifier
-    changed |= ClassUtils.setDateIfPresent(packageHeaderDTO.listVerifiedDate, result, 'listVerifiedDate');
-
-    // ListVerifier
-
-    if (packageHeaderDTO.userListVerifier) {
-      def looked_up_user = User.findByUsername(packageHeaderDTO.userListVerifier)
-      if (looked_up_user && ((result.userListVerifier == null) || (result.userListVerifier?.id != looked_up_user?.id))) {
-        result.userListVerifier = looked_up_user
-        changed = true
-      }
-      else {
-        log.warn("Unable to find username for list verifier ${packageHeaderDTO.userListVerifier}");
-      }
-    }
+    changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.file, result, 'file')
+    changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.openAccess, result, 'openAccess')
 
     // Platform
     if (packageHeaderDTO.nominalPlatform) {
@@ -1192,8 +1172,8 @@ class PackageService {
               'gokb_title_uid\n');
 
           def session = sessionFactory.getCurrentSession()
-          def combo_tipps = RefdataCategory.lookup('Combo.Type', 'Package.Tipps')
-          def status_current = RefdataCategory.lookup('KBComponent.Status', 'Current')
+          def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
+          def status_current = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Current')
           def query = session.createQuery("select tipp.id from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=:p and c.toComponent=tipp  and tipp.status = :sc and c.type = :ct order by tipp.id")
           query.setReadOnly(true)
           query.setParameter('p', pkg.getId(), StandardBasicTypes.LONG)
@@ -1273,16 +1253,9 @@ class PackageService {
                     sanitize(tipp.name ?: tipp.title.name) + '\t' +
                         print_id + '\t' +
                         online_id + '\t' +
-                        sanitize(tipp.startDate) + '\t' +
-                        sanitize(tipp.startVolume) + '\t' +
-                        sanitize(tipp.startIssue) + '\t' +
-                        sanitize(tipp.endDate) + '\t' +
-                        sanitize(tipp.endVolume) + '\t' +
-                        sanitize(tipp.endIssue) + '\t' +
                         sanitize(tipp.url) + '\t' +
                         (tipp.title.hasProperty('firstAuthor') ? sanitize(tipp.title.firstAuthor) : '') + '\t' +
                         sanitize(tipp.title.getId()) + '\t' +
-                        sanitize(tipp.embargo) + '\t' +
                         sanitize(tipp.coverageDepth).toLowerCase() + '\t' +
                         sanitize(tipp.coverageNote) + '\t' +
                         sanitize(tipp.title.getCurrentPublisher()?.name) + '\t' +
@@ -1336,7 +1309,7 @@ class PackageService {
           def sanitize = { it ? "${it}".trim() : "" }
 
           // As per spec header at top of file / section
-          writer.write("GOKb Export : ${pkg.provider?.name} : ${pkg.name} : ${export_date}\n");
+          writer.write("we:kb Export : ${pkg.provider?.name} : ${pkg.name} : ${export_date}\n");
 
           writer.write('TIPP ID\t' +
               'TIPP URL\t' +
@@ -1381,8 +1354,8 @@ class PackageService {
               '\n');
 
           def session = sessionFactory.getCurrentSession()
-          def combo_tipps = RefdataCategory.lookup('Combo.Type', 'Package.Tipps')
-          def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+          def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
+          def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
           def query = session.createQuery("select tipp.id from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=:p and c.toComponent=tipp  and tipp.status <> :sd and c.type = :ct order by tipp.id")
           query.setReadOnly(true)
           query.setParameter('p', pkg.getId(), StandardBasicTypes.LONG)
@@ -1468,13 +1441,6 @@ class PackageService {
                         sanitize(tipp.editStatus?.value) + '\t' +
                         sanitize(tipp.accessStartDate) + '\t' +
                         sanitize(tipp.accessEndDate) + '\t' +
-                        sanitize(tipp.startDate) + '\t' +
-                        sanitize(tipp.startVolume) + '\t' +
-                        sanitize(tipp.startIssue) + '\t' +
-                        sanitize(tipp.endDate) + '\t' +
-                        sanitize(tipp.endVolume) + '\t' +
-                        sanitize(tipp.endIssue) + '\t' +
-                        sanitize(tipp.embargo) + '\t' +
                         sanitize(tipp.coverageDepth) + '\t' +
                         sanitize(tipp.coverageNote) + '\t' +
                         sanitize(tipp.hostPlatform?.primaryUrl) + '\t' +
@@ -1582,14 +1548,14 @@ class PackageService {
     input.close()
   }
 
-  def synchronized updateFromSource(Package p, def user = null) {
+  def synchronized updateFromSource(Package p, def user = null, ignoreLastChanged = false) {
     log.debug("updateFromSource")
     def result = null
     boolean started = false
     if (running == false) {
       running = true
       log.debug("UpdateFromSource started")
-      result = startSourceUpdate(p, user) ? 'OK' : 'ERROR'
+      result = startSourceUpdate(p, user, ignoreLastChanged) ? 'OK' : 'ERROR'
       running = false
     }
     else {
@@ -1604,7 +1570,7 @@ class PackageService {
    * Bad configurations will result in failure.
    * The autoUpdate frequency in the source is ignored: the update starts immediately.
    */
-  private boolean startSourceUpdate(Package p, def user = null) {
+  private boolean startSourceUpdate(Package p, def user = null, boolean ignoreLastChanged = false) {
     log.debug("Source update start..")
     boolean error = false
     def ygorBaseUrl = grailsApplication.config.gokb.ygorUrl
@@ -1632,13 +1598,16 @@ class PackageService {
 
     if (tokenValue && ygorBaseUrl) {
       def path = "/enrichment/processGokbPackage?pkgId=${p.id}&updateToken=${tokenValue}"
+      if(ignoreLastChanged){
+          path = "/enrichment/processGokbPackage?pkgId=${p.id}&ignoreLastChanged=true&updateToken=${tokenValue}"
+      }
       updateTrigger = new RESTClient(ygorBaseUrl + path)
 
       try {
-        log.debug("GET ygor/enrichment/processGokbPackage?pkgId=${p.id}&updateToken=${tokenValue}")
+        log.debug("GET ygor"+path)
         updateTrigger.request(GET) { request ->
           response.success = { resp, data ->
-            log.debug("GET ygor/enrichment/processGokbPackage?pkgId=${p.id}&updateToken=${tokenValue} => success")
+            log.debug("GET ygor${path} => success")
             // wait for ygor to finish the enrichment
             boolean processing = true
             respData = data
@@ -1701,7 +1670,7 @@ class PackageService {
             }
           }
           response.failure = { resp ->
-            log.error("GET ygor/enrichment/processGokbPackage?pkgId=${p.id}&updateToken=${tokenValue} => failure")
+            log.error("GET ygor${path} => failure")
             log.error("ygor response: ${resp.responseBase}")
             error = true
           }
@@ -1722,7 +1691,7 @@ class PackageService {
     StringBuilder name = new StringBuilder()
     if (type == ExportType.KBART) {
       name.append(toCamelCase(pkg.provider?.name ? pkg.provider.name : "unknown Provider")).append('_')
-          .append(toCamelCase(pkg.global.value)).append('_')
+          .append(toCamelCase(pkg.scope.value)).append('_')
           .append(toCamelCase(pkg.name))
     }
     else {

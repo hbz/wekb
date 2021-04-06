@@ -2,6 +2,7 @@ package org.gokb
 
 import com.k_int.ClassUtils
 import com.k_int.ConcurrencyManagerService.Job
+import de.wekb.helper.RCConstants
 import gokbg3.MessageService
 import grails.converters.JSON
 import grails.plugin.springsecurity.SpringSecurityService
@@ -66,15 +67,15 @@ class CrossRefPkgRun {
     int total = 0
 
     try {
-      status_current = RefdataCategory.lookup('KBComponent.Status', 'Current')
-      status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
-      status_retired = RefdataCategory.lookup('KBComponent.Status', 'Retired')
-      status_expected = RefdataCategory.lookup('KBComponent.Status', 'Expected')
-      rr_deleted = RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'Status Deleted')
-      rr_nonCurrent = RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'Platform Noncurrent')
-      rr_TIPPs_retired = RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'TIPPs Retired')
-      rr_TIPPs_invalid = RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'Invalid TIPPs')
-      status_ip = RefdataCategory.lookup('Package.ListStatus', 'In Progress')
+      status_current = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Current')
+      status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
+      status_retired = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Retired')
+      status_expected = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Expected')
+      rr_deleted = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Status Deleted')
+      rr_nonCurrent = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Platform Noncurrent')
+      rr_TIPPs_retired = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'TIPPs Retired')
+      rr_TIPPs_invalid = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Invalid TIPPs')
+      status_ip = RefdataCategory.lookup(RCConstants.PACKAGE_LIST_STATUS, 'In Progress')
 
       springSecurityService.reauthenticate(user.username)
       user = User.get(user.id)
@@ -86,39 +87,36 @@ class CrossRefPkgRun {
                      message: messageService.resolveCode('crossRef.package.error.apiRole', [], locale)]
         )
         job?.endTime = new Date()
-
         return jsonResult
       }
+
       // validate and upsert header pkg
       if (!(rjson?.packageHeader?.name)) {
         globalError([code   : 400,
                      message: messageService.resolveCode('crossRef.package.error', [], locale)]
         )
         job?.endTime = new Date()
-
         return jsonResult
       }
+
       // Package Validation
       pkg_validation = Package.validateDTO(rjson.packageHeader, locale)
-
       if (!pkg_validation.valid) {
         globalError([code   : 403,
                      message: messageService.resolveCode('crossRef.package.error.validation.global', null, locale),
                      errors : pkg_validation.errors]
         )
         job?.endTime = new Date()
-
         return jsonResult
       }
+
       // upsert Package
       def proxy = packageService.upsertDTO(rjson.packageHeader, user)
-
       if (!proxy) {
         globalError([code   : 400,
                      message: messageService.resolveCode('crossRef.package.error', null, locale),
         ])
         job?.endTime = new Date()
-
         return jsonResult
       }
 
@@ -146,7 +144,6 @@ class CrossRefPkgRun {
         idx++
         def currentTippError = [index: idx]
         log.info("Crossreferencing #$idx title ${json_tipp.name ?: json_tipp.title.name}")
-
         if ((json_tipp.package == null) && (pkg.id)) {
           json_tipp.package = [internalId: pkg.id]
         }
@@ -155,7 +152,6 @@ class CrossRefPkgRun {
           currentTippError.put('package', ['message': messageService.resolveCode('crossRef.package.tipps.error.pkgId', [json_tipp.title.name], request_locale), baddata: json_tipp.package])
           invalidTipps << json_tipp
         }
-
         if (!invalidTipps.contains(json_tipp)) {
           // validate and upsert TitleInstance
           Map titleErrorMap = handleTitle(json_tipp)
@@ -163,7 +159,6 @@ class CrossRefPkgRun {
             currentTippError.put('title', titleErrorMap)
           }
         }
-
         if (!invalidTipps.contains(json_tipp)) {
           // validate and upsert PlatformInstance
           Map pltErrorMap = handlePlt(json_tipp)
@@ -171,7 +166,6 @@ class CrossRefPkgRun {
             currentTippError.put('platform', pltErrorMap)
           }
         }
-
         if (!invalidTipps.contains(json_tipp)) {
           // validate and upsert TIPP
           Map tippErrorMap = handleTIPP(json_tipp)
@@ -179,7 +173,6 @@ class CrossRefPkgRun {
             currentTippError.put('tipp', tippErrorMap)
           }
         }
-
         if (invalidTipps.contains(json_tipp)) {
           reviewRequestService.raise(
             pkg,

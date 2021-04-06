@@ -69,7 +69,7 @@ class PackageExportSpec extends Specification {
     resp.status == 200 // OK
     resp.body.contains("journal1")
     resp.body.contains("journal2")
-    resp.headers["Content-Disposition"] == ["attachment; filename=\"UnknownProvider_${pack1.global.value}_${pack1.name}_${new SimpleDateFormat("yyyy-MM-dd").format(new Date())}.tsv\""]
+    resp.headers["Content-Disposition"] == ["attachment; filename=\"UnknownProvider_${pack1.scope.value}_${pack1.name}_${new SimpleDateFormat("yyyy-MM-dd").format(new Date())}.tsv\""]
   }
 
   void "test POST /packages/packageTSVExport/"() {

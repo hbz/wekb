@@ -1,20 +1,17 @@
 package org.gokb
 
-import grails.converters.JSON
-import java.text.SimpleDateFormat
-import java.text.MessageFormat
 
+import de.wekb.helper.RCConstants
+import grails.converters.JSON
 import com.k_int.ClassUtils
 
 import org.gokb.cred.*
 
 import org.springframework.security.access.annotation.Secured;
 import grails.gorm.transactions.Transactional
-import grails.util.GrailsNameUtils
 import grails.core.GrailsClass
 import org.grails.datastore.mapping.model.*
 import org.grails.datastore.mapping.model.types.*
-import grails.validation.ValidationException
 
 class AjaxSupportController {
 
@@ -159,7 +156,7 @@ class AjaxSupportController {
       countQry:"select count(rdv) from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       rowQry:"select rdv from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       qryParams:[['cat': "Package Type"]],
-      rdvCat: "Package.Scope",
+      rdvCat: RCConstants.PACKAGE_SCOPE,
       cols:['value'],
       format:'simple'
     ],
@@ -171,7 +168,7 @@ class AjaxSupportController {
       rowQry:"select rdv from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       required:true,
       qryParams:[],
-      rdvCat: "KBComponent.Status",
+      rdvCat: RCConstants.KBCOMPONENT_STATUS,
       cols:['value'],
       format:'simple'
     ],
@@ -190,7 +187,7 @@ class AjaxSupportController {
       countQry:"select count(rdv) from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       rowQry:"select rdv from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       qryParams:[],
-      rdvCat: "KBComponentVariantName.VariantType",
+      rdvCat: RCConstants.KBCOMPONENT_VARIANTNAME_VARIANT_TYPE,
       cols:['value'],
       format:'simple'
     ],
@@ -199,7 +196,7 @@ class AjaxSupportController {
       countQry:"select count(rdv) from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       rowQry:"select rdv from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       qryParams:[],
-      rdvCat: "KBComponentVariantName.VariantType",
+      rdvCat: RCConstants.KBCOMPONENT_VARIANTNAME_VARIANT_TYPE,
       cols:['value'],
       format:'simple'
     ],
@@ -208,7 +205,7 @@ class AjaxSupportController {
       countQry:"select count(rdv) from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       rowQry:"select rdv from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       qryParams:[],
-      rdvCat: "KBComponentVariantName.Locale",
+      rdvCat: RCConstants.KBCOMPONENT_VARIANTNAME_LOCAL,
       cols:['value'],
       format:'simple'
     ],
@@ -219,7 +216,7 @@ class AjaxSupportController {
       countQry:"select count(rdv) from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       rowQry:"select rdv from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       qryParams:[],
-      rdvCat: "ReviewRequest.Status",
+      rdvCat: RCConstants.REVIEW_REQUEST_STATUS,
       cols:['value'],
       format:'simple'
     ],
@@ -229,7 +226,7 @@ class AjaxSupportController {
       rowQry:"select rdv from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       required:true,
       qryParams:[],
-      rdvCat: "TitleInstance.Medium",
+      rdvCat: RCConstants.TITLEINSTANCE_MEDIUM,
       cols:['value'],
       format:'simple'
     ],
@@ -239,7 +236,7 @@ class AjaxSupportController {
       rowQry:"select rdv from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       required:true,
       qryParams:[],
-      rdvCat: "TitleInstancePackagePlatform.CoverageDepth",
+      rdvCat: RCConstants.TIPP_COVERAGE_DEPTH,
       cols:['value'],
       format:'simple'
     ],
@@ -249,7 +246,7 @@ class AjaxSupportController {
       rowQry:"select rdv from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       required:true,
       qryParams:[],
-      rdvCat: "TIPPCoverageStatement.CoverageDepth",
+      rdvCat: RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH,
       cols:['value'],
       format:'simple'
     ],
@@ -1269,7 +1266,7 @@ class AjaxSupportController {
             log.debug("Found existing variant name: ${current_name_as_variant}")
         }
 
-        variant.variantType = RefdataCategory.lookupOrCreate('KBComponentVariantName.VariantType', 'Authorized')
+        variant.variantType = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_VARIANTNAME_VARIANT_TYPE, 'Authorized')
         owner.name = variant.variantName
 
         if (owner.validate()) {
@@ -1458,7 +1455,7 @@ class AjaxSupportController {
         }
 
         if (params.keepLink) {
-          c.status = RefdataCategory.lookup(Combo.RD_STATUS, Combo.STATUS_DELETED)
+          c.status = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_DELETED)
         }
         else{
           c.delete(flush:true);
@@ -1545,8 +1542,8 @@ class AjaxSupportController {
     def result = ['result': 'OK', 'params': params]
     def user_org = UserOrganisation.get(params.id ?: params.userOrg)
     def user = springSecurityService.currentUser
-    def pending_status = RefdataCategory.lookup('MembershipStatus', 'Pending')
-    def role_type = RefdataCategory.lookup('MembershipRole', 'Member')
+    def pending_status = RefdataCategory.lookup(RCConstants.MEMBERSHIP_STATUS, 'Pending')
+    def role_type = RefdataCategory.lookup(RCConstants.MEMBERSHIP_ROLE, 'Member')
 
     if ( user_org && !user_org.members?.party?.contains(user) ) {
       new UserOrganisationMembership(memberOf: user_org, party: user, role: role_type, status: pending_status).save(flush:true, failOnError:true)

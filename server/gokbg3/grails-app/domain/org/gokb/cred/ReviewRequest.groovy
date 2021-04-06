@@ -1,5 +1,7 @@
 package org.gokb.cred
 
+import de.wekb.helper.RCConstants
+
 import javax.persistence.Transient
 import org.gokb.refine.RefineProject
 import grails.converters.JSON
@@ -63,7 +65,7 @@ class ReviewRequest implements Auditable {
 
     // Create a request.
     ReviewRequest req = new ReviewRequest (
-        status : RefdataCategory.lookupOrCreate('ReviewRequest.Status', 'Open'),
+        status : RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STATUS, 'Open'),
         raisedBy : (raisedBy),
         descriptionOfCause : (cause),
         reviewRequest : (actionRequired),
@@ -119,7 +121,7 @@ class ReviewRequest implements Auditable {
   public void RRClose(rrcontext) {
     log.debug("Close review request ${id} (${this.class.name}) - user=${rrcontext.user}");
 
-    setStatus(RefdataCategory.lookupOrCreate('ReviewRequest.Status', 'Closed'))
+    setStatus(RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STATUS, 'Closed'))
     setClosedBy(rrcontext.user)
     save(failOnError:true)
     log.debug("Changed status - ${status} ${closedBy}")
@@ -180,7 +182,7 @@ class ReviewRequest implements Auditable {
 
   def beforeValidate() {
     if ( this.id == null && !isDirty('status') ) {
-      setStatus(RefdataCategory.lookupOrCreate('ReviewRequest.Status', 'Open'))
+      setStatus(RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STATUS, 'Open'))
     }
   }
 

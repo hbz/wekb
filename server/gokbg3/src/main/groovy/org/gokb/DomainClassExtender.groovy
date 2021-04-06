@@ -1,5 +1,7 @@
 package org.gokb
 
+import de.wekb.helper.RCConstants
+
 /**
  * The following class adds the functionality that allows properties maintained by the Combo
  * mechanism instead of the normal Grails gorm mapping.
@@ -27,7 +29,7 @@ package org.gokb
 import grails.util.GrailsNameUtils
 import groovy.util.logging.*
 
-import org.grails.core.GrailsClass
+
 import grails.core.GrailsClass
 import org.gokb.cred.*
 
@@ -39,7 +41,7 @@ class DomainClassExtender {
   private static RefdataValue getComboStatusActive = null;
   public static RefdataValue getComboStatusActive () {
     if (getComboStatusActive == null) {
-      getComboStatusActive = RefdataCategory.lookupOrCreate(Combo.RD_STATUS, Combo.STATUS_ACTIVE)
+      getComboStatusActive = RefdataCategory.lookupOrCreate(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE)
     }
 
     getComboStatusActive
@@ -305,7 +307,7 @@ class DomainClassExtender {
       String type_string = getComboTypeValue(propertyName)
 
       if (type_string) {
-        RefdataValue type = RefdataCategory.lookupOrCreate("Combo.Type", type_string)
+        RefdataValue type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, type_string)
 
         if (typeClass) {
 
@@ -612,7 +614,7 @@ class DomainClassExtender {
       Date endDate = (preserveCurrent ? new Date() : null)
 
       // Generate the type.
-      RefdataValue type = RefdataCategory.lookupOrCreate("Combo.Type", getComboTypeValue(propertyName))
+      RefdataValue type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, getComboTypeValue(propertyName))
 
       // Get all..
       List<Combo> combos
@@ -765,7 +767,7 @@ class DomainClassExtender {
         if (value) {
 
           // Generate the type.
-          RefdataValue type = RefdataCategory.lookupOrCreate(Combo.RD_TYPE, getComboTypeValue(propertyName))
+          RefdataValue type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, getComboTypeValue(propertyName))
 
           // Go through each item and generate a value.
           switch (value) {

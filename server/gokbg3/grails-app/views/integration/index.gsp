@@ -2,10 +2,10 @@
 <html>
 <head>
 <meta name="layout" content="sb-admin" />
-<title>GOKb: Integration API</title>
+<title><g:message code="gokb.appname" default="we:kb"/>: Integration API</title>
 </head>
 <body>
-  <h1 class="page-header">GOKb Integration API</h1>
+  <h1 class="page-header"><g:message code="gokb.appname" default="we:kb"/> Integration API</h1>
    <div id="mainarea" class="panel panel-default ${displayobj != null ? 'col-md-5 ' : ''}">
       <div class="panel-heading">
         <h3 class="panel-title">
@@ -14,9 +14,9 @@
       </div>
       <div class="panel-body">
         <p>Tell the system what you know about a particular title
-          (Specifically your local identifiers). This will enable GOKb to
+          (Specifically your local identifiers). This will enable <g:message code="gokb.appname" default="we:kb"/> to
           cross reference well known public identifiers with your local system
-          identifiers. GOKb can then support coreferencing of your local
+          identifiers. <g:message code="gokb.appname" default="we:kb"/> can then support coreferencing of your local
           identifiers, and identify titles using local proprietary naming
           schemes.</p>
         <h4>Usage:</h4>
@@ -65,7 +65,7 @@
           </code>
         </pre>
   
-        <p>The following CURL command will tell GOKb about the JUSP title for &quot;3 Biotech&quot;</p>
+        <p>The following CURL command will tell <g:message code="gokb.appname" default="we:kb"/> about the JUSP title for &quot;3 Biotech&quot;</p>
         <pre>
           <code>
 curl -v --user user:pass -X POST -H "Content-Type: application/json" -d '{"title":"3 Biotech",identifiers:[{"type":"eissn","value":"2190-5738"},{"type":"jusp","value":"6416"}]}' <g:createLink  controller="integration" action="crossReferenceTitle" />
@@ -103,7 +103,7 @@ curl -v --user user:pass -X POST -H "Content-Type: application/json" -d '{"title
           </code>
         </pre>
   
-        <p>The following CURL command will tell GOKb about the JUSP title for &quot;3 Biotech&quot;</p>
+        <p>The following CURL command will tell <g:message code="gokb.appname" default="we:kb"/> about the JUSP title for &quot;3 Biotech&quot;</p>
         <pre>
           <code>
 curl -v --user user:pass -X POST -H "Content-Type: application/json" -d '{"title":"3 Biotech",identifiers:[{"type":"eissn","value":"2190-5738"},{"type":"jusp","value":"6416"}]}' <g:createLink  controller="integration" action="crossReferenceTitle" />

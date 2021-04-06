@@ -1,5 +1,6 @@
 package gokbg3.rest
 
+import de.wekb.helper.RCConstants
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
 import grails.plugins.rest.client.RestBuilder
@@ -22,7 +23,7 @@ class SourcesTestSpec extends AbstractAuthSpec {
     IdentifierNamespace titleNS = IdentifierNamespace.findByName("TestSourceTitleNS") ?: new IdentifierNamespace(
       value: "testsourcetitlenamespace",
       name: "TestSourceTitleNS",
-      targetType: RefdataCategory.lookup('IdentifierNamespace.TargetType', 'Title'))
+      targetType: RefdataCategory.lookup(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE, 'Title'))
     Source quelle = Source.findByName("TestSource") ?: new Source(name: "TestSource", targetNamespace: titleNS)
   }
 

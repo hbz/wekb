@@ -35,11 +35,8 @@ class FTUpdateService {
   }
 
   def doFTUpdate() {
-    log.debug("doFTUpdate")
     log.debug("Execute IndexUpdateJob starting at ${new Date()}")
-    def start_time = System.currentTimeMillis()
     def esclient = ESWrapperService.getClient()
-
     try {
       updateES(esclient, org.gokb.cred.Package.class) { org.gokb.cred.Package kbc ->
         def result = null
@@ -53,6 +50,8 @@ class FTUpdateService {
         result.sortname = kbc.name
         result.altname = []
         result.listStatus = kbc.listStatus?.value
+        result.openAccess = kbc.openAccess?.value
+        result.file = kbc.file?.value
         result.lastUpdatedDisplay = dateFormatService.formatIsoTimestamp(kbc.lastUpdated)
         kbc.variantNames.each { vn ->
           result.altname.add(vn.variantName)
@@ -67,8 +66,7 @@ class FTUpdateService {
         result.nominalPlatformName = kbc.nominalPlatform?.name ?: ""
         result.nominalPlatformUuid = kbc.nominalPlatform?.uuid ?: ""
         result.scope = kbc.scope ? kbc.scope.value : ""
-        if (kbc.listVerifiedDate)
-          result.listVerifiedDate = dateFormatService.formatIsoTimestamp(kbc.listVerifiedDate)
+
         if (kbc.source) {
           result.source = [
             id              : kbc.source.id,
@@ -77,8 +75,9 @@ class FTUpdateService {
             url             : kbc.source.url,
             frequency       : kbc.source.frequency,
           ]
-          if (kbc.source.lastRun)
+          if (kbc.source.lastRun){
             result.source.lastRun = dateFormatService.formatIsoTimestamp(kbc.source.lastRun)
+          }
         }
         result.curatoryGroups = []
         kbc.curatoryGroups?.each { cg ->
@@ -393,7 +392,6 @@ class FTUpdateService {
             result.altname.add(vn.variantName)
           }
         }
-
         if (kbc.medium) result.medium = kbc.medium.value
         if (kbc.status) result.status = kbc.status.value
         if (kbc.publicationType) result.publicationType = kbc.publicationType.value
@@ -404,7 +402,6 @@ class FTUpdateService {
                                   value        : idc.toComponent.value,
                                   namespaceName: idc.toComponent.namespace.name])
         }
-
         if (kbc.dateFirstOnline) result.dateFirstOnline = dateFormatService.formatIsoTimestamp(kbc.dateFirstOnline)
         if (kbc.dateFirstInPrint) result.dateFristInPrint = dateFormatService.formatIsoTimestamp(kbc.dateFirstInPrint)
         if (kbc.accessStartDate) result.accessStartDate = dateFormatService.formatIsoTimestamp(kbc.accessStartDate)
@@ -428,10 +425,12 @@ class FTUpdateService {
           price.type = p.priceType?.value ?: ""
           price.amount = String.valueOf(p.price) ?: ""
           price.currency = p.currency?.value ?: ""
-          if (p.startDate)
+          if (p.startDate){
             price.startDate = dateFormatService.formatIsoTimestamp(p.startDate)
-          if (p.endDate)
+          }
+          if (p.endDate){
             price.endDate = dateFormatService.formatIsoTimestamp(p.endDate)
+          }
           result.prices.add(price)
         }
 
@@ -444,8 +443,8 @@ class FTUpdateService {
     running = false
   }
 
-  def updateES(esclient, domain, recgen_closure) {
 
+  def updateES(esclient, domain, recgen_closure) {
     log.debug("updateES(${domain}...)")
     cleanUpGorm()
     def count = 0
@@ -456,24 +455,29 @@ class FTUpdateService {
       def highest_id = 0
       FTControl.withNewTransaction {
         latest_ft_record = FTControl.findByDomainClassNameAndActivity(domain.name, 'ESIndex')
-
         log.debug("result of findByDomain: ${domain} ${latest_ft_record}")
         if (!latest_ft_record) {
-          latest_ft_record = new FTControl(domainClassName: domain.name, activity: 'ESIndex', lastTimestamp: 0, lastId: 0).save(flush: true, failOnError: true)
+          latest_ft_record =
+              new FTControl(domainClassName: domain.name, activity: 'ESIndex', lastTimestamp: 0, lastId: 0)
+                  .save(flush: true, failOnError: true)
           log.debug("Create new FT control record, as none available for ${domain.name}")
         }
         else {
           highest_timestamp = latest_ft_record.lastTimestamp
-          log.debug("Got existing ftcontrol record for ${domain.name} max timestamp is ${highest_timestamp} which is ${new Date(highest_timestamp)}")
+          log.debug("Got existing ftcontrol record for ${domain.name} max timestamp is ${highest_timestamp} which is " +
+              "${new Date(highest_timestamp)}")
         }
       }
       log.debug("updateES ${domain.name} since ${latest_ft_record.lastTimestamp}")
 
       def total = 0
       Date from = new Date(latest_ft_record.lastTimestamp)
-      def countq = domain.executeQuery("select count(o.id) from " + domain.name + " as o where (( o.lastUpdated > :ts ) OR ( o.dateCreated > :ts )) ", [ts: from], [readonly: true])[0]
+      def countq = domain.executeQuery("select count(o.id) from " + domain.name +
+          " as o where (( o.lastUpdated > :ts ) OR ( o.dateCreated > :ts )) ", [ts: from], [readonly: true])[0]
       log.debug("Will process ${countq} records")
-      def q = domain.executeQuery("select o.id from " + domain.name + " as o where ((o.lastUpdated > :ts ) OR ( o.dateCreated > :ts )) order by o.lastUpdated, o.id", [ts: from], [readonly: true])
+      def q = domain.executeQuery("select o.id from " + domain.name +
+          " as o where ((o.lastUpdated > :ts ) OR ( o.dateCreated > :ts )) order by o.lastUpdated, o.id", [ts: from],
+          [readonly: true])
       log.debug("Query completed.. processing rows...")
 
       BulkRequestBuilder bulkRequest = esclient.prepareBulk()
@@ -522,7 +526,6 @@ class FTUpdateService {
           }
         }
       }
-
       if (count > 0) {
         def bulkFinalResponse = bulkRequest.get()
         log.debug("Final BulkResponse: ${bulkFinalResponse}")
@@ -545,12 +548,14 @@ class FTUpdateService {
     }
   }
 
+
   def cleanUpGorm() {
     log.debug("Clean up GORM")
     def session = sessionFactory.currentSession
     session.flush()
     session.clear()
   }
+
 
   def clearDownAndInitES() {
     if (running == false) {
@@ -566,6 +571,7 @@ class FTUpdateService {
       return "Job cancelled – FTUpdate was already running!"
     }
   }
+
 
   @javax.annotation.PreDestroy
   def destroy() {

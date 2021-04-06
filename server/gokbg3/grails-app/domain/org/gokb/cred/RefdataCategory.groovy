@@ -44,7 +44,7 @@ class RefdataCategory {
   public static final String restPath = "/refdata/categories"
 
 
-  static def lookup(category_name, value, def sortkey = null) {
+  static def lookup(category_name, value, def sortkey = null){
     if ((value == null) || (category_name == null)){
       throw new RuntimeException("Request to lookupOrCreate null value in category ${category_name}")
     }

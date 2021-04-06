@@ -4,6 +4,7 @@
 
 import com.k_int.TextUtils
 
+println("-- using runtime.groovy config file !!! --")
 kbart2.mappings= [
   // Digital Archival Collections Ingest Format
     DAC : [
@@ -451,14 +452,6 @@ grails {
   }
 }
 
-validationRules = [
-  [ type:'must', rule:'ContainOneOfTheFollowingColumns', colnames:[ 'title.identifier.issn'] ],
-  [ type:'must', rule:'ContainOneOfTheFollowingColumns', colnames:[ 'title.identifier.eissn'] ],
-  [ type:'must', rule:'ContainOneOfTheFollowingColumns', colnames:[ 'publicationtitle'] ],
-  [ type:'must', rule:'ContainOneOfTheFollowingColumns', colnames:[ 'platform.host.name'] ],
-  [ type:'must', rule:'ContainOneOfTheFollowingColumns', colnames:[ 'platform.host.url'] ] ,
-  [ type:'must', rule:'ContainOneOfTheFollowingColumns', colnames:[ 'org.publisher.name'] ]
-]
 
 validation.regex.issn = "^\\d{4}\\-\\d{3}[\\dX]\$"
 validation.regex.eissn = "^\\d{4}\\-\\d{3}[\\dX]\$"
@@ -495,8 +488,8 @@ grails.plugin.springsecurity.ui.password.maxLength = 64
 grails.plugin.springsecurity.ui.password.validationRegex = '^.*$'
 
 //configure register
-grails.plugin.springsecurity.ui.register.emailFrom = "GOKb<no-reply@gokb.org>"
-grails.plugin.springsecurity.ui.register.emailSubject = 'Welcome to GOKb'
+grails.plugin.springsecurity.ui.register.emailFrom = "we:kb<no-reply@gokb.org>"
+grails.plugin.springsecurity.ui.register.emailSubject = 'Welcome to we:kb'
 grails.plugin.springsecurity.ui.register.defaultRoleNames = [
   "ROLE_USER"
 ]

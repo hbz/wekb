@@ -1,7 +1,8 @@
 package org.gokb.cred
 
-import com.k_int.ClassUtils
-import grails.gorm.transactions.Transactional
+
+import de.wekb.annotations.RefdataAnnotation
+import de.wekb.helper.RCConstants
 import org.gokb.GOKbTextUtils
 
 import javax.persistence.Transient
@@ -23,34 +24,40 @@ class Package extends KBComponent {
   // Breakable?: Y
   // Parent?: N // SO: This should not be needed really now. We should be able to test children for empty set.
   // Global?: Y
-  // Fixed?: Y
   // Consistent?: N
 
   // Refdata
+  @RefdataAnnotation(cat = RCConstants.PACKAGE_SCOPE)
   RefdataValue scope
+  @RefdataAnnotation(cat = RCConstants.PACKAGE_LIST_STATUS)
   RefdataValue listStatus
+  @RefdataAnnotation(cat = RCConstants.PACKAGE_CONTENT_TYPE)
   RefdataValue contentType
+  @RefdataAnnotation(cat = RCConstants.PACKAGE_BREAKABLE)
   RefdataValue breakable
+  @RefdataAnnotation(cat = RCConstants.PACKAGE_CONSISTENT)
   RefdataValue consistent
-  RefdataValue fixed
+  @RefdataAnnotation(cat = RCConstants.PACKAGE_PAYMENT_TYPE)
   RefdataValue paymentType
-  RefdataValue global
+
+  @RefdataAnnotation(cat = RCConstants.PACKAGE_OPEN_ACCESS)
+  RefdataValue openAccess
+
+  @RefdataAnnotation(cat = RCConstants.PACKAGE_FILE)
+  RefdataValue file
+
   RefineProject lastProject
   String globalNote
-  String listVerifier
-  User userListVerifier
-  Date listVerifiedDate
+
   String descriptionURL
 
-  private static refdataDefaults = [
+/*  private static refdataDefaults = [
     "scope"      : "Front File",
     "listStatus" : "Checked",
     "breakable"  : "Unknown",
     "consistent" : "Unknown",
-    "fixed"      : "Unknown",
-    "paymentType": "Unknown",
-    "global"     : "Global"
-  ]
+    "paymentType": "Unknown"
+  ]*/
 
   static manyByCombo = [
     tipps         : TitleInstancePackagePlatform,
@@ -83,13 +90,11 @@ class Package extends KBComponent {
     scope column: 'pkg_scope_rv_fk'
     breakable column: 'pkg_breakable_rv_fk'
     consistent column: 'pkg_consistent_rv_fk'
-    fixed column: 'pkg_fixed_rv_fk'
     paymentType column: 'pkg_payment_type_rv_fk'
-    global column: 'pkg_global_rv_fk'
     globalNote column: 'pkg_global_note'
-    listVerifier column: 'pkg_list_verifier'
-    userListVerifier column: 'pkg_list_verifier_user_fk'
     descriptionURL column: 'pkg_descr_url'
+    openAccess column: 'pkg_open_access'
+    file column: 'pkg_file'
   }
 
   static constraints = {
@@ -98,16 +103,16 @@ class Package extends KBComponent {
     listStatus(nullable: true, blank: false)
     breakable(nullable: true, blank: false)
     consistent(nullable: true, blank: false)
-    fixed(nullable: true, blank: false)
     paymentType(nullable: true, blank: false)
-    global(nullable: true, blank: false)
     globalNote(nullable: true, blank: true)
+    openAccess (nullable: true, blank: true)
+    file (nullable: true, blank: true)
     lastProject(nullable: true, blank: false)
     descriptionURL(nullable: true, blank: true)
     name(validator: { val, obj ->
       if (obj.hasChanged('name')) {
         if (val && val.trim()) {
-          def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+          def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
           def dupes = Package.findAllByNameIlikeAndStatusNotEqual(val, status_deleted);
 
           if (dupes?.size() > 0 && dupes.any { it != obj }) {
@@ -141,6 +146,8 @@ class Package extends KBComponent {
       'titleCount'         : false,
       'paymentType'        : false,
       'listStatus'         : "refdata",
+      'file'               : "refdata",
+      'openAccess'         : "refdata",
       'contentType'        : "refdata",
       'scope'              : "refdata"
     ],
@@ -158,11 +165,11 @@ class Package extends KBComponent {
 
   static def refdataFind(params) {
     def result = [];
-    def status_deleted = RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, KBComponent.STATUS_DELETED)
+    def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED)
     def status_filter = null
 
     if (params.filter1) {
-      status_filter = RefdataCategory.lookup('KBComponent.Status', params.filter1)
+      status_filter = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, params.filter1)
     }
 
     def ql = null;
@@ -186,7 +193,7 @@ class Package extends KBComponent {
 
     if (this.id) {
       if (onlyCurrent) {
-        def refdata_current = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Current');
+        def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current');
 
         all_titles = TitleInstance.executeQuery('''select distinct title
           from TitleInstance as title,
@@ -220,7 +227,7 @@ class Package extends KBComponent {
 
   @Transient
   public getCurrentTitleCount() {
-    def refdata_current = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Current');
+    def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current');
 
     int result = TitleInstance.executeQuery('''select count(distinct title.id)
       from TitleInstance as title,
@@ -240,8 +247,8 @@ class Package extends KBComponent {
 
   @Transient
   public getCurrentTippCount() {
-    def refdata_current = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Current');
-    def combo_tipps = RefdataCategory.lookup('Combo.Type', 'Package.Tipps')
+    def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current');
+    def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
 
     int result = Combo.executeQuery("select count(c.id) from Combo as c where c.fromComponent = ? and c.type = ? and c.toComponent.status = ?"
       , [this, combo_tipps, refdata_current])[0]
@@ -252,13 +259,13 @@ class Package extends KBComponent {
   @Transient
   public getReviews(def onlyOpen = true, def onlyCurrent = false) {
     def all_rrs = null
-    def refdata_current = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Current');
+    def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current');
 
     if (onlyOpen) {
 
       log.debug("Looking for more ReviewRequests connected to ${this}")
 
-      def refdata_open = RefdataCategory.lookupOrCreate('ReviewRequest.Status', 'Open');
+      def refdata_open = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STATUS, 'Open');
 
       if (onlyCurrent) {
         all_rrs = ReviewRequest.executeQuery('''select distinct rr
@@ -377,7 +384,7 @@ select tipp.id,
     Date now = new Date()
 
     if (tipps?.size() > 0) {
-      def deleted_status = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+      def deleted_status = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
       def tipp_ids = tipps?.collect { it.id }
 
       TitleInstancePackagePlatform.executeUpdate("update TitleInstancePackagePlatform as t set t.status = :del, t.lastUpdateComment = 'Deleted via Package delete', t.lastUpdated = :now where t.status != :del and t.id IN (:ttd)", [del: deleted_status, ttd: tipp_ids, now: now])
@@ -389,7 +396,7 @@ select tipp.id,
     log.debug("package::retire");
     // Call the delete method on the superClass.
     log.debug("Updating package status to retired");
-    def retired_status = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Retired');
+    def retired_status = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Retired');
     this.status = retired_status
     this.save();
 
@@ -416,7 +423,8 @@ select tipp.id,
       [code: 'exportPackage', label: 'TSV Export'],
       [code: 'kbartExport', label: 'KBART Export'],
       [code: 'verifyTitleList', label: 'Verify Title List'],
-      [code: 'packageUrlUpdate', label: 'Trigger Update']
+      [code: 'packageUrlUpdate', label: 'Trigger Update (Changed Titles)'],
+      [code: 'packageUrlUpdateAllTitles', label: 'Trigger Update (all Titles)']
       // [code:'method::registerWebhook', label:'Register Web Hook']
     ]
   }
@@ -459,10 +467,10 @@ select tipp.id,
 
     def identifier_prefix = "uri://gokb/${grailsApplication.config.sysid}/title/"
 
-    def refdata_package_tipps = RefdataCategory.lookupOrCreate('Combo.Type', 'Package.Tipps');
-    def refdata_hosted_tipps = RefdataCategory.lookupOrCreate('Combo.Type', 'Platform.HostedTipps');
-    def refdata_ti_tipps = RefdataCategory.lookupOrCreate('Combo.Type', 'TitleInstance.Tipps');
-    def refdata_deleted = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Deleted');
+    def refdata_package_tipps = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Package.Tipps');
+    def refdata_hosted_tipps = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Platform.HostedTipps');
+    def refdata_ti_tipps = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'TitleInstance.Tipps');
+    def refdata_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted');
 
     // log.debug("Running package contents qry : ${OAI_PKG_CONTENTS_QRY}");
 
@@ -479,11 +487,11 @@ select tipp.id,
         'listStatus'(listStatus?.value)
         'breakable'(breakable?.value)
         'consistent'(consistent?.value)
-        'fixed'(fixed?.value)
         'paymentType'(paymentType?.value)
-        'global'(global?.value)
         'globalNote'(globalNote)
         'contentType'(contentType?.value)
+        'openAccess'(openAccess?.value)
+        'file'(file?.value)
 
         if (nominalPlatform) {
           builder.'nominalPlatform'([id: nominalPlatform.id, uuid: nominalPlatform.uuid]) {
@@ -497,8 +505,6 @@ select tipp.id,
             'name'(provider.name)
           }
         }
-
-        'listVerifiedDate'(listVerifiedDate ? dateFormatService.formatIsoTimestamp(listVerifiedDate) : null)
 
         builder.'curatoryGroups' {
           curatoryGroups.each { cg ->
@@ -569,16 +575,16 @@ select tipp.id,
 
   @Transient
   private static getTitleIds(Long title_id) {
-    def refdata_ids = RefdataCategory.lookupOrCreate('Combo.Type', 'KBComponent.Ids');
-    def status_active = RefdataCategory.lookupOrCreate(Combo.RD_STATUS, Combo.STATUS_ACTIVE)
+    def refdata_ids = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'KBComponent.Ids');
+    def status_active = RefdataCategory.lookupOrCreate(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE)
     def result = Identifier.executeQuery("select i.namespace.value, i.value, i.namespace.family, i.namespace.name from Identifier as i, Combo as c where c.fromComponent.id = ? and c.type = ? and c.toComponent = i and c.status = ?", [title_id, refdata_ids, status_active], [readOnly: true]);
     result
   }
 
   @Transient
   private static getTippIds(Long tipp_id) {
-    def refdata_ids = RefdataCategory.lookupOrCreate('Combo.Type', 'KBComponent.Ids');
-    def status_active = RefdataCategory.lookupOrCreate(Combo.RD_STATUS, Combo.STATUS_ACTIVE)
+    def refdata_ids = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'KBComponent.Ids');
+    def status_active = RefdataCategory.lookupOrCreate(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE)
     def result = Identifier.executeQuery("select i.namespace.value, i.value, i.namespace.family, i.namespace.name from Identifier as i, Combo as c where c.fromComponent.id = ? and c.type = ? and c.toComponent = i and c.status = ?", [tipp_id, refdata_ids, status_active], [readOnly: true]);
     result
   }
@@ -601,7 +607,7 @@ select tipp.id,
     def result = [];
 
     if (this.id) {
-      def status_deleted = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Deleted')
+      def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
 
       // select tipp, accessStartDate, 'Added' from tipps UNION select tipp, accessEndDate, 'Removed' order by date
 
@@ -682,7 +688,7 @@ select tipp.id,
       }
     }
     if (result.valid) {
-      def status_deleted = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Deleted')
+      def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
       def pkg_normname = Package.generateNormname(packageHeaderDTO.name)
 
       def name_candidates = Package.executeQuery("from Package as p where p.normname = ? and p.status <> ?", [pkg_normname, status_deleted])

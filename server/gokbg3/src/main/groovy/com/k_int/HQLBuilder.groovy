@@ -1,5 +1,6 @@
 package com.k_int
 
+import de.wekb.helper.RCConstants
 import groovy.util.logging.*
 import org.gokb.cred.*;
 import grails.util.GrailsClassUtils
@@ -265,8 +266,8 @@ public class HQLBuilder {
       def combo_status_bindvar = combo_scope_name+"_status"
       hql_builder_context.query_clauses.add("${combo_scope_name}.type = :${combo_type_bindvar}");
       hql_builder_context.query_clauses.add("${combo_scope_name}.status = :${combo_status_bindvar}");
-      hql_builder_context.bindvars[combo_type_bindvar] = RefdataCategory.lookupOrCreate ( "Combo.Type", the_class.getComboTypeValueFor (the_class, propname))
-      hql_builder_context.bindvars[combo_status_bindvar] = RefdataCategory.lookup("Combo.Status", "Active")
+      hql_builder_context.bindvars[combo_type_bindvar] = RefdataCategory.lookupOrCreate ( RCConstants.COMBO_TYPE, the_class.getComboTypeValueFor (the_class, propname))
+      hql_builder_context.bindvars[combo_status_bindvar] = RefdataCategory.lookup(RCConstants.COMBO_STATUS, "Active")
     }
 
     def component_scope_name = propname

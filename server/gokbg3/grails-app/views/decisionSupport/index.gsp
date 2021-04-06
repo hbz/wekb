@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta name='layout' content='sb-admin'/>
-    <title>GOKb: Decision Support Dashboard</title>
+    <title><g:message code="gokb.appname" default="we:kb"/>: Decision Support Dashboard</title>
   </head>
   <body>
     <h1 class="page-header">Decision Support Dashboard</h1>

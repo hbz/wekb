@@ -1,11 +1,6 @@
 <%@ page import="org.gokb.cred.RefdataCategory" %>
 <%@page expressionCodec="none" %>
 <!DOCTYPE html>
-<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]-->
-<!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]-->
-<!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
-<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!-->
 <html lang="en" class="no-js">
 <!--<![endif]-->
 <head>
@@ -13,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title><g:layoutTitle default="GOKb" /></title>
+  <title><g:message code="gokb.appname" default="we:kb"/></title>
 
   <link rel="shortcut icon" href="${resource(dir: 'images', file: 'favicon.ico')}" type="image/x-icon">
   <g:layoutHead />
@@ -39,6 +34,8 @@
 
 </head>
 
+<wekb:serviceInjection />
+
 <body class="theme-${ grailsApplication.config.gokb.theme }">
 
   <div id="wrapper">
@@ -54,17 +51,19 @@
             <span class="icon-bar"></span>
             <span  class="icon-bar"></span>
         </button>
-        <g:link uri="/" class="navbar-brand" style="font-weight:bold;">
-          <g:message code="gokb.appname" default="GOKb"/> v<g:meta name="info.app.version" />
-          <g:if test="${grailsApplication.config.gokb.instance?.description}">
-            – ${grailsApplication.config.gokb.instance?.description}
-          </g:if>
+        <g:link uri="/" class="navbar-brand mekb-logo" >
+          <img  alt="Logo wekb"  src="${resource(dir: 'images', file: 'logo.svg')}"/>
         </g:link>
       </div>
       <!-- /.navbar-header -->
 
       <sec:ifLoggedIn>
         <ul class="nav navbar-nav navbar-right">
+          <g:if test="${grailsApplication.config.gokb.ygorUrl}">
+            <li><a  style="font-weight:bold;" href ="${grailsApplication.config.gokb.ygorUrl}">Ygor</a></li>
+          </g:if>
+
+          <li><span style="width:15px"></span></li>
           <li class="dropdown">
           	<a class="dropdown-toggle" data-toggle="dropdown" href="#" style="font-weight:bold;">
             	<i class="fa fa-user fa-fw"></i>

@@ -1,8 +1,9 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <!DOCTYPE html>
 <html>
   <head>
     <meta name='layout' content='sb-admin'/>
-    <title>GOKb: User Dashboard</title>
+    <title><g:message code="gokb.appname" default="we:kb"/>: User Dashboard</title>
   </head>
   <body>
     <h1 class="page-header">${request.user?.displayName ?: request.user?.username}</h1>
@@ -15,7 +16,7 @@
             </div>
             <div class="panel-body">
               <g:link class="display-inline" controller="search" action="index"
-                params="[qbe:'g:reviewRequests', qp_allocatedto:'org.gokb.cred.User:' + Long.toString(request.user.id), qp_status:'org.gokb.cred.RefdataValue:' + Long.toString(org.gokb.cred.RefdataCategory.lookupOrCreate('ReviewRequest.Status', 'Open').id), inline:true, hide:['qp_project', 'qp_allocatedto']]"
+                params="[qbe:'g:reviewRequests', qp_allocatedto:'org.gokb.cred.User:' + Long.toString(request.user.id), qp_status:'org.gokb.cred.RefdataValue:' + Long.toString(org.gokb.cred.RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STATUS, 'Open').id), inline:true, hide:['qp_project', 'qp_allocatedto']]"
                 id="">Your Review Tasks</g:link>
             </div>
           </div>
@@ -25,7 +26,7 @@
             </div>
             <div class="panel-body">
               <g:link class="display-inline" controller="search" action="index"
-                params="[qbe:'g:UserWatchedComponents', inline:true]"
+                params="[qbe:'g:userWatchedComponents', inline:true]"
                 id="">User Watched Components</g:link>
             </div>
           </div>
@@ -35,7 +36,7 @@
             </div>
             <div class="panel-body">
               <g:link class="display-inline" controller="search" action="index"
-                params="[qbe:'g:JobResult', inline:true]"
+                params="[qbe:'g:jobResults', inline:true]"
                 id="">Finished Upload Jobs</g:link>
             </div>
           </div>

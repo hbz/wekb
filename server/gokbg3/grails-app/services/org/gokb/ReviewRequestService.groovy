@@ -1,5 +1,6 @@
 package org.gokb
 
+import de.wekb.helper.RCConstants
 import org.gokb.cred.*
 import com.k_int.ClassUtils
 
@@ -8,7 +9,7 @@ class ReviewRequestService {
   def raise(KBComponent forComponent, String actionRequired, String cause = null, User raisedBy = null, refineProject = null, additionalInfo = null, RefdataValue stdDesc = null, CuratoryGroup group = null) {
     // Create a request.
     ReviewRequest req = new ReviewRequest(
-      status: RefdataCategory.lookupOrCreate('ReviewRequest.Status', 'Open'),
+      status: RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STATUS, 'Open'),
       raisedBy: (raisedBy),
       descriptionOfCause: (cause),
       reviewRequest: (actionRequired),

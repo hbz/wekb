@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name='layout' content='public' />
-<title>GOKb: Welcome</title>
+<title><g:message code="gokb.appname" default="we:kb"/>: Welcome</title>
 </head>
 
 <body>
@@ -19,7 +19,7 @@
                     <span class="icon-bar"></span>
                 </button>
                 <!-- navbar-brand is hidden on larger screens, but visible when the menu is collapsed -->
-                <a class="navbar-brand" href="index.html">GOKb</a>
+                <a class="navbar-brand" href="index.html"><g:message code="gokb.appname" default="we:kb"/></a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="primary-nav">
@@ -74,7 +74,7 @@
 					</div>
 					<span class="brand-before"> <small>Welcome to</small>
 					</span>
-					<h1 class="brand-name">GOKb</h1>
+					<h1 class="brand-name"><g:message code="gokb.appname" default="we:kb"/></h1>
 				</div>
 			</div>
 		</div>
@@ -84,10 +84,10 @@
 				<div class="col-lg-12">
 					<hr>
 					<h2 class="intro-text text-center">
-						About <strong>GOKb</strong>
+						About <strong><g:message code="gokb.appname" default="we:kb"/></strong>
 					</h2>
 					<hr>
-					<p>GOKb, the Global Open Knowledgebase, is a community-managed
+					%{--<p>GOKb, the Global Open Knowledgebase, is a community-managed
 						project that aims to describe electronic journals and books,
 						publisher packages, and platforms in a way that will be familiar
 						to librarians who have worked with electronic resources. Following
@@ -117,7 +117,7 @@
 					<p>
 						Further general information about the project can be found at <a
 							href="http://gokb.org/">http://gokb.org</a>.
-					</p>
+					</p>--}%
 				</div>
 			</div>
 		</div>

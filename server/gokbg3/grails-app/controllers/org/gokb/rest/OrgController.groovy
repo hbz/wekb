@@ -1,5 +1,6 @@
 package org.gokb.rest
 
+import de.wekb.helper.RCConstants
 import grails.converters.*
 import grails.core.GrailsClass
 import grails.gorm.transactions.*
@@ -284,7 +285,7 @@ class OrgController {
     }
 
     if (reqBody.providedPlatforms instanceof Collection) {
-      def plt_combo_type = RefdataCategory.lookup('Combo.Type', 'Platform.Provider')
+      def plt_combo_type = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Platform.Provider')
       Set new_plts = []
 
       reqBody.providedPlatforms.each { plt ->

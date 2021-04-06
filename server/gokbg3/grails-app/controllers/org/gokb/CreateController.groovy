@@ -6,6 +6,8 @@ import org.gokb.cred.*
 import org.grails.datastore.mapping.model.*
 import org.grails.datastore.mapping.model.types.*
 import grails.core.GrailsClass
+import wekb.AccessService
+
 import java.time.Instant
 import java.time.ZoneId
 import java.time.LocalDateTime
@@ -17,8 +19,9 @@ class CreateController {
   def springSecurityService
   def displayTemplateService
   def messageSource
+  AccessService accessService
 
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
   def index() {
     log.debug("CreateControler::index... ${params}");
     def result=[:]
@@ -27,7 +30,8 @@ class CreateController {
     // Create a new empty instance of the object to create
     result.newclassname=params.tmpl
     if ( params.tmpl ) {
-      def newclass = grailsApplication.getArtefact("Domain",result.newclassname);
+      def newclass = grailsApplication.getArtefact("Domain",result.newclassname)
+      result.editable = accessService.checkEditableObject(newclass, params)
       if ( newclass ) {
         log.debug("Got new class");
         try {
@@ -41,11 +45,16 @@ class CreateController {
             result.refdata_properties = classExaminationService.getRefdataPropertyNames(result.newclassname)
             result.displayobjclassname_short = result.displayobj.class.simpleName
             result.isComponent = (result.displayobj instanceof KBComponent)
+            result.editable = true
           }
         }
         catch ( Exception e ) {
           log.error("Problem",e);
         }
+      }else {
+        log.info("No Permission for ${result.newclassname} in CreateControler::index... ${params}");
+        response.sendError(401)
+        return
       }
     }
 
@@ -53,7 +62,7 @@ class CreateController {
     result
   }
 
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
   def process() {
     log.debug("CreateController::process... ${params}");
 
@@ -135,10 +144,10 @@ class CreateController {
           }
           log.debug("Completed setting properties");
 
-          if ( result.newobj.hasProperty('postCreateClosure') ) {
+         /* if ( result.newobj.hasProperty('postCreateClosure') ) {
             log.debug("Created object has a post create closure.. call it");
             result.newobj.postCreateClosure.call([user:user])
-          }
+          }*/
 
           // Add an error message here if no property was set via data sent through from the form.
           if (!propertyWasSet) {
@@ -213,6 +222,20 @@ class CreateController {
                   }
                   result.newobj.save(flush:true)
                 }
+              }
+
+              if (result.newobj.respondsTo("getCuratoryGroups")) {
+                log.debug("Set CuratoryGroups..");
+                if(user.isAdmin() || user.getSuperUserStatus()) {
+                  flash.message = "Object was not assigned to a curator group because you are admin or superuser!!!!"
+
+                }else {
+                  user.curatoryGroups.each { CuratoryGroup cg ->
+                    result.newobj.curatoryGroups.add(cg)
+                  }
+                }
+
+                  result.newobj.save(flush:true)
               }
 
               result.uri = createLink([controller: 'resource', action:'show', id:"${params.cls}:${result.newobj.id}"])

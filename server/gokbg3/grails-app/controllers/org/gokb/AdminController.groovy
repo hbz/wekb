@@ -2,6 +2,7 @@ package org.gokb
 
 import com.k_int.ConcurrencyManagerService
 import com.k_int.ConcurrencyManagerService.Job
+import de.wekb.helper.RCConstants
 import grails.converters.JSON
 import org.gokb.cred.*
 import org.hibernate.criterion.CriteriaSpecification
@@ -10,6 +11,7 @@ import org.springframework.security.access.annotation.Secured
 import org.springframework.security.acls.domain.BasePermission
 import org.springframework.security.acls.model.ObjectIdentity
 import org.springframework.security.acls.model.Permission
+import wekb.AdminService
 
 import java.util.concurrent.CancellationException
 
@@ -25,6 +27,7 @@ class AdminController {
   def titleAugmentService
   ConcurrencyManagerService concurrencyManagerService
   CleanupService cleanupService
+  AdminService adminService
 
   @Deprecated
   def tidyOrgData() {
@@ -37,7 +40,7 @@ class AdminController {
 
       def result = [:]
 
-      def publisher_combo_type = RefdataCategory.lookupOrCreate('Combo.Type', 'TitleInstance.Publisher');
+      def publisher_combo_type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'TitleInstance.Publisher');
 
       result.nonMasterOrgs = Org.executeQuery('''
       select org
@@ -93,7 +96,7 @@ class AdminController {
     }.startOrQueue()
 
     j.description = "Tidy Orgs Data"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'TidyOrgsData')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'TidyOrgsData')
 
     render(view: "logViewer", model: logViewer())
   }
@@ -136,7 +139,7 @@ class AdminController {
     }.startOrQueue()
 
     j.description = "Regenerate License Summaries"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'RegenerateLicenseSummaries')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'RegenerateLicenseSummaries')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -149,7 +152,7 @@ class AdminController {
     }.startOrQueue()
 
     j.description = "Ensure UUIDs for components"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'EnsureUUIDs')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'EnsureUUIDs')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -162,23 +165,12 @@ class AdminController {
     }.startOrQueue()
 
     j.description = "Ensure TIPLs for all TIPPs"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'EnsureTIPLs')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'EnsureTIPLs')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
   }
 
-  def convertTippCoverages() {
-    Job j = concurrencyManagerService.createJob { Job j ->
-      cleanupService.addMissingCoverageObjects(j)
-    }.startOrQueue()
-
-    j.description = "Generate missing TIPPCoverageStatements"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'GenerateTIPPCoverage')
-    j.startTime = new Date()
-
-    render(view: "logViewer", model: logViewer())
-  }
 
   def markInconsistentDates() {
     Job j = concurrencyManagerService.createJob { Job j ->
@@ -186,7 +178,7 @@ class AdminController {
     }.startOrQueue()
 
     j.description = "Mark insonsistent date ranges"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'MarkInconsDateRanges')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'MarkInconsDateRanges')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -239,7 +231,7 @@ class AdminController {
     }.startOrQueue()
 
     j.description = "Update Free Text Indexes"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'UpdateFreeTextIndexes')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'UpdateFreeTextIndexes')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -252,7 +244,7 @@ class AdminController {
     }.startOrQueue()
 
     j.description = "Reset Free Text Indexes"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'ResetFreeTextIndexes')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'ResetFreeTextIndexes')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -265,7 +257,7 @@ class AdminController {
     }.startOrQueue()
 
     j.description = "Master List Update"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'MasterListUpdate')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'MasterListUpdate')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -286,7 +278,7 @@ class AdminController {
     }.startOrQueue()
 
     j.description = "Enrichment Service"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'EnrichmentService')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'EnrichmentService')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -299,7 +291,7 @@ class AdminController {
     }.startOrQueue()
 
     j.description = "Generate Package Types"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'GeneratePackageTypes')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'GeneratePackageTypes')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -372,7 +364,7 @@ class AdminController {
     }.startOrQueue()
 
     j.description = "Housekeeping"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'Housekeeping')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'Housekeeping')
     j.startTime = new Date()
 
     log.debug "Triggering housekeeping task. Started job #${j.uuid}"
@@ -388,7 +380,7 @@ class AdminController {
     log.debug "Triggering cleanup task. Started job #${j.uuid}"
 
     j.description = "Cleanup Deleted Components"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'CleanupDeletedComponents')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'CleanupDeletedComponents')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -402,25 +394,42 @@ class AdminController {
     log.debug "Triggering cleanup task. Started job #${j.uuid}"
 
     j.description = "Cleanup Rejected Components"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'CleanupRejectedComponents')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'CleanupRejectedComponents')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
   }
+
 
   def cleanupOrphanedTipps() {
     Job j = concurrencyManagerService.createJob { Job j ->
       cleanupService.deleteOrphanedTipps(j)
     }.startOrQueue()
 
-    log.debug("Triggering cleanup task. Started job #${j.uuid}")
+    log.debug("Triggering cleanup orphaned TIPPs task. Started job #${j.uuid}")
 
     j.description = "TIPP Cleanup"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'TIPPCleanup')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'TIPPCleanup')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
   }
+
+
+  def cleanupOrphanedIdentifiers() {
+    Job j = concurrencyManagerService.createJob { Job j ->
+      cleanupService.deleteOrphanedIdentifiers(j)
+    }.startOrQueue()
+
+    log.debug("Triggering cleanup orphaned Identifiers task. Started job #${j.uuid}")
+
+    j.description = "Identifier Cleanup"
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'IdentifierCleanup')
+    j.startTime = new Date()
+
+    render(view: "logViewer", model: logViewer())
+  }
+
 
   def rejectWrongTitles() {
     Job j = concurrencyManagerService.createJob { Job j ->
@@ -430,7 +439,7 @@ class AdminController {
     log.debug("Reject wrong titles. Started job #${j.uuid}")
 
     j.description = "Set status of TitleInstances without package+history to 'Deleted'"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'DeleteTIWithoutHistory')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'DeleteTIWithoutHistory')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -444,7 +453,7 @@ class AdminController {
     log.debug("Reject wrong titles. Started job #${j.uuid}")
 
     j.description = "Set status of TitleInstances without identifiers+tipps to 'Rejected'"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'RejectTIWithoutIdentifier')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'RejectTIWithoutIdentifier')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -458,7 +467,7 @@ class AdminController {
     log.debug("Triggering cleanup task. Started job #${j.uuid}")
 
     j.description = "Platform Cleanup"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'PlatformCleanup')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'PlatformCleanup')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -494,7 +503,7 @@ class AdminController {
 
     log.debug "Triggering statistics rewrite, job #${j.uuid}"
     j.description = "Recalculate Statistics"
-    j.type = RefdataCategory.lookupOrCreate('Job.Type', 'RecalculateStatistics')
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'RecalculateStatistics')
     j.startTime = new Date()
 
     render(view: "logViewer", model: logViewer())
@@ -503,190 +512,7 @@ class AdminController {
   @Secured(['ROLE_SUPERUSER', 'IS_AUTHENTICATED_FULLY'])
   def setupAcl() {
 
-    def default_dcs = ["BookInstance", "JournalInstance", "TitleInstancePackagePlatform", "DatabaseInstance", "Office", "Imprint", "Package", "ReviewRequest", "Org", "Platform", "Source", "KBComponentVariantName", "TitleInstancePlatform", "TIPPCoverageStatement"]
-
-    default_dcs.each { dcd ->
-
-      def dc_org = KBDomainInfo.findByDcName("org.gokb.cred.${dcd}")
-
-      aclUtilService.addPermission(dc_org, 'ROLE_USER', BasePermission.READ)
-
-      aclUtilService.addPermission(dc_org, 'ROLE_CONTRIBUTOR', BasePermission.READ)
-      aclUtilService.addPermission(dc_org, 'ROLE_CONTRIBUTOR', BasePermission.WRITE)
-      aclUtilService.addPermission(dc_org, 'ROLE_CONTRIBUTOR', BasePermission.CREATE)
-
-      aclUtilService.addPermission(dc_org, 'ROLE_EDITOR', BasePermission.READ)
-      aclUtilService.addPermission(dc_org, 'ROLE_EDITOR', BasePermission.WRITE)
-      aclUtilService.addPermission(dc_org, 'ROLE_EDITOR', BasePermission.CREATE)
-      aclUtilService.addPermission(dc_org, 'ROLE_EDITOR', BasePermission.DELETE)
-
-      aclUtilService.addPermission(dc_org, 'ROLE_ADMIN', BasePermission.READ)
-      aclUtilService.addPermission(dc_org, 'ROLE_ADMIN', BasePermission.WRITE)
-      aclUtilService.addPermission(dc_org, 'ROLE_ADMIN', BasePermission.CREATE)
-      aclUtilService.addPermission(dc_org, 'ROLE_ADMIN', BasePermission.DELETE)
-      aclUtilService.addPermission(dc_org, 'ROLE_ADMIN', BasePermission.ADMINISTRATION)
-    }
-
-    def dc_cmb = KBDomainInfo.findByDcName("org.gokb.cred.Combo")
-
-    aclUtilService.addPermission(dc_cmb, 'ROLE_CONTRIBUTOR', BasePermission.CREATE)
-    aclUtilService.addPermission(dc_cmb, 'ROLE_CONTRIBUTOR', BasePermission.DELETE)
-
-    aclUtilService.addPermission(dc_cmb, 'ROLE_EDITOR', BasePermission.CREATE)
-    aclUtilService.addPermission(dc_cmb, 'ROLE_EDITOR', BasePermission.DELETE)
-
-    aclUtilService.addPermission(dc_cmb, 'ROLE_ADMIN', BasePermission.CREATE)
-    aclUtilService.addPermission(dc_cmb, 'ROLE_ADMIN', BasePermission.DELETE)
-
-    def dc_tit = KBDomainInfo.findByDcName("org.gokb.cred.TitleInstance")
-
-    aclUtilService.addPermission(dc_tit, 'ROLE_USER', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_tit, 'ROLE_CONTRIBUTOR', BasePermission.READ)
-    aclUtilService.addPermission(dc_tit, 'ROLE_CONTRIBUTOR', BasePermission.WRITE)
-
-    aclUtilService.addPermission(dc_tit, 'ROLE_EDITOR', BasePermission.READ)
-    aclUtilService.addPermission(dc_tit, 'ROLE_EDITOR', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_tit, 'ROLE_EDITOR', BasePermission.DELETE)
-
-    aclUtilService.addPermission(dc_tit, 'ROLE_ADMIN', BasePermission.READ)
-    aclUtilService.addPermission(dc_tit, 'ROLE_ADMIN', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_tit, 'ROLE_ADMIN', BasePermission.DELETE)
-    aclUtilService.addPermission(dc_tit, 'ROLE_ADMIN', BasePermission.ADMINISTRATION)
-
-    def dc_id = KBDomainInfo.findByDcName('org.gokb.cred.Identifier')
-
-    aclUtilService.addPermission(dc_id, 'ROLE_USER', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_id, 'ROLE_CONTRIBUTOR', BasePermission.READ)
-    aclUtilService.addPermission(dc_id, 'ROLE_CONTRIBUTOR', BasePermission.CREATE)
-    aclUtilService.addPermission(dc_id, 'ROLE_CONTRIBUTOR', BasePermission.DELETE)
-
-    aclUtilService.addPermission(dc_id, 'ROLE_EDITOR', BasePermission.READ)
-    aclUtilService.addPermission(dc_id, 'ROLE_EDITOR', BasePermission.CREATE)
-    aclUtilService.addPermission(dc_id, 'ROLE_EDITOR', BasePermission.DELETE)
-
-    aclUtilService.addPermission(dc_id, 'ROLE_ADMIN', BasePermission.READ)
-    aclUtilService.addPermission(dc_id, 'ROLE_ADMIN', BasePermission.CREATE)
-    aclUtilService.addPermission(dc_id, 'ROLE_ADMIN', BasePermission.DELETE)
-    aclUtilService.addPermission(dc_id, 'ROLE_ADMIN', BasePermission.ADMINISTRATION)
-
-    def dc_cg = KBDomainInfo.findByDcName('org.gokb.cred.CuratoryGroup')
-
-    aclUtilService.addPermission(dc_cg, 'ROLE_CONTRIBUTOR', BasePermission.READ)
-    aclUtilService.addPermission(dc_cg, 'ROLE_CONTRIBUTOR', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_cg, 'ROLE_CONTRIBUTOR', BasePermission.CREATE)
-
-    aclUtilService.addPermission(dc_cg, 'ROLE_EDITOR', BasePermission.READ)
-    aclUtilService.addPermission(dc_cg, 'ROLE_EDITOR', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_cg, 'ROLE_EDITOR', BasePermission.CREATE)
-
-    aclUtilService.addPermission(dc_cg, 'ROLE_ADMIN', BasePermission.READ)
-    aclUtilService.addPermission(dc_cg, 'ROLE_ADMIN', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_cg, 'ROLE_ADMIN', BasePermission.CREATE)
-    aclUtilService.addPermission(dc_cg, 'ROLE_ADMIN', BasePermission.DELETE)
-    aclUtilService.addPermission(dc_cg, 'ROLE_ADMIN', BasePermission.ADMINISTRATION)
-
-    def dc_uo = KBDomainInfo.findByDcName('org.gokb.cred.UserOrganisation')
-
-    aclUtilService.addPermission(dc_uo, 'ROLE_CONTRIBUTOR', BasePermission.READ)
-    aclUtilService.addPermission(dc_uo, 'ROLE_CONTRIBUTOR', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_uo, 'ROLE_CONTRIBUTOR', BasePermission.CREATE)
-
-    aclUtilService.addPermission(dc_uo, 'ROLE_EDITOR', BasePermission.READ)
-    aclUtilService.addPermission(dc_uo, 'ROLE_EDITOR', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_uo, 'ROLE_EDITOR', BasePermission.CREATE)
-
-    aclUtilService.addPermission(dc_uo, 'ROLE_ADMIN', BasePermission.READ)
-    aclUtilService.addPermission(dc_uo, 'ROLE_ADMIN', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_uo, 'ROLE_ADMIN', BasePermission.CREATE)
-    aclUtilService.addPermission(dc_uo, 'ROLE_ADMIN', BasePermission.DELETE)
-    aclUtilService.addPermission(dc_uo, 'ROLE_ADMIN', BasePermission.ADMINISTRATION)
-
-    def dc_rdc = KBDomainInfo.findByDcName('org.gokb.cred.RefdataCategory')
-
-    aclUtilService.addPermission(dc_rdc, 'ROLE_CONTRIBUTOR', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_rdc, 'ROLE_EDITOR', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_rdc, 'ROLE_ADMIN', BasePermission.READ)
-    aclUtilService.addPermission(dc_rdc, 'ROLE_ADMIN', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_rdc, 'ROLE_ADMIN', BasePermission.CREATE)
-    aclUtilService.addPermission(dc_rdc, 'ROLE_ADMIN', BasePermission.DELETE)
-    aclUtilService.addPermission(dc_rdc, 'ROLE_ADMIN', BasePermission.ADMINISTRATION)
-
-    def dc_rdv = KBDomainInfo.findByDcName('org.gokb.cred.RefdataValue')
-
-    aclUtilService.addPermission(dc_rdv, 'ROLE_USER', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_rdv, 'ROLE_CONTRIBUTOR', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_rdv, 'ROLE_EDITOR', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_rdv, 'ROLE_ADMIN', BasePermission.READ)
-    aclUtilService.addPermission(dc_rdv, 'ROLE_ADMIN', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_rdv, 'ROLE_ADMIN', BasePermission.CREATE)
-    aclUtilService.addPermission(dc_rdv, 'ROLE_ADMIN', BasePermission.DELETE)
-    aclUtilService.addPermission(dc_rdv, 'ROLE_ADMIN', BasePermission.ADMINISTRATION)
-
-    def dc_ns = KBDomainInfo.findByDcName('org.gokb.cred.IdentifierNamespace')
-
-    aclUtilService.addPermission(dc_ns, 'ROLE_USER', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_ns, 'ROLE_CONTRIBUTOR', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_ns, 'ROLE_EDITOR', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_ns, 'ROLE_ADMIN', BasePermission.READ)
-    aclUtilService.addPermission(dc_ns, 'ROLE_ADMIN', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_ns, 'ROLE_ADMIN', BasePermission.CREATE)
-    aclUtilService.addPermission(dc_ns, 'ROLE_ADMIN', BasePermission.DELETE)
-    aclUtilService.addPermission(dc_ns, 'ROLE_ADMIN', BasePermission.ADMINISTRATION)
-
-    def dc_usr = KBDomainInfo.findByDcName('org.gokb.cred.User')
-
-    aclUtilService.addPermission(dc_usr, 'ROLE_ADMIN', BasePermission.READ)
-    aclUtilService.addPermission(dc_usr, 'ROLE_ADMIN', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_usr, 'ROLE_ADMIN', BasePermission.ADMINISTRATION)
-
-    def dc_kbd = KBDomainInfo.findByDcName('org.gokb.cred.KBDomainInfo')
-
-    aclUtilService.addPermission(dc_kbd, 'ROLE_ADMIN', BasePermission.READ)
-
-    // DecisionSupport
-
-    def dc_dsc = KBDomainInfo.findByDcName('org.gokb.cred.DSCriterion')
-
-    aclUtilService.addPermission(dc_dsc, 'ROLE_EDITOR', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_dsc, 'ROLE_ADMIN', BasePermission.READ)
-    aclUtilService.addPermission(dc_dsc, 'ROLE_ADMIN', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_dsc, 'ROLE_ADMIN', BasePermission.CREATE)
-    aclUtilService.addPermission(dc_dsc, 'ROLE_ADMIN', BasePermission.DELETE)
-    aclUtilService.addPermission(dc_dsc, 'ROLE_ADMIN', BasePermission.ADMINISTRATION)
-
-    def dc_dscat = KBDomainInfo.findByDcName('org.gokb.cred.DSCategory')
-
-    aclUtilService.addPermission(dc_dscat, 'ROLE_EDITOR', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_dscat, 'ROLE_ADMIN', BasePermission.READ)
-    aclUtilService.addPermission(dc_dscat, 'ROLE_ADMIN', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_dscat, 'ROLE_ADMIN', BasePermission.CREATE)
-    aclUtilService.addPermission(dc_dscat, 'ROLE_ADMIN', BasePermission.DELETE)
-    aclUtilService.addPermission(dc_dscat, 'ROLE_ADMIN', BasePermission.ADMINISTRATION)
-
-    def dc_kbc = KBDomainInfo.findByDcName('org.gokb.cred.KBComponent')
-
-    aclUtilService.addPermission(dc_kbc, 'ROLE_USER', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_kbc, 'ROLE_CONTRIBUTOR', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_kbc, 'ROLE_EDITOR', BasePermission.READ)
-
-    aclUtilService.addPermission(dc_kbc, 'ROLE_ADMIN', BasePermission.READ)
-    aclUtilService.addPermission(dc_kbc, 'ROLE_ADMIN', BasePermission.WRITE)
-    aclUtilService.addPermission(dc_kbc, 'ROLE_ADMIN', BasePermission.DELETE)
-    aclUtilService.addPermission(dc_kbc, 'ROLE_ADMIN', BasePermission.ADMINISTRATION)
+    adminService.setupDefaultAcl()
 
     render(view: "logViewer", model: logViewer())
   }

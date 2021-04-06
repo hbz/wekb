@@ -1,9 +1,11 @@
 package com.k_int.apis
 
+import grails.plugin.springsecurity.SpringSecurityService
 import groovy.util.logging.Log4j
 
 import grails.plugin.springsecurity.SpringSecurityUtils
 import org.gokb.cred.KBDomainInfo
+import org.gokb.cred.User
 import org.springframework.security.acls.model.Permission
 import org.springframework.security.core.context.SecurityContextHolder as SECCH
 
@@ -25,6 +27,8 @@ import org.springframework.security.core.context.SecurityContextHolder as SECCH
  */
 @Log4j
 class SecurityApi <T> extends A_Api<T> {
+
+  SpringSecurityService springSecurityService = grails.util.Holders.grailsApplication.mainContext.getBean('springSecurityService')
   
   private SecurityApi () {}
   
@@ -60,7 +64,21 @@ class SecurityApi <T> extends A_Api<T> {
     
       allowed = !(component.respondsTo('isSystemComponent') && component.isSystemComponent())
       if (allowed) {
+
         allowed = SecurityApi.isTypeEditable (component.getClass(), defaultTo)
+
+        /*if(component.respondsTo('getCuratoryGroups')){
+          User user = springSecurityService.currentUser
+
+          if(user.curatoryGroups?.id.intersect(component.curatoryGroups?.id).size() > 0)
+          {
+            allowed = SecurityApi.isTypeEditable (component.getClass(), defaultTo)
+          }else {
+            allowed = SpringSecurityUtils.ifAnyGranted('ROLE_SUPERUSER') ?: false
+          }
+        }else {
+          allowed = SecurityApi.isTypeEditable(component.getClass(), defaultTo)
+        }*/
       }
     }
     else {
@@ -109,7 +127,7 @@ class SecurityApi <T> extends A_Api<T> {
     
     // Super users can do everything...
     if (SpringSecurityUtils.ifAnyGranted('ROLE_SUPERUSER')) return true
-    
+
     def domain_record_info = KBDomainInfo.findByDcName(clazz.name)
 
     if (domain_record_info) {

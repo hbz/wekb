@@ -1,5 +1,6 @@
 package org.gokb
 
+import de.wekb.helper.RCConstants
 import grails.gorm.transactions.Transactional
 import grails.util.Holders
 import groovyx.net.http.HTTPBuilder
@@ -15,7 +16,7 @@ class LanguagesService{
   static Map languages = [:]
 
   /**
-   * Fills the RefdataCategory given by {@link org.gokb.cred.KBComponent.RD_LANGUAGE} with a list of all language codes
+   * Fills the RefdataCategory given by {@link RCConstants.KBCOMPONENT_LANGUAGE} with a list of all language codes
    * provided in the ISO-639-2 map specified by the referenced languages microservice. See
    * https://github.com/hbz/languages-microservice#get-the-whole-iso-639-2-list for details.
    */
@@ -34,7 +35,7 @@ class LanguagesService{
       }
     }
     for (def entry in languages){
-      RefdataCategory.lookupOrCreate(KBComponent.RD_LANGUAGE, entry.key, entry.key)
+      RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_LANGUAGE, entry.key, entry.key)
     }
   }
 

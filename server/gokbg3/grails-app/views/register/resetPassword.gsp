@@ -1,7 +1,7 @@
 <html>
 <head>
   <meta name='layout' content='public'/>
-  <title>Password Reset</title>
+  <title><g:message code="gokb.appname" default="we:kb"/>: Password Reset</title>
 </head>
 
 <body>

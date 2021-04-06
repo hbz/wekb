@@ -1,5 +1,6 @@
 package org.gokb
 
+import de.wekb.helper.RCConstants
 import grails.util.GrailsNameUtils
 import groovyx.net.http.URIBuilder
 
@@ -246,9 +247,9 @@ class ComponentLookupService {
             }
 
             comboFilterStr += "${c}_combo.type = :${c}type AND "
-            qryParams["${c}type"] = RefdataCategory.lookupOrCreate ( "Combo.Type", cls.getComboTypeValueFor(cls, c))
+            qryParams["${c}type"] = RefdataCategory.lookupOrCreate ( RCConstants.COMBO_TYPE, cls.getComboTypeValueFor(cls, c))
             comboFilterStr += "${c}_combo.status = :${c}status "
-            qryParams["${c}status"] = RefdataCategory.lookup("Combo.Status", "Active")
+            qryParams["${c}status"] = RefdataCategory.lookup(RCConstants.COMBO_STATUS, "Active")
 
             def validLong = []
             def validStr = []
@@ -333,8 +334,8 @@ class ComponentLookupService {
 
         qryParams['qname'] = "%${genericTerm}%"
         qryParams['idqval'] = genericTerm
-        qryParams['idtype'] = RefdataCategory.lookup('Combo.Type','KBComponent.Ids')
-        qryParams['idqstatus'] = RefdataCategory.lookup('Combo.Status', 'Active')
+        qryParams['idtype'] = RefdataCategory.lookup(RCConstants.COMBO_TYPE,'KBComponent.Ids')
+        qryParams['idqstatus'] = RefdataCategory.lookup(RCConstants.COMBO_STATUS, 'Active')
       }
 
       log.debug("comboFilterString: ${comboFilterStr}")
@@ -439,7 +440,7 @@ class ComponentLookupService {
         hqlQry += " AND "
       }
       hqlQry += "p.status != :status"
-      qryParams['status'] = RefdataCategory.lookup("KBComponent.Status", "Deleted")
+      qryParams['status'] = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, "Deleted")
     }
 
     if (cls == ReviewRequest && !params['status']) {
@@ -451,7 +452,7 @@ class ComponentLookupService {
         hqlQry += " AND "
       }
       hqlQry += "p.status != :status"
-      qryParams['status'] = RefdataCategory.lookup("ReviewRequest.Status", "Deleted")
+      qryParams['status'] = RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STATUS, "Deleted")
     }
 
     if (cls == ReviewRequest && params['allocatedGroups']) {

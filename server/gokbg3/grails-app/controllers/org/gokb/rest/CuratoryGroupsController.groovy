@@ -2,7 +2,7 @@ package org.gokb.rest
 
 import com.k_int.ConcurrencyManagerService
 import com.k_int.ConcurrencyManagerService.Job
-
+import de.wekb.helper.RCConstants
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
 import org.gokb.cred.CuratoryGroup
@@ -29,10 +29,10 @@ class CuratoryGroupsController {
 
   @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
   def index() {
-    def status_filter = RefdataCategory.lookup('KBComponent.Status', 'Current')
+    def status_filter = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Current')
 
     if (params.status) {
-      def status = RefdataCategory.lookup('KBComponent.Status', params.status)
+      def status = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, params.status)
 
       if (status) {
         status_filter = status
@@ -125,7 +125,7 @@ class CuratoryGroupsController {
         def rdv = null
 
         if (params.status instanceof Integer) {
-          def cat = RefdataCategory.findByLabel('ReviewRequest.Status')
+          def cat = RefdataCategory.findByLabel(RCConstants.REVIEW_REQUEST_STATUS)
           def val = RefdataValue.get(params.status)
 
           if (val && val in cat.values) {
@@ -133,7 +133,7 @@ class CuratoryGroupsController {
           }
         }
         else if (params.status instanceof String) {
-          rdv = RefdataCategory.lookup('ReviewRequest.Status', params.status)
+          rdv = RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STATUS, params.status)
         }
 
         if (rdv) {

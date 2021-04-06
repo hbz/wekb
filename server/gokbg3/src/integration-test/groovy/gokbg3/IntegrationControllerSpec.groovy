@@ -311,8 +311,7 @@ class IntegrationControllerSpec extends Specification {
         "breakable"      : "No",
         "consistent"     : "Yes",
         "editStatus"     : "In Progress",
-        "fixed"          : "No",
-        "global"         : "Consortium",
+        "scope"         : "Consortium",
         "identifiers"    : [
           [
             "type" : "isil",
@@ -405,8 +404,7 @@ class IntegrationControllerSpec extends Specification {
         "breakable"      : "No",
         "consistent"     : "Yes",
         "editStatus"     : "In Progress",
-        "fixed"          : "No",
-        "global"         : "Consortium",
+        "scope"         : "Consortium",
         "identifiers"    : [
           [
             "type" : "isil",
@@ -491,8 +489,7 @@ class IntegrationControllerSpec extends Specification {
         "breakable"      : "No",
         "consistent"     : "Yes",
         "editStatus"     : "In Progress",
-        "fixed"          : "No",
-        "global"         : "Consortium",
+        "scope"         : "Consortium",
         "identifiers"    : [
           [
             "type" : "isil",
@@ -778,8 +775,7 @@ class IntegrationControllerSpec extends Specification {
         "consistent"     : "Yes",
         "editStatus"     : "In Progress",
         "listStatus"     : "Checked",
-        "fixed"          : "No",
-        "global"         : "Consortium",
+        "scope"         : "Consortium",
         "identifiers"    : [
           [
             "type" : "isil",
@@ -888,8 +884,7 @@ class IntegrationControllerSpec extends Specification {
         "consistent"     : "Yes",
         "editStatus"     : "In Progress",
         "listStatus"     : "Checked",
-        "fixed"          : "No",
-        "global"         : "Consortium",
+        "scope"         : "Consortium",
         "identifiers"    : [
           [
             "type" : "isil",
@@ -1086,8 +1081,7 @@ class IntegrationControllerSpec extends Specification {
         "breakable"      : "No",
         "consistent"     : "Yes",
         "editStatus"     : "In Progress",
-        "fixed"          : "No",
-        "global"         : "Consortium",
+        "scope"         : "Consortium",
         "identifiers"    : [
           [
             "type" : "isil",

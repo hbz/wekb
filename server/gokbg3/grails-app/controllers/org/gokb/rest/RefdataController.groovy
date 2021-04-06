@@ -1,5 +1,6 @@
 package org.gokb.rest
 
+import de.wekb.helper.RCConstants
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
 import org.gokb.cred.RefdataCategory
@@ -132,7 +133,7 @@ class RefdataController {
     def cat = null
     def base = grailsApplication.config.serverURL + '/'+namespace
 
-    cat = RefdataCategory.findByLabel("Package.Scope")
+    cat = RefdataCategory.findByLabel(RCConstants.PACKAGE_SCOPE)
 
     if (cat) {
       result['_links'] = ['self': ['href': base + "/package-scopes"]]
@@ -162,7 +163,7 @@ class RefdataController {
     def cat = null
     def base = grailsApplication.config.serverURL + '/'+namespace
 
-    cat = RefdataCategory.findByLabel("TIPPCoverageStatement.CoverageDepth")
+    cat = RefdataCategory.findByLabel(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH)
 
     if (cat) {
       result['_links'] = ['self': ['href': base + "/coverage-depth"]]
@@ -192,7 +193,7 @@ class RefdataController {
     def cat = null
     def base = grailsApplication.config.serverURL + '/'+namespace
 
-    cat = RefdataCategory.findByLabel("ReviewRequest.StdDesc")
+    cat = RefdataCategory.findByLabel(RCConstants.REVIEW_REQUEST_STD_DESC)
 
     if (cat) {
       result['_links'] = ['self': ['href': base + "/review-types"]]

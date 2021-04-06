@@ -1,6 +1,6 @@
 package org.gokb
 
-
+import de.wekb.helper.RCConstants
 import org.gokb.cred.*
 import groovy.xml.MarkupBuilder
 import groovy.xml.StreamingMarkupBuilder
@@ -126,7 +126,7 @@ class OaiController {
 
     def writer = new StringWriter()
     def xml = new MarkupBuilder(writer)
-    def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+    def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
 
 
     def prefixHandler = result.oaiConfig.schemas[params.metadataPrefix]
@@ -477,7 +477,7 @@ class OaiController {
       def records = []
       def order_by_clause = 'order by o.lastUpdated'
       def returnAttrs = true
-      def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+      def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
       def request_map = params
       request_map.keySet().removeAll(['controller','action','id'])
 
@@ -535,7 +535,7 @@ class OaiController {
 
       if ( params.curator && result.oaiConfig.curators) {
         def cg = CuratoryGroup.findByName(params.curator)
-        def comboType = RefdataCategory.lookupOrCreate('Combo.Type', result.oaiConfig.curators)
+        def comboType = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, result.oaiConfig.curators)
 
         if (cg) {
           query += ', Combo as cgCombo, CuratoryGroup as cg where cgCombo.toComponent = ? and cgCombo.type = ? and cgCombo.fromComponent = o '
@@ -562,7 +562,7 @@ class OaiController {
 
         if (linked_pkg) {
 
-          def comboType = RefdataCategory.lookupOrCreate('Combo.Type', result.oaiConfig.pkg)
+          def comboType = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, result.oaiConfig.pkg)
 
           query += ', Combo as pkgCombo, Package as pkg where pkgCombo.fromComponent = ? and pkgCombo.type = ? and pkgCombo.toComponent = o '
           wClause = true
@@ -587,7 +587,7 @@ class OaiController {
 
           if (val instanceof String) {
             query += 'o.status != ?'
-            def qry_rdc = RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, val)
+            def qry_rdc = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, val)
             query_params.add(qry_rdc)
             wClause = true
           }
