@@ -255,7 +255,7 @@ class PublicController {
                             '\t' +  // first_editor
                             '\t' +  // parent_publication_title_id
                             sanitize( tipp.title?.medium?.value ) + '\t' +  // publication_type
-                            sanitize( tipp.paymentType?.value ) +  // access_type
+                            sanitize( tipp.accessTypeType?.value ) +  // access_type
                             '\n');
                 tipp.discard();
               }
