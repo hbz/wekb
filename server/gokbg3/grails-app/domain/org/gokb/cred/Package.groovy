@@ -83,8 +83,7 @@ class Package extends KBComponent {
 
   static hasOne = [updateToken: UpdateToken]
 
-  @RefdataAnnotation(cat = RCConstants.COUNTRY)
-  @RefdataAnnotation(cat = RCConstants.PACKAGE_REGIONAL_RANGE)
+
   static hasMany = [
           nationalRange : RefdataValue,
           regionalRange : RefdataValue,
