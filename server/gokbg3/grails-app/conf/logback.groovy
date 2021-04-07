@@ -63,7 +63,7 @@ else {
   logger('de.wekb', INFO)
 
   //For Database Migration
-  logger ('liquibase', DEBUG)
+  logger ('liquibase', INFO)
 }
 
 def targetDir = BuildSettings.TARGET_DIR
