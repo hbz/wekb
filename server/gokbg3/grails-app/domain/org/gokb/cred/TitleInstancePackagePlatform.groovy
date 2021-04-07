@@ -275,18 +275,30 @@ class TitleInstancePackagePlatform extends KBComponent {
   }
 
   /**
-   * Create a new TIPP being mindful of the need to create TIPLs
+   * Create a new TIPP
    */
-  static tiplAwareCreate(tipp_fields = [:]) {
+  static tippCreate(tipp_fields = [:]) {
 
-//     def result = new TitleInstancePackagePlatform(tipp_fields)
-//     result.title = tipp_fields.title
-//     result.hostPlatform = tipp_fields.hostPlatform
-//     result.pkg = tipp_fields.pkg
     def tipp_status = tipp_fields.status ? RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, tipp_fields.status) : null
     def tipp_editstatus = tipp_fields.editStatus ? RefdataCategory.lookup(RCConstants.KBCOMPONENT_EDIT_STATUS, tipp_fields.editStatus) : null
+    RefdataValue tipp_medium = null
+    if (tipp_fields.medium) {
+      tipp_medium = determineMediumRef(tipp_fields)
+    }
+    RefdataValue tipp_publicationType = null
+    if (tipp_fields.type) {
+      tipp_publicationType = determinePublicationType(tipp_fields)
+    }
     def tipp_language = tipp_fields.language ? RefdataCategory.lookup('KBComponent.Language', tipp_fields.language) : null
-    def result = new TitleInstancePackagePlatform(uuid: tipp_fields.uuid, status: tipp_status, editStatus: tipp_editstatus, name: tipp_fields.name, language: tipp_language).save(failOnError: true)
+    TitleInstancePackagePlatform result = new TitleInstancePackagePlatform(
+            uuid: tipp_fields.uuid,
+            status: tipp_status,
+            editStatus: tipp_editstatus,
+            name: tipp_fields.name,
+            language: tipp_language,
+            medium: tipp_medium,
+            publicationType: tipp_publicationType,
+            url: tipp_fields.url).save(failOnError: true)
 
     if (result) {
 
@@ -296,10 +308,6 @@ class TitleInstancePackagePlatform extends KBComponent {
       def plt_combo_type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Platform.HostedTipps')
       new Combo(toComponent: result, fromComponent: tipp_fields.hostPlatform, type: plt_combo_type).save(flush: true, failOnError: true)
 
-      def ti_combo_type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'TitleInstance.Tipps')
-      new Combo(toComponent: result, fromComponent: tipp_fields.title, type: ti_combo_type).save(flush: true, failOnError: true)
-
-      TitleInstancePlatform.ensure(tipp_fields.title, tipp_fields.hostPlatform, tipp_fields.url)
     } else {
       log.error("TIPP creation failed!")
     }
@@ -313,10 +321,16 @@ class TitleInstancePackagePlatform extends KBComponent {
     return name ?: "${pkg?.name} / ${title?.name} / ${hostPlatform?.name}"
   }
 
+
+  @Transient
+  List<CuratoryGroup> getCuratoryGroups() {
+    return pkg ? pkg.curatoryGroups  : null
+  }
+
   /**
    * Please see https://github.com/openlibraryenvironment/gokb/wiki/tipp_dto
    */
-  @Transient
+  /*@Transient
   static def validateDTO(tipp_dto, locale) {
     def result = ['valid': true]
     def errors = [:]
@@ -507,6 +521,215 @@ class TitleInstancePackagePlatform extends KBComponent {
       }
     }
 
+    if (tipp_dto.last_changed) {
+      LocalDateTime lce = GOKbTextUtils.completeDateString(tipp_dto.lastChangedExternal, false)
+      if (!lce) {
+        errors.put('last_changed', [message: "Unable to parse", baddata: tipp_dto.remove('lastChangedExternal')])
+      }
+    }
+
+    if (!result.valid) {
+      log.warn("Tipp failed validation: ${tipp_dto} - pkg:${pkgLink} plat:${pltLink} ti:${tiLink} -- Errors: ${errors}")
+    }
+
+    if (errors.size() > 0) {
+      result.errors = errors
+    }
+    return result
+  }*/
+
+
+  @Transient
+  static def validateDTONew(tipp_dto, locale) {
+    def pkgLink = tipp_dto.pkg ?: tipp_dto.package
+    def pltLink = tipp_dto.hostPlatform ?: tipp_dto.platform
+    def titleMap = tipp_dto.title
+    def result = validateDTOTitleObject(titleMap, locale)
+    def errors = [:]
+
+    if (!pkgLink) {
+      result.valid = false
+      errors.pkg = [[message: "Missing package link!", baddata: pkgLink]]
+    } else {
+      def pkg = null
+
+      if (pkgLink instanceof Map) {
+        pkg = Package.get(pkgLink.id ?: pkgLink.internalId)
+      } else {
+        pkg = Package.get(pkgLink)
+      }
+
+      if (!pkg) {
+        result.valid = false
+        errors.pkg = [[message: "Could not resolve package id!", baddata: pkgLink, code: 404]]
+      }
+    }
+
+    if (!pltLink) {
+      result.valid = false
+      errors.hostPlatform = [[message: "Missing platform link!", baddata: pltLink]]
+    } else {
+      def plt = null
+
+      if (pltLink instanceof Map) {
+        plt = Platform.get(pltLink.id ?: pltLink.internalId)
+      } else {
+        plt = Platform.get(pltLink)
+      }
+
+      if (!plt) {
+        result.valid = false
+        errors.hostPlatform = [[message: "Could not resolve platform id!", baddata: pltLink, code: 404]]
+      }
+    }
+
+    if (!titleMap) {
+      result.valid = false
+      errors.title = [[message: "Missing title link!", baddata: titleMap]]
+    } else {
+      def ti = null
+
+      if (titleMap instanceof Map) {
+        ti = titleMap
+      }
+
+      if (!ti) {
+        result.valid = false
+        errors.title = [[message: "Could not resolve title!", baddata: titleMap, code: 404]]
+      }
+    }
+
+    if (!tipp_dto.name) {
+      result.valid = false
+      errors.title = [[message: "Missing title name!", baddata: titleMap, code: 404]]
+    }
+
+    //publicationType
+    if (tipp_dto.type) {
+      def publicationType = determinePublicationType(tipp_dto)
+      if (!publicationType) {
+        result.valid = false
+        errors.title = [[message: "Unknown publicationType", baddata: tipp_dto.type, code: 404]]
+      }
+    }
+
+    String idJsonKey = 'ids'
+    def ids_list = tipp_dto[idJsonKey]
+    if (!ids_list) {
+      idJsonKey = 'identifiers'
+      ids_list = tipp_dto[idJsonKey]
+    }
+    if (ids_list) {
+      def id_errors = Identifier.validateDTOs(ids_list, locale)
+      if (id_errors.size() > 0) {
+        errors.put(idJsonKey, id_errors)
+      }
+    }
+
+    if (tipp_dto.coverageStatements && !tipp_dto.coverage) {
+      tipp_dto.coverage = tipp_dto.coverageStatements
+    }
+
+    for (def coverage : tipp_dto.coverage) {
+      LocalDateTime parsedStart = GOKbTextUtils.completeDateString(coverage.startDate)
+      LocalDateTime parsedEnd = GOKbTextUtils.completeDateString(coverage.endDate, false)
+
+      if (coverage.startDate && !parsedStart) {
+        if (!errors.startDate) {
+          errors.startDate = []
+        }
+
+        result.valid = false
+        errors.startDate << [message: "Unable to parse coverage start date ${coverage.startDate}!", baddata: coverage.startDate]
+      }
+
+      if (coverage.endDate && !parsedEnd) {
+        if (!errors.endDate) {
+          errors.endDate = []
+        }
+
+        result.valid = false
+        errors.endDate << [message: "Unable to parse coverage end date ${coverage.endDate}!", baddata: coverage.endDate]
+      }
+
+      if (!coverage.coverageDepth) {
+        if (!errors.coverageDepth) {
+          errors.coverageDepth = []
+        }
+        coverage.coverageDepth = "fulltext"
+        errors.coverageDepth << [message: "Missing value for coverage depth: set to fulltext", baddata: coverage.coverageDepth]
+      } else {
+        if (coverage.coverageDepth instanceof String && !['fulltext', 'selected articles', 'abstracts'].contains(coverage.coverageDepth?.toLowerCase())) {
+          if (!errors.coverageDepth) {
+            errors.coverageDepth = []
+          }
+
+          result.valid = false
+          errors.coverageDepth << [message: "Unrecognized value '${coverage.coverageDepth}' for coverage depth", baddata: coverage.coverageDepth]
+        } else if (coverage.coverageDepth instanceof Integer) {
+          try {
+            def candidate = RefdataValue.get(coverage.coverageDepth)
+
+            if (!candidate && candidate.owner.label == RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH) {
+              if (!errors.coverageDepth) {
+                errors.coverageDepth = []
+              }
+
+              result.valid = false
+              errors.coverageDepth << [message: "Illegal value '${coverage.coverageDepth}' for coverage depth", baddata: coverage.coverageDepth]
+            }
+          } catch (Exception e) {
+            log.error("Exception $e caught in TIPP.validateDTO while coverageDepth instanceof Integer")
+          }
+        } else if (coverage.coverageDepth instanceof Map) {
+          if (coverage.coverageDepth.id) {
+            try {
+              def candidate = RefdataValue.get(coverage.coverageDepth.id)
+
+              if (!candidate && candidate.owner.label == RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH) {
+                if (!errors.coverageDepth) {
+                  errors.coverageDepth = []
+                }
+
+                result.valid = false
+                errors.coverageDepth << [message: "Illegal ID value '${coverage.coverageDepth.id}' for coverage depth", baddata: coverage.coverageDepth]
+              }
+            } catch (Exception e) {
+              log.error("Exception $e caught in TIPP.validateDTO while coverageDepth instanceof Map")
+            }
+          } else if (coverage.coverageDepth.value || coverage.coverageDepth.name) {
+            if (!['fulltext', 'selected articles', 'abstracts'].contains(coverage.coverageDepth?.toLowerCase())) {
+              if (!errors.coverageDepth) {
+                errors.coverageDepth = []
+              }
+
+              result.valid = false
+              errors.coverageDepth << [message: "Unrecognized value '${coverage.coverageDepth}' for coverage depth", baddata: coverage.coverageDepth]
+            }
+          }
+        }
+      }
+
+      if (parsedStart && parsedEnd && (parsedEnd < parsedStart)) {
+        result.valid = false
+        errors.endDate = [[message: "Coverage end date must not be prior to its start date!", baddata: coverage.endDate]]
+      }
+    }
+
+    if (tipp_dto.dateFirstInPrint) {
+      LocalDateTime dfip = GOKbTextUtils.completeDateString(tipp_dto.dateFirstInPrint, false)
+      if (!dfip) {
+        errors.put('dateFirstInPrint', [message: "Unable to parse", baddata: tipp_dto.remove('dateFirstInPrint')])
+      }
+    }
+
+    if (tipp_dto.dateFirstOnline) {
+      LocalDateTime dfo = GOKbTextUtils.completeDateString(tipp_dto.dateFirstOnline, false)
+      if (!dfo) {
+        errors.put('dateFirstOnline', [message: "Unable to parse", baddata: tipp_dto.remove('dateFirstOnline')])
+      }
+    }
+
     if (tipp_dto.lastChangedExternal) {
       LocalDateTime lce = GOKbTextUtils.completeDateString(tipp_dto.lastChangedExternal, false)
       if (!lce) {
@@ -514,8 +737,22 @@ class TitleInstancePackagePlatform extends KBComponent {
       }
     }
 
+    if (tipp_dto.accessStartDate) {
+      LocalDateTime dfo = GOKbTextUtils.completeDateString(tipp_dto.accessStartDate, false)
+      if (!dfo) {
+        errors.put('accessStartDate', [message: "Unable to parse", baddata: tipp_dto.remove('accessStartDate')])
+      }
+    }
+
+    if (tipp_dto.accessEndDate) {
+      LocalDateTime dfo = GOKbTextUtils.completeDateString(tipp_dto.accessEndDate, false)
+      if (!dfo) {
+        errors.put('accessEndDate', [message: "Unable to parse", baddata: tipp_dto.remove('accessEndDate')])
+      }
+    }
+
     if (!result.valid) {
-      log.warn("Tipp failed validation: ${tipp_dto} - pkg:${pkgLink} plat:${pltLink} ti:${tiLink} -- Errors: ${errors}")
+      log.warn("Tipp failed validation: ${tipp_dto} - pkg:${pkgLink} plat:${pltLink} ti:${titleMap} -- Errors: ${errors}")
     }
 
     if (errors.size() > 0) {
@@ -563,30 +800,28 @@ class TitleInstancePackagePlatform extends KBComponent {
       def title_info = tipp_dto.title
 
       if (title_info instanceof Map) {
-        ti = TitleInstance.get(title_info.id ?: title_info.internalId)
-      } else {
-        ti = TitleInstance.get(title_info)
+        ti = title_info
       }
-
-      log.debug("Title lookup: ${ti}")
     }
 
     def status_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current')
     def status_retired = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Retired')
     def trimmed_url = tipp_dto.url ? tipp_dto.url.trim() : null
+    //TODO: Moe
     def curator = pkg?.curatoryGroups?.size() > 0 ? (user.adminStatus || user.curatoryGroups?.id.intersect(pkg?.curatoryGroups?.id)) : true
 
     if (pkg && plt && ti && curator) {
       log.debug("See if we already have a tipp")
-      def tipps = TitleInstancePackagePlatform.executeQuery('select tipp from TitleInstancePackagePlatform as tipp, Combo as pkg_combo, Combo as title_combo, Combo as platform_combo  ' +
+      def tipps = TitleInstancePackagePlatform.executeQuery('select tipp from TitleInstancePackagePlatform as tipp, Combo as pkg_combo, Combo as platform_combo  ' +
         'where pkg_combo.toComponent=tipp and pkg_combo.fromComponent=?' +
         'and platform_combo.toComponent=tipp and platform_combo.fromComponent = ?' +
-        'and title_combo.toComponent=tipp and title_combo.fromComponent = ?',
-        [pkg, plt, ti])
+        'and (tipp.name = ? or tipp.name = ?)',
+        [pkg, plt, ti.name, tipp_dto.name])
       def uuid_tipp = tipp_dto.uuid ? TitleInstancePackagePlatform.findByUuid(tipp_dto.uuid) : null
       def tipp = null
 
-      if (uuid_tipp && uuid_tipp.pkg == pkg && uuid_tipp.title == ti && uuid_tipp.hostPlatform == plt) {
+      //TODO: MOE
+      if (uuid_tipp && uuid_tipp.pkg == pkg && uuid_tipp.hostPlatform == plt && (uuid_tipp.name == ti.name || uuid_tipp.name == tipp_dto.name)) {
         tipp = uuid_tipp
       }
 
@@ -637,24 +872,24 @@ class TitleInstancePackagePlatform extends KBComponent {
         log.debug("Creating new TIPP..")
         def tmap = [
           'pkg'         : pkg,
-          'title'       : ti,
           'hostPlatform': plt,
           'url'         : trimmed_url,
           'uuid'        : (tipp_dto.uuid ?: null),
           'status'      : (tipp_dto.status ?: null),
           'name'        : (tipp_dto.name ?: null),
           'editStatus'  : (tipp_dto.editStatus ?: null),
-          'language'    : (tipp_dto.language ?: null)
+          'language'    : (tipp_dto.language ?: null),
+          'type'        : (tipp_dto.type ?: null),
+          'medium'    : (tipp_dto.medium ?: null),
+
         ]
 
-        tipp = tiplAwareCreate(tmap)
+        tipp = tippCreate(tmap)
         // Hibernate problem
 
         if (!tipp) {
           log.error("TIPP creation failed!")
         }
-      } else {
-        TitleInstancePlatform.ensure(ti, plt, trimmed_url)
       }
 
       if (tipp) {
@@ -664,7 +899,6 @@ class TitleInstancePackagePlatform extends KBComponent {
           if (tipp.accessEndDate) {
             tipp.accessEndDate = null
           }
-
           changed = true
         }
 
@@ -694,14 +928,15 @@ class TitleInstancePackagePlatform extends KBComponent {
         changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'editionStatement', tipp_dto.editionStatement)
         changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'series', tipp_dto.series)
         changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'subjectArea', tipp_dto.subjectArea)
-        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'editionStatement', tipp_dto.editionStatement)
         changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'parentPublicationTitleId', tipp_dto.parentPublicationTitleId)
         changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'precedingPublicationTitleId', tipp_dto.precedingPublicationTitleId)
+
         changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.accessStartDate, tipp, 'accessStartDate')
         changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.accessEndDate, tipp, 'accessEndDate')
         changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.dateFirstInPrint, tipp, 'dateFirstInPrint')
         changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.dateFirstOnline, tipp, 'dateFirstOnline')
-        changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.lastChangedExternal, tipp, 'lastChangedExternal')
+        changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.last_changed, tipp, 'lastChangedExternal')
+
         changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.medium, tipp, 'medium', RCConstants.TITLEINSTANCE_MEDIUM)
         changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.publicationType, tipp, 'publicationType', RCConstants.TIPP_PUBLICATION_TYPE)
         changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.language, tipp, 'language')
@@ -719,8 +954,6 @@ class TitleInstancePackagePlatform extends KBComponent {
           if (c.id) {
             new_ids.add(c.id)
           }
-
-
           changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'coverageNote', c.coverageNote)
           changed |= com.k_int.ClassUtils.setRefdataIfPresent(c.coverageDepth, tipp, 'coverageDepth', RCConstants.TIPP_COVERAGE_DEPTH)
 
@@ -732,7 +965,6 @@ class TitleInstancePackagePlatform extends KBComponent {
 
           tipp.coverageStatements?.each { tcs ->
             if (c.id && tcs.id == c.id) {
-              missing_by_id.remove(tcs)
 
               changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startIssue', c.startIssue)
               changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endIssue', c.endIssue)
@@ -993,6 +1225,193 @@ class TitleInstancePackagePlatform extends KBComponent {
   @Transient
   getTitleClass() {
     def result = KBComponent.get(title.id)?.class.getSimpleName()
+    result
+  }
+
+  static determineMediumRef(titleObj) {
+    if (titleObj.medium) {
+      switch (titleObj.medium.toLowerCase()) {
+        case "a & i database":
+        case "abstract- & indexdatenbank":
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "A & I Database")
+        case "audio":
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Audio")
+        case "database":
+        case "fulltext database":
+        case "Volltextdatenbank":
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Database")
+        case "dataset":
+        case "datenbestand":
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Dataset")
+        case "film":
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Film")
+        case "image":
+        case "bild":
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Image")
+        case "journal":
+        case "zeitschrift":
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Journal")
+        case "book":
+        case "buch":
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Book")
+        case "published score":
+        case "musiknoten":
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Published Score")
+        case "article":
+        case "artikel":
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Article")
+        case "software":
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Software")
+        case "statistics":
+        case "statistiken":
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Statistics")
+        case "market data":
+        case "marktdaten":
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Market Data")
+        case "standards":
+        case "normen":
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Standards")
+        case "biography":
+        case "biografie":
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Biography")
+        case "legal text":
+        case "gesetzestext/urteil":
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Legal Text")
+        case "cartography":
+        case "kartenwerk":
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Cartography")
+        case "miscellaneous":
+        case "sonstiges":
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Miscellaneous")
+        case "other":
+          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Other")
+        default:
+          return null
+      }
+    }
+    else {
+      return null
+    }
+  }
+
+  private static determinePublicationType(tippObj) {
+    if (tippObj.type) {
+      switch (tippObj.type) {
+        case "serial":
+        case "Serial":
+        case "Journal":
+        case "journal":
+          return RefdataCategory.lookup(RCConstants.TIPP_PUBLICATION_TYPE, "Serial")
+          break;
+        case "monograph":
+        case "Monograph":
+        case "Book":
+        case "book":
+          return RefdataCategory.lookup(RCConstants.TIPP_PUBLICATION_TYPE, "Monograph")
+          break;
+        case "Database":
+        case "database":
+          return RefdataCategory.lookup(RCConstants.TIPP_PUBLICATION_TYPE, "Database")
+          break;
+        case "Other":
+        case "other":
+          return RefdataCategory.lookup(RCConstants.TIPP_PUBLICATION_TYPE, "Other")
+          break;
+        default:
+          return null
+          break;
+      }
+    }
+    else {
+      return null
+    }
+  }
+
+  public static def validateDTOTitleObject(JSONObject titleDTO, Locale locale) {
+    def result = ['valid': true]
+    def valErrors = [:]
+
+    if (!titleDTO.name||titleDTO.name.trim()=='') {
+      result.valid = false
+      valErrors.put('name', [message: "missing"])
+    }
+    else {
+      /*LocalDateTime startDate = GOKbTextUtils.completeDateString(titleDTO.publishedFrom)
+      LocalDateTime endDate = GOKbTextUtils.completeDateString(titleDTO.publishedTo, false)
+
+      if (titleDTO.publishedFrom && !startDate) {
+        result.valid = false
+        valErrors.put('publishedFrom', [message: "Unable to parse", baddata: titleDTO.remove('publishedFrom')])
+      }
+
+      if (titleDTO.publishedTo && !endDate) {
+        result.valid = false
+        valErrors.put('publishedTo', [message: "Unable to parse", baddata: titleDTO.remove('publishedTo')])
+      }
+
+      if (startDate && endDate && (endDate < startDate)) {
+        valErrors.put('publishedTo', [message: "Publishing end date must not be prior to its start date!", baddata: titleDTO.publishedTo])
+        // switch dates
+        def tmp = titleDTO.publishedTo
+        titleDTO.publishedTo = titleDTO.publishedFrom
+        titleDTO.publishedFrom = tmp
+      }*/
+
+      String idJsonKey = 'ids'
+      def ids_list = titleDTO[idJsonKey]
+
+      if (!ids_list) {
+        idJsonKey = 'identifiers'
+        ids_list = titleDTO[idJsonKey]
+      }
+
+      def id_errors = Identifier.validateDTOs(ids_list, locale)
+
+      if (id_errors.size() > 0) {
+        valErrors.put(idJsonKey, id_errors)
+        if (titleDTO[idJsonKey].size() == 0) {
+          valErrors.put(idJsonKey, [message: 'no valid identifiers left'])
+        }
+      }
+    }
+
+    if (titleDTO.medium) {
+      RefdataValue medRef = determineMediumRef(titleDTO)
+      if (!medRef) {
+        valErrors.put('medium', [message: "cannot parse", baddata: titleDTO.remove('medium')])
+      }
+    }
+
+    if (titleDTO.language) {
+      RefdataValue languageRef = RefdataCategory.lookup('KBComponent.Language', titleDTO.language)
+
+      if (!languageRef) {
+        valErrors.put('language', [message: "cannot parse", baddata: titleDTO.remove('language')])
+      }
+    }
+
+/*    if (titleDTO.dateFirstInPrint) {
+      LocalDateTime dfip = GOKbTextUtils.completeDateString(titleDTO.dateFirstInPrint, false)
+      if (!dfip) {
+        valErrors.put('dateFirstInPrint', [message: "Unable to parse", baddata: titleDTO.remove('dateFirstInPrint')])
+      }
+    }
+
+    if (titleDTO.dateFirstOnline) {
+      LocalDateTime dfo = GOKbTextUtils.completeDateString(titleDTO.dateFirstOnline, false)
+      if (!dfo) {
+        valErrors.put('dateFirstOnline', [message: "Unable to parse", baddata: titleDTO.remove('dateFirstOnline')])
+      }
+    }*/
+
+    if (valErrors.size() > 0) {
+      if (result.errors) {
+        result.errors.putAll(valErrors)
+      }
+      else {
+        result.errors = valErrors
+      }
+    }
     result
   }
 }
