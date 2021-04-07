@@ -74,6 +74,7 @@ class RCConstants {
     public static final String SOURCE_DATA_FORMAT = "Source.DataFormat"
     public static final String SOURCE_FREQUENCY = "Source.Frequency"
 
+    public static final String TIPP_ACCESS_TYPE = "TitleInstancePackagePlatform.AccessType"
     public static final String TIPP_COVERAGE_DEPTH = "TitleInstancePackagePlatform.CoverageDepth"
     public static final String TIPP_DELAYED_OA = "TitleInstancePackagePlatform.DelayedOA"
     public static final String TIPP_FORMAT = "TitleInstancePackagePlatform.Format"

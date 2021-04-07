@@ -2,6 +2,7 @@ package org.gokb.cred
 
 import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
+import org.grails.web.json.JSONObject
 
 import javax.persistence.Transient
 import com.k_int.ClassUtils
@@ -63,6 +64,9 @@ class TitleInstancePackagePlatform extends KBComponent {
   //Date publishedTo
 
 
+  @RefdataAnnotation(cat = RCConstants.TIPP_ACCESS_TYPE)
+  RefdataValue accessType
+
   @RefdataAnnotation(cat = RCConstants.TIPP_COVERAGE_DEPTH)
   RefdataValue coverageDepth
 
@@ -103,6 +107,7 @@ class TitleInstancePackagePlatform extends KBComponent {
     'ignore'       : [
       'format',
       'paymentType',
+      'accessType',
       'delayedOA',
       'hybridOA',
       'coverageNote',
@@ -199,6 +204,7 @@ class TitleInstancePackagePlatform extends KBComponent {
     hybridOA column: 'tipp_hybrid_oa'
     hybridOAUrl column: 'tipp_hybrid_oa_url'
     primary column: 'tipp_primary'
+    accessType column: 'tipp_access_type'
     paymentType column: 'tipp_payment_type'
     accessStartDate column: 'tipp_access_start_date'
     accessEndDate column: 'tipp_access_end_date'
@@ -225,6 +231,7 @@ class TitleInstancePackagePlatform extends KBComponent {
     hybridOA(nullable: true, blank: true)
     hybridOAUrl(nullable: true, blank: true)
     primary(nullable: true, blank: true)
+    accessType (nullable: true, blank: true)
     paymentType(nullable: true, blank: true)
     accessStartDate(nullable: true, blank: false)
     accessEndDate(validator: { val, obj ->
@@ -661,21 +668,21 @@ class TitleInstancePackagePlatform extends KBComponent {
           changed = true
         }
 
-        if (tipp_dto.paymentType && tipp_dto.paymentType.length() > 0) {
+        if (tipp_dto.accessType && tipp_dto.accessType.length() > 0) {
 
-          def payment_statement
+          def access_statement
 
-          if (tipp_dto.paymentType == 'P') {
-            payment_statement = 'Paid'
-          } else if (tipp_dto.paymentType == 'F') {
-            payment_statement = 'OA'
+          if (tipp_dto.accessType == 'P') {
+            access_statement = 'Paid'
+          } else if (tipp_dto.accessType == 'F') {
+            access_statement = 'Free'
           } else {
-            payment_statement = tipp_dto.paymentType
+            access_statement = tipp_dto.accessType
           }
 
-          def payment_ref = RefdataCategory.lookup(RCConstants.TIPP_PAYMENT_TYPE, payment_statement)
+          def access_ref = RefdataCategory.lookup(RCConstants.TIPP_ACCESS_TYPE, access_statement)
 
-          if (payment_ref) tipp.paymentType = payment_ref
+          if (access_ref) tipp.accessType = access_ref
         }
 
         changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'url', trimmed_url)
@@ -904,6 +911,7 @@ class TitleInstancePackagePlatform extends KBComponent {
             'file'(file?.value)
             'breakable'(breakable?.value)
             'consistent'(consistent?.value)
+            'accessType'(accessType?.value)
             'paymentType'(paymentType?.value)
             'globalNote'(globalNote)
             'contentType'(contentType?.value)
