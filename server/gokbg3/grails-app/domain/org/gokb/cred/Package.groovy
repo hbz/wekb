@@ -83,6 +83,13 @@ class Package extends KBComponent {
 
   static hasOne = [updateToken: UpdateToken]
 
+  @RefdataAnnotation(cat = RCConstants.COUNTRY)
+  @RefdataAnnotation(cat = RCConstants.PACKAGE_REGIONAL_RANGE)
+  static hasMany = [
+          nationalRange : RefdataValue,
+          regionalRange : RefdataValue,
+  ]
+
   static mapping = {
     includes KBComponent.mapping
     listStatus column: 'pkg_list_status_rv_fk'
@@ -95,6 +102,18 @@ class Package extends KBComponent {
     descriptionURL column: 'pkg_descr_url'
     openAccess column: 'pkg_open_access'
     file column: 'pkg_file'
+
+    nationalRange             joinTable: [
+            name:   'package_national_range',
+            key:    'package_fk',
+            column: 'national_range_rv_fk', type:   'BIGINT'
+    ], lazy: false
+
+    regionalRange             joinTable: [
+            name:   'package_regional_range',
+            key:    'package_fk',
+            column: 'regional_range_rv_fk', type:   'BIGINT'
+    ], lazy: false
   }
 
   static constraints = {
@@ -124,6 +143,8 @@ class Package extends KBComponent {
         }
       }
     })
+    nationalRange(nullable:true)
+    regionalRange(nullable:true)
   }
 
   public String getRestPath() {
@@ -734,24 +755,6 @@ select tipp.id,
             }
           }
         }
-      }
-    }
-
-    if (packageHeaderDTO.provider && packageHeaderDTO.provider instanceof Integer) {
-      def prov = Org.get(packageHeaderDTO.provider)
-
-      if (!prov) {
-        result.errors.provider = [[message: messageService.resolveCode('crossRef.error.lookup', ["Provider", "ID"], locale), code: 404, baddata: packageHeaderDTO.provider]]
-        result.valid = false
-      }
-    }
-
-    if (packageHeaderDTO.nominalPlatform && packageHeaderDTO.nominalPlatform instanceof Integer) {
-      def prov = Platform.get(packageHeaderDTO.nominalPlatform)
-
-      if (!prov) {
-        result.errors.nominalPlatform = [[message: messageService.resolveCode('crossRef.error.lookup', ["Platform", "ID"], locale), code: 404, baddata: packageHeaderDTO.nominalPlatform]]
-        result.valid = false
       }
     }
 
