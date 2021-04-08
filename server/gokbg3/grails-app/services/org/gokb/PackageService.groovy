@@ -820,6 +820,7 @@ class PackageService {
 
           packageHeaderDTO.identifiers.each { rid ->
 
+            //TODO: MOE
             Identifier the_id = componentLookupService.lookupOrCreateCanonicalIdentifier(rid.type, rid.value);
 
             if (mp.ids.contains(the_id)) {
@@ -919,6 +920,7 @@ class PackageService {
     changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.paymentType, result, 'paymentType')
     changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.file, result, 'file')
     changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.openAccess, result, 'openAccess')
+    changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.contentType, result, 'contentType')
 
     // Platform
     if (packageHeaderDTO.nominalPlatform) {

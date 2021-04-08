@@ -114,7 +114,7 @@ class TippController {
       def curator = pkg?.curatoryGroups?.size() > 0 ? user.curatoryGroups?.id.intersect(obj.pkg.curatoryGroups?.id) : true
 
       if (curator) {
-        def tipp_validation = TitleInstancePackagePlatform.validateDTO(reqBody, RequestContextUtils.getLocale(request))
+        def tipp_validation = TitleInstancePackagePlatform.validateDTONew(reqBody, RequestContextUtils.getLocale(request))
 
         if (tipp_validation.valid) {
           def obj = TitleInstancePackagePlatform.upsertDTO(reqBody, user)
@@ -184,7 +184,7 @@ class TippController {
         reqBody.hostPlatform = obj.hostPlatform.id
         reqBody.pkg = obj.pkg.id
 
-        def tipp_validation = TitleInstancePackagePlatform.validateDTO(reqBody, RequestContextUtils.getLocale(request))
+        def tipp_validation = TitleInstancePackagePlatform.validateDTONew(reqBody, RequestContextUtils.getLocale(request))
 
         if (tipp_validation.valid) {
           def jsonMap = obj.jsonMapping

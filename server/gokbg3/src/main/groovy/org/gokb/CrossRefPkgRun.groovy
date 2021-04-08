@@ -152,13 +152,13 @@ class CrossRefPkgRun {
           currentTippError.put('package', ['message': messageService.resolveCode('crossRef.package.tipps.error.pkgId', [json_tipp.title.name], request_locale), baddata: json_tipp.package])
           invalidTipps << json_tipp
         }
-        if (!invalidTipps.contains(json_tipp)) {
+/*        if (!invalidTipps.contains(json_tipp)) {
           // validate and upsert TitleInstance
           Map titleErrorMap = handleTitle(json_tipp)
           if (titleErrorMap.size() > 0) {
             currentTippError.put('title', titleErrorMap)
           }
-        }
+        }*/
         if (!invalidTipps.contains(json_tipp)) {
           // validate and upsert PlatformInstance
           Map pltErrorMap = handlePlt(json_tipp)
@@ -168,7 +168,7 @@ class CrossRefPkgRun {
         }
         if (!invalidTipps.contains(json_tipp)) {
           // validate and upsert TIPP
-          Map tippErrorMap = handleTIPP(json_tipp)
+          Map tippErrorMap = handleTIPPNew(json_tipp)
           if (tippErrorMap.size() > 0) {
             currentTippError.put('tipp', tippErrorMap)
           }
@@ -547,7 +547,7 @@ class CrossRefPkgRun {
 
   private Map handleTIPP(JSONObject tippJson) {
     Map tippError = [:]
-    def validation_result = TitleInstancePackagePlatform.validateDTO(tippJson, locale)
+    def validation_result = TitleInstancePackagePlatform.validateDTONew(tippJson, locale)
     log.debug("validate TIPP ${tippJson.name ?: tippJson.title.name}")
     if (!validation_result.valid) {
       invalidTipps << tippJson
@@ -632,6 +632,119 @@ class CrossRefPkgRun {
         def tipp_error = [
           message: messageService.resolveCode('crossRef.package.tipps.error', [tippJson.title.name], locale),
           baddata: tippJson
+        ]
+        return tipp_error
+      }
+    }
+    return tippError
+  }
+
+
+  private Map handleTIPPNew(JSONObject tippJson) {
+    Map tippError = [:]
+    def validation_result = TitleInstancePackagePlatform.validateDTONew(tippJson, locale)
+    log.debug("validate TIPP ${tippJson.name ?: tippJson.title.name}")
+    if (!validation_result.valid) {
+      invalidTipps << tippJson
+      log.debug("TIPP Validation failed on ${tippJson.name ?: tippJson.title.name}")
+      return validation_result.errors
+    }
+    else {
+      if (validation_result.errors?.size() > 0) {
+        tippError.putAll(validation_result.errors)
+      }
+      log.debug("upsert TIPP ${tippJson.name ?: tippJson.title.name}")
+      def upserted_tipp = null
+      try {
+        upserted_tipp = TitleInstancePackagePlatform.upsertDTO(tippJson, user)
+        log.debug("Upserted TIPP ${upserted_tipp} with URL ${upserted_tipp?.url}")
+        upserted_tipp.merge(flush: true)
+        componentUpdateService.ensureCoreData(upserted_tipp, tippJson, fullsync, user)
+
+
+        /*if (titleObj.historyEvents?.size() > 0) {
+          def he_result = titleHistoryService.processHistoryEvents(ti, titleObj, title_class_name, user, fullsync, locale)
+          if (he_result.errors) {
+            if (!currentTippError.title) {
+              currentTippError.title = [:]
+            }
+            currentTippError[title].put('historyEvents': [
+                    message: messageService.resolveCode('crossRef.package.tipps.error.title.history', null, locale),
+                    baddata: tippJson.title,
+                    errors : he_result.errors])
+          }
+        }
+
+        titleLookupService.addPublisherHistory(ti, titleObj.publisher_history)*/
+
+
+      }
+      catch (grails.validation.ValidationException ve) {
+        log.error("ValidationException attempting to cross reference TIPP", ve)
+        upserted_tipp?.discard()
+        tippError.putAll(messageService.processValidationErrors(ve.errors))
+        return tippError
+      }
+      catch (Exception ge) {
+        log.error("Exception attempting to cross reference TIPP:", ge)
+        def tipp_error = [
+                message: messageService.resolveCode('crossRef.package.tipps.error', [tippJson.title.name], locale),
+                baddata: tippJson,
+                errors : [message: ge.toString()]
+        ]
+        upserted_tipp?.discard()
+        return tipp_error
+      }
+      if (upserted_tipp) {
+        if (existing_tipp_ids.size() > 0 && existing_tipp_ids.contains(upserted_tipp.id)) {
+          log.debug("Existing TIPP matched!")
+          existing_tipp_ids.removeElement(upserted_tipp.id)
+        }
+        if (upserted_tipp.status != status_deleted && tippJson.status == "Deleted") {
+          upserted_tipp.deleteSoft()
+          removedNum++;
+        }
+        else if (upserted_tipp.status != status_retired && tippJson.status == "Retired") {
+          upserted_tipp.retire()
+          removedNum++;
+        }
+        else if (upserted_tipp.status != status_current && (!tippJson.status || tippJson.status == "Current")) {
+          if (upserted_tipp.isDeleted() && !fullsync) {
+            // upserted_tipp.merge(flush: true)
+            reviewRequestService.raise(
+                    upserted_tipp,
+                    "Matched TIPP was marked as Deleted.",
+                    "Check TIPP Status.",
+                    user,
+                    null,
+                    null,
+                    rr_deleted
+            )
+          }
+          upserted_tipp.status = status_current
+        }
+//        upserted_tipp.save()
+        upserted_tipp.merge(flush: true)
+        if (upserted_tipp.isCurrent() && upserted_tipp.hostPlatform?.status != status_current) {
+          def additionalInfo = [:]
+          additionalInfo.vars = [upserted_tipp.hostPlatform.name, upserted_tipp.hostPlatform.status?.value]
+          reviewRequestService.raise(
+                  upserted_tipp,
+                  "The existing platform matched for this TIPP (${upserted_tipp.hostPlatform}) is marked as ${upserted_tipp.hostPlatform.status?.value}! Please review the URL/Platform for validity.",
+                  "Platform not marked as current.",
+                  user,
+                  null,
+                  (additionalInfo as JSON).toString(),
+                  rr_nonCurrent
+          )
+        }
+      }
+      else {
+        log.debug("Could not reference TIPP")
+        invalidTipps << tippJson
+        def tipp_error = [
+                message: messageService.resolveCode('crossRef.package.tipps.error', [tippJson.title.name], locale),
+                baddata: tippJson
         ]
         return tipp_error
       }

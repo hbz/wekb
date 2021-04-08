@@ -52,6 +52,7 @@ class RCConstants {
     public static final String PACKAGE_FILE = "Package.File"
     public static final String PACKAGE_LINK_TYPE = "Package.LinkType"
     public static final String PACKAGE_LIST_STATUS = "Package.ListStatus"
+    public static final String PACKAGE_REGIONAL_RANGE = "Package.RegionalRange"
     public static final String PACKAGE_PAYMENT_TYPE = "Package.PaymentType"
     public static final String PACKAGE_OPEN_ACCESS = "Package.OpenAccess"
     public static final String PACKAGE_SCOPE = "Package.Scope"
@@ -74,6 +75,7 @@ class RCConstants {
     public static final String SOURCE_DATA_FORMAT = "Source.DataFormat"
     public static final String SOURCE_FREQUENCY = "Source.Frequency"
 
+    public static final String TIPP_ACCESS_TYPE = "TitleInstancePackagePlatform.AccessType"
     public static final String TIPP_COVERAGE_DEPTH = "TitleInstancePackagePlatform.CoverageDepth"
     public static final String TIPP_DELAYED_OA = "TitleInstancePackagePlatform.DelayedOA"
     public static final String TIPP_FORMAT = "TitleInstancePackagePlatform.Format"

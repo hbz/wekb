@@ -959,6 +959,7 @@ class WorkflowController{
           tipp_dto.platform = ['internalId': old_tipp.hostPlatform.id]
           tipp_dto.title = ['internalId': new_ti.id]
           if (old_tipp.paymentType?.value) tipp_dto.paymentType = old_tipp.paymentType?.value
+          if (old_tipp.accessType?.value) tipp_dto.accessType = old_tipp.accessType?.value
           tipp_dto.url = old_tipp.url ?: ""
           tipp_dto.coverage = []
 
@@ -1581,7 +1582,7 @@ class WorkflowController{
             (tipp.title.hasProperty('firstEditor') ? sanitize(tipp.title.firstEditor) : '') + '\t' +
             '\t' +  // parent_publication_title_id
             sanitize(tipp.title?.medium?.value) + '\t' +  // publication_type
-            sanitize(tipp.paymentType?.value) + '\t' +  // access_type
+            sanitize(tipp.accessType?.value) + '\t' +  // access_type
             sanitize(tipp.title.getIdentifierValue('ZDB')) +
             '\n')
   }

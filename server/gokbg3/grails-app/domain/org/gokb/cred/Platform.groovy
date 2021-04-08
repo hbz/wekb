@@ -300,6 +300,7 @@ class Platform extends KBComponent {
 
             def platform_crit = Platform.createCriteria()
 
+            //TODO: MOE Matching
             url_candidates = platform_crit.list {
               or {
                 like("name", "${urlHost}")

@@ -83,6 +83,12 @@ class Package extends KBComponent {
 
   static hasOne = [updateToken: UpdateToken]
 
+
+  static hasMany = [
+          nationalRange : RefdataValue,
+          regionalRange : RefdataValue,
+  ]
+
   static mapping = {
     includes KBComponent.mapping
     listStatus column: 'pkg_list_status_rv_fk'
@@ -95,6 +101,18 @@ class Package extends KBComponent {
     descriptionURL column: 'pkg_descr_url'
     openAccess column: 'pkg_open_access'
     file column: 'pkg_file'
+
+    nationalRange             joinTable: [
+            name:   'package_national_range',
+            key:    'package_fk',
+            column: 'national_range_rv_fk', type:   'BIGINT'
+    ], lazy: false
+
+    regionalRange             joinTable: [
+            name:   'package_regional_range',
+            key:    'package_fk',
+            column: 'regional_range_rv_fk', type:   'BIGINT'
+    ], lazy: false
   }
 
   static constraints = {
@@ -124,6 +142,8 @@ class Package extends KBComponent {
         }
       }
     })
+    nationalRange(nullable:true)
+    regionalRange(nullable:true)
   }
 
   public String getRestPath() {
@@ -687,6 +707,25 @@ select tipp.id,
         result.errors.put(idJsonKey, id_errors)
       }
     }
+
+    if (packageHeaderDTO.provider && packageHeaderDTO.provider instanceof Integer) {
+      def prov = Org.get(packageHeaderDTO.provider)
+
+      if (!prov) {
+        result.errors.provider = [[message: messageService.resolveCode('crossRef.error.lookup', ["Provider", "ID"], locale), code: 404, baddata: packageHeaderDTO.provider]]
+        result.valid = false
+      }
+    }
+
+    if (packageHeaderDTO.nominalPlatform && packageHeaderDTO.nominalPlatform instanceof Integer) {
+      def prov = Platform.get(packageHeaderDTO.nominalPlatform)
+
+      if (!prov) {
+        result.errors.nominalPlatform = [[message: messageService.resolveCode('crossRef.error.lookup', ["Platform", "ID"], locale), code: 404, baddata: packageHeaderDTO.nominalPlatform]]
+        result.valid = false
+      }
+    }
+
     if (result.valid) {
       def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
       def pkg_normname = Package.generateNormname(packageHeaderDTO.name)
@@ -734,24 +773,6 @@ select tipp.id,
             }
           }
         }
-      }
-    }
-
-    if (packageHeaderDTO.provider && packageHeaderDTO.provider instanceof Integer) {
-      def prov = Org.get(packageHeaderDTO.provider)
-
-      if (!prov) {
-        result.errors.provider = [[message: messageService.resolveCode('crossRef.error.lookup', ["Provider", "ID"], locale), code: 404, baddata: packageHeaderDTO.provider]]
-        result.valid = false
-      }
-    }
-
-    if (packageHeaderDTO.nominalPlatform && packageHeaderDTO.nominalPlatform instanceof Integer) {
-      def prov = Platform.get(packageHeaderDTO.nominalPlatform)
-
-      if (!prov) {
-        result.errors.nominalPlatform = [[message: messageService.resolveCode('crossRef.error.lookup', ["Platform", "ID"], locale), code: 404, baddata: packageHeaderDTO.nominalPlatform]]
-        result.valid = false
       }
     }
 

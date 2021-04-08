@@ -51,11 +51,19 @@ if (Environment.isDevelopmentMode() || Environment.current == Environment.TEST) 
   logger('gokbg3.UserDetailsInterceptor', ERROR)
   logger('gokbg3.PreferencesInterceptor', ERROR)
   logger('gokbg3.RestMappingService', ERROR)
+  logger('de.wekb', DEBUG)
+
+  //For Database Migration
+  logger ('liquibase', DEBUG)
 }
 else {
   logger('com.k_int', INFO)
   logger('org.gokb', INFO)
   logger('gokbg3', INFO)
+  logger('de.wekb', INFO)
+
+  //For Database Migration
+  logger ('liquibase', INFO)
 }
 
 def targetDir = BuildSettings.TARGET_DIR
