@@ -1,4 +1,4 @@
-<div class="wekb-numberChartHero">
+<div class="wekb-numberChartHero mb-4">
     <div class="container">
         <div class="row justify-content-between">
             <g:each in="${componentsOfStatistic.sort{it}}" var="component">
