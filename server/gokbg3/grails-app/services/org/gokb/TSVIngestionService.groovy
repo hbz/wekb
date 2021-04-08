@@ -1051,7 +1051,17 @@ class TSVIngestionService {
         }
 
         if ( identifiers.size() > 0 ) {
-          def title = titleLookupService.findOrCreate(the_kbart.publication_title, the_kbart.publisher_name, identifiers, user, null, row_specific_config.defaultTypeName)
+          def title = titleLookupService.findOrCreate(
+              the_kbart.publication_title,
+              the_kbart.publisher_name,
+              identifiers,
+              user,
+              null,
+              row_specific_config.defaultTypeName,
+              null,
+              false,
+              the_kbart.language
+          )
 
           if ( title ) {
 
@@ -1236,7 +1246,7 @@ class TSVIngestionService {
 
       // These are immutable for a TIPP - only set at creation time
       // We are going to create tipl objects at the end instead if per title inline.
-      // tipp = TitleInstancePackagePlatform.tiplAwareCreate(tipp_values)
+      // tipp = TitleInstancePackagePlatform.tippCreate(tipp_values)
 
       // Copy the new tipp_values from the file into our new object
       def tipp_fields = [
@@ -1247,7 +1257,7 @@ class TSVIngestionService {
         name: the_kbart.publication_title
       ]
 
-      tipp = TitleInstancePackagePlatform.tiplAwareCreate(tipp_fields)
+      tipp = TitleInstancePackagePlatform.tippCreate(tipp_fields)
     }
 
     Set<String> ids = tipp.ids.collect { "${it.namespace?.value}|${it.value}".toString() }

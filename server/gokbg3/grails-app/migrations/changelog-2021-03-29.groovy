@@ -24,9 +24,9 @@ databaseChangeLog = {
         dropColumn(columnName: "frequency", tableName: "source")
     }
 
-    changeSet(author: "djebeniani (generated)", id: "1617016430509-7") {
+/*    changeSet(author: "djebeniani (generated)", id: "1617016430509-7") {
         dropColumn(columnName: "preceding_publication_title_id", tableName: "title_instance_package_platform")
-    }
+    }*/
 
     changeSet(author: "djebeniani (generated)", id: "1617016430509-8") {
         dropColumn(columnName: "series", tableName: "title_instance")

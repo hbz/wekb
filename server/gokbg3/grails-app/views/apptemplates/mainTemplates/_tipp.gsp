@@ -48,13 +48,6 @@
     </dd>
 
     <dt>
-        <gokb:annotatedLabel owner="${d}" property="name">TIPP Name</gokb:annotatedLabel>
-    </dt>
-    <dd>
-        <gokb:xEditable class="ipe" owner="${d}" field="name"/>
-    </dd>
-
-    <dt>
         <gokb:annotatedLabel owner="${d}" property="url">Host Platform URL</gokb:annotatedLabel>
     </dt>
     <dd>
@@ -140,7 +133,7 @@
     </dd>
 
     <dt>
-        <gokb:annotatedLabel owner="${d}" property="editionStatement">Edition statement</gokb:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="editionStatement">Edition</gokb:annotatedLabel>
     </dt>
     <dd>
         <gokb:xEditable class="ipe" owner="${d}" field="editionStatement"/>
@@ -206,6 +199,14 @@
     <dd>
         <gokb:xEditableRefData owner="${d}" field="paymentType"
                                config="${RCConstants.TIPP_PAYMENT_TYPE}"/>
+    </dd>
+
+    <dt>
+        <gokb:annotatedLabel owner="${d}" property="accessType">Access Type</gokb:annotatedLabel>
+    </dt>
+    <dd>
+        <gokb:xEditableRefData owner="${d}" field="accessType"
+                               config="${RCConstants.TIPP_ACCESS_TYPE}"/>
     </dd>
 
 </dl>

@@ -27,6 +27,11 @@ class ReviewRequest implements Auditable {
   RefineProject refineProject
   String additionalInfo
 
+  Org raisedByOrg
+  Org allocatedToOrg
+  Org closedByOrg
+  Org reviewedByOrg
+
   // Timestamps
   Date dateCreated
   Date lastUpdated
@@ -36,6 +41,12 @@ class ReviewRequest implements Auditable {
     descriptionOfCause column:'rr_cause_txt', type:'text'
     reviewRequest column:'rr_req_txt', type:'text'
     additionalInfo column:'rr_additional_info', type:'text'
+
+    raisedByOrg column:'rr_raised_by_org_fk'
+    reviewedByOrg column:'rr_reviewed_by_org_fk'
+    allocatedToOrg column:'rr_allocated_to_org_fk'
+    closedByOrg column:'rr_closed_by_org_fk'
+
   }
 
   static constraints = {
@@ -53,6 +64,10 @@ class ReviewRequest implements Auditable {
     needsNotify(nullable:true, blank:true)
     refineProject(nullable:true, blank:true)
     additionalInfo(nullable:true, blank:true)
+    raisedByOrg(nullable:true, blank:false)
+    reviewedByOrg(nullable:true, blank:false)
+    allocatedToOrg(nullable:true, blank:false)
+    closedByOrg(nullable:true, blank:false)
   }
 
   public static ReviewRequest raise (KBComponent forComponent,

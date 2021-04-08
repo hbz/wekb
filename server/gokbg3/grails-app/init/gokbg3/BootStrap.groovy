@@ -434,6 +434,10 @@ class BootStrap {
         RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_EDIT_STATUS, KBComponent.EDIT_STATUS_IN_PROGRESS).save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_EDIT_STATUS, KBComponent.EDIT_STATUS_REJECTED).save(flush: true, failOnError: true)
 
+
+        RefdataCategory.lookupOrCreate(RCConstants.TIPP_ACCESS_TYPE, "Free").save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(RCConstants.TIPP_ACCESS_TYPE, "Paid").save(flush: true, failOnError: true)
+
         RefdataCategory.lookupOrCreate(RCConstants.TIPP_FORMAT, "Digitised").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.TIPP_FORMAT, "Electronic").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.TIPP_FORMAT, "Print").save(flush: true, failOnError: true)

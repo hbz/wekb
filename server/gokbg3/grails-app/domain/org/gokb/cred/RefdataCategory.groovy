@@ -43,44 +43,42 @@ class RefdataCategory {
 
   public static final String restPath = "/refdata/categories"
 
-  static def lookup(category_name, value, def sortkey = null) {
 
-    if ((value == null) || (category_name == null))
-      throw new RuntimeException("Request to lookupOrCreate null value in category ${category_name}");
-
-    def result = null;
-
+  static def lookup(category_name, value, def sortkey = null){
+    if ((value == null) || (category_name == null)){
+      throw new RuntimeException("Request to lookupOrCreate null value in category ${category_name}")
+    }
+    def result = null
     def rdv_cache_key = category_name + ':' + value + ':' + sortkey
     def rdv_id = rdv_cache[rdv_cache_key]
     if (rdv_id && rdv_id instanceof Long) {
-      result = RefdataValue.get(rdv_id);
+      result = RefdataValue.get(rdv_id)
     }
     else if (!rdv_id instanceof Long) {
-      throw new RuntimeException("Got a string value from rdv_cache for ${category_name}, ${value}!");
+      throw new RuntimeException("Got a string value from rdv_cache for ${category_name}, ${value}!")
     }
     else {
       // The category.
       def cats = RefdataCategory.executeQuery('select c from RefdataCategory as c where lower(c.desc) = ?', category_name.toLowerCase());
-      def cat = null;
-
+      def cat = null
       if (cats.size() == 0) {
         return result
-      } else if (cats.size() == 1) {
+      }
+      else if (cats.size() == 1){
         cat = cats[0]
-        // log.debug("Found existing category for ${category_name} : ${cat}");
         result = RefdataValue.findByOwnerAndValueIlike(cat, value)
-      } else {
+      }
+      else {
         throw new RuntimeException("Multiple matching refdata category names")
       }
-
       if (result) {
         rdv_cache[rdv_cache_key] = result.id
       }
     }
-
     // return the refdata value.
     result
   }
+
 
   static RefdataValue[] lookup(category_name) {
     if (category_name == null)

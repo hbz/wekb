@@ -474,7 +474,7 @@ class PackageController {
           }
         }
 
-        def tipp_validation = TitleInstancePackagePlatform.validateDTO(tipp_dto, RequestContextUtils.getLocale(request))
+        def tipp_validation = TitleInstancePackagePlatform.validateDTONew(tipp_dto, RequestContextUtils.getLocale(request))
 
         if (ti_errors?.size > 0 || !tipp_validation.valid) {
           if (!errors.tipps) {
@@ -662,7 +662,7 @@ class PackageController {
           def idx = 0
 
           reqBody.each { tipp ->
-            def tipp_validation = TitleInstancePackagePlatform.validateDTO(tipp, RequestContextUtils.getLocale(request))
+            def tipp_validation = TitleInstancePackagePlatform.validateDTONew(tipp, RequestContextUtils.getLocale(request))
 
             if (tipp_validation.valid) {
               def tipp_obj = TitleInstancePackagePlatform.upsertDTO(tipp)
@@ -840,7 +840,9 @@ class PackageController {
                               user,
                               null,
                               title_class_name,
-                              titleObj.uuid
+                              titleObj.uuid,
+                              false,
+                              titleObj.language
                             )
 
                             if (ti?.id && !ti.hasErrors()) {
@@ -1037,7 +1039,7 @@ class PackageController {
                   // If valid so far, validate tipps
                   log.debug("Validating tipps [${tippctr++}]");
                   json.eachWithIndex { tipp, idx ->
-                    def validation_result = TitleInstancePackagePlatform.validateDTO(tipp, request_locale)
+                    def validation_result = TitleInstancePackagePlatform.validateDTONew(tipp, request_locale)
 
                     if (validation_result && !validation_result.valid) {
                       log.debug("TIPP Validation failed on ${tipp}")

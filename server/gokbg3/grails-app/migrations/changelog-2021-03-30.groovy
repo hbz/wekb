@@ -10,17 +10,17 @@ databaseChangeLog = {
         addForeignKeyConstraint(baseColumnNames: "pkg_file", baseTableName: "package", constraintName: "FKdgwi2nrck0bhovlb2sju6iwfp", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "rdv_id", referencedTableName: "refdata_value")
     }
 
-    changeSet(author: "djebeniani (generated)", id: "1617095504908-3") {
+/*    changeSet(author: "djebeniani (generated)", id: "1617095504908-3") {
         dropForeignKeyConstraint(baseTableName: "package", constraintName: "fkajnnn4oj0lv2ek3sq3ms6squ4")
-    }
+    }*/
 
-    changeSet(author: "djebeniani (generated)", id: "1617095504908-4") {
+/*    changeSet(author: "djebeniani (generated)", id: "1617095504908-4") {
         dropForeignKeyConstraint(baseTableName: "package", constraintName: "fkigjskhpyi7lvpbsq1tx36bh1w")
-    }
+    }*/
 
-    changeSet(author: "djebeniani (generated)", id: "1617095504908-5") {
+/*    changeSet(author: "djebeniani (generated)", id: "1617095504908-5") {
         dropForeignKeyConstraint(baseTableName: "package", constraintName: "fkkt416sp4afou253it51jbsbky")
-    }
+    }*/
 
     changeSet(author: "djebeniani (generated)", id: "1617095504908-6") {
         dropColumn(columnName: "list_verified_date", tableName: "package")
