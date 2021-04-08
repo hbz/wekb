@@ -68,7 +68,7 @@ class BootStrap {
             def apiRole = Role.findByAuthority('ROLE_API') ?: new Role(authority: 'ROLE_API', roleType: 'global').save(failOnError: true)
             def suRole = Role.findByAuthority('ROLE_SUPERUSER') ?: new Role(authority: 'ROLE_SUPERUSER', roleType: 'global').save(failOnError: true)
 
-            log.debug("Create admin user...");
+            /*log.debug("Create admin user...");
             def adminUser = User.findByUsername('admin')
             if (!adminUser) {
                 log.error("No admin user found, create")
@@ -116,16 +116,16 @@ class BootStrap {
                 if (!tempUser.authorities.contains(userRole)) {
                     UserRole.create tempUser, userRole
                 }
-            }
+            }*/
 
 
             // Make sure admin user has all the system roles.
-            [contributorRole, userRole, editorRole, adminRole, apiRole, suRole].each { role ->
+            /*[contributorRole, userRole, editorRole, adminRole, apiRole, suRole].each { role ->
                 log.debug("Ensure admin user has ${role} role");
                 if (!adminUser.authorities.contains(role)) {
                     UserRole.create adminUser, role
                 }
-            }
+            }*/
         }
 
 
@@ -240,8 +240,10 @@ class BootStrap {
         // log.info("Default batch loader config");
         // defaultBulkLoaderConfig();
 
-        log.info("Register users and override default admin password");
-        registerUsers()
+        /*log.info("Register users and override default admin password");
+        registerUsers()*/
+
+        anonymizeUsers()
 
         log.info("Ensuring ElasticSearch index")
         ensureEsIndices()
@@ -1149,6 +1151,28 @@ class BootStrap {
                 } else {
                     log.debug("  -> ${role} already present")
                 }
+            }
+        }
+    }
+
+    def anonymizeUsers() {
+        if(grailsApplication.config.anonymizeUsers) {
+            log.debug("anonymizeUsers")
+            User.findAll().each { User user ->
+
+                log.debug("anonymizeUsers ${user.displayName} ${user.username}")
+                if(user.curatoryGroups.find{CuratoryGroup curatoryGroup -> curatoryGroup.name == "hbz" || curatoryGroup.name == "LAS:eR"}){
+                    user.email = 'local@localhost.local'
+                }else {
+                    user.username = "User ${user.id}"
+                    user.displayName = "User ${user.id}"
+                    user.email = 'local@localhost.local'
+                    user.password = "${user.lastUpdated}+${user.id}"
+                    user.enabled = false
+                    user.accountLocked = true
+                    user.save()
+                }
+
             }
         }
     }
