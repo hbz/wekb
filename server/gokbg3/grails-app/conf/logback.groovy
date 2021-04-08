@@ -54,7 +54,7 @@ if (Environment.isDevelopmentMode() || Environment.current == Environment.TEST) 
   logger('de.wekb', DEBUG)
 
   //For Database Migration
-  logger ('liquibase', DEBUG)
+  logger ('liquibase', INFO)
 }
 else {
   logger('com.k_int', INFO)
