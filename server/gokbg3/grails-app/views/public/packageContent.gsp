@@ -89,17 +89,22 @@
 
                     <div id="content">
                         <ul id="tabs" class="nav nav-tabs">
-                            <li role="presentation" class="active"><a href="#titledetails"
-                                                                      data-toggle="tab">Titles/TIPPs <span
-                                        class="badge badge-warning">${titleCount}</span>
-                            </a></li>
-                            <li role="presentation"><a href="#identifiers" data-toggle="tab">Identifiers <span
-                                    class="badge badge-warning">${pkg?.getCombosByPropertyNameAndStatus('ids', 'Active')?.size() ?: '0'}</span>
-                            </a></li>
+                            <li role="presentation" class=nav-item">
+                                <a class="nav-link active" href="#titledetails" data-toggle="tab">Titles/TIPPs
+                                    <span class="badge badge-warning">${titleCount}</span>
+                                </a>
+                            </li>
+                            <li role="presentation" class=nav-item">
+                                <a class="nav-link" href="#identifiers" data-toggle="tab">Identifiers
+                                    <span  class="badge badge-warning">${pkg?.getCombosByPropertyNameAndStatus('ids', 'Active')?.size() ?: '0'}</span>
+                                </a>
+                            </li>
 
-                            <li role="presentation"><a href="#altnames" data-toggle="tab">Alternate Names
-                                <span class="badge badge-warning">${pkg.variantNames?.size() ?: '0'}</span>
-                            </a></li>
+                            <li role="presentation" class=nav-item">
+                                <a class="nav-link" href="#altnames" data-toggle="tab">Alternate Names
+                                    <span class="badge badge-warning">${pkg.variantNames?.size() ?: '0'}</span>
+                                </a>
+                            </li>
                         </ul>
 
                         <div id="my-tab-content" class="tab-content">
