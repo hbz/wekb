@@ -2,6 +2,7 @@ package de.wekb.helper
 
 import grails.core.GrailsApplication
 import grails.util.Environment
+import grails.util.Holders
 
 class ServerUtils {
 
@@ -10,13 +11,13 @@ class ServerUtils {
     static final SERVER_QA    = 'SERVER_QA'
     static final SERVER_PROD  = 'SERVER_PROD'
 
-    static GrailsApplication grailsApplication
+
 
     static String getCurrentServer() {
 
         if (! Environment.isDevelopmentMode()) {
 
-            switch (grailsApplication.config.systemId) {
+            switch (Holders.grailsApplication.config.systemId) {
                 case 'we:kb-Dev':
                     return SERVER_DEV
                     break

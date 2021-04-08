@@ -1157,7 +1157,7 @@ class BootStrap {
 
     def anonymizeUsers() {
         if(grailsApplication.config.anonymizeUsers) {
-            log.debug("anonymizeUsers")
+            log.info("anonymizeUsers")
             User.findAll().each { User user ->
 
                 log.debug("anonymizeUsers ${user.displayName} ${user.username}")
