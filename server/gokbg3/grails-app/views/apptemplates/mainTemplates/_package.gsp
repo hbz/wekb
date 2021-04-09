@@ -132,7 +132,7 @@
               <g:link class="display-inline" controller="search" action="index"
                 params="[qbe:'g:tipps', qp_pkg_id:d.id, inline:true, refOid: d.getLogEntityId(), hide:['qp_pkg_id', 'qp_cp', 'qp_pkg', 'qp_pub_id']]"
                 id="">Titles in this package</g:link>
-              <g:if test="${ editable && params.controller != 'create' }">
+              %{--<g:if test="${ editable && params.controller != 'create' }">
                 <div class="panel-body">
                   <h4>
                     <gokb:annotatedLabel owner="${d}" property="addTipp">Add new TIPP</gokb:annotatedLabel>
@@ -164,7 +164,7 @@
                     </dl>
                   </g:form>
                 </div>
-              </g:if>
+              </g:if>--}%
             </dd>
           </dl>
         </g:if>
