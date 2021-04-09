@@ -566,7 +566,7 @@ class ComponentLookupService {
     }
 
     log.debug("Identified endpoint: ${endpoint}")
-    def base = grailsApplication.config.serverURL + "/rest" + "${context ?: endpoint}"
+    def base = grailsApplication.config.serverUrl + "/rest" + "${context ?: endpoint}"
 
     result['_links'] = [:]
 
@@ -604,7 +604,7 @@ class ComponentLookupService {
       }
     }
     else {
-      selfLink = new URIBuilder(grailsApplication.config.serverURL + "/rest")
+      selfLink = new URIBuilder(grailsApplication.config.serverUrl + "/rest")
     }
     result['_links']['self'] = [href: selfLink.toString()]
 

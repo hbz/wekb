@@ -31,7 +31,6 @@ public class DisplayTemplateService {
     globalDisplayTemplates.put('org.gokb.cred.RefdataCategory',[ type:'staticgsp', rendername:'rdc' ]);
     globalDisplayTemplates.put('org.gokb.cred.RefdataValue',[ type:'staticgsp', rendername:'rdv', noCreate:true ]);
     globalDisplayTemplates.put('org.gokb.cred.ReviewRequest',[ type:'staticgsp', rendername:'revreq' ]);
-    globalDisplayTemplates.put('org.gokb.cred.Subject',[ type:'staticgsp', rendername:'subject' ]);
     globalDisplayTemplates.put('org.gokb.cred.Source',[ type:'staticgsp', rendername:'source' ]);
     globalDisplayTemplates.put('org.gokb.cred.TitleInstance',[ type:'staticgsp', rendername:'title', noCreate:true ]);
     globalDisplayTemplates.put('org.gokb.cred.TitleInstancePackagePlatform',[ type:'staticgsp', rendername:'tipp', noCreate:true ]);

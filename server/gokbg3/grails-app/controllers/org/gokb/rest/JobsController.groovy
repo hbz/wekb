@@ -24,7 +24,7 @@ class JobsController {
     def result = [:]
     def max = params.limit ? params.int('limit') : 10
     def offset = params.offset ? params.int('offset') : 0
-    def base = grailsApplication.config.serverURL + "/rest"
+    def base = grailsApplication.config.serverUrl + "/rest"
     def sort = params._sort ?: null
     def order = params._order ?: null
     User user = User.get(springSecurityService.principal.id)

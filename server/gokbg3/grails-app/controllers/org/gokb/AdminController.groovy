@@ -98,7 +98,7 @@ class AdminController {
     j.description = "Tidy Orgs Data"
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'TidyOrgsData')
 
-    render(view: "logViewer", model: logViewer())
+    redirect(controller: 'admin', action: 'jobs');
   }
 
   def logViewer() {
@@ -142,7 +142,7 @@ class AdminController {
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'RegenerateLicenseSummaries')
     j.startTime = new Date()
 
-    render(view: "logViewer", model: logViewer())
+    redirect(controller: 'admin', action: 'jobs');
   }
 
   def ensureUuids() {
@@ -155,7 +155,7 @@ class AdminController {
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'EnsureUUIDs')
     j.startTime = new Date()
 
-    render(view: "logViewer", model: logViewer())
+    redirect(controller: 'admin', action: 'jobs');
 
   }
 
@@ -168,7 +168,7 @@ class AdminController {
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'EnsureTIPLs')
     j.startTime = new Date()
 
-    render(view: "logViewer", model: logViewer())
+    redirect(controller: 'admin', action: 'jobs');
   }
 
 
@@ -181,7 +181,7 @@ class AdminController {
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'MarkInconsDateRanges')
     j.startTime = new Date()
 
-    render(view: "logViewer", model: logViewer())
+    redirect(controller: 'admin', action: 'jobs');
   }
 
   def copyUploadedFile(inputfile, deposit_token) {
@@ -234,7 +234,7 @@ class AdminController {
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'UpdateFreeTextIndexes')
     j.startTime = new Date()
 
-    render(view: "logViewer", model: logViewer())
+    redirect(controller: 'admin', action: 'jobs');
   }
 
   def resetTextIndexes() {
@@ -247,7 +247,7 @@ class AdminController {
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'ResetFreeTextIndexes')
     j.startTime = new Date()
 
-    render(view: "logViewer", model: logViewer())
+    redirect(controller: 'admin', action: 'jobs');
   }
 
   def masterListUpdate() {
@@ -260,7 +260,7 @@ class AdminController {
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'MasterListUpdate')
     j.startTime = new Date()
 
-    render(view: "logViewer", model: logViewer())
+    redirect(controller: 'admin', action: 'jobs');
   }
 
   def clearBlockCache() {
@@ -281,7 +281,7 @@ class AdminController {
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'EnrichmentService')
     j.startTime = new Date()
 
-    render(view: "logViewer", model: logViewer())
+    redirect(controller: 'admin', action: 'jobs');
   }
 
   def addPackageTypes() {
@@ -294,7 +294,7 @@ class AdminController {
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'GeneratePackageTypes')
     j.startTime = new Date()
 
-    render(view: "logViewer", model: logViewer())
+    redirect(controller: 'admin', action: 'jobs');
   }
 
   def jobs() {
@@ -355,7 +355,7 @@ class AdminController {
     Job j = concurrencyManagerService.getJob(params.id)
 
     j?.forceCancel()
-    render(view: "logViewer", model: logViewer())
+    redirect(controller: 'admin', action: 'jobs');
   }
 
   def housekeeping() {
@@ -369,7 +369,7 @@ class AdminController {
 
     log.debug "Triggering housekeeping task. Started job #${j.uuid}"
 
-    render(view: "logViewer", model: logViewer())
+    redirect(controller: 'admin', action: 'jobs');
   }
 
   def cleanup() {
@@ -383,7 +383,7 @@ class AdminController {
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'CleanupDeletedComponents')
     j.startTime = new Date()
 
-    render(view: "logViewer", model: logViewer())
+    redirect(controller: 'admin', action: 'jobs');
   }
 
   def cleanupRejected() {
@@ -397,7 +397,7 @@ class AdminController {
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'CleanupRejectedComponents')
     j.startTime = new Date()
 
-    render(view: "logViewer", model: logViewer())
+    redirect(controller: 'admin', action: 'jobs');
   }
 
 
@@ -412,7 +412,7 @@ class AdminController {
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'TIPPCleanup')
     j.startTime = new Date()
 
-    render(view: "logViewer", model: logViewer())
+    redirect(controller: 'admin', action: 'jobs');
   }
 
 
@@ -427,7 +427,7 @@ class AdminController {
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'IdentifierCleanup')
     j.startTime = new Date()
 
-    render(view: "logViewer", model: logViewer())
+    redirect(controller: 'admin', action: 'jobs');
   }
 
 
@@ -442,7 +442,7 @@ class AdminController {
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'DeleteTIWithoutHistory')
     j.startTime = new Date()
 
-    render(view: "logViewer", model: logViewer())
+    redirect(controller: 'admin', action: 'jobs');
   }
 
   def rejectNoIdTitles() {
@@ -456,7 +456,7 @@ class AdminController {
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'RejectTIWithoutIdentifier')
     j.startTime = new Date()
 
-    render(view: "logViewer", model: logViewer())
+    redirect(controller: 'admin', action: 'jobs');
   }
 
   def cleanupPlatforms() {
@@ -470,7 +470,7 @@ class AdminController {
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'PlatformCleanup')
     j.startTime = new Date()
 
-    render(view: "logViewer", model: logViewer())
+    redirect(controller: 'admin', action: 'jobs');
   }
 
   def exportGroups() {
@@ -506,7 +506,7 @@ class AdminController {
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'RecalculateStatistics')
     j.startTime = new Date()
 
-    render(view: "logViewer", model: logViewer())
+    redirect(controller: 'admin', action: 'jobs');
   }
 
   @Secured(['ROLE_SUPERUSER', 'IS_AUTHENTICATED_FULLY'])
@@ -514,6 +514,6 @@ class AdminController {
 
     adminService.setupDefaultAcl()
 
-    render(view: "logViewer", model: logViewer())
+    redirect(controller: 'admin', action: 'jobs');
   }
 }

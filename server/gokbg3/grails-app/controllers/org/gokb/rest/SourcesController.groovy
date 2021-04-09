@@ -26,7 +26,7 @@ class SourcesController {
   @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
   def index() {
     def result = [:]
-    def base = grailsApplication.config.serverURL + "/rest"
+    def base = grailsApplication.config.serverUrl + "/rest"
     User user = null
 
     if (springSecurityService.isLoggedIn()) {
@@ -45,7 +45,7 @@ class SourcesController {
   def show() {
     def result = [:]
     def obj = null
-    def base = grailsApplication.config.serverURL + "/rest"
+    def base = grailsApplication.config.serverUrl + "/rest"
     def is_curator = true
     User user = null
     if (springSecurityService.isLoggedIn()) {

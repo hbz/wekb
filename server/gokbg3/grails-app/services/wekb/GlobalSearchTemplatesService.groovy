@@ -311,15 +311,6 @@ class GlobalSearchTemplatesService {
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'people.person'],
                                         hide       : true
                                 ],
-                                [
-                                        type       : 'lookup',
-                                        baseClass  : 'org.gokb.cred.Subject',
-                                        prompt     : 'Subject',
-                                        qparam     : 'qp_subject',
-                                        placeholder: 'Subject',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'subjects.subject'],
-                                        hide       : true
-                                ],
                         ],
                         qbeGlobals: [
                                 ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',

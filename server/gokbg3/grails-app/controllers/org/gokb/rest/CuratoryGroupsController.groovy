@@ -69,7 +69,7 @@ class CuratoryGroupsController {
   def show() {
     def result = [:]
     def curGroup = null
-    def base = grailsApplication.config.serverURL + "/rest"
+    def base = grailsApplication.config.serverUrl + "/rest"
     User user = null
 
     if (springSecurityService.isLoggedIn()) {
@@ -109,7 +109,7 @@ class CuratoryGroupsController {
     def result = [:]
     def max = params.limit ? params.long('limit') : 10
     def offset = params.offset ? params.long('offset') : 0
-    def base = grailsApplication.config.serverURL + "/rest"
+    def base = grailsApplication.config.serverUrl + "/rest"
     def sort = params.sort ?: null
     def order = params.order ?: null
     def group = CuratoryGroup.get(params.id)
@@ -215,7 +215,7 @@ class CuratoryGroupsController {
     def result = [:]
     def max = params.limit ? params.long('limit') : 10
     def offset = params.offset ? params.long('offset') : 0
-    def base = grailsApplication.config.serverURL + "/rest"
+    def base = grailsApplication.config.serverUrl + "/rest"
     def sort = params._sort ?: null
     def order = params._order ?: null
     def group = CuratoryGroup.get(params.id)

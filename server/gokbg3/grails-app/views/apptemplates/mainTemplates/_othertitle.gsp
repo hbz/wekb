@@ -96,7 +96,6 @@
 
       <li><a href="#people" data-toggle="tab">People <span class="badge badge-warning"> ${d.people?.size() ?: '0'} </span></a></li>
 
-      <li><a href="#subjects" data-toggle="tab">Subjects <span class="badge badge-warning"> ${d.subjects?.size() ?: '0'} </span></a></li>
     </g:if>
     <g:else>
       <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Alternate Names </span></li>
@@ -109,7 +108,6 @@
         <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Decision Support </span></li>
       </g:if>
       <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">People </span></li>
-      <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Subjects </span></li>
     </g:else>
   </ul>
   <div id="my-tab-content" class="tab-content">
@@ -274,20 +272,6 @@
 		</dd>
 	  </dl>
     </div>
-
-    <div class="tab-pane" id="subjects">
-	  <dl>
-	    <dt>
-		  <gokb:annotatedLabel owner="${d}" property="subjects">Add Subjects</gokb:annotatedLabel>
-		</dt>
-		<dd>
-		  <!-- this bit could be better  -->
-		  <g:render template="/apptemplates/secondTemplates/componentSubject"
-				    model="${[d:d, property:'subjects', cols:[[expr:'subject.name',colhead:'Subject Heading',action:'link-subject'],
-						                                      [expr:'subject.clsmrk', colhead: 'Classification']],targetClass:'org.gokb.cred.Subject',direction:'in']}" />
-		</dd>
-	  </dl>
-	</div>
 
   </div>
   <g:render template="/apptemplates/secondTemplates/componentStatus"

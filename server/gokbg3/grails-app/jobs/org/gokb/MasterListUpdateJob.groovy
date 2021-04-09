@@ -15,11 +15,11 @@ class MasterListUpdateJob {
 
   def execute() {
     log.debug ("Beginning scheduled Master Package update job.")
-    if ( grailsApplication.config.masterListGenerationEnabled ) {
+    if ( grailsApplication.config.gokb.masterListGenerationEnabled ) {
       packageService.updateAllMasters(true)
     }
     else {
-      log.debug("grailsApplication.config.masterListGenerationEnabled not set - no master list generation");
+      log.debug("grailsApplication.config.gokb.masterListGenerationEnabled not set - no master list generation");
     }
     log.debug ("Master Package update job completed.")
   }

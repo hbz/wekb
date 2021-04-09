@@ -154,9 +154,6 @@
       <g:if test="${grailsApplication.config.gokb.decisionSupport?.active}" >
         <li><a href="#ds" data-toggle="tab">Decision Support</a></li>
       </g:if>
-      <g:if test="${grailsApplication.config.gokb.handleSubjects}" >
-        <li><a href="#subjects" data-toggle="tab">Subjects <span class="badge badge-warning"> ${d.subjects?.size() ?: '0'} </span></a></li>
-      </g:if>
     </g:if>
     <g:else>
       <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Alternate Names </span></li>
@@ -168,9 +165,6 @@
       <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Review Tasks </span></li>
       <g:if test="${grailsApplication.config.gokb.decisionSupport?.active}" >
         <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Decision Support </span></li>
-      </g:if>
-      <g:if test="${grailsApplication.config.gokb.handleSubjects}" >
-        <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Subjects </span></li>
       </g:if>
     </g:else>
 
@@ -319,22 +313,6 @@
     <div class="tab-pane" id="ds">
       <g:render template="/apptemplates/secondTemplates/dstab" model="${[d:d]}" />
     </div>
-
-    <div class="tab-pane" id="subjects">
-          <dl>
-            <g:if test="${d.id}">
-                <dt>
-                      <gokb:annotatedLabel owner="${d}" property="subjects">Add Subjects</gokb:annotatedLabel>
-                </dt>
-                <dd>
-                  <!-- this bit could be better  -->
-                  <g:render template="/apptemplates/secondTemplates/componentSubject"
-                                    model="${[d:d, property:'subjects', cols:[[expr:'subject.name',colhead:'Subject Heading',action:'link-subject'],
-                                                                                      [expr:'subject.clsmrk', colhead: 'Classification']],targetClass:'org.gokb.cred.Subject',direction:'in']}" />
-                </dd>
-            </g:if>
-          </dl>
-        </div>
 
   </div>
   <g:if test="${d.id}">

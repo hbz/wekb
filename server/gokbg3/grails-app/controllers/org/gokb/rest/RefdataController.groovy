@@ -17,7 +17,7 @@ class RefdataController {
 
   @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
   def index() {
-    def base = grailsApplication.config.serverURL + namespace
+    def base = grailsApplication.config.serverUrl + namespace
     def result = [:]
 
     result['_links'] = ['self': ['href': base + "/refdata/"]]
@@ -50,7 +50,7 @@ class RefdataController {
   def showCategory() {
     def result = [:]
     def cat = null
-    def base = grailsApplication.config.serverURL + namespace
+    def base = grailsApplication.config.serverUrl + namespace
 
     if (params.id.contains('.')) {
       cat = RefdataCategory.findByDesc(params.id)
@@ -85,7 +85,7 @@ class RefdataController {
   def showValue() {
     def result = [:]
     def val = null
-    def base = grailsApplication.config.serverURL + namespace
+    def base = grailsApplication.config.serverUrl + namespace
 
     if (params.id.contains(':')) {
       val = genericOIDService.resolveOID(params.id)
@@ -131,7 +131,7 @@ class RefdataController {
     def result = [:]
     def resultData = []
     def cat = null
-    def base = grailsApplication.config.serverURL + '/'+namespace
+    def base = grailsApplication.config.serverUrl + '/'+namespace
 
     cat = RefdataCategory.findByLabel(RCConstants.PACKAGE_SCOPE)
 
@@ -161,7 +161,7 @@ class RefdataController {
     def result = [:]
     def resultData = []
     def cat = null
-    def base = grailsApplication.config.serverURL + '/'+namespace
+    def base = grailsApplication.config.serverUrl + '/'+namespace
 
     cat = RefdataCategory.findByLabel(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH)
 
@@ -191,7 +191,7 @@ class RefdataController {
     def result = [:]
     def resultData = []
     def cat = null
-    def base = grailsApplication.config.serverURL + '/'+namespace
+    def base = grailsApplication.config.serverUrl + '/'+namespace
 
     cat = RefdataCategory.findByLabel(RCConstants.REVIEW_REQUEST_STD_DESC)
 

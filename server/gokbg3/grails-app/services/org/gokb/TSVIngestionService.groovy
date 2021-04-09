@@ -1,36 +1,23 @@
 package org.gokb
 
 import de.wekb.helper.RCConstants
-
-import java.util.Map;
-import java.util.Set;
-import java.util.GregorianCalendar;
-
 import au.com.bytecode.opencsv.CSVReader
-import au.com.bytecode.opencsv.bean.CsvToBean
-import au.com.bytecode.opencsv.bean.HeaderColumnNameMappingStrategy
-import au.com.bytecode.opencsv.bean.HeaderColumnNameTranslateMappingStrategy
+
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
 import java.time.ZoneId
 
-import com.k_int.ConcurrencyManagerService;
-import com.k_int.ConcurrencyManagerService.Job
 import com.k_int.ClassUtils
 
 import grails.gorm.transactions.Transactional
 
-import org.gokb.cred.TitleInstance
 // Only in ebooks branch -- import org.gokb.cred.BookInstance
 import org.gokb.cred.ComponentPerson
-import org.gokb.cred.ComponentSubject
-import org.gokb.cred.IngestionProfile
 import org.gokb.cred.Identifier
 import org.gokb.cred.IdentifierNamespace
 import org.gokb.cred.KBComponent
 import org.gokb.cred.ComponentHistoryEvent
 import org.gokb.cred.ComponentHistoryEventParticipant
-import org.gokb.cred.KBComponentVariantName
+
 // import org.gokb.cred.KBartRecord
 import org.gokb.cred.Org
 import org.gokb.cred.Package;
@@ -39,16 +26,14 @@ import org.gokb.cred.Platform
 import org.gokb.cred.RefdataCategory;
 import org.gokb.cred.RefdataValue;
 import org.gokb.cred.ReviewRequest
-import org.gokb.cred.Subject
+
 import org.gokb.cred.TitleInstance;
 import org.gokb.cred.Combo;
 import org.gokb.cred.TitleInstancePackagePlatform;
 import org.gokb.cred.User;
 import org.gokb.cred.DataFile;
-import org.gokb.cred.IngestionProfile;
-import org.gokb.cred.CuratoryGroup;
-import org.gokb.exceptions.*;
-import com.k_int.TextUtils
+import org.gokb.cred.IngestionProfile
+import org.gokb.exceptions.*
 import grails.converters.JSON
 import org.apache.commons.io.ByteOrderMark
 
@@ -429,34 +414,6 @@ class TSVIngestionService {
     }
     }
     ti
-  }
-
-  def TitleInstance addSubjects(the_subjects, the_title) {
-    if (the_subjects) {
-      for (the_subject in the_subjects) {
-
-        def norm_subj_name = KBComponent.generateNormname(the_subject)
-        def subject = Subject.findAllByNormname(norm_subj_name) //no alt names for subjects
-        // log.debug("this was found for subject: ${subject}")
-        if (!subject) {
-          // log.debug("subject not found, creating a new one")
-          subject = new Subject(name:the_subject, normname:norm_subj_name)
-          subject.save(failOnError:true, flush:true)
-        }
-        boolean done=false
-        def componentSubjects = the_title.subjects?:[]
-        for (cs in componentSubjects) {
-          if (!done && (cs.subject.id==subject.id)) {
-            done=true;
-          }
-        }
-        if (!done) {
-          def cs = new ComponentSubject(component:the_title, subject:subject);
-          cs.save(failOnError:true, flush:true)
-        }
-      }
-    }
-    the_title
   }
 
   def TitleInstance addPublisher (publisher_name, ti, user = null, project = null) {
@@ -1095,9 +1052,6 @@ class TSVIngestionService {
               if ( the_kbart.first_editor && the_kbart.first_editor.trim().length() > 0 ) {
                 addPerson(the_kbart.first_editor, editor_role, title);
               }
-
-              log.debug("Adding subjects");
-              addSubjects(the_kbart.subjects, title)
 
               log.debug("Adding additional authors");
               the_kbart.additional_authors.each { author ->

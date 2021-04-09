@@ -108,8 +108,8 @@ order by f.id, ti.id, title_in_group.id
 
       mailService.sendMail {
         to user.email
-        from "${grailsApplication.config.alerts.emailFrom ?: 'we:kb <user-alerts@gokb.org>'}"
-        subject "${grailsApplication.config.alerts.subject ?: 'Your we:kb User Alerts'} - ${new Date()}"
+        from "${grailsApplication.config.gokb.alerts.emailFrom ?: 'we:kb <user-alerts@gokb.org>'}"
+        subject "${grailsApplication.config.gokb.alerts.subject ?: 'Your we:kb User Alerts'} - ${new Date()}"
         html content
       }
 

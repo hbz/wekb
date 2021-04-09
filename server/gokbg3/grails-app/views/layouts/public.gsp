@@ -73,9 +73,6 @@
 
           <li><span style="width:15px"></span></li>
           <li><g:link controller="home" action="index" style="font-weight:bold;">Login</g:link></li>
-          %{--<g:if test="${grailsApplication.config.gokb.uiUrl}">
-            <li><a style="font-weight:bold;" href ="${grailsApplication.config.gokb.uiUrl}">GOKb Client</a></li>
-          </g:if>--}%
        </div>
 
      </div>
