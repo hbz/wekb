@@ -165,7 +165,7 @@ class FTUpdateService {
         result
       }
 
-      updateES(esclient, org.gokb.cred.JournalInstance.class) { org.gokb.cred.JournalInstance kbc ->
+/*      updateES(esclient, org.gokb.cred.JournalInstance.class) { org.gokb.cred.JournalInstance kbc ->
         def result = null
         def current_pub = kbc.currentPublisher
         result = [:]
@@ -284,24 +284,24 @@ class FTUpdateService {
         result.componentType = kbc.class.simpleName
         // log.debug("process ${result}")
         result
-      }
+      }*/
 
       updateES(esclient, org.gokb.cred.TitleInstancePackagePlatform.class) { org.gokb.cred.TitleInstancePackagePlatform kbc ->
 
         def result = [:]
         result._id = "${kbc.class.name}:${kbc.id}"
         result.uuid = kbc.uuid
-        result.name = kbc.name ?: (kbc.title?.name ?: null)
+        result.name = kbc.name
         result.componentType = kbc.class.simpleName
 
         result.curatoryGroups = []
         kbc.pkg?.curatoryGroups?.each { cg ->
           result.curatoryGroups.add(cg.name)
         }
-        result.titleType = kbc.title?.niceName ?: 'Unknown'
+        result.titleType = kbc.niceName ?: 'Unknown'
         result.lastUpdatedDisplay = dateFormatService.formatIsoTimestamp(kbc.lastUpdated)
         result.url = kbc.url
-        if (kbc.title?.niceName == 'Journal') {
+        if (kbc.niceName == 'Journal') {
           result.coverage = []
           ArrayList coverage_src = kbc.coverageStatements?.size() > 0 ? kbc.coverageStatements : [kbc]
           coverage_src.each { tcs ->
@@ -318,7 +318,7 @@ class FTUpdateService {
             result.coverage.add(cst)
           }
         }
-        if (kbc.title?.niceName == 'Book') {
+/*        if (kbc.niceName == 'Book') {
           // edition for eBooks
           def edition = [:]
           if (kbc.title?.editionNumber) {
@@ -340,7 +340,7 @@ class FTUpdateService {
           result.titleFirstEditor = kbc.title?.firstEditor ?: ""
           result.titleFirstAuthor = kbc.title?.firstAuthor ?: ""
           result.titleImprint = kbc.title?.imprint?.name ?: ""
-        }
+        }*/
 
         if (kbc.pkg) {
           result.tippPackage = kbc.pkg.getLogEntityId()
@@ -360,7 +360,7 @@ class FTUpdateService {
         result.titlePublishers = []
         // variant names
         result.altname = []
-        if (kbc.title) {
+/*        if (kbc.title) {
           result.tippTitle = kbc.title.getLogEntityId()
           result.tippTitleName = kbc.title.name
           result.tippTitleUuid = kbc.title.uuid
@@ -391,7 +391,7 @@ class FTUpdateService {
           kbc.title.variantNames.each { vn ->
             result.altname.add(vn.variantName)
           }
-        }
+        }*/
         if (kbc.medium) result.medium = kbc.medium.value
         if (kbc.status) result.status = kbc.status.value
         if (kbc.publicationType) result.publicationType = kbc.publicationType.value

@@ -112,7 +112,7 @@
                                         <g:sortableColumn property="tipp.title.name" title="Title"/>
                                         <g:sortableColumn property="tipp.title.ids" title="Identifiers"/>
                                         <g:sortableColumn property="tipp.hostPlatform.name" title="Platform"/>
-                                        <g:sortableColumn property="tipp.title.niceName" title="Title Type"/>
+                                        <g:sortableColumn property="tipp.niceName" title="Title Type"/>
                                         <th>Coverage</th>
                                     </tr>
                                     </thead>
@@ -121,12 +121,12 @@
                                         <tr>
                                             <td>
                                                 <g:link controller="public" action="tippContent" id="${t.uuid}">
-                                                    ${t.title.name}
+                                                    ${t.name}
                                                 </g:link>
                                             </td>
                                             <td>
                                                 <ul>
-                                                    <g:each in="${t.title.ids}" var="id">
+                                                    <g:each in="${t.ids}" var="id">
                                                         <li><strong>${id.namespace.value}</strong> : ${id.value}</li>
                                                     </g:each>
                                                 </ul>
@@ -137,7 +137,7 @@
                                                     ${t.hostPlatform?.name}
                                                 </g:link>
                                             </td>
-                                            <td>${t.title.niceName}</td>
+                                            <td>${t.niceName}</td>
                                             <td>
                                                 ${t.coverageDepth?.value}<br/>${t.coverageNote}
                                             </td>
