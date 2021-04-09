@@ -60,7 +60,7 @@ class UserDetailsInterceptor {
           // Add to the session.
           session.menus = menus
 
-          def default_dcs = ["org.gokb.cred.Package", "org.gokb.cred.Platform", "org.gokb.cred.TitleInstance", "org.gokb.cred.BookInstance", "org.gokb.cred.DatabaseInstance", "org.gokb.cred.JournalInstance", "org.gokb.cred.OtherInstance", "org.gokb.cred.TitleInstancePackagePlatform", "org.gokb.cred.Office", "org.gokb.cred.Org", "org.gokb.cred.Source"]
+          def default_dcs = ["org.gokb.cred.Package", "org.gokb.cred.Platform", "org.gokb.cred.TitleInstancePackagePlatform", "org.gokb.cred.Org", "org.gokb.cred.Source"]
 
           boolean userIsAdmin = user.isAdmin()
 

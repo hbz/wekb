@@ -20,8 +20,18 @@
           </g:form>
         </li>
 
-        <li class="${params?.controller == "home" && (params?.action == 'index' || params?.action == 'dashboard') ? 'active' : ''}"><g:link controller="home"><i class="fa fa-dashboard fa-fw"></i> Statistics</g:link></li>
-        <li class="${params?.controller == "home" && (params?.action == 'userdash') ? 'active' : ''}"><g:link controller="home" action="userdash"><i class="fa fa-dashboard fa-fw"></i> My Dashboard</g:link></li>
+        <li class="${params?.controller == "home" && (params?.action == 'userdash') ? 'active' : ''}"><g:link controller="home" action="userdash"><i class="far fa-chart-bar"></i> My Dashboard</g:link></li>
+
+        <g:if test="${session.curatorialGroups && ( session.curatorialGroups.size() > 0 ) }">
+          <li class="${(params?.controller == "group")  ? 'active' : ''}"><a href="#"><i class="fas fa-globe"></i> My Groups<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+              <g:each in="${session.curatorialGroups}" var="cg">
+                <li><g:link controller="group" action="index" id="${cg.id}">${cg.name}</g:link></li>
+              </g:each>
+            </ul>
+          </li>
+        </g:if>
+
         <li class="${(params?.controller == "search" || params?.controller == "globalSearch")  ? 'active' : ''}"><a href="#"><i class="fa fa-search fa-fw"></i> Search<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
             <li class="divider"></li>
@@ -52,6 +62,8 @@
           </li>
         </sec:ifAnyGranted>
 
+        <li class="${params?.controller == "home" && (params?.action == 'index' || params?.action == 'dashboard') ? 'active' : ''}"><g:link controller="home"><i class="fas fa-chart-line"></i> Statistics</g:link></li>
+
         <li><g:link controller="welcome"><i class="fa fa-tasks fa-fw"></i> To Do<span class="fa arrow"></span></g:link>
 
           <ul class="nav nav-second-level">
@@ -72,17 +84,6 @@
               Identifier Review</g:link></li>
           </ul>
         </li>
-
-
-        <g:if test="${session.curatorialGroups && ( session.curatorialGroups.size() > 0 ) }">
-          <li><a href="#"><i class="fa fa-search fa-fw"></i> My Groups<span class="fa arrow"></span></a>
-            <ul class="nav nav-second-level">
-              <g:each in="${session.curatorialGroups}" var="cg">
-                <li><g:link controller="group" action="index" id="${cg.id}">${cg.name}</g:link></li>
-              </g:each>
-            </ul>
-          </li>
-        </g:if>
 
         <li class="${params?.controller == "coreference" ? 'active' : ''}"><g:link controller="coreference" action="index"><i class="fa fa-list-alt fa-fw"></i> Coreference</g:link></li>
 
