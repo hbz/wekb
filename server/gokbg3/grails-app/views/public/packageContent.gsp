@@ -112,7 +112,7 @@
                                         <g:sortableColumn property="tipp.title.name" title="Title"/>
                                         <g:sortableColumn property="tipp.title.ids" title="Identifiers"/>
                                         <g:sortableColumn property="tipp.hostPlatform.name" title="Platform"/>
-                                        <g:sortableColumn property="tipp.title.niceName" title="Title Type"/>
+                                        <g:sortableColumn property="tipp.niceName" title="Title Type"/>
                                         <th>Coverage</th>
                                     </tr>
                                     </thead>
@@ -137,7 +137,7 @@
                                                     ${t.hostPlatform?.name}
                                                 </g:link>
                                             </td>
-                                            <td>${t.title.niceName}</td>
+                                            <td>${t.niceName}</td>
                                             <td>
                                                 ${t.coverageDepth?.value}<br/>${t.coverageNote}
                                             </td>
