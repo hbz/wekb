@@ -37,7 +37,7 @@ class CreateController {
         try {
           result.displayobj = newclass.newInstance()
           log.debug("Got new instance");
-          result.editable = SecurityApi.isTypeCreatable(result.displayobj)
+          result.editable = SecurityApi.isTypeCreatable(result.displayobj.getClass())
 
           if ( params.tmpl ) {
             result.displaytemplate = displayTemplateService.getTemplateInfo(params.tmpl)
