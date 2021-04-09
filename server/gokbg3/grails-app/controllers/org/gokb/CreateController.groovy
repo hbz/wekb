@@ -1,5 +1,6 @@
 package org.gokb
 
+import com.k_int.apis.SecurityApi
 import grails.converters.JSON
 import org.springframework.security.access.annotation.Secured;
 import org.gokb.cred.*
@@ -31,12 +32,12 @@ class CreateController {
     result.newclassname=params.tmpl
     if ( params.tmpl ) {
       def newclass = grailsApplication.getArtefact("Domain",result.newclassname)
-      result.editable = accessService.checkEditableObject(newclass, params)
       if ( newclass ) {
-        log.debug("Got new class");
+        log.debug("Got new class")
         try {
           result.displayobj = newclass.newInstance()
           log.debug("Got new instance");
+          result.editable = SecurityApi.isTypeCreatable(result.displayobj)
 
           if ( params.tmpl ) {
             result.displaytemplate = displayTemplateService.getTemplateInfo(params.tmpl)
@@ -45,7 +46,6 @@ class CreateController {
             result.refdata_properties = classExaminationService.getRefdataPropertyNames(result.newclassname)
             result.displayobjclassname_short = result.displayobj.class.simpleName
             result.isComponent = (result.displayobj instanceof KBComponent)
-            result.editable = true
           }
         }
         catch ( Exception e ) {

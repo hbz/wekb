@@ -28,6 +28,7 @@ class GlobalSearchTemplatesService {
         globalSearchTemplates.put('offices', offices())
         globalSearchTemplates.put('orgs', orgs())
         globalSearchTemplates.put('packages', packages())
+        globalSearchTemplates.put('platforms', platforms())
         globalSearchTemplates.put('projects', projects())
         globalSearchTemplates.put('refdataCategories', refdataCategories())
         globalSearchTemplates.put('reviewRequests', reviewRequests())
