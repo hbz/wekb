@@ -1,3 +1,4 @@
+
 <%@ page import="de.wekb.helper.RCConstants" %>
 <!DOCTYPE html>
 <html>
@@ -29,7 +30,7 @@
                         <g:render template="rightBox"
                                   model="${[d: tipp.pkg]}"/>
 
-                        <g:render template="/apptemplates/mainTemplates/tipp"
+                        <g:render template="tipp"
                                   model="${[d: tipp]}"/>
 
                     </g:if>

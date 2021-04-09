@@ -28,7 +28,7 @@
                         <g:render template="rightBox"
                                   model="${[d: platform]}"/>
 
-                        <g:render template="/apptemplates/mainTemplates/platform"
+                        <g:render template="platform"
                                   model="${[d: platform]}"/>
                     </g:if>
             </div>

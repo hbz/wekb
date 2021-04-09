@@ -70,7 +70,7 @@
                 <li class="nav-item"><a class="nav-link" href ="${grailsApplication.config.gokb.ygorUrl}">Ygor</a></li>
               </g:if>
 
-              <li class="nav-item"><g:link class="nav-link"" controller="home" action="index">Login</g:link></li>
+              <li class="nav-item"><g:link class="nav-link" controller="home" action="index">Login</g:link></li>
               %{--<g:if test="${grailsApplication.config.gokb.uiUrl}">
                 <li><a style="font-weight:bold;" href ="${grailsApplication.config.gokb.uiUrl}">GOKb Client</a></li>
               </g:if>--}%
