@@ -32,8 +32,8 @@ class BootStrap {
 
     def init = { servletContext ->
 
-        log.info("--------------------------------------------------------------------------------")
-        log.info("\n\nInit\n\n")
+        log.info("------------------------------------Init Begin--------------------------------------------")
+
 
         log.info("Database: ${grailsApplication.config.dataSource.url}")
         log.info("Database datasource dbCreate: ${grailsApplication.config.dataSource.dbCreate}")
@@ -134,15 +134,9 @@ class BootStrap {
             DSConfig();
         }
 
-//    String fs = grailsApplication.config.project_dir
+
 //    log.debug("Theme:: ${grailsApplication.config.gokb.theme}");
 //
-//    log.debug("Make sure project files directory exists, config says it's at ${fs}");
-//    File f = new File(fs)
-//    if ( ! f.exists() ) {
-//      log.debug("Creating upload directory path.")
-//      f.mkdirs()
-//    }
 
 
         refdataCats()
@@ -262,7 +256,7 @@ class BootStrap {
         log.info("Checking for missing component statistics")
         ComponentStatisticService.updateCompStats()
 
-        log.info("GoKB Init complete");
+        log.info("------------------------------------Init End--------------------------------------------")
     }
 
     def defaultBulkLoaderConfig() {
@@ -1156,7 +1150,7 @@ class BootStrap {
     }
 
     def anonymizeUsers() {
-        if(grailsApplication.config.anonymizeUsers) {
+        if(grailsApplication.config.gokb.anonymizeUsers) {
             log.info("anonymizeUsers")
             User.findAll().each { User user ->
 

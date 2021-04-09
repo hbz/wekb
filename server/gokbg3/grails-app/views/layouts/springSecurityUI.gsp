@@ -31,9 +31,6 @@
         </button>
         <g:link uri="/" class="navbar-brand" style="font-weight:bold;">
           <g:message code="gokb.appname" default="we:kb"/> v<g:meta name="info.app.version" />
-          <g:if test="${grailsApplication.config.gokb.instance?.description}">
-            – ${grailsApplication.config.gokb.instance?.description}
-          </g:if>
         </g:link>
       </div>
     <!-- /.navbar-header -->

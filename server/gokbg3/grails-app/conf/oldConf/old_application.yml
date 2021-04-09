@@ -2,7 +2,9 @@
 grails:
     config:
         locations:
-            - ~/.grails/wekb-config.groovy
+            - ~/.grails/gokb-config.groovy
+            - ~/.grails/gokb-config.yml
+            - ~/.grails/gokb-config.properties
     cors:
         enabled: true
         mappings:
@@ -21,10 +23,10 @@ grails:
             events: false
     mime:
         file:
-            extensions: true
+            extensions: false
         use:
             accept:
-                header: false
+                header: true
         disable:
             accept:
                 header:
@@ -68,13 +70,13 @@ grails:
         encoding: UTF-8
     views:
         default:
-            codec: none
+            codec: html
         gsp:
             encoding: UTF-8
             htmlcodec: xml
             codecs:
                 expression: html
-                scriptlets: none
+                scriptlets: html
                 taglib: none
                 staticparts: none
     exceptionresolver:
@@ -148,11 +150,24 @@ environments:
                             useFilter: true
             mail:
                 port: 3025
+        gokb:
+            ygorUrl: null
+            languagesUrl : http://localhost:8070
+            packageUpdate:
+                enabled: false
+            es:
+                cluster: gokbg3-dev
+                host: localhost
+                indices:
+                    titles: gokbtitles
+                    tipps: gokbtipps
+                    orgs: gokborgs
+                    packages: gokbpackages
+                    platforms: gokbplatforms
+            tsvExportTempDirectory: /tmp/gokb/export
         cache:
             headers:
                 enabled: false
-        gokb:
-            defaultCuratoryGroup: Local
     test:
         dataSource:
             dbCreate: none # create-drop
@@ -173,6 +188,20 @@ environments:
                 testOnReturn: true
                 validationQuery: select 1
                 defaultTransactionIsolation: java.sql.Connection.TRANSACTION_READ_COMMITTED
+        gokb:
+            ygorUrl: null
+            languagesUrl : http://localhost:8070
+            packageUpdate:
+                enabled: false
+            es:
+                cluster: gokbg3-test
+                host: localhost
+                indices:
+                    titles: gokbtitles
+                    tipps: gokbtipps
+                    orgs: gokborgs
+                    packages: gokbpackages
+                    platforms: gokbplatforms
         grails:
             mail:
                 port: 3025
@@ -207,26 +236,27 @@ environments:
             plugin:
                 greenmail:
                     disabled: true
+        gokb:
+            packageUpdate:
+                enabled: false
+            ygorUrl: null
+            languagesUrl : http://localhost:8070
+            es:
+                cluster: gokbg3-prod
+                host: localhost
+                indices:
+                    titles: gokbtitles
+                    tipps: gokbtipps
+                    orgs: gokborgs
+                    packages: gokbpackages
+                    platforms: gokbplatforms
 gokb:
-    ygorUrl: null
-    languagesUrl: http://localhost:8070
+    defaultCuratoryGroup: Local
     ftupdate_enabled: true
     decisionSupport:
         active: false
         otherVoters: false
     costInfo: false
-    packageUpdate:
-        enabled: false
-    es:
-        cluster: gokbg3-test
-        host: localhost
-        indices:
-            titles: gokbtitles
-            tipps: gokbtipps
-            orgs: gokborgs
-            packages: gokbpackages
-            platforms: gokbplatforms
-    tsvExportTempDirectory: /tmp/gokb/export
 
 quartz:
     autoStartup: true

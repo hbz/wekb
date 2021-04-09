@@ -38,12 +38,7 @@ class HomeController {
   def index () {
     log.debug("Home::index -- ${params}")
 
-    if ( grailsApplication.config?.newDash ) {
-      forward ( action: "userdash", params: (params))
-    }
-    else {
-      forward ( action: "dashboard", params: (params))
-    }
+    redirect(action:'dashboard')
   }
 
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])

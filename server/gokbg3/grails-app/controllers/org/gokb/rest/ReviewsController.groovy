@@ -27,7 +27,7 @@ class ReviewsController {
   @Secured(['ROLE_CONTRIBUTOR', 'IS_AUTHENTICATED_FULLY'])
   def index() {
     def result = []
-    def base = grailsApplication.config.serverURL + "/rest"
+    def base = grailsApplication.config.serverUrl + "/rest"
     User user = User.get(springSecurityService.principal.id)
     result = componentLookupService.restLookup(user, ReviewRequest, params)
 
@@ -38,7 +38,7 @@ class ReviewsController {
   def show() {
     def result = [:]
     def obj = ReviewRequest.get(genericOIDService.oidToId(params.id))
-    def base = grailsApplication.config.serverURL + "/rest"
+    def base = grailsApplication.config.serverUrl + "/rest"
     def includes = params['_include'] ? params['_include'].split(',') : []
     def embeds = params['_embed'] ? params['_embed'].split(',') : []
     User user = User.get(springSecurityService.principal.id)
@@ -361,7 +361,7 @@ class ReviewsController {
   }
 
   private def generateLinks(obj,user) {
-    def base = grailsApplication.config.serverURL + "/rest" + obj.restPath + "/${obj.id}"
+    def base = grailsApplication.config.serverUrl + "/rest" + obj.restPath + "/${obj.id}"
     def linksObj = [self:[href:base]]
     def curator = isUserCurator(obj,user)
 

@@ -838,7 +838,7 @@ class ESSearchService{
 
   private Map mapEsToDomain(record, params) {
     def domainMapping = [:]
-    def base = grailsApplication.config.serverURL + "/rest"
+    def base = grailsApplication.config.serverUrl + "/rest"
     def linkedObjects = [:]
     def embed_active = params['_embed']?.split(',') ?: []
     def include_list = params['_include']?.split(',') ?: null
@@ -962,7 +962,7 @@ class ESSearchService{
    */
 
   private def convertEsLinks(es_result, params, component_endpoint) {
-    def base = grailsApplication.config.serverURL + "/rest" + "${component_endpoint}"
+    def base = grailsApplication.config.serverUrl + "/rest" + "${component_endpoint}"
 
     es_result['_links'] = [:]
     es_result['data'] = es_result.records
@@ -1045,7 +1045,7 @@ class ESSearchService{
    */
 
   private def mapCuratoryGroups(domainMapping, cgs) {
-    def base = grailsApplication.config.serverURL + "/rest"
+    def base = grailsApplication.config.serverUrl + "/rest"
 
     domainMapping['_embedded']['curatoryGroups'] = []
     cgs.each { cg ->

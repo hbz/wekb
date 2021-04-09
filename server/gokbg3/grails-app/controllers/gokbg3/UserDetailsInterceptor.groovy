@@ -47,7 +47,6 @@ class UserDetailsInterceptor {
       if (user) {
         log.debug("User details filter... User present");
         request.user = user
-        //request.userOptions = user.getUserOptions(grailsApplication)
         
         if (!session.menus) {
         

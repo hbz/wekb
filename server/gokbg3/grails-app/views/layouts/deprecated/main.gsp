@@ -148,7 +148,7 @@
     </div>
   </div>
 
-  <g:if test="${(grailsApplication.config.kuali?.analytics?.code instanceof String ) }">
+%{--  <g:if test="${(grailsApplication.config.kuali?.analytics?.code instanceof String ) }">
     <g:javascript>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -158,7 +158,7 @@
         ga('create', '${grailsApplication.config.kuali.analytics.code}', 'kuali.org');
         ga('send', 'pageview');
       </g:javascript>
-  </g:if>
+  </g:if>--}%
 </body>
 <r:layoutResources />
 </html>

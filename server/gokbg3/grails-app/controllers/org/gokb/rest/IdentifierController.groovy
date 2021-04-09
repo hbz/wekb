@@ -32,7 +32,7 @@ class IdentifierController {
   @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
   def index() {
     def result = [:]
-    def base = grailsApplication.config.serverURL + "/rest"
+    def base = grailsApplication.config.serverUrl + "/rest"
     User user = null
 
     if (springSecurityService.isLoggedIn()) {
@@ -53,7 +53,7 @@ class IdentifierController {
   def show() {
     def result = [:]
     def obj = null
-    def base = grailsApplication.config.serverURL + "/rest"
+    def base = grailsApplication.config.serverUrl + "/rest"
     def is_curator = true
     User user = null
 
@@ -237,7 +237,7 @@ class IdentifierController {
     def result = [_links: [:]]
     def data = []
     params << [_exclude:"_links"]
-    def base = grailsApplication.config.serverURL + "/rest"
+    def base = grailsApplication.config.serverUrl + "/rest"
     List<IdentifierNamespace> nss = []
     if (params.targetType != null) {
       nss = IdentifierNamespace.findAllByTargetType(targetTypeMap[params.targetType])
