@@ -121,12 +121,12 @@
                                         <tr>
                                             <td>
                                                 <g:link controller="public" action="tippContent" id="${t.uuid}">
-                                                    ${t.title.name}
+                                                    ${t.name}
                                                 </g:link>
                                             </td>
                                             <td>
                                                 <ul>
-                                                    <g:each in="${t.title.ids}" var="id">
+                                                    <g:each in="${t.ids}" var="id">
                                                         <li><strong>${id.namespace.value}</strong> : ${id.value}</li>
                                                     </g:each>
                                                 </ul>
