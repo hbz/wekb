@@ -29,55 +29,55 @@
                     <g:render template="rightBox"
                               model="${[d: pkg]}"/>
 
-                    <dl class="dl-horizontal">
-                        <dt>
+                    <dl class="row">
+                        <dt class="col-3 text-right">
                             <gokb:annotatedLabel owner="${pkg}" property="provider">Provider</gokb:annotatedLabel>
                         </dt>
-                        <dd>
+                        <dd class="col-9 text-left">
                             <gokb:manyToOneReferenceTypedown owner="${pkg}" field="provider" baseClass="org.gokb.cred.Org" >${pkg.provider?.name}</gokb:manyToOneReferenceTypedown>
                         </dd>
 
-                        <dt>
+                        <dt class="col-3 text-right">
                             <gokb:annotatedLabel owner="${pkg}" property="source">Source</gokb:annotatedLabel>
                         </dt>
-                        <dd>
+                        <dd class="col-9 text-left">
                             <gokb:manyToOneReferenceTypedown owner="${pkg}" field="source" baseClass="org.gokb.cred.Source" >${pkg.source?.name}</gokb:manyToOneReferenceTypedown>
                         </dd>
 
-                        <dt>
+                        <dt class="col-3 text-right">
                             <gokb:annotatedLabel owner="${pkg}" property="nominalPlatform">Nominal Platform</gokb:annotatedLabel>
                         </dt>
-                        <dd>
+                        <dd class="col-9 text-left">
                             <gokb:manyToOneReferenceTypedown owner="${pkg}" field="nominalPlatform"
                                                              name="${comboprop}" baseClass="org.gokb.cred.Platform" >
                                 ${pkg.nominalPlatform?.name ?: ''}
                             </gokb:manyToOneReferenceTypedown>
                         </dd>
                         <g:if test="${pkg}">
-                            <dt>
+                            <dt class="col-3 text-right">
                                 <gokb:annotatedLabel owner="${pkg}" property="status">Status</gokb:annotatedLabel>
                             </dt>
-                            <dd>
+                            <dd class="col-9 text-left">
                                     ${pkg.status?.value ?: 'Not Set'}
                             </dd>
                         </g:if>
 
-                        <dt> <gokb:annotatedLabel owner="${pkg}" property="lastUpdateComment">Last Update Comment</gokb:annotatedLabel> </dt>
-                        <dd> <gokb:xEditable class="ipe" owner="${pkg}" field="lastUpdateComment" /> </dd>
+                        <dt class="col-3 text-right"> <gokb:annotatedLabel owner="${pkg}" property="lastUpdateComment">Last Update Comment</gokb:annotatedLabel> </dt>
+                        <dd class="col-9 text-left"> <gokb:xEditable class="ipe" owner="${pkg}" field="lastUpdateComment" /> </dd>
 
-                        <dt> <gokb:annotatedLabel owner="${pkg}" property="editStatus">Edit Status</gokb:annotatedLabel> </dt>
-                        <dd> <gokb:xEditableRefData owner="${pkg}" field="editStatus" config="${RCConstants.KBCOMPONENT_EDIT_STATUS}" /> </dd>
+                        <dt class="col-3 text-right"> <gokb:annotatedLabel owner="${pkg}" property="editStatus">Edit Status</gokb:annotatedLabel> </dt>
+                        <dd class="col-9 text-left"> <gokb:xEditableRefData owner="${pkg}" field="editStatus" config="${RCConstants.KBCOMPONENT_EDIT_STATUS}" /> </dd>
 
-                        <dt> <gokb:annotatedLabel owner="${pkg}" property="description">Description</gokb:annotatedLabel> </dt>
-                        <dd> <gokb:xEditable class="ipe" owner="${pkg}" field="description" /> </dd>
+                        <dt class="col-3 text-right"> <gokb:annotatedLabel owner="${pkg}" property="description">Description</gokb:annotatedLabel> </dt>
+                        <dd class="col-9 text-left"> <gokb:xEditable class="ipe" owner="${pkg}" field="description" /> </dd>
 
-                        <dt> <gokb:annotatedLabel owner="${pkg}" property="descriptionURL">URL</gokb:annotatedLabel> </dt>
-                        <dd> <gokb:xEditable class="ipe" owner="${pkg}" field="descriptionURL" /> </dd>
+                        <dt class="col-3 text-right"> <gokb:annotatedLabel owner="${pkg}" property="descriptionURL">URL</gokb:annotatedLabel> </dt>
+                        <dd class="col-9 text-left"> <gokb:xEditable class="ipe" owner="${pkg}" field="descriptionURL" /> </dd>
 
-                        <dt>
+                        <dt class="col-3 text-right">
                             <gokb:annotatedLabel owner="${pkg}" property="globalNote">Global Range</gokb:annotatedLabel>
                         </dt>
-                        <dd>
+                        <dd class="col-9 text-left">
                             <gokb:xEditable class="ipe" owner="${pkg}" field="globalNote" />
                         </dd>
 
