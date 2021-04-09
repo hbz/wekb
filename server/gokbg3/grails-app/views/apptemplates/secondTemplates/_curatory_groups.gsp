@@ -1,4 +1,4 @@
-<%@page import="org.gokb.cred.CuratoryGroup"%>
+<%@page import="org.gokb.cred.CuratoryGroup; org.gokb.cred.TitleInstancePackagePlatform;"%>
 
 <g:set var="cur_editable" value="${ CuratoryGroup.isTypeAdministerable() || ( (editable && d.class.name != 'org.gokb.cred.User' ) && ((d.curatoryGroups?.size() == 0) || (request.curator?.size() > 0) || (params.curationOverride == "true" && request.user.isAdmin()))) }" />
 <g:set var="editable" value="${d.isAdministerable() || d == user || (editable && ((d.curatoryGroups ? (request.curator != null && request.curator.size() > 0) : true) || (params.curationOverride == 'true' && request.user.isAdmin())) ) }" />
@@ -17,7 +17,7 @@
       <g:each in="${d.curatoryGroups}" var="t">
         <tr>
           <td><g:link controller="resource" action="show" id="${t.getClassName()}:${t.id}"> ${t.name}</g:link></td>
-          <g:if test="${cur_editable && editable}">
+          <g:if test="${cur_editable && editable && !(d instanceof TitleInstancePackagePlatform)}">
             <td>
                 <g:link controller="ajaxSupport" action="unlinkManyToMany" class="confirm-click" data-confirm-message="Are you sure you wish to unlink ${ t.name }?" params="${ ["__property":"curatoryGroups", "__context":d.getClassName() + ":" + d.id, "__itemToRemove" : t.getClassName() + ":" + t.id, "propagate": "true"] }" >Unlink</g:link>
             </td>
@@ -30,7 +30,7 @@
     		<td colspan="2">There are currently no linked Curatory Groups</td>
     	</tr>
     </g:else>
-    <g:if test="${cur_editable && editable}">
+    <g:if test="${cur_editable && editable && !(d instanceof TitleInstancePackagePlatform)}">
       <tr>
           <th colspan="2">Link a Curatory Group</th>
       </tr>

@@ -2,6 +2,15 @@
 %{--<g:set var="editable"
        value="${d.isEditable() && ((request.curator != null ? request.curator.size() > 0 ? true : false : true) || (params.curationOverride == 'true' && request.user.isAdmin()))}"/>--}%
 <dl class="dl-horizontal">
+
+    <dt>
+        <gokb:annotatedLabel owner="${d}" property="name">Title</gokb:annotatedLabel>
+    </dt>
+    <dd>
+        <gokb:xEditable class="ipe" owner="${d}" field="name"/>
+    </dd>
+
+    <sec:ifAnyGranted roles="ROLE_ADMIN">
     <dt>
         <gokb:annotatedLabel owner="${d}" property="title">Title</gokb:annotatedLabel>
     </dt>
@@ -14,8 +23,9 @@
         </g:if><g:else>
             ${(d.title?.name) ?: 'Empty'}
         </g:else>
-        <g:if test="${d.title}">(${d.title.niceName})</g:if>
+        <g:if test="${d.title}">(${d.title.niceName})</g:if> (Only to see for ROLE_ADMIN )
     </dd>
+    </sec:ifAnyGranted>
 
     <dt>
         <gokb:annotatedLabel owner="${d}" property="package">Package</gokb:annotatedLabel>
@@ -213,7 +223,7 @@
 
 <ul id="tabs" class="nav nav-tabs">
 
-    <g:if test="${d.title.niceName == 'Journal' || d.publicationType?.value == 'Serial'}">
+    <g:if test="${d.publicationType?.value == 'Serial'}">
         <li class="active">
             <a href="#tippcoverage" data-toggle="tab">Coverage</a>
         </li>
@@ -252,7 +262,7 @@
 
 <div id="my-tab-content" class="tab-content">
 
-    <g:if test="${d.title.niceName == 'Journal' || d.publicationType?.value == 'Serial'}">
+    <g:if test="${d.publicationType?.value == 'Serial'}">
         <div class="tab-pane active" id="tippcoverage">
             <dl class="dl-horizontal">
                 <dt>

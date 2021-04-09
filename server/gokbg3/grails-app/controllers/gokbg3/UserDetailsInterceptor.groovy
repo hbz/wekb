@@ -102,12 +102,6 @@ class UserDetailsInterceptor {
                             link : ['controller' : 'search', 'action' : 'index', 'params' : [qbe:'g:'+ key]],
                             attr : ['title' : "Search ${val.title}"]
                     ]
-                  }else {
-                    menus["search"]["${d.type.value}"] << [
-                            text : val.title,
-                            link : ['controller' : 'search', 'action' : 'index', 'params' : [qbe:'g:'+ key]],
-                            attr : ['title' : "Search ${val.title}"]
-                    ]
                   }
 
                 }
@@ -120,12 +114,6 @@ class UserDetailsInterceptor {
 
                   if(userIsAdmin && !(d.dcName in default_dcs)){
                     menus["admin"]["create"] << [
-                            text: d.displayName,
-                            link: ['controller': 'create', 'action': 'index', 'params': [tmpl: d.dcName]],
-                            attr: ['title': "New ${d.displayName}"]
-                    ]
-                  }else {
-                    menus["create"]["${d.type.value}"] << [
                             text: d.displayName,
                             link: ['controller': 'create', 'action': 'index', 'params': [tmpl: d.dcName]],
                             attr: ['title': "New ${d.displayName}"]

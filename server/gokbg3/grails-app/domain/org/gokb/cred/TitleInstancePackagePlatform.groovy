@@ -271,7 +271,28 @@ class TitleInstancePackagePlatform extends KBComponent {
 
   @Override
   String getNiceName() {
-    return "TIPP"
+    if (publicationType) {
+      switch (publicationType) {
+        case RefdataCategory.lookup(RCConstants.TIPP_PUBLICATION_TYPE, "Serial"):
+          return "Journal"
+          break;
+        case RefdataCategory.lookup(RCConstants.TIPP_PUBLICATION_TYPE, "Monograph"):
+          return "Book"
+          break;
+        case RefdataCategory.lookup(RCConstants.TIPP_PUBLICATION_TYPE, "Database"):
+          return "Database"
+          break;
+        case RefdataCategory.lookup(RCConstants.TIPP_PUBLICATION_TYPE, "Other"):
+          return "Other"
+          break;
+        default:
+          return "Title"
+          break;
+      }
+    }
+    else {
+      return "Title"
+    }
   }
 
   /**
