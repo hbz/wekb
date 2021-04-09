@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.ServerUtils" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,10 +31,27 @@
 </head>
 
 <wekb:serviceInjection />
+<g:set var="currentServer" scope="page" value="${ServerUtils.getCurrentServer()}"/>
 
 <body id="page-body" class="theme-${ grailsApplication.config.gokb.theme }">
 
-  <nav class="navbar navbar-expand-sm navbar-dark bg-dark" id="primary-nav-bar" role="navigation">
+<g:if test="${currentServer == ServerUtils.SERVER_DEV}">
+    <div class="text-success label big wb-server-label">
+        <span>DEV</span>
+    </div>
+</g:if>
+<g:if test="${currentServer == ServerUtils.SERVER_QA}">
+    <div class="text-danger label big wb-server-label">
+        <span>QA</span>
+    </div>
+</g:if>
+<g:if test="${currentServer == ServerUtils.SERVER_LOCAL}">
+    <div class="text-primary wb-server-label">
+        <span>LOCAL</span>
+    </div>
+</g:if>
+
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark" id="primary-nav-bar" role="navigation">
      <div class="container">
          <div class="d-flex flex-grow-1">
              <a class="navbar-brand navbar-image mekb-logo" href="${grailsApplication.config.server.contextPath ?: ''}/" >
