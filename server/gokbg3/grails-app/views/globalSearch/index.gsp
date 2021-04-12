@@ -78,7 +78,7 @@
       <p>
         <g:each in="${['componentType']}" var="facet">
           <g:each in="${params.list(facet)}" var="fv">
-            <span class="badge alert-info">${facet}:${fv} &nbsp; <g:link controller="${controller}" action="${action}" params="${removeFacet(params,facet,fv)}"><i class="fa fa-times"></i></g:link></span>
+            <span class="badge alert-info">${facet}:${fv == 'TitleInstancePackagePlatform' ? 'Titles' : fv  }&nbsp; <g:link controller="${controller}" action="${action}" params="${removeFacet(params,facet,fv)}"><i class="fa fa-times"></i></g:link></span>
           </g:each>
         </g:each>
       </p> 
@@ -118,8 +118,8 @@
            <table class="table table-striped table-bordered">
              <thead>
                <tr>
-                 <th>Component Name</th>
-                 <th>Component Type</th>
+                 <th>Name</th>
+                 <th>Type</th>
                  <th style="width:10%">Status</th>
                </tr>
              </thead>
