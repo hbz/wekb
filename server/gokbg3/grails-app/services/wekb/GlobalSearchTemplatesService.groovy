@@ -1,5 +1,6 @@
 package wekb
 
+import de.wekb.helper.RCConstants
 import grails.gorm.transactions.Transactional
 
 @Transactional
@@ -1058,7 +1059,7 @@ class GlobalSearchTemplatesService {
     Map tipps() {
         Map result = [
                 baseclass: 'org.gokb.cred.TitleInstancePackagePlatform',
-                title    : 'TIPPs',
+                title    : 'Titles',
                 group    : 'Secondary',
                 qbeConfig: [
                         qbeForm   : [
@@ -1066,7 +1067,7 @@ class GlobalSearchTemplatesService {
                                         prompt     : 'Title',
                                         qparam     : 'qp_title',
                                         placeholder: 'Title',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'title.name'],
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'name'],
                                 ],
                                 [
                                         prompt     : 'Title ID',
@@ -1078,11 +1079,20 @@ class GlobalSearchTemplatesService {
                                 [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : 'TitleInstance.Medium',
-                                        prompt     : 'Type',
+                                        filter1    : RCConstants.TIPP_MEDIUM,
+                                        prompt     : 'Medium',
                                         qparam     : 'qp_medium',
                                         placeholder: 'Medium of item',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'title.medium'],
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'medium'],
+                                ],
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.RefdataValue',
+                                        filter1    : RCConstants.TIPP_PUBLICATION_TYPE,
+                                        prompt     : 'Type',
+                                        qparam     : 'qp_publicationType',
+                                        placeholder: 'Type of item',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'publicationType'],
                                 ],
                                 [
                                         type       : 'lookup',
@@ -1091,13 +1101,6 @@ class GlobalSearchTemplatesService {
                                         qparam     : 'qp_cp',
                                         placeholder: 'Content Provider',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'pkg.provider']
-                                ],
-                                [
-                                        prompt     : 'Title Publisher ID',
-                                        qparam     : 'qp_pub_id',
-                                        placeholder: 'Title Publisher ID',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'title.publisher.id', 'type': 'java.lang.Long'],
-                                        hide       : true
                                 ],
                                 [
                                         prompt     : 'Package ID',
@@ -1146,7 +1149,7 @@ class GlobalSearchTemplatesService {
                                  'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': 'KBComponent.Status', 'type': 'java.lang.Object']
                         ],
                         qbeResults: [
-                                [heading: 'TIPP Persistent Id', property: 'persistentId', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
+                                [heading: 'Title Persistent Id', property: 'persistentId', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
                                 [heading: 'Title', property: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
                                 [heading: 'Type', property: 'publicationType?.value', sort: 'publicationType.value'],
                                 [heading: 'Medium', property: 'medium?.value', sort: 'medium.value'],

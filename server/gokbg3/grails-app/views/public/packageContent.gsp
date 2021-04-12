@@ -90,7 +90,7 @@
                     <div id="content">
                         <ul id="tabs" class="nav nav-tabs">
                             <li role="presentation" class="active"><a href="#titledetails"
-                                                                      data-toggle="tab">Titles/TIPPs <span
+                                                                      data-toggle="tab">Titles <span
                                         class="badge badge-warning">${titleCount}</span>
                             </a></li>
                             <li role="presentation"><a href="#identifiers" data-toggle="tab">Identifiers <span

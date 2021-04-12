@@ -29,7 +29,7 @@
           </th>
           <th>Scope</th>
           <th>ListStatus</th>
-          <th>Number of TIPPs</th>
+          <th>Number of Titles</th>
         </tr>
       </thead>
       <tbody>

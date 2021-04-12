@@ -96,7 +96,7 @@
   <div id="content">
     <ul id="tabs" class="nav nav-tabs">
       <g:if test="${d.id}">
-        <li role="presentation" class="active"><a href="#titledetails" data-toggle="tab">Titles/TIPPs <span class="badge badge-warning"> ${d.currentTitleCount}/ ${d.currentTippCount} </span></a></li>
+        <li role="presentation" class="active"><a href="#titledetails" data-toggle="tab">Titles <span class="badge badge-warning"> ${d.currentTippCount} </span></a></li>
         <li role="presentation"><a href="#identifiers" data-toggle="tab">Identifiers <span class="badge badge-warning"> ${d?.getCombosByPropertyNameAndStatus('ids','Active')?.size() ?: '0'} </span></a></li>
 
         <li role="presentation"><a href="#altnames" data-toggle="tab">Alternate Names
@@ -110,7 +110,7 @@
         <li role="presentation"><a href="#review" data-toggle="tab">Review Requests</a></li>
       </g:if>
       <g:else>
-        <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Titles/TIPPs </span></li>
+        <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Titles </span></li>
         <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Identifiers </span></li>
         <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Alternate Names </span></li>
         <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Relations </span></li>
@@ -127,7 +127,7 @@
       <div class="tab-pane active" id="titledetails">
         <g:if test="${params.controller != 'create'}">
           <dl>
-            <dt><gokb:annotatedLabel owner="${d}" property="tipps">Titles/TIPPs</gokb:annotatedLabel></dt>
+            <dt><gokb:annotatedLabel owner="${d}" property="tipps">Titles</gokb:annotatedLabel></dt>
             <dd>
               <g:link class="display-inline" controller="search" action="index"
                 params="[qbe:'g:tipps', qp_pkg_id:d.id, inline:true, refOid: d.getLogEntityId(), hide:['qp_pkg_id', 'qp_cp', 'qp_pkg', 'qp_pub_id']]"
