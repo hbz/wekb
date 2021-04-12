@@ -1,3 +1,4 @@
+
 <%@ page import="de.wekb.helper.RCConstants" %>
 <!DOCTYPE html>
 <html>
@@ -10,32 +11,30 @@
 
 <div class="container">
 
-    <div class="row">
-        <div class="box">
 
-            <div class="col-lg-12 well">
-
-                    <g:if test="${flash.error}">
-                        <div class="alert alert-warning" style="font-weight:bold;">
-                            <p>${flash.error}</p>
-                        </div>
-                    </g:if>
-
-
-                    <g:if test="${tipp}">
-
-                        <h1>Title: <span style="font-weight:bolder;">${tipp.title.name}</span></h1>
-
-                        <g:render template="rightBox"
-                                  model="${[d: tipp.pkg]}"/>
-
-                        <g:render template="/apptemplates/mainTemplates/tipp"
-                                  model="${[d: tipp]}"/>
-
-                    </g:if>
-            </div>
+    <g:if test="${flash.error}">
+        <div class="alert alert-warning" style="font-weight:bold;">
+            <p>${flash.error}</p>
         </div>
-    </div>
+    </g:if>
+
+
+    <g:if test="${tipp}">
+
+        <h1>Title: <span style="font-weight:bolder;">${tipp.title.name}</span></h1>
+        <div class="row">
+            <div class="col-sm-9">
+                <g:render template="tipp"  model="${[d: tipp]}"/>
+            </div>
+
+            <g:render template="rightBox" model="${[d: tipp.pkg]}"/>
+        </div>
+        <g:render template="tippTabs"  model="${[d: tipp]}"/>
+
+
+
+    </g:if>
+
 
 </div>
 </body>

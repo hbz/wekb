@@ -10,30 +10,22 @@
 
 <div class="container">
 
-    <div class="row">
-        <div class="box">
-
-            <div class="col-lg-12 well">
-
-                    <g:if test="${flash.error}">
-                        <div class="alert alert-warning" style="font-weight:bold;">
-                            <p>${flash.error}</p>
-                        </div>
-                    </g:if>
-
-
-                    <g:if test="${platform}">
-                        <h1>Platform: <span style="font-weight:bolder;">${platform.name}</span></h1>
-
-                        <g:render template="rightBox"
-                                  model="${[d: platform]}"/>
-
-                        <g:render template="/apptemplates/mainTemplates/platform"
-                                  model="${[d: platform]}"/>
-                    </g:if>
-            </div>
+    <g:if test="${flash.error}">
+        <div class="alert alert-warning" style="font-weight:bold;">
+            <p>${flash.error}</p>
         </div>
-    </div>
+    </g:if>
+
+    <g:if test="${platform}">
+        <h1>Platform: <span style="font-weight:bolder;">${platform.name}</span></h1>
+        <div class="row">
+            <div class="col-sm-9">
+                <g:render template="platform"  model="${[d: platform]}"/>
+            </div>
+            <g:render template="rightBox" model="${[d: platform]}"/>
+        </div>
+        <g:render template="platformTabs"  model="${[d: platform]}"/>
+    </g:if>
 
 </div>
 </body>
