@@ -94,14 +94,14 @@ class TitleInstancePackagePlatform extends KBComponent {
 
   private static SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd")
 
-  private static refdataDefaults = [
+/*  private static refdataDefaults = [
     "format"       : "Electronic",
     "delayedOA"    : "Unknown",
     "hybridOA"     : "Unknown",
     "primary"      : "No",
     "paymentType"  : "Paid",
     "coverageDepth": "Fulltext"
-  ]
+  ]*/
 
   static jsonMapping = [
     'ignore'       : [

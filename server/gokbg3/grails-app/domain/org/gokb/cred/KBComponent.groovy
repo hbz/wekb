@@ -39,8 +39,7 @@ abstract class KBComponent implements Auditable{
   '''
 
   private static refdataDefaults = [
-      "status"    : STATUS_CURRENT,
-      "editStatus": EDIT_STATUS_IN_PROGRESS
+      "status"    : STATUS_CURRENT
   ]
 
   private static final Map fullDefaultsForClass = [:]

@@ -23,9 +23,9 @@ class Platform extends KBComponent {
     provider: Org
   ]
 
-  private static refdataDefaults = [
+/*  private static refdataDefaults = [
     "authentication": "Unknown"
-  ]
+  ]*/
 
   static manyByCombo = [
     hostedPackages: Package,
