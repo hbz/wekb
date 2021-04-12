@@ -221,7 +221,6 @@ gokb:
         cluster: gokbg3-test
         host: localhost
         indices:
-            titles: gokbtitles
             tipps: gokbtipps
             orgs: gokborgs
             packages: gokbpackages

@@ -89,10 +89,6 @@ class ESSearchService{
   ]
 
   static Map indicesPerType = [
-      "JournalInstance" : "gokbtitles",
-      "DatabaseInstance" : "gokbtitles",
-      "OtherInstance" : "gokbtitles",
-      "BookInstance" : "gokbtitles",
       "TitleInstancePackagePlatform" : "gokbtipps",
       "Org" : "gokborgs",
       "Package" : "gokbpackages",

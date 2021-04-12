@@ -32,7 +32,7 @@
           </li>
         </g:if>
 
-        <li class="${(params?.controller == "search" || params?.controller == "globalSearch")  ? 'active' : ''}"><a href="#"><i class="fa fa-search fa-fw"></i> Search<span class="fa arrow"></span></a>
+        <li class="${(params?.controller == "search")  ? 'active' : ''}"><a href="#"><i class="fa fa-search fa-fw"></i> Search<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
             <li class="divider"></li>
             <li><g:link controller="search" action="index" params="[qbe:'g:tipps']" title="Search Titles" ><i class='fa fa-angle-double-right fa-fw'></i> Titles</g:link></li>
