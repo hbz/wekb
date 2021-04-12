@@ -214,36 +214,37 @@
 <ul id="tabs" class="nav nav-tabs">
 
     <g:if test="${d.title.niceName == 'Journal' || d.publicationType?.value == 'Serial'}">
-        <li class="active">
-            <a href="#tippcoverage" data-toggle="tab">Coverage</a>
+         <li role="presentation" class=nav-item">
+            <a class="nav-link active" href="#tippcoverage" data-toggle="tab">Coverage</a>
         </li>
     </g:if>
-    <li><a href="#identifiers" data-toggle="tab">Identifiers <span
+    <li role="presentation" class=nav-item">
+        <a class="nav-link" href="#identifiers" data-toggle="tab">Identifiers <span
             class="badge badge-warning">${d?.getCombosByPropertyNameAndStatus('ids', 'Active')?.size() ?: '0'}</span>
     </a>
     </li>
 
-    <li>
-        <a href="#addprops" data-toggle="tab">Additional Properties
+    <li role="presentation" class=nav-item">
+        <a class="nav-link" href="#addprops" data-toggle="tab">Additional Properties
             <span class="badge badge-warning">${d.additionalProperties?.size() ?: '0'}</span>
         </a>
     </li>
     <g:if test="${controllerName != 'public'}">
-        <li>
-            <a href="#review" data-toggle="tab">Review Requests
+        <li role="presentation" class=nav-item">
+            <a class="nav-link" href="#review" data-toggle="tab">Review Requests
                 <span class="badge badge-warning">${d.reviewRequests?.size() ?: '0'}</span>
             </a>
         </li>
     </g:if>
 
-    <li>
-        <a href="#subjectArea" data-toggle="tab">Subject Area</a>
+    <li role="presentation" class=nav-item">
+        <a class="nav-link" href="#subjectArea" data-toggle="tab">Subject Area</a>
     </li>
-    <li>
-        <a href="#series" data-toggle="tab">Series</a>
+    <li role="presentation" class=nav-item">
+        <a class="nav-link" href="#series" data-toggle="tab">Series</a>
     </li>
-    <li>
-        <a href="#prices" data-toggle="tab">Prices
+    <li role="presentation" class=nav-item">
+        <a class="nav-link" href="#prices" data-toggle="tab">Prices
             <span class="badge badge-warning">${d.prices?.size() ?: '0'}</span>
         </a>
     </li>
@@ -253,8 +254,8 @@
 <div id="my-tab-content" class="tab-content">
 
     <g:if test="${d.title.niceName == 'Journal' || d.publicationType?.value == 'Serial'}">
-        <div class="tab-pane active" id="tippcoverage">
-            <dl class="dl-horizontal">
+        <div class="tab-pane fade show active" id="tippcoverage">
+            <dl class="row">
                 <dt class="col-3 text-right">
                     <gokb:annotatedLabel owner="${d}" property="coverage">Coverage</gokb:annotatedLabel>
                 </dt>
@@ -312,7 +313,7 @@
                                 data-toggle="collapse" data-target="#collapseableAddCoverageStatement">
                             Add new <i class="fas fa-plus"></i>
                         </button>
-                        <dl id="collapseableAddCoverageStatement" class="dl-horizontal collapse">
+                        <dl id="collapseableAddCoverageStatement" class="row collapse">
                             <g:form controller="ajaxSupport" action="addToCollection"
                                     class="form-inline" params="[fragment: 'tippcoverage']">
                                 <input type="hidden" name="__context"
@@ -385,8 +386,8 @@
     </g:if>
 
 
-    <div class="tab-pane" id="identifiers">
-        <dl>
+    <div class="tab-pane fade" id="identifiers">
+        <dl class="row">
             <dt class="col-3 text-right">
                 <gokb:annotatedLabel owner="${d}" property="ids">Identifiers</gokb:annotatedLabel>
             </dt>
@@ -400,8 +401,7 @@
                         <gokb:annotatedLabel owner="${d}"
                                              property="addIdentifier">Add new Identifier</gokb:annotatedLabel>
                     </h4>
-                    <g:render template="/apptemplates/secondTemplates/addIdentifier"
-                              model="${[d: d, hash: '#identifiers']}"/>
+                    <g:render template="/apptemplates/secondTemplates/addIdentifier" model="${[d: d, hash: '#identifiers']}"/>
                 </g:if>
             </dd>
         </dl>
@@ -409,18 +409,17 @@
     </div>
 
 
-    <div class="tab-pane" id="addprops">
-        <g:render template="/apptemplates/secondTemplates/addprops"
-                  model="${[d: d]}"/>
+    <div class="tab-pane fade" id="addprops">
+        <g:render template="/apptemplates/secondTemplates/addprops" model="${[d: d]}"/>
     </div>
 
     <g:if test="${controllerName != 'public'}">
-        <div class="tab-pane" id="review">
+        <div class="tab-pane fade" id="review">
             <g:render template="/apptemplates/secondTemplates/revreqtab" model="${[d: d]}"/>
         </div>
     </g:if>
 
-    <div class="tab-pane" id="subjectArea">
+    <div class="tab-pan fade" id="subjectArea">
         <dl class="dl-horizontal">
             <dt class="col-3 text-right">
                 <gokb:annotatedLabel owner="${d}" property="subjectArea">Subject Area</gokb:annotatedLabel>
@@ -431,9 +430,9 @@
         </dl>
     </div>
 
-    <div class="tab-pane" id="series">
+    <div class="tab-pane fade" id="series">
 
-        <dl class="dl-horizontal">
+        <dl class="row">
             <dt class="col-3 text-right">
                 <gokb:annotatedLabel owner="${d}" property="series">Series</gokb:annotatedLabel>
             </dt>
