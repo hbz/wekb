@@ -21,7 +21,6 @@
               
           </th>
           <th>Status</th>
-          <th>List verified date</th>
           <th>
             <g:link params="${params+[pkg_sort:'lastUpdated',pkg_sort_order:('desc'== params.pkg_sort_order?'asc':'desc')]}">
               Last Modified

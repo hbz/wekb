@@ -1,18 +1,18 @@
-import java.text.SimpleDateFormat
 
-// Added by the Spring Security Core plugin:
-grails.plugin.springsecurity.userLookup.userDomainClassName = 'org.gokb.cred.User'
-grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'org.gokb.cred.UserRole'
-grails.plugin.springsecurity.authority.className = 'org.gokb.cred.Role'
 
-grails.plugin.springsecurity.ui.forgotPassword.emailFrom = "we:kb<no-reply@gokb.org>"
-
-grails.mime.file.extensions=false
+println("-- using application.groovy config file !!! --")
 
 grails.gorm.default.mapping = {
     autowire true
 }
-grails.plugin.springsecurity.ui.register.postRegisterUrl = '/public/index'
+
+grails.gorm.default.constraints = {
+    '*'(nullable: true, blank:false)
+}
+
+grails.gorm.autoFlush=true
+
+//grails.gorm.failOnError=true
 
 grails {
     plugin {
@@ -25,6 +25,31 @@ grails {
 
 // database migration plugin
 grails.plugin.databasemigration.updateOnStart = true
+
+// Added by the Spring Security Core plugin:
+grails.plugin.springsecurity.userLookup.userDomainClassName = 'org.gokb.cred.User'
+grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'org.gokb.cred.UserRole'
+grails.plugin.springsecurity.authority.className = 'org.gokb.cred.Role'
+
+grails.plugin.springsecurity.ui.forgotPassword.emailFrom = "laser@hbz-nrw.de"
+grails.plugin.springsecurity.ui.forgotPassword.emailSubject = "we:kb Forgotten Password"
+
+grails.plugin.springsecurity.ui.register.emailFrom = "laser@hbz-nrw.de"
+grails.plugin.springsecurity.ui.register.emailSubject = 'Welcome to we:kb'
+grails.plugin.springsecurity.ui.register.defaultRoleNames = ["ROLE_USER"]
+grails.plugin.springsecurity.ui.register.postRegisterUrl = '/home/index'
+
+grails.plugin.springsecurity.ui.password.minLength = 6
+grails.plugin.springsecurity.ui.password.maxLength = 64
+grails.plugin.springsecurity.ui.password.validationRegex = '^.*$'
+/**
+ * We need to disable springs password encoding as we handle this in our domain model.
+ */
+grails.plugin.springsecurity.ui.encodePassword = false
+
+// The following 2 entries make the app use basic auth by default
+grails.plugin.springsecurity.useBasicAuth = true
+grails.plugin.springsecurity.basic.realmName = "gokb"
 
 grails.plugin.springsecurity.filterChain.chainMap = [
         [pattern: '/login/auth',          filters: 'none'],
@@ -112,55 +137,43 @@ grails.plugin.springsecurity.controllerAnnotations.staticRules = [
 ]
 
 
-appDefaultPrefs {
-  globalDateFormat='yyyy-MM-dd'
-}
+grails.project.groupId = appName // change this to alter the default package name and Maven publishing destination
 
-possible_date_formats = [
-    new SimpleDateFormat('yyyy/MM/dd'),
-    new SimpleDateFormat('yyyy-MM-dd'),
-    new SimpleDateFormat('dd/MM/yyyy'),
-    new SimpleDateFormat('dd.MM.yyyy'),
-    new SimpleDateFormat('dd/MM/yy'),
-    new SimpleDateFormat('yyyy/MM'),
-    new SimpleDateFormat('yyyy')
-];
+// URL Mapping Cache Max Size, defaults to 5000
+//grails.urlmapping.cache.maxsize = 1000
 
-isxn_formatter = { issn_string ->
-      def result = issn_string
-      def trimmed = (issn_string?:'').trim()
-      if ( trimmed.length() == 8 ) {
-        result = issn_string.substring(0,4)+"-"+issn_string.substring(4,8)
-      }
-      return result;
-    }
+// What URL patterns should be processed by the resources plugin
+grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
+
+// enable Sitemesh preprocessing of GSP pages
+grails.views.gsp.sitemesh.preprocess = true
+
+// scaffolding templates configuration
+grails.scaffolding.templates.domainSuffix = 'Instance'
+
+grails.plugins.twitterbootstrap.fixtaglib = true
+
+// Set to false to use the new Grails 1.2 JSONBuilder in the render method
+grails.json.legacy.builder = false
+// enabled native2ascii conversion of i18n properties files
+grails.enable.native2ascii = true
+// packages to include in Spring bean scanning
+grails.spring.bean.packages = []
+// whether to disable processing of multi part requests
+grails.web.disable.multipart=false
+
+grails.converters.json.circular.reference.behaviour = 'INSERT_NULL'
+
+/** Less config **/
+/** Config duplicated here and in build.groovy for alternate run paths */
+grails.assets.less.compiler = 'less4j'
+grails.assets.excludes = [ '**/_*.less', 'gokb/themes/*.less', 'gokb/themes/**/*.less', 'bootstrap/*.less', 'bootstrap/**/*.less' ]
+grails.assets.includes = [ 'webfonts/*', 'gokb/themes/*/theme.less', 'bootstrap/bootstrap.less' ]
+grails.assets.plugin."twitter-bootstrap".excludes = ["**/*.less"]
+grails.assets.plugin."font-awesome-resources".excludes = ["**/*.less"]
+grails.assets.plugin."jquery".excludes = ["**", "*.*"]
+grails.assets.minifyJs = false
 
 
-identifiers = [
-  'class_ones' : [
-    'issn',
-    'eissn',
-    'doi',
-    'isbn',
-    'issnl',
-    'zdb',
-    'uri'
-  ],
 
-  // Class ones that need to be cross-checked. If an Identifier supplied as an ISSN,
-  // is found against a title but as an eISSN we still treat this as a match
-  'cross_checks' : [
-    ['issn', 'eissn'],
-    ['issn', 'issnl'],
-    ['eissn', 'issn'],
-    ['eissn', 'issnl'],
-    ['issnl', 'issn'],
-    ['issnl', 'eissn']
-  ],
-
-  formatters : [
-    'issn' : isxn_formatter,
-    'eissn' : isxn_formatter
-  ]
-]
 

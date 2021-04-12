@@ -208,12 +208,6 @@ class User extends Party {
 //     false
 //   }
 
-/*  def getUserOptions(GrailsApplication grailsApplication) {
-    def userOptions = [:]
-    userOptions.availableSearches = grailsApplication.config.globalSearchTemplates.sort{ it.value.title }
-    userOptions
-  }*/
-
   transient def getUserPreferences() {
     def userPrefs = [:]
 

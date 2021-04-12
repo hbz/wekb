@@ -5,6 +5,7 @@
 import com.k_int.TextUtils
 
 println("-- using runtime.groovy config file !!! --")
+
 kbart2.mappings= [
   // Digital Archival Collections Ingest Format
     DAC : [
@@ -331,9 +332,7 @@ kbart2.editorRole='Editor'
 
 project_dir = new java.io.File(org.grails.io.support.GrailsResourceUtils.GRAILS_APP_DIR + "/../project-files/").getCanonicalPath() + "/"
 
-refine_min_version = "3.0.0"
-
-// ftupdate_enabled = true
+//refine_min_version = "3.0.0"
 
 // Config for the refine extension build process.
 refine = [
@@ -356,70 +355,7 @@ refine = [
   extensionBuildTarget    : "dist",
 ]
 
-grails.project.groupId = appName // change this to alter the default package name and Maven publishing destination
-grails.mime.file.extensions = true // enables the parsing of file extensions from URLs into the request format
-grails.mime.use.accept.header = false
-grails.mime.types = [
-  all:           '*/*',
-  atom:          'application/atom+xml',
-  css:           'text/css',
-  csv:           'text/csv',
-  form:          'application/x-www-form-urlencoded',
-  html:          ['text/html','application/xhtml+xml'],
-  js:            'text/javascript',
-  json:          ['application/json', 'text/json'],
-  multipartForm: 'multipart/form-data',
-  rss:           'application/rss+xml',
-  text:          'text/plain',
-  xml:           ['text/xml', 'application/xml']
-]
-
-// URL Mapping Cache Max Size, defaults to 5000
-//grails.urlmapping.cache.maxsize = 1000
-
-// What URL patterns should be processed by the resources plugin
-grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
-
-// The default codec used to encode data with ${}
-grails.views.default.codec = "none" // none, html, base64
-grails.views.gsp.encoding = "UTF-8"
-grails.converters.encoding = "UTF-8"
-// enable Sitemesh preprocessing of GSP pages
-grails.views.gsp.sitemesh.preprocess = true
-// scaffolding templates configuration
-grails.scaffolding.templates.domainSuffix = 'Instance'
-
-grails.plugins.twitterbootstrap.fixtaglib = true
-
-// Set to false to use the new Grails 1.2 JSONBuilder in the render method
-grails.json.legacy.builder = false
-// enabled native2ascii conversion of i18n properties files
-grails.enable.native2ascii = true
-// packages to include in Spring bean scanning
-grails.spring.bean.packages = []
-// whether to disable processing of multi part requests
-grails.web.disable.multipart=false
-
-// request parameters to mask when logging exceptions
-grails.exceptionresolver.params.exclude = ['password']
-
-// configure auto-caching of queries by default (if false you can cache individual queries with 'cache: true')
-grails.hibernate.cache.queries = false
-
-environments {
-  development {
-    grails.logging.jul.usebridge = true
-  }
-  production {
-    grails.logging.jul.usebridge = false
-    // TODO: grails.serverURL = "http://www.changeme.com"
-  }
-  test {
-    grails.serverURL = "http://localhost:$server.port/$appName"
-  }
-}
-
-// Log directory/created in current working dir if tomcat var not found.
+/*// Log directory/created in current working dir if tomcat var not found.
 def logWatchFile
 
 // First lets see if we have a log file present.
@@ -442,7 +378,7 @@ if (!base) {
 def logFile = logWatchFile.canonicalPath
 
 // Also add it as config value too.
-log_location = logFile
+log_location = logFile*/
 
 grails {
   fileViewer {
@@ -467,14 +403,6 @@ validation.regex.zdb = "^\\d+\\-[\\dX]\$"
 //   class_one_cols[name] = "${IngestService.IDENTIFIER_PREFIX}${name}"
 // }
 
-grails.gorm.default.constraints = {
-  '*'(nullable: true, blank:false)
-}
-
-grails.gorm.autoFlush=true
-
-//grails.gorm.failOnError=true
-
 permNames = [
   1 : [name:'Read', inst:org.springframework.security.acls.domain.BasePermission.READ],
   2 : [name:'Write', inst:org.springframework.security.acls.domain.BasePermission.WRITE],
@@ -483,31 +411,9 @@ permNames = [
   16 : [name:'Administration', inst:org.springframework.security.acls.domain.BasePermission.ADMINISTRATION],
 ]
 
-grails.plugin.springsecurity.ui.password.minLength = 6
-grails.plugin.springsecurity.ui.password.maxLength = 64
-grails.plugin.springsecurity.ui.password.validationRegex = '^.*$'
-
-//configure register
-grails.plugin.springsecurity.ui.register.emailFrom = "we:kb<no-reply@gokb.org>"
-grails.plugin.springsecurity.ui.register.emailSubject = 'Welcome to we:kb'
-grails.plugin.springsecurity.ui.register.defaultRoleNames = [
-  "ROLE_USER"
-]
-grails.plugin.springsecurity.ui.register.postRegisterUrl = '/home/index'
-// The following 2 entries make the app use basic auth by default
-grails.plugin.springsecurity.useBasicAuth = true
-grails.plugin.springsecurity.basic.realmName = "gokb"
-
 cosine.good_threshold = 0.75
 
 extensionDownloadUrl = 'https://github.com/k-int/gokb-phase1/wiki/GOKb-Refine-Extensions'
-
-grails.converters.json.circular.reference.behaviour = 'INSERT_NULL'
-
-/**
- * We need to disable springs password encoding as we handle this in our domain model.
- */
-grails.plugin.springsecurity.ui.encodePassword = false
 
 defaultOaiConfig = [
   lastModified:'lastUpdated',
@@ -535,15 +441,7 @@ apiClasses = [
   "com.k_int.apis.GrailsDomainHelpersApi"
 ]
 
-/** Less config **/
-/** Config duplicated here and in build.groovy for alternate run paths */
-grails.assets.less.compiler = 'less4j'
-grails.assets.excludes = [ '**/_*.less', 'gokb/themes/*.less', 'gokb/themes/**/*.less', 'bootstrap/*.less', 'bootstrap/**/*.less' ]
-grails.assets.includes = [ 'webfonts/*', 'gokb/themes/*/theme.less', 'bootstrap/bootstrap.less' ]
-grails.assets.plugin."twitter-bootstrap".excludes = ["**/*.less"]
-grails.assets.plugin."font-awesome-resources".excludes = ["**/*.less"]
-grails.assets.plugin."jquery".excludes = ["**", "*.*"]
-grails.assets.minifyJs = false
+
 
 gokb.theme = "yeti"
 
@@ -589,26 +487,49 @@ searchApi = [
 // 'Access-Control-Allow-Origin': 'http://xissn.worldcat.org'
 //     'My-Custom-Header': 'some value'
 
-// Uncomment and edit the following lines to start using Grails encoding & escaping improvements
-// GSP settings
-grails {
- views {
-  gsp {
-    encoding = 'UTF-8'
-    htmlcodec = 'xml' // use xml escaping instead of HTML4 escaping
-    codecs {
-      expression = 'html' // escapes values inside null
-      scriptlet = 'none' // escapes output from scriptlets in GSPs
-      taglib = 'none' // escapes output from taglibs
-      staticparts = 'none' // escapes output from static template parts
-    }
-  }
-  // escapes all not-encoded output at final stage of outputting
-//   filteringCodecForContentType {
-//   //'text/html' = 'html'
-//   }
- }
-}
+
 
 fileViewer.grails.views.gsp.codecs.expression = "none"
 
+
+identifiers = [
+        'class_ones' : [
+                'issn',
+                'eissn',
+                'doi',
+                'isbn',
+                'issnl',
+                'zdb',
+                'uri'
+        ],
+
+        // Class ones that need to be cross-checked. If an Identifier supplied as an ISSN,
+        // is found against a title but as an eISSN we still treat this as a match
+        'cross_checks' : [
+                ['issn', 'eissn'],
+                ['issn', 'issnl'],
+                ['eissn', 'issn'],
+                ['eissn', 'issnl'],
+                ['issnl', 'issn'],
+                ['issnl', 'eissn']
+        ],
+
+        formatters : [
+                'issn' : isxn_formatter,
+                'eissn' : isxn_formatter
+        ]
+]
+
+isxn_formatter = { issn_string ->
+    def result = issn_string
+    def trimmed = (issn_string?:'').trim()
+    if ( trimmed.length() == 8 ) {
+        result = issn_string.substring(0,4)+"-"+issn_string.substring(4,8)
+    }
+    return result;
+}
+
+
+appDefaultPrefs {
+    globalDateFormat='yyyy-MM-dd'
+}

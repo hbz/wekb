@@ -352,7 +352,6 @@ abstract class KBComponent implements Auditable{
       variantNames        : 'owner',
       reviewRequests      : 'componentToReview',
       people              : 'component',
-      subjects            : 'component',
       prices              : 'owner'
   ]
 
@@ -365,7 +364,6 @@ abstract class KBComponent implements Auditable{
       variantNames        : KBComponentVariantName,
       reviewRequests      : ReviewRequest,
       people              : ComponentPerson,
-      subjects            : ComponentSubject,
       prices              : ComponentPrice
   ]
 
@@ -1257,7 +1255,6 @@ abstract class KBComponent implements Auditable{
     }
     ReviewRequest.executeUpdate("delete from ReviewRequest as c where c.componentToReview=:component", [component: this])
     ComponentPerson.executeUpdate("delete from ComponentPerson as c where c.component=:component", [component: this])
-    ComponentSubject.executeUpdate("delete from ComponentSubject as c where c.component=:component", [component: this])
     ComponentIngestionSource.executeUpdate("delete from ComponentIngestionSource as c where c.component=:component", [component: this])
     KBComponent.executeUpdate("update KBComponent set duplicateOf = NULL where duplicateOf=:component", [component: this])
     KBComponent.executeUpdate("delete from ComponentPrice where owner=:component", [component: this])
@@ -1289,7 +1286,6 @@ abstract class KBComponent implements Auditable{
       }
       ReviewRequest.executeUpdate("delete from ReviewRequest as c where c.componentToReview.id IN (:component)", [component: batch])
       ComponentPerson.executeUpdate("delete from ComponentPerson as c where c.component.id IN (:component)", [component: batch])
-      ComponentSubject.executeUpdate("delete from ComponentSubject as c where c.component.id IN (:component)", [component: batch])
       ComponentIngestionSource.executeUpdate("delete from ComponentIngestionSource as c where c.component.id IN (:component)", [component: batch])
       KBComponent.executeUpdate("update KBComponent set duplicateOf = NULL where duplicateOf.id IN (:component)", [component: batch])
       ComponentPrice.executeUpdate("delete from ComponentPrice as cp where cp.owner.id IN (:component)", [component: batch])

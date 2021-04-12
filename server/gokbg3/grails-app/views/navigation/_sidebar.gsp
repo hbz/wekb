@@ -20,36 +20,49 @@
           </g:form>
         </li>
 
-        <li class="${params?.controller == "home" && (params?.action == 'index' || params?.action == 'dashboard') ? 'active' : ''}"><g:link controller="home"><i class="fa fa-dashboard fa-fw"></i> Statistics</g:link></li>
-        <li class="${params?.controller == "home" && (params?.action == 'userdash') ? 'active' : ''}"><g:link controller="home" action="userdash"><i class="fa fa-dashboard fa-fw"></i> My Dashboard</g:link></li>
+        <li class="${params?.controller == "home" && (params?.action == 'userdash') ? 'active' : ''}"><g:link controller="home" action="userdash"><i class="far fa-chart-bar"></i> My Dashboard</g:link></li>
+
+        <g:if test="${session.curatorialGroups && ( session.curatorialGroups.size() > 0 ) }">
+          <li class="${(params?.controller == "group")  ? 'active' : ''}"><a href="#"><i class="fas fa-globe"></i> My Groups<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+              <g:each in="${session.curatorialGroups}" var="cg">
+                <li><g:link controller="group" action="index" id="${cg.id}">${cg.name}</g:link></li>
+              </g:each>
+            </ul>
+          </li>
+        </g:if>
+
         <li class="${(params?.controller == "search" || params?.controller == "globalSearch")  ? 'active' : ''}"><a href="#"><i class="fa fa-search fa-fw"></i> Search<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
             <li class="divider"></li>
-            <g:each in="${session.menus?.search}" var="type,items" status="counter">
-              <g:if test="${ counter > 0 }" >
-                <li class="divider">${type}</li>
-              </g:if>
-              <g:each in="${items}" var="item">
-                <li class="menu-search-${type}">${ g.link(item.link + item.attr) { "<i class='fa fa-angle-double-right fa-fw'></i> ${item.text}" } }</li>
-              </g:each>
-            </g:each>
+            <li><g:link controller="search" action="index" params="[qbe:'g:tipps']" title="Search Titles" ><i class='fa fa-angle-double-right fa-fw'></i> Titles</g:link></li>
+            <li><g:link controller="search" action="index" params="[qbe:'g:packages']" title="Search Packages" ><i class='fa fa-angle-double-right fa-fw'></i> Packages</g:link></li>
+            <li><g:link controller="search" action="index" params="[qbe:'g:platforms']" title="Search Platforms" ><i class='fa fa-angle-double-right fa-fw'></i> Platforms</g:link></li>
+
+            <li class="divider"></li>
+            <li><g:link controller="search" action="index" params="[qbe:'g:curatoryGroups']" title="Search Curatory Groups" ><i class='fa fa-angle-double-right fa-fw'></i> Curatory Groups</g:link></li>
+            <li><g:link controller="search" action="index" params="[qbe:'g:orgs']" title="Search Orgs" ><i class='fa fa-angle-double-right fa-fw'></i> Organizations</g:link></li>
+            <li><g:link controller="search" action="index" params="[qbe:'g:sources']" title="Search Sources" ><i class='fa fa-angle-double-right fa-fw'></i> Sources</g:link></li>
+
           </ul> <!-- /.nav-second-level -->
         </li>
-        <g:if test="${session.menus?.create}">
+        <sec:ifAnyGranted roles='ROLE_ADMIN,ROLE_EDITOR,ROLE_CONTRIBUTOR'>
           <li class="${params?.controller == "create" ? 'active' : ''}"><a href="#"><i class="fa fa-plus fa-fw"></i> Create<span class="fa arrow"></span></a>
             <ul class="nav nav-second-level">
-              <g:each in="${session.menus?.create}" var="type,items" status="counter">
-                <g:if test="${ counter > 0 }" >
-                  <li class="divider">${type}</li>
-                </g:if>
-                <g:each in="${items}" var="item">
-                  <li class="menu-create-${type}">${ g.link(item.link + item.attr) { "<i class='fa fa-angle-double-right fa-fw'></i> ${item.text}" } }</li>
-                </g:each>
-              </g:each>
+
+              <li class="divider"></li>
+              <li><g:link controller="create" action="index" params="[tmpl:'org.gokb.cred.TitleInstancePackagePlatform']" title="New Titles" ><i class='fa fa-angle-double-right fa-fw'></i> Titles</g:link></li>
+              <li><g:link controller="create" action="index" params="[tmpl:'org.gokb.cred.Package']" title="New Packages" ><i class='fa fa-angle-double-right fa-fw'></i> Packages</g:link></li>
+              <li><g:link controller="create" action="index" params="[tmpl:'org.gokb.cred.Platform']" title="New Platforms" ><i class='fa fa-angle-double-right fa-fw'></i> Platforms</g:link></li>
+
+              <li class="divider"></li>
+              <li><g:link controller="create" action="index" params="[tmpl:'org.gokb.cred.Source']" title="New Sources" ><i class='fa fa-angle-double-right fa-fw'></i> Sources</g:link></li>
 
             </ul> <!-- /.nav-second-level -->
           </li>
-        </g:if>
+        </sec:ifAnyGranted>
+
+        <li class="${params?.controller == "home" && (params?.action == 'index' || params?.action == 'dashboard') ? 'active' : ''}"><g:link controller="home"><i class="fas fa-chart-line"></i> Statistics</g:link></li>
 
         <li><g:link controller="welcome"><i class="fa fa-tasks fa-fw"></i> To Do<span class="fa arrow"></span></g:link>
 
@@ -72,29 +85,11 @@
           </ul>
         </li>
 
-
-        <g:if test="${session.curatorialGroups && ( session.curatorialGroups.size() > 0 ) }">
-          <li><a href="#"><i class="fa fa-search fa-fw"></i> My Groups<span class="fa arrow"></span></a>
-            <ul class="nav nav-second-level">
-              <g:each in="${session.curatorialGroups}" var="cg">
-                <li><g:link controller="group" action="index" id="${cg.id}">${cg.name}</g:link></li>
-              </g:each>
-            </ul>
-          </li>
-        </g:if>
-%{--        <g:if test="${grailsApplication.config.feature.directUpload}">
-          <li class="${params?.controller == "savedItems" ? 'active' : ''}" ><g:link controller="savedItems" action="index"><i class="fa fa-folder fa-fw"></i> Saved Items</g:link></li>
-          <sec:ifAnyGranted roles="ROLE_EDITOR, ROLE_CONTRIBUTOR, ROLE_ADMIN, ROLE_SUPERUSER">
-          <li class="${params?.controller == "upload" ? 'active' : ''}" ><g:link controller="upload" action="index"><i class="fa fa-upload fa-fw"></i> File Upload</g:link></li>
-          </sec:ifAnyGranted>
-          <li class="${params?.controller == "ingest" ? 'active' : ''}" ><g:link controller="ingest" action="index"><i class="fa fa-upload fa-fw"></i> Direct Ingest</g:link></li>
-        </g:if>--}%
-
         <li class="${params?.controller == "coreference" ? 'active' : ''}"><g:link controller="coreference" action="index"><i class="fa fa-list-alt fa-fw"></i> Coreference</g:link></li>
 
 
         <g:if test="${session.menus?.admin?.search}">
-          <li class="${params?.controller == "search"  ? 'active' : ''}"><a href="#"><i class="fa fa-search fa-fw"></i> Admin Search<span class="fa arrow"></span></a>
+          <li><a href="#"><i class="fa fa-search fa-fw"></i> Admin Search<span class="fa arrow"></span></a>
             <ul class="nav nav-second-level">
               <li class="divider"></li>
                 <g:each in="${session.menus.admin.search}" var="item">
@@ -105,7 +100,7 @@
         </g:if>
 
         <g:if test="${session.menus?.admin?.create}">
-          <li class="${params?.controller == "create" ? 'active' : ''}"><a href="#"><i class="fa fa-plus fa-fw"></i> Admin Create<span class="fa arrow"></span></a>
+          <li><a href="#"><i class="fa fa-plus fa-fw"></i> Admin Create<span class="fa arrow"></span></a>
             <ul class="nav nav-second-level">
                 <g:each in="${session.menus.admin.create}" var="item">
                   <li class="menu-create-admin">${ g.link(item.link + item.attr) { "<i class='fa fa-angle-double-right fa-fw'></i> ${item.text}" } }</li>
@@ -140,7 +135,7 @@
                 <li><g:link controller="admin" action="ensureTipls" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Ensure TIPLs</g:link></li>
                 <li><g:link controller="admin" action="addPackageTypes" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Ensure Package Content Types</g:link></li>
                 <li><g:link controller="admin" action="triggerEnrichments" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Trigger enrichments</g:link></li>
-                <li><g:link controller="admin" action="logViewer"><i class="fa fa-angle-double-right fa-fw"></i> Log Viewer</g:link></li>
+                %{--<li><g:link controller="admin" action="logViewer"><i class="fa fa-angle-double-right fa-fw"></i> Log Viewer</g:link></li>--}%
               <%--      <li><g:link controller="admin" action="housekeeping" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Housekeeping</g:link></li> --%>
 
               <!--

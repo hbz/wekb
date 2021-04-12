@@ -90,7 +90,7 @@ class GlobalSearchController {
             entry.buckets.each { bucket ->
                 log.debug("Bucket: ${bucket}");
                 bucket.each { bi ->
-                  def displayTerm = (bi.getKey() != 'TitleInstancePackagePlatform' ? bi.getKey() : 'TIPP')
+                  def displayTerm = (bi.getKey() != 'TitleInstancePackagePlatform' ? bi.getKey() : 'Titles')
                   log.debug("Bucket item: ${bi} ${bi.getKey()} ${bi.getDocCount()}");
                   facet_values.add([term:bi.getKey(),display:displayTerm,count:bi.getDocCount()])
                   }

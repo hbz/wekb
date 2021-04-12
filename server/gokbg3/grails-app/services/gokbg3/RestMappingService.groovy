@@ -69,7 +69,7 @@ class RestMappingService {
     def include_list = params['_include']?.split(',') ?: null
     def exclude_list = params['_exclude']?.split(',') ?: null
     def nested = params['nested'] ? true : false
-    def base = grailsApplication.config.serverURL + "/rest"
+    def base = grailsApplication.config.serverUrl + "/rest"
     def curatedClass = obj.respondsTo('curatoryGroups')
     def jsonMap = null
     def is_curator = true

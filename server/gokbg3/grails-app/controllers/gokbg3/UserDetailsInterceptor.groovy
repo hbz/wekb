@@ -47,7 +47,6 @@ class UserDetailsInterceptor {
       if (user) {
         log.debug("User details filter... User present");
         request.user = user
-        //request.userOptions = user.getUserOptions(grailsApplication)
         
         if (!session.menus) {
         
@@ -61,7 +60,7 @@ class UserDetailsInterceptor {
           // Add to the session.
           session.menus = menus
 
-          def default_dcs = ["org.gokb.cred.Package", "org.gokb.cred.Platform", "org.gokb.cred.TitleInstance", "org.gokb.cred.BookInstance", "org.gokb.cred.DatabaseInstance", "org.gokb.cred.JournalInstance", "org.gokb.cred.OtherInstance", "org.gokb.cred.TitleInstancePackagePlatform", "org.gokb.cred.Office", "org.gokb.cred.Org", "org.gokb.cred.Source"]
+          def default_dcs = ["org.gokb.cred.Package", "org.gokb.cred.Platform", "org.gokb.cred.TitleInstancePackagePlatform", "org.gokb.cred.Org", "org.gokb.cred.Source"]
 
           boolean userIsAdmin = user.isAdmin()
 
@@ -103,12 +102,6 @@ class UserDetailsInterceptor {
                             link : ['controller' : 'search', 'action' : 'index', 'params' : [qbe:'g:'+ key]],
                             attr : ['title' : "Search ${val.title}"]
                     ]
-                  }else {
-                    menus["search"]["${d.type.value}"] << [
-                            text : val.title,
-                            link : ['controller' : 'search', 'action' : 'index', 'params' : [qbe:'g:'+ key]],
-                            attr : ['title' : "Search ${val.title}"]
-                    ]
                   }
 
                 }
@@ -121,12 +114,6 @@ class UserDetailsInterceptor {
 
                   if(userIsAdmin && !(d.dcName in default_dcs)){
                     menus["admin"]["create"] << [
-                            text: d.displayName,
-                            link: ['controller': 'create', 'action': 'index', 'params': [tmpl: d.dcName]],
-                            attr: ['title': "New ${d.displayName}"]
-                    ]
-                  }else {
-                    menus["create"]["${d.type.value}"] << [
                             text: d.displayName,
                             link: ['controller': 'create', 'action': 'index', 'params': [tmpl: d.dcName]],
                             attr: ['title': "New ${d.displayName}"]
