@@ -154,13 +154,16 @@ class HomeController {
 
     def widgets = [
             'Titles' : [
-                    'componentName' : 'TitleInstance',
+                    'componentName' : 'TitleInstancePackagePlatform',
             ],
             'Organizations' : [
                     'componentName' : 'Org',
             ],
             'Packages' : [
                     'componentName' : 'Package'
+            ],
+            'Platform' : [
+                    'componentName' : 'Platform',
             ],
     ]
 
