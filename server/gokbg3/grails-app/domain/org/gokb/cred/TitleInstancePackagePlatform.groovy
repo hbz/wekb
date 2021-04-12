@@ -677,8 +677,8 @@ class TitleInstancePackagePlatform extends KBComponent {
         if (!errors.coverageDepth) {
           errors.coverageDepth = []
         }
-        coverage.coverageDepth = "fulltext"
-        errors.coverageDepth << [message: "Missing value for coverage depth: set to fulltext", baddata: coverage.coverageDepth]
+       /* coverage.coverageDepth = "fulltext"
+        errors.coverageDepth << [message: "Missing value for coverage depth: set to fulltext", baddata: coverage.coverageDepth]*/
       } else {
         if (coverage.coverageDepth instanceof String && !['fulltext', 'selected articles', 'abstracts'].contains(coverage.coverageDepth?.toLowerCase())) {
           if (!errors.coverageDepth) {
