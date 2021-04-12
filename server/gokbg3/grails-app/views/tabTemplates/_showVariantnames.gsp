@@ -1,5 +1,5 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
-<div class="tab-pane" id="altnames">
+<div class="tab-pane fade" id="altnames">
   <g:if test="${d.id != null}">
     <dl>
       <dt>
