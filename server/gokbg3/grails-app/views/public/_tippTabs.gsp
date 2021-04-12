@@ -4,7 +4,7 @@
 
 <ul id="tabs" class="nav nav-tabs">
 
-    <g:if test="${d.title.niceName == 'Journal' || d.publicationType?.value == 'Serial'}">
+    <g:if test="${d.niceName == 'Journal'}">
          <li role="presentation" class=nav-item">
             <a class="nav-link active" href="#tippcoverage" data-toggle="tab">Coverage</a>
         </li>
@@ -44,7 +44,7 @@
 
 <div id="my-tab-content" class="tab-content">
 
-    <g:if test="${d.title.niceName == 'Journal' || d.publicationType?.value == 'Serial'}">
+    <g:if test="${d.niceName == 'Journal'}">
         <div class="tab-pane fade show active" id="tippcoverage">
             <dl class="row">
                 <dt class="col-3 text-right">

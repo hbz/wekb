@@ -83,7 +83,7 @@
         <div id="row">
             <ul id="tabs" class="nav nav-tabs">
                 <li role="presentation" class="nav-item">
-                    <a class="nav-link active" href="#titledetails" data-toggle="tab">Titles/TIPPs
+                    <a class="nav-link active" href="#titledetails" data-toggle="tab">Titles
                         <span class="badge badge-warning">${titleCount}</span>
                     </a>
                 </li>
@@ -108,7 +108,8 @@
                                         <g:sortableColumn property="tipp.title.name" title="Title"/>
                                         <g:sortableColumn property="tipp.title.ids" title="Identifiers"/>
                                         <g:sortableColumn property="tipp.hostPlatform.name" title="Platform"/>
-                                        <g:sortableColumn property="tipp.niceName" title="Title Type"/>
+                                        <g:sortableColumn property="tipp.publicationType" title="Title Type"/>
+                                        <g:sortableColumn property="tipp.medium" title="Medium"/>
                                         <th>Coverage</th>
                                     </tr>
                                     </thead>
@@ -134,6 +135,7 @@
                                                 </g:link>
                                             </td>
                                             <td>${t.niceName}</td>
+                                            <td>${t.medium?.value}</td>
                                             <td>
                                                 ${t.coverageDepth?.value}<br/>${t.coverageNote}
                                             </td>

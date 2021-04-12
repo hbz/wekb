@@ -3,18 +3,10 @@
        value="${d.isEditable() && ((request.curator != null ? request.curator.size() > 0 ? true : false : true) || (params.curationOverride == 'true' && request.user.isAdmin()))}"/>--}%
 <dl class="row">
     <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="title">Title</gokb:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="name">Title</gokb:annotatedLabel>
     </dt>
-    <dd class="col-9 text-left"">
-        <g:if test="${controllerName != 'public'}">
-            <g:link controller="resource" action="show"
-                    id="${d.title?.class?.name + ':' + d.title?.id}">
-                ${(d.title?.name) ?: 'Empty'}
-            </g:link>
-        </g:if><g:else>
-            ${(d.title?.name) ?: 'Empty'}
-        </g:else>
-        <g:if test="${d.title}">(${d.title.niceName})</g:if>
+    <dd class="col-9 text-left">
+        ${d.name}
     </dd>
 
     <dt class="col-3 text-right">
