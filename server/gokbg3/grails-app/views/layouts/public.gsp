@@ -51,7 +51,7 @@
     </div>
 </g:if>
 
-    <nav class="navbar navbar-expand-sm navbar-dark bg-dark" id="primary-nav-bar" role="navigation">
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark mb-3" id="primary-nav-bar" role="navigation">
      <div class="container">
          <div class="d-flex flex-grow-1">
              <a class="navbar-brand navbar-image mekb-logo" href="${grailsApplication.config.server.contextPath ?: ''}/" >
