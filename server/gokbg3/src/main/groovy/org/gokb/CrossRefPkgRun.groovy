@@ -221,15 +221,18 @@ class CrossRefPkgRun {
 
         if (rjson.tipps?.size() > 0 && rjson.tipps.size() > invalidTipps.size()) {
           if (pkg.status == status_current && pkg?.listStatus != status_ip) {
-            pkg.listStatus = status_ip
-            pkg.merge(flush: true)
+            //Macht kein Sinn vorerst
+            //pkg.listStatus = status_ip
+            //pkg.merge(flush: true)
           }
         }
         else {
           log.debug("imported Package $pkg.name contains no valid TIPPs")
         }
 
-        if (!addOnly && existing_tipp_ids.size() > 0) {
+        //Setzt vorraus, dass das Paket immer mit dem gleichen Paket-Inhalt importiert wird. Jedoch kann ein Anbieter auch nur ein Zuschnitt eines Paket aktualisieren!!!
+        //Es werden autmatisch alle TIPPs, die nicht in der KBART sind auf Retired oder Deleted gesetzt!!!!
+        /*if (!addOnly && existing_tipp_ids.size() > 0) {
           existing_tipp_ids.eachWithIndex { ttd, ix ->
             def to_retire = TitleInstancePackagePlatform.get(ttd)
 
@@ -266,7 +269,7 @@ class CrossRefPkgRun {
               rr_TIPPs_retired
             )
           }
-        }
+        }*/
 
         log.debug("Removed ${removedNum} TIPPS from the matched package!")
         jsonResult.result = 'OK'

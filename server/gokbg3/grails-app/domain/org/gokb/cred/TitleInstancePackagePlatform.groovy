@@ -94,14 +94,14 @@ class TitleInstancePackagePlatform extends KBComponent {
 
   private static SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd")
 
-  private static refdataDefaults = [
+/*  private static refdataDefaults = [
     "format"       : "Electronic",
     "delayedOA"    : "Unknown",
     "hybridOA"     : "Unknown",
     "primary"      : "No",
     "paymentType"  : "Paid",
     "coverageDepth": "Fulltext"
-  ]
+  ]*/
 
   static jsonMapping = [
     'ignore'       : [
@@ -677,8 +677,8 @@ class TitleInstancePackagePlatform extends KBComponent {
         if (!errors.coverageDepth) {
           errors.coverageDepth = []
         }
-        coverage.coverageDepth = "fulltext"
-        errors.coverageDepth << [message: "Missing value for coverage depth: set to fulltext", baddata: coverage.coverageDepth]
+       /* coverage.coverageDepth = "fulltext"
+        errors.coverageDepth << [message: "Missing value for coverage depth: set to fulltext", baddata: coverage.coverageDepth]*/
       } else {
         if (coverage.coverageDepth instanceof String && !['fulltext', 'selected articles', 'abstracts'].contains(coverage.coverageDepth?.toLowerCase())) {
           if (!errors.coverageDepth) {

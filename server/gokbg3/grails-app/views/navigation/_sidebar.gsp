@@ -20,10 +20,10 @@
           </g:form>
         </li>
 
-        <li class="${params?.controller == "home" && (params?.action == 'userdash') ? 'active' : ''}"><g:link controller="home" action="userdash"><i class="far fa-chart-bar"></i> My Dashboard</g:link></li>
+        <li class="${controllerName == "home" && (actionName == 'userdash') ? 'active' : ''}"><g:link controller="home" action="userdash"><i class="far fa-chart-bar"></i> My Dashboard</g:link></li>
 
         <g:if test="${session.curatorialGroups && ( session.curatorialGroups.size() > 0 ) }">
-          <li class="${(params?.controller == "group")  ? 'active' : ''}"><a href="#"><i class="fas fa-globe"></i> My Groups<span class="fa arrow"></span></a>
+          <li class="${(controllerName == "group")  ? 'active' : ''}"><a href="#"><i class="fas fa-globe"></i> My Groups<span class="fa arrow"></span></a>
             <ul class="nav nav-second-level">
               <g:each in="${session.curatorialGroups}" var="cg">
                 <li><g:link controller="group" action="index" id="${cg.id}">${cg.name}</g:link></li>
@@ -32,7 +32,7 @@
           </li>
         </g:if>
 
-        <li class="${(params?.controller == "search" || params?.controller == "globalSearch")  ? 'active' : ''}"><a href="#"><i class="fa fa-search fa-fw"></i> Search<span class="fa arrow"></span></a>
+        <li class="${(controllerName == "search")  ? 'active' : ''}"><a href="#"><i class="fa fa-search fa-fw"></i> Search<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
             <li class="divider"></li>
             <li><g:link controller="search" action="index" params="[qbe:'g:tipps']" title="Search Titles" ><i class='fa fa-angle-double-right fa-fw'></i> Titles</g:link></li>
@@ -47,7 +47,7 @@
           </ul> <!-- /.nav-second-level -->
         </li>
         <sec:ifAnyGranted roles='ROLE_ADMIN,ROLE_EDITOR,ROLE_CONTRIBUTOR'>
-          <li class="${params?.controller == "create" ? 'active' : ''}"><a href="#"><i class="fa fa-plus fa-fw"></i> Create<span class="fa arrow"></span></a>
+          <li class="${controllerName == "create" ? 'active' : ''}"><a href="#"><i class="fa fa-plus fa-fw"></i> Create<span class="fa arrow"></span></a>
             <ul class="nav nav-second-level">
 
               <li class="divider"></li>
@@ -62,7 +62,7 @@
           </li>
         </sec:ifAnyGranted>
 
-        <li class="${params?.controller == "home" && (params?.action == 'index' || params?.action == 'dashboard') ? 'active' : ''}"><g:link controller="home"><i class="fas fa-chart-line"></i> Statistics</g:link></li>
+        <li class="${controllerName == "home" && (actionName == 'index' || actionName == 'dashboard') ? 'active' : ''}"><g:link controller="home"><i class="fas fa-chart-line"></i> Statistics</g:link></li>
 
         <li><g:link controller="welcome"><i class="fa fa-tasks fa-fw"></i> To Do<span class="fa arrow"></span></g:link>
 
@@ -85,7 +85,7 @@
           </ul>
         </li>
 
-        <li class="${params?.controller == "coreference" ? 'active' : ''}"><g:link controller="coreference" action="index"><i class="fa fa-list-alt fa-fw"></i> Coreference</g:link></li>
+        <li class="${controllerName == "coreference" ? 'active' : ''}"><g:link controller="coreference" action="index"><i class="fa fa-list-alt fa-fw"></i> Coreference</g:link></li>
 
 
         <g:if test="${session.menus?.admin?.search}">
@@ -111,7 +111,7 @@
         </g:if>
 
         <sec:ifAnyGranted roles="ROLE_ADMIN">
-          <li class="${params?.controller == "admin" ? 'active' : ''}"><a href="#"><i class="fa fa-wrench fa-fw"></i> Admin<span class="fa arrow"></span></a>
+          <li class="${controllerName == "admin" ? 'active' : ''}"><a href="#"><i class="fa fa-wrench fa-fw"></i> Admin<span class="fa arrow"></span></a>
             <ul class="nav nav-second-level">
               <li><g:link controller="user" action="search"><i class="fa fa-angle-double-right fa-fw"></i> User Management Console</g:link></li>
               <%-- <li><g:link controller="admin" action="tidyOrgData" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Tidy Orgs Data</g:link></li> --%>
@@ -145,7 +145,7 @@
               <li><a href="https://github.com/openlibraryenvironment/gokb/wiki/Integration-APIs:-Telling-GOKb-about-new-or-corresponding-resources-and-local-identifiers"><i class="fa fa-database fa-fw"></i> Integration API</a></li>
             </ul>
           </li>
-          <li class="${params?.controller == "home" && params?.action == 'about' ? 'active' : ''}" ><g:link controller="home" action="about"><i class="fa fa-info fa-fw"></i> Operating environment</g:link></li>
+          <li class="${controllerName == "home" && actionName == 'about' ? 'active' : ''}" ><g:link controller="home" action="about"><i class="fa fa-info fa-fw"></i> Operating environment</g:link></li>
         </sec:ifAnyGranted>
 
         <g:if test="${ grailsApplication.config.gokb.decisionSupport}">
@@ -156,9 +156,9 @@
 
       </sec:ifLoggedIn>
       <sec:ifNotLoggedIn>
-        <li class="${params?.controller == "public" && params?.action == 'public' ? 'active' : ''}"><g:link controller="public"><i class="fa fa-home fa-fw"></i> <g:message code="gokb.appname" default="we:kb"/></g:link></li>
-        <li class="${params?.controller == "register" ? 'active' : ''}"><g:link controller="register" action="forgotPassword"><i class="fa fa-edit fa-fw"></i> Forgot Password</g:link></li>
-        <li class="${params?.controller == "login" ? 'active' : ''}"><g:link controller="login"><i class="fa fa-sign-in fa-fw"></i> Sign in</g:link></li>
+        <li class="${controllerName == "public" && actionName == 'public' ? 'active' : ''}"><g:link controller="public"><i class="fa fa-home fa-fw"></i> <g:message code="gokb.appname" default="we:kb"/></g:link></li>
+        <li class="${controllerName == "register" ? 'active' : ''}"><g:link controller="register" action="forgotPassword"><i class="fa fa-edit fa-fw"></i> Forgot Password</g:link></li>
+        <li class="${controllerName == "login" ? 'active' : ''}"><g:link controller="login"><i class="fa fa-sign-in fa-fw"></i> Sign in</g:link></li>
       </sec:ifNotLoggedIn>
 
     </ul>
