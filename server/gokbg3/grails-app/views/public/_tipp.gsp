@@ -443,6 +443,6 @@
     </div>
     <g:render template="/tabTemplates/showPrices" model="${[d: d]}"/>
 </div>
-<g:render template="/apptemplates/secondTemplates/componentStatus"
+<g:render template="componentStatus"
           model="${[d: d]}"/>
 

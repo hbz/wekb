@@ -102,7 +102,7 @@
             <div id="my-tab-content" class="tab-content">
                 <div class="tab-pane fade show active" id="titledetails">
                     <h2>Titles (${titleCount})</h2>
-                    <table class="table table-striped table-bordered">
+                    <table class="table table-striped">
                             <thead>
                                 <tr>
                                         <g:sortableColumn property="tipp.title.name" title="Title"/>
@@ -166,9 +166,8 @@
                         </dd>
                     </dl>
                 </div>
-
-                <g:render template="/apptemplates/secondTemplates/componentStatus" model="${[d: pkg]}"/>
             </div>
+            <g:render template="componentStatus" model="${[d: pkg]}"/>
         </div>
     </g:if>
 </div>

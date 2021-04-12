@@ -180,7 +180,7 @@
 
     </div>
     <g:if test="${d.id}">
-        <g:render template="/apptemplates/secondTemplates/componentStatus"
+        <g:render template="componentStatus"
                   model="${[d: d]}"/>
     </g:if>
 
