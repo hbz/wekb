@@ -29,25 +29,22 @@
                <button class="btn btn-primary" type="submit">Login</button>
                 <small ><g:link controller="register" action="forgotPassword"><g:message code="spring.security.ui.login.forgotPassword" /></g:link></small>
 
-                <small ><a data-toggle="modal" data-cache="false"
+                <small ><a href data-toggle="modal" data-cache="false"
                                                     data-target="#infoModal">Not yet registered for a <g:message code="gokb.appname" default="we:kb"/>: account?</a></small>
             </g:form>
       </div>
     </div>
   </div>
 
-<div id="infoModal" class="qmodal modal modal-wide" role="dialog" tabindex="-1">
+<div id="infoModal" class="modal" role="dialog" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-
-
                 <h3 class="modal-title">Not yet registered for a <g:message code="gokb.appname" default="we:kb"/>: account?</h3>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             </div>
 
             <div class="modal-body">Contact us at <a href="mailto:laser@hbz-nrw.de">laser@hbz-nrw.de</a> so that we can set up an account for you and provide you with your initial login information.</div>
-
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
