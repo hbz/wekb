@@ -90,6 +90,20 @@
     <g:render template="/apptemplates/secondTemplates/refdataprops"
               model="${[d:(d), rd:(rd), dtype:(dtype), notShowProps: [RCConstants.PACKAGE_LIST_STATUS]]}" />
 
+    <dt>
+      <gokb:annotatedLabel owner="${d}" property="nationalRanges">National Range</gokb:annotatedLabel>
+    </dt>
+    <dd>
+      <g:render template="/apptemplates/secondTemplates/nationalRange" />
+    </dd>
+
+    <dt>
+      <gokb:annotatedLabel owner="${d}" property="regionalRanges">Regional Range</gokb:annotatedLabel>
+    </dt>
+    <dd>
+      <g:render template="/apptemplates/secondTemplates/regionalRange" />
+    </dd>
+
 
   </dl>
 

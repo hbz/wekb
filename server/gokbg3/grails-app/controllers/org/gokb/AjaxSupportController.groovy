@@ -12,6 +12,7 @@ import grails.gorm.transactions.Transactional
 import grails.core.GrailsClass
 import org.grails.datastore.mapping.model.*
 import org.grails.datastore.mapping.model.types.*
+import wekb.AccessService
 
 class AjaxSupportController {
 
@@ -21,6 +22,7 @@ class AjaxSupportController {
   def componentLookupService
   def messageSource
   def messageService
+  AccessService accessService
 
 
   @Deprecated
@@ -1563,5 +1565,105 @@ class AjaxSupportController {
     }
 
     render result as JSON
+  }
+
+  @Transactional
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
+  def addNationalRange() {
+    Map<String, Object> result = [:]
+
+    Package pkgInstance = Package.get(params.package)
+
+    if (!pkgInstance) {
+      flash.message = message(code: 'default.not.found.message', args: ['Package', params.id]) as String
+      redirect(url: request.getHeader('referer'))
+      return
+    }
+    result.editable = accessService.checkEditableObject(pkgInstance, params)
+
+    if (result.editable) {
+      RefdataValue nationalRange = RefdataValue.get(params.nationalRange)
+      if(nationalRange && !(nationalRange in pkgInstance.nationalRanges)) {
+        pkgInstance.addToNationalRanges(nationalRange)
+        pkgInstance.save()
+      }
+    }
+
+    redirect(url: request.getHeader('referer'))
+  }
+
+  @Transactional
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
+  def addRegionalRange() {
+    Map<String, Object> result = [:]
+
+    Package pkgInstance = Package.get(params.package)
+
+    if (!pkgInstance) {
+      flash.message = message(code: 'default.not.found.message', args: ['Package', params.id]) as String
+      redirect(url: request.getHeader('referer'))
+      return
+    }
+    result.editable = accessService.checkEditableObject(pkgInstance, params)
+
+    if (result.editable) {
+      RefdataValue regionalRange = RefdataValue.get(params.regionalRange)
+      if(regionalRange && !(regionalRange in pkgInstance.regionalRanges)) {
+        pkgInstance.addToRegionalRanges(regionalRange)
+        pkgInstance.save()
+      }
+    }
+
+    redirect(url: request.getHeader('referer'))
+  }
+
+  @Transactional
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
+  def deleteNationalRange() {
+    Map<String, Object> result = [:]
+
+    Package pkgInstance = Package.get(params.package)
+
+    if (!pkgInstance) {
+      flash.message = message(code: 'default.not.found.message', args: ['Package', params.id]) as String
+      redirect(url: request.getHeader('referer'))
+      return
+    }
+    result.editable = accessService.checkEditableObject(pkgInstance, params)
+
+    if (result.editable) {
+      RefdataValue nationalRange = RefdataValue.get(params.removeNationalRange)
+      if(nationalRange && (nationalRange in pkgInstance.nationalRanges)) {
+        pkgInstance.removeFromNationalRanges(nationalRange)
+        pkgInstance.save()
+      }
+    }
+
+    redirect(url: request.getHeader('referer'))
+  }
+
+  @Transactional
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
+  def deleteRegionalRange() {
+    Map<String, Object> result = [:]
+
+    Package pkgInstance = Package.get(params.package)
+
+    if (!pkgInstance) {
+      flash.message = message(code: 'default.not.found.message', args: ['Package', params.id]) as String
+      redirect(url: request.getHeader('referer'))
+      return
+    }
+    result.editable = accessService.checkEditableObject(pkgInstance, params)
+
+    if (result.editable) {
+      RefdataValue regionalRange = RefdataValue.get(params.regionalRange)
+      if(regionalRange && (regionalRange in pkgInstance.regionalRanges)) {
+        pkgInstance.removeFromRegionalRanges(regionalRange)
+        pkgInstance.save()
+      }
+    }
+
+    redirect(url: request.getHeader('referer'))
   }
 }

@@ -85,8 +85,8 @@ class Package extends KBComponent {
 
 
   static hasMany = [
-          nationalRange : RefdataValue,
-          regionalRange : RefdataValue,
+          nationalRanges : RefdataValue,
+          regionalRanges : RefdataValue,
   ]
 
   static mapping = {
@@ -102,13 +102,13 @@ class Package extends KBComponent {
     openAccess column: 'pkg_open_access'
     file column: 'pkg_file'
 
-    nationalRange             joinTable: [
+    nationalRanges             joinTable: [
             name:   'package_national_range',
             key:    'package_fk',
             column: 'national_range_rv_fk', type:   'BIGINT'
     ], lazy: false
 
-    regionalRange             joinTable: [
+    regionalRanges             joinTable: [
             name:   'package_regional_range',
             key:    'package_fk',
             column: 'regional_range_rv_fk', type:   'BIGINT'
@@ -142,8 +142,8 @@ class Package extends KBComponent {
         }
       }
     })
-    nationalRange(nullable:true)
-    regionalRange(nullable:true)
+    nationalRanges(nullable:true)
+    regionalRanges(nullable:true)
   }
 
   public String getRestPath() {
