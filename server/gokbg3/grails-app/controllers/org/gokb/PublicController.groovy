@@ -17,7 +17,24 @@ class PublicController {
   def classExaminationService
 
   public static String TIPPS_QRY = 'from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=? and c.toComponent=tipp and c.type = ? and tipp.status = ?';
-
+  def wcagPlainEnglish() {
+    log.debug("wcagPlainEnglish::${params}")
+    def result = [:]
+    println(params)
+    result
+  }
+  def sendFeedbackForm() {
+    log.debug("sendFeedbackFormh::${params}")
+    def result = [:]
+    println(params)
+    result
+  }
+  def wcagFeedbackForm() {
+    log.debug("wcagFeedbackForm::${params}")
+    def result = [:]
+    println(params)
+    result
+  }
   def packageContent() {
     log.debug("packageContent::${params}")
     def result = [:]
