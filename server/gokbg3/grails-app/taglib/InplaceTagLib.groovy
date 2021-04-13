@@ -177,6 +177,7 @@ class InplaceTagLib {
         }
         else {
           if ((attrs.owner[attrs.field] == null) || (attrs.owner[attrs.field].toString().length()==0)) {
+            out << "<span class='readonly editable-empty' title='Read Only' >Empty</span>"
           }
           else if(attrs.field == 'decValue') {
             out << NumberFormat.getInstance(LocaleContextHolder.getLocale()).format(attrs.owner[attrs.field])
@@ -254,8 +255,12 @@ class InplaceTagLib {
 
       out << "</span>"
     }else{
-      def content = (attrs.owner?."${attrs.field}" ? renderObjectValue (attrs.owner."${attrs.field}") : body()?.trim() )
-      out << "<span class='readonly${content ? '' : ' editable-empty'}' title='Read Only' >${content ?: 'Empty'}</span>"
+      if (body) {
+        out << body()
+      } else {
+        def content = (attrs.owner?."${attrs.field}" ? renderObjectValue(attrs.owner."${attrs.field}") : "")
+        out << "<span class='readonly${content ? '' : ' editable-empty'}' title='Read Only' >${content ?: 'Empty'}</span>"
+      }
     }
 
   }
@@ -496,8 +501,12 @@ class InplaceTagLib {
         out << ' &nbsp; <a href="' + follow_link + '" title="Jump to resource"><i class="fas fa-eye"></i></a>'
       }
     }else {
-      def content = (attrs.owner?."${attrs.field}" ? renderObjectValue (attrs.owner."${attrs.field}") : body()?.trim() )
-      out << "<span class='readonly${content ? '' : ' editable-empty'}' title='Read Only' >${content ?: 'Empty'}</span>"
+      if (body) {
+        out << body()
+      } else {
+        def content = (attrs.owner?."${attrs.field}" ? renderObjectValue(attrs.owner."${attrs.field}") : "")
+        out << "<span class='readonly${content ? '' : ' editable-empty'}' title='Read Only' >${content ?: 'Empty'}</span>"
+      }
     }
   }
 
