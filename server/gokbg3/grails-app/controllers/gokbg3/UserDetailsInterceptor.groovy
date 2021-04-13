@@ -60,8 +60,8 @@ class UserDetailsInterceptor {
           // Add to the session.
           session.menus = menus
 
-          def default_dcs = ["org.gokb.cred.Package", "org.gokb.cred.Platform", "org.gokb.cred.TitleInstancePackagePlatform", "org.gokb.cred.Org", "org.gokb.cred.Source"]
-
+         /* def default_dcs = ["org.gokb.cred.Package", "org.gokb.cred.Platform", "org.gokb.cred.TitleInstancePackagePlatform", "org.gokb.cred.Org", "org.gokb.cred.Source"]
+*/
           boolean userIsAdmin = user.isAdmin()
 
           // Step 1 : List all domains available to this user order by type, grouped into type
@@ -69,15 +69,15 @@ class UserDetailsInterceptor {
 
             if(userIsAdmin) {
               ilike('dcName', 'org.gokb%')
-            }else{
+            }/*else{
               inList('dcName', default_dcs)
-            }
+            }*/
             
             createAlias ("type", "menueType")
             
-            order ('menueType.sortKey','asc')
+            /*order ('menueType.sortKey','asc')
             order ('menueType.value','asc')
-            order ('dcSortOrder','asc')
+            order ('dcSortOrder','asc')*/
             order ('displayName','asc')
           }
           
@@ -96,7 +96,7 @@ class UserDetailsInterceptor {
                 searches_for_this_domain.each { key, val ->
                   
                   // Add a menu item.
-                  if(userIsAdmin && !(d.dcName in default_dcs)){
+                  if(userIsAdmin){
                     menus["admin"]["search"] << [
                             text : val.title,
                             link : ['controller' : 'search', 'action' : 'index', 'params' : [qbe:'g:'+ key]],
@@ -112,7 +112,7 @@ class UserDetailsInterceptor {
 
                 if ( display_template  && !display_template.noCreate) {
 
-                  if(userIsAdmin && !(d.dcName in default_dcs)){
+                  if(userIsAdmin){
                     menus["admin"]["create"] << [
                             text: d.displayName,
                             link: ['controller': 'create', 'action': 'index', 'params': [tmpl: d.dcName]],
