@@ -36,6 +36,7 @@
 
 <wekb:serviceInjection />
 <g:set var="currentServer" scope="page" value="${ServerUtils.getCurrentServer()}"/>
+<g:set var="currentUser" scope="page" value="${springSecurityService.getCurrentUser()}"/>
 
 <body class="theme-${ grailsApplication.config.gokb.theme }">
 
@@ -84,7 +85,7 @@
           <li class="dropdown">
           	<a class="dropdown-toggle" data-toggle="dropdown" href="#" style="font-weight:bold;">
             	<i class="fa fa-user fa-fw"></i>
-            	${request.user?.displayName ?: request.user?.username}
+            	${currentUser?.displayName ?: currentUser?.username}
               <i class="fa fa-caret-down fa-fw"></i>
           	</a>
             <ul class="dropdown-menu dropdown-user">

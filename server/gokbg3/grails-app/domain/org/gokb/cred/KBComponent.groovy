@@ -74,15 +74,15 @@ abstract class KBComponent implements Auditable{
   }
 
   @Transient
-  private def springSecurityService
+  def springSecurityService
 
   @Transient
   protected grails.core.GrailsApplication grailsApplication
 
-  @Transient
-  setSpringSecurityService(sss){
+  /*@Transient
+  public setSpringSecurityService(sss){
     this.springSecurityService = sss
-  }
+  }*/
 
   @Transient
   setGrailsApplication(ga){

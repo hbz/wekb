@@ -14,7 +14,7 @@
                 Page Not Found (404)
 
                 <br>
-                <button class="btn btn-default"
+                <button class="btn btn-default btn-primary"
                         onclick="window.history.back()">${message(code: 'default.button.back')}</button>
             </div>
         </div>
