@@ -2,7 +2,7 @@
 <dl class="dl-horizontal">
 
   <dt><gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel></dt>
-  <dd><gokb:xEditable class="ipe" owner="${d}" field="displayName" /></dd>
+  <dd><gokb:xEditable  owner="${d}" field="displayName" /></dd>
 
   <g:if test="${d.id != null}">
   <g:set var="userIsOrgAdmin" value="${d.members.find { it.party == request.user && it.role?.value == 'Administrator' && it.status?.value == 'Approved'}}" />

@@ -2,7 +2,7 @@
 <dl class="dl-horizontal">
 
   <dt><gokb:annotatedLabel owner="${d}" property="name">Curatory Group Name</gokb:annotatedLabel></dt>
-  <dd><gokb:xEditable class="ipe" owner="${d}" field="name" /></dd>
+  <dd><gokb:xEditable  owner="${d}" field="name" /></dd>
 
   <g:if test="${d.id != null}">
 

@@ -16,13 +16,13 @@
           <gokb:annotatedLabel owner="${d}" property="cause">Cause</gokb:annotatedLabel>
         </dt>
         <dd style="max-width:60%">
-          <gokb:xEditable class="ipe" owner="${d}" field="descriptionOfCause" />
+          <gokb:xEditable  owner="${d}" field="descriptionOfCause" />
         </dd>
         <dt>
           <gokb:annotatedLabel owner="${d}" property="reviewRequest">Review Request</gokb:annotatedLabel>
         </dt>
         <dd>
-          <gokb:xEditable class="ipe" owner="${d}" field="reviewRequest" />
+          <gokb:xEditable  owner="${d}" field="reviewRequest" />
         </dd>
         <g:if test="${d.id}">
           <sec:ifAnyGranted roles="ROLE_SUPERUSER">

@@ -8,7 +8,7 @@
 			<gokb:annotatedLabel owner="${d}" property="url">URL</gokb:annotatedLabel>
 		</dt>
 		<dd>
-			<gokb:xEditable class="ipe" owner="${d}" field="url" />
+			<gokb:xEditable  owner="${d}" field="url" />
 			<g:if test="${d.url}">
 				&nbsp;<a href="${d.url}" target="new">Follow Link</a>
 			</g:if>
@@ -72,7 +72,7 @@
 			<gokb:annotatedLabel owner="${d}" property="lastRun">Last Run</gokb:annotatedLabel>
 		</dt>
 		<dd>
-			<gokb:xEditable class="ipe" owner="${d}" type="date" field="lastRun" />
+			<gokb:xEditable  owner="${d}" type="date" field="lastRun" />
 		</dd>
 	</dl>
 </g:if>

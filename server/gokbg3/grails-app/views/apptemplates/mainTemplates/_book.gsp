@@ -11,7 +11,7 @@
       </div>
     </g:if>
     <g:else>
-      <gokb:xEditable class="ipe" owner="${d}" field="name" />
+      <gokb:xEditable  owner="${d}" field="name" />
     </g:else>
   </dd>
 
@@ -88,28 +88,28 @@
     <gokb:annotatedLabel owner="${d}" property="firstAuthor">First Author</gokb:annotatedLabel>
   </dt>
   <dd>
-    <gokb:xEditable class="ipe" owner="${d}" field="firstAuthor" />
+    <gokb:xEditable  owner="${d}" field="firstAuthor" />
   </dd>
 
   <dt>
     <gokb:annotatedLabel owner="${d}" property="firstEditor">First Editor</gokb:annotatedLabel>
   </dt>
   <dd>
-    <gokb:xEditable class="ipe" owner="${d}" field="firstEditor" />
+    <gokb:xEditable  owner="${d}" field="firstEditor" />
   </dd>
 
   <dt>
     <gokb:annotatedLabel owner="${d}" property="publishedFrom">Published From</gokb:annotatedLabel>
   </dt>
   <dd>
-    <gokb:xEditable class="ipe" owner="${d}" type="date" field="publishedFrom" />
+    <gokb:xEditable  owner="${d}" type="date" field="publishedFrom" />
   </dd>
 
   <dt>
     <gokb:annotatedLabel owner="${d}" property="publishedTo">Published To</gokb:annotatedLabel>
   </dt>
   <dd>
-    <gokb:xEditable class="ipe" owner="${d}" type="date" field="publishedTo" />
+    <gokb:xEditable  owner="${d}" type="date" field="publishedTo" />
   </dd>
 
   <g:if test="${d.id != null && d.titleHistory}">
@@ -207,28 +207,28 @@
     <div class="tab-pane" id="bookdetails">
       <dl class="dl-horizontal">
         <dt> <gokb:annotatedLabel owner="${d}" property="editionNumber">Edition Number</gokb:annotatedLabel> </dt>
-        <dd> <gokb:xEditable class="ipe" owner="${d}" field="editionNumber" /> </dd>
+        <dd> <gokb:xEditable  owner="${d}" field="editionNumber" /> </dd>
 
         <dt> <gokb:annotatedLabel owner="${d}" property="coverImage">Cover Image URL</gokb:annotatedLabel> </dt>
-        <dd> <gokb:xEditable class="ipe" owner="${d}" field="coverImage" /> </dd>
+        <dd> <gokb:xEditable  owner="${d}" field="coverImage" /> </dd>
 
         <dt> <gokb:annotatedLabel owner="${d}" property="editionDifferentiator">Edition Differentiator</gokb:annotatedLabel> </dt>
-        <dd> <gokb:xEditable class="ipe" owner="${d}" field="editionDifferentiator" /> </dd>
+        <dd> <gokb:xEditable  owner="${d}" field="editionDifferentiator" /> </dd>
 
         <dt> <gokb:annotatedLabel owner="${d}" property="editionStatement">Edition Statement</gokb:annotatedLabel> </dt>
-        <dd> <gokb:xEditable class="ipe" owner="${d}" field="editionStatement" /> </dd>
+        <dd> <gokb:xEditable  owner="${d}" field="editionStatement" /> </dd>
 
         <dt> <gokb:annotatedLabel owner="${d}" property="volumeNumber">Volume Number</gokb:annotatedLabel> </dt>
-        <dd> <gokb:xEditable class="ipe" owner="${d}" field="volumeNumber" /> </dd>
+        <dd> <gokb:xEditable  owner="${d}" field="volumeNumber" /> </dd>
 
         <dt> <gokb:annotatedLabel owner="${d}" property="dateFirstInPrint">Date first in print</gokb:annotatedLabel> </dt>
-        <dd> <gokb:xEditable class="ipe" owner="${d}" type="date" field="dateFirstInPrint" /> </dd>
+        <dd> <gokb:xEditable  owner="${d}" type="date" field="dateFirstInPrint" /> </dd>
 
         <dt> <gokb:annotatedLabel owner="${d}" property="dateFirstOnline">Date first online</gokb:annotatedLabel> </dt>
-        <dd> <gokb:xEditable class="ipe" owner="${d}" type="date" field="dateFirstOnline" /> </dd>
+        <dd> <gokb:xEditable  owner="${d}" type="date" field="dateFirstOnline" /> </dd>
 
         <dt> <gokb:annotatedLabel owner="${d}" property="summaryOfContent">Summary of content</gokb:annotatedLabel> </dt>
-        <dd> <gokb:xEditable class="ipe" owner="${d}" field="summaryOfContent" /> </dd>
+        <dd> <gokb:xEditable  owner="${d}" field="summaryOfContent" /> </dd>
       </dl>
     </div>
 

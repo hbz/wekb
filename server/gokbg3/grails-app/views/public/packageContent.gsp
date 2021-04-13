@@ -51,22 +51,22 @@
                     </g:if>
 
                     <dt class="col-3 text-right"> <gokb:annotatedLabel owner="${pkg}" property="lastUpdateComment">Last Update Comment</gokb:annotatedLabel> </dt>
-                    <dd class="col-9 text-left"> <gokb:xEditable class="ipe" owner="${pkg}" field="lastUpdateComment" /> </dd>
+                    <dd class="col-9 text-left"> <gokb:xEditable  owner="${pkg}" field="lastUpdateComment" /> </dd>
 
                     <dt class="col-3 text-right"> <gokb:annotatedLabel owner="${pkg}" property="editStatus">Edit Status</gokb:annotatedLabel> </dt>
                     <dd class="col-9 text-left"> <gokb:xEditableRefData owner="${pkg}" field="editStatus" config="${RCConstants.KBCOMPONENT_EDIT_STATUS}" /> </dd>
 
                     <dt class="col-3 text-right"> <gokb:annotatedLabel owner="${pkg}" property="description">Description</gokb:annotatedLabel> </dt>
-                    <dd class="col-9 text-left"> <gokb:xEditable class="ipe" owner="${pkg}" field="description" /> </dd>
+                    <dd class="col-9 text-left"> <gokb:xEditable  owner="${pkg}" field="description" /> </dd>
 
                     <dt class="col-3 text-right"> <gokb:annotatedLabel owner="${pkg}" property="descriptionURL">URL</gokb:annotatedLabel> </dt>
-                    <dd class="col-9 text-left"> <gokb:xEditable class="ipe" owner="${pkg}" field="descriptionURL" /> </dd>
+                    <dd class="col-9 text-left"> <gokb:xEditable  owner="${pkg}" field="descriptionURL" /> </dd>
 
                     <dt class="col-3 text-right">
                         <gokb:annotatedLabel owner="${pkg}" property="globalNote">Global Range</gokb:annotatedLabel>
                     </dt>
                     <dd class="col-9 text-left">
-                        <gokb:xEditable class="ipe" owner="${pkg}" field="globalNote" />
+                        <gokb:xEditable  owner="${pkg}" field="globalNote" />
                     </dd>
 
 

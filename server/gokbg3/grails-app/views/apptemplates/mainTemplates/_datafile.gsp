@@ -1,7 +1,7 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
 <dl class="dl-horizontal">
   <dt> <gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel> </dt>
-  <dd> <gokb:xEditable class="ipe" owner="${d}" field="name" /> </dd>
+  <dd> <gokb:xEditable  owner="${d}" field="name" /> </dd>
 </dl>
 
 <div id="content">

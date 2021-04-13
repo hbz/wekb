@@ -14,7 +14,7 @@
       <g:link controller="packages" action="packageTSVExport" id="${params.id}"><g:message code="gokb.appname" default="we:kb"/> File</g:link>
     </g:if>
     <g:else>
-      <gokb:xEditable class="ipe" owner="${d}" field="name" />
+      <gokb:xEditable  owner="${d}" field="name" />
     </g:else>
   </dd>
     </dd>
@@ -68,22 +68,22 @@
     </g:if>
 
     <dt> <gokb:annotatedLabel owner="${d}" property="lastUpdateComment">Last Update Comment</gokb:annotatedLabel> </dt>
-    <dd> <gokb:xEditable class="ipe" owner="${d}" field="lastUpdateComment" /> </dd>
+    <dd> <gokb:xEditable  owner="${d}" field="lastUpdateComment" /> </dd>
 
     <dt> <gokb:annotatedLabel owner="${d}" property="editStatus">Edit Status</gokb:annotatedLabel> </dt>
     <dd> <gokb:xEditableRefData owner="${d}" field="editStatus" config="${RCConstants.KBCOMPONENT_EDIT_STATUS}" /> </dd>
 
     <dt> <gokb:annotatedLabel owner="${d}" property="description">Description</gokb:annotatedLabel> </dt>
-    <dd> <gokb:xEditable class="ipe" owner="${d}" field="description" /> </dd>
+    <dd> <gokb:xEditable  owner="${d}" field="description" /> </dd>
 
     <dt> <gokb:annotatedLabel owner="${d}" property="descriptionURL">URL</gokb:annotatedLabel> </dt>
-    <dd> <gokb:xEditable class="ipe" owner="${d}" field="descriptionURL" /> </dd>
+    <dd> <gokb:xEditable  owner="${d}" field="descriptionURL" /> </dd>
 
     <dt>
       <gokb:annotatedLabel owner="${d}" property="globalNote">Global Note</gokb:annotatedLabel>
     </dt>
     <dd>
-      <gokb:xEditable class="ipe" owner="${d}" field="globalNote" />
+      <gokb:xEditable  owner="${d}" field="globalNote" />
     </dd>
 
     <g:render template="/apptemplates/secondTemplates/refdataprops"

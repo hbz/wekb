@@ -5,7 +5,7 @@
           <gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel>
   </dt>
   <dd>
-          <gokb:xEditable class="ipe" owner="${d}" field="name" />
+          <gokb:xEditable  owner="${d}" field="name" />
   </dd>
   <dt>
           <gokb:annotatedLabel owner="${d}" property="status">Status</gokb:annotatedLabel>
@@ -22,7 +22,7 @@
           <gokb:annotatedLabel owner="${d}" property="reference">Reference</gokb:annotatedLabel>
   </dt>
   <dd>
-          <gokb:xEditable class="ipe" owner="${d}" field="reference" />
+          <gokb:xEditable  owner="${d}" field="reference" />
   </dd>
   <dt>
     <gokb:annotatedLabel owner="${d}" property="source">Source</gokb:annotatedLabel>
@@ -117,7 +117,7 @@
             <gokb:annotatedLabel owner="${d}" property="homepage">Homepage</gokb:annotatedLabel>
           </dt>
           <dd>
-            <gokb:xEditable class="ipe" owner="${d}" field="homepage" />
+            <gokb:xEditable  owner="${d}" field="homepage" />
           </dd>
             <dt class="dt-label">
               <gokb:annotatedLabel owner="${d}" property="roles">Roles</gokb:annotatedLabel>
@@ -235,8 +235,8 @@
                       <tr>
                         <td><g:link controller="resource" action="show" id="${p.toComponent.class.name}:${p.toComponent.id}"> ${p.toComponent.name} </g:link></td>
                         <td><gokb:xEditableRefData owner="${p}" field="status" config="${RCConstants.COMBO_STATUS}" /></td>
-                        <td><gokb:xEditable class="ipe" owner="${p}" field="startDate" type="date" /></td>
-                        <td><gokb:xEditable class="ipe" owner="${p}" field="endDate" type="date" /></td>
+                        <td><gokb:xEditable  owner="${p}" field="startDate" type="date" /></td>
+                        <td><gokb:xEditable  owner="${p}" field="endDate" type="date" /></td>
                         <td><g:link controller="ajaxSupport" action="deleteCombo" id="${p.id}">Delete</g:link></td>
                       </tr>
                     </g:each>

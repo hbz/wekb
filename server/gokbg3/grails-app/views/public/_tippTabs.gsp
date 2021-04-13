@@ -70,18 +70,18 @@
                         <g:if test="${d.coverageStatements?.size() > 0}">
                             <g:each var="cs" in="${d.coverageStatements.sort { it.startDate }}">
                                 <tr>
-                                    <td><gokb:xEditable class="ipe" owner="${cs}" type="date"
+                                    <td><gokb:xEditable  owner="${cs}" type="date"
                                                         field="startDate"/></td>
-                                    <td><gokb:xEditable class="ipe" owner="${cs}"
+                                    <td><gokb:xEditable  owner="${cs}"
                                                         field="startVolume"/></td>
-                                    <td><gokb:xEditable class="ipe" owner="${cs}"
+                                    <td><gokb:xEditable  owner="${cs}"
                                                         field="startIssue"/></td>
-                                    <td><gokb:xEditable class="ipe" owner="${cs}" type="date"
+                                    <td><gokb:xEditable  owner="${cs}" type="date"
                                                         field="endDate"/></td>
-                                    <td><gokb:xEditable class="ipe" owner="${cs}" field="endVolume"/></td>
-                                    <td><gokb:xEditable class="ipe" owner="${cs}" field="endIssue"/></td>
-                                    <td><gokb:xEditable class="ipe" owner="${cs}" field="embargo"/></td>
-                                    <td><gokb:xEditable class="ipe" owner="${cs}" field="coverageNote"/></td>
+                                    <td><gokb:xEditable  owner="${cs}" field="endVolume"/></td>
+                                    <td><gokb:xEditable  owner="${cs}" field="endIssue"/></td>
+                                    <td><gokb:xEditable  owner="${cs}" field="embargo"/></td>
+                                    <td><gokb:xEditable  owner="${cs}" field="coverageNote"/></td>
                                     <td><gokb:xEditableRefData owner="${cs}" field="coverageDepth"
                                                                config="${RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH}"/>
                                     </td>
@@ -163,7 +163,7 @@
                     <gokb:annotatedLabel owner="${d}" property="coverageNote">Coverage Note</gokb:annotatedLabel>
                 </dt>
                 <dd class="col-9 text-left">
-                    <gokb:xEditable class="ipe" owner="${d}" field="coverageNote"/>
+                    <gokb:xEditable  owner="${d}" field="coverageNote"/>
                 </dd>
                 <dt class="col-3 text-right">
                     <gokb:annotatedLabel owner="${d}" property="coverageDepth">Coverage Depth</gokb:annotatedLabel>

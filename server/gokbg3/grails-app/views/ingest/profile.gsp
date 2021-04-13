@@ -48,7 +48,7 @@
                 <gokb:annotatedLabel owner="${ip}" property="platformUrl">URL</gokb:annotatedLabel>
               </dt>
               <dd>
-                <gokb:xEditable class="ipe" owner="${ip}" field="platformUrl" />
+                <gokb:xEditable  owner="${ip}" field="platformUrl" />
               </dd>
             </dl>
           </div>
