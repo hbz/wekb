@@ -10,33 +10,35 @@
         <gokb:xEditable class="ipe" owner="${d}" field="name"/>
     </dd>
 
+
     <sec:ifAnyGranted roles="ROLE_ADMIN">
-    <dt>
-        <gokb:annotatedLabel owner="${d}" property="title">Title</gokb:annotatedLabel>
-    </dt>
-    <dd style="max-width:60%">
-        <g:if test="${controllerName != 'public'}">
-            <g:link controller="resource" action="show"
-                    id="${d.title?.class?.name + ':' + d.title?.id}">
-                ${(d.title?.name) ?: 'Empty'}
-            </g:link>
-        </g:if><g:else>
-            ${(d.title?.name) ?: 'Empty'}
-        </g:else>
-        <g:if test="${d.title}">(${d.title.niceName})</g:if> (Only to see for ROLE_ADMIN )
-    </dd>
+        <g:if test="${controllerName != 'create'}">
+            <dt>
+                <gokb:annotatedLabel owner="${d}" property="title">Title</gokb:annotatedLabel>
+            </dt>
+            <dd style="max-width:60%">
+                    <g:link controller="resource" action="show"
+                            id="${d.title?.class?.name + ':' + d.title?.id}">
+                        ${(d.title?.name) ?: 'Empty'}
+                    </g:link>
+                <g:if test="${d.title}">(${d.title.niceName})</g:if> (Only to see for ROLE_ADMIN )
+            </dd>
+        </g:if>
     </sec:ifAnyGranted>
 
     <dt>
         <gokb:annotatedLabel owner="${d}" property="package">Package</gokb:annotatedLabel>
     </dt>
     <dd>
-        <g:if test="${controllerName != 'public'}">
+        <g:if test="${controllerName == 'create'}">
+            <gokb:manyToOneReferenceTypedown owner="${d}" field="pkg" baseClass="org.gokb.cred.Package" />
+        </g:if>
+        <g:elseif test="${controllerName != 'public'}">
             <g:link controller="resource" action="show"
                     id="${d.pkg?.class?.name + ':' + d.pkg?.id}">
                 ${(d.pkg?.name) ?: 'Empty'}
             </g:link>
-        </g:if>
+        </g:elseif>
         <g:else>
             ${(d.pkg?.name) ?: 'Empty'}
         </g:else>
@@ -46,12 +48,15 @@
         <gokb:annotatedLabel owner="${d}" property="platform">Platform</gokb:annotatedLabel>
     </dt>
     <dd>
-        <g:if test="${controllerName != 'public'}">
+        <g:if test="${controllerName == 'create'}">
+            <gokb:manyToOneReferenceTypedown owner="${d}" field="hostPlatform" baseClass="org.gokb.cred.Platform" />
+        </g:if>
+        <g:elseif test="${controllerName != 'public'}">
             <g:link controller="resource" action="show"
                     id="${d.hostPlatform?.class?.name + ':' + d.hostPlatform?.id}">
                 ${(d.hostPlatform?.name) ?: 'Empty'}
             </g:link>
-        </g:if>
+        </g:elseif>
         <g:else>
             ${(d.hostPlatform?.name) ?: 'Empty'}
         </g:else>

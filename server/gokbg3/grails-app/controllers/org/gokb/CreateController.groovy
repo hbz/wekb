@@ -149,8 +149,12 @@ class CreateController {
             result.newobj.postCreateClosure.call([user:user])
           }*/
 
-          // Add an error message here if no property was set via data sent through from the form.
-          if (!propertyWasSet) {
+          if (result.newobj instanceof TitleInstancePackagePlatform && (params.pkg == null || params.hostPlatform == null || params.url == null)) {
+            flash.error="Please fill Package, Platform and Host Platform URL to create the component."
+            result.uri = g.createLink([controller: 'create', action:'index', params:[tmpl:params.cls]])
+          }
+          else if (!propertyWasSet) {
+            // Add an error message here if no property was set via data sent through from the form.
             log.debug("No properties set");
             flash.error="Please fill in at least one piece of information to create the component."
             result.uri = g.createLink([controller: 'create', action:'index', params:[tmpl:params.cls]])
@@ -245,6 +249,7 @@ class CreateController {
         catch ( Exception e ) {
           log.error("Problem",e);
           flash.error = "Could not create component!"
+          result.uri = createLink([controller: 'resource', action:'show', id:"${params.cls}:${result.newobj.id}"])
         }
       }
     }

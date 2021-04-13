@@ -74,8 +74,7 @@
 		<gokb:annotatedLabel owner="${d}" property="owner">Owner Org</gokb:annotatedLabel>
 	</dt>
 	<dd>
-		<gokb:manyToOneReferenceTypedown owner="${d}" field="org"
-			name="${comboprop}" baseClass="org.gokb.cred.Org">
+		<gokb:manyToOneReferenceTypedown owner="${d}" field="org" baseClass="org.gokb.cred.Org">
 			${d.org?.name?:''}
 		</gokb:manyToOneReferenceTypedown>
 	</dd>

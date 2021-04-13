@@ -37,8 +37,7 @@
                         <gokb:annotatedLabel owner="${pkg}" property="nominalPlatform">Nominal Platform</gokb:annotatedLabel>
                     </dt>
                     <dd class="col-9 text-left">
-                        <gokb:manyToOneReferenceTypedown owner="${pkg}" field="nominalPlatform"
-                                                         name="${comboprop}" baseClass="org.gokb.cred.Platform" >
+                        <gokb:manyToOneReferenceTypedown owner="${pkg}" field="nominalPlatform" baseClass="org.gokb.cred.Platform" >
                             ${pkg.nominalPlatform?.name ?: ''}
                         </gokb:manyToOneReferenceTypedown>
                     </dd>

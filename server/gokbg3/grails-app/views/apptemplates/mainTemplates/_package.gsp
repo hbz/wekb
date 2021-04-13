@@ -37,8 +37,7 @@
       <gokb:annotatedLabel owner="${d}" property="nominalPlatform">Nominal Platform</gokb:annotatedLabel>
     </dt>
     <dd>
-      <gokb:manyToOneReferenceTypedown owner="${d}" field="nominalPlatform"
-                                       name="${comboprop}" baseClass="org.gokb.cred.Platform" >
+      <gokb:manyToOneReferenceTypedown owner="${d}" field="nominalPlatform" baseClass="org.gokb.cred.Platform" >
         ${d.nominalPlatform?.name ?: ''}
       </gokb:manyToOneReferenceTypedown>
     </dd>
@@ -81,7 +80,7 @@
     <dd> <gokb:xEditable class="ipe" owner="${d}" field="descriptionURL" /> </dd>
 
     <dt>
-      <gokb:annotatedLabel owner="${d}" property="globalNote">Global Range</gokb:annotatedLabel>
+      <gokb:annotatedLabel owner="${d}" property="globalNote">Global Note</gokb:annotatedLabel>
     </dt>
     <dd>
       <gokb:xEditable class="ipe" owner="${d}" field="globalNote" />
@@ -90,19 +89,21 @@
     <g:render template="/apptemplates/secondTemplates/refdataprops"
               model="${[d:(d), rd:(rd), dtype:(dtype), notShowProps: [RCConstants.PACKAGE_LIST_STATUS]]}" />
 
-    <dt>
-      <gokb:annotatedLabel owner="${d}" property="nationalRanges">National Range</gokb:annotatedLabel>
-    </dt>
-    <dd>
-      <g:render template="/apptemplates/secondTemplates/nationalRange" />
-    </dd>
+    <g:if test="${controllerName != 'create'}">
+        <dt>
+          <gokb:annotatedLabel owner="${d}" property="nationalRanges">National Range</gokb:annotatedLabel>
+        </dt>
+        <dd>
+          <g:render template="/apptemplates/secondTemplates/nationalRange" />
+        </dd>
 
-    <dt>
-      <gokb:annotatedLabel owner="${d}" property="regionalRanges">Regional Range</gokb:annotatedLabel>
-    </dt>
-    <dd>
-      <g:render template="/apptemplates/secondTemplates/regionalRange" />
-    </dd>
+        <dt>
+          <gokb:annotatedLabel owner="${d}" property="regionalRanges">Regional Range</gokb:annotatedLabel>
+        </dt>
+        <dd>
+          <g:render template="/apptemplates/secondTemplates/regionalRange" />
+        </dd>
+    </g:if>
 
 
   </dl>
