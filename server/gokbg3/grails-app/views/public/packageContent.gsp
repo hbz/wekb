@@ -101,10 +101,24 @@
             </ul>
             <div id="my-tab-content" class="tab-content">
                 <div class="tab-pane fade show active" id="titledetails">
+
                     <h2>Titles (${titleCount})</h2>
+
+                    <g:form controller="public" class="form" role="form" action="${actionName}" method="get" params="${params}">
+                        <div class="form-group input-group-md">
+                            <div class="btn-group pull-right">
+                                <label for="newMax">Results on Page</label>
+                                <g:select name="newMax" from="[10, 25, 50, 100, 200, 500]" value="${params.max}" onChange="this.form.submit()"/>
+                            </div>
+                        </div>
+                    </g:form>
+                    <br>
+                    <br>
+
                     <table class="table table-striped">
                             <thead>
                                 <tr>
+                                        <th></th>
                                         <g:sortableColumn property="tipp.title.name" title="Title"/>
                                         <g:sortableColumn property="tipp.title.ids" title="Identifiers"/>
                                         <g:sortableColumn property="tipp.hostPlatform.name" title="Platform"/>
@@ -114,8 +128,11 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <g:each in="${tipps}" var="t">
+                                    <g:each in="${tipps}" var="t" status="i">
                                         <tr>
+                                            <td>
+                                            ${ (params.offset ?: 0)  + i + 1 }
+                                            </td>
                                             <td>
                                                 <g:link controller="public" action="tippContent" id="${t.uuid}">
                                                     ${t.name}
@@ -144,13 +161,13 @@
                                     </tbody>
                                 </table>
 
-                    <div class="pagination" style="text-align:center">
-                                <g:if test="${titleCount ?: 0 > 0}">
-                                    <g:paginate controller="public" action="packageContent" params="${params}"
-                                                next="Next"
-                                                prev="Prev" max="${max}" total="${titleCount}"/>
-                                </g:if>
-                    </div>
+                    <g:if test="${titleCount ?: 0 > 0}">
+                        <div class="pagination mb-4 d-flex justify-content-center">
+                            <g:paginate controller="public" action="index" params="${params}" next="&raquo;" prev="&laquo;"
+                                        max="${max}" total="${titleCount}"/>
+                        </div>
+                    </g:if>
+
                 </div>
                 <g:render template="/tabTemplates/showVariantnames" model="${[d: pkg]}"/>
 

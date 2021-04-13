@@ -42,20 +42,26 @@ class PublicController {
         result.refdata_properties = classExaminationService.getRefdataPropertyNames(result.pkg.class.name)
 
         Map newParams = [:]
-        newParams.sort = params.sort ? "${params.sort}" : 'lower(tipp.name)'
-        newParams.order = params.order ? "${params.order}" : 'asc'
-        newParams.offset = params.offset ?: 0
-        newParams.max = params.max ?:  10
-        newParams.id = params.id
+        params.sort = params.sort ? "${params.sort}" : 'lower(tipp.name)'
+        params.order = params.order ? "${params.order}" : 'asc'
+
+        if (params.newMax) {
+          session.setAttribute("newMax", params.newMax)
+          params.remove(params.newMax)
+          params.offset = 0
+        }
+        params.offset = params.offset ?: 0
+        params.max = session.getAttribute("newMax") ? session.getAttribute("newMax") : params.max
 
         result.titleCount = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_current])[0]
-        result.tipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_current], newParams)
+        result.tipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_current], params)
         log.debug("Tipp qry done ${result.tipps?.size()}")
-        result.params = newParams
+
       }else {
         flash.error = "Package not found"
       }
     }
+    println(params)
     result
   }
 
@@ -146,7 +152,6 @@ class PublicController {
       mutableParams.offset = 0
       mutableParams.search = null
     }
-    println(mutableParams)
 
     result =  ESSearchService.search(mutableParams)
 
