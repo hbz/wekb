@@ -106,14 +106,18 @@ class PublicController {
 
     def mutableParams = new HashMap(params)
 
-    if (mutableParams.max == null ){
+    if (mutableParams.newMax) {
+      session.setAttribute("newMax", mutableParams.newMax)
+    }
+
+    if (mutableParams.max == null && !session.getAttribute("newMax")){
       mutableParams.max = 10
     }
     else {
-      mutableParams.max = Integer.parseInt(mutableParams.max)
+      mutableParams.max = session.getAttribute("newMax") ? Integer.parseInt(session.getAttribute("newMax")) : Integer.parseInt(mutableParams.max)
     }
 
-    if (mutableParams.offset == null ) {
+    if (mutableParams.offset == null || mutableParams.newMax ) {
       mutableParams.offset = 0
     }
     else {
@@ -142,9 +146,7 @@ class PublicController {
       mutableParams.offset = 0
       mutableParams.search = null
     }
-
-    if(mutableParams.filter == 'current')
-      mutableParams.tempFQ = ' -pkg_scope:\"Master File\" -\"open access\" '
+    println(mutableParams)
 
     result =  ESSearchService.search(mutableParams)
 
@@ -167,6 +169,10 @@ class PublicController {
       }
 
     }
+
+    params.max = mutableParams.max
+    params.offset = mutableParams.offset
+    params.remove('newMax')
 
     result
   }

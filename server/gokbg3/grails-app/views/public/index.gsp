@@ -7,18 +7,19 @@
 
 <body>
 
-<wekb:serviceInjection />
+<wekb:serviceInjection/>
 
 <g:render template="number-chart-hero"/>
 <div class="container">
     <h1>Filter</h1>
+
     <div class="card wekb-filter mb-4">
         <g:form controller="public" class="form" role="form" action="index" method="get" params="${params}">
             <div class="row">
                 <div class="col-sm-4">
                     <div class="form-group input-group-md">
                         <label for="q">Search for packages...</label>
-                      <input type="text" class="form-control" placeholder="Find package like..." value="${params.q}"
+                        <input type="text" class="form-control" placeholder="Find package like..." value="${params.q}"
                                name="q">
 
                     </div>
@@ -29,9 +30,11 @@
                     <div class="col-sm-4">
                         <div class="">
                             <g:if test="${facet.key != 'type'}">
-                                <label for="${facet.key}" class=""><g:message code="facet.so.${facet.key}" default="${facet.key}"/></label>
-                                <select name="${facet.key}" class="wekb-multiselect" multiple aria-label="Default select example">
-                                    <g:each in="${facet.value?.sort { it.display }}" var="v">
+                                <label for="${facet.key}" class=""><g:message code="facet.so.${facet.key}"
+                                                                              default="${facet.key}"/></label>
+                                <select name="${facet.key}" class="wekb-multiselect" multiple
+                                        aria-label="Default select example">
+                                    <g:each in="${facet.value?.sort { it.display.toLowerCase() }}" var="v">
                                         <g:set var="fname" value="facet:${facet.key + ':' + v.term}"/>
                                         <g:set var="kbc"
                                                value="${v.term.startsWith('org.gokb.cred') ? org.gokb.cred.KBComponent.get(v.term.split(':')[1].toLong()) : null}"/>
@@ -49,14 +52,17 @@
                     </div>
                 </g:each>
             </div>
+
             <div class="row">
                 <div class="col-sm-12">
                     <div class="form-group">
                         <div class="btn-group pull-right">
                             <button class="btn btn-primary " type="submit" value="yes" name="search">Search</button>
                         </div>
+
                         <div class="btn-group pull-right" style="margin-right: 5px;">
-                            <a class="btn btn-dark"  href="${grailsApplication.config.server.contextPath ?: ''}"/>Reset</a>
+                            <a class="btn btn-dark"
+                               href="${grailsApplication.config.server.contextPath ?: ''}"/>Reset</a>
                         </div>
 
                     </div>
@@ -65,16 +71,29 @@
         </g:form>
     </div>
 </div>
-</div>
 
 
 <div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <g:form controller="public" class="form" role="form" action="index" method="get" params="${params}">
+                <div class="form-group input-group-md">
+                    <div class="btn-group pull-right">
+                        <label for="newMax">Results on Page</label>
+                        <g:select name="newMax" from="[10, 25, 50, 100, 200, 500]" value="${params.max}" onChange="this.form.submit()"/>
+                    </div>
+                </div>
+            </g:form>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-md-12">
             <h1>Results <span class="label label-default">${resultsTotal}</span></h1>
             <table class="table table-striped">
                 <thead>
                 <tr>
+                    <th></th>
                     <g:sortableColumn property="sortname" title="Package Name"/>
                     <g:sortableColumn property="cpname" title="Provider"/>
                     <g:sortableColumn property="curatoryGroups" title="Curatory Groups"/>
@@ -84,8 +103,11 @@
                 </tr>
                 </thead>
                 <tbody>
-                <g:each in="${hits}" var="hit">
+                <g:each in="${hits}" var="hit" status="i">
                     <tr>
+                        <td>
+                            ${ (params.int('offset') ?: 0)  + i + 1 }
+                        </td>
                         <td>
                             <g:link controller="public" action="packageContent"
                                     id="${hit.id}">${hit.source.name}</g:link>
@@ -96,8 +118,8 @@
                         <td>${hit.source.cpname}</td>
                         <td>
                             <g:if test="${hit.source.curatoryGroups?.size() > 0}">
-                                <g:each in="${hit.source.curatoryGroups}" var="cg" status="i">
-                                    <g:if test="${i > 0}"><br></g:if>
+                                <g:each in="${hit.source.curatoryGroups}" var="cg" status="c">
+                                    <g:if test="${c > 0}"><br></g:if>
                                     ${cg}
                                 </g:each>
                             </g:if>
@@ -111,7 +133,8 @@
                         </td>
                         <td>
                             <g:if test="${hit.source.lastUpdatedDisplay}">
-                            <g:formatDate format="${message(code: 'default.date.format')}" date="${dateFormatService.parseDate(hit.source.lastUpdatedDisplay)}"/>
+                                <g:formatDate format="${message(code: 'default.date.format')}"
+                                              date="${dateFormatService.parseDate(hit.source.lastUpdatedDisplay)}"/>
                             </g:if>
                         </td>
                     </tr>
@@ -147,7 +170,7 @@
             var conf = {
                 placeholder: "Please select",
                 allowClear: true,
-                width:'100%',
+                width: '100%',
                 minimumInputLength: 0,
                 /*                ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
                                     url: gokb.config.lookupURI,
