@@ -53,18 +53,11 @@
                 </g:each>
             </div>
 
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="form-group">
-                        <div class="btn-group pull-right">
-                            <button class="btn btn-primary " type="submit" value="yes" name="search">Search</button>
-                        </div>
-
-                        <div class="btn-group pull-right" style="margin-right: 5px;">
-                            <a class="btn btn-dark"
-                               href="${grailsApplication.config.server.contextPath ?: ''}"/>Reset</a>
-                        </div>
-
+            <div class="form-group row justify-content-end">
+                <div class="col-4">
+                    <div class="float-right">
+                        <a class="btn btn-dark" href="${grailsApplication.config.server.contextPath ?: ''}"/>Reset</a>
+                        <button class="btn btn-primary " type="submit" value="yes" name="search">Search</button>
                     </div>
                 </div>
             </div>
