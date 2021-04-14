@@ -6,6 +6,7 @@ import grails.util.Environment
 import grails.core.GrailsClass
 import grails.core.GrailsApplication
 import grails.converters.JSON
+import liquibase.util.csv.opencsv.CSVReader
 import org.gokb.LanguagesService
 
 import javax.servlet.http.HttpServletRequest
@@ -417,8 +418,22 @@ class BootStrap {
     def refdataCats() {
 
         log.info("refdataCats")
+        RefdataValue.executeUpdate('UPDATE RefdataValue rdv SET rdv.isHardData =:reset', [reset: false])
+        RefdataCategory.executeUpdate('UPDATE RefdataCategory rdc SET rdc.isHardData =:reset', [reset: false])
 
-        RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS,
+        List rdcList = getParsedCsvData('setup/RefdataCategory.csv', 'RefdataCategory')
+
+        rdcList.each { map ->
+            RefdataCategory.construct(map)
+        }
+
+        List rdvList = getParsedCsvData('setup/RefdataValue.csv', 'RefdataValue')
+
+        rdvList.each { map ->
+            RefdataValue.construct(map)
+        }
+
+        /*RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS,
             [(KBComponent.STATUS_CURRENT)  : '0',
              (KBComponent.STATUS_EXPECTED) : '1',
              (KBComponent.STATUS_RETIRED)  : '2',
@@ -1017,7 +1032,7 @@ class BootStrap {
         RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'DeleteTIWithoutHistory').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'RejectTIWithoutIdentifier').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'PlatformCleanup').save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'RecalculateStatistics').save(flush: true, failOnError: true)
+        RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'RecalculateStatistics').save(flush: true, failOnError: true)*/
 
         log.debug("Deleting any null refdata values")
         RefdataValue.executeUpdate('delete from RefdataValue where value is null')
@@ -1206,6 +1221,54 @@ class BootStrap {
             log.debug("ES index ${indexName} already exists..")
             // Validate settings & mappings
         }
+    }
+
+    List getParsedCsvData(String filePath, String objType) {
+
+        List result = []
+        File csvFile = grailsApplication.mainContext.getResource(filePath).file
+
+        if (! ['RefdataCategory', 'RefdataValue'].contains(objType)) {
+            println "WARNING: invalid object type ${objType}!"
+        }
+        else if (! csvFile.exists()) {
+            println "WARNING: ${filePath} not found!"
+        }
+        else {
+            csvFile.withReader { reader ->
+                CSVReader csvr = new CSVReader(reader, (char) ';', (char) '"', (char) '\\', (int) 1)
+                String[] line
+
+                while (line = csvr.readNext()) {
+                    if (line[0]) {
+                        if (objType == 'RefdataCategory') {
+                            // CSV: [token, value_de, value_en]
+                            Map<String, Object> map = [
+                                    token   : line[0].trim(),
+                                    desc_de: line[1].trim(),
+                                    desc_en: line[2].trim(),
+                                    hardData: true
+                            ]
+                            result.add(map)
+                        }
+                        if (objType == 'RefdataValue') {
+                            // CSV: [rdc, token, value_de, value_en]
+                            Map<String, Object> map = [
+                                    token   : line[1].trim(),
+                                    rdc     : line[0].trim(),
+                                    value_de: line[2].trim(),
+                                    value_en: line[3].trim(),
+                                    hardData: true
+
+                            ]
+                            result.add(map)
+                        }
+                    }
+                }
+            }
+        }
+
+        result
     }
 
 }

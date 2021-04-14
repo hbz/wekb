@@ -94,6 +94,7 @@ class RCConstants {
     public static final String TITLEINSTANCE_OA_STATUS = "TitleInstance.OAStatus"
     public static final String TITLEINSTANCE_PURE_OA = "TitleInstance.PureOA"
     public static final String TITLEINSTANCE_REASON_RETIRED = "TitleInstance.ReasonRetired"
+    public static final String TITLEINSTANCE_CONTINUING_SERIES = "TitleInstance.ContinuingSeries"
     public static final String TITLEINSTANCE_REL = "TitleInstance.Rel"
 
     public static final String USER_ORGANISATION_MISSION = "UserOrganisation.Mission"

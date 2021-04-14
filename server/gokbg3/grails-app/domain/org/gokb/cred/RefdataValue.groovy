@@ -1,16 +1,25 @@
 package org.gokb.cred
 
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.hibernate.proxy.HibernateProxy
 import grails.plugins.orm.auditable.Auditable
 
 class RefdataValue implements Auditable {
 
+  static Log static_logger = LogFactory.getLog(RefdataValue)
+
   String value
+  String value_de
+  String value_en
   String icon
   String description
   String sortKey
   RefdataValue useInstead
   RefdataCategory owner
+
+  // indicates this object is created via current bootstrap
+  boolean isHardData = false
 
   static mapping = {
     id column:'rdv_id'
@@ -21,6 +30,9 @@ class RefdataValue implements Auditable {
     sortKey column:'rdv_sortkey'
     useInstead column:'rdv_use_instead'
     icon column:'rdv_icon'
+    value_de column: 'rdv_value_de'
+    value_en column: 'rdv_value_en'
+    isHardData column: 'rdv_is_hard_data'
   }
 
   static constraints = {
@@ -96,4 +108,39 @@ class RefdataValue implements Auditable {
   //  def availableActions() {
   //    [ [ code:'object::delete' , label: 'Delete' ] ]
   //  }
+
+  static RefdataValue construct(Map<String, Object> map) {
+
+    withTransaction {
+      String token    = map.get('token')
+      String rdc      = map.get('rdc')
+
+      boolean hardData = new Boolean(map.get('hardData'))
+
+      RefdataCategory cat = RefdataCategory.findByDescIlike(rdc)
+      if (!cat) {
+        cat = RefdataCategory.construct([
+                token   : rdc,
+                hardData: false,
+                desc_de: rdc,
+                desc_en: rdc
+        ])
+      }
+
+      RefdataValue rdv = RefdataValue.findByOwnerAndValueIlike(cat, token)
+
+      if (!rdv) {
+        static_logger.debug("INFO: no match found; creating new refdata value for ( ${token} @ ${rdc}, ${map} )")
+        rdv = new RefdataValue(owner: cat, value: token)
+      }
+
+      rdv.value_de = map.get('value_de') ?: null
+      rdv.value_en = map.get('value_en') ?: null
+
+      rdv.isHardData = hardData
+      rdv.save()
+
+      rdv
+    }
+  }
 }

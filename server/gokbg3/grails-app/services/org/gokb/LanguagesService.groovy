@@ -7,6 +7,7 @@ import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.RESTClient
 import org.gokb.cred.KBComponent
 import org.gokb.cred.RefdataCategory
+import org.gokb.cred.RefdataValue
 
 import static groovyx.net.http.Method.GET
 
@@ -35,7 +36,16 @@ class LanguagesService{
       }
     }
     for (def entry in languages){
-      RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_LANGUAGE, entry.key, entry.key)
+
+      Map<String, Object> map = [
+              token   : entry.key,
+              rdc     : RCConstants.KBCOMPONENT_LANGUAGE,
+              value_de: entry.value.ger ?: null,
+              value_en: entry.value.eng ?: null,
+              hardData: true
+      ]
+
+      RefdataValue.construct(map)
     }
   }
 
