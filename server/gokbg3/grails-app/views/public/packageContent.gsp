@@ -101,20 +101,19 @@
             </ul>
             <div id="my-tab-content" class="tab-content">
                 <div class="tab-pane fade show active" id="titledetails">
-
-                    <h2>Titles (${titleCount})</h2>
-
-                    <g:form controller="public" class="form" role="form" action="${actionName}" method="get" params="${params}">
-                        <div class="form-group input-group-md">
-                            <div class="btn-group pull-right">
-                                <label for="newMax">Results on Page</label>
-                                <g:select name="newMax" from="[10, 25, 50, 100, 200, 500]" value="${params.max}" onChange="this.form.submit()"/>
-                            </div>
+                    <div class="row">
+                        <div class="col-sm">
+                            <h2>Titles (${titleCount})</h2>
                         </div>
-                    </g:form>
-                    <br>
-                    <br>
-
+                        <div class="col-sm">
+                            <g:form controller="public" class="form-group row justify-content-end" role="form" action="${actionName}" method="get" params="${params}">
+                                <label class="col-sm-6 col-form-label text-right" for="newMax">Results on Page</label>
+                                <div class="col-sm-6">
+                                        <g:select class="form-control"  name="newMax" from="[10, 25, 50, 100, 200, 500]" value="${params.max}" onChange="this.form.submit()"/>
+                                </div>
+                            </g:form>
+                        </div>
+                    </div>
                     <table class="table table-striped">
                             <thead>
                                 <tr>

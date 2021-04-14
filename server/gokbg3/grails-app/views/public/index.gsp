@@ -75,13 +75,14 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-sm-12">
-            <g:form controller="public" class="form" role="form" action="index" method="get" params="${params}">
-                <div class="form-group input-group-md">
-                    <div class="btn-group pull-right">
-                        <label for="newMax">Results on Page</label>
-                        <g:select name="newMax" from="[10, 25, 50, 100, 200, 500]" value="${params.max}" onChange="this.form.submit()"/>
-                    </div>
+        <div class="col-sm">
+            <h1>Results <span class="label label-default">${resultsTotal}</span></h1>
+        </div>
+        <div class="col-sm">
+            <g:form controller="public" class="form-group row justify-content-end" role="form" action="${actionName}" method="get" params="${params}">
+                <label class="col-sm-6 col-form-label text-right" for="newMax">Results on Page</label>
+                <div class="col-sm-6">
+                    <g:select class="form-control"  name="newMax" from="[10, 25, 50, 100, 200, 500]" value="${params.max}" onChange="this.form.submit()"/>
                 </div>
             </g:form>
         </div>
@@ -89,7 +90,6 @@
 
     <div class="row">
         <div class="col-md-12">
-            <h1>Results <span class="label label-default">${resultsTotal}</span></h1>
             <table class="table table-striped">
                 <thead>
                 <tr>
