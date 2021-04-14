@@ -1,15 +1,11 @@
 package org.gokb.cred
 
-
+import de.wekb.base.AbstractI10n
 import groovy.util.logging.*
-import grails.util.GrailsNameUtils
 import org.apache.commons.logging.LogFactory
 
-import javax.persistence.Transient
-import org.grails.datastore.mapping.model.*
-
 @Slf4j
-class RefdataCategory {
+class RefdataCategory extends AbstractI10n {
 
   public static rdv_cache = [:]
   private static rdc_cache = [:]

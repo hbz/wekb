@@ -336,10 +336,10 @@ class InplaceTagLib {
       switch ( value.class ) {
         case org.gokb.cred.RefdataValue.class:
           if ( value.icon != null ) {
-            result="<span class=\"select-icon ${value.icon}\"></span>${value.value}"
+            result="<span class=\"select-icon ${value.icon}\"></span>${value.getI10n('value')}"
           }
           else {
-            result=value.value
+            result=value.getI10n('value')
           }
           break;
         case Boolean.class:
