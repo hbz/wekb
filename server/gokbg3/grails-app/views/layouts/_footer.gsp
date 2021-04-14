@@ -23,7 +23,7 @@
                  <ul>
                      <li><a target="_blank" class="content" href="https://www.hbz-nrw.de/barrierefreiheit">Accessibility Statement</a></li>
                      <li><g:link controller="public" action="wcagPlainEnglish">Plain English</g:link></li>
-%{--                     <li><g:link controller="public" action="wcagFeedbackForm">Accessibility Feedback Form</g:link></li>--}%
+                     <li><g:link controller="public" action="wcagFeedbackForm">Accessibility Feedback Form</g:link></li>
                  </ul>
                 </div>
                 <div class="col-sm-4 footer-social">

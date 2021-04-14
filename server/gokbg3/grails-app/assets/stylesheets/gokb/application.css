@@ -18,6 +18,15 @@
 
 /** PUBLIC START **/
 
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+main {
+  flex:1;
+}
+
 /* Logo */
 .navbar-brand.mekb-logo{
   padding: 3px 15px;
