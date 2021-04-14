@@ -7,6 +7,7 @@ Combo.Type;Combo Type;Combo Type
 Country;Country;Country
 Currency;Currency;Currency
 DCType;DCType;DCType
+DDC;Dewey-Dezimalklassifikation;Dewey Decimal Classification
 IdentifierNamespace.TargetType;Identifier Namespace Target Type;Identifier Namespace Target Type
 ingest.filetype;ingest filetype;ingest filetype
 Job.Type;Job Type;Job Type

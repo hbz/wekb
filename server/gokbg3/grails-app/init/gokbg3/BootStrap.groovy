@@ -433,6 +433,12 @@ class BootStrap {
             RefdataValue.construct(map)
         }
 
+        List ddcList = getParsedCsvData('setup/DDC.csv', 'RefdataValue')
+
+        ddcList.each { map ->
+            RefdataValue.construct(map)
+        }
+
         /*RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS,
             [(KBComponent.STATUS_CURRENT)  : '0',
              (KBComponent.STATUS_EXPECTED) : '1',
