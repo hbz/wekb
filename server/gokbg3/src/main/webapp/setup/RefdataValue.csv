@@ -296,6 +296,8 @@ Country;YT;Mayotte;Mayotte
 Country;ZA;Südafrika;South Africa
 Country;ZM;Sambia;Zambia
 Country;ZW;Zimbabwe;Zimbabwe
+CuratoryGroup.Type;Other;Sonstige;Other
+CuratoryGroup.Type;Provider;Anbieter;Provider
 Currency;EUR;EUR;EUR
 Currency;GBP;GBP;GBP
 Currency;USD;USD;USD

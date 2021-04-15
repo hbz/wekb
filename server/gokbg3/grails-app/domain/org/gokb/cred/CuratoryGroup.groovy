@@ -1,12 +1,16 @@
 package org.gokb.cred
 
+import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
 
 class CuratoryGroup extends KBComponent {
 
   static belongsTo = User
 
-  User owner;
+  User owner
+
+  @RefdataAnnotation(cat = RCConstants.CURATORY_GROUP_TYPE)
+  RefdataValue type
 
   static hasMany = [
     users: User,
@@ -14,6 +18,7 @@ class CuratoryGroup extends KBComponent {
 
   static mapping = {
     includes KBComponent.mapping
+    type column: 'cg_type_rv_fk'
   }
 
   static mappedBy = [users: "curatoryGroups", ]
@@ -52,6 +57,7 @@ class CuratoryGroup extends KBComponent {
         }
       }
     })
+    type (nullable:true, blank:false)
   }
 
   public String getRestPath() {

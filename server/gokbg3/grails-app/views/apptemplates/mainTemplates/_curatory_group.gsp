@@ -4,6 +4,9 @@
   <dt><gokb:annotatedLabel owner="${d}" property="name">Curatory Group Name</gokb:annotatedLabel></dt>
   <dd><gokb:xEditable  owner="${d}" field="name" /></dd>
 
+	<dt><gokb:annotatedLabel owner="${d}" property="type">Type</gokb:annotatedLabel></dt>
+	<dd><gokb:xEditableRefData owner="${d}" field="type" config="${RCConstants.CURATORY_GROUP_TYPE}" /></dd>
+
   <g:if test="${d.id != null}">
 
 	  <dt><gokb:annotatedLabel owner="${d}" property="status">Status</gokb:annotatedLabel></dt>
