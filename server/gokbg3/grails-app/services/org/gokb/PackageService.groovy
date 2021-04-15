@@ -16,6 +16,7 @@ import org.hibernate.Session
 import org.hibernate.type.StandardBasicTypes
 import org.springframework.util.FileCopyUtils
 
+import javax.servlet.ServletOutputStream
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.zip.ZipEntry
@@ -1133,22 +1134,10 @@ class PackageService {
   /**
    * collects the data of the given package into a KBART formatted TSV file for later download
    */
-  void createKbartExport(Package pkg) {
+  void createKbartExport(Package pkg, def response) {
     if (pkg) {
-      def exportFileName = generateExportFileName(pkg, ExportType.KBART)
-      def path = exportFilePath()
       try {
-        def out = new File("${path}${exportFileName}")
-        if (out.isFile())
-          return
-        else {
-          new File(path).list().each { fileName ->
-            if (fileName.startsWith(exportFileName.substring(0, exportFileName.length() - 21))) {
-              if (!new File(path + fileName).delete())
-                log.warn("couldn't delete file ${path}${fileName}")
-            }
-          }
-        }
+        ServletOutputStream out = response.outputStream
         out.withWriter { writer ->
 
           def sanitize = { it ? "${it}".trim() : "" }
@@ -1293,6 +1282,8 @@ class PackageService {
           writer.flush();
           writer.close();
         }
+        out.flush()
+        out.close()
       }
       catch (Exception e) {
         log.error("Problem with creating KBART export data", e);
@@ -1300,24 +1291,12 @@ class PackageService {
     }
   }
 
-  public void createTsvExport(Package pkg) {
+  public void createTsvExport(Package pkg, def response) {
     def export_date = dateFormatService.formatDate(new Date());
-    String filename = generateExportFileName(pkg, ExportType.TSV)
-    String path = exportFilePath()
     try {
       if (pkg) {
         String lastUpdate = dateFormatService.formatDate(pkg.lastUpdated)
-        File out = new File("${path}${filename}")
-        if (out.isFile())
-          return
-        else {
-          new File(path).list().each { someFileName ->
-            if (someFileName.startsWith(filename.substring(0, filename.length() - 15))) {
-              if (!new File(path + someFileName).delete())
-                log.warn("couldn't delete file ${path}${someFileName}")
-            }
-          }
-        }
+        ServletOutputStream out = response.outputStream
         out.withWriter { writer ->
           def sanitize = { it ? "${it}".trim() : "" }
 
@@ -1472,6 +1451,8 @@ class PackageService {
           writer.flush();
           writer.close();
         }
+        out.flush()
+        out.close()
       }
     }
     catch (Exception e) {
@@ -1481,26 +1462,14 @@ class PackageService {
 
   void sendFile(Package pkg, ExportType type, def response) {
     String fileName = generateExportFileName(pkg, type)
+    response.setContentType('text/tab-separated-values');
+    response.setHeader("Content-Disposition", "attachment; filename=\"${fileName.substring(0, fileName.length() - 13)}.tsv\"")
+    response.setHeader("Content-Encoding", "UTF-8")
     try {
-      File file = new File(exportFilePath() + fileName)
-      if (!file.isFile()) {
         if (type == ExportType.KBART)
-          createKbartExport(pkg)
+          createKbartExport(pkg, response)
         else
-          createTsvExport(pkg)
-        file = new File(exportFilePath() + fileName)
-      }
-      InputStream inFile = new FileInputStream(file)
-
-      response.setContentType('text/tab-separated-values');
-      response.setHeader("Content-Disposition", "attachment; filename=\"${fileName.substring(0, fileName.length() - 13)}.tsv\"")
-      response.setHeader("Content-Encoding", "UTF-8")
-      response.setContentLength(file.bytes.length)
-
-      def out = response.outputStream
-      IOUtils.copy(inFile, out)
-      inFile.close()
-      out.close()
+          createTsvExport(pkg, response)
     }
     catch (Exception e) {
       log.error("Problem with sending export", e);
@@ -1518,9 +1487,9 @@ class PackageService {
         File src = new File(exportFilePath() + fileName)
         if (!src.isFile()) {
           if (type == ExportType.KBART)
-            createKbartExport(pkg)
+            createKbartExport(pkg, response)
           else
-            createTsvExport(pkg)
+            createTsvExport(pkg, response)
           src = new File(exportFilePath() + fileName)
         }
         File dest = new File("${exportFilePath()}/${pathPrefix}/${fileName.substring(0, fileName.length() - 13)}.tsv")
@@ -1704,7 +1673,7 @@ class PackageService {
     StringBuilder name = new StringBuilder()
     if (type == ExportType.KBART) {
       name.append(toCamelCase(pkg.provider?.name ? pkg.provider.name : "unknown Provider")).append('_')
-          .append(toCamelCase(pkg.scope.value)).append('_')
+          .append(toCamelCase(pkg.scope?.value ?: '')).append('_')
           .append(toCamelCase(pkg.name))
     }
     else {
