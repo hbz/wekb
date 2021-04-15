@@ -1673,7 +1673,7 @@ class PackageService {
     StringBuilder name = new StringBuilder()
     if (type == ExportType.KBART) {
       name.append(toCamelCase(pkg.provider?.name ? pkg.provider.name : "unknown Provider")).append('_')
-          .append(toCamelCase(pkg.scope?.value ?: '')).append('_')
+          .append(toCamelCase(pkg.scope ? pkg.scope.value : '')).append('_')
           .append(toCamelCase(pkg.name))
     }
     else {
