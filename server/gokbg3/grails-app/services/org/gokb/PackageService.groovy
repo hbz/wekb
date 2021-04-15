@@ -1672,7 +1672,7 @@ class PackageService {
     String lastUpdate = dateFormatService.formatTimestamp(pkg.lastUpdated)
     StringBuilder name = new StringBuilder()
     if (type == ExportType.KBART) {
-      name.append(toCamelCase(pkg.provider?.name ? pkg.provider.name : "unknown Provider")).append('_')
+      name.append(toCamelCase(pkg.provider ? pkg.provider.name : "unknown Provider")).append('_')
           .append(toCamelCase(pkg.scope ? pkg.scope.value : '')).append('_')
           .append(toCamelCase(pkg.name))
     }
