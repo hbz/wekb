@@ -17,6 +17,8 @@ class RCConstants {
 
     public static final String COUNTRY = "Country"
 
+    public static final String CURATORY_GROUP_TYPE = "CuratoryGroup.Type"
+
     public static final String CURRENCY = "Currency"
 
     public static final String DC_TYPE = "DCType"

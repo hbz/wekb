@@ -7,7 +7,7 @@
             </dt>
             <dd>
                 <ul>
-                    <g:each in="${d.ddcs?.sort { it.value }}" var="ddc">
+                    <g:each in="${d.ddcs.sort { it.value }}" var="ddc">
                         <li>${ddc.value}: ${ddc.getI10n('value')}
                         <g:if test="${editable}">
                             <g:link controller="ajaxSupport" action="deleteDDC"

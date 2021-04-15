@@ -265,7 +265,7 @@
 
     <li>
         <a href="#ddcs" data-toggle="tab">DDCs
-            <span class="badge badge-warning">${d.ddcs?.size() ?: '0'}</span>
+            <span class="badge badge-warning">${d.ddcs.size() ?: '0'}</span>
         </a>
     </li>
 </ul>

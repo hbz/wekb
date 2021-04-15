@@ -255,4 +255,10 @@ databaseChangeLog = {
         }
     }
 
+    changeSet(author: "djebeniani (generated)", id: "1618476753914-85") {
+        addColumn(tableName: "curatory_group") {
+            column(name: "cg_type_rv_fk", type: "int8")
+        }
+    }
+
 }
