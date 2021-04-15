@@ -21,7 +21,7 @@
                             id="${d.title?.class?.name + ':' + d.title?.id}">
                         ${(d.title?.name) ?: 'Empty'}
                     </g:link>
-                <g:if test="${d.title}">(${d.title.niceName})</g:if> (Only to see for ROLE_ADMIN )
+                <g:if test="${d.title}">(${d.title.niceName})</g:if> (visible for ROLE_ADMIN only)
             </dd>
         </g:if>
     </sec:ifAnyGranted>
