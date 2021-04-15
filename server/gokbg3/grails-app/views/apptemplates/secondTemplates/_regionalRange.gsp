@@ -1,6 +1,6 @@
 <%@ page import="de.wekb.helper.RCConstants; org.gokb.cred.RefdataCategory" %>
 <ul>
-    <g:each in="${d.regionalRanges?.sort { it.getI10n('value') }}" var="regionalRange">
+    <g:each in="${d.regionalRanges.sort { it.getI10n('value') }}" var="regionalRange">
         <li>${regionalRange.value}
         <g:if test="${editable}">
             <g:link controller="ajaxSupport" action="deleteRegionalRange"
