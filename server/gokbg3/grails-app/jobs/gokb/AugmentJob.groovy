@@ -6,10 +6,12 @@ class AugmentJob {
 
   def titleAugmentService
 
-  // Every five minutes
-  static triggers = {
-    cron name: 'CollectJobTrigger', cronExpression: "0 0/5 * * * ?", startDelay:600000
-  }
+  /* ----> DISABLED
+ // Every five minutes
+ static triggers = {
+   cron name: 'CollectJobTrigger', cronExpression: "0 0/5 * * * ?", startDelay:600000
+ }
+ */
 
   def execute() {
   }
