@@ -84,18 +84,18 @@
             <ul id="tabs" class="nav nav-tabs">
                 <li role="presentation" class="nav-item">
                     <a class="nav-link active" href="#titledetails" data-toggle="tab">Titles
-                        <span class="badge badge-warning">${titleCount}</span>
+                        <span class="badge badge-dark">${titleCount}</span>
                     </a>
                 </li>
                 <li role="presentation" class="nav-item">
                     <a class="nav-link" href="#identifiers" data-toggle="tab">Identifiers
-                        <span  class="badge badge-warning">${pkg?.getCombosByPropertyNameAndStatus('ids', 'Active')?.size() ?: '0'}</span>
+                        <span  class="badge badge-dark">${pkg?.getCombosByPropertyNameAndStatus('ids', 'Active')?.size() ?: '0'}</span>
                     </a>
                 </li>
 
                 <li role="presentation" class="nav-item">
                     <a class="nav-link" href="#altnames" data-toggle="tab">Alternate Names
-                        <span class="badge badge-warning">${pkg.variantNames?.size() ?: '0'}</span>
+                        <span class="badge badge-dark">${pkg.variantNames?.size() ?: '0'}</span>
                     </a>
                 </li>
             </ul>

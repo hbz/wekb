@@ -11,19 +11,19 @@
     </g:if>
     <li role="presentation" class=nav-item">
         <a class="nav-link" href="#identifiers" data-toggle="tab">Identifiers <span
-            class="badge badge-warning">${d?.getCombosByPropertyNameAndStatus('ids', 'Active')?.size() ?: '0'}</span>
+            class="badge badge-dark">${d?.getCombosByPropertyNameAndStatus('ids', 'Active')?.size() ?: '0'}</span>
     </a>
     </li>
 
     <li role="presentation" class=nav-item">
         <a class="nav-link" href="#addprops" data-toggle="tab">Additional Properties
-            <span class="badge badge-warning">${d.additionalProperties?.size() ?: '0'}</span>
+            <span class="badge badge-dark">${d.additionalProperties?.size() ?: '0'}</span>
         </a>
     </li>
     <g:if test="${controllerName != 'public'}">
         <li role="presentation" class=nav-item">
             <a class="nav-link" href="#review" data-toggle="tab">Review Requests
-                <span class="badge badge-warning">${d.reviewRequests?.size() ?: '0'}</span>
+                <span class="badge badge-dark">${d.reviewRequests?.size() ?: '0'}</span>
             </a>
         </li>
     </g:if>
@@ -36,7 +36,7 @@
     </li>
     <li role="presentation" class=nav-item">
         <a class="nav-link" href="#prices" data-toggle="tab">Prices
-            <span class="badge badge-warning">${d.prices?.size() ?: '0'}</span>
+            <span class="badge badge-dark">${d.prices?.size() ?: '0'}</span>
         </a>
     </li>
 </ul>

@@ -18,6 +18,18 @@
 
 /** PUBLIC START **/
 
+/* important for accessibility */
+a {
+  color: #007da7;
+}
+.btn-primary {
+  background-color: #007da7;
+  border-color: #007da7;
+}
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: #FFFBFB;
+}
+
 body {
   display: flex;
   min-height: 100vh;
@@ -36,8 +48,8 @@ main {
 .wekb-numberChartHero {
   padding-top: 35px;
   padding-bottom: 35px;
-  color: white;
-  background-color: #a9ceda;
+  color: black;
+  background-color: #4c7f9029;
   margin-top: -1rem!important;
 }
 .wekb-numberChartHero .mekb-title{
