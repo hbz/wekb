@@ -510,14 +510,15 @@ class FTUpdateService {
           bulkRequest = esclient.prepareBulk()
           log.debug("BulkResponse: ${bulkResponse}")
           FTControl.withNewTransaction {
-            latest_ft_record = FTControl.get(latest_ft_record.id)
+            Long id = latest_ft_record.id
+            latest_ft_record = FTControl.get(id)
             if (latest_ft_record) {
               latest_ft_record.lastTimestamp = highest_timestamp
               latest_ft_record.lastId = highest_id
               latest_ft_record.save(flush: true, failOnError: true)
             }
             else {
-              log.error("Unable to locate free text control record with ID ${latest_ft_record.id}. Possibe parallel FT update")
+              log.error("Unable to locate free text control record with ID ${id}. Possibe parallel FT update")
             }
           }
           cleanUpGorm()
