@@ -10,7 +10,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <div style="font-size:2.5em;margin-top:100px;" class="alert alert-default">
+            <div style="font-size:2.5em;margin-top:100px;">
                 ${message(code: "default.error.exception")}
             </div>
             <br>
