@@ -39,6 +39,12 @@
             <span class="badge badge-warning">${d.prices?.size() ?: '0'}</span>
         </a>
     </li>
+
+    <li>
+        <a href="#ddcs" data-toggle="tab">DDCs
+            <span class="badge badge-warning">${d.ddcs?.size() ?: '0'}</span>
+        </a>
+    </li>
 </ul>
 
 
@@ -233,6 +239,8 @@
         </dl>
     </div>
     <g:render template="/tabTemplates/showPrices" model="${[d: d]}"/>
+
+    <g:render template="/tabTemplates/showDDCs" model="${[d:d]}" />
 </div>
 <g:render template="componentStatus"
           model="${[d: d]}"/>

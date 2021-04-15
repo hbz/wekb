@@ -87,6 +87,7 @@ class Package extends KBComponent {
   static hasMany = [
           nationalRanges : RefdataValue,
           regionalRanges : RefdataValue,
+          ddcs : RefdataValue,
   ]
 
   static mapping = {
@@ -101,6 +102,12 @@ class Package extends KBComponent {
     descriptionURL column: 'pkg_descr_url'
     openAccess column: 'pkg_open_access'
     file column: 'pkg_file'
+
+    ddcs             joinTable: [
+            name:   'package_dewey_decimal_classification',
+            key:    'package_fk',
+            column: 'ddc_rv_fk', type:   'BIGINT'
+    ], lazy: false
 
     nationalRanges             joinTable: [
             name:   'package_national_range',
@@ -144,6 +151,7 @@ class Package extends KBComponent {
     })
     nationalRanges(nullable:true)
     regionalRanges(nullable:true)
+    ddcs(nullable:true)
   }
 
   public String getRestPath() {

@@ -117,6 +117,13 @@
         <li role="presentation"><a href="#altnames" data-toggle="tab">Alternate Names
           <span class="badge badge-warning"> ${d.variantNames?.size() ?: '0'}</span>
         </a></li>
+
+        <li>
+          <a href="#ddcs" data-toggle="tab">DDCs
+            <span class="badge badge-warning">${d.ddcs?.size() ?: '0'}</span>
+          </a>
+        </li>
+
         <li><a href="#relationships" data-toggle="tab">Relations</a></li>
         <g:if test="${grailsApplication.config.gokb.decisionSupport?.active}">
           <li role="presentation"><a href="#ds" data-toggle="tab">Decision Support</a></li>
@@ -186,6 +193,8 @@
       </div>
 
       <g:render template="/tabTemplates/showVariantnames" model="${[d:displayobj, showActions:true]}" />
+
+      <g:render template="/tabTemplates/showDDCs" model="${[d:displayobj, showActions:true]}" />
 
       <div class="tab-pane" id="identifiers">
         <dl>

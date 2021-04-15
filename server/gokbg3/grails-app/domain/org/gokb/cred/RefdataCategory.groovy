@@ -1,20 +1,25 @@
 package org.gokb.cred
 
-
+import de.wekb.base.AbstractI10n
 import groovy.util.logging.*
-import grails.util.GrailsNameUtils
-import javax.persistence.Transient
-import org.grails.datastore.mapping.model.*
+import org.apache.commons.logging.LogFactory
 
 @Slf4j
-class RefdataCategory {
+class RefdataCategory extends AbstractI10n {
 
   public static rdv_cache = [:]
   private static rdc_cache = [:]
 
+  static org.apache.commons.logging.Log static_logger = LogFactory.getLog(RefdataCategory)
+
   String desc
+  String desc_en
+  String desc_de
   String label
   Set values
+
+  // indicates this object is created via current bootstrap
+  boolean isHardData = false
 
   static mapping = {
     id column: 'rdc_id'
@@ -22,6 +27,9 @@ class RefdataCategory {
     label column: 'rdc_label'
     desc column: 'rdc_description', index: 'rdc_description_idx'
     values sort: 'value', order: 'asc'
+    desc_en column: 'rdc_desc_en'
+    desc_de column: 'rdc_desc_de'
+    isHardData column: 'rdc_is_hard_data'
 
   }
 
@@ -200,6 +208,31 @@ class RefdataCategory {
       if (v != null) {
         result = "org.gokb.cred.RefdataValue:${v.id}"
       }
+    }
+  }
+
+  static RefdataCategory construct(Map<String, Object> map) {
+
+    withTransaction {
+      String token = map.get('token')
+      boolean hardData = new Boolean(map.get('hardData'))
+      String desc_en = map.get('desc_en')
+      String desc_de = map.get('desc_de')
+
+      RefdataCategory rdc = RefdataCategory.findByDescIlike(token)
+
+      if (!rdc) {
+        static_logger.debug("INFO: no match found; creating new refdata category for ( ${map})")
+        rdc = new RefdataCategory(desc: token)
+      }
+
+      rdc.desc_de = desc_en ?: null
+      rdc.desc_en = desc_de ?: null
+
+      rdc.isHardData = hardData
+      rdc.save()
+
+      rdc
     }
   }
 

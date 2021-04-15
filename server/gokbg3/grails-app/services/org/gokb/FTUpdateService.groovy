@@ -91,6 +91,29 @@ class FTUpdateService {
                                   namespaceName: idc.toComponent.namespace.name])
         }
         result.componentType = kbc.class.simpleName
+
+        result.nationalRanges = []
+        kbc.nationalRanges.each { nationalRange ->
+          result.nationalRanges.add([value     : nationalRange.value,
+                                    value_de  : nationalRange.value_de,
+                                    value_en  : nationalRange.value_de])
+        }
+
+        result.regionalRanges = []
+        kbc.regionalRanges.each { regionalRange ->
+          result.regionalRanges.add([value     : regionalRange.value,
+                                    value_de  : regionalRange.value_de,
+                                    value_en  : regionalRange.value_de])
+        }
+
+        result.ddcs = []
+        kbc.ddcs.each { ddc ->
+          result.ddcs.add([value     : ddc.value,
+                           value_de  : ddc.value_de,
+                           value_en  : ddc.value_de])
+        }
+
+
         result
       }
 
@@ -432,6 +455,13 @@ class FTUpdateService {
             price.endDate = dateFormatService.formatIsoTimestamp(p.endDate)
           }
           result.prices.add(price)
+        }
+
+        result.ddcs = []
+        kbc.ddcs.each { ddc ->
+          result.ddcs.add([value     : ddc.value,
+                           value_de  : ddc.value_de,
+                           value_en  : ddc.value_de])
         }
 
         result

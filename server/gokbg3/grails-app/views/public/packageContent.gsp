@@ -101,6 +101,13 @@
                         <span class="badge badge-warning">${pkg.variantNames?.size() ?: '0'}</span>
                     </a>
                 </li>
+
+                <li>
+                    <a href="#ddcs" data-toggle="tab">DDCs
+                        <span class="badge badge-warning">${pkg.ddcs?.size() ?: '0'}</span>
+                    </a>
+                </li>
+
             </ul>
             <div id="my-tab-content" class="tab-content">
                 <div class="tab-pane fade show active" id="titledetails">
@@ -172,7 +179,10 @@
                     </g:if>
 
                 </div>
+
                 <g:render template="/tabTemplates/showVariantnames" model="${[d: pkg]}"/>
+
+                <g:render template="/tabTemplates/showDDCs" model="${[d:pkg]}" />
 
                 <div class="tab-pane fade" id="identifiers">
                     <dl>
