@@ -228,7 +228,7 @@ databaseChangeLog = {
         }
     }
 
-    changeSet(author: "agalffy (hand-coded)", id: "1618476753914-1") {
+    changeSet(author: "agalffy (hand-coded)", id: "1618476753914-82") {
         grailsChange {
             change {
                 sql.execute('truncate table review_request_allocation_log;')
@@ -237,7 +237,7 @@ databaseChangeLog = {
         }
     }
 
-    changeSet(author: "agalffy (hand-coded)", id: "1618476753914-2") {
+    changeSet(author: "agalffy (hand-coded)", id: "1618476753914-83") {
         grailsChange {
             change {
                 sql.execute('truncate table allocated_review_group;')
@@ -246,7 +246,7 @@ databaseChangeLog = {
         }
     }
 
-    changeSet(author: "agalffy (hand-coded)", id: "1618476753914-3") {
+    changeSet(author: "agalffy (hand-coded)", id: "1618476753914-84") {
         grailsChange {
             change {
                 sql.execute('delete from review_request;')
