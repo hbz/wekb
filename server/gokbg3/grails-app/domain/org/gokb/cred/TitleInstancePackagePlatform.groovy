@@ -179,7 +179,9 @@ class TitleInstancePackagePlatform extends KBComponent {
   ]
 
   static hasMany = [
-    coverageStatements: TIPPCoverageStatement
+    coverageStatements: TIPPCoverageStatement,
+    ddcs: RefdataValue
+
   ]
 
   static mappedBy = [
@@ -220,6 +222,12 @@ class TitleInstancePackagePlatform extends KBComponent {
     series column: 'series', type: 'text'
     url column: 'url', type: 'text'
     subjectArea column: 'subject_area', type: 'text'
+
+    ddcs             joinTable: [
+            name:   'tipp_dewey_decimal_classification',
+            key:    'tipp_fk',
+            column: 'ddc_rv_fk', type:   'BIGINT'
+    ], lazy: false
   }
 
   static constraints = {
@@ -249,6 +257,7 @@ class TitleInstancePackagePlatform extends KBComponent {
     precedingPublicationTitleId(nullable: true, blank: true)
     lastChangedExternal(nullable: true, blank: true)
     medium(nullable: true, blank: true)
+    ddcs(nullable: true)
   }
 
   public static final String restPath = "/package-titles"
