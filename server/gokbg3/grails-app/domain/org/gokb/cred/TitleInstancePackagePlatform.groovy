@@ -834,8 +834,8 @@ class TitleInstancePackagePlatform extends KBComponent {
     if (pkg && plt && ti && curator) {
       log.debug("See if we already have a tipp")
       def tipps = TitleInstancePackagePlatform.executeQuery('select tipp from TitleInstancePackagePlatform as tipp, Combo as pkg_combo, Combo as platform_combo  ' +
-        'where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg' +
-        'and platform_combo.toComponent=tipp and platform_combo.fromComponent = :platform' +
+        'where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg ' +
+        'and platform_combo.toComponent=tipp and platform_combo.fromComponent = :platform ' +
         'and tipp.name in (:tiName, :tiDtoName)',
         [pkg: pkg, platform: plt, tiName: ti.name, tiDtoName: tipp_dto.name])
       def uuid_tipp = tipp_dto.uuid ? TitleInstancePackagePlatform.findByUuid(tipp_dto.uuid) : null
