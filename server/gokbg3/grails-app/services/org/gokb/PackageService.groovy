@@ -1114,6 +1114,17 @@ class PackageService {
         changed = true
       }
     }
+
+    if (packageHeaderDTO.ddcs) {
+      packageHeaderDTO.ddcs.each{ String ddc ->
+        RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.DDC, ddc)
+
+        if(refdataValue && !(refdataValue in result.ddcs)){
+          result.addToDdcs(refdataValue)
+        }
+      }
+    }
+
     result.save(flush: true)
     result
   }

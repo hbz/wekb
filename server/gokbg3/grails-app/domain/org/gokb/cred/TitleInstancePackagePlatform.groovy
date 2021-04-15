@@ -1091,9 +1091,19 @@ class TitleInstancePackagePlatform extends KBComponent {
             }
           }
         }
-      }
 
-      tipp.save(flush: true, failOnError: true);
+        if (tipp_dto.ddcs) {
+            tipp_dto.ddcs.each{ String ddc ->
+              RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.DDC, ddc)
+
+              if(refdataValue && !(refdataValue in result.ddcs)){
+                result.addToDdcs(refdataValue)
+              }
+            }
+        }
+
+        tipp.save(flush: true, failOnError: true);
+      }
 
       result = tipp
     } else {
