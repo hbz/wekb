@@ -383,7 +383,7 @@ class PackagesController {
     if (request.method == "GET") {
       if (params.id == "all") {
         Package.all.each { pack ->
-          packageService.createKbartExport(pack)
+          packageService.createKbartExport(pack, response)
         }
         return response
       }
@@ -409,7 +409,7 @@ class PackagesController {
     if (request.method == "GET") {
       if (params.id == "all") {
         Package.all.each { pack ->
-          packageService.createTsvExport(pack)
+          packageService.createTsvExport(pack, response)
         }
         return response
       }

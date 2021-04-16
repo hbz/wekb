@@ -6,7 +6,7 @@
 			<gokb:annotatedLabel owner="${d}" property="licenseURL">License URL</gokb:annotatedLabel>
 		</dt>
 		<dd>
-			<gokb:xEditable class="ipe" owner="${d}" field="url" />
+			<gokb:xEditable  owner="${d}" field="url" />
 		</dd>
 		<dt>
 			<gokb:annotatedLabel owner="${d}" property="licenseType">License Type</gokb:annotatedLabel>

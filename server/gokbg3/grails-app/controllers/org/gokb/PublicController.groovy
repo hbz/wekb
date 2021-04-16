@@ -68,7 +68,7 @@ class PublicController {
           params.offset = 0
         }
         params.offset = params.offset ?: 0
-        params.max = session.getAttribute("newMax") ? session.getAttribute("newMax") : params.max
+        params.max = session.getAttribute("newMax") ?: 10
 
         result.titleCount = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_current])[0]
         result.tipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_current], params)
@@ -78,7 +78,6 @@ class PublicController {
         flash.error = "Package not found"
       }
     }
-    println(params)
     result
   }
 

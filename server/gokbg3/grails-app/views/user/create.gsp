@@ -24,7 +24,7 @@
 		<g:each var='role' in='${authorityList}'>
 			<div>
 				<g:set var='authority' value='${uiPropertiesStrategy.getProperty(role, 'authority')}'/>
-				<g:checkBox name='${authority}'/>
+				<g:checkBox name='${authority}' checked="${authority =="ROLE_USER" ? "true": "false"}"/>
 				<g:link controller='role' action='edit' id='${role.id}'>${authority}</g:link>
 			</div>
 		</g:each>

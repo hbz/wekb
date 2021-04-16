@@ -6,7 +6,7 @@
 			<gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel>
 		</dt>
 		<dd>
-			<gokb:xEditable class="ipe" owner="${d}" field="name" />
+			<gokb:xEditable  owner="${d}" field="name" />
 		</dd>
 		<dt>
 			<gokb:annotatedLabel owner="${d}" property="status">Status</gokb:annotatedLabel>

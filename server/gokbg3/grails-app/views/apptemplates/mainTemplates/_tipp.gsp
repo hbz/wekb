@@ -7,36 +7,38 @@
         <gokb:annotatedLabel owner="${d}" property="name">Title</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable class="ipe" owner="${d}" field="name"/>
+        <gokb:xEditable  owner="${d}" field="name"/>
     </dd>
 
+
     <sec:ifAnyGranted roles="ROLE_ADMIN">
-    <dt>
-        <gokb:annotatedLabel owner="${d}" property="title">Title</gokb:annotatedLabel>
-    </dt>
-    <dd style="max-width:60%">
-        <g:if test="${controllerName != 'public'}">
-            <g:link controller="resource" action="show"
-                    id="${d.title?.class?.name + ':' + d.title?.id}">
-                ${(d.title?.name) ?: 'Empty'}
-            </g:link>
-        </g:if><g:else>
-            ${(d.title?.name) ?: 'Empty'}
-        </g:else>
-        <g:if test="${d.title}">(${d.title.niceName})</g:if> (Only to see for ROLE_ADMIN )
-    </dd>
+        <g:if test="${controllerName != 'create'}">
+            <dt>
+                <gokb:annotatedLabel owner="${d}" property="title">Title</gokb:annotatedLabel>
+            </dt>
+            <dd style="max-width:60%">
+                    <g:link controller="resource" action="show"
+                            id="${d.title?.class?.name + ':' + d.title?.id}">
+                        ${(d.title?.name) ?: 'Empty'}
+                    </g:link>
+                <g:if test="${d.title}">(${d.title.niceName})</g:if> (visible for ROLE_ADMIN only)
+            </dd>
+        </g:if>
     </sec:ifAnyGranted>
 
     <dt>
         <gokb:annotatedLabel owner="${d}" property="package">Package</gokb:annotatedLabel>
     </dt>
     <dd>
-        <g:if test="${controllerName != 'public'}">
+        <g:if test="${controllerName == 'create'}">
+            <gokb:manyToOneReferenceTypedown owner="${d}" field="pkg" baseClass="org.gokb.cred.Package" />
+        </g:if>
+        <g:elseif test="${controllerName != 'public'}">
             <g:link controller="resource" action="show"
                     id="${d.pkg?.class?.name + ':' + d.pkg?.id}">
                 ${(d.pkg?.name) ?: 'Empty'}
             </g:link>
-        </g:if>
+        </g:elseif>
         <g:else>
             ${(d.pkg?.name) ?: 'Empty'}
         </g:else>
@@ -46,12 +48,15 @@
         <gokb:annotatedLabel owner="${d}" property="platform">Platform</gokb:annotatedLabel>
     </dt>
     <dd>
-        <g:if test="${controllerName != 'public'}">
+        <g:if test="${controllerName == 'create'}">
+            <gokb:manyToOneReferenceTypedown owner="${d}" field="hostPlatform" baseClass="org.gokb.cred.Platform" />
+        </g:if>
+        <g:elseif test="${controllerName != 'public'}">
             <g:link controller="resource" action="show"
                     id="${d.hostPlatform?.class?.name + ':' + d.hostPlatform?.id}">
                 ${(d.hostPlatform?.name) ?: 'Empty'}
             </g:link>
-        </g:if>
+        </g:elseif>
         <g:else>
             ${(d.hostPlatform?.name) ?: 'Empty'}
         </g:else>
@@ -61,7 +66,7 @@
         <gokb:annotatedLabel owner="${d}" property="url">Host Platform URL</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable class="ipe" owner="${d}" field="url"/>
+        <gokb:xEditable  owner="${d}" field="url"/>
         <g:if test="${d.url}">
             &nbsp;<a href="${d.url}" target="new"><i class="fas fa-external-link-alt"></i></a>
         </g:if>
@@ -93,21 +98,21 @@
         <gokb:annotatedLabel owner="${d}" property="firstAuthor">First Author</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable class="ipe" owner="${d}" field="firstAuthor"/>
+        <gokb:xEditable  owner="${d}" field="firstAuthor"/>
     </dd>
 
     <dt>
         <gokb:annotatedLabel owner="${d}" property="publisherName">Publisher Name</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable class="ipe" owner="${d}" field="publisherName"/>
+        <gokb:xEditable  owner="${d}" field="publisherName"/>
     </dd>
 
     <dt>
         <gokb:annotatedLabel owner="${d}" property="dateFirstInPrint">Date first in print</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable class="ipe" owner="${d}" type="date"
+        <gokb:xEditable  owner="${d}" type="date"
                         field="dateFirstInPrint"/>
     </dd>
 
@@ -115,7 +120,7 @@
         <gokb:annotatedLabel owner="${d}" property="dateFirstOnline">Date first online</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable class="ipe" owner="${d}" type="date"
+        <gokb:xEditable  owner="${d}" type="date"
                         field="dateFirstOnline"/>
     </dd>
 
@@ -123,7 +128,7 @@
         <gokb:annotatedLabel owner="${d}" property="accessStartDate">Access Start Date</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable class="ipe" owner="${d}" type="date"
+        <gokb:xEditable  owner="${d}" type="date"
                         field="accessStartDate"/>
     </dd>
 
@@ -131,7 +136,7 @@
         <gokb:annotatedLabel owner="${d}" property="accessEndDate">Access End Date</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable class="ipe" owner="${d}" type="date"
+        <gokb:xEditable  owner="${d}" type="date"
                         field="accessEndDate"/>
     </dd>
 
@@ -139,14 +144,14 @@
         <gokb:annotatedLabel owner="${d}" property="volumeNumber">Volume Number</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable class="ipe" owner="${d}" field="volumeNumber"/>
+        <gokb:xEditable  owner="${d}" field="volumeNumber"/>
     </dd>
 
     <dt>
         <gokb:annotatedLabel owner="${d}" property="editionStatement">Edition</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable class="ipe" owner="${d}" field="editionStatement"/>
+        <gokb:xEditable  owner="${d}" field="editionStatement"/>
     </dd>
 
     <dt>
@@ -154,7 +159,7 @@
                              property="parentPublicationTitleId">Parent publication title ID</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable class="ipe" owner="${d}" field="parentPublicationTitleId"/>
+        <gokb:xEditable  owner="${d}" field="parentPublicationTitleId"/>
     </dd>
 
     <dt>
@@ -162,14 +167,14 @@
                              property="precedingPublicationTitleId">Preceding publication title ID</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable class="ipe" owner="${d}" field="precedingPublicationTitleId"/>
+        <gokb:xEditable  owner="${d}" field="precedingPublicationTitleId"/>
     </dd>
 
     <dt>
         <gokb:annotatedLabel owner="${d}" property="reference">Reference</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable class="ipe" owner="${d}" field="reference"/>
+        <gokb:xEditable  owner="${d}" field="reference"/>
     </dd>
 
     <dt>
@@ -193,7 +198,7 @@
         <gokb:annotatedLabel owner="${d}" property="lastChangedExternal">Last change</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable class="ipe" owner="${d}" field="lastChangedExternal" type='date'/>
+        <gokb:xEditable  owner="${d}" field="lastChangedExternal" type='date'/>
     </dd>
 
     <dt>
@@ -257,6 +262,12 @@
             <span class="badge badge-warning">${d.prices?.size() ?: '0'}</span>
         </a>
     </li>
+
+    <li>
+        <a href="#ddcs" data-toggle="tab">DDCs
+            <span class="badge badge-warning">${d.ddcs.size() ?: '0'}</span>
+        </a>
+    </li>
 </ul>
 
 
@@ -288,18 +299,18 @@
                         <g:if test="${d.coverageStatements?.size() > 0}">
                             <g:each var="cs" in="${d.coverageStatements.sort { it.startDate }}">
                                 <tr>
-                                    <td><gokb:xEditable class="ipe" owner="${cs}" type="date"
+                                    <td><gokb:xEditable  owner="${cs}" type="date"
                                                         field="startDate"/></td>
-                                    <td><gokb:xEditable class="ipe" owner="${cs}"
+                                    <td><gokb:xEditable  owner="${cs}"
                                                         field="startVolume"/></td>
-                                    <td><gokb:xEditable class="ipe" owner="${cs}"
+                                    <td><gokb:xEditable  owner="${cs}"
                                                         field="startIssue"/></td>
-                                    <td><gokb:xEditable class="ipe" owner="${cs}" type="date"
+                                    <td><gokb:xEditable  owner="${cs}" type="date"
                                                         field="endDate"/></td>
-                                    <td><gokb:xEditable class="ipe" owner="${cs}" field="endVolume"/></td>
-                                    <td><gokb:xEditable class="ipe" owner="${cs}" field="endIssue"/></td>
-                                    <td><gokb:xEditable class="ipe" owner="${cs}" field="embargo"/></td>
-                                    <td><gokb:xEditable class="ipe" owner="${cs}" field="coverageNote"/></td>
+                                    <td><gokb:xEditable  owner="${cs}" field="endVolume"/></td>
+                                    <td><gokb:xEditable  owner="${cs}" field="endIssue"/></td>
+                                    <td><gokb:xEditable  owner="${cs}" field="embargo"/></td>
+                                    <td><gokb:xEditable  owner="${cs}" field="coverageNote"/></td>
                                     <td><gokb:xEditableRefData owner="${cs}" field="coverageDepth"
                                                                config="${RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH}"/>
                                     </td>
@@ -381,7 +392,7 @@
                     <gokb:annotatedLabel owner="${d}" property="coverageNote">Coverage Note</gokb:annotatedLabel>
                 </dt>
                 <dd>
-                    <gokb:xEditable class="ipe" owner="${d}" field="coverageNote"/>
+                    <gokb:xEditable  owner="${d}" field="coverageNote"/>
                 </dd>
                 <dt>
                     <gokb:annotatedLabel owner="${d}" property="coverageDepth">Coverage Depth</gokb:annotatedLabel>
@@ -453,6 +464,8 @@
         </dl>
     </div>
     <g:render template="/tabTemplates/showPrices" model="${[d: d]}"/>
+
+    <g:render template="/tabTemplates/showDDCs" model="${[d: d]}"/>
 </div>
 <g:render template="/apptemplates/secondTemplates/componentStatus"
           model="${[d: d]}"/>

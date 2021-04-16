@@ -1,0 +1,68 @@
+token;desc_de;desc_en
+Activity.Status;Activity Status;Activity Status
+Activity.Type;Activity Type;Activity Type
+AllocatedReviewGroup.Status;Allocated Review Group Status;Allocated Review Group Status
+Combo.Status;Combo Status;Combo Status
+Combo.Type;Combo Type;Combo Type
+Country;Country;Country
+CuratoryGroup.Type;CuratoryGroup Type;CuratoryGroup Type
+Currency;Currency;Currency
+DCType;DCType;DCType
+DDC;Dewey-Dezimalklassifikation;Dewey Decimal Classification
+IdentifierNamespace.TargetType;Identifier Namespace Target Type;Identifier Namespace Target Type
+ingest.filetype;ingest filetype;ingest filetype
+Job.Type;Job Type;Job Type
+KBComponent.EditStatus;KBComponent EditStatus;KBComponent EditStatus
+KBComponent.Language;KBComponent Language;KBComponent Language
+KBComponent.Status;KBComponent Status;KBComponent Status
+KBComponentVariantName.Locale;KBComponent VariantName Locale;KBComponent VariantName Locale
+KBComponentVariantName.Status;KBComponent VariantName Status;KBComponent VariantName Status
+KBComponentVariantName.VariantType;KBComponent VariantName VariantType;KBComponent VariantName VariantType
+License.Category;License Category;License Category
+License.Type;License Type;License Type
+MembershipRole;Membership Role;Membership Role
+MembershipStatus;Membership Status;Membership Status
+Org.Mission;Org Mission;Org Mission
+Org.Role;Org Role;Org Role
+Package.Breakable;Package Breakable;Package Breakable
+Package.Consistent;Package Consistent;Package Consistent
+Package.ContentType;Package Content Type;Package Content Type
+Package.File;Package File;Package File
+Package.Global;Package Global;Package Global
+Package.LinkType;Package Link Type;Package Link Type
+Package.ListStatus;Package List Status;Package List Status
+Package.OpenAccess;Package Open Access;Package Open Access
+Package.PaymentType;Package Payment Type;Package Payment Type
+Package.Scope;Package Scope;Package Scope
+Platform.Authentication;Platform Authentication;Platform Authentication
+Platform.AuthMethod;Platform AuthMethod;Platform AuthMethod
+Platform.Role;Platform Role;Platform Role
+Platform.Roles;Platform Roles;Platform Roles
+Platform.Service;Platform Service;Platform Service
+Platform.Software;Platform Software;Platform Software
+Price.type;Price type;Price type
+RDFDataType;RDF Data Type;RDF Data Type
+ReviewRequest.Status;Review Request Status;Review Request Status
+ReviewRequest.StdDesc;Review Request Std Desc;Review Request Std Desc
+Source.DataFormat;Source Data Format;Source Data Format
+Source.DataSupplyMethod;Source Data Supply Method;Source Data Supply Method
+Source.Frequency;Source Frequency;Source Frequency
+Tipp.LinkType;Tipp Link Type;Tipp Link Type
+Tipp.StatusReason;Tipp Status Reason;Tipp Status Reason
+TIPPCoverageStatement.CoverageDepth;TIPP CoverageStatement Coverage Depth;TIPP CoverageStatement Coverage Depth
+TitleInstance.ContinuingSeries;Title Instance Continuing Series;Title Instance Continuing Series
+TitleInstance.Medium;Title Instance Medium;Title Instance Medium
+TitleInstance.OAStatus;Title Instance OAStatus;Title Instance OAStatus
+TitleInstance.PureOA;Title Instance PureOA;Title Instance PureOA
+TitleInstance.ReasonRetired;Title Instance Reason Retired;Title Instance Reason Retired
+TitleInstance.Rel;Title Instance Rel;Title Instance Rel
+TitleInstancePackagePlatform.AccessType;TitleInstancePackagePlatform Access Type;TitleInstancePackagePlatform Access Type
+TitleInstancePackagePlatform.CoverageDepth;TitleInstancePackagePlatform Coverage Depth;TitleInstancePackagePlatform Coverage Depth
+TitleInstancePackagePlatform.DelayedOA;TitleInstancePackagePlatform Delayed OA;TitleInstancePackagePlatform Delayed OA
+TitleInstancePackagePlatform.Format;TitleInstancePackagePlatform Format;TitleInstancePackagePlatform Format
+TitleInstancePackagePlatform.Medium;TitleInstancePackagePlatform Medium;TitleInstancePackagePlatform Medium
+TitleInstancePackagePlatform.PaymentType;TitleInstancePackagePlatform Payment Type;TitleInstancePackagePlatform Payment Type
+TitleInstancePackagePlatform.Primary;TitleInstancePackagePlatform Primary;TitleInstancePackagePlatform Primary
+TitleInstancePackagePlatform.PublicationType;TitleInstancePackagePlatform Publication Type;TitleInstancePackagePlatform Publication Type
+UserOrganisation.Mission;UserOrganisation Mission;UserOrganisation Mission
+YN;YN;YN

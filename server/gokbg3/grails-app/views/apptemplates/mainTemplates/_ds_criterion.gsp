@@ -1,12 +1,12 @@
 <dl class="dl-horizontal">
   <dt> <gokb:annotatedLabel owner="${d}" property="explanation">Title</gokb:annotatedLabel> </dt>
-  <dd> <gokb:xEditable class="ipe" owner="${d}" field="title" /> </dd>
+  <dd> <gokb:xEditable  owner="${d}" field="title" /> </dd>
 
   <dt> <gokb:annotatedLabel owner="${d}" property="description">Description</gokb:annotatedLabel> </dt>
-  <dd> <gokb:xEditable class="ipe" owner="${d}" field="description" /> </dd>
+  <dd> <gokb:xEditable  owner="${d}" field="description" /> </dd>
 
   <dt> <gokb:annotatedLabel owner="${d}" property="explanation">Explanation</gokb:annotatedLabel> </dt>
-  <dd> <gokb:xEditable class="ipe" owner="${d}" field="explanation" /> </dd>
+  <dd> <gokb:xEditable  owner="${d}" field="explanation" /> </dd>
 
   <dt> <gokb:annotatedLabel owner="${d}" property="owner">Category</gokb:annotatedLabel> </dt>
   <dd>

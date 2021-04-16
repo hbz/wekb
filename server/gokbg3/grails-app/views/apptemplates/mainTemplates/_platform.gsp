@@ -7,7 +7,7 @@
         <gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable class="ipe" owner="${d}" field="name"/>
+        <gokb:xEditable  owner="${d}" field="name"/>
     </dd>
     <dt>
         <gokb:annotatedLabel owner="${d}" property="status">Status</gokb:annotatedLabel>
@@ -42,7 +42,7 @@
         <gokb:annotatedLabel owner="${d}" property="primaryURL">Primary URL</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable class="ipe" owner="${d}" field="primaryUrl">${d.primaryUrl}</gokb:xEditable>
+        <gokb:xEditable  owner="${d}" field="primaryUrl">${d.primaryUrl}</gokb:xEditable>
         <g:if test="${d.primaryUrl}">
             <g:if test="${d.primaryUrl.startsWith('http')}">
                 &nbsp; <a href="${d.primaryUrl}" target="new"><i class="fas fa-external-link-alt"></i></a>

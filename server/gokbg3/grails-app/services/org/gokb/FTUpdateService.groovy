@@ -3,6 +3,7 @@ package org.gokb
 import com.k_int.ESSearchService
 import grails.gorm.transactions.Transactional
 import org.elasticsearch.action.bulk.BulkRequestBuilder
+import org.gokb.cred.KBComponentAdditionalProperty
 
 @Transactional
 class FTUpdateService {
@@ -91,6 +92,36 @@ class FTUpdateService {
                                   namespaceName: idc.toComponent.namespace.name])
         }
         result.componentType = kbc.class.simpleName
+
+        result.nationalRanges = []
+        kbc.nationalRanges.each { nationalRange ->
+          result.nationalRanges.add([value     : nationalRange.value,
+                                    value_de  : nationalRange.value_de,
+                                    value_en  : nationalRange.value_de])
+        }
+
+        result.regionalRanges = []
+        kbc.regionalRanges.each { regionalRange ->
+          result.regionalRanges.add([value     : regionalRange.value,
+                                    value_de  : regionalRange.value_de,
+                                    value_en  : regionalRange.value_de])
+        }
+
+        result.ddcs = []
+        kbc.ddcs.each { ddc ->
+          result.ddcs.add([value     : ddc.value,
+                           value_de  : ddc.value_de,
+                           value_en  : ddc.value_de])
+        }
+
+        result.additionalProperties = []
+
+        kbc.additionalProperties.each { KBComponentAdditionalProperty kbComponentAdditionalProperty ->
+          result.additionalProperties.add([value    : kbComponentAdditionalProperty.apValue,
+                                          name      : kbComponentAdditionalProperty.propertyDefn.propertyName])
+        }
+
+
         result
       }
 
@@ -434,6 +465,13 @@ class FTUpdateService {
           result.prices.add(price)
         }
 
+        result.ddcs = []
+        kbc.ddcs.each { ddc ->
+          result.ddcs.add([value     : ddc.value,
+                           value_de  : ddc.value_de,
+                           value_en  : ddc.value_de])
+        }
+
         result
       }
     }
@@ -510,14 +548,15 @@ class FTUpdateService {
           bulkRequest = esclient.prepareBulk()
           log.debug("BulkResponse: ${bulkResponse}")
           FTControl.withNewTransaction {
-            latest_ft_record = FTControl.get(latest_ft_record.id)
+            Long id = latest_ft_record.id
+            latest_ft_record = FTControl.get(id)
             if (latest_ft_record) {
               latest_ft_record.lastTimestamp = highest_timestamp
               latest_ft_record.lastId = highest_id
               latest_ft_record.save(flush: true, failOnError: true)
             }
             else {
-              log.error("Unable to locate free text control record with ID ${latest_ft_record.id}. Possibe parallel FT update")
+              log.error("Unable to locate free text control record with ID ${id}. Possibe parallel FT update")
             }
           }
           cleanUpGorm()

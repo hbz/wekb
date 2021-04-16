@@ -4,7 +4,7 @@
           <gokb:annotatedLabel owner="${d}" property="name">Imprint Name</gokb:annotatedLabel>
   </dt>
   <dd>
-          <gokb:xEditable class="ipe" owner="${d}" field="name" />
+          <gokb:xEditable  owner="${d}" field="name" />
   </dd>
   <dt>
     <gokb:annotatedLabel owner="${d}" property="org">Represented Org</gokb:annotatedLabel>
@@ -39,8 +39,8 @@
           <tr>
             <td><g:link controller="resource" action="show" id="${p.fromComponent.class.name}:${p.fromComponent.id}"> ${p.fromComponent.name} </g:link></td>
             <td><gokb:xEditableRefData owner="${p}" field="status" config="${RCConstants.COMBO_STATUS}" /></td>
-            <td><gokb:xEditable class="ipe" owner="${p}" field="startDate" type="date" /></td>
-            <td><gokb:xEditable class="ipe" owner="${p}" field="endDate" type="date" /></td>
+            <td><gokb:xEditable  owner="${p}" field="startDate" type="date" /></td>
+            <td><gokb:xEditable  owner="${p}" field="endDate" type="date" /></td>
             <td><g:link controller="ajaxSupport" action="deleteCombo" id="${p.id}">Delete</g:link></td>
           </tr>
         </g:each>

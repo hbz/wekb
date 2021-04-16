@@ -3,7 +3,7 @@
 
   <dl class="dl-horizontal">
     <dt> <gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel> </dt>
-    <dd> <gokb:xEditable class="ipe" owner="${d}" field="name" /> </dd>
+    <dd> <gokb:xEditable  owner="${d}" field="name" /> </dd>
     <dt> <gokb:annotatedLabel owner="${d}" property="status">Status</gokb:annotatedLabel> </dt>
     <dd> <gokb:xEditableRefData owner="${d}" field="status" config="${RCConstants.KBCOMPONENT_STATUS}" /> </dd>
     <dt> <gokb:annotatedLabel owner="${d}" property="status">Instances</gokb:annotatedLabel> </dt>

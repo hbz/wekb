@@ -26,8 +26,8 @@
           <tr>
             <td><g:link controller="resource" action="show" id="${p.toComponent.class.name}:${p.toComponent.id}"> ${p.toComponent.name} </g:link></td>
             <td><gokb:xEditableRefData owner="${p}" field="status" config="${RCConstants.COMBO_STATUS}" /></td>
-            <td><gokb:xEditable class="ipe" owner="${p}" field="startDate" type="date" /></td>
-            <td><gokb:xEditable class="ipe" owner="${p}" field="endDate" type="date" /></td>
+            <td><gokb:xEditable  owner="${p}" field="startDate" type="date" /></td>
+            <td><gokb:xEditable  owner="${p}" field="endDate" type="date" /></td>
             <td><g:if test="${d.isEditable()}"><g:link controller="ajaxSupport" action="deleteCombo" id="${p.id}"  onclick="return confirm('Are you sure you want to delete this link?')">Delete</g:link></g:if></td>
           </tr>
         </g:each>

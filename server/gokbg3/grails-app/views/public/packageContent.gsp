@@ -37,8 +37,7 @@
                         <gokb:annotatedLabel owner="${pkg}" property="nominalPlatform">Nominal Platform</gokb:annotatedLabel>
                     </dt>
                     <dd class="col-9 text-left">
-                        <gokb:manyToOneReferenceTypedown owner="${pkg}" field="nominalPlatform"
-                                                         name="${comboprop}" baseClass="org.gokb.cred.Platform" >
+                        <gokb:manyToOneReferenceTypedown owner="${pkg}" field="nominalPlatform" baseClass="org.gokb.cred.Platform" >
                             ${pkg.nominalPlatform?.name ?: ''}
                         </gokb:manyToOneReferenceTypedown>
                     </dd>
@@ -52,22 +51,26 @@
                     </g:if>
 
                     <dt class="col-3 text-right"> <gokb:annotatedLabel owner="${pkg}" property="lastUpdateComment">Last Update Comment</gokb:annotatedLabel> </dt>
-                    <dd class="col-9 text-left"> <gokb:xEditable class="ipe" owner="${pkg}" field="lastUpdateComment" /> </dd>
+                    <dd class="col-9 text-left"> <gokb:xEditable  owner="${pkg}" field="lastUpdateComment" /> </dd>
 
                     <dt class="col-3 text-right"> <gokb:annotatedLabel owner="${pkg}" property="editStatus">Edit Status</gokb:annotatedLabel> </dt>
                     <dd class="col-9 text-left"> <gokb:xEditableRefData owner="${pkg}" field="editStatus" config="${RCConstants.KBCOMPONENT_EDIT_STATUS}" /> </dd>
 
                     <dt class="col-3 text-right"> <gokb:annotatedLabel owner="${pkg}" property="description">Description</gokb:annotatedLabel> </dt>
-                    <dd class="col-9 text-left"> <gokb:xEditable class="ipe" owner="${pkg}" field="description" /> </dd>
+                    <dd class="col-9 text-left"> <gokb:xEditable  owner="${pkg}" field="description" /> </dd>
 
                     <dt class="col-3 text-right"> <gokb:annotatedLabel owner="${pkg}" property="descriptionURL">URL</gokb:annotatedLabel> </dt>
-                    <dd class="col-9 text-left"> <gokb:xEditable class="ipe" owner="${pkg}" field="descriptionURL" /> </dd>
+                    <dd class="col-9 text-left"> <gokb:xEditable  owner="${pkg}" field="descriptionURL" />
+                        <g:if test="${pkg.descriptionURL}">
+                        &nbsp;<a href="${pkg.descriptionURL}" target="new"><i class="fas fa-external-link-alt"></i></a>
+                        </g:if>
+                    </dd>
 
                     <dt class="col-3 text-right">
                         <gokb:annotatedLabel owner="${pkg}" property="globalNote">Global Range</gokb:annotatedLabel>
                     </dt>
                     <dd class="col-9 text-left">
-                        <gokb:xEditable class="ipe" owner="${pkg}" field="globalNote" />
+                        <gokb:xEditable  owner="${pkg}" field="globalNote" />
                     </dd>
 
 
@@ -98,6 +101,13 @@
                         <span class="badge badge-secondary">${pkg.variantNames?.size() ?: '0'}</span>
                     </a>
                 </li>
+
+                <li>
+                    <a href="#ddcs" data-toggle="tab">DDCs
+                        <span class="badge badge-warning">${pkg.ddcs?.size() ?: '0'}</span>
+                    </a>
+                </li>
+
             </ul>
             <div id="my-tab-content" class="tab-content">
                 <div class="tab-pane fade show active" id="titledetails">
@@ -168,7 +178,10 @@
                     </g:if>
 
                 </div>
+
                 <g:render template="/tabTemplates/showVariantnames" model="${[d: pkg]}"/>
+
+                <g:render template="/tabTemplates/showDDCs" model="${[d:pkg]}" />
 
                 <div class="tab-pane fade" id="identifiers">
                     <dl>

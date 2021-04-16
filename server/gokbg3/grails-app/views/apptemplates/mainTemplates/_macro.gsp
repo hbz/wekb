@@ -4,14 +4,14 @@
 		<gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel>
 	</dt>
 	<dd>
-		<gokb:xEditable class="ipe" owner="${d}" field="name" />
+		<gokb:xEditable  owner="${d}" field="name" />
 	</dd>
 	<g:if test="${d?.id != null}">
 	  <dt>
 	    <gokb:annotatedLabel owner="${d}" property="description">Description</gokb:annotatedLabel>
 	  </dt>
 	  <dd class="multiline" >
-	    <gokb:xEditable class="ipe" owner="${d}" field="description" />
+	    <gokb:xEditable  owner="${d}" field="description" />
 	  </dd>
 		<dt>
 			<gokb:annotatedLabel owner="${d}" property="tags">Tags</gokb:annotatedLabel>
@@ -53,7 +53,7 @@
 			<gokb:annotatedLabel owner="${d}" property="refineTransformations">Refine Transformations</gokb:annotatedLabel>
 		</dt>
 		<dd class="multiline json refine-transform preformatted" >
-			<gokb:xEditable class="ipe" owner="${d}" field="refineTransformations" data-tpl="tpl" />
+			<gokb:xEditable  owner="${d}" field="refineTransformations" data-tpl="tpl" />
 		</dd>
 	</g:if>
 </dl>

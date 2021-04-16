@@ -4,20 +4,20 @@
 		<gokb:annotatedLabel owner="${d}" property="domainClassName">Domain Class Name</gokb:annotatedLabel>
 	</dt>
 	<dd>
-		<gokb:xEditable class="ipe" owner="${d}" field="dcName" />
+		<gokb:xEditable  owner="${d}" field="dcName" />
 	</dd>
 	<dt>
 		<gokb:annotatedLabel owner="${d}" property="displayName">Display Name</gokb:annotatedLabel>
 	</dt>
 	<dd>
-		<gokb:xEditable class="ipe" owner="${d}" field="displayName" />
+		<gokb:xEditable  owner="${d}" field="displayName" />
 	</dd>
 
 	<dt>
 		<gokb:annotatedLabel owner="${d}" property="dcSortOrder">Sort Order</gokb:annotatedLabel>
 	</dt>
 	<dd>
-		<gokb:xEditable class="ipe" owner="${d}" field="dcSortOrder" />
+		<gokb:xEditable  owner="${d}" field="dcSortOrder" />
 	</dd>
 
 	<dt>

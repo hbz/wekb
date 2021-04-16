@@ -11,7 +11,7 @@
       </div>
     </g:if>
     <g:else>
-      <gokb:xEditable class="ipe" owner="${d}" field="name" />
+      <gokb:xEditable  owner="${d}" field="name" />
     </g:else>
   </dd>
 
@@ -72,14 +72,14 @@
     <gokb:annotatedLabel owner="${d}" property="publishedFrom">Published From</gokb:annotatedLabel>
   </dt>
   <dd>
-    <gokb:xEditable class="ipe" owner="${d}" type="date" field="publishedFrom" />
+    <gokb:xEditable  owner="${d}" type="date" field="publishedFrom" />
   </dd>
 
   <dt>
     <gokb:annotatedLabel owner="${d}" property="publishedTo">Published To</gokb:annotatedLabel>
   </dt>
   <dd>
-    <gokb:xEditable class="ipe" owner="${d}" type="date" field="publishedTo" />
+    <gokb:xEditable  owner="${d}" type="date" field="publishedTo" />
   </dd>
 
   <g:if test="${d?.id != null && d.titleHistory}">

@@ -1,6 +1,6 @@
 <%@ page import="de.wekb.helper.RCConstants; org.gokb.cred.RefdataCategory" %>
 <ul>
-    <g:each in="${d.nationalRanges.sort { it.value }}" var="nationalRange">
+    <g:each in="${d.nationalRanges.sort { it.getI10n('value') }}" var="nationalRange">
         <li>${nationalRange.value}
         <g:if test="${editable}">
             <g:link controller="ajaxSupport" action="deleteNationalRange"
@@ -32,11 +32,11 @@
                         <div class="field">
                             <label>National Range:</label>
 
-                            <g:select from="${RefdataCategory.lookup(RCConstants.COUNTRY)}"
+                            <g:select from="${RefdataCategory.lookup(RCConstants.COUNTRY).sort {it.getI10n('value')}}"
                                       class="ui dropdown fluid"
                                       id="nationalRangeSelection"
                                       optionKey="id"
-                                      optionValue="${{ it.value }}"
+                                      optionValue="${{ it.getI10n('value') }}"
                                       name="nationalRange"
                                       value=""/>
                         </div>

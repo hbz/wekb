@@ -179,7 +179,9 @@ class TitleInstancePackagePlatform extends KBComponent {
   ]
 
   static hasMany = [
-    coverageStatements: TIPPCoverageStatement
+    coverageStatements: TIPPCoverageStatement,
+    ddcs: RefdataValue
+
   ]
 
   static mappedBy = [
@@ -220,6 +222,12 @@ class TitleInstancePackagePlatform extends KBComponent {
     series column: 'series', type: 'text'
     url column: 'url', type: 'text'
     subjectArea column: 'subject_area', type: 'text'
+
+    ddcs             joinTable: [
+            name:   'tipp_dewey_decimal_classification',
+            key:    'tipp_fk',
+            column: 'ddc_rv_fk', type:   'BIGINT'
+    ], lazy: false
   }
 
   static constraints = {
@@ -249,6 +257,7 @@ class TitleInstancePackagePlatform extends KBComponent {
     precedingPublicationTitleId(nullable: true, blank: true)
     lastChangedExternal(nullable: true, blank: true)
     medium(nullable: true, blank: true)
+    ddcs(nullable: true)
   }
 
   public static final String restPath = "/package-titles"
@@ -834,8 +843,8 @@ class TitleInstancePackagePlatform extends KBComponent {
     if (pkg && plt && ti && curator) {
       log.debug("See if we already have a tipp")
       def tipps = TitleInstancePackagePlatform.executeQuery('select tipp from TitleInstancePackagePlatform as tipp, Combo as pkg_combo, Combo as platform_combo  ' +
-        'where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg' +
-        'and platform_combo.toComponent=tipp and platform_combo.fromComponent = :platform' +
+        'where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg ' +
+        'and platform_combo.toComponent=tipp and platform_combo.fromComponent = :platform ' +
         'and tipp.name in (:tiName, :tiDtoName)',
         [pkg: pkg, platform: plt, tiName: ti.name, tiDtoName: tipp_dto.name])
       def uuid_tipp = tipp_dto.uuid ? TitleInstancePackagePlatform.findByUuid(tipp_dto.uuid) : null
@@ -1082,9 +1091,19 @@ class TitleInstancePackagePlatform extends KBComponent {
             }
           }
         }
-      }
 
-      tipp.save(flush: true, failOnError: true);
+        if (tipp_dto.ddcs) {
+            tipp_dto.ddcs.each{ String ddc ->
+              RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.DDC, ddc)
+
+              if(refdataValue && !(refdataValue in result.ddcs)){
+                result.addToDdcs(refdataValue)
+              }
+            }
+        }
+
+        tipp.save(flush: true, failOnError: true);
+      }
 
       result = tipp
     } else {

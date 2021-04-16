@@ -769,6 +769,7 @@ class GlobalSearchTemplatesService {
                                 [heading: 'List Status', property: 'listStatus?.value', sort: 'listStatus'],
                                 [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
+                                [heading: 'Titles', property: 'currentTippCount'],
                         ],
                         actions   : [
                                 [name: 'Register Web Hook for all Packages', code: 'general::registerWebhook', iconClass: 'glyphicon glyphicon-link']

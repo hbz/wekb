@@ -43,7 +43,7 @@
         <gokb:annotatedLabel owner="${d}" property="url">Host Platform URL</gokb:annotatedLabel>
     </dt>
     <dd class="col-9 text-left">
-        <gokb:xEditable class="ipe" owner="${d}" field="url"/>
+        <gokb:xEditable  owner="${d}" field="url"/>
         <g:if test="${d.url}">
             &nbsp;<a href="${d.url}" target="new"><i class="fas fa-external-link-alt"></i></a>
         </g:if>
@@ -75,21 +75,21 @@
         <gokb:annotatedLabel owner="${d}" property="firstAuthor">First Author</gokb:annotatedLabel>
     </dt>
     <dd class="col-9 text-left">
-        <gokb:xEditable class="ipe" owner="${d}" field="firstAuthor"/>
+        <gokb:xEditable  owner="${d}" field="firstAuthor"/>
     </dd>
 
     <dt class="col-3 text-right">
         <gokb:annotatedLabel owner="${d}" property="publisherName">Publisher Name</gokb:annotatedLabel>
     </dt>
     <dd class="col-9 text-left">
-        <gokb:xEditable class="ipe" owner="${d}" field="publisherName"/>
+        <gokb:xEditable  owner="${d}" field="publisherName"/>
     </dd>
 
     <dt class="col-3 text-right">
         <gokb:annotatedLabel owner="${d}" property="dateFirstInPrint">Date first in print</gokb:annotatedLabel>
     </dt>
     <dd class="col-9 text-left">
-        <gokb:xEditable class="ipe" owner="${d}" type="date"
+        <gokb:xEditable  owner="${d}" type="date"
                         field="dateFirstInPrint"/>
     </dd>
 
@@ -97,7 +97,7 @@
         <gokb:annotatedLabel owner="${d}" property="dateFirstOnline">Date first online</gokb:annotatedLabel>
     </dt>
     <dd class="col-9 text-left">
-        <gokb:xEditable class="ipe" owner="${d}" type="date"
+        <gokb:xEditable  owner="${d}" type="date"
                         field="dateFirstOnline"/>
     </dd>
 
@@ -105,7 +105,7 @@
         <gokb:annotatedLabel owner="${d}" property="accessStartDate">Access Start Date</gokb:annotatedLabel>
     </dt>
     <dd class="col-9 text-left">
-        <gokb:xEditable class="ipe" owner="${d}" type="date"
+        <gokb:xEditable  owner="${d}" type="date"
                         field="accessStartDate"/>
     </dd>
 
@@ -113,7 +113,7 @@
         <gokb:annotatedLabel owner="${d}" property="accessEndDate">Access End Date</gokb:annotatedLabel>
     </dt>
     <dd class="col-9 text-left">
-        <gokb:xEditable class="ipe" owner="${d}" type="date"
+        <gokb:xEditable  owner="${d}" type="date"
                         field="accessEndDate"/>
     </dd>
 
@@ -121,14 +121,14 @@
         <gokb:annotatedLabel owner="${d}" property="volumeNumber">Volume Number</gokb:annotatedLabel>
     </dt>
     <dd class="col-9 text-left">
-        <gokb:xEditable class="ipe" owner="${d}" field="volumeNumber"/>
+        <gokb:xEditable  owner="${d}" field="volumeNumber"/>
     </dd>
 
     <dt class="col-3 text-right">
         <gokb:annotatedLabel owner="${d}" property="editionStatement">Edition</gokb:annotatedLabel>
     </dt>
     <dd class="col-9 text-left">
-        <gokb:xEditable class="ipe" owner="${d}" field="editionStatement"/>
+        <gokb:xEditable  owner="${d}" field="editionStatement"/>
     </dd>
 
     <dt class="col-3 text-right">
@@ -136,7 +136,7 @@
                              property="parentPublicationTitleId">Parent publication title ID</gokb:annotatedLabel>
     </dt>
     <dd class="col-9 text-left">
-        <gokb:xEditable class="ipe" owner="${d}" field="parentPublicationTitleId"/>
+        <gokb:xEditable  owner="${d}" field="parentPublicationTitleId"/>
     </dd>
 
     <dt class="col-3 text-right">
@@ -144,14 +144,14 @@
                              property="precedingPublicationTitleId">Preceding publication title ID</gokb:annotatedLabel>
     </dt>
     <dd class="col-9 text-left">
-        <gokb:xEditable class="ipe" owner="${d}" field="precedingPublicationTitleId"/>
+        <gokb:xEditable  owner="${d}" field="precedingPublicationTitleId"/>
     </dd>
 
     <dt class="col-3 text-right">
         <gokb:annotatedLabel owner="${d}" property="reference">Reference</gokb:annotatedLabel>
     </dt>
     <dd class="col-9 text-left">
-        <gokb:xEditable class="ipe" owner="${d}" field="reference"/>
+        <gokb:xEditable  owner="${d}" field="reference"/>
     </dd>
 
     <dt class="col-3 text-right">
@@ -175,7 +175,7 @@
         <gokb:annotatedLabel owner="${d}" property="lastChangedExternal">Last change</gokb:annotatedLabel>
     </dt>
     <dd class="col-9 text-left">
-        <gokb:xEditable class="ipe" owner="${d}" field="lastChangedExternal" type='date'/>
+        <gokb:xEditable  owner="${d}" field="lastChangedExternal" type='date'/>
     </dd>
 
     <dt class="col-3 text-right">

@@ -33,7 +33,7 @@ public class DisplayTemplateService {
     globalDisplayTemplates.put('org.gokb.cred.ReviewRequest',[ type:'staticgsp', rendername:'revreq' ]);
     globalDisplayTemplates.put('org.gokb.cred.Source',[ type:'staticgsp', rendername:'source' ]);
     globalDisplayTemplates.put('org.gokb.cred.TitleInstance',[ type:'staticgsp', rendername:'title', noCreate:true ]);
-    globalDisplayTemplates.put('org.gokb.cred.TitleInstancePackagePlatform',[ type:'staticgsp', rendername:'tipp', noCreate:true ]);
+    globalDisplayTemplates.put('org.gokb.cred.TitleInstancePackagePlatform',[ type:'staticgsp', rendername:'tipp']);
     globalDisplayTemplates.put('org.gokb.cred.User',[ type:'staticgsp', rendername:'user', noCreate:true ]);
     globalDisplayTemplates.put('org.gokb.cred.UserOrganisation',[ type:'staticgsp', rendername:'user_org' ]);
     globalDisplayTemplates.put('org.gokb.cred.Work',[ type:'staticgsp', rendername:'work' ]);

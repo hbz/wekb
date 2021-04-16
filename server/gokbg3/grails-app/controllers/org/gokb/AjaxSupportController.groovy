@@ -1666,4 +1666,54 @@ class AjaxSupportController {
 
     redirect(url: request.getHeader('referer'))
   }
+
+  @Transactional
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
+  def addDDC() {
+    Map<String, Object> result = [:]
+
+    def object = resolveOID2(params.object)
+
+    if (!object) {
+      flash.message = message(code: 'default.not.found.message', args: ['Object', params.id]) as String
+      redirect(url: request.getHeader('referer'))
+      return
+    }
+    result.editable = accessService.checkEditableObject(object, params)
+
+    if (result.editable) {
+      RefdataValue ddc = RefdataValue.get(params.ddc)
+      if(ddc && !(ddc in object.ddcs)) {
+        object.addToDdcs(ddc)
+        object.save()
+      }
+    }
+
+    redirect(url: request.getHeader('referer'))
+  }
+
+  @Transactional
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
+  def deleteDDC() {
+    Map<String, Object> result = [:]
+
+    def object = resolveOID2(params.object)
+
+    if (!object) {
+      flash.message = message(code: 'default.not.found.message', args: ['Object', params.id]) as String
+      redirect(url: request.getHeader('referer'))
+      return
+    }
+    result.editable = accessService.checkEditableObject(object, params)
+
+    if (result.editable) {
+      RefdataValue ddc = RefdataValue.get(params.removeDDC)
+      if(ddc && (ddc in object.ddcs)) {
+        object.removeFromDdcs(ddc)
+        object.save()
+      }
+    }
+
+    redirect(url: request.getHeader('referer'))
+  }
 }

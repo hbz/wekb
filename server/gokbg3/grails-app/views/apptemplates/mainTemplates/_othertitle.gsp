@@ -11,7 +11,7 @@
       </div>
     </g:if>
     <g:else>
-      <gokb:xEditable class="ipe" owner="${d}" field="name" />
+      <gokb:xEditable  owner="${d}" field="name" />
     </g:else>
   </dd>
 
