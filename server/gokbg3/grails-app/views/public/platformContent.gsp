@@ -19,7 +19,7 @@
     <g:if test="${platform}">
         <h1>Platform: <span style="font-weight:bolder;">${platform.name}</span></h1>
         <div class="row">
-            <div class="col-sm-9">
+            <div class="col-md-9">
                 <g:render template="platform"  model="${[d: platform]}"/>
             </div>
             <g:render template="rightBox" model="${[d: platform]}"/>

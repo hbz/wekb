@@ -57,7 +57,7 @@
                     <gokb:annotatedLabel owner="${d}" property="coverage">Coverage</gokb:annotatedLabel>
                 </dt>
                 <dd class="col-9 text-left">
-                    <table class="table table-striped">
+                    <table class="table table-striped table-responsive-stack">
                         <thead>
                         <tr>
                             <th>Start Date</th>

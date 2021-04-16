@@ -17,7 +17,7 @@
         </g:if>
         <g:if test="${pkg}">
             <h1>Package: <span style="font-weight:bolder;">${pkgName}</span></h1>
-            <div class="col-sm-9">
+            <div class="col-md-9">
                 <dl class="row">
                     <dt class="col-3 text-right">
                         <gokb:annotatedLabel owner="${pkg}" property="provider">Provider</gokb:annotatedLabel>
@@ -124,7 +124,7 @@
                             </g:form>
                         </div>
                     </div>
-                    <table class="table table-striped">
+                    <table class="table table-striped table-responsive-stack">
                             <thead>
                                 <tr>
                                         <th></th>

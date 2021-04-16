@@ -1,4 +1,4 @@
-<div class="col-3">
+<div class="col-md-3">
     <div class="card p-4">
         <h2>Curated By</h2>
         <ul>
