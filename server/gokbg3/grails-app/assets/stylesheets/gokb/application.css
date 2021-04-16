@@ -27,14 +27,14 @@ a {
 }
 .nav-tabs .nav-link, .nav-tabs .nav-link.disabled, .nav-tabs .nav-link.disabled:focus, .nav-tabs .nav-link.disabled:hover {
   border-color: rgba(0,0,0,.1);
-  background-color: #FBFBF5;
+  background-color: #FBFBFB;
 }
 .btn-primary {
   background-color: #007da7;
   border-color: #007da7;
 }
 .table-striped tbody tr:nth-of-type(odd) {
-  background-color: #FBFBF5;
+  background-color: #FBFBFB;
 }
 
 body {

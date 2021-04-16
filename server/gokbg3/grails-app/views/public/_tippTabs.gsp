@@ -40,9 +40,9 @@
         </a>
     </li>
 
-    <li>
-        <a href="#ddcs" data-toggle="tab">DDCs
-            <span class="badge badge-warning">${d.ddcs.size() ?: '0'}</span>
+    <li role="presentation" class="nav-item">
+        <a class="nav-link" href="#ddcs" data-toggle="tab">DDCs
+            <span class="badge badge-secondary">${d.ddcs.size() ?: '0'}</span>
         </a>
     </li>
 </ul>
