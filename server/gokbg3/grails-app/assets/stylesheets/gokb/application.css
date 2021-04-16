@@ -19,17 +19,17 @@
 /** PUBLIC START **/
 /* Mobile Tables START */
 
-.table-responsive-stack .table-responsive-stack-thead {
+.wekb-table-responsive-stack .wekb-table-responsive-stack-thead {
   font-weight: bold;
 }
 
 @media screen and (max-width: 768px) {
-  .table-responsive-stack td,
-  .table-responsive-stack th {
+  .wekb-table-responsive-stack td,
+  .wekb-table-responsive-stack th {
     display:block;
     flex: 1 1 auto;
   }
-  .table-responsive-stack tr {
+  .wekb-table-responsive-stack tr {
     flex-direction: column;
     border-bottom: 3px solid #ccc;
     display:block;

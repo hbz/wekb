@@ -124,7 +124,7 @@
                             </g:form>
                         </div>
                     </div>
-                    <table class="table table-striped table-responsive-stack">
+                    <table class="table table-striped wekb-table-responsive-stack">
                             <thead>
                                 <tr>
                                         <th></th>
