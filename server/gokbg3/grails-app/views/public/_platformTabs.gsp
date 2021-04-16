@@ -15,7 +15,7 @@
             </li>
             <li role="presentation" class="nav-item">
                 <a class="nav-link"  href="#altnames" data-toggle="tab">Alternate Names <span
-                    class="badge badge-secondary">${d.variantNames?.size() ?: '0'}</span></a>
+                    class="badge badge-pill badge-info">${d.variantNames?.size() ?: '0'}</span></a>
             </li>
             <g:if test="${controllerName != 'public'}">
                 <g:if test="${grailsApplication.config.gokb.decisionSupport?.active}">
@@ -27,7 +27,7 @@
 
                 <li role="presentation" class="nav-item">
                     <a class="nav-link" href="#review" data-toggle="tab">Review Tasks (Open/Total)<span
-                        class="badge badge-secondary">
+                        class="badge badge-pill badge-info">
                     ${d.reviewRequests?.findAll { it.status == org.gokb.cred.RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STATUS, 'Open') }?.size() ?: '0'}/${d.reviewRequests.size()}
 
                 </span></a>
