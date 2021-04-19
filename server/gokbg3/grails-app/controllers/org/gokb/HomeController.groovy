@@ -86,6 +86,7 @@ class HomeController {
       html {
         result.user = user
         result.curator = [user]
+        result.editable = true
 
         result
       }
@@ -107,6 +108,8 @@ class HomeController {
     def result = [:]
     User user = springSecurityService.currentUser
     result.user = user
+    result.editable = true
+
     result
   }
 

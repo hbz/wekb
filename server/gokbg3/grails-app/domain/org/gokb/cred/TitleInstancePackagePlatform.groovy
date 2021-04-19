@@ -760,10 +760,10 @@ class TitleInstancePackagePlatform extends KBComponent {
       }
     }
 
-    if (tipp_dto.lastChangedExternal) {
-      LocalDateTime lce = GOKbTextUtils.completeDateString(tipp_dto.lastChangedExternal, false)
+    if (tipp_dto.last_changed) {
+      LocalDateTime lce = GOKbTextUtils.completeDateString(tipp_dto.last_changed, false)
       if (!lce) {
-        errors.put('lastChangedExternal', [message: "Unable to parse", baddata: tipp_dto.remove('lastChangedExternal')])
+        errors.put('last_changed', [message: "Unable to parse", baddata: tipp_dto.remove('last_changed')])
       }
     }
 

@@ -4,13 +4,13 @@
 
 <ul id="tabs" class="nav nav-tabs">
 
-    <g:if test="${d.niceName == 'Journal'}">
+    <g:if test="${d.publicationType?.value == 'Serial'}">
          <li role="presentation" class=nav-item">
             <a class="nav-link active" href="#tippcoverage" data-toggle="tab">Coverage</a>
         </li>
     </g:if>
     <li role="presentation" class=nav-item">
-        <a class="nav-link" href="#identifiers" data-toggle="tab">Identifiers <span
+        <a class="nav-link ${d.publicationType?.value != 'Serial' ? 'active' : ''}" href="#identifiers" data-toggle="tab">Identifiers <span
             class="badge badge-warning">${d?.getCombosByPropertyNameAndStatus('ids', 'Active')?.size() ?: '0'}</span>
     </a>
     </li>
@@ -39,9 +39,8 @@
             <span class="badge badge-warning">${d.prices?.size() ?: '0'}</span>
         </a>
     </li>
-
-    <li>
-        <a href="#ddcs" data-toggle="tab">DDCs
+    <li role="presentation" class=nav-item">
+        <a class="nav-link" href="#ddcs" data-toggle="tab">DDCs
             <span class="badge badge-warning">${d.ddcs.size() ?: '0'}</span>
         </a>
     </li>
@@ -50,7 +49,7 @@
 
 <div id="my-tab-content" class="tab-content">
 
-    <g:if test="${d.niceName == 'Journal'}">
+    <g:if test="${d.publicationType?.value == 'Serial'}">
         <div class="tab-pane fade show active" id="tippcoverage">
             <dl class="row">
                 <dt class="col-3 text-right">
@@ -183,7 +182,7 @@
     </g:if>
 
 
-    <div class="tab-pane fade" id="identifiers">
+    <div class="tab-pane fade ${d.publicationType?.value != 'Serial' ? 'show active' : ''}" id="identifiers">
         <dl class="row">
             <dt class="col-3 text-right">
                 <gokb:annotatedLabel owner="${d}" property="ids">Identifiers</gokb:annotatedLabel>
