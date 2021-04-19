@@ -331,6 +331,16 @@ public class HQLBuilder {
                                                          ( ( crit.defn.contextTree.wildcard=='R' || crit.defn.contextTree.wildcard=='B') ? '%' : '')
         break;
 
+      case 'exists':
+        if ( crit.defn.type=='lookup') {
+          def value = hql_builder_context.genericOIDService.resolveOID2(crit.value)
+          if(value && value.class.getSimpleName() == 'RefdataValue') {
+            hql_builder_context.query_clauses.add("${crit.defn.contextTree.negate ? 'not ' : ''} exists (select ${crit.defn.qparam} from ${scoped_property} as ${crit.defn.qparam} where ${crit.defn.qparam} = :${crit.defn.qparam} ) ");
+            hql_builder_context.bindvars[crit.defn.qparam] = value
+          }
+        }
+        break;
+
       default:
         log.error("Unhandled comparator '${crit.defn.contextTree.comparator}'. crit: ${crit}");
     }
