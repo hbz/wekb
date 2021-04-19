@@ -195,7 +195,7 @@
 
 
     <dt>
-        <gokb:annotatedLabel owner="${d}" property="lastChangedExternal">Last change</gokb:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="lastChangedExternal">Last Changed</gokb:annotatedLabel>
     </dt>
     <dd>
         <gokb:xEditable  owner="${d}" field="lastChangedExternal" type='date'/>
