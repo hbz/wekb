@@ -102,8 +102,8 @@
                     </a>
                 </li>
 
-                <li>
-                    <a href="#ddcs" data-toggle="tab">DDCs
+                <li role="presentation" class="nav-item">
+                    <a class="nav-link" href="#ddcs" data-toggle="tab">DDCs
                         <span class="badge badge-warning">${pkg.ddcs?.size() ?: '0'}</span>
                     </a>
                 </li>
@@ -199,6 +199,7 @@
                     </dl>
                 </div>
             </div>
+
             <g:render template="componentStatus" model="${[d: pkg]}"/>
         </div>
     </g:if>

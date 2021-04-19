@@ -233,7 +233,7 @@
             <a href="#tippcoverage" data-toggle="tab">Coverage</a>
         </li>
     </g:if>
-    <li><a href="#identifiers" data-toggle="tab">Identifiers <span
+    <li class="${d.publicationType?.value != 'Serial' ? 'active' : ''}"><a href="#identifiers" data-toggle="tab">Identifiers <span
             class="badge badge-warning">${d?.getCombosByPropertyNameAndStatus('ids', 'Active')?.size() ?: '0'}</span>
     </a>
     </li>
@@ -406,7 +406,7 @@
     </g:if>
 
 
-    <div class="tab-pane" id="identifiers">
+    <div class="tab-pane ${d.publicationType?.value != 'Serial' ? 'show active' : ''}" id="identifiers">
         <dl>
             <dt>
                 <gokb:annotatedLabel owner="${d}" property="ids">Identifiers</gokb:annotatedLabel>
