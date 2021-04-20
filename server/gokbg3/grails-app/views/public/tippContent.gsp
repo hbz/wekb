@@ -23,7 +23,7 @@
 
         <h1>Title: <span style="font-weight:bolder;">${tipp.name}</span></h1>
         <div class="row">
-            <div class="col-sm-9">
+            <div class="col-md-9">
                 <g:render template="tipp"  model="${[d: tipp]}"/>
             </div>
 

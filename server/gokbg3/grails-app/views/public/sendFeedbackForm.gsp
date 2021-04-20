@@ -8,9 +8,7 @@
 
 <body>
 <div class="container">
-    <h1 >Vielen Dank für Ihr Feedback!</h1>
-    <p>Ihr Feedbackformular wurde erfolgreich verschickt.</p>
-    <p>Vielen Dank, dass Sie sich Zeit genommen haben, uns von Ihren Problemen in Bezug auf die Barrierefreiheit von LAS:eR zu berichten. Sie helfen uns damit sehr, unser Angebot zu optimieren .</p>
+    <h1 >Thank you for sending us your feedback on accessibility in we:kb!</h1>
 </div>
 </body>
 </html>

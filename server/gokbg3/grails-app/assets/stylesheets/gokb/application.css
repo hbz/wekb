@@ -17,6 +17,54 @@
 */
 
 /** PUBLIC START **/
+/* Mobile Tables START */
+
+.wekb-table-responsive-stack .wekb-table-responsive-stack-thead {
+  font-weight: bold;
+}
+
+@media screen and (max-width: 768px) {
+  .wekb-table-responsive-stack td,
+  .wekb-table-responsive-stack th {
+    display:block;
+    flex: 1 1 auto;
+  }
+  .wekb-table-responsive-stack tr {
+    flex-direction: column;
+    border-bottom: 3px solid #ccc;
+    display:block;
+  }
+}
+/* Mobile Tables END */
+
+/* accessibility START*/
+a {
+  color: #007da7;
+}
+.badge-info {
+  background-color: #2A5967;
+}
+.nav-tabs .nav-link, .nav-tabs .nav-link.disabled, .nav-tabs .nav-link.disabled:focus, .nav-tabs .nav-link.disabled:hover {
+  border-color: rgba(0,0,0,.1);
+  background-color: #E2EAED;
+  color: black;
+}
+.btn-primary {
+  background-color: #007da7;
+  border-color: #007da7;
+}
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: #FBFBFB;
+}
+/* accessibility END*/
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+main {
+  flex:1;
+}
 
 /* Logo */
 .navbar-brand.mekb-logo{
@@ -27,8 +75,8 @@
 .wekb-numberChartHero {
   padding-top: 35px;
   padding-bottom: 35px;
-  color: white;
-  background-color: #a9ceda;
+  color: black;
+  background-color: #4c7f9029;
   margin-top: -1rem!important;
 }
 .wekb-numberChartHero .mekb-title{
