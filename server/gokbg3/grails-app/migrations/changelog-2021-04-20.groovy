@@ -42,7 +42,7 @@ databaseChangeLog = {
 
     changeSet(author: "djebeniani (generated)", id: "1618908946625-10") {
         addColumn(tableName: "title_instance_package_platform") {
-            column(name: "tipp_superceding_publication_title_id", type: "varchar(255)")
+            column(name: "tipp_superseding_publication_title_id", type: "varchar(255)")
         }
     }
 }

@@ -19,10 +19,10 @@
 
             <dt>
                 <gokb:annotatedLabel owner="${d}"
-                                     property="supercedingPublicationTitleId">Superceding publication title ID</gokb:annotatedLabel>
+                                     property="supersedingPublicationTitleId">superseding publication title ID</gokb:annotatedLabel>
             </dt>
             <dd>
-                <gokb:xEditable  owner="${d}" field="supercedingPublicationTitleId"/>
+                <gokb:xEditable  owner="${d}" field="supersedingPublicationTitleId"/>
             </dd>
 
             <dt>
