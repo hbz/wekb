@@ -4,13 +4,13 @@
 
 <ul id="tabs" class="nav nav-tabs">
 
-    <g:if test="${d.niceName == 'Journal'}">
+    <g:if test="${d.publicationType?.value == 'Serial'}">
          <li role="presentation" class=nav-item">
             <a class="nav-link active" href="#tippcoverage" data-toggle="tab">Coverage</a>
         </li>
     </g:if>
     <li role="presentation" class=nav-item">
-        <a class="nav-link" href="#identifiers" data-toggle="tab">Identifiers <span
+        <a class="nav-link ${d.publicationType?.value != 'Serial' ? 'active' : ''}" href="#identifiers" data-toggle="tab">Identifiers <span
             class="badge badge-pill badge-info">${d?.getCombosByPropertyNameAndStatus('ids', 'Active')?.size() ?: '0'}</span>
     </a>
     </li>
@@ -39,18 +39,21 @@
             <span class="badge badge-pill badge-info">${d.prices?.size() ?: '0'}</span>
         </a>
     </li>
-
-    <li role="presentation" class="nav-item">
+    <li role="presentation" class=nav-item">
         <a class="nav-link" href="#ddcs" data-toggle="tab">DDCs
-            <span class="badge badge-pill badge-info">${d.ddcs.size() ?: '0'}</span>
+            <span class="badge badge-pill badge-info">${d.ddcs.size()}</span>
         </a>
+    </li>
+
+    <li role="presentation" class=nav-item">
+        <a class="nav-link" href="#openAccess" data-toggle="tab">Open Access</a>
     </li>
 </ul>
 
 
 <div id="my-tab-content" class="tab-content">
 
-    <g:if test="${d.niceName == 'Journal'}">
+    <g:if test="${d.publicationType?.value == 'Serial'}">
         <div class="tab-pane fade show active" id="tippcoverage">
             <dl class="row">
                 <dt class="col-3 text-right">
@@ -183,7 +186,7 @@
     </g:if>
 
 
-    <div class="tab-pane fade" id="identifiers">
+    <div class="tab-pane fade ${d.publicationType?.value != 'Serial' ? 'show active' : ''}" id="identifiers">
         <dl class="row">
             <dt class="col-3 text-right">
                 <gokb:annotatedLabel owner="${d}" property="ids">Identifiers</gokb:annotatedLabel>
@@ -216,31 +219,15 @@
         </div>
     </g:if>
 
-    <div class="tab-pan fade" id="subjectArea">
-        <dl class="dl-horizontal">
-            <dt class="col-3 text-right">
-                <gokb:annotatedLabel owner="${d}" property="subjectArea">Subject Area</gokb:annotatedLabel>
-            </dt>
-            <dd class="col-9 text-left">
-                <gokb:xEditable owner="${d}" field="subjectArea"/>
-            </dd>
-        </dl>
-    </div>
+    <g:render template="/tabTemplates/showSubjectArea" model="${[d: d]}"/>
 
-    <div class="tab-pane fade" id="series">
+    <g:render template="/tabTemplates/showSeries" model="${[d: d]}"/>
 
-        <dl class="row">
-            <dt class="col-3 text-right">
-                <gokb:annotatedLabel owner="${d}" property="series">Series</gokb:annotatedLabel>
-            </dt>
-            <dd class="col-9 text-left">
-                <gokb:xEditable owner="${d}" field="series"/>
-            </dd>
-        </dl>
-    </div>
     <g:render template="/tabTemplates/showPrices" model="${[d: d]}"/>
 
-    <g:render template="/tabTemplates/showDDCs" model="${[d:d]}" />
+    <g:render template="/tabTemplates/showDDCs" model="${[d: d]}"/>
+
+    <g:render template="/tabTemplates/showOpenAccess" model="${[d: d]}"/>
 </div>
 <g:render template="componentStatus"
           model="${[d: d]}"/>

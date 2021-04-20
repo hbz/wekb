@@ -108,13 +108,13 @@ class GlobalSearchTemplatesService {
                                 [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : 'KBComponent.Status',
+                                        filter1    : RCConstants.KBCOMPONENT_STATUS,
                                         prompt     : 'Status',
                                         qparam     : 'qp_status',
                                         placeholder: 'Component Status',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'status'],
                                         // II: Default not yet implemented
-                                        default    : [type: 'query', query: 'select r from RefdataValue where r.value=:v and r.owner.description=:o', params: ['Current', 'KBComponent.Status']]
+                                        default    : [type: 'query', query: 'select r from RefdataValue where r.value=:v and r.owner.description=:o', params: ['Current', RCConstants.KBCOMPONENT_STATUS]]
                                 ],
                                 [
                                         type       : 'lookup',
@@ -128,7 +128,7 @@ class GlobalSearchTemplatesService {
                         ],
                         qbeGlobals: [
                                 ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
-                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': 'KBComponent.Status', 'type': 'java.lang.Object']
+                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
                         ],
                         qbeResults: [
                                 [heading: 'Type', property: 'niceName'],
@@ -155,6 +155,24 @@ class GlobalSearchTemplatesService {
                                         qparam     : 'qp_name',
                                         placeholder: 'Name of Curatory Group',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'name']
+                                ],
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.RefdataValue',
+                                        filter1    : RCConstants.CURATORY_GROUP_TYPE,
+                                        prompt     : 'Type',
+                                        qparam     : 'qp_type',
+                                        placeholder: 'Type',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'type'],
+                                ],
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.RefdataValue',
+                                        filter1    : RCConstants.KBCOMPONENT_STATUS,
+                                        prompt     : 'Status',
+                                        qparam     : 'qp_status',
+                                        placeholder: 'Component Status',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'status'],
                                 ],
                         ],
                         qbeGlobals: [
@@ -316,7 +334,7 @@ class GlobalSearchTemplatesService {
                         ],
                         qbeGlobals: [
                                 ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
-                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': 'KBComponent.Status', 'type': 'java.lang.Object']
+                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
                         ],
                         qbeResults: [
                                 [heading: 'Title', property: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id'], sort: 'name'],
@@ -356,7 +374,7 @@ class GlobalSearchTemplatesService {
                         ],
                         qbeGlobals: [
                                 ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
-                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': 'KBComponent.Status', 'type': 'java.lang.Object']
+                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
                         ],
                         qbeResults: [
                                 [heading: 'Title', property: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id'], sort: 'name'],
@@ -403,18 +421,18 @@ class GlobalSearchTemplatesService {
                                 [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : 'KBComponent.Status',
+                                        filter1    : RCConstants.KBCOMPONENT_STATUS,
                                         prompt     : 'Status',
                                         qparam     : 'qp_status',
                                         placeholder: 'Status of item',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'status'],
                                         // II: Default not yet implemented
-                                        default    : [type: 'query', query: 'select r from RefdataValue where r.value=:v and r.owner.description=:o', params: ['Current', 'KBComponent.Status']]
+                                        default    : [type: 'query', query: 'select r from RefdataValue where r.value=:v and r.owner.description=:o', params: ['Current', RCConstants.KBCOMPONENT_STATUS]]
                                 ],
                         ],
                         qbeGlobals: [
                                 ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
-                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': 'KBComponent.Status', 'type': 'java.lang.Object']
+                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
                         ],
                         qbeResults: [
                                 [heading: 'Title', property: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id'], sort: 'name'],
@@ -493,7 +511,7 @@ class GlobalSearchTemplatesService {
                                 [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : 'Job.Type',
+                                        filter1    : RCConstants.JOB_TYPE,
                                         prompt     : 'Type',
                                         qparam     : 'qp_type',
                                         placeholder: 'Type of Job',
@@ -532,7 +550,7 @@ class GlobalSearchTemplatesService {
                         ],
                         qbeGlobals: [
                                 ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
-                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': 'KBComponent.Status', 'type': 'java.lang.Object']
+                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
                         ],
                         qbeResults: [
                                 [heading: 'Name/Title', property: 'name', sort: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
@@ -560,7 +578,7 @@ class GlobalSearchTemplatesService {
                         ],
                         qbeGlobals: [
                                 ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
-                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': 'KBComponent.Status', 'type': 'java.lang.Object']
+                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
                         ],
                         qbeResults: [
                                 [heading: 'Name/Title', property: 'name', sort: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
@@ -618,7 +636,7 @@ class GlobalSearchTemplatesService {
                         ],
                         qbeGlobals: [
                                 ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
-                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': 'KBComponent.Status', 'type': 'java.lang.Object']
+                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
                         ],
                         qbeResults: [
                                 [heading: 'Name/Title', property: 'name', sort: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
@@ -644,6 +662,16 @@ class GlobalSearchTemplatesService {
                                         qparam     : 'qp_name',
                                         placeholder: 'Name or title of item',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'name', 'wildcard': 'R']
+                                ],
+
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.RefdataValue',
+                                        filter1    : RCConstants.ORG_ROLE,
+                                        prompt     : 'Role',
+                                        qparam     : 'qp_roles',
+                                        placeholder: 'Role',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'exists', 'prop': 'roles'],
                                 ],
                         ],
                         qbeGlobals: [
@@ -686,18 +714,18 @@ class GlobalSearchTemplatesService {
                                 [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : 'KBComponent.Status',
+                                        filter1    : RCConstants.KBCOMPONENT_STATUS,
                                         prompt     : 'Status',
                                         qparam     : 'qp_status',
                                         placeholder: 'Component Status',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'status'],
                                         // II: Default not yet implemented
-                                        default    : [type: 'query', query: 'select r from RefdataValue where r.value=:v and r.owner.description=:o', params: ['Current', 'KBComponent.Status']]
+                                        default    : [type: 'query', query: 'select r from RefdataValue where r.value=:v and r.owner.description=:o', params: ['Current', RCConstants.KBCOMPONENT_STATUS]]
                                 ],
                                 [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : 'Package.ListStatus',
+                                        filter1    : RCConstants.PACKAGE_LIST_STATUS,
                                         prompt     : 'List Status',
                                         qparam     : 'qp_liststatus',
                                         placeholder: 'List Status',
@@ -706,7 +734,7 @@ class GlobalSearchTemplatesService {
                                 [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : 'Package.Scope',
+                                        filter1    : RCConstants.PACKAGE_SCOPE,
                                         prompt     : 'Availability',
                                         qparam     : 'qp_scope',
                                         placeholder: 'Availability',
@@ -715,7 +743,7 @@ class GlobalSearchTemplatesService {
                                 [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : 'Package.ContentType',
+                                        filter1    : RCConstants.PACKAGE_CONTENT_TYPE,
                                         prompt     : 'Content Type',
                                         qparam     : 'qp_content',
                                         placeholder: 'Content Type',
@@ -758,7 +786,7 @@ class GlobalSearchTemplatesService {
                         ],
                         qbeGlobals: [
                                 ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
-                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': 'KBComponent.Status', 'type': 'java.lang.Object']
+                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
                         ],
                         qbeResults: [
                                 [heading: 'Provider', property: 'provider?.name', link: true],
@@ -798,18 +826,18 @@ class GlobalSearchTemplatesService {
                                 [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : 'KBComponent.Status',
+                                        filter1    : RCConstants.KBCOMPONENT_STATUS,
                                         prompt     : 'Status',
                                         qparam     : 'qp_status',
                                         placeholder: 'Component Status',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'status'],
                                         // II: Default not yet implemented
-                                        default    : [type: 'query', query: 'select r from RefdataValue where r.value=:v and r.owner.description=:o', params: ['Current', 'KBComponent.Status']]
+                                        default    : [type: 'query', query: 'select r from RefdataValue where r.value=:v and r.owner.description=:o', params: ['Current', RCConstants.KBCOMPONENT_STATUS]]
                                 ],
                         ],
                         qbeGlobals: [
                                 ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
-                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': 'KBComponent.Status', 'type': 'java.lang.Object']
+                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
                         ],
                         qbeResults: [
                                 [heading: 'Name/Title', property: 'name', sort: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
@@ -882,7 +910,7 @@ class GlobalSearchTemplatesService {
                                 [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : 'ReviewRequest.Status',
+                                        filter1    : RCConstants.REVIEW_REQUEST_STATUS,
                                         prompt     : 'Status',
                                         qparam     : 'qp_status',
                                         placeholder: 'Name or title of item',
@@ -897,7 +925,7 @@ class GlobalSearchTemplatesService {
                                 [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : 'ReviewRequest.StdDesc',
+                                        filter1    : RCConstants.REVIEW_REQUEST_STD_DESC,
                                         prompt     : 'Type',
                                         qparam     : 'qp_desc',
                                         placeholder: 'Standard description',
@@ -956,7 +984,7 @@ class GlobalSearchTemplatesService {
                         ],
                         qbeGlobals: [
                                 ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
-                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': 'KBComponent.Status', 'type': 'java.lang.Object']
+                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
                         ],
                         qbeResults: [
                                 [heading: 'ID', property: 'id', sort: 'id', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
@@ -1012,7 +1040,7 @@ class GlobalSearchTemplatesService {
                                 [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : 'TitleInstance.Medium',
+                                        filter1    : RCConstants.TITLEINSTANCE_MEDIUM,
                                         prompt     : 'Type',
                                         qparam     : 'qp_medium',
                                         placeholder: 'Medium of item',
@@ -1022,13 +1050,13 @@ class GlobalSearchTemplatesService {
                                 [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : 'KBComponent.Status',
+                                        filter1    : RCConstants.KBCOMPONENT_STATUS,
                                         prompt     : 'Status',
                                         qparam     : 'qp_status',
                                         placeholder: 'Status of item',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'status'],
                                         // II: Default not yet implemented
-                                        default    : [type: 'query', query: 'select r from RefdataValue where r.value=:v and r.owner.description=:o', params: ['Current', 'KBComponent.Status']]
+                                        default    : [type: 'query', query: 'select r from RefdataValue where r.value=:v and r.owner.description=:o', params: ['Current', RCConstants.KBCOMPONENT_STATUS]]
                                 ],
 
                                 // In order for this to work as users expect, we're going to need a unique clause at the root context, or we get
@@ -1042,7 +1070,7 @@ class GlobalSearchTemplatesService {
                         ],
                         qbeGlobals: [
                                 ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
-                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': 'KBComponent.Status', 'type': 'java.lang.Object']
+                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
                         ],
                         qbeResults: [
                                 [heading: 'ID', property: 'id', link: [controller: 'resource', action: 'show', id: 'x.r?.class?.name+\':\'+x.r?.id'], sort: 'name'],
@@ -1136,18 +1164,18 @@ class GlobalSearchTemplatesService {
                                 [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : 'KBComponent.Status',
+                                        filter1    : RCConstants.KBCOMPONENT_STATUS,
                                         prompt     : 'Status',
                                         qparam     : 'qp_status',
                                         placeholder: 'Status',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'status'],
                                         // II: Default not yet implemented
-                                        default    : [type: 'query', query: 'select r from RefdataValue where r.value=:v and r.owner.description=:o', params: ['Current', 'KBComponent.Status']]
+                                        default    : [type: 'query', query: 'select r from RefdataValue where r.value=:v and r.owner.description=:o', params: ['Current', RCConstants.KBCOMPONENT_STATUS]]
                                 ],
                         ],
                         qbeGlobals: [
                                 ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
-                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': 'KBComponent.Status', 'type': 'java.lang.Object']
+                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
                         ],
                         qbeResults: [
                                 [heading: 'Title Persistent Id', property: 'persistentId', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
@@ -1270,7 +1298,7 @@ class GlobalSearchTemplatesService {
                         ],
                         qbeGlobals: [
                                 ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
-                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': 'KBComponent.Status', 'type': 'java.lang.Object']
+                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
                         ],
                         qbeResults: [
                                 [heading: 'Title', property: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id'], sort: 'name'],

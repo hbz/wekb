@@ -378,7 +378,7 @@ class PackagesController {
     result
   }
 
-  @Transactional(readOnly = true)
+  /*@Transactional(readOnly = true)
   def kbart() {
     if (request.method == "GET") {
       if (params.id == "all") {
@@ -402,9 +402,9 @@ class PackagesController {
       }
       packageService.sendZip(packs, PackageService.ExportType.KBART, response)
     }
-  }
+  }*/
 
-  @Transactional(readOnly = true)
+  /*@Transactional(readOnly = true)
   def packageTSVExport() {
     if (request.method == "GET") {
       if (params.id == "all") {
@@ -427,5 +427,5 @@ class PackagesController {
       }
       packageService.sendZip(packs, PackageService.ExportType.TSV, response)
     }
-  }
+  }*/
 }

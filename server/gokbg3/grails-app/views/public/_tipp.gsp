@@ -79,6 +79,13 @@
     </dd>
 
     <dt class="col-3 text-right">
+        <gokb:annotatedLabel owner="${d}" property="firstAuthor">First Editor</gokb:annotatedLabel>
+    </dt>
+    <dd class="col-9 text-left">
+        <gokb:xEditable  owner="${d}" field="firstEditor"/>
+    </dd>
+
+    <dt class="col-3 text-right">
         <gokb:annotatedLabel owner="${d}" property="publisherName">Publisher Name</gokb:annotatedLabel>
     </dt>
     <dd class="col-9 text-left">
@@ -132,34 +139,11 @@
     </dd>
 
     <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}"
-                             property="parentPublicationTitleId">Parent publication title ID</gokb:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="accessType">Access Type</gokb:annotatedLabel>
     </dt>
     <dd class="col-9 text-left">
-        <gokb:xEditable  owner="${d}" field="parentPublicationTitleId"/>
-    </dd>
-
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}"
-                             property="precedingPublicationTitleId">Preceding publication title ID</gokb:annotatedLabel>
-    </dt>
-    <dd class="col-9 text-left">
-        <gokb:xEditable  owner="${d}" field="precedingPublicationTitleId"/>
-    </dd>
-
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="reference">Reference</gokb:annotatedLabel>
-    </dt>
-    <dd class="col-9 text-left">
-        <gokb:xEditable  owner="${d}" field="reference"/>
-    </dd>
-
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="editStatus">Edit Status</gokb:annotatedLabel>
-    </dt>
-    <dd class="col-9 text-left">
-        <gokb:xEditableRefData owner="${d}" field="editStatus"
-                               config="${RCConstants.KBCOMPONENT_EDIT_STATUS}"/>
+        <gokb:xEditableRefData owner="${d}" field="accessType"
+                               config="${RCConstants.TIPP_ACCESS_TYPE}"/>
     </dd>
 
     <dt class="col-3 text-right">
@@ -172,33 +156,10 @@
 
 
     <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="lastChangedExternal">Last change</gokb:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="lastChangedExternal">Last Changed</gokb:annotatedLabel>
     </dt>
     <dd class="col-9 text-left">
         <gokb:xEditable  owner="${d}" field="lastChangedExternal" type='date'/>
-    </dd>
-
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="format">Format</gokb:annotatedLabel>
-    </dt>
-    <dd class="col-9 text-left">
-        <gokb:xEditableRefData owner="${d}" field="format"
-                               config="${RCConstants.TIPP_FORMAT}"/>
-    </dd>
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="paymentType">Payment Type</gokb:annotatedLabel>
-    </dt>
-    <dd class="col-9 text-left">
-        <gokb:xEditableRefData owner="${d}" field="paymentType"
-                               config="${RCConstants.TIPP_PAYMENT_TYPE}"/>
-    </dd>
-
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="accessType">Access Type</gokb:annotatedLabel>
-    </dt>
-    <dd class="col-9 text-left">
-        <gokb:xEditableRefData owner="${d}" field="accessType"
-                               config="${RCConstants.TIPP_ACCESS_TYPE}"/>
     </dd>
 
 </dl>

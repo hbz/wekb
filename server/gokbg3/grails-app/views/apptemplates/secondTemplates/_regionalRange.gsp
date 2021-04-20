@@ -16,16 +16,9 @@
     <a data-toggle="modal" data-cache="false"
        data-target="#regionalRangeModal">Add Regional Range</a>
 
-    <div id="regionalRangeModal" class="qmodal modal modal-wide" role="dialog" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <g:form class="ui form" url="[controller: 'ajaxSupport', action: 'addRegionalRange']" method="post">
-                    <div class="modal-header">
-                        <h3 class="modal-title">Add Regional Range</h3>
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    </div>
+    <bootStrap:modal id="regionalRangeModal" title="Add Regional Range">
 
-                    <div class="modal-body">
+                <g:form class="ui form" url="[controller: 'ajaxSupport', action: 'addRegionalRange']" method="post">
 
                         <input type="hidden" name="package" value="${d.id}"/>
 
@@ -40,14 +33,6 @@
                                       name="regionalRange"
                                       value=""/>
                         </div>
-
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-default">Add</button>
-                    </div>
                 </g:form>
-            </div>
-        </div>
-    </div>
+    </bootStrap:modal>
 </g:if>

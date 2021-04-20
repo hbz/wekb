@@ -214,6 +214,7 @@ class Package extends KBComponent {
     result
   }
 
+  @Deprecated
   @Transient
   public getTitles(def onlyCurrent = true, int max = 10, offset = 0) {
     def all_titles = null
@@ -253,6 +254,7 @@ class Package extends KBComponent {
     return all_titles;
   }
 
+  @Deprecated
   @Transient
   public getCurrentTitleCount() {
     def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current');
@@ -372,7 +374,6 @@ select tipp.id,
        tipp.status,
        tipp.accessStartDate,
        tipp.accessEndDate,
-       tipp.format,
        plat.primaryUrl,
        tipp.lastUpdated,
        tipp.uuid,

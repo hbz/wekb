@@ -8,6 +8,7 @@ import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
+import wekb.ExportService
 import wekb.GlobalSearchTemplatesService
 
 
@@ -19,6 +20,7 @@ class WorkflowController{
   def packageService
   def dateFormatService
   GlobalSearchTemplatesService globalSearchTemplatesService
+  ExportService exportService
 
   def actionConfig = [
       'method::deleteSoft'     : [actionType: 'simple'],
@@ -958,7 +960,6 @@ class WorkflowController{
           tipp_dto.package = ['internalId': old_tipp.pkg.id]
           tipp_dto.platform = ['internalId': old_tipp.hostPlatform.id]
           tipp_dto.title = ['internalId': new_ti.id]
-          if (old_tipp.paymentType?.value) tipp_dto.paymentType = old_tipp.paymentType?.value
           if (old_tipp.accessType?.value) tipp_dto.accessType = old_tipp.accessType?.value
           tipp_dto.url = old_tipp.url ?: ""
           tipp_dto.coverage = []
@@ -1532,14 +1533,12 @@ class WorkflowController{
       return
     }
 
-    def status_current = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Current')
-    def combo_pkg_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
     def export_date = dateFormatService.formatDate(new Date())
     if (packages_to_export.size() == 1){
-      filename = "we:kb Export : ${packages_to_export[0].provider?.name} : ${packages_to_export[0].name} : ${export_date}.tsv"
+      filename = "kbart_${packages_to_export[0].provider?.name}_${packages_to_export[0].name}_${export_date}.tsv"
     }
     else{
-      filename = "we:kb Export : multiple_packages : ${export_date}.tsv"
+      filename = "kbart_multiple_packages_${export_date}.tsv"
     }
 
     try{
@@ -1547,7 +1546,7 @@ class WorkflowController{
       response.setHeader("Content-disposition", "attachment; filename=\"${filename}\"")
       response.contentType = "text/tab-separated-values" // "text/tsv"
       packages_to_export.each{ pkg ->
-        packageService.sendFile(pkg, PackageService.ExportType.KBART, response)
+        exportService.exportPackageTippsAsKBART(response.outputStream, pkg)
       }
     }
     catch (Exception e){
@@ -1595,14 +1594,12 @@ class WorkflowController{
       return
     }
 
-    def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
-    def combo_pkg_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
     def export_date = dateFormatService.formatDate(new Date())
     if (packages_to_export.size() == 1){
-      filename = "we:kb Export : ${packages_to_export[0].provider?.name} : ${packages_to_export[0].name} : ${export_date}.tsv"
+      filename = "wekb_package_${packages_to_export[0].provider?.name}_${packages_to_export[0].name}_${export_date}.tsv"
     }
     else{
-      filename = "we:kb Export : multiple_packages : ${export_date}.tsv"
+      filename = "wekb_package_multiple_packages_${export_date}.tsv"
     }
 
     try{
@@ -1611,7 +1608,7 @@ class WorkflowController{
       response.contentType = "text/tab-separated-values" // "text/tsv"
 
       packages_to_export.each{ pkg ->
-        packageService.sendFile(pkg, PackageService.ExportType.TSV, response)
+        exportService.exportPackageTippsAsTSV(response.outputStream, pkg)
       }
     }
     catch (Exception e){
