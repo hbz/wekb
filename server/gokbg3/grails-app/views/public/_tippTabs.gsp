@@ -41,8 +41,12 @@
     </li>
     <li role="presentation" class=nav-item">
         <a class="nav-link" href="#ddcs" data-toggle="tab">DDCs
-            <span class="badge badge-warning">${d.ddcs.size() ?: '0'}</span>
+            <span class="badge badge-warning">${d.ddcs.size()}</span>
         </a>
+    </li>
+
+    <li role="presentation" class=nav-item">
+        <a class="nav-link" href="#openAccess" data-toggle="tab">Open Access</a>
     </li>
 </ul>
 
@@ -215,31 +219,15 @@
         </div>
     </g:if>
 
-    <div class="tab-pan fade" id="subjectArea">
-        <dl class="dl-horizontal">
-            <dt class="col-3 text-right">
-                <gokb:annotatedLabel owner="${d}" property="subjectArea">Subject Area</gokb:annotatedLabel>
-            </dt>
-            <dd class="col-9 text-left">
-                <gokb:xEditable owner="${d}" field="subjectArea"/>
-            </dd>
-        </dl>
-    </div>
+    <g:render template="/tabTemplates/showSubjectArea" model="${[d: d]}"/>
 
-    <div class="tab-pane fade" id="series">
+    <g:render template="/tabTemplates/showSeries" model="${[d: d]}"/>
 
-        <dl class="row">
-            <dt class="col-3 text-right">
-                <gokb:annotatedLabel owner="${d}" property="series">Series</gokb:annotatedLabel>
-            </dt>
-            <dd class="col-9 text-left">
-                <gokb:xEditable owner="${d}" field="series"/>
-            </dd>
-        </dl>
-    </div>
     <g:render template="/tabTemplates/showPrices" model="${[d: d]}"/>
 
-    <g:render template="/tabTemplates/showDDCs" model="${[d:d]}" />
+    <g:render template="/tabTemplates/showDDCs" model="${[d: d]}"/>
+
+    <g:render template="/tabTemplates/showOpenAccess" model="${[d: d]}"/>
 </div>
 <g:render template="componentStatus"
           model="${[d: d]}"/>

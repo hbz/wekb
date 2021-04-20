@@ -359,7 +359,7 @@ class PublicController {
                           sanitize( pkg.name ) + '\t' + sanitize( pkg.getId() ) + '\t' + '\t' + sanitize( tipp.hostPlatform.name ) + '\t' +
                           sanitize( tipp.hostPlatform.primaryUrl ) + '\t' + sanitize( tipp.hostPlatform.getId() ) + '\t\t' + sanitize( tipp.status?.value ) + '\t' + sanitize( tipp.accessStartDate )  + '\t' +
                           sanitize( tipp.accessEndDate ) + '\t' + sanitize( tipp.coverageNote ) + '\t' + sanitize( tipp.hostPlatform.primaryUrl ) + '\t' +
-                          sanitize( tipp.format?.value ) + '\t' + sanitize( tipp.paymentType?.value ) +
+                          + sanitize( tipp.paymentType?.value ) +
                           '\n');
             tipp.discard();
           }

@@ -102,6 +102,13 @@
     </dd>
 
     <dt>
+        <gokb:annotatedLabel owner="${d}" property="firstAuthor">First Editor</gokb:annotatedLabel>
+    </dt>
+    <dd>
+        <gokb:xEditable  owner="${d}" field="firstEditor"/>
+    </dd>
+
+    <dt>
         <gokb:annotatedLabel owner="${d}" property="publisherName">Publisher Name</gokb:annotatedLabel>
     </dt>
     <dd>
@@ -155,34 +162,25 @@
     </dd>
 
     <dt>
-        <gokb:annotatedLabel owner="${d}"
-                             property="parentPublicationTitleId">Parent publication title ID</gokb:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="editionStatement">Edition</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable  owner="${d}" field="parentPublicationTitleId"/>
+        <gokb:xEditable  owner="${d}" field="editionStatement"/>
     </dd>
 
     <dt>
-        <gokb:annotatedLabel owner="${d}"
-                             property="precedingPublicationTitleId">Preceding publication title ID</gokb:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="accessType">Access Type</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable  owner="${d}" field="precedingPublicationTitleId"/>
+        <gokb:xEditableRefData owner="${d}" field="accessType"
+                               config="${RCConstants.TIPP_ACCESS_TYPE}"/>
     </dd>
 
     <dt>
-        <gokb:annotatedLabel owner="${d}" property="reference">Reference</gokb:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="note">Notes</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable  owner="${d}" field="reference"/>
-    </dd>
-
-    <dt>
-        <gokb:annotatedLabel owner="${d}" property="editStatus">Edit Status</gokb:annotatedLabel>
-    </dt>
-    <dd>
-        <gokb:xEditableRefData owner="${d}" field="editStatus"
-                               config="${RCConstants.KBCOMPONENT_EDIT_STATUS}"/>
+        <gokb:xEditable owner="${d}" field="note"/>
     </dd>
 
     <dt>
@@ -199,29 +197,6 @@
     </dt>
     <dd>
         <gokb:xEditable  owner="${d}" field="lastChangedExternal" type='date'/>
-    </dd>
-
-    <dt>
-        <gokb:annotatedLabel owner="${d}" property="format">Format</gokb:annotatedLabel>
-    </dt>
-    <dd>
-        <gokb:xEditableRefData owner="${d}" field="format"
-                               config="${RCConstants.TIPP_FORMAT}"/>
-    </dd>
-    <dt>
-        <gokb:annotatedLabel owner="${d}" property="paymentType">Payment Type</gokb:annotatedLabel>
-    </dt>
-    <dd>
-        <gokb:xEditableRefData owner="${d}" field="paymentType"
-                               config="${RCConstants.TIPP_PAYMENT_TYPE}"/>
-    </dd>
-
-    <dt>
-        <gokb:annotatedLabel owner="${d}" property="accessType">Access Type</gokb:annotatedLabel>
-    </dt>
-    <dd>
-        <gokb:xEditableRefData owner="${d}" field="accessType"
-                               config="${RCConstants.TIPP_ACCESS_TYPE}"/>
     </dd>
 
 </dl>
@@ -265,8 +240,12 @@
 
     <li>
         <a href="#ddcs" data-toggle="tab">DDCs
-            <span class="badge badge-warning">${d.ddcs.size() ?: '0'}</span>
+            <span class="badge badge-warning">${d.ddcs.size()}</span>
         </a>
+    </li>
+
+    <li>
+        <a href="#openAccess" data-toggle="tab">Open Access</a>
     </li>
 </ul>
 
@@ -441,31 +420,15 @@
         </div>
     </g:if>
 
-    <div class="tab-pane" id="subjectArea">
-        <dl class="dl-horizontal">
-            <dt>
-                <gokb:annotatedLabel owner="${d}" property="subjectArea">Subject Area</gokb:annotatedLabel>
-            </dt>
-            <dd>
-                <gokb:xEditable owner="${d}" field="subjectArea"/>
-            </dd>
-        </dl>
-    </div>
+    <g:render template="/tabTemplates/showSubjectArea" model="${[d: d]}"/>
 
-    <div class="tab-pane" id="series">
+    <g:render template="/tabTemplates/showSeries" model="${[d: d]}"/>
 
-        <dl class="dl-horizontal">
-            <dt>
-                <gokb:annotatedLabel owner="${d}" property="series">Series</gokb:annotatedLabel>
-            </dt>
-            <dd>
-                <gokb:xEditable owner="${d}" field="series"/>
-            </dd>
-        </dl>
-    </div>
     <g:render template="/tabTemplates/showPrices" model="${[d: d]}"/>
 
     <g:render template="/tabTemplates/showDDCs" model="${[d: d]}"/>
+
+    <g:render template="/tabTemplates/showOpenAccess" model="${[d: d]}"/>
 </div>
 <g:render template="/apptemplates/secondTemplates/componentStatus"
           model="${[d: d]}"/>

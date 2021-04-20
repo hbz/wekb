@@ -17,6 +17,8 @@
         </div>
         <g:if test="${actionName == 'packageContent'}">
             <br>
+            &nbsp;
+            <br>
 
             <div style="clear:both;">
 

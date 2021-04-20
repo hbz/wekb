@@ -958,7 +958,6 @@ class WorkflowController{
           tipp_dto.package = ['internalId': old_tipp.pkg.id]
           tipp_dto.platform = ['internalId': old_tipp.hostPlatform.id]
           tipp_dto.title = ['internalId': new_ti.id]
-          if (old_tipp.paymentType?.value) tipp_dto.paymentType = old_tipp.paymentType?.value
           if (old_tipp.accessType?.value) tipp_dto.accessType = old_tipp.accessType?.value
           tipp_dto.url = old_tipp.url ?: ""
           tipp_dto.coverage = []

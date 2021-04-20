@@ -104,7 +104,7 @@
 
                 <li role="presentation" class="nav-item">
                     <a class="nav-link" href="#ddcs" data-toggle="tab">DDCs
-                        <span class="badge badge-warning">${pkg.ddcs?.size() ?: '0'}</span>
+                        <span class="badge badge-warning">${pkg.ddcs?.size()}</span>
                     </a>
                 </li>
 
