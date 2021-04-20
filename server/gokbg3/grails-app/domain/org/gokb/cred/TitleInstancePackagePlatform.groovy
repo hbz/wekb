@@ -1471,4 +1471,74 @@ class TitleInstancePackagePlatform extends KBComponent {
       }
     return result
   }
+
+  @Transient
+  public String getListPriceInEUR(){
+    RefdataValue listType = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'list')
+
+    RefdataValue currency = RefdataCategory.lookup(RCConstants.CURRENCY, 'EUR')
+
+    return retrievePriceOfCategory(listType, currency)
+  }
+
+  @Transient
+  public String getListPriceInUSD(){
+    RefdataValue listType = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'list')
+
+    RefdataValue currency = RefdataCategory.lookup(RCConstants.CURRENCY, 'USD')
+
+    return retrievePriceOfCategory(listType, currency)
+  }
+
+
+  @Transient
+  public String getListPriceInGBP(){
+    RefdataValue listType = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'list')
+
+    RefdataValue currency = RefdataCategory.lookup(RCConstants.CURRENCY, 'GBP')
+
+    return retrievePriceOfCategory(listType, currency)
+  }
+
+  @Transient
+  public String getOAAPCPriceInEUR(){
+    RefdataValue listType = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'open access apc')
+
+    RefdataValue currency = RefdataCategory.lookup(RCConstants.CURRENCY, 'EUR')
+
+    return retrievePriceOfCategory(listType, currency)
+  }
+
+  @Transient
+  public String getOAAPCPriceInUSD(){
+    RefdataValue listType = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'open access apc')
+
+    RefdataValue currency = RefdataCategory.lookup(RCConstants.CURRENCY, 'USD')
+
+    return retrievePriceOfCategory(listType, currency)
+  }
+
+
+  @Transient
+  public String getOAAPCPriceInGBP(){
+    RefdataValue listType = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'open access apc')
+
+    RefdataValue currency = RefdataCategory.lookup(RCConstants.CURRENCY, 'GBP')
+
+    return retrievePriceOfCategory(listType, currency)
+  }
+  
+  @Transient
+  public String retrievePriceOfCategory(RefdataValue listType, RefdataValue currency){
+    String result = null
+
+    ComponentPrice existPrice = ComponentPrice.findWhere(owner: this, priceType: listType, currency: currency)
+
+    if(existPrice){
+      result = existPrice.price.toString()
+    }
+    return result
+    
+  }
+
 }
