@@ -57,11 +57,11 @@ Country;AM;Armenien;Armenia
 Country;AO;Angola;Angola
 Country;AQ;Antarktis;Antarctica
 Country;AR;Argentinien;Argentina
-Country;AS;Samoa, amerikanischer Teil;American Samoa
-Country;AT;�sterreich;Austria
+Country;AS;"Samoa; amerikanischer Teil";American Samoa
+Country;AT;Österreich;Austria
 Country;AU;Australien;Australia
 Country;AW;Aruba;Aruba
-Country;AX;�land;�land Islands
+Country;AX;Åland;Åland Islands
 Country;AZ;Aserbaidschan;Azerbaijan
 Country;BA;Bosnien-Herzegowina;Bosnia and Herzegovina
 Country;BB;Barbados;Barbados
@@ -72,11 +72,11 @@ Country;BG;Bulgarien;Bulgaria
 Country;BH;Bahrain;Bahrain
 Country;BI;Burundi;Burundi
 Country;BJ;Benin;Benin
-Country;BL;St. Barth�lemy;Saint Barth�lemy
+Country;BL;St. Barthélemy;Saint Barthélemy
 Country;BM;Bermuda;Bermuda
 Country;BN;Brunei;Brunei Darussalam
-Country;BO;Bolivien;Bolivia, Plurinational State of
-Country;BQ;Karibische Niederlande;Bonaire, Sint Eustatius and Saba
+Country;BO;Bolivien;"Bolivia; Plurinational State of"
+Country;BQ;Karibische Niederlande;"Bonaire; Sint Eustatius and Saba"
 Country;BR;Brasilien;Brazil
 Country;BS;Bahamas;Bahamas
 Country;BT;Bhutan;Bhutan
@@ -86,11 +86,11 @@ Country;BY;Belarus;Belarus
 Country;BZ;Belize;Belize
 Country;CA;Kanada;Canada
 Country;CC;Kokos-Insel (Keeling);Cocos (Keeling) Islands
-Country;CD;Kongo, demokratische Republik;Congo, the Democratic Republic of the
+Country;CD;"Kongo; demokratische Republik";"Congo; the Democratic Republic of the"
 Country;CF;Zentralafrika;Central African Republic
 Country;CG;Kongo (Republik);Congo
 Country;CH;Schweiz;Switzerland
-Country;CI;Elfenbeink�ste;C�te d'Ivoire
+Country;CI;Elfenbeinküste;Côte d'Ivoire
 Country;CK;Cook-Inseln;Cook Islands
 Country;CL;Chile;Chile
 Country;CM;Kamerun;Cameroon
@@ -99,44 +99,44 @@ Country;CO;Kolumbien;Colombia
 Country;CR;Costa Rica;Costa Rica
 Country;CU;Kuba;Cuba
 Country;CV;Kapverdische Inseln;Cape Verde
-Country;CW;Cura�ao;Cura�ao
+Country;CW;Curaçao;Curaçao
 Country;CX;Weihnachtsinseln (indischer Ozean);Christmas Island
 Country;CY;Zypern;Cyprus
 Country;CZ;Tschechische Republik;Czech Republic
 Country;DE;Deutschland;Germany
 Country;DJ;Djibouti;Djibouti
-Country;DK;D�nemark;Denmark
+Country;DK;Dänemark;Denmark
 Country;DM;Dominica;Dominica
 Country;DO;Dominikanische Republik;Dominican Republic
 Country;DZ;Algerien;Algeria
 Country;EC;Ekuador;Ecuador
 Country;EE;Estland;Estonia
-Country;EG;�gypten;Egypt
+Country;EG;Ägypten;Egypt
 Country;EH;Westsahara;Western Sahara
 Country;ER;Eritrea;Eritrea
 Country;ES;Spanien;Spain
-Country;ET;�thiopien;Ethiopia
+Country;ET;Äthiopien;Ethiopia
 Country;FI;Finnland;Finland
 Country;FJ;Fidschi;Fiji
 Country;FK;Falkland-Inseln;Falkland Islands (Malvinas)
-Country;FM;Mikronesien (F�derierte Staaten von);Micronesia, Federated States of
-Country;FO;F�r�er-Inseln;Faroe Islands
+Country;FM;Mikronesien (Föderierte Staaten von);"Micronesia; Federated States of"
+Country;FO;Färöer-Inseln;Faroe Islands
 Country;FR;Frankreich;France
 Country;GA;Gabun;Gabon
 Country;GB;Grossbritannien und Nordirland;United Kingdom
 Country;GD;Grenada;Grenada
 Country;GE;Georgien;Georgia
-Country;GF;Franz�sisch-Guyana;French Guiana
+Country;GF;Französisch-Guyana;French Guiana
 Country;GG;Guernsey;Guernsey
 Country;GH;Ghana;Ghana
 Country;GI;Gibraltar;Gibraltar
-Country;GL;Gr�nland;Greenland
+Country;GL;Grönland;Greenland
 Country;GM;Gambia;Gambia
 Country;GN;Guinea (Republik);Guinea
 Country;GP;Guadeloupe;Guadeloupe
-Country;GQ;�quatorial-Guinea;Equatorial Guinea
+Country;GQ;Äquatorial-Guinea;Equatorial Guinea
 Country;GR;Griechenland;Greece
-Country;GS;S�dgeorgien und die s�dlichen Sandwichinseln;South Georgia and the South Sandwich Islands
+Country;GS;Südgeorgien und die südlichen Sandwichinseln;South Georgia and the South Sandwich Islands
 Country;GT;Guatemala;Guatemala
 Country;GU;Guam;Guam
 Country;GW;Guinea-Bissau;Guinea-Bissau
@@ -150,11 +150,11 @@ Country;HU;Ungarn;Hungary
 Country;ID;Indonesien;Indonesia
 Country;IE;Irland;Ireland
 Country;IL;Israel;Israel
-Country;IM;Man, Insel;Isle of Man
+Country;IM;"Man; Insel";Isle of Man
 Country;IN;Indien;India
 Country;IO;Britisches Territorium im indischen Ozean;British Indian Ocean Territory
 Country;IQ;Irak;Iraq
-Country;IR;Iran;Iran, Islamic Republic of
+Country;IR;Iran;"Iran; Islamic Republic of"
 Country;IS;Island;Iceland
 Country;IT;Italien;Italy
 Country;JE;Jersey;Jersey
@@ -167,8 +167,8 @@ Country;KH;Kambodscha;Cambodia
 Country;KI;Kiribati;Kiribati
 Country;KM;Komoren;Comoros
 Country;KN;St. Christoph (St. Kitts) und Nevis;Saint Kitts and Nevis
-Country;KP;Korea, demokratische Volksrepublik (Nordkorea);Korea, Democratic People's Republic of
-Country;KR;Korea, Republik (S�dkorea);Korea, Republic of
+Country;KP;"Korea; demokratische Volksrepublik (Nordkorea)";"Korea; Democratic People's Republic of"
+Country;KR;"Korea; Republik (Südkorea)";"Korea; Republic of"
 Country;KW;Kuwait;Kuwait
 Country;KY;Cayman;Cayman Islands
 Country;KZ;Kasachstan;Kazakhstan
@@ -185,12 +185,12 @@ Country;LV;Lettland;Latvia
 Country;LY;Libyen;Libya
 Country;MA;Marokko;Morocco
 Country;MC;Monaco;Monaco
-Country;MD;Moldova;Moldova, Republic of
-Country;ME;Montenegro, Republik;Montenegro
+Country;MD;Moldova;"Moldova; Republic of"
+Country;ME;"Montenegro; Republik";Montenegro
 Country;MF;St. Martin;Saint Martin (French part)
 Country;MG;Madagaskar;Madagascar
 Country;MH;Marshall-Inseln;Marshall Islands
-Country;MK;Mazedonien, ehemalige jugoslawische Republik;Macedonia, the Former Yugoslav Republic of
+Country;MK;"Mazedonien; ehemalige jugoslawische Republik";"Macedonia; the Former Yugoslav Republic of"
 Country;ML;Mali;Mali
 Country;MM;Myanmar (Union);Myanmar
 Country;MN;Mongolei;Mongolia
@@ -200,7 +200,7 @@ Country;MQ;Martinique;Martinique
 Country;MR;Mauretanien;Mauritania
 Country;MS;Montserrat;Montserrat
 Country;MT;Malta;Malta
-Country;MU;Mauritius, Insel;Mauritius
+Country;MU;"Mauritius; Insel";Mauritius
 Country;MV;Malediven;Maldives
 Country;MW;Malawi;Malawi
 Country;MX;Mexiko;Mexico
@@ -221,7 +221,7 @@ Country;NZ;Neuseeland;New Zealand
 Country;OM;Oman;Oman
 Country;PA;Panama;Panama
 Country;PE;Peru;Peru
-Country;PF;Franz�sisch-Polynesien;French Polynesia
+Country;PF;Französisch-Polynesien;French Polynesia
 Country;PG;Papua-Neuguinea;Papua New Guinea
 Country;PH;Philippinen;Philippines
 Country;PK;Pakistan;Pakistan
@@ -229,15 +229,15 @@ Country;PL;Polen;Poland
 Country;PM;St. Pierre und Miquelon;Saint Pierre and Miquelon
 Country;PN;Pitcairn;Pitcairn
 Country;PR;Puerto Rico;Puerto Rico
-Country;PS;Pal�stina;Palestine, State of
+Country;PS;Palästina;"Palestine; State of"
 Country;PT;Portugal;Portugal
 Country;PW;Palau;Palau
 Country;PY;Paraguay;Paraguay
 Country;QA;Qatar;Qatar
-Country;RE;R�union;R�union
-Country;RO;Rum�nien;Romania
-Country;RS;Serbien,  Republik;Serbia
-Country;RU;Russische F�deration;Russian Federation
+Country;RE;Réunion;Réunion
+Country;RO;Rumänien;Romania
+Country;RS;"Serbien;  Republik";Serbia
+Country;RU;Russische Föderation;Russian Federation
 Country;RW;Rwanda;Rwanda
 Country;SA;Saudi-Arabien;Saudi Arabia
 Country;SB;Salomon-Inseln;Solomon Islands
@@ -245,7 +245,7 @@ Country;SC;Seychellen;Seychelles
 Country;SD;Sudan;Sudan
 Country;SE;Schweden;Sweden
 Country;SG;Singapur;Singapore
-Country;SH;St. Helena, Ascension und Tristan da Cunha;Saint Helena, Ascension and Tristan da Cunha
+Country;SH;"St. Helena; Ascension und Tristan da Cunha";"Saint Helena; Ascension and Tristan da Cunha"
 Country;SI;Slowenien;Slovenia
 Country;SJ;Svalbard und Insel Jan Mayen;Svalbard and Jan Mayen
 Country;SK;Slowakische Republik;Slovakia
@@ -254,7 +254,7 @@ Country;SM;San Marino;San Marino
 Country;SN;Senegal;Senegal
 Country;SO;Somalia;Somalia
 Country;SR;Suriname;Suriname
-Country;SS;S�dsudan;South Sudan
+Country;SS;Südsudan;South Sudan
 Country;ST;St. Thomas und Principe;Sao Tome and Principe
 Country;SV;El Salvador;El Salvador
 Country;SX;St. Maarten;Sint Maarten (Dutch part)
@@ -262,7 +262,7 @@ Country;SY;Syrien;Syrian Arab Republic
 Country;SZ;Swasiland;Swaziland
 Country;TC;Turks und Caicos;Turks and Caicos Islands
 Country;TD;Tschad;Chad
-Country;TF;Franz�sische S�d- und Antarktisgebiete;French Southern Territories
+Country;TF;Französische Süd- und Antarktisgebiete;French Southern Territories
 Country;TG;Togo;Togo
 Country;TH;Thailand;Thailand
 Country;TJ;Tadschikistan;Tajikistan
@@ -271,29 +271,29 @@ Country;TL;Timor-Leste;Timor-Leste
 Country;TM;Turkmenistan;Turkmenistan
 Country;TN;Tunesien;Tunisia
 Country;TO;Tonga;Tonga
-Country;TR;T�rkei;Turkey
+Country;TR;Türkei;Turkey
 Country;TT;Trinidad und Tobago;Trinidad and Tobago
 Country;TV;Tuvalu;Tuvalu
-Country;TW;Taiwan (Chinesisches Taipei);Taiwan, Province of China
-Country;TZ;Tansania;Tanzania, United Republic of
+Country;TW;Taiwan (Chinesisches Taipei);"Taiwan; Province of China"
+Country;TZ;Tansania;"Tanzania; United Republic of"
 Country;UA;Ukraine;Ukraine
 Country;UG;Uganda;Uganda
-Country;UM;Amerikanische �berseeinseln, kleinere;United States Minor Outlying Islands
+Country;UM;"Amerikanische Überseeinseln; kleinere";United States Minor Outlying Islands
 Country;US;Vereinigte Staaten von Amerika;United States
 Country;UY;Uruguay;Uruguay
 Country;UZ;Usbekistan;Uzbekistan
 Country;VA;Vatikan;Holy See (Vatican City State)
 Country;VC;St. Vincent und Grenadinen;Saint Vincent and the Grenadines
-Country;VE;Venezuela;Venezuela, Bolivarian Republic of
-Country;VG;britischer Teil (Tortola);Virgin Islands, British,Virginische Inseln
-Country;VI;Amerikanische Jungferninseln;Virgin Islands, U.S.
+Country;VE;Venezuela;"Venezuela; Bolivarian Republic of"
+Country;VG;britischer Teil (Tortola);"Virgin Islands; British;Virginische Inseln"
+Country;VI;Amerikanische Jungferninseln;"Virgin Islands; U.S."
 Country;VN;Vietnam;Viet Nam
 Country;VU;Vanuatu;Vanuatu
 Country;WF;Wallis und Futuna;Wallis and Futuna
-Country;WS;Samoa, West;Samoa
+Country;WS;"Samoa; West";Samoa
 Country;YE;Jemen;Yemen
 Country;YT;Mayotte;Mayotte
-Country;ZA;S�dafrika;South Africa
+Country;ZA;Südafrika;South Africa
 Country;ZM;Sambia;Zambia
 Country;ZW;Zimbabwe;Zimbabwe
 CuratoryGroup.Type;Other;Sonstige;Other
