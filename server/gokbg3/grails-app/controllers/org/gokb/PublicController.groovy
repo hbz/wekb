@@ -1,6 +1,8 @@
 package org.gokb
 
 import de.wekb.helper.RCConstants
+import grails.core.GrailsApplication
+import grails.plugins.mail.MailService
 import org.gokb.cred.*
 import org.hibernate.ScrollMode
 import org.hibernate.ScrollableResults
@@ -15,26 +17,42 @@ class PublicController {
   def dateFormatService
   def sessionFactory
   def classExaminationService
+  MailService mailService
 
   public static String TIPPS_QRY = 'from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=? and c.toComponent=tipp and c.type = ? and tipp.status = ?';
+
   def wcagPlainEnglish() {
     log.debug("wcagPlainEnglish::${params}")
     def result = [:]
-    println(params)
+    //println(params)
     result
   }
+
   def sendFeedbackForm() {
-    log.debug("sendFeedbackFormh::${params}")
     def result = [:]
-    println(params)
+    try {
+
+      mailService.sendMail {
+        to 'barrierefreiheitsbelange@hbz-nrw.de'
+        from 'laser@hbz-nrw.de'
+        subject grailsApplication.config.systemId + ' - Feedback-Mechanismus Barrierefreiheit'
+        body (view: '/mailTemplate/text/wcagFeedback', model: [name:params.name, email:params.eMail, url:params.url, comment:params.comment])
+
+      }
+    }
+    catch (Exception e) {
+      println "Unable to perform email due to exception ${e.message}"
+    }
     result
   }
+
   def wcagFeedbackForm() {
     log.debug("wcagFeedbackForm::${params}")
     def result = [:]
-    println(params)
+    //println(params)
     result
   }
+
   def packageContent() {
     log.debug("packageContent::${params}")
     def result = [:]
