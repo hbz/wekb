@@ -139,22 +139,6 @@
     </dd>
 
     <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}"
-                             property="parentPublicationTitleId">Parent publication title ID</gokb:annotatedLabel>
-    </dt>
-    <dd class="col-9 text-left">
-        <gokb:xEditable  owner="${d}" field="parentPublicationTitleId"/>
-    </dd>
-
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}"
-                             property="precedingPublicationTitleId">Preceding publication title ID</gokb:annotatedLabel>
-    </dt>
-    <dd class="col-9 text-left">
-        <gokb:xEditable  owner="${d}" field="precedingPublicationTitleId"/>
-    </dd>
-
-    <dt class="col-3 text-right">
         <gokb:annotatedLabel owner="${d}" property="accessType">Access Type</gokb:annotatedLabel>
     </dt>
     <dd class="col-9 text-left">

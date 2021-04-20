@@ -68,6 +68,9 @@ class TitleInstancePackagePlatform extends KBComponent {
   @KbartAnnotation(kbartField = 'preceding_publication_title_id' , type='serials')
   String precedingPublicationTitleId
 
+  @HbzKbartAnnotation(kbartField = 'superceding_publication_title_id' , type='all')
+  String supercedingPublicationTitleId
+
   @KbartAnnotation(kbartField = 'notes' , type='all')
   String note
 
@@ -142,6 +145,7 @@ class TitleInstancePackagePlatform extends KBComponent {
       'firstEditor'           : "firstEditor",
       'parentPublicationTitleId'   : "parentPublicationTitleId",
       'precedingPublicationTitleId': "precedingPublicationTitleId",
+      'supercedingPublicationTitleId':"supercedingPublicationTitleId",
       'lastChangedExternal'   : "lastChangedExternal",
       'medium'                : "medium",
       'language'              : "language"
@@ -218,6 +222,7 @@ class TitleInstancePackagePlatform extends KBComponent {
     firstEditor column: 'tipp_first_editor', type: 'text'
     parentPublicationTitleId column: 'tipp_parent_publication_id'
     precedingPublicationTitleId column: 'tipp_preceding_publication_id'
+    supercedingPublicationTitleId column: 'tipp_superceding_publication_title_id'
     lastChangedExternal column: 'tipp_last_change_ext'
     medium column: 'tipp_medium_rv_fk'
     series column: 'series', type: 'text'
@@ -256,6 +261,7 @@ class TitleInstancePackagePlatform extends KBComponent {
     firstEditor(nullable: true, blank: true)
     parentPublicationTitleId(nullable: true, blank: true)
     precedingPublicationTitleId(nullable: true, blank: true)
+    supercedingPublicationTitleId (nullable: true, blank: true)
     lastChangedExternal(nullable: true, blank: true)
     medium(nullable: true, blank: true)
     ddcs(nullable: true)
@@ -961,6 +967,7 @@ class TitleInstancePackagePlatform extends KBComponent {
         changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'subjectArea', tipp_dto.subjectArea)
         changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'parentPublicationTitleId', tipp_dto.parentPublicationTitleId)
         changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'precedingPublicationTitleId', tipp_dto.precedingPublicationTitleId)
+        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'supercedingPublicationTitleId', tipp_dto.supercedingPublicationTitleId)
         changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'note', tipp_dto.notes)
 
         changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.accessStartDate, tipp, 'accessStartDate')
@@ -1161,6 +1168,7 @@ class TitleInstancePackagePlatform extends KBComponent {
         builder.'firstEditor'(firstEditor?.trim())
         builder.'parentPublicationTitleId'(parentPublicationTitleId?.trim())
         builder.'precedingPublicationTitleId'(precedingPublicationTitleId?.trim())
+        builder.'supercedingPublicationTitleId'(supercedingPublicationTitleId?.trim())
         builder.'lastChangedExternal'(lastChangedExternal?.trim())
         builder.'medium'(medium?.value.trim())
         builder.'language'(language?.value.trim())

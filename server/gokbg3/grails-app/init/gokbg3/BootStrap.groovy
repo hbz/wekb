@@ -210,6 +210,7 @@ class BootStrap {
                 [value: 'zdb', name: 'ZDB-ID', pattern: "^\\d+-[\\dxX]\$"],
                 [value: 'isil', name: 'ISIL', pattern: "^(?=[0-9A-Z-]{4,16}\$)[A-Z]{1,4}-[A-Z0-9]{1,11}(-[A-Z0-9]+)?\$"],
                 [value: 'ezb_anchor', name: 'EZB Anchor'],
+                [value: 'package_ezb_anchor', name: 'EZB Anchor'],
                 [value: 'ezb', name: 'EZB-ID'],
                 [value: 'package_isci', name: 'Package ISCI'],
         ]
