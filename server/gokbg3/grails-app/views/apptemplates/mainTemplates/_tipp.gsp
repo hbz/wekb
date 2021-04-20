@@ -102,6 +102,13 @@
     </dd>
 
     <dt>
+        <gokb:annotatedLabel owner="${d}" property="firstAuthor">First Editor</gokb:annotatedLabel>
+    </dt>
+    <dd>
+        <gokb:xEditable  owner="${d}" field="firstEditor"/>
+    </dd>
+
+    <dt>
         <gokb:annotatedLabel owner="${d}" property="publisherName">Publisher Name</gokb:annotatedLabel>
     </dt>
     <dd>
@@ -155,6 +162,13 @@
     </dd>
 
     <dt>
+        <gokb:annotatedLabel owner="${d}" property="editionStatement">Edition</gokb:annotatedLabel>
+    </dt>
+    <dd>
+        <gokb:xEditable  owner="${d}" field="editionStatement"/>
+    </dd>
+
+    <dt>
         <gokb:annotatedLabel owner="${d}"
                              property="parentPublicationTitleId">Parent publication title ID</gokb:annotatedLabel>
     </dt>
@@ -171,18 +185,11 @@
     </dd>
 
     <dt>
-        <gokb:annotatedLabel owner="${d}" property="reference">Reference</gokb:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="accessType">Access Type</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable  owner="${d}" field="reference"/>
-    </dd>
-
-    <dt>
-        <gokb:annotatedLabel owner="${d}" property="editStatus">Edit Status</gokb:annotatedLabel>
-    </dt>
-    <dd>
-        <gokb:xEditableRefData owner="${d}" field="editStatus"
-                               config="${RCConstants.KBCOMPONENT_EDIT_STATUS}"/>
+        <gokb:xEditableRefData owner="${d}" field="accessType"
+                               config="${RCConstants.TIPP_ACCESS_TYPE}"/>
     </dd>
 
     <dt>
@@ -199,29 +206,6 @@
     </dt>
     <dd>
         <gokb:xEditable  owner="${d}" field="lastChangedExternal" type='date'/>
-    </dd>
-
-    <dt>
-        <gokb:annotatedLabel owner="${d}" property="format">Format</gokb:annotatedLabel>
-    </dt>
-    <dd>
-        <gokb:xEditableRefData owner="${d}" field="format"
-                               config="${RCConstants.TIPP_FORMAT}"/>
-    </dd>
-    <dt>
-        <gokb:annotatedLabel owner="${d}" property="paymentType">Payment Type</gokb:annotatedLabel>
-    </dt>
-    <dd>
-        <gokb:xEditableRefData owner="${d}" field="paymentType"
-                               config="${RCConstants.TIPP_PAYMENT_TYPE}"/>
-    </dd>
-
-    <dt>
-        <gokb:annotatedLabel owner="${d}" property="accessType">Access Type</gokb:annotatedLabel>
-    </dt>
-    <dd>
-        <gokb:xEditableRefData owner="${d}" field="accessType"
-                               config="${RCConstants.TIPP_ACCESS_TYPE}"/>
     </dd>
 
 </dl>

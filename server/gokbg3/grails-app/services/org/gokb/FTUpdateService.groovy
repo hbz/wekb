@@ -448,6 +448,7 @@ class FTUpdateService {
         if (kbc.firstEditor) result.firstEditor = kbc.firstEditor
         if (kbc.parentPublicationTitleId) result.parentPublicationTitleId = kbc.parentPublicationTitleId
         if (kbc.precedingPublicationTitleId) result.precedingPublicationTitleId = kbc.precedingPublicationTitleId
+        if (kbc.note) result.note = kbc.note
 
         // prices
         result.prices = []

@@ -1399,8 +1399,6 @@ class PackageService {
                           sanitize(tcs.coverageDepth) + '\t' +
                           sanitize(tcs.coverageNote) + '\t' +
                           sanitize(tipp.hostPlatform.primaryUrl) + '\t' +
-                          sanitize(tipp.format?.value) + '\t' +
-                          sanitize(tipp.paymentType?.value) + '\t' +
                           sanitize(tipp.getIdentifierValue('DOI') ?: tipp.title.getIdentifierValue('DOI')) + '\t' +
                           sanitize(tipp.getIdentifierValue('ISBN') ?: tipp.title.getIdentifierValue('ISBN')) + '\t' +
                           sanitize(tipp.getIdentifierValue('pISBN') ?: tipp.title.getIdentifierValue('pISBN')) +
@@ -1436,8 +1434,6 @@ class PackageService {
                         sanitize(tipp.coverageDepth) + '\t' +
                         sanitize(tipp.coverageNote) + '\t' +
                         sanitize(tipp.hostPlatform?.primaryUrl) + '\t' +
-                        sanitize(tipp.format?.value) + '\t' +
-                        sanitize(tipp.paymentType?.value) + '\t' +
                         sanitize(tipp.getIdentifierValue('DOI') ?: tipp.title.getIdentifierValue('DOI')) + '\t' +
                         sanitize(tipp.getIdentifierValue('ISBN') ?: tipp.title.getIdentifierValue('ISBN')) + '\t' +
                         sanitize(tipp.getIdentifierValue('pISBN') ?: tipp.title.getIdentifierValue('pISBN')) +
