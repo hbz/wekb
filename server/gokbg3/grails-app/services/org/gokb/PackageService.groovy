@@ -1134,7 +1134,7 @@ class PackageService {
   /**
    * collects the data of the given package into a KBART formatted TSV file for later download
    */
-  void createKbartExport(Package pkg, def response) {
+  /*void createKbartExport(Package pkg, def response) {
     if (pkg) {
       try {
         ServletOutputStream out = response.outputStream
@@ -1289,9 +1289,9 @@ class PackageService {
         log.error("Problem with creating KBART export data", e);
       }
     }
-  }
+  }*/
 
-  public void createTsvExport(Package pkg, def response) {
+  /*public void createTsvExport(Package pkg, def response) {
     def export_date = dateFormatService.formatDate(new Date());
     try {
       if (pkg) {
@@ -1454,9 +1454,9 @@ class PackageService {
     catch (Exception e) {
       log.error("Problem with writing tsv export file", e);
     }
-  }
+  }*/
 
-  void sendFile(Package pkg, ExportType type, def response) {
+  /*void sendFile(Package pkg, ExportType type, def response) {
     String fileName = generateExportFileName(pkg, type)
     response.setContentType('text/tab-separated-values');
     response.setHeader("Content-Disposition", "attachment; filename=\"${fileName.substring(0, fileName.length() - 13)}.tsv\"")
@@ -1470,9 +1470,9 @@ class PackageService {
     catch (Exception e) {
       log.error("Problem with sending export", e);
     }
-  }
+  }*/
 
-  public void sendZip(Collection packs, ExportType type, def response) {
+  /*public void sendZip(Collection packs, ExportType type, def response) {
     def pathPrefix = UUID.randomUUID().toString()
     File tempDir = new File(exportFilePath() + "/" + pathPrefix)
     tempDir.mkdir()
@@ -1524,7 +1524,7 @@ class PackageService {
     IOUtils.copy(input, output)
     output.close()
     input.close()
-  }
+  }*/
 
   def synchronized updateFromSource(Package p, def user = null, ignoreLastChanged = false) {
     log.debug("updateFromSource")
@@ -1664,7 +1664,7 @@ class PackageService {
     return !error
   }
 
-  private String generateExportFileName(Package pkg, ExportType type) {
+  /*private String generateExportFileName(Package pkg, ExportType type) {
     String lastUpdate = dateFormatService.formatTimestamp(pkg.lastUpdated)
     StringBuilder name = new StringBuilder()
     if (type == ExportType.KBART) {
@@ -1677,13 +1677,13 @@ class PackageService {
     }
     name.append('_').append(lastUpdate).append('.tsv')
     return name.toString()
-  }
+  }*/
 
-  private String exportFilePath() {
+  /*private String exportFilePath() {
     String exportPath = grailsApplication.config.gokb.tsvExportTempDirectory ?: "/tmp/gokb/export"
     Files.createDirectories(Paths.get(exportPath))
     exportPath.endsWith('/') ? exportPath : exportPath + '/'
-  }
+  }*/
 
   private String toCamelCase(String before) {
     StringBuilder ret = new StringBuilder()

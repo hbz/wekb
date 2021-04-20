@@ -1471,4 +1471,103 @@ class TitleInstancePackagePlatform extends KBComponent {
       }
     return result
   }
+
+  @Transient
+  public String getListPriceInEUR(){
+    String result = null
+
+    RefdataValue listType = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'list')
+
+    RefdataValue currency = RefdataCategory.lookup(RCConstants.CURRENCY, 'EUR')
+
+    ComponentPrice existPrice = ComponentPrice.findWhere(owner: this, priceType: listType, currency: currency)
+
+    if(existPrice){
+      result = existPrice.price.toString()
+    }
+    return result
+  }
+
+  @Transient
+  public String getListPriceInUSD(){
+    String result = null
+
+    RefdataValue listType = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'list')
+
+    RefdataValue currency = RefdataCategory.lookup(RCConstants.CURRENCY, 'USD')
+
+    ComponentPrice existPrice = ComponentPrice.findWhere(owner: this, priceType: listType, currency: currency)
+
+    if(existPrice){
+      result = existPrice.price.toString()
+    }
+    return result
+  }
+
+
+  @Transient
+  public String getListPriceInGBP(){
+    String result = null
+
+    RefdataValue listType = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'list')
+
+    RefdataValue currency = RefdataCategory.lookup(RCConstants.CURRENCY, 'GBP')
+
+    ComponentPrice existPrice = ComponentPrice.findWhere(owner: this, priceType: listType, currency: currency)
+
+    if(existPrice){
+      result = existPrice.price.toString()
+    }
+    return result
+  }
+
+  @Transient
+  public String getOAAPCPriceInEUR(){
+    String result = null
+
+    RefdataValue listType = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'open access apc')
+
+    RefdataValue currency = RefdataCategory.lookup(RCConstants.CURRENCY, 'EUR')
+
+    ComponentPrice existPrice = ComponentPrice.findWhere(owner: this, priceType: listType, currency: currency)
+
+    if(existPrice){
+      result = existPrice.price.toString()
+    }
+    return result
+  }
+
+  @Transient
+  public String getOAAPCPriceInUSD(){
+    String result = null
+
+    RefdataValue listType = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'open access apc')
+
+    RefdataValue currency = RefdataCategory.lookup(RCConstants.CURRENCY, 'USD')
+
+    ComponentPrice existPrice = ComponentPrice.findWhere(owner: this, priceType: listType, currency: currency)
+
+    if(existPrice){
+      result = existPrice.price.toString()
+    }
+    return result
+  }
+
+
+  @Transient
+  public String getOAAPCPriceInGBP(){
+    String result = null
+
+    RefdataValue listType = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'open access apc')
+
+    RefdataValue currency = RefdataCategory.lookup(RCConstants.CURRENCY, 'GBP')
+
+    ComponentPrice existPrice = ComponentPrice.findWhere(owner: this, priceType: listType, currency: currency)
+
+    if(existPrice){
+      result = existPrice.price.toString()
+    }
+    return result
+  }
+
 }

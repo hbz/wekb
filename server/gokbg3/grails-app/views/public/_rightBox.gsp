@@ -22,8 +22,8 @@
 
             <div style="clear:both;">
 
-                <g:link controller="packages" action="kbart" id="${params.id}">KBart File</g:link> &nbsp;
-                <g:link controller="packages" action="packageTSVExport" id="${params.id}"><g:message
+                <g:link controller="public" action="kbart" id="${params.id}">KBart File</g:link> &nbsp;
+                <g:link controller="public" action="packageTSVExport" id="${params.id}"><g:message
                         code="gokb.appname" default="we:kb"/> File</g:link>
             </div>
         </g:if>
