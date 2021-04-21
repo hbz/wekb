@@ -16,12 +16,12 @@
               </g:if>
                <div class="form-group">
                  <label for="username"><g:message code='springSecurity.login.username.label'/></label>
-                 <input type="text" class="form-control" id="username" aria-describedby="usernameHelp" placeholder="Username" name="${securityConfig.apf.usernameParameter}">
+                 <input type="text" class="form-control" id="username"  placeholder="Username" name="${securityConfig.apf.usernameParameter}">
                </div>
 
                <div class="form-group">
                  <label for="password"><g:message code='springSecurity.login.password.label'/></label>
-                 <input type="password" class="form-control" id="password" aria-describedby="passwordHelp" placeholder="" name="${securityConfig.apf.passwordParameter}">
+                 <input type="password" class="form-control" id="password"  placeholder="" name="${securityConfig.apf.passwordParameter}">
                </div>
 
                <!-- input type="checkbox" class="checkbox" name="${securityConfig.rememberMe.parameter}" id="remember_me" checked="checked"-->
