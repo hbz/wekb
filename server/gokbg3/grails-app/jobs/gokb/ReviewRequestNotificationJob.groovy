@@ -18,13 +18,13 @@ class ReviewRequestNotificationJob {
 
     def usermap = [:]
 
-    pendingRequests.each { pr ->
+/*    pendingRequests.each { pr ->
       if ( usermap[pr.allocatedTo.id] == null ) {
         usermap[pr.allocatedTo.id] = []
       }
 
       usermap[pr.allocatedTo.id].add(pr);
-    }
+    }*/
 
     usermap.each { k,v ->
       v.each { pr ->

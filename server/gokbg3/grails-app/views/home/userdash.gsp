@@ -10,7 +10,7 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-12">
-          <div class="panel panel-default">
+          %{--<div class="panel panel-default">
             <div class="panel-heading clearfix">
               <h3 class="panel-title">Your Most Recent Review Tasks</h3>
             </div>
@@ -19,7 +19,7 @@
                 params="[qbe:'g:reviewRequests', qp_allocatedto:'org.gokb.cred.User:' + Long.toString(request.user.id), qp_status:'org.gokb.cred.RefdataValue:' + Long.toString(org.gokb.cred.RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STATUS, 'Open').id), inline:true, hide:['qp_project', 'qp_allocatedto']]"
                 id="">Your Review Tasks</g:link>
             </div>
-          </div>
+          </div>--}%
           <div class="panel panel-default">
             <div class="panel-heading clearfix">
               <h3 class="panel-title">Most recently updated Watched Components</h3>

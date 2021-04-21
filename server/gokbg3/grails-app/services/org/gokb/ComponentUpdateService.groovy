@@ -82,10 +82,11 @@ class ComponentUpdateService {
                 component,
                 "Review ID status.",
                 "Identifier ${canonical_identifier} was previously connected to '${component}', but has since been manually removed.",
-                user,
+                RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'Import Request'),
                 null,
                 null,
-                RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Removed Identifier')
+                RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Removed Identifier'),
+                null
               )
             }
             else {
