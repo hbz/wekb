@@ -1,5 +1,5 @@
 
-<form class="form" role="form">
+<form class="form"  >
   <div class="form-group">
     <label for="code"><gokb:annotatedLabel owner="${d}" property="code">Category Code</gokb:annotatedLabel></label>
     <gokb:xEditable owner="${d}" field="code" class="form-control" />

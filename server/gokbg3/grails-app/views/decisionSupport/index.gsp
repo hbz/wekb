@@ -26,7 +26,7 @@
                 </div>
                 <div id="dsfilters" class="panel-collapse collapse in">
                   <div class="panel-body">
-                    <g:form method="get" controller="decisionSupport" role="form">
+                    <g:form method="get" controller="decisionSupport"  >
                       <div class="form-horizontal">
                         <div class="form-group">
                           <label for="dimselect" class="col-sm-2 control-label">Component</label>

@@ -10,7 +10,7 @@
 
     <h4>New note</h4>
 
-    <g:form name="newNoteForm" controller="ajaxSupport" action="addToCollection" role="form" class="form">
+    <g:form name="newNoteForm" controller="ajaxSupport" action="addToCollection"   class="form">
       <input type="hidden" name="__context" value="${ownerClass}:${ownerId}"/>
       <input type="hidden" name="__newObjectClass" value="org.gokb.cred.Note"/>
       <input type="hidden" name="ownerClass" value="${ownerClass}"/>
