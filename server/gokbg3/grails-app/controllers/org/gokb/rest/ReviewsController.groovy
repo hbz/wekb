@@ -133,7 +133,7 @@ class ReviewsController {
         }
 
         if (reqBody.needsNotify) {
-          def nn = params.boolean(reqBody.needsNotify)
+          Boolean nn = params.boolean(reqBody.needsNotify)
 
           if (nn) {
             obj.needsNotify = nn
