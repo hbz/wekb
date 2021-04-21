@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RCConstants;" %>
 <g:if test="${d.publicationType?.value == 'Serial'}">
 	<div class="tab-pane active" id="tippcoverage">
 		<dl class="dl-horizontal">
@@ -17,7 +18,9 @@
 						<th>Embargo</th>
 						<th>Note</th>
 						<th>Depth</th>
-						<th>Actions</th>
+						<g:if test="${editable}">
+							<th>Actions</th>
+						</g:if>
 					</tr>
 					</thead>
 					<tbody>
@@ -39,9 +42,13 @@
 								<td><gokb:xEditableRefData owner="${cs}" field="coverageDepth"
 														   config="${RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH}"/>
 								</td>
-								<td><g:if test="${editable}"><g:link controller="ajaxSupport"
-																	 action="deleteCoverageStatement"
-																	 params="[id: cs.id, fragment: 'tippcoverage']">Delete</g:link></g:if></td>
+								<g:if test="${editable}">
+									<td>
+										<g:link controller="ajaxSupport"
+																		 action="deleteCoverageStatement"
+																		 params="[id: cs.id, fragment: 'tippcoverage']">Delete</g:link>
+									</td>
+								</g:if>
 							</tr>
 						</g:each>
 					</g:if>

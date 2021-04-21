@@ -5,14 +5,16 @@
 <ul id="tabs" class="nav nav-tabs">
 
     <g:if test="${d.publicationType?.value == 'Serial'}">
-         <li role="presentation" class=nav-item">
+        <li role="presentation" class=nav-item">
             <a class="nav-link active" href="#tippcoverage" data-toggle="tab">Coverage</a>
         </li>
     </g:if>
+
     <li role="presentation" class=nav-item">
-        <a class="nav-link ${d.publicationType?.value != 'Serial' ? 'active' : ''}" href="#identifiers" data-toggle="tab">Identifiers <span
-            class="badge badge-pill badge-info">${d?.getCombosByPropertyNameAndStatus('ids', 'Active')?.size() ?: '0'}</span>
-    </a>
+        <a class="nav-link ${d.publicationType?.value != 'Serial' ? 'active' : ''}" href="#identifiers"
+           data-toggle="tab">Identifiers <span
+                class="badge badge-pill badge-info">${d?.getCombosByPropertyNameAndStatus('ids', 'Active')?.size() ?: '0'}</span>
+        </a>
     </li>
 
     <li role="presentation" class=nav-item">
@@ -20,16 +22,15 @@
             <span class="badge badge-pill badge-info">${d.additionalProperties?.size() ?: '0'}</span>
         </a>
     </li>
-    <g:if test="${controllerName != 'public'}">
-        <li role="presentation" class=nav-item">
-            <a class="nav-link" href="#review" data-toggle="tab">Review Requests
-                <span class="badge badge-pill badge-info">${d.reviewRequests?.size() ?: '0'}</span>
-            </a>
-        </li>
-    </g:if>
 
     <li role="presentation" class=nav-item">
         <a class="nav-link" href="#subjectArea" data-toggle="tab">Subject Area</a>
+    </li>
+
+    <li role="presentation" class=nav-item">
+        <a class="nav-link" href="#ddcs" data-toggle="tab">DDCs
+            <span class="badge badge-pill badge-info">${d.ddcs.size()}</span>
+        </a>
     </li>
 
     <li role="presentation" class=nav-item">
@@ -45,15 +46,15 @@
             <span class="badge badge-pill badge-info">${d.prices?.size() ?: '0'}</span>
         </a>
     </li>
-    <li role="presentation" class=nav-item">
-        <a class="nav-link" href="#ddcs" data-toggle="tab">DDCs
-            <span class="badge badge-pill badge-info">${d.ddcs.size()}</span>
-        </a>
-    </li>
 
-    <li role="presentation" class=nav-item">
-        <a class="nav-link" href="#openAccess" data-toggle="tab">Open Access</a>
-    </li>
+    <g:if test="${controllerName != 'public'}">
+        <li role="presentation" class=nav-item">
+            <a class="nav-link" href="#review" data-toggle="tab">Review Requests
+                <span class="badge badge-pill badge-info">${d.reviewRequests?.size() ?: '0'}</span>
+            </a>
+        </li>
+    </g:if>
+
 </ul>
 
 

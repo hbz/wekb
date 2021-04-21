@@ -27,7 +27,7 @@
                 <g:render template="tipp"  model="${[d: tipp]}"/>
             </div>
 
-            <g:render template="rightBox" model="${[d: tipp.pkg]}"/>
+            <g:render template="rightBox" model="${[d: tipp]}"/>
         </div>
         <g:render template="tippTabs"  model="${[d: tipp]}"/>
 
