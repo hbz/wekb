@@ -149,7 +149,7 @@
                                             </td>
                                             <td>
                                                 <ul>
-                                                    <g:each in="${t.ids}" var="id">
+                                                    <g:each in="${t.ids.sort{it.namespace.value}}" var="id">
                                                         <li><strong>${id.namespace.value}</strong> : ${id.value}</li>
                                                     </g:each>
                                                 </ul>

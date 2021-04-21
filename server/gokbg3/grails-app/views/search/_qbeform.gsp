@@ -100,6 +100,7 @@
           </g:if>
           <g:else>
             <div class="btn-group pull-right" role="group" aria-label="Search Buttons">
+              <g:link class="btn btn-success btn-sm" controller="search" params="[qbe: params.qbe]">Reset</g:link>
               <button name="searchAction" type="submit" class="btn btn-success btn-sm" value="search">Search</button>
               <div class="btn-group" role="group">
                 <button class="btn btn-success btn-sm"

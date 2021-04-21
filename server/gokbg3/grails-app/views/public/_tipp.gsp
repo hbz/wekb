@@ -147,6 +147,13 @@
     </dd>
 
     <dt class="col-3 text-right">
+        <gokb:annotatedLabel owner="${d}" property="note">Notes</gokb:annotatedLabel>
+    </dt>
+    <dd class="col-9 text-left">
+        <gokb:xEditable owner="${d}" field="note"/>
+    </dd>
+
+    <dt class="col-3 text-right">
         <gokb:annotatedLabel owner="${d}" property="status">Status</gokb:annotatedLabel>
     </dt>
     <dd class="col-9 text-left">
