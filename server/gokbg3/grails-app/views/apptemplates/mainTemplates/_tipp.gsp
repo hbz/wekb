@@ -7,7 +7,7 @@
         <gokb:annotatedLabel owner="${d}" property="name">Title</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable  owner="${d}" field="name"/>
+        <gokb:xEditable owner="${d}" field="name"/>
     </dd>
 
 
@@ -17,10 +17,10 @@
                 <gokb:annotatedLabel owner="${d}" property="title">Title</gokb:annotatedLabel>
             </dt>
             <dd style="max-width:60%">
-                    <g:link controller="resource" action="show"
-                            id="${d.title?.class?.name + ':' + d.title?.id}">
-                        ${(d.title?.name) ?: 'Empty'}
-                    </g:link>
+                <g:link controller="resource" action="show"
+                        id="${d.title?.class?.name + ':' + d.title?.id}">
+                    ${(d.title?.name) ?: 'Empty'}
+                </g:link>
                 <g:if test="${d.title}">(${d.title.niceName})</g:if> (visible for ROLE_ADMIN only)
             </dd>
         </g:if>
@@ -31,7 +31,7 @@
     </dt>
     <dd>
         <g:if test="${controllerName == 'create'}">
-            <gokb:manyToOneReferenceTypedown owner="${d}" field="pkg" baseClass="org.gokb.cred.Package" />
+            <gokb:manyToOneReferenceTypedown owner="${d}" field="pkg" baseClass="org.gokb.cred.Package"/>
         </g:if>
         <g:elseif test="${controllerName != 'public'}">
             <g:link controller="resource" action="show"
@@ -49,7 +49,7 @@
     </dt>
     <dd>
         <g:if test="${controllerName == 'create'}">
-            <gokb:manyToOneReferenceTypedown owner="${d}" field="hostPlatform" baseClass="org.gokb.cred.Platform" />
+            <gokb:manyToOneReferenceTypedown owner="${d}" field="hostPlatform" baseClass="org.gokb.cred.Platform"/>
         </g:if>
         <g:elseif test="${controllerName != 'public'}">
             <g:link controller="resource" action="show"
@@ -66,7 +66,7 @@
         <gokb:annotatedLabel owner="${d}" property="url">Host Platform URL</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable  owner="${d}" field="url"/>
+        <gokb:xEditable owner="${d}" field="url"/>
         <g:if test="${d.url}">
             &nbsp;<a href="${d.url}" target="new"><i class="fas fa-external-link-alt"></i></a>
         </g:if>
@@ -98,28 +98,28 @@
         <gokb:annotatedLabel owner="${d}" property="firstAuthor">First Author</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable  owner="${d}" field="firstAuthor"/>
+        <gokb:xEditable owner="${d}" field="firstAuthor"/>
     </dd>
 
     <dt>
         <gokb:annotatedLabel owner="${d}" property="firstAuthor">First Editor</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable  owner="${d}" field="firstEditor"/>
+        <gokb:xEditable owner="${d}" field="firstEditor"/>
     </dd>
 
     <dt>
         <gokb:annotatedLabel owner="${d}" property="publisherName">Publisher Name</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable  owner="${d}" field="publisherName"/>
+        <gokb:xEditable owner="${d}" field="publisherName"/>
     </dd>
 
     <dt>
         <gokb:annotatedLabel owner="${d}" property="dateFirstInPrint">Date first in print</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable  owner="${d}" type="date"
+        <gokb:xEditable owner="${d}" type="date"
                         field="dateFirstInPrint"/>
     </dd>
 
@@ -127,7 +127,7 @@
         <gokb:annotatedLabel owner="${d}" property="dateFirstOnline">Date first online</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable  owner="${d}" type="date"
+        <gokb:xEditable owner="${d}" type="date"
                         field="dateFirstOnline"/>
     </dd>
 
@@ -135,7 +135,7 @@
         <gokb:annotatedLabel owner="${d}" property="accessStartDate">Access Start Date</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable  owner="${d}" type="date"
+        <gokb:xEditable owner="${d}" type="date"
                         field="accessStartDate"/>
     </dd>
 
@@ -143,7 +143,7 @@
         <gokb:annotatedLabel owner="${d}" property="accessEndDate">Access End Date</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable  owner="${d}" type="date"
+        <gokb:xEditable owner="${d}" type="date"
                         field="accessEndDate"/>
     </dd>
 
@@ -151,14 +151,14 @@
         <gokb:annotatedLabel owner="${d}" property="volumeNumber">Volume Number</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable  owner="${d}" field="volumeNumber"/>
+        <gokb:xEditable owner="${d}" field="volumeNumber"/>
     </dd>
 
     <dt>
         <gokb:annotatedLabel owner="${d}" property="editionStatement">Edition</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable  owner="${d}" field="editionStatement"/>
+        <gokb:xEditable owner="${d}" field="editionStatement"/>
     </dd>
 
     <dt>
@@ -189,68 +189,70 @@
         <gokb:annotatedLabel owner="${d}" property="lastChangedExternal">Last Changed</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:xEditable  owner="${d}" field="lastChangedExternal" type='date'/>
+        <gokb:xEditable owner="${d}" field="lastChangedExternal" type='date'/>
     </dd>
 
 </dl>
 
-<ul id="tabs" class="nav nav-tabs">
+<g:if test="${d.id != null}">
+    <ul id="tabs" class="nav nav-tabs">
 
-    <g:if test="${d.publicationType?.value == 'Serial'}">
-        <li class="active">
-            <a href="#tippcoverage" data-toggle="tab">Coverage</a>
+        <g:if test="${d.publicationType?.value == 'Serial'}">
+            <li class="active">
+                <a href="#tippcoverage" data-toggle="tab">Coverage</a>
+            </li>
+        </g:if>
+        <li class="${d.publicationType?.value != 'Serial' ? 'active' : ''}"><a href="#identifiers"
+                                                                               data-toggle="tab">Identifiers <span
+                    class="badge badge-warning">${d.getCombosByPropertyNameAndStatus('ids', 'Active')?.size() ?: '0'}</span>
+        </a>
         </li>
-    </g:if>
-    <li class="${d.publicationType?.value != 'Serial' ? 'active' : ''}"><a href="#identifiers" data-toggle="tab">Identifiers <span
-            class="badge badge-warning">${d?.getCombosByPropertyNameAndStatus('ids', 'Active')?.size() ?: '0'}</span>
-    </a>
-    </li>
 
-    <li>
-        <a href="#addprops" data-toggle="tab">Additional Properties
-            <span class="badge badge-warning">${d.additionalProperties?.size() ?: '0'}</span>
-        </a>
-    </li>
-
-    <li>
-        <a href="#subjectArea" data-toggle="tab">Subject Area</a>
-    </li>
-
-    <li>
-        <a href="#ddcs" data-toggle="tab">DDCs
-            <span class="badge badge-warning">${d.ddcs?.size()}</span>
-        </a>
-    </li>
-
-    <li>
-        <a href="#series" data-toggle="tab">Series</a>
-    </li>
-
-    <li>
-        <a href="#openAccess" data-toggle="tab">Open Access</a>
-    </li>
-
-    <li>
-        <a href="#prices" data-toggle="tab">Prices
-            <span class="badge badge-warning">${d.prices?.size() ?: '0'}</span>
-        </a>
-    </li>
-
-    <g:if test="${controllerName != 'public'}">
         <li>
-            <a href="#review" data-toggle="tab">Review Requests
-                <span class="badge badge-warning">${d.reviewRequests?.size() ?: '0'}</span>
+            <a href="#addprops" data-toggle="tab">Additional Properties
+                <span class="badge badge-warning">${d.additionalProperties.size()}</span>
             </a>
         </li>
-    </g:if>
-</ul>
+
+        <li>
+            <a href="#subjectArea" data-toggle="tab">Subject Area</a>
+        </li>
+
+        <li>
+            <a href="#ddcs" data-toggle="tab">DDCs
+                <span class="badge badge-warning">${d.ddcs.size()}</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="#series" data-toggle="tab">Series</a>
+        </li>
+
+        <li>
+            <a href="#openAccess" data-toggle="tab">Open Access</a>
+        </li>
+
+        <li>
+            <a href="#prices" data-toggle="tab">Prices
+                <span class="badge badge-warning">${d.prices.size()}</span>
+            </a>
+        </li>
+
+        <g:if test="${controllerName != 'public'}">
+            <li>
+                <a href="#review" data-toggle="tab">Review Requests
+                    <span class="badge badge-warning">${d.reviewRequests.size()}</span>
+                </a>
+            </li>
+        </g:if>
+    </ul>
 
 
-<div id="my-tab-content" class="tab-content">
+    <div id="my-tab-content" class="tab-content">
 
-    <g:render template="/tabTemplates/tippTabs" model="${[d: d]}"/>
+        <g:render template="/tabTemplates/tippTabs" model="${[d: d]}"/>
 
-</div>
-<g:render template="/apptemplates/secondTemplates/componentStatus"
-          model="${[d: d]}"/>
-
+    </div>
+    <g:render template="/apptemplates/secondTemplates/componentStatus"
+              model="${[d: d]}"/>
+</g:if>
