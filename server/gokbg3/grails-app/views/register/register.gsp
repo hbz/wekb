@@ -54,7 +54,7 @@
           <div class="panel panel-default">
             <div class="panel-heading">Register as a new user</div>
             <div class="panel-body">
-              <g:form controller="register" action="register" class="form" role="form">
+              <g:form controller="register" action="register" class="form"  >
                 <div class="form-group ${registerCommand.errors.hasFieldErrors('username') ? 'has-error' : ''}">
                   <label for="username">Username (<span style="color:red">*</span>)</label>
                   <input autocomplete="false" type="text" class="form-control" id="username" name="username" placeholder="Requested Username" value="${registerCommand.username}" style="width:50%"/>

@@ -32,7 +32,7 @@
        <div class="row">
          <div class="span12">
 
-           <g:form controller="packages" class="form" role="form" action="index" method="get" params="${params}">
+           <g:form controller="packages" class="form"   action="index" method="get" params="${params}">
 
              <input type="hidden" name="offset" value="${params.offset}"/>
              <g:if test="${params.startYear && params.endYear}">

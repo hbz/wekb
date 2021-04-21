@@ -10,7 +10,7 @@
             </div>
             <div class="col-sm-8">
                 <div class="col-sm-4 footer-social">
-                 <h4>Contact Us</h4>
+                 <h2>Contact Us</h4>
                  <ul>
                      <li><a class="content" href="mailto:laser@hbz-nrw.de">E-Mail</a></li>
                      <li><a target="_blank" class="content" href="https://www.hbz-nrw.de/ueber-uns/kontakt/anreise">How to reach us</a></li>
@@ -19,7 +19,7 @@
                  </ul>
                 </div>
                 <div class="col-sm-4 footer-social">
-                 <h4>Accessibility</h4>
+                 <h2>Accessibility</h4>
                  <ul>
                      <li><a target="_blank" class="content" href="https://www.hbz-nrw.de/barrierefreiheit">Accessibility Statement</a></li>
                      <li><g:link controller="public" action="wcagPlainEnglish">Plain English</g:link></li>
@@ -27,7 +27,7 @@
                  </ul>
                 </div>
                 <div class="col-sm-4 footer-social">
-                 <h4>Technical Details</h4>
+                 <h2>Technical Details</h4>
                  <ul>
                      <%-- App version --%>
                      <li>
