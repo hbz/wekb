@@ -25,7 +25,7 @@
                 </g:else>
 		<div class="panel-footer clearfix" >
 			<form action='${postUrl}' method='POST' id='loginForm'
-				class='form-horizontal col-md-6 col-md-offset-3' autocomplete='off' role="form">
+				class='form-horizontal col-md-6 col-md-offset-3' autocomplete='off'  >
 
 				<div class="form-group">
 					<label class="control-label" for='username'><g:message

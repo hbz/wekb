@@ -1,7 +1,7 @@
 <g:if test="${hide.contains('SEARCH_FORM')}">
 </g:if>
 <g:elseif test="${params.inline}">
-  <g:form method="get" class="form-horizontal" controller="search" role="form">
+  <g:form method="get" class="form-horizontal" controller="search"  >
     <input type="hidden" name="qbe" value="${params.qbe}"/>
 
     <g:each in="${hide}" var="hidden_var">
@@ -34,7 +34,7 @@
   </g:form>
 </g:elseif>
 <g:else>
-  <g:form method="get" class="form-horizontal" controller="search" role="form">
+  <g:form method="get" class="form-horizontal" controller="search"  >
 
     <input type="hidden" name="qbe" value="${params.qbe}"/>
 

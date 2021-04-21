@@ -198,6 +198,10 @@ ul.select2-choices:after {
 }
 
 /** PUBLIC END **/
+
+.select2-default {
+  color: #495057!important;
+}
 .threeColGrid > div:nth-child(4n+5) {
     clear: left;
 }

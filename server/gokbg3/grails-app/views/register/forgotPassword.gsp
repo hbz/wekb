@@ -24,7 +24,7 @@
         </g:if>
 
 
-      <g:form action='forgotPassword' name="forgotPasswordForm" autocomplete='off' class="form" role="form">
+      <g:form action='forgotPassword' name="forgotPasswordForm" autocomplete='off' class="form"  >
 
         <g:if test='${emailSent}'>
           <br/>
