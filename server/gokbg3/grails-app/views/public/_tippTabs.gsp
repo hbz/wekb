@@ -186,7 +186,7 @@
     </g:if>
 
 
-    <div class="tab-pane fade ${d.publicationType?.value != 'Serial' ? 'show active' : ''}" id="identifiers">
+    <div class="tab-pane fade ${d.publicationType?.value != 'Serial' ? 'active' : ''}" id="identifiers">
         <dl class="row">
             <dt class="col-3 text-right">
                 <gokb:annotatedLabel owner="${d}" property="ids">Identifiers</gokb:annotatedLabel>

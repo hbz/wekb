@@ -378,7 +378,7 @@
     </g:if>
 
 
-    <div class="tab-pane ${d.publicationType?.value != 'Serial' ? 'show active' : ''}" id="identifiers">
+    <div class="tab-pane ${d.publicationType?.value != 'Serial' ? 'active' : ''}" id="identifiers">
         <dl>
             <dt>
                 <gokb:annotatedLabel owner="${d}" property="ids">Identifiers</gokb:annotatedLabel>
