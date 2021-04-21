@@ -162,13 +162,6 @@
     </dd>
 
     <dt>
-        <gokb:annotatedLabel owner="${d}" property="editionStatement">Edition</gokb:annotatedLabel>
-    </dt>
-    <dd>
-        <gokb:xEditable  owner="${d}" field="editionStatement"/>
-    </dd>
-
-    <dt>
         <gokb:annotatedLabel owner="${d}" property="accessType">Access Type</gokb:annotatedLabel>
     </dt>
     <dd>
