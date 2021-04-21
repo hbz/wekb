@@ -158,7 +158,7 @@ ul.select2-choices:after {
 .footer-bs .footer-nav ul.list a:hover { color:rgba(255,255,255,0.60); text-decoration:none; }
 
 .footer-bs .footer-social ul { list-style:none; padding:0px; }
-.footer-bs .footer-social h4 {
+.footer-bs .footer-social h2 {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 3px;
