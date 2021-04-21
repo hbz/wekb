@@ -85,24 +85,24 @@
     <g:if test="${pkg}">
         <div id="row">
             <ul id="tabs" class="nav nav-tabs">
-                <li role="presentation" class="nav-item">
+                <li class="nav-item">
                     <a class="nav-link active" href="#titledetails" data-toggle="tab">Titles
                         <span class="badge badge-pill badge-info">${titleCount}</span>
                     </a>
                 </li>
-                <li role="presentation" class="nav-item">
+                <li class="nav-item">
                     <a class="nav-link" href="#identifiers" data-toggle="tab">Identifiers
                         <span  class="badge badge-pill badge-info">${pkg?.getCombosByPropertyNameAndStatus('ids', 'Active')?.size() ?: '0'}</span>
                     </a>
                 </li>
 
-                <li role="presentation" class="nav-item">
+                <li class="nav-item">
                     <a class="nav-link" href="#altnames" data-toggle="tab">Alternate Names
                         <span class="badge badge-pill badge-info">${pkg.variantNames?.size() ?: '0'}</span>
                     </a>
                 </li>
 
-                <li role="presentation" class="nav-item">
+                <li class="nav-item">
                     <a class="nav-link" href="#ddcs" data-toggle="tab">DDCs
                         <span class="badge badge-pill badge-info">${pkg.ddcs?.size() ?: '0'}</span>
                     </a>
