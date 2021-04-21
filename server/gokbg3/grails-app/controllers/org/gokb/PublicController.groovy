@@ -202,7 +202,11 @@ class PublicController {
 
     Package pkg = genericOIDService.resolveOID(params.id)
 
-    Date export_date = dateFormatService.formatDate(new Date());
+    if(!pkg){
+      pkg = KBComponent.findByUuid(params.id)
+    }
+
+    String export_date = dateFormatService.formatDate(new Date());
 
     String filename = "kbart_${pkg.name}_${export_date}.tsv"
 
@@ -224,7 +228,11 @@ class PublicController {
 
     Package pkg = genericOIDService.resolveOID(params.id)
 
-    def export_date = dateFormatService.formatDate(new Date());
+    if(!pkg){
+      pkg = KBComponent.findByUuid(params.id)
+    }
+
+    String export_date = dateFormatService.formatDate(new Date());
 
     String filename = "wekb_package_${pkg.name.toLowerCase()}_${export_date}.tsv"
 
