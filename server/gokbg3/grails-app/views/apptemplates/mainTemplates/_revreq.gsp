@@ -24,33 +24,6 @@
         <dd>
           <gokb:xEditable  owner="${d}" field="reviewRequest" />
         </dd>
-        <g:if test="${d.id}">
-          <sec:ifAnyGranted roles="ROLE_SUPERUSER">
-            <dt>
-              <gokb:annotatedLabel owner="${d}" property="allocationLog">Allocation Log</gokb:annotatedLabel>
-            </dt>
-            <dd>
-              <table class="table table-bordered table-striped">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>User</th>
-                    <th>Note</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <g:each in="${d.allocationLog}" var="l">
-                    <tr>
-                      <td>${l.dateCreated}</td>
-                      <td>${l.allocatedTo}</td>
-                      <td>${l.note}</td>
-                    </tr>
-                  </g:each>
-                </tbody>
-              </table>
-            </dd>
-          </sec:ifAnyGranted>
-        </g:if>
      </dl>
 <div id="content">
   <ul id="tabs" class="nav nav-tabs">
