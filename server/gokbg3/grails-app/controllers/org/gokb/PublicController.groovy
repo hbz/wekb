@@ -190,20 +190,20 @@ class PublicController {
     result =  ESSearchService.search(mutableParams)
 
 
-    def query_params = [forbiddenStatus : RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED)]
+    def query_params = [onlyCurrent : RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_CURRENT)]
 
     List providerRoles = [RefdataCategory.lookup(RCConstants.ORG_ROLE, 'Content Provider'), RefdataCategory.lookup(RCConstants.ORG_ROLE, 'Platform Provider'), RefdataCategory.lookup(RCConstants.ORG_ROLE, 'Publisher')]
 
-    def query_params2 = [forbiddenStatus : RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED), roles: providerRoles]
+    def query_params2 = [onlyCurrent : RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_CURRENT), roles: providerRoles]
 
     result.componentsOfStatistic = ["Provider", "Package", "Platform", "CuratoryGroup", "TitleInstancePackagePlatform"]
 
     result.countComponent = [:]
     result.componentsOfStatistic.each { component ->
       if(component == "Provider"){
-        result.countComponent."${component.toLowerCase()}" = Org.executeQuery("select count(o.id) from Org as o join o.roles rdv where rdv in (:roles) and o.status != :forbiddenStatus", query_params2, [readOnly: true])[0]
+        result.countComponent."${component.toLowerCase()}" = Org.executeQuery("select count(o.id) from Org as o join o.roles rdv where rdv in (:roles) and o.status = :onlyCurrent", query_params2, [readOnly: true])[0]
       }else {
-        def fetch_all = "select count(o.id) from ${component} as o where status != :forbiddenStatus"
+        def fetch_all = "select count(o.id) from ${component} as o where status = :onlyCurrent"
         result.countComponent."${component.toLowerCase()}" = KBComponent.executeQuery(fetch_all.toString(), query_params, [readOnly: true])[0]
       }
 
