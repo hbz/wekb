@@ -67,13 +67,13 @@
         <li><g:link controller="welcome"><i class="fa fa-tasks fa-fw"></i> To Do<span class="fa arrow"></span></g:link>
 
           <ul class="nav nav-second-level">
-            <li><g:link controller="search" action="index"
+            %{--<li><g:link controller="search" action="index"
                         params="[
                                 qbe:'g:reviewRequests',
                                 qp_allocatedto:'org.gokb.cred.User:'+ applicationContext.springSecurityService.principal.id,
                                 qp_status: ('org.gokb.cred.RefdataValue:'+(RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STATUS, 'Open').id))
                         ]">
-              <i class="fa fa-angle-double-right fa-fw"></i> My ToDos</g:link></li>
+              <i class="fa fa-angle-double-right fa-fw"></i> My ToDos</g:link></li>--}%
             <li><g:link controller="search" action="index"
                         params="${[
                                 qbe:'g:reviewRequests',

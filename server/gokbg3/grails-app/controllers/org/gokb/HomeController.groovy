@@ -58,7 +58,6 @@ class HomeController {
 
     result.openActivities = Activity.findAllByOwnerAndStatus(user,active_status)
     result.recentlyClosedActivities = Activity.findAllByOwnerAndStatusNotEqual(user,active_status,[max: 10, sort: "lastUpdated", order: "desc"])
-    result.recentReviewRequests = ReviewRequest.findAllByRaisedByAndStatus(user,needs_review_status,[max: 10, sort: "dateCreated", order: "desc"])
 
     result
   }

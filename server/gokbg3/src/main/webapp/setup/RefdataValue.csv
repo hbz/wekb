@@ -462,6 +462,8 @@ ReviewRequest.StdDesc;Status Deleted;Status Deleted;Status Deleted
 ReviewRequest.StdDesc;Status Retired;Status Retired;Status Retired
 ReviewRequest.StdDesc;TIPPs Retired;TIPPs Retired;TIPPs Retired
 ReviewRequest.StdDesc;Type Mismatch;Type Mismatch;Type Mismatch
+ReviewRequest.Type;Import Request;Import Request;Import Request
+ReviewRequest.Type;User Request;User Request;User Request
 Source.DataFormat;KBART;KBART;KBART
 Source.DataFormat;Proprietary;Proprietary;Proprietary
 Source.DataSupplyMethod;eMail;eMail;eMail

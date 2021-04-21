@@ -51,8 +51,7 @@ class GroupController {
       log.debug("Got ${cg_components.size()} connected components")
 
       def cg_review_tasks_hql = ''' from ReviewRequest as rr where ((
-        rr.allocatedTo in ( select u from CuratoryGroup as cg join cg.users as u where cg = :group )
-        or rr.componentToReview.id in (:cgcomponents)
+        rr.componentToReview.id in (:cgcomponents)
       ) or exists (select arc from AllocatedReviewGroup as arc where arc.review = rr and arc.group = :group))
       and rr.status != :closed and rr.status != :deleted
       '''

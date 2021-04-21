@@ -207,6 +207,7 @@ class PublicController {
         result.countComponent."${component.toLowerCase()}" = KBComponent.executeQuery(fetch_all.toString(), query_params, [readOnly: true])[0]
       }
 
+
     }
 
     params.max = mutableParams.max

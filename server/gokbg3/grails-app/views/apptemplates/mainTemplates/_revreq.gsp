@@ -108,13 +108,6 @@
           <dd>
         </g:if>
         <sec:ifAnyGranted roles="ROLE_SUPERUSER">
-          <dt>
-            <gokb:annotatedLabel owner="${d}" property="allocatedTo">Allocated To</gokb:annotatedLabel>
-          </dt>
-          <dd>
-            ${d.allocatedTo ? d.allocatedTo.displayName ?: d.allocatedTo.username : 'N/A'}
-          </dd>
-
           <g:if test="${d.id != null}">
             <dt>
               <gokb:annotatedLabel owner="${d}" property="dateCreated">Request Timestamp</gokb:annotatedLabel>
