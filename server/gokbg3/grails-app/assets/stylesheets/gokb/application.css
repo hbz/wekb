@@ -203,6 +203,12 @@ ul.select2-choices:after {
 
 /** PUBLIC END **/
 
+/* Bugfix ERMS-3385 */
+.dl-horizontal dd{
+  width: 50%;
+}
+
+
 .select2-default {
   color: #495057!important;
 }
