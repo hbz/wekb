@@ -86,7 +86,7 @@
             <table class="table table-striped wekb-table-responsive-stack">
                 <thead>
                 <tr>
-                    <th></th>
+                    <th>#</th>
                     <g:sortableColumn property="sortname" title="Package Name"/>
                     <g:sortableColumn property="cpname" title="Provider"/>
                     <g:sortableColumn property="curatoryGroups" title="Curatory Groups"/>

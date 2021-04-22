@@ -127,7 +127,7 @@
                     <table class="table table-striped wekb-table-responsive-stack">
                             <thead>
                                 <tr>
-                                        <th></th>
+                                        <th>#</th>
                                         <g:sortableColumn property="tipp.title.name" title="Title"/>
                                         <g:sortableColumn property="tipp.title.ids" title="Identifiers"/>
                                         <g:sortableColumn property="tipp.hostPlatform.name" title="Platform"/>
