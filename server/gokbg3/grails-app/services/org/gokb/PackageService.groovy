@@ -1540,7 +1540,7 @@ class PackageService {
     boolean started = false
     if (running == false) {
       running = true
-      println("UpdateFromSource started")
+      //println("UpdateFromSource started")
       log.debug("UpdateFromSource started")
       result = startSourceUpdate(p, user, ignoreLastChanged) ? 'OK' : 'ERROR'
       running = false
@@ -1559,7 +1559,7 @@ class PackageService {
    */
   private boolean startSourceUpdate(Package p, def user = null, boolean ignoreLastChanged = false) {
     log.debug("Source update start..")
-    println("Source update start..")
+    //println("Source update start..")
     boolean error = false
     def ygorBaseUrl = grailsApplication.config.gokb.ygorUrl
 
