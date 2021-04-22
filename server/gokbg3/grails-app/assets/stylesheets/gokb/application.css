@@ -202,7 +202,12 @@ ul.select2-choices:after {
 }
 
 /** PUBLIC END **/
-
+/* list group-item font is to small in yeti theme */
+.list-group {
+    font-size: 1.5rem;
+    font-weight: 400
+}
+ */
 /* Bugfix ERMS-3385 */
 .dl-horizontal dd{
   width: 50%;
