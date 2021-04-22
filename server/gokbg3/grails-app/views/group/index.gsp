@@ -8,7 +8,18 @@
   <h1 class="page-header">${group?.name}</h1>
   <div id="mainarea" class="panel panel-default">
 
-    <g:render template="/search/pagination" model="${[s_controller:'group',offset_param:'pkg_offset',offset:pkg_offset,records:packages,jumpToPage:'pkg_jumpToPage',page:pkg_page,page_max:pkg_page_max,lasthit:(pkg_offset.toInteger() + packages.size()),recset:true,max:max,params:params,reccount:package_count,hideActions:true]}"/>
+
+    <p><g:link controller="group" action="myPackages" id="${group.id}">My Packages</g:link></p>
+
+    <p><g:link controller="group" action="myPlatforms" id="${group.id}">My Platforms</g:link></p>
+
+    <p><g:link controller="group" action="myOrgs" id="${group.id}">My Orgs</g:link></p>
+
+    <p><g:link controller="group" action="myTitles" id="${group.id}">My Titles</g:link></p>
+
+    <p><g:link controller="group" action="myReviewRequests" id="${group.id}">My Review Requests</g:link></p>
+
+    %{--<g:render template="/search/pagination" model="${[s_controller:'group',offset_param:'pkg_offset',offset:pkg_offset,records:packages,jumpToPage:'pkg_jumpToPage',page:pkg_page,page_max:pkg_page_max,lasthit:(pkg_offset.toInteger() + packages.size()),recset:true,max:max,params:params,reccount:package_count,hideActions:true]}"/>
 
     <table class="table table-striped table-condensed table-bordered">
       <thead style="white-space:nowrap;">
@@ -88,7 +99,7 @@
             </tr>
         </g:each>
       </tbody>
-    </table>
+    </table>--}%
   </div>
 %{--   <g:link class="display-inline" controller="search" action="index"
           params="[qbe:'g:reviewRequests']"

@@ -23,13 +23,18 @@
         <li class="${controllerName == "home" && (actionName == 'userdash') ? 'active' : ''}"><g:link controller="home" action="userdash"><i class="far fa-chart-bar"></i> My Dashboard</g:link></li>
 
         <g:if test="${session.curatorialGroups && ( session.curatorialGroups.size() > 0 ) }">
-          <li class="${(controllerName == "group")  ? 'active' : ''}"><a href="#"><i class="fas fa-globe"></i> My Groups<span class="fa arrow"></span></a>
-            <ul class="nav nav-second-level">
-              <g:each in="${session.curatorialGroups}" var="cg">
-                <li><g:link controller="group" action="index" id="${cg.id}">${cg.name}</g:link></li>
-              </g:each>
-            </ul>
-          </li>
+          <g:if test="${session.curatorialGroups && ( session.curatorialGroups.size() == 1 ) }">
+            <li class="${(controllerName == "group")  ? 'active' : ''}"><g:link controller="group" action="index" id="${session.curatorialGroups[0].id}"><i class="fas fa-globe"></i> My Group </li></g:link>
+          </g:if>
+          <g:else>
+            <li class="${(controllerName == "group")  ? 'active' : ''}"><a href="#"><i class="fas fa-globe"></i> My Groups<span class="fa arrow"></span></a>
+              <ul class="nav nav-second-level">
+                <g:each in="${session.curatorialGroups}" var="cg">
+                  <li><g:link controller="group" action="index" id="${cg.id}">${cg.name}</g:link></li>
+                </g:each>
+              </ul>
+            </li>
+          </g:else>
         </g:if>
 
         <li class="${(controllerName == "search")  ? 'active' : ''}"><a href="#"><i class="fa fa-search fa-fw"></i> Search<span class="fa arrow"></span></a>
