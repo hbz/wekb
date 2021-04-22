@@ -369,7 +369,7 @@ class CrossRefPkgRun {
         log.debug("Got more than one cg candidate!")
         job?.groupId = curatory_group_ids[0]
       }
-      curatoryGroup = job?.groupId
+      curatoryGroup = CuratoryGroup.get(job?.groupId)
       curated_pkg = true
     }
 
