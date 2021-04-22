@@ -421,6 +421,22 @@ Package.PaymentType;Mixed;Mixed;Mixed
 Package.PaymentType;Paid;Paid;Paid
 Package.PaymentType;Uncharged;Uncharged;Uncharged
 Package.PaymentType;Unknown;Unknown;Unknown
+Package.RegionalRange;Baden-Wurttemberg;Baden-Württemberg;Baden-Wurttemberg
+Package.RegionalRange;Bavaria;Bayern;Bavaria
+Package.RegionalRange;Berlin;Berlin;Berlin
+Package.RegionalRange;Brandenburg;Brandenburg;Brandenburg
+Package.RegionalRange;Bremen;Bremen;Bremen
+Package.RegionalRange;Hamburg;Hamburg;Hamburg
+Package.RegionalRange;Hesse;Hessen;Hesse
+Package.RegionalRange;Lower Saxony;Niedersachsen;Lower Saxony
+Package.RegionalRange;Mecklenburg-West Pomerania;Mecklenburg-Vorpommern;Mecklenburg-West Pomerania
+Package.RegionalRange;North Rhine-Westphalia;Nordrhein-Westfalen;North Rhine-Westphalia
+Package.RegionalRange;Rhineland-Palatinate;Rheinland-Pfalz;Rhineland-Palatinate
+Package.RegionalRange;Saarland;Saarland;Saarland
+Package.RegionalRange;Saxony;Sachsen;Saxony
+Package.RegionalRange;Saxony-Anhalt;Sachsen-Anhalt;Saxony-Anhalt
+Package.RegionalRange;Schleswig-Holstein;Schleswig-Holstein;Schleswig-Holstein
+Package.RegionalRange;Thuringia;Thüringen;Thuringia
 Package.Scope;Consortium;Consortium;Consortium
 Package.Scope;Global;Global;Global
 Package.Scope;Individual;Individual;Individual

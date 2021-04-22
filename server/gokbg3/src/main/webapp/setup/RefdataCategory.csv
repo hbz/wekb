@@ -32,6 +32,7 @@ Package.Global;Package Global;Package Global
 Package.LinkType;Package Link Type;Package Link Type
 Package.ListStatus;Package List Status;Package List Status
 Package.OpenAccess;Package Open Access;Package Open Access
+Package.RegionalRange; Package RegionalRange; Package RegionalRange
 Package.PaymentType;Package Payment Type;Package Payment Type
 Package.Scope;Package Scope;Package Scope
 Platform.Authentication;Platform Authentication;Platform Authentication
