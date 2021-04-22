@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="layout" content="sb-admin"/>
-    <title><g:message code="gokb.appname" default="we:kb"/>: My Review Requests (${group.name})</title>
+    <title><g:message code="gokb.appname" default="we:kb"/>: My Sources (${group.name})</title>
 </head>
 
 <body>
@@ -10,7 +10,7 @@
 
 <div id="mainarea" class="panel panel-default">
 
-    <h3>My Review Requests</h3>
+    <h3>My Sources</h3>
 
     <g:if test="${!params.inline}">
         <div class="panel-heading">
