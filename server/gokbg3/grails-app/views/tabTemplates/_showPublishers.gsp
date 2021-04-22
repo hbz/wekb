@@ -38,19 +38,23 @@
         <gokb:annotatedLabel owner="${d}" property="addPublisher">Add new Publisher</gokb:annotatedLabel>
       </h4>
       <dl class="dl-horizontal">
-        <g:form controller="ajaxSupport" action="addToStdCollection">
-          <input type="hidden" name="__context" value="${d.class.name}:${d.id}" />
-          <input type="hidden" name="__property" value="publisher" />
-          <input type="hidden" name="fragment" value="#publishers" />
-          <dt class="dt-label">Organization</dt>
-          <dd>
-            <gokb:simpleReferenceTypedown class="form-control select-ml" name="__relatedObject" baseClass="org.gokb.cred.Org" style="display:block;" />
-          </dd>
-          <dt></dt>
-          <dd>
-            <button type="submit" class="btn btn-default btn-primary">Add</button>
-          </dd>
-        </g:form>
+
+        <a data-toggle="modal" data-cache="false"
+           data-target="#publishersModal">Add new Publisher</a>
+
+        <bootStrap:modal id="publishersModal" title="Add new Publisher">
+
+          <g:form controller="ajaxSupport" action="addToStdCollection">
+            <input type="hidden" name="__context" value="${d.class.name}:${d.id}" />
+            <input type="hidden" name="__property" value="publisher" />
+            <input type="hidden" name="fragment" value="#publishers" />
+            <dt class="dt-label">Organization</dt>
+            <dd>
+              <gokb:simpleReferenceTypedown class="form-control select-ml" name="__relatedObject" baseClass="org.gokb.cred.Org" style="display:block;" />
+            </dd>
+          </g:form>
+        </bootStrap:modal>
+
       </dl>
     </g:if>
   </dd>

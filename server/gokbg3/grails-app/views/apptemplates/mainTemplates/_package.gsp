@@ -94,7 +94,7 @@
           <gokb:annotatedLabel owner="${d}" property="nationalRanges">National Range</gokb:annotatedLabel>
         </dt>
         <dd>
-          <g:if test="${d.scope.value == 'National'}">
+          <g:if test="${d.scope?.value == 'National'}">
             <g:render template="/apptemplates/secondTemplates/nationalRange" />
           </g:if>
         </dd>
@@ -211,9 +211,6 @@
                         [expr:'toComponent.namespace.value', colhead:'Namespace'],
                         [expr:'toComponent.value', colhead:'ID', action:'link']]]}" />
             <g:if test="${editable}">
-              <h4>
-                <gokb:annotatedLabel owner="${d}" property="addIdentifier">Add new Identifier</gokb:annotatedLabel>
-              </h4>
               <g:render template="/apptemplates/secondTemplates/addIdentifier" model="${[d:d, hash:'#identifiers']}"/>
             </g:if>
           </dd>
