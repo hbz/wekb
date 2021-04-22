@@ -924,6 +924,7 @@ class PackageService {
     changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.contentType, result, 'contentType')
 
     // Platform
+    Platform newPlatform = null
     if (packageHeaderDTO.nominalPlatform) {
       def platformDTO = [:];
 
@@ -950,9 +951,10 @@ class PackageService {
         }
         if (!np && platformDTO.name) {
           np = Platform.upsertDTO(platformDTO)
+          newPlatform = np
         }
         if (np) {
-          if (result.nominalPlatform != np) {
+          if (result.nominalPlatform == null) {
             result.nominalPlatform = np;
             changed = true
           }
@@ -1006,7 +1008,7 @@ class PackageService {
         }
       }
       if (prov) {
-        if (result.provider != prov) {
+        if (result.provider == null) {
           result.provider = prov;
           log.debug("Provider ${prov.name} set.")
           changed = true
@@ -1057,10 +1059,16 @@ class PackageService {
           result.curatoryGroups.add(cg)
           changed = true;
         }
+        //If new Platform set curatoryGroups
+        if(newPlatform) {
+          newPlatform.curatoryGroups.add(cg)
+        }
+
       }
       else if (cgname) {
         def new_cg = new CuratoryGroup(name: cgname).save(flush: true, failOnError: true)
         result.curatoryGroups.add(new_cg)
+        newPlatform.curatoryGroups.add(new_cg)
         changed = true
       }
     }
@@ -1532,6 +1540,7 @@ class PackageService {
     boolean started = false
     if (running == false) {
       running = true
+      //println("UpdateFromSource started")
       log.debug("UpdateFromSource started")
       result = startSourceUpdate(p, user, ignoreLastChanged) ? 'OK' : 'ERROR'
       running = false
@@ -1550,6 +1559,7 @@ class PackageService {
    */
   private boolean startSourceUpdate(Package p, def user = null, boolean ignoreLastChanged = false) {
     log.debug("Source update start..")
+    //println("Source update start..")
     boolean error = false
     def ygorBaseUrl = grailsApplication.config.gokb.ygorUrl
 

@@ -18,7 +18,8 @@
         <g:link class="list-group-item list-group-item-action"  controller="group" action="myTitles" id="${group.id}">My Titles</g:link>
       </div>
       <div class="col-md-4">
-        <g:link style="border-bottom: 1px solid #ddd;" class="list-group-item list-group-item-action"  controller="group" action="myReviewRequests" id="${group.id}">My Review Requests</g:link>
+        <g:link class="list-group-item list-group-item-action"  controller="group" action="mySources" id="${group.id}">My Sources</g:link>
+        <g:link class="list-group-item list-group-item-action"  controller="group" action="myReviewRequests" id="${group.id}">My Review Requests</g:link>
       </div>
     </div>
 

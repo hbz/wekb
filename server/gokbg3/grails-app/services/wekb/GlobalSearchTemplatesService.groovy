@@ -11,6 +11,7 @@ class GlobalSearchTemplatesService {
     @javax.annotation.PostConstruct
     def init() {
         globalSearchTemplates.put('additionalPropertyDefinitions', additionalPropertyDefinitions())
+        globalSearchTemplates.put('allocatedReviewGroups', allocatedReviewGroups())
         globalSearchTemplates.put('components', components())
         globalSearchTemplates.put('curatoryGroups', curatoryGroups())
         globalSearchTemplates.put('dataFiles', dataFiles())
@@ -72,6 +73,70 @@ class GlobalSearchTemplatesService {
                         qbeResults: [
                                 [heading: 'Property Name', property: 'propertyName', sort: 'propertyName', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
                                 // [heading:'Property Name', property:'propertyName', link:[controller:'search',action:'index',params:'x.params+[\'det\':x.counter]']]
+                        ]
+                ]
+        ]
+        result
+    }
+
+    Map allocatedReviewGroups() {
+        Map result = [
+                baseclass: 'org.gokb.cred.AllocatedReviewGroup',
+                title    : 'Requests For Review by Group',
+                group    : 'Secondary',
+                qbeConfig: [
+                        qbeForm   : [
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.RefdataValue',
+                                        filter1    : RCConstants.REVIEW_REQUEST_STATUS,
+                                        prompt     : 'Status',
+                                        qparam     : 'qp_status',
+                                        placeholder: 'Name or title of item',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'status']
+                                ],
+                                [
+                                        prompt     : 'Cause',
+                                        qparam     : 'qp_cause',
+                                        placeholder: 'Cause',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'like', 'prop': 'descriptionOfCause']
+                                ],
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.RefdataValue',
+                                        filter1    : RCConstants.REVIEW_REQUEST_STD_DESC,
+                                        prompt     : 'Type',
+                                        qparam     : 'qp_desc',
+                                        placeholder: 'Standard description',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'stdDesc']
+                                ],
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.RefdataValue',
+                                        filter1    : RCConstants.REVIEW_REQUEST_TYPE,
+                                        prompt     : 'Type',
+                                        qparam     : 'qp_type',
+                                        placeholder: 'Type',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'type']
+                                ],
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.CuratoryGroup',
+                                        prompt     : 'Curatory Group',
+                                        qparam     : 'qp_curgroup',
+                                        placeholder: 'Curatory Group',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'group'],
+                                        hide       : false
+                                ],
+                        ],
+                        qbeGlobals: [
+                        ],
+                        qbeResults: [
+                                [heading: 'Cause', property: 'review.descriptionOfCause', link: [controller: 'resource', action: 'show', id: 'x.r.review.class.name+\':\'+x.r.review.id']],
+                                [heading: 'Request', property: 'review.reviewRequest'],
+                                [heading: 'Status', property: 'review.status?.value'],
+                                [heading: 'Type', property: 'review.type?.value'],
+                                [heading: 'Timestamp', property: 'review.dateCreated', sort: 'review.dateCreated'],
                         ]
                 ]
         ]
@@ -958,15 +1023,6 @@ class GlobalSearchTemplatesService {
                                         placeholder: 'Type',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'type']
                                 ],
-                                [
-                                        type       : 'lookup',
-                                        baseClass  : 'org.gokb.cred.CuratoryGroup',
-                                        prompt     : 'Curatory Group',
-                                        qparam     : 'qp_curgroup',
-                                        placeholder: 'Curatory Group',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'curatoryGroups'],
-                                        hide       : false
-                                ],
                         ],
                         qbeGlobals: [
                         ],
@@ -1018,6 +1074,15 @@ class GlobalSearchTemplatesService {
                                         placeholder: 'Name of Source',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'name']
                                 ],
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.CuratoryGroup',
+                                        prompt     : 'Curatory Group',
+                                        qparam     : 'qp_curgroup',
+                                        placeholder: 'Curatory Group',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'curatoryGroups'],
+                                        hide       : false
+                                ],
                         ],
                         qbeGlobals: [
                                 ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
@@ -1027,6 +1092,10 @@ class GlobalSearchTemplatesService {
                                 [heading: 'ID', property: 'id', sort: 'id', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
                                 [heading: 'Name/Title', property: 'name', sort: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
                                 [heading: 'Url', property: 'url', sort: 'url'],
+                                [heading: 'automatic Updates', property: 'automaticUpdates'],
+                                [heading: 'Frequency', property: 'frequency?.value'],
+                                [heading: 'Last Run', property: 'lastRun'],
+                                [heading: 'Identifier Namespace', property: 'targetNamespace?.value'],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
                         ]
                 ]

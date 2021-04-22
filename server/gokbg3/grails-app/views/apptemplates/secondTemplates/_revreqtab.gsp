@@ -31,7 +31,7 @@
         </tbody>
     </table>
 </div>
-<g:if test="${editable}">
+%{--<g:if test="${editable}">
     <div>
         <button
                 class="hidden-license-details btn btn-default btn-primary "
@@ -51,5 +51,5 @@
             </g:form>
         </dl>
     </div>
-</g:if>
+</g:if>--}%
 <div style="clear:both"></div>

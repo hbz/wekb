@@ -1,4 +1,4 @@
-<%@ page import="de.wekb.helper.RCConstants" %>
+<%@ page import="org.gokb.cred.RefdataCategory; de.wekb.helper.RCConstants" %>
 
   <dl class="dl-horizontal">
   <dt>
@@ -94,14 +94,18 @@
           <gokb:annotatedLabel owner="${d}" property="nationalRanges">National Range</gokb:annotatedLabel>
         </dt>
         <dd>
-          <g:render template="/apptemplates/secondTemplates/nationalRange" />
+          <g:if test="${d.scope?.value == 'National'}">
+            <g:render template="/apptemplates/secondTemplates/nationalRange" />
+          </g:if>
         </dd>
 
         <dt>
           <gokb:annotatedLabel owner="${d}" property="regionalRanges">Regional Range</gokb:annotatedLabel>
         </dt>
         <dd>
-          <g:render template="/apptemplates/secondTemplates/regionalRange" />
+          <g:if test="${RefdataCategory.lookup(RCConstants.COUNTRY, 'DE') in d.regionalRanges}">
+            <g:render template="/apptemplates/secondTemplates/regionalRange" />
+          </g:if>
         </dd>
     </g:if>
 
@@ -207,9 +211,6 @@
                         [expr:'toComponent.namespace.value', colhead:'Namespace'],
                         [expr:'toComponent.value', colhead:'ID', action:'link']]]}" />
             <g:if test="${editable}">
-              <h4>
-                <gokb:annotatedLabel owner="${d}" property="addIdentifier">Add new Identifier</gokb:annotatedLabel>
-              </h4>
               <g:render template="/apptemplates/secondTemplates/addIdentifier" model="${[d:d, hash:'#identifiers']}"/>
             </g:if>
           </dd>

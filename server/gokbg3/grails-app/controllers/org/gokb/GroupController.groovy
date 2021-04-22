@@ -125,7 +125,7 @@ class GroupController {
             searchResult = getResultGenerics()
 
             params.qp_curgroup = searchResult.group.class.name+':'+searchResult.group.id
-            params.qbe = 'g:reviewRequests'
+            params.qbe = 'g:allocatedReviewGroups'
             params.hide = ['qp_curgroup']
 
             searchResult = searchService.search(searchResult.user, searchResult, params, response.format)
@@ -136,6 +136,27 @@ class GroupController {
             return
         }
     }
+
+
+    @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+    def mySources() {
+        def searchResult = [:]
+        if (params.id) {
+            searchResult = getResultGenerics()
+
+            params.qp_curgroup = searchResult.group.class.name+':'+searchResult.group.id
+            params.qbe = 'g:sources'
+            params.hide = ['qp_curgroup']
+
+            searchResult = searchService.search(searchResult.user, searchResult, params, response.format)
+
+            searchResult.result
+        }else {
+            response.sendError(404)
+            return
+        }
+    }
+
 
     @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
     def myTitles() {

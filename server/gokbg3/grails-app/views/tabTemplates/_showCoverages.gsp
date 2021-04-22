@@ -60,63 +60,10 @@
 					</tbody>
 				</table>
 				<g:if test="${editable}">
-					<button
-							class="hidden-license-details btn btn-default btn-sm btn-primary "
-							data-toggle="collapse" data-target="#collapseableAddCoverageStatement">
-						Add new <i class="fas fa-plus"></i>
-					</button>
-					<dl id="collapseableAddCoverageStatement" class="dl-horizontal collapse">
-						<g:form controller="ajaxSupport" action="addToCollection"
-								class="form-inline" params="[fragment: 'tippcoverage']">
-							<input type="hidden" name="__context"
-								   value="${d.class.name}:${d.id}"/>
-							<input type="hidden" name="__newObjectClass"
-								   value="org.gokb.cred.TIPPCoverageStatement"/>
-							<input type="hidden" name="__recip" value="owner"/>
-							<dt class="dt-label">Start Date</dt>
-							<dd>
-								<input class="form-control" type="date" name="startDate"/>
-							</dd>
-							<dt class="dt-label">Start Volume</dt>
-							<dd>
-								<input class="form-control" type="text" name="startVolume"/>
-							</dd>
-							<dt class="dt-label">Start Issue</dt>
-							<dd>
-								<input class="form-control" type="text" name="startIssue"/>
-							</dd>
-							<dt class="dt-label">End Date</dt>
-							<dd>
-								<input class="form-control" type="date" name="endDate"/>
-							</dd>
-							<dt class="dt-label">End Volume</dt>
-							<dd>
-								<input class="form-control" type="text" name="endVolume"/>
-							</dd>
-							<dt class="dt-label">End Issue</dt>
-							<dd>
-								<input class="form-control" type="text" name="endIssue"/>
-							</dd>
-							<dt class="dt-label">Embargo</dt>
-							<dd>
-								<input class="form-control" type="text" name="embargo"/>
-							</dd>
-							<dt class="dt-label">Coverage Depth</dt>
-							<dd>
-								<gokb:simpleReferenceTypedown name="coverageDepth"
-															  baseClass="org.gokb.cred.RefdataValue"
-															  filter1="${RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH}"/>
-							</dd>
-							<dt class="dt-label">Coverage Note</dt>
-							<dd>
-								<input class="form-control" type="text" name="coverageNote"/>
-							</dd>
-							<dt></dt>
-							<dd>
-								<button type="submit"
-										class="btn btn-default btn-primary btn-sm ">Add</button>
-							</dd>
-						</g:form>
+					<dl class="dl-horizontal">
+						<a data-toggle="modal" data-cache="false"
+						   data-target="#coverageStatementsModal">Add Coverage Statement</a>
+
 					</dl>
 				</g:if>
 			</dd>
@@ -135,4 +82,55 @@
 			</dd>
 		</dl>
 	</div>
+	<g:if test="${editable}">
+	<bootStrap:modal id="coverageStatementsModal" title="Add Coverage Statement">
+
+		<g:form controller="ajaxSupport" action="addToCollection"
+				class="form-inline" params="[fragment: 'tippcoverage']">
+			<input type="hidden" name="__context"
+				   value="${d.class.name}:${d.id}"/>
+			<input type="hidden" name="__newObjectClass"
+				   value="org.gokb.cred.TIPPCoverageStatement"/>
+			<input type="hidden" name="__recip" value="owner"/>
+			<dt class="dt-label">Start Date</dt>
+			<dd>
+				<input class="form-control" type="date" name="startDate"/>
+			</dd>
+			<dt class="dt-label">Start Volume</dt>
+			<dd>
+				<input class="form-control" type="text" name="startVolume"/>
+			</dd>
+			<dt class="dt-label">Start Issue</dt>
+			<dd>
+				<input class="form-control" type="text" name="startIssue"/>
+			</dd>
+			<dt class="dt-label">End Date</dt>
+			<dd>
+				<input class="form-control" type="date" name="endDate"/>
+			</dd>
+			<dt class="dt-label">End Volume</dt>
+			<dd>
+				<input class="form-control" type="text" name="endVolume"/>
+			</dd>
+			<dt class="dt-label">End Issue</dt>
+			<dd>
+				<input class="form-control" type="text" name="endIssue"/>
+			</dd>
+			<dt class="dt-label">Embargo</dt>
+			<dd>
+				<input class="form-control" type="text" name="embargo"/>
+			</dd>
+			<dt class="dt-label">Coverage Depth</dt>
+			<dd>
+				<gokb:simpleReferenceTypedown name="coverageDepth"
+											  baseClass="org.gokb.cred.RefdataValue"
+											  filter1="${RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH}"/>
+			</dd>
+			<dt class="dt-label">Coverage Note</dt>
+			<dd>
+				<input class="form-control" type="text" name="coverageNote"/>
+			</dd>
+		</g:form>
+	</bootStrap:modal>
+		</g:if>
 </g:if>

@@ -35,22 +35,34 @@
             </tr>
         </g:else>
     </g:each>
-    <g:if test="${editable}">
-        <tr>
+    </tbody>
+</table>
+
+<g:if test="${editable}">
+
+        <a data-toggle="modal" data-cache="false"
+           data-target="#additionalPropertiesModal">Add Additional Property</a>
+
+        <bootStrap:modal id="additionalPropertiesModal" title="Add Additional Property">
+
             <g:form controller="ajaxSupport" action="addToCollection" class="form-inline">
                 <input type="hidden" name="__context" value="${d.class.name}:${d.id}"/>
                 <input type="hidden" name="__newObjectClass" value="org.gokb.cred.KBComponentAdditionalProperty"/>
                 <input type="hidden" name="__addToColl" value="additionalProperties"/>
-                <td><gokb:simpleReferenceTypedown class="form-control" name="propertyDefn"
+                <dt class="dt-label">Additional Property Definition</dt>
+                <dd>
+                <gokb:simpleReferenceTypedown class="form-control" name="propertyDefn"
                                                   baseClass="org.gokb.cred.AdditionalPropertyDefinition"
-                                                  editable="${editable}"/></td>
-                <td><input type="text" class="form-control" name="apValue"/></td>
-                <td><button type="submit" class="btn btn-default btn-primary">Add</button></td>
+                                                  editable="${editable}"/>
+                </dd>
+                <dt class="dt-label">Value</dt>
+                <dd>
+                    <input type="text" class="form-control" name="apValue"/>
+                </dd>
             </g:form>
-        </tr>
-    </g:if>
-    </tbody>
-</table>
+        </bootStrap:modal>
+
+</g:if>
 
 
 
