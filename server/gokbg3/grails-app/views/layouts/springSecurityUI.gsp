@@ -1,4 +1,4 @@
-<%@ page import="org.gokb.cred.RefdataCategory" %>
+<%@ page import="org.gokb.cred.RefdataCategory; de.wekb.helper.ServerUtils;" %>
 <!doctype html>
 <html class="no-js" lang="">
 <head>
@@ -15,7 +15,29 @@
   <asset:stylesheet src="gokb/themes/${ grailsApplication.config.gokb.theme }/theme.css"/>
 <g:layoutHead/>
 </head>
+
+<wekb:serviceInjection />
+<g:set var="currentServer" scope="page" value="${ServerUtils.getCurrentServer()}"/>
+<g:set var="currentUser" scope="page" value="${springSecurityService.getCurrentUser()}"/>
+
 <body class="theme-${ grailsApplication.config.gokb.theme }">
+
+<g:if test="${currentServer == ServerUtils.SERVER_DEV}">
+  <div class="text-success label big wb-server-label">
+    <span>DEV</span>
+  </div>
+</g:if>
+<g:if test="${currentServer == ServerUtils.SERVER_QA}">
+  <div class="text-danger label big wb-server-label">
+    <span>QA</span>
+  </div>
+</g:if>
+<g:if test="${currentServer == ServerUtils.SERVER_LOCAL}">
+  <div class="text-primary wb-server-label">
+    <span>LOCAL</span>
+  </div>
+</g:if>
+
   <div id="wrapper">
 
     <!-- Navigation -->
@@ -30,10 +52,7 @@
           <span  class="icon-bar"></span>
         </button>
         <g:link uri="/" class="navbar-brand" style="font-weight:bold;">
-          <g:message code="gokb.appname" default="GOKb"/> v<g:meta name="info.app.version" />
-          <g:if test="${grailsApplication.config.gokb.instance?.description}">
-            – ${grailsApplication.config.gokb.instance?.description}
-          </g:if>
+          <g:message code="gokb.appname" default="we:kb"/> v<g:meta name="info.app.version" />
         </g:link>
       </div>
     <!-- /.navbar-header -->
@@ -43,7 +62,7 @@
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="font-weight:bold;">
               <i class="fa fa-user fa-fw"></i>
-              ${request.user?.displayName ?: request.user?.username}
+              ${currentUser.displayName ?: currentUser.username}
               <i class="fa fa-caret-down fa-fw"></i>
             </a>
             <ul class="dropdown-menu dropdown-user">

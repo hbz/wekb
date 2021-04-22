@@ -1,8 +1,9 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <!DOCTYPE html>
 <html>
   <head>
     <meta name="layout" content="sb-admin"/>
-    <title>GOKb: My Preferences</title>
+    <title><g:message code="gokb.appname" default="we:kb"/>: My Preferences</title>
   </head>
   <body>  
   <h1 class="page-header">My Preferences</h1>
@@ -13,20 +14,20 @@
 
 	        <dt>Show Info Icon :</dt>
 	        <dd>
-	          <g:xEditableRefData owner="${user}" field="showInfoIcon"
-	            config="YN" />
+	          <gokb:xEditableRefData owner="${user}" field="showInfoIcon"
+	            config="${RCConstants.YN}" />
 	        </dd>
 
 	        <dt>Show Quick View :</dt>
 	        <dd>
-	          <g:xEditableRefData owner="${user}" field="showQuickView" config="YN" />
+	          <gokb:xEditableRefData owner="${user}" field="showQuickView" config="${RCConstants.YN}" />
 	        </dd>
 
 	        <dt>Default Page Size :</dt>
-	        <dd><g:xEditable owner="${user}" field="defaultPageSize" /></dd>
+	        <dd><gokb:xEditable owner="${user}" field="defaultPageSize" /></dd>
 
 	        <dt>Send Alert Emails :</dt>
-	        <dd><g:xEditableRefData owner="${user}" field="send_alert_emails" config="YN" /></dd>
+	        <dd><gokb:xEditableRefData owner="${user}" field="send_alert_emails" config="${RCConstants.YN}" /></dd>
 	      </dl>
       </div>
     </div>

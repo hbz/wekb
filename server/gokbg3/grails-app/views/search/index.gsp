@@ -22,14 +22,13 @@
 					</h3>
 				</div>
 				<div class="panel-body">
-					<g:each in="${session.menus?.search}" var="type,items" status="counter">
-						<g:if test="${ counter > 0 }" >
-							<div class="divider"></div>
-						</g:if>
-						<g:each in="${items}" var="item">
-							<li><g:link controller="${item.link.controller}" action="${item.link.action}" params="${item.link.params}"> ${item.text} </g:link></li>
-						</g:each>
-					</g:each>
+					<li><g:link controller="search" action="index" params="[qbe:'g:tipps']" title="Search Titles" > Titles</g:link></li>
+					<li><g:link controller="search" action="index" params="[qbe:'g:packages']" title="Search Packages" > Packages</g:link></li>
+					<li><g:link controller="search" action="index" params="[qbe:'g:platforms']" title="Search Platforms" > Platforms</g:link></li>
+
+					<li><g:link controller="search" action="index" params="[qbe:'g:curatoryGroups']" title="Search Curatory Groups" > Curatory Groups</g:link></li>
+					<li><g:link controller="search" action="index" params="[qbe:'g:orgs']" title="Search Orgs" > Organizations</g:link></li>
+					<li><g:link controller="search" action="index" params="[qbe:'g:sources']" title="Search Sources" > Sources</g:link></li>
 				</div>
 			</g:if>
 			<g:else>
@@ -43,9 +42,9 @@
 				<div class="panel-body">
 					<g:if test="${(qbetemplate.message != null)}">
 						<p style="text-align: center">
-							<bootstrap:alert class="alert-info">
+							<div class="alert-info">
 								${qbetemplate.message}
-							</bootstrap:alert>
+							</div>
 						</p>
 					</g:if>
 	
@@ -136,8 +135,8 @@
 					</nav>
 					<g:if test="${displaytemplate != null}">
 						<g:if test="${displaytemplate.type=='staticgsp'}">
-							<h4><g:render template="/apptemplates/component_heading" model="${[d:displayobj]}" /></h4>
-							<g:render template="/apptemplates/${displaytemplate.rendername}"
+							<h4><g:render template="/apptemplates/secondTemplates/component_heading" model="${[d:displayobj]}" /></h4>
+							<g:render template="/apptemplates/mainTemplates/${displaytemplate.rendername}"
 								model="${[d:displayobj, rd:refdata_properties, dtype:displayobjclassname_short]}" />
 	
 						</g:if>

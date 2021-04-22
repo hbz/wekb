@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="layout" content="sb-admin" />
-<title>GOKb: Identifier Review</title>
+<title><g:message code="gokb.appname" default="we:kb"/>: Identifier Review</title>
 </head>
 <body>
   <h1 class="page-header">Identifier Review</h1>
@@ -13,7 +13,7 @@
           <div class="input-group">
             <dt class="dt-label">Identifier Namespace</dt>
             <dd>
-              <g:simpleReferenceTypedown class="form-control" name="id" baseClass="org.gokb.cred.IdentifierNamespace" value="${namespace ? 'org.gokb.cred.IdentifierNamespace:' + namespace.id : ''}" />
+              <gokb:simpleReferenceTypedown class="form-control" name="id" baseClass="org.gokb.cred.IdentifierNamespace" value="${namespace ? 'org.gokb.cred.IdentifierNamespace:' + namespace.id : ''}" />
             </dd>
             <dt class="dt-label">Conflict type</dt>
             <dd>

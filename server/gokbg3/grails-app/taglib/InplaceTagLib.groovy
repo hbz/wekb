@@ -1,16 +1,15 @@
-import groovy.json.JsonBuilder
-import java.net.Authenticator.RequestorType;
-
-import com.k_int.kbplus.*
+import grails.plugin.springsecurity.SpringSecurityUtils
 import org.gokb.cred.*;
 import com.k_int.ClassUtils
+import org.springframework.context.i18n.LocaleContextHolder
 
-import grails.core.GrailsClass
-import grails.core.GrailsApplication
+import java.text.NumberFormat
+import java.text.SimpleDateFormat
 
-import org.hibernate.proxy.HibernateProxy
 
 class InplaceTagLib {
+
+  static namespace = 'gokb'
 
   def genericOIDService
   def springSecurityService
@@ -25,7 +24,7 @@ class InplaceTagLib {
     boolean cur = request.curator != null ? request.curator.size() > 0 : true
 
     // Default editable value.
-    boolean tl_editable = owner?.isEditable()
+    boolean tl_editable = owner?.isEditable() ?: (params.curationOverride == 'true' && user.isAdmin())
 
     if (owner?.class?.name == 'org.gokb.cred.User') {
       tl_editable = user.equals(owner)
@@ -41,6 +40,22 @@ class InplaceTagLib {
 
     if ( !tl_editable && owner?.class?.name == 'org.gokb.cred.Combo' ) {
       tl_editable = owner.fromComponent.isEditable()
+    }
+
+    if ( !tl_editable && owner?.class?.name == 'org.gokb.cred.Combo' ) {
+      tl_editable = owner.fromComponent.isEditable()
+    }
+
+    if (!tl_editable && attrs.editable) {
+      tl_editable = attrs.editable
+    }
+
+    if (attrs.overWriteEditable != null) {
+      tl_editable = attrs.overWriteEditable
+    }
+
+    if ( !tl_editable && SpringSecurityUtils.ifAnyGranted('ROLE_SUPERUSER')) {
+      tl_editable = true
     }
 
     // If not editable then we should output as value only and return the value.
@@ -81,189 +96,234 @@ class InplaceTagLib {
 
     // The check editable should output the read only version so we should just exit
     // if read only.
-    if (!checkEditable(attrs, body, out)) return;
+   /* if (!checkEditable(attrs, body, out)) return;*/
 
-    def owner = ClassUtils.deproxy(attrs.owner);
+    boolean editable = isEditable(request.getAttribute('editable'), attrs.overwriteEditable)
 
-    def oid = owner.id != null ? "${owner.class.name}:${owner.id}" : ''
-    def id = attrs.id ?: "${oid}:${attrs.field}"
-    def dformat = attrs."data-format"?:'yyyy-mm-dd'
+    if ( editable ) {
+      def owner = ClassUtils.deproxy(attrs.owner);
 
-    // Default the format.
+      def oid = owner.id != null ? "${owner.class.name}:${owner.id}" : ''
+      def id = attrs.id ?: "${oid}:${attrs.field}"
+      def dformat = attrs."data-format" ?: 'yyyy-mm-dd'
 
-    out << "<span id=\"${id}\" class=\"xEditableValue ${attrs.class?:''} ${attrs.type == 'date' ? 'date' : ''}\""
+      // Default the format.
 
-    if (attrs.inputclass) {
-      out << " data-inputclass=\"${attrs.inputclass}\""
-    }
-    if ( oid && ( oid != '' ) ) out << " data-pk=\"${oid}\""
-    out << " data-name=\"${attrs.field}\""
+      out << "<span id=\"${id}\" class=\"xEditableValue ${attrs.class ?: ''} ${attrs.type == 'date' ? 'date' : ''}\""
 
-    // SO: fix for FF not honouring no-wrap css.
-    if ((attrs.type ?: 'textarea') == 'textarea') {
-      out << " data-tpl=\"${'<textarea wrap=\'off\'></textarea>'.encodeAsHTML()}\""
-    }
+      if (attrs.inputclass) {
+        out << " data-inputclass=\"${attrs.inputclass}\""
+      }
+      if (oid && (oid != '')) out << " data-pk=\"${oid}\""
+      out << " data-name=\"${attrs.field}\""
 
-    def data_link = null
-    switch ( attrs.type ) {
-      case 'date':
-        data_link = createLink(controller:'ajaxSupport', action: 'editableSetValue', params:[type:'date', dateFormat: (dformat.replace('mm', 'MM'))])
-        out << " data-type='date' data-inputclass='form-control form-date' data-format='${dformat}' data-datepicker='{minYear: 1500, smartDays: true, clearBtn: true}' data-viewformat='yyyy-mm-dd'"
-        def dv = attrs."data-value"
+      // SO: fix for FF not honouring no-wrap css.
+      if ((attrs.type ?: 'textarea') == 'textarea') {
+        out << " data-tpl=\"${'<textarea wrap=\'off\'></textarea>'.encodeAsHTML()}\""
+      }
 
-        if (!dv) {
-          if (owner[attrs.field]) {
+      def data_link = null
+      switch (attrs.type) {
+        case 'date':
+          data_link = createLink(controller: 'ajaxSupport', action: 'editableSetValue', params: [type: 'date', dateFormat: (dformat.replace('mm', 'MM'))])
+          out << " data-type='date' data-inputclass='form-control form-date' data-format='${dformat}' data-datepicker='{minYear: 1500, smartDays: true, clearBtn: true}' data-viewformat='yyyy-mm-dd'"
+          def dv = attrs."data-value"
 
-            // Date format.
-            def sdf = new java.text.SimpleDateFormat(dformat.replace('mm', 'MM'))
-            dv = sdf.format(owner[attrs.field])
-          } else {
-            dv = ""
+          if (!dv) {
+            if (owner[attrs.field]) {
+
+              // Date format.
+              def sdf = new java.text.SimpleDateFormat(dformat.replace('mm', 'MM'))
+              dv = sdf.format(owner[attrs.field])
+            } else {
+              dv = ""
+            }
+          }
+
+          out << " data-value='${dv}'"
+
+          // out << " data-type=\"text\" data-format='${dformat}'"
+          break;
+        case 'string':
+        default:
+          data_link = createLink(controller: 'ajaxSupport', action: 'editableSetValue')
+          out << " data-type=\"${attrs.type ?: 'textarea'}\""
+          break;
+      }
+
+      out << " data-url=\"${data_link}\""
+      out << ">"
+
+      if (body) {
+        out << body()
+      } else {
+        if (attrs.type != 'date') {
+          out << owner[attrs.field]
+        } else if (owner[attrs.field]) {
+          def sdf = new java.text.SimpleDateFormat(attrs."data-format" ?: 'yyyy-MM-dd')
+          out << sdf.format(owner[attrs.field])
+        }
+      }
+      out << "</span>"
+    }else {
+      out << "<span class=\"${attrs.class ?: ''}\">"
+      if ( body ) {
+        out << body()
+      }
+      else {
+        if (attrs.owner[attrs.field] && attrs.type=='date') {
+          SimpleDateFormat sdf = new SimpleDateFormat(attrs.format?: message(code:'default.date.format'))
+          out << sdf.format(attrs.owner[attrs.field])
+        }
+        else {
+          if ((attrs.owner[attrs.field] == null) || (attrs.owner[attrs.field].toString().length()==0)) {
+            out << "<span class='readonly editable-empty' title='Read Only' >Empty</span>"
+          }
+          else if(attrs.field == 'decValue') {
+            out << NumberFormat.getInstance(LocaleContextHolder.getLocale()).format(attrs.owner[attrs.field])
+          }
+          else {
+            out << attrs.owner[attrs.field]
           }
         }
-
-        out << " data-value='${dv}'"
-
-        // out << " data-type=\"text\" data-format='${dformat}'"
-        break;
-      case 'string':
-      default:
-        data_link = createLink(controller:'ajaxSupport', action: 'editableSetValue')
-        out << " data-type=\"${attrs.type?:'textarea'}\""
-        break;
-    }
-
-    out << " data-url=\"${data_link}\""
-    out << ">"
-
-    if ( body ) {
-      out << body()
-    }
-    else {
-      if (attrs.type!='date' ) {
-        out << owner[attrs.field]
-      } else if (owner[attrs.field]){
-        def sdf = new java.text.SimpleDateFormat(attrs."data-format"?:'yyyy-MM-dd')
-        out << sdf.format(owner[attrs.field])
       }
+      out << '</span>'
     }
-    out << "</span>"
   }
 
   def xEditableRefData = { attrs, body ->
 
     User user = springSecurityService.currentUser
-    boolean isAdmin = user.getAuthorities().find { Role role ->
-      "ROLE_ADMIN".equalsIgnoreCase(role.authority)
-    }
+    boolean isAdmin = user?.hasRole("ROLE_ADMIN")
 
     // The check editable should output the read only version so we should just exit
     // if read only.
-    if (!checkEditable(attrs, body, out)) return;
+    //if (!checkEditable(attrs, body, out)) return;
 
-    def owner = ClassUtils.deproxy( attrs.remove("owner") )
+    boolean editable = isEditable(request.getAttribute('editable'), attrs.overwriteEditable)
 
-    // out << "editable many to one: <div id=\"${attrs.id}\" class=\"xEditableManyToOne\" data-type=\"select2\" data-config=\"${attrs.config}\" />"
-    def data_link = createLink(controller:'ajaxSupport', action: 'getRefdata', params:[id:attrs.remove("config"),format:'json'])
-    def update_link = createLink(controller:'ajaxSupport', action: 'genericSetRel')
-    def oid = owner.id != null ? "${owner.class.name}:${owner.id}" : ''
-    def id = attrs.remove("id") ?: "${oid}:${attrs.field}"
-    def type = attrs.remove("type") ?: "select"
-    def field = attrs.remove("field")
-    attrs['class'] = ["xEditableManyToOne"]
+    if ( editable ) {
 
-    out << "<span>"
+      def owner = ClassUtils.deproxy(attrs.remove("owner"))
 
-    // Output an editable link
-    out << "<span id=\"${id}\" "
-    if ( ( owner != null ) && ( owner.id != null ) ) {
-      out << "data-pk=\"${oid}\" "
+      // out << "editable many to one: <div id=\"${attrs.id}\" class=\"xEditableManyToOne\" data-type=\"select2\" data-config=\"${attrs.config}\" />"
+      def config = attrs.remove("config")
+      def data_link = createLink(controller: 'ajaxSupport', action: 'getRefdata', params: [id: config, format: 'json'])
+      def update_link = createLink(controller: 'ajaxSupport', action: 'genericSetRel')
+      def oid = owner.id != null ? "${owner.class.name}:${owner.id}" : ''
+      def id = attrs.remove("id") ?: "${oid}:${attrs.field}"
+      def type = attrs.remove("type") ?: "select"
+      def field = attrs.remove("field")
+      attrs['class'] = ["xEditableManyToOne"]
+
+      out << "<span>"
+
+      // Output an editable link
+      out << "<span id=\"${id}\" "
+      if ((owner != null) && (owner.id != null)) {
+        out << "data-pk=\"${oid}\" "
+      }
+
+      out << "data-url=\"${update_link}\" "
+
+      def attributes = attrs.collect({ k, v ->
+
+        if (v instanceof Collection) {
+          v = v.collect({ val ->
+            "${val}"
+          }).join(" ")
+        }
+        "${k}=\"${v.encodeAsHTML()}\""
+      }).join(" ")
+      out << "data-type=\"${type}\" data-name=\"${field}\" data-source=\"${data_link}\" ${attributes} >"
+
+      // Here we can register different ways of presenting object references. The most pressing need to be
+      // outputting a span containing an icon for refdata fields.
+      out << renderObjectValue(owner[field])
+
+      out << "</span>"
+
+      // If the caller specified an rdc attribute then they are describing a refdata category.
+      // We want to add a link to the category edit page IF the annotation is editable.
+
+      if (isAdmin) {
+        RefdataCategory rdc = RefdataCategory.findByDesc(config)
+        if (rdc) {
+          out << '&nbsp;<a href="' + createLink(controller: 'resource', action: 'show', id: 'org.gokb.cred.RefdataCategory:' + rdc.id) + '"title="Jump to RefdataCategory"><i class="fas fa-eye"></i></a><br/>'
+        }
+      }
+
+      out << "</span>"
+    }else{
+      if (body) {
+        out << body()
+      } else {
+        def content = (attrs.owner?."${attrs.field}" ? renderObjectValue(attrs.owner."${attrs.field}") : "")
+        out << "<span class='readonly${content ? '' : ' editable-empty'}' title='Read Only' >${content ?: 'Empty'}</span>"
+      }
     }
 
-    out << "data-url=\"${update_link}\" "
-
-    def attributes = attrs.collect({k, v ->
-
-      if (v instanceof Collection) {
-        v = v.collect({ val ->
-          "${val}"
-        }).join(" ")
-      }
-      "${k}=\"${v.encodeAsHTML()}\""
-    }).join(" ")
-    out << "data-type=\"${type}\" data-name=\"${field}\" data-source=\"${data_link}\" ${attributes} >"
-
-    // Here we can register different ways of presenting object references. The most pressing need to be
-    // outputting a span containing an icon for refdata fields.
-    out << renderObjectValue(owner[field])
-
-    out << "</span>"
-
-    // If the caller specified an rdc attribute then they are describing a refdata category.
-    // We want to add a link to the category edit page IF the annotation is editable.
-
-    if ( isAdmin ) {
-      RefdataCategory rdc = RefdataCategory.findByDesc(attrs.config)
-      if ( rdc ) {
-        out << '&nbsp;<a href="'+createLink(controller:'resource', action: 'show', id:'org.gokb.cred.RefdataCategory:'+rdc.id)+'">Refdata</a><br/>'
-      }
-    }
-
-    out << "</span>"
   }
 
   def xEditableBoolean = { attrs, body ->
 
-    User user = springSecurityService.currentUser
-    boolean isAdmin = user.getAuthorities().find { Role role ->
-      "ROLE_ADMIN".equalsIgnoreCase(role.authority)
+   /* User user = springSecurityService.currentUser
+    boolean isAdmin = user.hasRole("ROLE_ADMIN")
     }
-
+*/
     // The check editable should output the read only version so we should just exit
     // if read only.
-    if (!checkEditable(attrs, body, out)) return;
+    //if (!checkEditable(attrs, body, out)) return;
 
-    def owner = ClassUtils.deproxy( attrs.remove("owner") )
+    boolean editable = isEditable(request.getAttribute('editable'), attrs.overwriteEditable)
 
-    // out << "editable many to one: <div id=\"${attrs.id}\" class=\"xEditableManyToOne\" data-type=\"select2\" data-config=\"${attrs.config}\" />"
-    def data_link = createLink(controller:'ajaxSupport', action: 'getRefdata', params:[id:'boolean',format:'json'])
-    def update_link = createLink(controller:'ajaxSupport', action: 'genericSetRel', params:[type: 'boolean'])
-    def oid = owner.id != null ? "${owner.class.name}:${owner.id}" : ''
-    def id = attrs.remove("id") ?: "${oid}:${attrs.field}"
-    def field = attrs.remove("field")
-    attrs['class'] = ["xEditableManyToOne"]
+    if ( editable ) {
 
-    out << "<span>"
+      def owner = ClassUtils.deproxy(attrs.remove("owner"))
 
-    // Output an editable link
-    out << "<span id=\"${id}\" "
-    if ( ( owner != null ) && ( owner.id != null ) ) {
-      out << "data-pk=\"${oid}\" "
+      // out << "editable many to one: <div id=\"${attrs.id}\" class=\"xEditableManyToOne\" data-type=\"select2\" data-config=\"${attrs.config}\" />"
+      def data_link = createLink(controller: 'ajaxSupport', action: 'getRefdata', params: [id: 'boolean', format: 'json'])
+      def update_link = createLink(controller: 'ajaxSupport', action: 'genericSetRel', params: [type: 'boolean'])
+      def oid = owner.id != null ? "${owner.class.name}:${owner.id}" : ''
+      def id = attrs.remove("id") ?: "${oid}:${attrs.field}"
+      def field = attrs.remove("field")
+      attrs['class'] = ["xEditableManyToOne"]
+
+      out << "<span>"
+
+      // Output an editable link
+      out << "<span id=\"${id}\" "
+      if ((owner != null) && (owner.id != null)) {
+        out << "data-pk=\"${oid}\" "
+      }
+
+      out << "data-url=\"${update_link}\" "
+
+      def attributes = attrs.collect({ k, v ->
+
+        if (v instanceof Collection) {
+          v = v.collect({ val ->
+            "${val}"
+          }).join(" ")
+        }
+        "${k}=\"${v.encodeAsHTML()}\""
+      }).join(" ")
+      out << "data-type=\"select\" data-name=\"${field}\" data-source=\"${data_link}\" ${attributes}>"
+
+      // Here we can register different ways of presenting object references. The most pressing need to be
+      // outputting a span containing an icon for refdata fields.
+      out << renderObjectValue(owner[field])
+
+      out << "</span>"
+
+      // If the caller specified an rdc attribute then they are describing a refdata category.
+      // We want to add a link to the category edit page IF the annotation is editable.
+
+      out << "</span>"
+    }else {
+      out << renderObjectValue(attrs.owner[attrs.field])
     }
 
-    out << "data-url=\"${update_link}\" "
-
-    def attributes = attrs.collect({k, v ->
-
-      if (v instanceof Collection) {
-        v = v.collect({ val ->
-          "${val}"
-        }).join(" ")
-      }
-      "${k}=\"${v.encodeAsHTML()}\""
-    }).join(" ")
-    out << "data-type=\"select\" data-name=\"${field}\" data-source=\"${data_link}\" ${attributes}>"
-
-    // Here we can register different ways of presenting object references. The most pressing need to be
-    // outputting a span containing an icon for refdata fields.
-    out << renderObjectValue(owner[field])
-
-    out << "</span>"
-
-    // If the caller specified an rdc attribute then they are describing a refdata category.
-    // We want to add a link to the category edit page IF the annotation is editable.
-
-    out << "</span>"
   }
 
   /**
@@ -276,10 +336,10 @@ class InplaceTagLib {
       switch ( value.class ) {
         case org.gokb.cred.RefdataValue.class:
           if ( value.icon != null ) {
-            result="<span class=\"select-icon ${value.icon}\"></span>${value.value}"
+            result="<span class=\"select-icon ${value.icon}\"></span>${value.getI10n('value')}"
           }
           else {
-            result=value.value
+            result=value.getI10n('value')
           }
           break;
         case Boolean.class:
@@ -393,7 +453,7 @@ class InplaceTagLib {
 
     // The check editable should output the read only version so we should just exit
     // if read only.
-    def editable = true
+    /*def editable = true
     def viewable = true
 
     if (!checkViewable(attrs, body, out)) {
@@ -401,44 +461,56 @@ class InplaceTagLib {
     }
     else if (!checkEditable(attrs, body, out)) {
       editable = false
-    }
+    }*/
 
-    def owner = ClassUtils.deproxy(attrs.owner)
+    boolean editable = isEditable(request.getAttribute('editable'), attrs.overwriteEditable)
 
-    def oid = attrs.owner.id != null ? "${owner.class.name}:${owner.id}" : ''
-    def id = attrs.id ?: "${oid ?: owner.class.name }:${attrs.field}"
-    def update_link = createLink(controller:'ajaxSupport', action: 'genericSetRel')
+    if ( editable ) {
+      def viewable = true
+      def owner = ClassUtils.deproxy(attrs.owner)
 
-    def follow_link = null;
+      def oid = attrs.owner.id != null ? "${owner.class.name}:${owner.id}" : ''
+      def id = attrs.id ?: "${oid ?: owner.class.name}:${attrs.field}"
+      def update_link = createLink(controller: 'ajaxSupport', action: 'genericSetRel')
 
-    if ( viewable && owner != null && owner[attrs.field] != null ) {
-      def field_class = "${ClassUtils.deproxy(owner[attrs.field]).class.name}"
+      def follow_link = null;
 
-      follow_link = createLink(controller:'resource', action: 'show')
-      follow_link = follow_link + '/' + field_class + ':' + owner[attrs.field].id;
-    }
+      if (viewable && owner != null && owner[attrs.field] != null) {
+        def field_class = "${ClassUtils.deproxy(owner[attrs.field]).class.name}"
 
-    if ( viewable && editable ) {
-      out << "<a href=\"#\" data-domain=\"${attrs.baseClass}\" id=\"${id}\" class=\"xEditableManyToOneS2\" "
-
-      if ( ( attrs.filter1 != null ) && ( attrs.filter1.length() > 0 ) ) {
-        out << "data-filter1=\"${attrs.filter1}\" "
+        follow_link = createLink(controller: 'resource', action: 'show')
+        follow_link = follow_link + '/' + field_class + ':' + owner[attrs.field].id;
       }
 
-      if ( owner?.id != null )
-        out << "data-pk=\"${oid}\" "
+      if (viewable && editable) {
+        out << "<a href=\"#\" data-domain=\"${attrs.baseClass}\" id=\"${id}\" class=\"xEditableManyToOneS2\" "
 
-      out << "data-type=\"select2\" data-name=\"${attrs.field}\" data-url=\"${update_link}\" >"
-      out << body()
-      out << "</a>";
-    }
+        if ((attrs.filter1 != null) && (attrs.filter1.length() > 0)) {
+          out << "data-filter1=\"${attrs.filter1}\" "
+        }
 
-    if( follow_link ){
-      out << ' &nbsp; <a href="'+follow_link+'" title="Jump to resource"><i class="fas fa-eye"></i></a>'
+        if (owner?.id != null)
+          out << "data-pk=\"${oid}\" "
+
+        out << "data-type=\"select2\" data-name=\"${attrs.field}\" data-url=\"${update_link}\" >"
+        out << body()
+        out << "</a>";
+      }
+
+      if (follow_link) {
+        out << ' &nbsp; <a href="' + follow_link + '" title="Jump to resource"><i class="fas fa-eye"></i></a>'
+      }
+    }else {
+      if (body) {
+        out << body()
+      } else {
+        def content = (attrs.owner?."${attrs.field}" ? renderObjectValue(attrs.owner."${attrs.field}") : "")
+        out << "<span class='readonly${content ? '' : ' editable-empty'}' title='Read Only' >${content ?: 'Empty'}</span>"
+      }
     }
   }
 
-  def manyToOneReferenceTypedownOld = { attrs, body ->
+  /*def manyToOneReferenceTypedownOld = { attrs, body ->
 
     // The check editable should output the read only version so we should just exit
     // if read only.
@@ -452,7 +524,7 @@ class InplaceTagLib {
     out << "<span data-domain=\"org.gokb.cred.Org\" id=\"${id}\" class=\"xEditableManyToOneS2\" data-pk=\"${oid}\" data-type=\"select2\" data-name=\"${attrs.field}\" data-value=\"\" data-url=\"${update_link}\" >"
     out << body()
     out << "</span>";
-  }
+  }*/
 
 
   def simpleHiddenRefdata = { attrs, body ->
@@ -490,5 +562,22 @@ class InplaceTagLib {
     else {
       out << attrs.default
     }
+  }
+
+  private boolean isEditable (editable, overwrite) {
+
+    boolean result = Boolean.valueOf(editable)
+
+    List positive = [true, 'true', 'True', 1]
+    List negative = [false, 'false', 'False', 0]
+
+    if (overwrite in positive) {
+      result = true
+    }
+    else if (overwrite in negative) {
+      result = false
+    }
+
+    result
   }
 }

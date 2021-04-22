@@ -1,5 +1,5 @@
-import com.bmuschko.gradle.docker.tasks.image.Dockerfile
-import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+/*import com.bmuschko.gradle.docker.tasks.image.Dockerfile
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage*/
 
 buildscript {
     repositories {
@@ -15,9 +15,9 @@ buildscript {
         classpath "com.bertramlabs.plugins:asset-pipeline-gradle:2.14.8"
         // Experiment with guide from http://guides.grails.org/grails-as-docker-container/guide/index.html
         classpath "com.bmuschko:gradle-docker-plugin:3.2.5"
-        classpath 'org.grails.plugins:database-migration:3.0.3'
         // Fixing too long classpath in Windows development environment
         classpath "gradle.plugin.ua.eshepelyuk:ManifestClasspath:1.0.0"
+        classpath 'org.grails.plugins:database-migration:3.0.4'
     }
 }
 
@@ -70,7 +70,6 @@ dependencies {
     compile "org.grails.plugins:mail:2.0.0"
     compile 'org.grails.plugins:greenmail:2.0.0.RC2'
     compile 'org.grails.plugins:cache-headers:2.0.2'
-    compile 'org.grails.plugins:database-migration:3.0.3'
     compile 'org.grails.plugins:grails-melody-plugin:1.80.0'
 
     compile 'org.grails.plugins:spring-security-core:3.2.3'
@@ -92,7 +91,6 @@ dependencies {
     compile 'org.apache.tika:tika-core:1.17'
     compile 'org.grails.plugins:grails-executor:0.4'
     compile 'org.grails.plugins:audit-logging:3.0.0'
-    compile 'org.liquibase:liquibase-core:3.5.3'
     compile 'org.grails.plugins:external-config:1.4.0'
 
     // This  is for rest integration tests -  see more at
@@ -119,6 +117,10 @@ dependencies {
     testRuntime "org.seleniumhq.selenium:selenium-api:3.141.59"
     testRuntime 'com.bertramlabs.plugins:less-asset-pipeline:2.14.10'
     testRuntime "org.apache.httpcomponents:httpclient"
+
+    //database-migration
+    compile 'org.grails.plugins:database-migration:3.0.4'
+    compile 'org.liquibase:liquibase-core:3.5.5'
 }
 
 bootRun {
@@ -177,7 +179,7 @@ webdriverBinaries {
 sourceSets {
     main {
         resources {
-            srcDir 'migrations'
+            srcDir 'grails-app/migrations'
         }
     }
 }
@@ -213,10 +215,12 @@ assets {
 // Logon to docker hub:: docker login --username=yourhubusername
 // Push image to docker hub::   docker push knowint/gokbg3
 
+/*
 ext {
     dockerTag = "knowint/${project.name}:${project.version}".toLowerCase()
     dockerBuildDir = mkdir("${buildDir}/docker")
 }
+
 
 task prepareDocker(type: Copy, dependsOn: assemble) {
     description = 'Copy files from src/main/docker and application jar to Docker temporal build directory'
@@ -256,3 +260,4 @@ task buildImage(type: DockerBuildImage, dependsOn: createDockerfile) {
     // tag = dockerTag
     tags = [dockerTag, 'knowint/gokbg3:latest']
 }
+*/

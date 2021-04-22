@@ -2,6 +2,7 @@ package org.gokb
 
 import com.k_int.ClassUtils
 import com.k_int.ConcurrencyManagerService.Job
+import de.wekb.helper.RCConstants
 import gokbg3.MessageService
 import grails.converters.JSON
 import grails.plugin.springsecurity.SpringSecurityService
@@ -49,6 +50,9 @@ class CrossRefPkgRun {
   def rr_TIPPs_retired
   def rr_TIPPs_invalid
   def status_ip
+  RefdataValue rr_type
+  CuratoryGroup curatoryGroup
+
 
   public CrossRefPkgRun(JSONObject json, Boolean add, Boolean full, Boolean isAutoUpdate, Locale loc, User u) {
     rjson = json
@@ -66,15 +70,17 @@ class CrossRefPkgRun {
     int total = 0
 
     try {
-      status_current = RefdataCategory.lookup('KBComponent.Status', 'Current')
-      status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
-      status_retired = RefdataCategory.lookup('KBComponent.Status', 'Retired')
-      status_expected = RefdataCategory.lookup('KBComponent.Status', 'Expected')
-      rr_deleted = RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'Status Deleted')
-      rr_nonCurrent = RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'Platform Noncurrent')
-      rr_TIPPs_retired = RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'TIPPs Retired')
-      rr_TIPPs_invalid = RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'Invalid TIPPs')
-      status_ip = RefdataCategory.lookup('Package.ListStatus', 'In Progress')
+      status_current = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Current')
+      status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
+      status_retired = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Retired')
+      status_expected = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Expected')
+      rr_deleted = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Status Deleted')
+      rr_nonCurrent = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Platform Noncurrent')
+      rr_TIPPs_retired = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'TIPPs Retired')
+      rr_TIPPs_invalid = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Invalid TIPPs')
+      status_ip = RefdataCategory.lookup(RCConstants.PACKAGE_LIST_STATUS, 'In Progress')
+      rr_type = RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'Import Request')
+
 
       springSecurityService.reauthenticate(user.username)
       user = User.get(user.id)
@@ -86,39 +92,38 @@ class CrossRefPkgRun {
                      message: messageService.resolveCode('crossRef.package.error.apiRole', [], locale)]
         )
         job?.endTime = new Date()
-
         return jsonResult
       }
+
       // validate and upsert header pkg
       if (!(rjson?.packageHeader?.name)) {
         globalError([code   : 400,
                      message: messageService.resolveCode('crossRef.package.error', [], locale)]
         )
         job?.endTime = new Date()
-
         return jsonResult
       }
+
+      //TODO: Permission AccessService!!!!!
+
       // Package Validation
       pkg_validation = Package.validateDTO(rjson.packageHeader, locale)
-
       if (!pkg_validation.valid) {
         globalError([code   : 403,
                      message: messageService.resolveCode('crossRef.package.error.validation.global', null, locale),
                      errors : pkg_validation.errors]
         )
         job?.endTime = new Date()
-
         return jsonResult
       }
+
       // upsert Package
       def proxy = packageService.upsertDTO(rjson.packageHeader, user)
-
       if (!proxy) {
         globalError([code   : 400,
                      message: messageService.resolveCode('crossRef.package.error', null, locale),
         ])
         job?.endTime = new Date()
-
         return jsonResult
       }
 
@@ -146,7 +151,6 @@ class CrossRefPkgRun {
         idx++
         def currentTippError = [index: idx]
         log.info("Crossreferencing #$idx title ${json_tipp.name ?: json_tipp.title.name}")
-
         if ((json_tipp.package == null) && (pkg.id)) {
           json_tipp.package = [internalId: pkg.id]
         }
@@ -155,15 +159,13 @@ class CrossRefPkgRun {
           currentTippError.put('package', ['message': messageService.resolveCode('crossRef.package.tipps.error.pkgId', [json_tipp.title.name], request_locale), baddata: json_tipp.package])
           invalidTipps << json_tipp
         }
-
-        if (!invalidTipps.contains(json_tipp)) {
+/*        if (!invalidTipps.contains(json_tipp)) {
           // validate and upsert TitleInstance
           Map titleErrorMap = handleTitle(json_tipp)
           if (titleErrorMap.size() > 0) {
             currentTippError.put('title', titleErrorMap)
           }
-        }
-
+        }*/
         if (!invalidTipps.contains(json_tipp)) {
           // validate and upsert PlatformInstance
           Map pltErrorMap = handlePlt(json_tipp)
@@ -171,24 +173,23 @@ class CrossRefPkgRun {
             currentTippError.put('platform', pltErrorMap)
           }
         }
-
         if (!invalidTipps.contains(json_tipp)) {
           // validate and upsert TIPP
-          Map tippErrorMap = handleTIPP(json_tipp)
+          Map tippErrorMap = handleTIPPNew(json_tipp)
           if (tippErrorMap.size() > 0) {
             currentTippError.put('tipp', tippErrorMap)
           }
         }
-
         if (invalidTipps.contains(json_tipp)) {
           reviewRequestService.raise(
             pkg,
             "TIPP rejected",
             "TIPP ${json_tipp.name ?: json_tipp.title.name} coudn't be imported. ${(currentTippError as JSON).toString()}",
-            user,
+            rr_type,
             null,
             (currentTippError as JSON).toString(),
-            rr_TIPPs_invalid
+            rr_TIPPs_invalid,
+            [curatoryGroup]
           )
           job?.message("skipped invalid title ${(currentTippError as JSON).toString()}")
         }
@@ -228,15 +229,18 @@ class CrossRefPkgRun {
 
         if (rjson.tipps?.size() > 0 && rjson.tipps.size() > invalidTipps.size()) {
           if (pkg.status == status_current && pkg?.listStatus != status_ip) {
-            pkg.listStatus = status_ip
-            pkg.merge(flush: true)
+            //Macht kein Sinn vorerst
+            //pkg.listStatus = status_ip
+            //pkg.merge(flush: true)
           }
         }
         else {
           log.debug("imported Package $pkg.name contains no valid TIPPs")
         }
 
-        if (!addOnly && existing_tipp_ids.size() > 0) {
+        //Setzt vorraus, dass das Paket immer mit dem gleichen Paket-Inhalt importiert wird. Jedoch kann ein Anbieter auch nur ein Zuschnitt eines Paket aktualisieren!!!
+        //Es werden autmatisch alle TIPPs, die nicht in der KBART sind auf Retired oder Deleted gesetzt!!!!
+        /*if (!addOnly && existing_tipp_ids.size() > 0) {
           existing_tipp_ids.eachWithIndex { ttd, ix ->
             def to_retire = TitleInstancePackagePlatform.get(ttd)
 
@@ -267,13 +271,14 @@ class CrossRefPkgRun {
               pkg,
               "TIPPs retired.",
               "An update to package ${pkg.id} did not contain ${removedNum} previously existing TIPPs.",
-              user,
+              rr_type,
               null,
               (additionalInfo as JSON).toString(),
-              rr_TIPPs_retired
+              rr_TIPPs_retired,
+              [curatoryGroup]
             )
           }
-        }
+        }*/
 
         log.debug("Removed ${removedNum} TIPPS from the matched package!")
         jsonResult.result = 'OK'
@@ -364,6 +369,7 @@ class CrossRefPkgRun {
         log.debug("Got more than one cg candidate!")
         job?.groupId = curatory_group_ids[0]
       }
+      curatoryGroup = CuratoryGroup.get(job?.groupId)
       curated_pkg = true
     }
 
@@ -412,7 +418,9 @@ class CrossRefPkgRun {
         user,
         null,
         title_class_name,
-        titleObj.uuid
+        titleObj.uuid,
+        false,
+        titleObj.language
       )
 
       if (ti?.id && !ti.hasErrors()) {
@@ -431,7 +439,7 @@ class CrossRefPkgRun {
         componentUpdateService.ensureCoreData(ti, titleObj, fullsync, user)
 
         title_changed |= componentUpdateService.setAllRefdata([
-          'OAStatus', 'medium',
+          'OAStatus', 'medium', 'language',
           'pureOA', 'continuingSeries',
           'reasonRetired'
         ], titleObj, ti)
@@ -552,14 +560,17 @@ class CrossRefPkgRun {
 
   private Map handleTIPP(JSONObject tippJson) {
     Map tippError = [:]
-    def validation_result = TitleInstancePackagePlatform.validateDTO(tippJson, locale)
+    def validation_result = TitleInstancePackagePlatform.validateDTONew(tippJson, locale)
     log.debug("validate TIPP ${tippJson.name ?: tippJson.title.name}")
-    if (validation_result && !validation_result.valid) {
+    if (!validation_result.valid) {
       invalidTipps << tippJson
       log.debug("TIPP Validation failed on ${tippJson.name ?: tippJson.title.name}")
       return validation_result.errors
     }
     else {
+      if (validation_result.errors?.size() > 0) {
+        tippError.putAll(validation_result.errors)
+      }
       log.debug("upsert TIPP ${tippJson.name ?: tippJson.title.name}")
       def upserted_tipp = null
       try {
@@ -604,10 +615,11 @@ class CrossRefPkgRun {
               upserted_tipp,
               "Matched TIPP was marked as Deleted.",
               "Check TIPP Status.",
-              user,
+              rr_type,
               null,
               null,
-              rr_deleted
+              rr_deleted,
+              [curatoryGroup]
             )
           }
           upserted_tipp.status = status_current
@@ -621,10 +633,11 @@ class CrossRefPkgRun {
             upserted_tipp,
             "The existing platform matched for this TIPP (${upserted_tipp.hostPlatform}) is marked as ${upserted_tipp.hostPlatform.status?.value}! Please review the URL/Platform for validity.",
             "Platform not marked as current.",
-            user,
+            rr_type,
             null,
             (additionalInfo as JSON).toString(),
-            rr_nonCurrent
+            rr_nonCurrent,
+            [curatoryGroup]
           )
         }
       }
@@ -634,6 +647,121 @@ class CrossRefPkgRun {
         def tipp_error = [
           message: messageService.resolveCode('crossRef.package.tipps.error', [tippJson.title.name], locale),
           baddata: tippJson
+        ]
+        return tipp_error
+      }
+    }
+    return tippError
+  }
+
+
+  private Map handleTIPPNew(JSONObject tippJson) {
+    Map tippError = [:]
+    def validation_result = TitleInstancePackagePlatform.validateDTONew(tippJson, locale)
+    log.debug("validate TIPP ${tippJson.name ?: tippJson.title.name}")
+    if (!validation_result.valid) {
+      invalidTipps << tippJson
+      log.debug("TIPP Validation failed on ${tippJson.name ?: tippJson.title.name}")
+      return validation_result.errors
+    }
+    else {
+      if (validation_result.errors?.size() > 0) {
+        tippError.putAll(validation_result.errors)
+      }
+      log.debug("upsert TIPP ${tippJson.name ?: tippJson.title.name}")
+      def upserted_tipp = null
+      try {
+        upserted_tipp = TitleInstancePackagePlatform.upsertDTO(tippJson, user)
+        log.debug("Upserted TIPP ${upserted_tipp} with URL ${upserted_tipp?.url}")
+        upserted_tipp.merge(flush: true)
+        componentUpdateService.ensureCoreData(upserted_tipp, tippJson, fullsync, user)
+
+
+        /*if (titleObj.historyEvents?.size() > 0) {
+          def he_result = titleHistoryService.processHistoryEvents(ti, titleObj, title_class_name, user, fullsync, locale)
+          if (he_result.errors) {
+            if (!currentTippError.title) {
+              currentTippError.title = [:]
+            }
+            currentTippError[title].put('historyEvents': [
+                    message: messageService.resolveCode('crossRef.package.tipps.error.title.history', null, locale),
+                    baddata: tippJson.title,
+                    errors : he_result.errors])
+          }
+        }
+
+        titleLookupService.addPublisherHistory(ti, titleObj.publisher_history)*/
+
+
+      }
+      catch (grails.validation.ValidationException ve) {
+        log.error("ValidationException attempting to cross reference TIPP", ve)
+        upserted_tipp?.discard()
+        tippError.putAll(messageService.processValidationErrors(ve.errors))
+        return tippError
+      }
+      catch (Exception ge) {
+        log.error("Exception attempting to cross reference TIPP:", ge)
+        def tipp_error = [
+                message: messageService.resolveCode('crossRef.package.tipps.error', [tippJson.title.name], locale),
+                baddata: tippJson,
+                errors : [message: ge.toString()]
+        ]
+        upserted_tipp?.discard()
+        return tipp_error
+      }
+      if (upserted_tipp) {
+        if (existing_tipp_ids.size() > 0 && existing_tipp_ids.contains(upserted_tipp.id)) {
+          log.debug("Existing TIPP matched!")
+          existing_tipp_ids.removeElement(upserted_tipp.id)
+        }
+        if (upserted_tipp.status != status_deleted && tippJson.status == "Deleted") {
+          upserted_tipp.deleteSoft()
+          removedNum++;
+        }
+        else if (upserted_tipp.status != status_retired && tippJson.status == "Retired") {
+          upserted_tipp.retire()
+          removedNum++;
+        }
+        else if (upserted_tipp.status != status_current && (!tippJson.status || tippJson.status == "Current")) {
+          if (upserted_tipp.isDeleted() && !fullsync) {
+            // upserted_tipp.merge(flush: true)
+            reviewRequestService.raise(
+                    upserted_tipp,
+                    "Matched TIPP was marked as Deleted.",
+                    "Check TIPP Status.",
+                    rr_type,
+                    null,
+                    null,
+                    rr_deleted,
+                    [curatoryGroup]
+            )
+          }
+          upserted_tipp.status = status_current
+        }
+//        upserted_tipp.save()
+        upserted_tipp.merge(flush: true)
+        if (upserted_tipp.isCurrent() && upserted_tipp.hostPlatform?.status != status_current) {
+          def additionalInfo = [:]
+          additionalInfo.vars = [upserted_tipp.hostPlatform.name, upserted_tipp.hostPlatform.status?.value]
+          reviewRequestService.raise(
+                  upserted_tipp,
+                  "The existing platform matched for this TIPP (${upserted_tipp.hostPlatform}) is marked as ${upserted_tipp.hostPlatform.status?.value}! Please review the URL/Platform for validity.",
+                  "Platform not marked as current.",
+                  rr_type,
+                  null,
+                  (additionalInfo as JSON).toString(),
+                  rr_nonCurrent,
+                  [curatoryGroup]
+          )
+        }
+      }
+      else {
+        log.debug("Could not reference TIPP")
+        invalidTipps << tippJson
+        def tipp_error = [
+                message: messageService.resolveCode('crossRef.package.tipps.error', [tippJson.title.name], locale),
+                baddata: tippJson
         ]
         return tipp_error
       }

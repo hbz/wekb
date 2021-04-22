@@ -1,5 +1,6 @@
 package com.k_int
 
+import de.wekb.helper.RCConstants
 import groovy.util.logging.*
 import org.gokb.cred.*;
 import grails.util.GrailsClassUtils
@@ -265,8 +266,8 @@ public class HQLBuilder {
       def combo_status_bindvar = combo_scope_name+"_status"
       hql_builder_context.query_clauses.add("${combo_scope_name}.type = :${combo_type_bindvar}");
       hql_builder_context.query_clauses.add("${combo_scope_name}.status = :${combo_status_bindvar}");
-      hql_builder_context.bindvars[combo_type_bindvar] = RefdataCategory.lookupOrCreate ( "Combo.Type", the_class.getComboTypeValueFor (the_class, propname))
-      hql_builder_context.bindvars[combo_status_bindvar] = RefdataCategory.lookup("Combo.Status", "Active")
+      hql_builder_context.bindvars[combo_type_bindvar] = RefdataCategory.lookupOrCreate ( RCConstants.COMBO_TYPE, the_class.getComboTypeValueFor (the_class, propname))
+      hql_builder_context.bindvars[combo_status_bindvar] = RefdataCategory.lookup(RCConstants.COMBO_STATUS, "Active")
     }
 
     def component_scope_name = propname
@@ -328,6 +329,16 @@ public class HQLBuilder {
         hql_builder_context.bindvars[crit.defn.qparam] = ( ( crit.defn.contextTree.wildcard=='L' || crit.defn.contextTree.wildcard=='B') ? '%' : '') +
                                                          base_value +
                                                          ( ( crit.defn.contextTree.wildcard=='R' || crit.defn.contextTree.wildcard=='B') ? '%' : '')
+        break;
+
+      case 'exists':
+        if ( crit.defn.type=='lookup') {
+          def value = hql_builder_context.genericOIDService.resolveOID2(crit.value)
+          if(value && value.class.getSimpleName() == 'RefdataValue') {
+            hql_builder_context.query_clauses.add("${crit.defn.contextTree.negate ? 'not ' : ''} exists (select ${crit.defn.qparam} from ${scoped_property} as ${crit.defn.qparam} where ${crit.defn.qparam} = :${crit.defn.qparam} ) ");
+            hql_builder_context.bindvars[crit.defn.qparam] = value
+          }
+        }
         break;
 
       default:

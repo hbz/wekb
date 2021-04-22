@@ -1,8 +1,5 @@
 package org.gokb.cred
 
-import javax.persistence.Transient
-import org.gokb.GOKbTextUtils
-import org.gokb.DomainClassExtender
 import groovy.util.logging.*
 import static grails.async.Promises.*
 
@@ -26,8 +23,8 @@ class JournalInstance extends TitleInstance {
   }
 
   @Override
-  public String getNiceName() {
-    return "Journal";
+  String getNiceName() {
+    return "Journal"
   }
 
   public static final String restPath = "/titles"
@@ -43,7 +40,6 @@ class JournalInstance extends TitleInstance {
     // Currently, serial items are mapped based on the name of the journal. We may need to add a discriminator property
     if ( ( hasChanged('name') ) ||
          ( hasChanged('componentDiscriminator') )) {
-//       submitRemapWorkTask();
     }
     touchAllDependants()
   }

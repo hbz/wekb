@@ -1,5 +1,6 @@
 package org.gokb
 
+import de.wekb.helper.RCConstants
 import grails.gorm.transactions.Transactional
 
 import org.gokb.cred.*
@@ -13,8 +14,8 @@ class PlatformService {
   def restLookup(platformDTO, def user = null) {
 
     def result = [to_create: true]
-    def status_current = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Current')
-    def status_deleted = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Deleted')
+    def status_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current')
+    def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
     def matches = new HashMap()
     Boolean viable_url = false
 

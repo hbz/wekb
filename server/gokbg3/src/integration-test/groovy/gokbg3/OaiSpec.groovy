@@ -1,6 +1,7 @@
 package gokbg3
 
 import com.sun.corba.se.impl.orb.PrefixParserData
+import de.wekb.helper.RCConstants
 import grails.testing.mixin.integration.Integration
 import grails.transaction.*
 import spock.lang.Specification
@@ -34,9 +35,9 @@ class OaiSpec extends Specification {
   Org test_org
 
   def setup() {
-    def http = RefdataCategory.lookup('Source.DataSupplyMethod', 'HTTP Url').save(flush: true)
-    def kbart = RefdataCategory.lookup('Source.DataFormat', 'KBART').save(flush: true)
-    def freq = RefdataCategory.lookup('Source.Frequency', 'Weekly').save(flush: true)
+    def http = RefdataCategory.lookup(RCConstants.SOURCE_DATA_SUPPLY_METHOD, 'HTTP Url').save(flush: true)
+    def kbart = RefdataCategory.lookup(RCConstants.SOURCE_DATA_FORMAT, 'KBART').save(flush: true)
+    def freq = RefdataCategory.lookup(RCConstants.SOURCE_FREQUENCY, 'Weekly').save(flush: true)
     Source testSource = Source.findByName("PackTestSource") ?: new Source(
       name: "PackTestSource",
       url: "https://org/package",
@@ -64,9 +65,9 @@ class OaiSpec extends Specification {
     tipp1.setPrice("list", "1234.56 EUR")
     tipp1.setPublisherName("test Publisher")
 
-    new Combo(fromComponent: test_pkg, toComponent: tipp1, type: RefdataCategory.lookup('Combo.Type', 'Package.Tipps'), status: RefdataCategory.lookup('Combo.Status', 'Active')).save(flush: true)
-    new Combo(fromComponent: test_plt, toComponent: tipp1, type: RefdataCategory.lookup('Combo.Type', 'Platform.HostedTipps'), status: RefdataCategory.lookup('Combo.Status', 'Active')).save(flush: true)
-    new Combo(fromComponent: title1, toComponent: tipp1, type: RefdataCategory.lookup('Combo.Type', 'TitleInstance.Tipps'), status: RefdataCategory.lookup('Combo.Status', 'Active')).save(flush: true)
+    new Combo(fromComponent: test_pkg, toComponent: tipp1, type: RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps'), status: RefdataCategory.lookup(RCConstants.COMBO_STATUS, 'Active')).save(flush: true)
+    new Combo(fromComponent: test_plt, toComponent: tipp1, type: RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Platform.HostedTipps'), status: RefdataCategory.lookup(RCConstants.COMBO_STATUS, 'Active')).save(flush: true)
+    new Combo(fromComponent: title1, toComponent: tipp1, type: RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'TitleInstance.Tipps'), status: RefdataCategory.lookup(RCConstants.COMBO_STATUS, 'Active')).save(flush: true)
 
     def coverageStatement = [startDate: new Date(), startVolume: "1", startIssue: "1"]
 

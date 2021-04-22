@@ -15,6 +15,7 @@ import com.k_int.ClassUtils
  */
 
 class AnnotationTagLib {
+  static namespace = 'gokb'
   static defaultEncodeAs = 'raw'
   def springSecurityService
 
@@ -71,9 +72,7 @@ class AnnotationTagLib {
 
     // Annotation required?
     User user = springSecurityService.currentUser
-    boolean isAdmin = user.getAuthorities().find { Role role ->
-      "ROLE_ADMIN".equalsIgnoreCase(role.authority)
-    }
+    boolean isAdmin = user?.isAdmin()
 
     // Should the annotation be shown?
     boolean show_annotation = session?.userPereferences?.showInfoIcon && (isAdmin || annotation?.value != null)

@@ -1,9 +1,11 @@
 package org.gokb.rest
 
-
+import de.wekb.helper.RCConstants
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
 import grails.plugin.springsecurity.annotation.Secured
+import org.gokb.ReviewRequestService
+import org.gokb.cred.CuratoryGroup
 import org.gokb.cred.RefdataCategory
 import org.gokb.cred.RefdataValue
 import org.gokb.cred.ReviewRequest
@@ -23,11 +25,12 @@ class ReviewsController {
   def messageService
   def restMappingService
   def componentLookupService
+  ReviewRequestService reviewRequestService
 
   @Secured(['ROLE_CONTRIBUTOR', 'IS_AUTHENTICATED_FULLY'])
   def index() {
     def result = []
-    def base = grailsApplication.config.serverURL + "/rest"
+    def base = grailsApplication.config.serverUrl + "/rest"
     User user = User.get(springSecurityService.principal.id)
     result = componentLookupService.restLookup(user, ReviewRequest, params)
 
@@ -38,7 +41,7 @@ class ReviewsController {
   def show() {
     def result = [:]
     def obj = ReviewRequest.get(genericOIDService.oidToId(params.id))
-    def base = grailsApplication.config.serverURL + "/rest"
+    def base = grailsApplication.config.serverUrl + "/rest"
     def includes = params['_include'] ? params['_include'].split(',') : []
     def embeds = params['_embed'] ? params['_embed'].split(',') : []
     User user = User.get(springSecurityService.principal.id)
@@ -70,7 +73,7 @@ class ReviewsController {
     def result = ['result':'OK', 'params': params]
     def reqBody = request.JSON
     def errors = [:]
-    def immutable = ['raisedBy', 'componentToReview', 'dateCreated', 'lastUpdated', 'id']
+    def immutable = ['componentToReview', 'dateCreated', 'lastUpdated', 'id']
     def user = User.get(springSecurityService.principal.id)
     def obj = ReviewRequest.get(genericOIDService.oidToId(params.id))
 
@@ -85,14 +88,14 @@ class ReviewsController {
           def new_status = null
 
           if (reqBody.status instanceof Integer) {
-            def rdc = RefdataCategory.findByDesc("ReviewRequest.Status")
+            def rdc = RefdataCategory.findByDesc(RCConstants.REVIEW_REQUEST_STATUS)
             def rdv = RefdataValue.get(reqBody.status)
 
             if (rdv?.owner == rdc) {
               new_status = rdv
             }
           } else {
-            new_status = RefdataCategory.lookup("ReviewRequest.Status", reqBody.status)
+            new_status = RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STATUS, reqBody.status)
           }
 
           if (new_status) {
@@ -107,14 +110,14 @@ class ReviewsController {
           def rdv_desc = null
 
           if (reqBody.stdDesc instanceof Integer) {
-            def rdc = RefdataCategory.findByDesc("ReviewRequest.StdDesc")
+            def rdc = RefdataCategory.findByDesc(RCConstants.REVIEW_REQUEST_STD_DESC)
             def rdv = RefdataValue.get(reqBody.stdDesc)
 
             if (rdv?.owner == rdc) {
               rdv_desc = rdv
             }
           } else {
-            rdv_desc = RefdataCategory.lookup("ReviewRequest.StdDesc", reqBody.stdDesc)
+            rdv_desc = RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STD_DESC, reqBody.stdDesc)
           }
 
           if (rdv_desc) {
@@ -129,36 +132,14 @@ class ReviewsController {
           obj.additionalInfo = JsonOutput.toJson(reqBody.additionalInfo)
         }
 
-        if (reqBody.allocatedTo) {
-          def allocatedUser = User.findById(reqBody.allocatedTo)
-
-          if (allocatedUser) {
-            obj.allocatedTo = allocatedUser
-          }
-          else {
-            errors.allocatedTo = [[message:"Unable to update allocated User for ID ${reqBody.allocatedTo}", baddata: reqBody.allocatedTo]]
-          }
-        }
-
-        if (reqBody.reviewedBy) {
-          def reviewedByUser = User.findById(reqBody.reviewedBy)
-
-          if (reviewedByUser) {
-            obj.reviewedBy = reviewedByUser
-          }
-          else {
-            errors.reviewedBy = [[message:"Unable to update reviewedBy User for ID ${reqBody.reviewedBy}", baddata: reqBody.reviewedBy]]
-          }
-        }
-
         if (reqBody.needsNotify) {
-          def nn = params.boolean(reqBody.needsNotify)
+          Boolean nn = params.boolean(reqBody.needsNotify)
 
           if (nn) {
-            obj.reviewedBy = nn
+            obj.needsNotify = nn
           }
           else {
-            errors.reviewedBy = [[message:"Expected boolean value for needsNotify!", baddata: reqBody.needsNotify]]
+            errors.needsNotify = [[message:"Expected boolean value for needsNotify!", baddata: reqBody.needsNotify]]
           }
         }
 
@@ -263,7 +244,7 @@ class ReviewsController {
       if (reqBody.stdDesc || reqBody.type) {
         def desc = null
         def reqDesc = reqBody?.stdDesc ?: reqBody.type
-        def cat = RefdataCategory.findByLabel('ReviewRequest.StdDesc')
+        def cat = RefdataCategory.findByLabel(RCConstants.REVIEW_REQUEST_STD_DESC)
 
         if (reqDesc instanceof Integer) {
           def rdv = RefdataValue.get(reqBody.stdDesc)
@@ -273,7 +254,7 @@ class ReviewsController {
           }
         }
         else {
-          desc = RefdataCategory.lookup('ReviewRequest.StdDesc', reqDesc)
+          desc = RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STD_DESC, reqDesc)
         }
 
         if (desc) {
@@ -286,7 +267,8 @@ class ReviewsController {
 
       if (errors.size() == 0) {
         try {
-          obj = reviewRequestService.raise(pars.componentToReview, pars.reviewRequest, pars.descriptionOfCause, user, pars.additionalInfo, stdDesc)
+          List<CuratoryGroup> curatoryGroups = pars.componentToReview.respondsTo('curatoryGroups') ? pars.componentToReview.curatoryGroups : null
+          obj = reviewRequestService.raise(pars.componentToReview, pars.reviewRequest, pars.descriptionOfCause, RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), pars.additionalInfo, pars.stdDesc, curatoryGroups)
 
           if (obj) {
             result = restMappingService.mapObjectToJson(obj, user)
@@ -326,7 +308,7 @@ class ReviewsController {
       def curator = isUserCurator(obj, user)
 
       if ( curator || user.isAdmin() ) {
-        obj.status = RefdataCategory.lookup('ReviewRequest.Status','Deleted')
+        obj.status = RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STATUS,'Deleted')
       }
       else {
         result.result = 'ERROR'
@@ -350,10 +332,7 @@ class ReviewsController {
   private def isUserCurator(obj, user) {
     def curator = false
 
-    if (obj.allocatedTo == user) {
-      curator = true
-    }
-    else if (obj.allocatedGroups?.id.intersect(user.curatoryGroups?.id)) {
+    if (obj.allocatedGroups?.id.intersect(user.curatoryGroups?.id)) {
       curator = true
     }
 
@@ -361,7 +340,7 @@ class ReviewsController {
   }
 
   private def generateLinks(obj,user) {
-    def base = grailsApplication.config.serverURL + "/rest" + obj.restPath + "/${obj.id}"
+    def base = grailsApplication.config.serverUrl + "/rest" + obj.restPath + "/${obj.id}"
     def linksObj = [self:[href:base]]
     def curator = isUserCurator(obj,user)
 

@@ -1,10 +1,16 @@
 package org.gokb.cred
 
+import de.wekb.annotations.RefdataAnnotation
+import de.wekb.helper.RCConstants
+
 class CuratoryGroup extends KBComponent {
 
   static belongsTo = User
 
-  User owner;
+  User owner
+
+  @RefdataAnnotation(cat = RCConstants.CURATORY_GROUP_TYPE)
+  RefdataValue type
 
   static hasMany = [
     users: User,
@@ -12,6 +18,7 @@ class CuratoryGroup extends KBComponent {
 
   static mapping = {
     includes KBComponent.mapping
+    type column: 'cg_type_rv_fk'
   }
 
   static mappedBy = [users: "curatoryGroups", ]
@@ -39,7 +46,7 @@ class CuratoryGroup extends KBComponent {
     name (validator: { val, obj ->
       if (obj.hasChanged('name')) {
         if (val && val.trim()) {
-          def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+          def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
           def dupes = CuratoryGroup.findAllByNameIlikeAndStatusNotEqual(val, status_deleted);
 
           if (dupes?.size() > 0 && dupes.any { it != obj }) {
@@ -50,6 +57,7 @@ class CuratoryGroup extends KBComponent {
         }
       }
     })
+    type (nullable:true, blank:false)
   }
 
   public String getRestPath() {
@@ -63,7 +71,7 @@ class CuratoryGroup extends KBComponent {
 
   static def refdataFind(params) {
     def result = [];
-    def status_deleted = RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, KBComponent.STATUS_DELETED)
+    def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED)
     def ql = null;
     ql = CuratoryGroup.findAllByNameIlikeAndStatusNotEqual("${params.q}%", status_deleted ,params)
 

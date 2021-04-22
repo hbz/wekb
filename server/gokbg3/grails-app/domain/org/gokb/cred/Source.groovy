@@ -1,5 +1,7 @@
 package org.gokb.cred
 
+import de.wekb.helper.RCConstants
+
 import javax.persistence.Transient
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -52,7 +54,7 @@ class Source extends KBComponent {
     name(validator: { val, obj ->
       if (obj.hasChanged('name')) {
         if (val && val.trim()) {
-          def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+          def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
           def dupes = Source.findAllByNameIlikeAndStatusNotEqual(val, status_deleted);
 
           if (dupes.size() > 0 && dupes.any {it != obj}) {
@@ -70,11 +72,11 @@ class Source extends KBComponent {
 
   static def refdataFind(params) {
     def result = [];
-    def status_deleted = RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, KBComponent.STATUS_DELETED)
+    def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED)
     def status_filter = null
 
     if(params.filter1) {
-      status_filter = RefdataCategory.lookup('KBComponent.Status', params.filter1)
+      status_filter = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, params.filter1)
     }
 
     def ql = null;
@@ -159,7 +161,11 @@ class Source extends KBComponent {
         if (today == due){
           return true
         }
+      }else {
+        log.info("Source needsUpdate(): Frequency (${frequency}) is not null but intervals is null")
       }
+    }else {
+      log.info("Source needsUpdate(): Frequency is null")
     }
     return false
   }

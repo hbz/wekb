@@ -220,7 +220,7 @@ class ConcurrencyManagerService {
    * @param task
    * @return a new Job
    */
-  public Job createJob (Closure task) {
+  Job createJob (Closure task) {
 
     // Just allocate the job ID to the size of the map.
     Job j = createNewJob()

@@ -1,5 +1,6 @@
 package org.gokb
 
+import de.wekb.helper.RCConstants
 import grails.converters.*
 import grails.gorm.transactions.*
 import org.springframework.security.acls.model.NotFoundException
@@ -13,9 +14,6 @@ import grails.converters.JSON
 import grails.core.GrailsClass
 import groovyx.net.http.URIBuilder
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-
 import org.grails.datastore.mapping.model.*
 import org.grails.datastore.mapping.model.types.*
 
@@ -27,15 +25,16 @@ import org.hibernate.Hibernate
 @Transactional(readOnly = true)
 class PackagesController {
 
+  def dateFormatService
   def genericOIDService
   def springSecurityService
   def concurrencyManagerService
   def TSVIngestionService
+  def packageService
   def ESWrapperService
   def ESSearchService
   def sessionFactory
   def messageService
-  def packageService
 
   public static String TIPPS_QRY = 'select tipp from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=? and c.toComponent=tipp  and c.type.value = ? order by tipp.id';
 
@@ -53,6 +52,39 @@ class PackagesController {
       log.debug("Tipp qry done ${result.tipps?.size()}");
     }
     result
+  }
+
+  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  def compareContents() {
+    log.debug("compareContents")
+    def result = [params: params, result: 'OK']
+    def user = springSecurityService.currentUser
+
+    if (params.one && params.two) {
+      def date = params.date ? dateFormatService.parseDate(params.date)  : null
+      def full = params.full ? params.boolean('full') : false
+      def listOne = params.list('one')
+      def listTwo = params.list('two')
+
+      if (params.wait) {
+        result = packageService.compareLists(listOne, listTwo, full, date)
+      }
+      else {
+        def background_job = concurrencyManagerService.createJob { Job job ->
+          packageService.compareLists(listOne, listTwo, full, date, job)
+        }.startOrQueue()
+
+        background_job.description = "Package comparison"
+        background_job.type = RefdataCategory.lookup(RCConstants.JOB_TYPE, 'PackageComparison')
+        background_job.ownerId = user.id
+        result.job_id = background_job.uuid
+      }
+    }
+    else {
+      log.debug("Missing info..")
+    }
+
+    render result as JSON
   }
 
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
@@ -109,7 +141,7 @@ class PackagesController {
           def deposit_token = java.util.UUID.randomUUID().toString();
           def temp_file = copyUploadedFile(request.getFile("content"), deposit_token);
           log.debug("Got file content")
-          def format_rdv = RefdataCategory.lookupOrCreate('ingest.filetype', params.fmt).save()
+          def format_rdv = RefdataCategory.lookupOrCreate(RCConstants.INGEST_FILE_TYPE, params.fmt).save()
           def pkg = params.pkg
           def platformUrl = params.platformUrl
           def source = Source.findByName(params.source) ?: new Source(name: params.source).save(flush: true, failOnError: true);
@@ -170,7 +202,7 @@ class PackagesController {
             def deposit_token = java.util.UUID.randomUUID().toString();
             def temp_file = copyUploadedFile(request.getFile("content"), deposit_token);
             log.debug("Got file content")
-            def format_rdv = RefdataCategory.lookupOrCreate('ingest.filetype', params.fmt).save()
+            def format_rdv = RefdataCategory.lookupOrCreate(RCConstants.INGEST_FILE_TYPE, params.fmt).save()
             def pkg = params.pkg
             def platformUrl = params.platformUrl
             // def source = params.source
@@ -268,7 +300,7 @@ class PackagesController {
             }
 
             background_job.description = "Deposit datafile ${upload_filename}(as ${params.fmt} from ${source} ) and create/update package ${pkg}"
-            background_job.type = RefdataCategory.lookupOrCreate('Job.Type', 'DepositDatafile')
+            background_job.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'DepositDatafile')
             background_job.ownerId = user.id
             background_job.startOrQueue()
             jobid = background_job.uuid
@@ -346,12 +378,12 @@ class PackagesController {
     result
   }
 
-  @Transactional(readOnly = true)
+  /*@Transactional(readOnly = true)
   def kbart() {
     if (request.method == "GET") {
       if (params.id == "all") {
         Package.all.each { pack ->
-          packageService.createKbartExport(pack)
+          packageService.createKbartExport(pack, response)
         }
         return response
       }
@@ -360,7 +392,8 @@ class PackagesController {
         packageService.sendFile(pkg, PackageService.ExportType.KBART, response)
       else
         log.error("Cant find package with ID ${params.id}")
-    } else if (request.method == "POST") {
+    }
+    else if (request.method == "POST") {
       def packs = []
       request.JSON.data.ids.each { id ->
         def pkg = Package.findByUuid(id) ?: genericOIDService.resolveOID(id)
@@ -369,14 +402,14 @@ class PackagesController {
       }
       packageService.sendZip(packs, PackageService.ExportType.KBART, response)
     }
-  }
+  }*/
 
-  @Transactional(readOnly = true)
+  /*@Transactional(readOnly = true)
   def packageTSVExport() {
     if (request.method == "GET") {
       if (params.id == "all") {
         Package.all.each { pack ->
-          packageService.createTsvExport(pack)
+          packageService.createTsvExport(pack, response)
         }
         return response
       }
@@ -394,5 +427,5 @@ class PackagesController {
       }
       packageService.sendZip(packs, PackageService.ExportType.TSV, response)
     }
-  }
+  }*/
 }

@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="layout" content="sb-admin" />
-<title>GOKb: File Upload</title>
+<title><g:message code="gokb.appname" default="we:kb"/>: File Upload</title>
 </head>
 <body>
 

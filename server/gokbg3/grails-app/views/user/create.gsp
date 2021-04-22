@@ -12,6 +12,7 @@
 				<tbody>
 				<s2ui:textFieldRow name='username' labelCodeDefault='Username'/>
 				<s2ui:passwordFieldRow name='password' labelCodeDefault='Password'/>
+				<s2ui:textFieldRow name='email' labelCodeDefault='Mail'/>
 				<s2ui:checkboxRow name='enabled' labelCodeDefault='Enabled'/>
 				<s2ui:checkboxRow name='accountExpired' labelCodeDefault='Account Expired'/>
 				<s2ui:checkboxRow name='accountLocked' labelCodeDefault='Account Locked'/>
@@ -23,7 +24,7 @@
 		<g:each var='role' in='${authorityList}'>
 			<div>
 				<g:set var='authority' value='${uiPropertiesStrategy.getProperty(role, 'authority')}'/>
-				<g:checkBox name='${authority}'/>
+				<g:checkBox name='${authority}' checked="${authority =="ROLE_USER" ? "true": "false"}"/>
 				<g:link controller='role' action='edit' id='${role.id}'>${authority}</g:link>
 			</div>
 		</g:each>

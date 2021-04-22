@@ -41,7 +41,7 @@
 			<input type="hidden" name="__context" value="${d.getClassName()}:${d.id}"/>
 			<input type="hidden" name="__property" value="fileAttachments"/>
         	<div class="input-group col-xs-6" >
-	        <g:simpleReferenceTypedown class="form-control" name="__relatedObject" baseClass="org.gokb.cred.DataFile" />
+	        <gokb:simpleReferenceTypedown class="form-control" name="__relatedObject" baseClass="org.gokb.cred.DataFile" />
 			<button type="submit" class="btn btn-default btn-primary btn-sm ">Add Link</button>
         	</div>
         </td>

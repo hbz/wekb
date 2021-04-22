@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="layout" content="sb-admin" />
-<title>GOKb::Review Request Transfer</title>
+<title><g:message code="gokb.appname" default="we:kb"/>::Review Request Transfer</title>
 </head>
 <body>
 	<h1 class="page-header">Review Request Transfer</h1>
@@ -44,7 +44,7 @@
 							<div class="form-group">
 								<label for="allocUser" class="col-sm-2 control-label">To User</label>
 								<div class="col-sm-8">
-									<g:simpleReferenceTypedown class="form-control" id="allocUser" name="allocToUser" baseClass="org.gokb.cred.User" />
+									<gokb:simpleReferenceTypedown class="form-control" id="allocUser" name="allocToUser" baseClass="org.gokb.cred.User" />
 								</div>
 							</div>
 							<div class="form-group">

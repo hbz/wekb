@@ -26,7 +26,7 @@ class SourcesController {
   @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
   def index() {
     def result = [:]
-    def base = grailsApplication.config.serverURL + "/rest"
+    def base = grailsApplication.config.serverUrl + "/rest"
     User user = null
 
     if (springSecurityService.isLoggedIn()) {
@@ -40,45 +40,41 @@ class SourcesController {
     render result as JSON
   }
 
+  
   @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
   def show() {
     def result = [:]
     def obj = null
-    def base = grailsApplication.config.serverURL + "/rest"
+    def base = grailsApplication.config.serverUrl + "/rest"
     def is_curator = true
     User user = null
-
     if (springSecurityService.isLoggedIn()) {
       user = User.get(springSecurityService.principal?.id)
     }
-
-    if (params.oid || params.id) {
+    if (params.oid || params.id){
       obj = Source.findByUuid(params.id)
-
-      if (!obj) {
+      if (!obj){
         obj = Source.get(genericOIDService.oidToId(params.id))
       }
-
-      if (obj) {
+      if (obj){
         result = restMappingService.mapObjectToJson(obj, params, user)
-
-        // result['_currentTipps'] = obj.currentTippCount
-        // result['_linkedOpenRequests'] = obj.getReviews(true,true).size()
-      } else {
+      }
+      else{
         result.message = "Object ID could not be resolved!"
         response.setStatus(404)
         result.code = 404
         result.result = 'ERROR'
       }
-    } else {
+    }
+    else {
       result.result = 'ERROR'
       response.setStatus(400)
       result.code = 400
       result.message = 'No object id supplied!'
     }
-
     render result as JSON
   }
+
 
   @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
   @Transactional

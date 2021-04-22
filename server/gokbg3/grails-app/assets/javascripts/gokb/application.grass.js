@@ -184,7 +184,7 @@ window.gokb = {
     
     $(".xEditableManyToOne").editable();
     
-    // Handle dates differently now.
+    /*// Handle dates differently now.
     $('.ipe').each(function() {
 
       // The context.
@@ -209,7 +209,7 @@ window.gokb = {
 
       // Make it editbale()
       me.editable();
-    });
+    });*/
   
     
     var results = $(".simpleHiddenRefdata");

@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="layout" content="sb-admin" />
-<title>GOKb: Log Watcher</title>
+<title><g:message code="gokb.appname" default="we:kb"/>: Log Watcher</title>
 <asset:script type="text/javascript" >
   var initScroll = false;
   (function($){

@@ -1,7 +1,7 @@
 <html>
 <head>
   <meta name='layout' content='public'/>
-  <title>Password Reset</title>
+  <title><g:message code="gokb.appname" default="we:kb"/>: Password Reset</title>
 </head>
 
 <body>
@@ -23,7 +23,7 @@
           <div class="info alert-info" style="display: block">${flash.message}</div>
         </g:if>
 
-        <g:form action='resetPassword' name="forgotPasswordForm" autocomplete='off' class="form" role="form">
+        <g:form action='resetPassword' name="forgotPasswordForm" autocomplete='off' class="form" >
           <g:hiddenField name='t' value='${token}'/>
           <div class="sign-in">
 

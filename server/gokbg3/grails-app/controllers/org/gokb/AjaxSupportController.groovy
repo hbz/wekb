@@ -1,20 +1,18 @@
 package org.gokb
 
-import grails.converters.JSON
-import java.text.SimpleDateFormat
-import java.text.MessageFormat
 
+import de.wekb.helper.RCConstants
+import grails.converters.JSON
 import com.k_int.ClassUtils
 
 import org.gokb.cred.*
 
 import org.springframework.security.access.annotation.Secured;
 import grails.gorm.transactions.Transactional
-import grails.util.GrailsNameUtils
 import grails.core.GrailsClass
 import org.grails.datastore.mapping.model.*
 import org.grails.datastore.mapping.model.types.*
-import grails.validation.ValidationException
+import wekb.AccessService
 
 class AjaxSupportController {
 
@@ -24,6 +22,7 @@ class AjaxSupportController {
   def componentLookupService
   def messageSource
   def messageService
+  AccessService accessService
 
 
   @Deprecated
@@ -39,7 +38,7 @@ class AjaxSupportController {
         def user = springSecurityService.currentUser
 
         if (target) {
-          def editable = checkEditable(target,user)
+          def editable = checkEditable(target)
 
           if (editable) {
             target[params.name] = params.value
@@ -159,7 +158,7 @@ class AjaxSupportController {
       countQry:"select count(rdv) from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       rowQry:"select rdv from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       qryParams:[['cat': "Package Type"]],
-      rdvCat: "Package.Scope",
+      rdvCat: RCConstants.PACKAGE_SCOPE,
       cols:['value'],
       format:'simple'
     ],
@@ -171,7 +170,7 @@ class AjaxSupportController {
       rowQry:"select rdv from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       required:true,
       qryParams:[],
-      rdvCat: "KBComponent.Status",
+      rdvCat: RCConstants.KBCOMPONENT_STATUS,
       cols:['value'],
       format:'simple'
     ],
@@ -190,7 +189,7 @@ class AjaxSupportController {
       countQry:"select count(rdv) from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       rowQry:"select rdv from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       qryParams:[],
-      rdvCat: "KBComponentVariantName.VariantType",
+      rdvCat: RCConstants.KBCOMPONENT_VARIANTNAME_VARIANT_TYPE,
       cols:['value'],
       format:'simple'
     ],
@@ -199,7 +198,7 @@ class AjaxSupportController {
       countQry:"select count(rdv) from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       rowQry:"select rdv from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       qryParams:[],
-      rdvCat: "KBComponentVariantName.VariantType",
+      rdvCat: RCConstants.KBCOMPONENT_VARIANTNAME_VARIANT_TYPE,
       cols:['value'],
       format:'simple'
     ],
@@ -208,7 +207,7 @@ class AjaxSupportController {
       countQry:"select count(rdv) from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       rowQry:"select rdv from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       qryParams:[],
-      rdvCat: "KBComponentVariantName.Locale",
+      rdvCat: RCConstants.KBCOMPONENT_VARIANTNAME_LOCAL,
       cols:['value'],
       format:'simple'
     ],
@@ -219,7 +218,7 @@ class AjaxSupportController {
       countQry:"select count(rdv) from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       rowQry:"select rdv from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       qryParams:[],
-      rdvCat: "ReviewRequest.Status",
+      rdvCat: RCConstants.REVIEW_REQUEST_STATUS,
       cols:['value'],
       format:'simple'
     ],
@@ -229,7 +228,7 @@ class AjaxSupportController {
       rowQry:"select rdv from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       required:true,
       qryParams:[],
-      rdvCat: "TitleInstance.Medium",
+      rdvCat: RCConstants.TITLEINSTANCE_MEDIUM,
       cols:['value'],
       format:'simple'
     ],
@@ -239,7 +238,7 @@ class AjaxSupportController {
       rowQry:"select rdv from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       required:true,
       qryParams:[],
-      rdvCat: "TitleInstancePackagePlatform.CoverageDepth",
+      rdvCat: RCConstants.TIPP_COVERAGE_DEPTH,
       cols:['value'],
       format:'simple'
     ],
@@ -249,7 +248,7 @@ class AjaxSupportController {
       rowQry:"select rdv from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
       required:true,
       qryParams:[],
-      rdvCat: "TIPPCoverageStatement.CoverageDepth",
+      rdvCat: RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH,
       cols:['value'],
       format:'simple'
     ],
@@ -278,7 +277,7 @@ class AjaxSupportController {
 
     if (domain_class && (domain_class.getClazz().isTypeCreatable() || domain_class.getClazz().isTypeAdministerable())) {
       if (contextObj) {
-        def editable = checkEditable(contextObj, user)
+        def editable = checkEditable(contextObj)
 
         if (editable || contextObj.id == user.id) {
           log.debug("Create a new instance of ${params.__newObjectClass}");
@@ -503,7 +502,7 @@ class AjaxSupportController {
    */
 
   @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
   def addToStdCollection() {
     log.debug("addToStdCollection(${params})");
     // Adds a link to a collection that is not mapped through a join object
@@ -512,7 +511,7 @@ class AjaxSupportController {
     def relatedObj = resolveOID2(params.__relatedObject)
     def result = ['result': 'OK', 'params': params]
     if (relatedObj != null && contextObj != null) {
-      def editable = checkEditable(contextObj, user)
+      def editable = checkEditable(contextObj)
 
       if (editable || user.id == contextObj.id) {
         if (!contextObj["${params.__property}"].contains(relatedObj)) {
@@ -576,7 +575,7 @@ class AjaxSupportController {
     def user = springSecurityService.currentUser
     def result = ['result': 'OK', 'params': params]
     if (contextObj) {
-      def editable = checkEditable(contextObj, user)
+      def editable = checkEditable(contextObj)
 
       if (editable || contextObj.id == user.id) {
         def item_to_remove = resolveOID2(params.__itemToRemove)
@@ -688,7 +687,7 @@ class AjaxSupportController {
     def result = ['result': 'OK', 'params': params]
 
     if ( contextObj ) {
-      def editable = checkEditable(contextObj, user)
+      def editable = checkEditable(contextObj)
 
       if (editable && contextObj.isDeletable()) {
         if(contextObj.respondsTo('deleteSoft')) {
@@ -811,7 +810,7 @@ class AjaxSupportController {
     def result = ['result': 'OK', 'params': params]
     def errors = [:]
     if (target_object) {
-      def editable = checkEditable(target_object, user)
+      def editable = checkEditable(target_object)
 
       if (editable || target_object == user) {
         if (params.type == 'date') {
@@ -875,17 +874,8 @@ class AjaxSupportController {
     }
   }
 
-  private boolean checkEditable(obj, user) {
-    def editable = obj.isEditable()
-
-    if (editable) {
-      def curatedObj = obj.respondsTo("getCuratoryGroups") ? obj : ( KBComponent.has(obj, 'pkg') ? obj.pkg : null )
-
-      if (curatedObj && curatedObj.curatoryGroups?.size() > 0) {
-
-        editable = (user.curatoryGroups?.id.intersect(curatedObj.curatoryGroups?.id).size() > 0 || user.isAdmin()) ? true : false
-      }
-    }
+  private boolean checkEditable(obj) {
+    def editable = accessService.checkEditableObject(obj, params)
 
     editable
   }
@@ -917,7 +907,7 @@ class AjaxSupportController {
     def result = ['result':'OK']
 
     if ( target != null) {
-      def editable = checkEditable(target, user)
+      def editable = checkEditable(target)
 
       if (editable) {
         // def binding_properties = [ "${params.name}":value ]
@@ -927,7 +917,7 @@ class AjaxSupportController {
         log.debug("Saving... after assignment ${params.name} = ${target[params.name]}");
 
         if ( target.validate() ) {
-          target.save(flush:true)
+          target = target.merge(flush: true, failOnError: true)
 
           if ( params.resultProp ) {
             result = value ? value[params.resultProp] : ''
@@ -1026,7 +1016,7 @@ class AjaxSupportController {
       def ns = genericOIDService.resolveOID(params.identifierNamespace)
       def owner = genericOIDService.resolveOID(params.__context)
       if ( ( ns != null ) && ( owner != null ) ) {
-        def editable = checkEditable(owner, user)
+        def editable = checkEditable(owner)
 
         if (editable) {
           // Lookup or create Identifier
@@ -1241,7 +1231,7 @@ class AjaxSupportController {
 
     if ( variant != null) {
       def owner = variant.owner
-      def editable = checkEditable(owner, user)
+      def editable = checkEditable(owner)
 
       if (editable) {
         // Does the current owner.name exist in a variant? If not, we should create one so we don't loose the info
@@ -1269,7 +1259,7 @@ class AjaxSupportController {
             log.debug("Found existing variant name: ${current_name_as_variant}")
         }
 
-        variant.variantType = RefdataCategory.lookupOrCreate('KBComponentVariantName.VariantType', 'Authorized')
+        variant.variantType = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_VARIANTNAME_VARIANT_TYPE, 'Authorized')
         owner.name = variant.variantName
 
         if (owner.validate()) {
@@ -1332,7 +1322,7 @@ class AjaxSupportController {
     def variantOwner = variant?.owner ?: null
 
     if ( variant != null ) {
-      def editable = checkEditable(variantOwner, user)
+      def editable = checkEditable(variantOwner)
 
       if (editable) {
         def variantName = variant.variantName
@@ -1393,7 +1383,7 @@ class AjaxSupportController {
     def tipp = tcs.owner
 
     if ( tcs != null) {
-      def editable = checkEditable(tipp, user)
+      def editable = checkEditable(tipp)
 
       if (editable) {
         tcs.delete()
@@ -1448,7 +1438,7 @@ class AjaxSupportController {
 
     if (c && c.fromComponent) {
       def owner = c.fromComponent
-      def editable = checkEditable(owner, user)
+      def editable = checkEditable(owner)
 
       if (editable) {
         log.debug("Delete combo..")
@@ -1458,7 +1448,7 @@ class AjaxSupportController {
         }
 
         if (params.keepLink) {
-          c.status = RefdataCategory.lookup(Combo.RD_STATUS, Combo.STATUS_DELETED)
+          c.status = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_DELETED)
         }
         else{
           c.delete(flush:true);
@@ -1512,7 +1502,7 @@ class AjaxSupportController {
     def user = springSecurityService.currentUser
 
     if (c) {
-      def editable = checkEditable(c.owner, user)
+      def editable = checkEditable(c.owner)
 
       if (editable) {
         log.debug("Delete Price..")
@@ -1545,8 +1535,8 @@ class AjaxSupportController {
     def result = ['result': 'OK', 'params': params]
     def user_org = UserOrganisation.get(params.id ?: params.userOrg)
     def user = springSecurityService.currentUser
-    def pending_status = RefdataCategory.lookup('MembershipStatus', 'Pending')
-    def role_type = RefdataCategory.lookup('MembershipRole', 'Member')
+    def pending_status = RefdataCategory.lookup(RCConstants.MEMBERSHIP_STATUS, 'Pending')
+    def role_type = RefdataCategory.lookup(RCConstants.MEMBERSHIP_ROLE, 'Member')
 
     if ( user_org && !user_org.members?.party?.contains(user) ) {
       new UserOrganisationMembership(memberOf: user_org, party: user, role: role_type, status: pending_status).save(flush:true, failOnError:true)
@@ -1566,5 +1556,155 @@ class AjaxSupportController {
     }
 
     render result as JSON
+  }
+
+  @Transactional
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
+  def addNationalRange() {
+    Map<String, Object> result = [:]
+
+    Package pkgInstance = Package.get(params.package)
+
+    if (!pkgInstance) {
+      flash.message = message(code: 'default.not.found.message', args: ['Package', params.id]) as String
+      redirect(url: request.getHeader('referer'))
+      return
+    }
+    result.editable = accessService.checkEditableObject(pkgInstance, params)
+
+    if (result.editable) {
+      RefdataValue nationalRange = RefdataValue.get(params.nationalRange)
+      if(nationalRange && !(nationalRange in pkgInstance.nationalRanges)) {
+        pkgInstance.addToNationalRanges(nationalRange)
+        pkgInstance.save()
+      }
+    }
+
+    redirect(url: request.getHeader('referer'))
+  }
+
+  @Transactional
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
+  def addRegionalRange() {
+    Map<String, Object> result = [:]
+
+    Package pkgInstance = Package.get(params.package)
+
+    if (!pkgInstance) {
+      flash.message = message(code: 'default.not.found.message', args: ['Package', params.id]) as String
+      redirect(url: request.getHeader('referer'))
+      return
+    }
+    result.editable = accessService.checkEditableObject(pkgInstance, params)
+
+    if (result.editable) {
+      RefdataValue regionalRange = RefdataValue.get(params.regionalRange)
+      if(regionalRange && !(regionalRange in pkgInstance.regionalRanges)) {
+        pkgInstance.addToRegionalRanges(regionalRange)
+        pkgInstance.save()
+      }
+    }
+
+    redirect(url: request.getHeader('referer'))
+  }
+
+  @Transactional
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
+  def deleteNationalRange() {
+    Map<String, Object> result = [:]
+
+    Package pkgInstance = Package.get(params.package)
+
+    if (!pkgInstance) {
+      flash.message = message(code: 'default.not.found.message', args: ['Package', params.id]) as String
+      redirect(url: request.getHeader('referer'))
+      return
+    }
+    result.editable = accessService.checkEditableObject(pkgInstance, params)
+
+    if (result.editable) {
+      RefdataValue nationalRange = RefdataValue.get(params.removeNationalRange)
+      if(nationalRange && (nationalRange in pkgInstance.nationalRanges)) {
+        pkgInstance.removeFromNationalRanges(nationalRange)
+        pkgInstance.save()
+      }
+    }
+
+    redirect(url: request.getHeader('referer'))
+  }
+
+  @Transactional
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
+  def deleteRegionalRange() {
+    Map<String, Object> result = [:]
+
+    Package pkgInstance = Package.get(params.package)
+
+    if (!pkgInstance) {
+      flash.message = message(code: 'default.not.found.message', args: ['Package', params.id]) as String
+      redirect(url: request.getHeader('referer'))
+      return
+    }
+    result.editable = accessService.checkEditableObject(pkgInstance, params)
+
+    if (result.editable) {
+      RefdataValue regionalRange = RefdataValue.get(params.regionalRange)
+      if(regionalRange && (regionalRange in pkgInstance.regionalRanges)) {
+        pkgInstance.removeFromRegionalRanges(regionalRange)
+        pkgInstance.save()
+      }
+    }
+
+    redirect(url: request.getHeader('referer'))
+  }
+
+  @Transactional
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
+  def addDDC() {
+    Map<String, Object> result = [:]
+
+    def object = resolveOID2(params.object)
+
+    if (!object) {
+      flash.message = message(code: 'default.not.found.message', args: ['Object', params.id]) as String
+      redirect(url: request.getHeader('referer'))
+      return
+    }
+    result.editable = accessService.checkEditableObject(object, params)
+
+    if (result.editable) {
+      RefdataValue ddc = RefdataValue.get(params.ddc)
+      if(ddc && !(ddc in object.ddcs)) {
+        object.addToDdcs(ddc)
+        object.save()
+      }
+    }
+
+    redirect(url: request.getHeader('referer'))
+  }
+
+  @Transactional
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
+  def deleteDDC() {
+    Map<String, Object> result = [:]
+
+    def object = resolveOID2(params.object)
+
+    if (!object) {
+      flash.message = message(code: 'default.not.found.message', args: ['Object', params.id]) as String
+      redirect(url: request.getHeader('referer'))
+      return
+    }
+    result.editable = accessService.checkEditableObject(object, params)
+
+    if (result.editable) {
+      RefdataValue ddc = RefdataValue.get(params.removeDDC)
+      if(ddc && (ddc in object.ddcs)) {
+        object.removeFromDdcs(ddc)
+        object.save()
+      }
+    }
+
+    redirect(url: request.getHeader('referer'))
   }
 }

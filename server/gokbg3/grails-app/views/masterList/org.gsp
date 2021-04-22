@@ -4,11 +4,11 @@
     <meta name="layout" content="sb-admin"/>
     <asset:stylesheet src="gokb/application.css"/>
     <asset:javascript src="gokb/application.js" />
-    <title>GOKb: Master Lists</title>
+    <title><g:message code="gokb.appname" default="we:kb"/>: Master Lists</title>
   </head>
   <body>
 	  <h1 class="page-header">
-	    Master lists for <g:render template="/apptemplates/component_heading" model="${[d:o]}" />
+	    Master lists for <g:render template="/apptemplates/secondTemplates/component_heading" model="${[d:o]}" />
 	  </h1>
     <div id="mainarea" class="panel panel-default">
       <div class="panel-body">
@@ -34,8 +34,6 @@
 	            <th>Titles</th>
 	            <th>Package</th>
 	            <th>Platform</th>
-	            <th>Start</th>
-	            <th>End</th>
 	          </tr>
           </thead>
           <tbody>
@@ -45,8 +43,6 @@
                 <td>${tipp.title.name}</td>
                 <td>${tipp.pkg.name}</td>
                 <td>${tipp.hostPlatform.name}</td>
-                <td>Start Date: ${tipp.startDate}<br/>Start Volume: ${tipp.startVolume}<br/>Start Issue: ${tipp.startIssue}</td>
-                <td>End Date: ${tipp.endDate}<br/>End Volume: ${tipp.endVolume}<br/>End Issue: ${tipp.endIssue}</td>
               </tr>
             </g:each>
           </tbody>

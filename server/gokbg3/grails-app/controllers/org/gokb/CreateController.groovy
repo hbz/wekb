@@ -1,11 +1,14 @@
 package org.gokb
 
+import com.k_int.apis.SecurityApi
 import grails.converters.JSON
 import org.springframework.security.access.annotation.Secured;
 import org.gokb.cred.*
 import org.grails.datastore.mapping.model.*
 import org.grails.datastore.mapping.model.types.*
 import grails.core.GrailsClass
+import wekb.AccessService
+
 import java.time.Instant
 import java.time.ZoneId
 import java.time.LocalDateTime
@@ -17,8 +20,9 @@ class CreateController {
   def springSecurityService
   def displayTemplateService
   def messageSource
+  AccessService accessService
 
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
   def index() {
     log.debug("CreateControler::index... ${params}");
     def result=[:]
@@ -27,12 +31,13 @@ class CreateController {
     // Create a new empty instance of the object to create
     result.newclassname=params.tmpl
     if ( params.tmpl ) {
-      def newclass = grailsApplication.getArtefact("Domain",result.newclassname);
+      def newclass = grailsApplication.getArtefact("Domain",result.newclassname)
       if ( newclass ) {
-        log.debug("Got new class");
+        log.debug("Got new class")
         try {
           result.displayobj = newclass.newInstance()
           log.debug("Got new instance");
+          result.editable = SecurityApi.isTypeCreatable(result.displayobj.getClass())
 
           if ( params.tmpl ) {
             result.displaytemplate = displayTemplateService.getTemplateInfo(params.tmpl)
@@ -46,6 +51,10 @@ class CreateController {
         catch ( Exception e ) {
           log.error("Problem",e);
         }
+      }else {
+        log.info("No Permission for ${result.newclassname} in CreateControler::index... ${params}");
+        response.sendError(401)
+        return
       }
     }
 
@@ -53,7 +62,7 @@ class CreateController {
     result
   }
 
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
   def process() {
     log.debug("CreateController::process... ${params}");
 
@@ -135,13 +144,17 @@ class CreateController {
           }
           log.debug("Completed setting properties");
 
-          if ( result.newobj.hasProperty('postCreateClosure') ) {
+         /* if ( result.newobj.hasProperty('postCreateClosure') ) {
             log.debug("Created object has a post create closure.. call it");
             result.newobj.postCreateClosure.call([user:user])
-          }
+          }*/
 
-          // Add an error message here if no property was set via data sent through from the form.
-          if (!propertyWasSet) {
+          if (result.newobj instanceof TitleInstancePackagePlatform && (params.pkg == null || params.hostPlatform == null || params.url == null)) {
+            flash.error="Please fill Package, Platform and Host Platform URL to create the component."
+            result.uri = g.createLink([controller: 'create', action:'index', params:[tmpl:params.cls]])
+          }
+          else if (!propertyWasSet) {
+            // Add an error message here if no property was set via data sent through from the form.
             log.debug("No properties set");
             flash.error="Please fill in at least one piece of information to create the component."
             result.uri = g.createLink([controller: 'create', action:'index', params:[tmpl:params.cls]])
@@ -215,6 +228,20 @@ class CreateController {
                 }
               }
 
+              if (result.newobj.respondsTo("getCuratoryGroups")) {
+                log.debug("Set CuratoryGroups..");
+                if(user.isAdmin() || user.getSuperUserStatus()) {
+                  flash.message = "Object was not assigned to a curator group because you are admin or superuser!!!!"
+
+                }else {
+                  user.curatoryGroups.each { CuratoryGroup cg ->
+                    result.newobj.curatoryGroups.add(cg)
+                  }
+                }
+
+                  result.newobj.save(flush:true)
+              }
+
               result.uri = createLink([controller: 'resource', action:'show', id:"${params.cls}:${result.newobj.id}"])
             }
           }
@@ -222,6 +249,7 @@ class CreateController {
         catch ( Exception e ) {
           log.error("Problem",e);
           flash.error = "Could not create component!"
+          result.uri = createLink([controller: 'resource', action:'show', id:"${params.cls}:${result.newobj.id}"])
         }
       }
     }

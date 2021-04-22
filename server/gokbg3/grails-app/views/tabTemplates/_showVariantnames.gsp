@@ -1,9 +1,9 @@
-<g:set var="editable" value="${ d.isEditable() && ((request.curator != null ? request.curator.size() > 0 : true) || (params.curationOverride == "true" && request.user.isAdmin())) }" />
-<div class="tab-pane" id="altnames">
+<%@ page import="de.wekb.helper.RCConstants" %>
+<div class="tab-pane fade" id="altnames">
   <g:if test="${d.id != null}">
     <dl>
       <dt>
-        <g:annotatedLabel owner="${d}" property="alternateNames">Alternate Names</g:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="alternateNames">Alternate Names</gokb:annotatedLabel>
       </dt>
       <dd>
         <table class="table table-striped table-bordered">
@@ -13,7 +13,7 @@
               <th>Status</th>
               <th>Variant Type</th>
               <th>Locale</th>
-                        <g:if test="${ showActions }">
+                        <g:if test="${ editable && showActions }">
                         <th>Actions</th>
                         </g:if>
             </tr>
@@ -24,57 +24,53 @@
                 <td>
                   ${v.variantName}
                 </td>
-                <td><g:xEditableRefData owner="${v}" field="status" config='KBComponentVariantName.Status' /></td>
-                <td><g:xEditableRefData owner="${v}" field="variantType" config='KBComponentVariantName.VariantType' /></td>
-                <td><g:xEditableRefData owner="${v}" field="locale" config='KBComponentVariantName.Locale' /></td>
-                <td>
+                <td><gokb:xEditableRefData owner="${v}" field="status" config="${RCConstants.KBCOMPONENT_VARIANTNAME_STATUS}" overWriteEditable="${editable}"/></td>
+                <td><gokb:xEditableRefData owner="${v}" field="variantType" config="${RCConstants.KBCOMPONENT_VARIANTNAME_VARIANT_TYPE}" overWriteEditable="${editable}"/></td>
+                <td><gokb:xEditableRefData owner="${v}" field="locale" config="${RCConstants.KBCOMPONENT_VARIANTNAME_LOCAL}" overWriteEditable="${editable}"/></td>
                   <g:if test="${ editable && showActions }">
+                    <td>
                               <g:link controller="ajaxSupport" action="authorizeVariant" id="${v.id}">Make Authorized</g:link>,
                               <g:link controller="ajaxSupport" class="confirm-click" data-confirm-message="Are you sure you wish to delete this Variant?"
                                 action="deleteVariant" id="${v.id}" >Delete</g:link>
+                    </td>
                   </g:if>
-                </td>
               </tr>
             </g:each>
           </tbody>
         </table>
 
         <g:if test="${editable}">
-          <h4>
-            <g:annotatedLabel owner="${d}" property="addVariantName">Add Variant Name</g:annotatedLabel>
-          </h4>
-          <dl class="dl-horizontal">
-            <g:form controller="ajaxSupport" action="addToCollection"
-              class="form-inline">
-              <input type="hidden" name="__context"
-                value="${d.class.name}:${d.id}" />
-              <input type="hidden" name="__newObjectClass"
-                value="org.gokb.cred.KBComponentVariantName" />
-              <input type="hidden" name="__recip" value="owner" />
-              <input type="hidden" name="fragment" value="altnames" />
-              <dt class="dt-label">Variant Name</dt>
-              <dd>
-                <input type="text" class="form-control select-m" name="variantName" />
-              </dd>
-              <dt class="dt-label">Locale</dt>
-              <dd>
-                <g:simpleReferenceTypedown class="form-control" name="locale"
-                  baseClass="org.gokb.cred.RefdataValue"
-                  filter1="KBComponentVariantName.Locale" />
-              </dd>
-              <dt class="dt-label">Variant Type</dt>
-              <dd>
-                <g:simpleReferenceTypedown class="form-control" name="variantType"
-                  baseClass="org.gokb.cred.RefdataValue"
-                  filter1="KBComponentVariantName.VariantType" />
-              </dd>
-              <dt></dt>
-              <dd>
-                <button type="submit"
-                  class="btn btn-default btn-primary">Add</button>
-              </dd>
-            </g:form>
-          </dl>
+            <a data-toggle="modal" data-cache="false"
+               data-target="#variantnamesModal">Add Variant Name</a>
+
+            <bootStrap:modal id="variantnamesModal" title="Add Variant Name">
+
+              <g:form controller="ajaxSupport" action="addToCollection"
+                      class="form-inline">
+                <input type="hidden" name="__context"
+                       value="${d.class.name}:${d.id}" />
+                <input type="hidden" name="__newObjectClass"
+                       value="org.gokb.cred.KBComponentVariantName" />
+                <input type="hidden" name="__recip" value="owner" />
+                <input type="hidden" name="fragment" value="altnames" />
+                <dt class="dt-label">Variant Name</dt>
+                <dd>
+                  <input type="text" class="form-control select-m" name="variantName" />
+                </dd>
+                <dt class="dt-label">Locale</dt>
+                <dd>
+                  <gokb:simpleReferenceTypedown class="form-control" name="locale"
+                                                baseClass="org.gokb.cred.RefdataValue"
+                                                filter1="${RCConstants.KBCOMPONENT_VARIANTNAME_LOCAL}" />
+                </dd>
+                <dt class="dt-label">Variant Type</dt>
+                <dd>
+                  <gokb:simpleReferenceTypedown class="form-control" name="variantType"
+                                                baseClass="org.gokb.cred.RefdataValue"
+                                                filter1="${RCConstants.KBCOMPONENT_VARIANTNAME_VARIANT_TYPE}" />
+                </dd>
+              </g:form>
+            </bootStrap:modal>
         </g:if>
       </dd>
     </dl>

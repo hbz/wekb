@@ -4,8 +4,6 @@ import groovy.util.slurpersupport.GPathResult
 import static groovyx.net.http.ContentType.*
 import static groovyx.net.http.Method.*
 import groovyx.net.http.*
-import org.apache.http.entity.mime.*
-import org.apache.http.entity.mime.content.*
 import java.nio.charset.Charset
 import org.apache.http.*
 import org.apache.http.protocol.*
@@ -51,9 +49,6 @@ class ZdbAPIService {
 
   def checkAccess () {
     boolean result = true
-    def testUrl = "http://sru.k10plus.de/k10plus"
-    def testClient = new RESTClient(testUrl)
-
     try {
       target_service.request(GET, ContentType.XML) { request ->
         uri.query = [
@@ -63,13 +58,11 @@ class ZdbAPIService {
           maximumRecords: "10",
           query: "pica.zdb=2936849-2"
         ]
-
         response.success = { resp, data ->
           if (data.'zs:searchRetrieveResponse'.'zs:diagnostics') {
             result = false
           }
         }
-
         response.failure = { resp, data ->
           result = false
         }
@@ -79,7 +72,6 @@ class ZdbAPIService {
       log.debug("No KXP access..")
       result = false
     }
-
     result
   }
 

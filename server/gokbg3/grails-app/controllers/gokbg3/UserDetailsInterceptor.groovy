@@ -1,8 +1,11 @@
 package gokbg3
 
-import org.gokb.cred.*;
+import org.gokb.cred.*
+import wekb.GlobalSearchTemplatesService;
 
 class UserDetailsInterceptor {
+
+  GlobalSearchTemplatesService globalSearchTemplatesService
 
   public UserDetailsInterceptor() {
     match(controller: 'admin')
@@ -44,7 +47,6 @@ class UserDetailsInterceptor {
       if (user) {
         log.debug("User details filter... User present");
         request.user = user
-        request.userOptions = user.getUserOptions(grailsApplication)
         
         if (!session.menus) {
         
@@ -57,17 +59,25 @@ class UserDetailsInterceptor {
           
           // Add to the session.
           session.menus = menus
-          
+
+         /* def default_dcs = ["org.gokb.cred.Package", "org.gokb.cred.Platform", "org.gokb.cred.TitleInstancePackagePlatform", "org.gokb.cred.Org", "org.gokb.cred.Source"]
+*/
+          boolean userIsAdmin = user.isAdmin()
+
           // Step 1 : List all domains available to this user order by type, grouped into type
           def domains = KBDomainInfo.createCriteria().list {
-            
-            ilike ('dcName', 'org.gokb%')
+
+            if(userIsAdmin) {
+              ilike('dcName', 'org.gokb%')
+            }/*else{
+              inList('dcName', default_dcs)
+            }*/
             
             createAlias ("type", "menueType")
             
-            order ('menueType.sortKey','asc')
+            /*order ('menueType.sortKey','asc')
             order ('menueType.value','asc')
-            order ('dcSortOrder','asc')
+            order ('dcSortOrder','asc')*/
             order ('displayName','asc')
           }
           
@@ -81,16 +91,19 @@ class UserDetailsInterceptor {
               if ( tc.isTypeReadable() ) {
       
                 // Find any searches for that domain that the user has access to and add them to the menu section
-                def searches_for_this_domain = grailsApplication.config.globalSearchTemplates.findAll{it.value.baseclass==d.dcName}
+                def searches_for_this_domain = globalSearchTemplatesService.findAllByBaseClass(d.dcName)
                 
                 searches_for_this_domain.each { key, val ->
                   
                   // Add a menu item.
-                  menus["search"]["${d.type.value}"] << [
-                    text : val.title,
-                    link : ['controller' : 'search', 'action' : 'index', 'params' : [qbe:'g:'+ key]],
-                    attr : ['title' : "Search ${val.title}"]
-                  ]
+                  if(userIsAdmin){
+                    menus["admin"]["search"] << [
+                            text : val.title,
+                            link : ['controller' : 'search', 'action' : 'index', 'params' : [qbe:'g:'+ key]],
+                            attr : ['title' : "Search ${val.title}"]
+                    ]
+                  }
+
                 }
               }
               // Add if creatable.
@@ -98,11 +111,14 @@ class UserDetailsInterceptor {
                 def display_template = displayTemplateService.getTemplateInfo(d.dcName)
 
                 if ( display_template  && !display_template.noCreate) {
-                  menus["create"]["${d.type.value}"] << [
-                    text : d.displayName,
-                    link : ['controller' : 'create', 'action' : 'index', 'params' : [tmpl:d.dcName]],
-                    attr : ['title' : "New ${d.displayName}"]
-                  ]
+
+                  if(userIsAdmin){
+                    menus["admin"]["create"] << [
+                            text: d.displayName,
+                            link: ['controller': 'create', 'action': 'index', 'params': [tmpl: d.dcName]],
+                            attr: ['title': "New ${d.displayName}"]
+                    ]
+                  }
                 }
               }
             }

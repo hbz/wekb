@@ -3,7 +3,7 @@ package org.gokb.rest
 import com.k_int.ClassUtils
 import com.k_int.ConcurrencyManagerService
 import com.k_int.ConcurrencyManagerService.Job
-
+import de.wekb.helper.RCConstants
 import grails.converters.*
 import grails.core.GrailsClass
 import grails.gorm.transactions.*
@@ -46,7 +46,7 @@ class PackageController {
   @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
   def index() {
     def result = [:]
-    def base = grailsApplication.config.serverURL + "/rest"
+    def base = grailsApplication.config.serverUrl + "/rest"
     User user = null
 
     if (springSecurityService.isLoggedIn()) {
@@ -79,7 +79,7 @@ class PackageController {
   def show() {
     def result = [:]
     def obj = null
-    def base = grailsApplication.config.serverURL + "/rest"
+    def base = grailsApplication.config.serverUrl + "/rest"
     def is_curator = true
     User user = null
 
@@ -164,8 +164,6 @@ class PackageController {
           def jsonMap = obj.jsonMapping
 
           jsonMap.immutable = [
-            'userListVerifier',
-            'listVerifiedDate',
             'listStatus'
           ]
 
@@ -277,8 +275,6 @@ class PackageController {
         ]
 
         jsonMap.immutable = [
-          'userListVerifier',
-          'listVerifiedDate',
           'listStatus'
         ]
 
@@ -368,21 +364,17 @@ class PackageController {
       def new_val = null
 
       if (reqBody.listStatus instanceof String) {
-        new_val = RefdataCategory.lookup('Package.ListStatus', reqBody.listStatus)
+        new_val = RefdataCategory.lookup(RCConstants.PACKAGE_LIST_STATUS, reqBody.listStatus)
       }
       else if (reqBody.listStatus instanceof Integer) {
         def rdv = RefdataValue.get(reqBody.listStatus)
 
-        if (rdv.owner == RefdataCategory.findByLabel('Package.ListStatus')) {
+        if (rdv.owner == RefdataCategory.findByLabel(RCConstants.PACKAGE_LIST_STATUS)) {
           new_val = rdv
         }
 
         if (new_val && new_val != obj.listStatus) {
           obj.listStatus = new_val
-        }
-
-        if (new_val && new_val.value == 'Checked') {
-          obj.listVerifiedDate = new Date()
         }
       }
     }
@@ -398,7 +390,7 @@ class PackageController {
 
       if (prov) {
         if (!obj.hasErrors() && errors.size() == 0 && prov != obj.provider) {
-          def combo_type = RefdataCategory.lookup('Combo.Type', 'Package.Provider')
+          def combo_type = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Provider')
           def current_combo = Combo.findByFromComponentAndType(obj, combo_type)
 
           if (current_combo) {
@@ -430,7 +422,7 @@ class PackageController {
 
       if (plt) {
         if (!obj.hasErrors() && errors.size() == 0 && plt != obj.nominalPlatform) {
-          def combo_type = RefdataCategory.lookup('Combo.Type', 'Package.NominalPlatform')
+          def combo_type = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.NominalPlatform')
           def current_combo = Combo.findByFromComponentAndType(obj, combo_type)
 
           if (current_combo) {
@@ -482,7 +474,7 @@ class PackageController {
           }
         }
 
-        def tipp_validation = TitleInstancePackagePlatform.validateDTO(tipp_dto, RequestContextUtils.getLocale(request))
+        def tipp_validation = TitleInstancePackagePlatform.validateDTONew(tipp_dto, RequestContextUtils.getLocale(request))
 
         if (ti_errors?.size > 0 || !tipp_validation.valid) {
           if (!errors.tipps) {
@@ -609,7 +601,7 @@ class PackageController {
 
     if (obj) {
       def context = "/packages/" + params.id + "/tipps"
-      def base = grailsApplication.config.serverURL + "/rest"
+      def base = grailsApplication.config.serverUrl + "/rest"
       def es_search = params.es ? true : false
 
       params.remove('id')
@@ -670,7 +662,7 @@ class PackageController {
           def idx = 0
 
           reqBody.each { tipp ->
-            def tipp_validation = TitleInstancePackagePlatform.validateDTO(tipp, RequestContextUtils.getLocale(request))
+            def tipp_validation = TitleInstancePackagePlatform.validateDTONew(tipp, RequestContextUtils.getLocale(request))
 
             if (tipp_validation.valid) {
               def tipp_obj = TitleInstancePackagePlatform.upsertDTO(tipp)
@@ -848,7 +840,9 @@ class PackageController {
                               user,
                               null,
                               title_class_name,
-                              titleObj.uuid
+                              titleObj.uuid,
+                              false,
+                              titleObj.language
                             )
 
                             if (ti?.id && !ti.hasErrors()) {
@@ -867,7 +861,7 @@ class PackageController {
                               componentUpdateService.ensureCoreData(ti, titleObj, fullsync, user)
 
                               title_changed |= componentUpdateService.setAllRefdata([
-                                'OAStatus', 'medium',
+                                'OAStatus', 'medium', 'language',
                                 'pureOA', 'continuingSeries',
                                 'reasonRetired'
                               ], titleObj, ti)
@@ -1045,7 +1039,7 @@ class PackageController {
                   // If valid so far, validate tipps
                   log.debug("Validating tipps [${tippctr++}]");
                   json.eachWithIndex { tipp, idx ->
-                    def validation_result = TitleInstancePackagePlatform.validateDTO(tipp, request_locale)
+                    def validation_result = TitleInstancePackagePlatform.validateDTONew(tipp, request_locale)
 
                     if (validation_result && !validation_result.valid) {
                       log.debug("TIPP Validation failed on ${tipp}")
@@ -1075,10 +1069,10 @@ class PackageController {
 
                   def tipps_to_delete = existing_tipps.clone()
                   def num_removed_tipps = 0;
-                  def status_current = RefdataCategory.lookup('KBComponent.Status', 'Current')
-                  def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
-                  def status_retired = RefdataCategory.lookup('KBComponent.Status', 'Retired')
-                  def status_expected = RefdataCategory.lookup('KBComponent.Status', 'Expected')
+                  def status_current = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Current')
+                  def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
+                  def status_retired = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Retired')
+                  def status_expected = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Expected')
 
                   def tipp_upsert_start_time = System.currentTimeMillis()
                   def tipp_fails = 0
@@ -1086,7 +1080,7 @@ class PackageController {
                   if (json?.size() > 0) {
                     Package.withNewSession {
                       def pkg_new = Package.get(the_pkg.id)
-                      def status_ip = RefdataCategory.lookup('Package.ListStatus', 'In Progress')
+                      def status_ip = RefdataCategory.lookup(RCConstants.PACKAGE_LIST_STATUS, 'In Progress')
 
                       if (pkg_new.status == status_current && pkg_new?.listStatus != status_ip) {
                         pkg_new.listStatus = status_ip
@@ -1214,10 +1208,11 @@ class PackageController {
                           the_pkg,
                           "TIPPs retired.",
                           "An update to package ${the_pkg.id} did not contain ${num_removed_tipps} previously existing TIPPs.",
-                          user,
+                          RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'),
                           null,
                           null,
-                          RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'TIPPs Retired')
+                          RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'TIPPs Retired'),
+                          the_pkg.curatoryGroups
                         )
                       }
                     }
@@ -1256,10 +1251,11 @@ class PackageController {
                       the_pkg,
                       "Invalid TIPPs.",
                       "An update for this package failed because of invalid TIPP information (JOB ${job.uuid}).",
-                      user,
+                      RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'),
                       null,
                       (additionalInfo as JSON).toString(),
-                      RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'Invalid TIPPs')
+                      RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Invalid TIPPs'),
+                      the_pkg.curatoryGroups
                     )
                   }
                 }
@@ -1292,7 +1288,7 @@ class PackageController {
         log.debug("Starting job ${background_job}..")
 
         background_job.description = "Package CrossRef (${obj.name})"
-        background_job.type = RefdataCategory.lookupOrCreate('Job.Type', 'PackageCrossRef')
+        background_job.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'PackageCrossRef')
         background_job.startOrQueue()
         background_job.startTime = new Date()
 

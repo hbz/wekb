@@ -1,7 +1,7 @@
 <html>
 <head>
-  <meta name='layout' content='sb-admin'/>
-  <title><g:message code='spring.security.ui.forgotPassword.title'/></title>
+  <meta name='layout' content='public'/>
+  <title><g:message code="gokb.appname" default="we:kb"/>: <g:message code='spring.security.ui.forgotPassword.title'/></title>
 </head>
 
 <body>
@@ -24,7 +24,7 @@
         </g:if>
 
 
-      <g:form action='forgotPassword' name="forgotPasswordForm" autocomplete='off' class="form" role="form">
+      <g:form action='forgotPassword' name="forgotPasswordForm" autocomplete='off' class="form"  >
 
         <g:if test='${emailSent}'>
           <br/>
@@ -43,6 +43,8 @@
           <div class="form-group">
             <button type="submit" value="Submit" class="btn btn-success">Send Password Recovery Email...</button>
           </div>
+
+          <p><b>Not yet registered for a <g:message code="gokb.appname" default="we:kb"/>: account? Contact us at <a href="mailto:laser@hbz-nrw.de">laser@hbz-nrw.de</a> so that we can set up an account for you and provide you with your initial login information. </b></p>
 
         </g:else>
 

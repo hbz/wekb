@@ -2,7 +2,9 @@ package org.gokb
 
 import com.k_int.ConcurrencyManagerService.Job
 import com.k_int.ClassUtils
+import de.wekb.helper.RCConstants
 import grails.gorm.transactions.Transactional
+
 import grails.io.IOUtils
 import groovy.util.logging.Slf4j
 import groovyx.net.http.RESTClient
@@ -14,6 +16,7 @@ import org.hibernate.Session
 import org.hibernate.type.StandardBasicTypes
 import org.springframework.util.FileCopyUtils
 
+import javax.servlet.ServletOutputStream
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.zip.ZipEntry
@@ -53,6 +56,8 @@ class PackageService {
   */
 
   def sessionFactory
+  def genericOIDService
+  def restMappingService
   ComponentLookupService componentLookupService
   def grailsApplication
   def messageService
@@ -69,7 +74,7 @@ class PackageService {
    */
   private RefdataValue getMasterScope() {
     // The Scope.
-    RefdataCategory.lookupOrCreate("Package.Scope", "GOKb Master")
+    RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "GOKb Master")
   }
 
   /**
@@ -369,7 +374,7 @@ class PackageService {
         c.add(
             "status",
             "eq",
-            RefdataCategory.lookupOrCreate(KBComponent.RD_STATUS, KBComponent.STATUS_CURRENT))
+            RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_CURRENT))
       }
     }.each {
 
@@ -397,9 +402,9 @@ class PackageService {
     }
 
     def msg_list = []
-    def rdv_journal = RefdataCategory.lookup("TitleInstance.Medium", "Journal")
-    def rdv_book = RefdataCategory.lookup("TitleInstance.Medium", "Book")
-    def rdv_db = RefdataCategory.lookup("TitleInstance.Medium", "Database")
+    def rdv_journal = RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Journal")
+    def rdv_book = RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Book")
+    def rdv_db = RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Database")
     def ctr = 0
 
     for (pkg in pkg_list) {
@@ -412,19 +417,19 @@ class PackageService {
         def has_book = pkg_obj.tipps.title.find { it.medium == rdv_book }
 
         if (has_db && !has_journal && !has_book) {
-          pkg_obj.contentType = RefdataCategory.lookup('Package.ContentType', 'Database')
+          pkg_obj.contentType = RefdataCategory.lookup(RCConstants.PACKAGE_CONTENT_TYPE, 'Database')
           result.db++
         }
         else if (has_journal && !has_db && !has_book) {
-          pkg_obj.contentType = RefdataCategory.lookup('Package.ContentType', 'Journal')
+          pkg_obj.contentType = RefdataCategory.lookup(RCConstants.PACKAGE_CONTENT_TYPE, 'Journal')
           result.journal++
         }
         else if (has_book && !has_db && !has_journal) {
-          pkg_obj.contentType = RefdataCategory.lookup('Package.ContentType', 'Book')
+          pkg_obj.contentType = RefdataCategory.lookup(RCConstants.PACKAGE_CONTENT_TYPE, 'Book')
           result.book++
         }
         else if (has_book && has_journal) {
-          pkg_obj.contentType = RefdataCategory.lookup('Package.ContentType', 'Mixed')
+          pkg_obj.contentType = RefdataCategory.lookup(RCConstants.PACKAGE_CONTENT_TYPE, 'Mixed')
           result.mixed++
         }
         else if (!has_book && !has_journal && !has_db) {
@@ -454,6 +459,202 @@ class PackageService {
     }
   }
 
+  @Transactional
+  def compareLists(listOne, listTwo, def full = true, Date date = null, Job j = null) {
+    def result = [:]
+    def status_current = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Current')
+    def status_retired = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Retired')
+    def status_expected = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Expected')
+    def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
+    def tipp_status = [status_current]
+    Date checkDate = date ?: new Date()
+    def tipp_params = [:]
+    def totals = [one: [tipps: 0, titles: 0], two: [tipps: 0, titles: 0]]
+    def titlesOne = [:]
+    def titlesTwo = [:]
+    def currentPkgNum = 0
+    boolean cancelled = false
+
+    if (date) {
+      if (date.before(new Date())) {
+        tipp_status << status_retired
+      }
+    }
+
+    if (full) {
+      result = ['new': [], 'both':[], 'missing':[]]
+    }
+    else {
+      result = ['new': 0, 'both': 0, 'missing': 0]
+    }
+
+    log.debug("Building titles map 1 ..")
+
+    Package.withNewSession {
+      for (p1 in listOne) {
+        def pkg = Package.get(genericOIDService.oidToId(p1))
+        currentPkgNum++
+
+        if (pkg && !cancelled) {
+          int total = TitleInstancePackagePlatform.executeQuery("select count(*) from TitleInstancePackagePlatform as tipp where tipp.status in (:tippStatus) and exists (select c from Combo as c where c.fromComponent = :pkg and c.toComponent = tipp)", [tippStatus: tipp_status, pkg: pkg])[0]
+          int currentOffset = 0
+
+          while (currentOffset < total) {
+            def tipps = TitleInstancePackagePlatform.executeQuery("from TitleInstancePackagePlatform as tipp where tipp.status in (:tippStatus) and exists (select c from Combo as c where c.fromComponent = :pkg and c.toComponent = tipp)", [tippStatus: tipp_status, pkg: pkg])
+
+            tipps.each { tipp ->
+              def inRange = true
+
+              if (tipp.accessEndDate && tipp.accessEndDate.before(checkDate)) {
+                inRange = false
+              }
+              else if (tipp.accessStartDate && tipp.accessStartDate.after(checkDate)) {
+                inRange = false
+              }
+              else if (tipp.status == status_retired) {
+                if (date && tipp.lastUpdated?.before(checkDate)) {
+                  inRange = false
+                }
+              }
+
+              if (inRange) {
+                if (!titlesOne[tipp.title.id]){
+                  titlesOne[tipp.title.id] = [id: tipp.title.id, name: tipp.title.name, tipps: []]
+                  totals.one.titles++
+                }
+
+                totals.one.tipps++
+                titlesOne[tipp.title.id]['tipps'] << restMappingService.mapObjectToJson(tipp, tipp_params)
+              }
+              currentOffset++
+            }
+            cleanUpGorm()
+          }
+
+          if (Thread.currentThread().isInterrupted() || j?.isCancelled()) {
+            log.debug("cancelling Job #${j?.uuid}")
+            cancelled = true
+            break
+          }
+
+          if (j) {
+            j.setProgress(currentPkgNum, (listOne.size() + listTwo.size()))
+          }
+        }
+        else if (!pkg) {
+          log.debug("Unable to resolve Package with id ${p1}")
+        }
+      }
+
+      log.debug("Added ${totals.one.titles} titles with ${totals.one.tipps} TIPPs!")
+
+      log.debug("Building titles map 2 ..")
+
+      for (p2 in listTwo) {
+        def pkg = Package.get(genericOIDService.oidToId(p2))
+        currentPkgNum++
+
+        if (pkg && !cancelled) {
+          int total = TitleInstancePackagePlatform.executeQuery("select count(*) from TitleInstancePackagePlatform as tipp where tipp.status in (:tippStatus) and exists (select c from Combo as c where c.fromComponent = :pkg and c.toComponent = tipp)", [tippStatus: tipp_status, pkg: pkg])[0]
+          int currentOffset = 0
+
+          while (currentOffset < total) {
+            def tipps = TitleInstancePackagePlatform.executeQuery("from TitleInstancePackagePlatform as tipp where tipp.status in (:tippStatus) and exists (select c from Combo as c where c.fromComponent = :pkg and c.toComponent = tipp)", [tippStatus: tipp_status, pkg: pkg], [max: 50, offset: currentOffset])
+
+            tipps.each { tipp ->
+              def inRange = true
+
+              if (tipp.accessEndDate && tipp.accessEndDate.before(checkDate)) {
+                inRange = false
+              }
+              else if (tipp.accessStartDate && tipp.accessStartDate.after(checkDate)) {
+                inRange = false
+              }
+              else if (tipp.status == status_retired) {
+                if (date && tipp.lastUpdated.before(checkDate)) {
+                  inRange = false
+                }
+              }
+
+              if (inRange) {
+                if (!titlesTwo[tipp.title.id]){
+                  titlesTwo[tipp.title.id] = [id: tipp.title.id, name: tipp.title.name, tipps: []]
+                  totals.two.titles++
+                }
+
+                totals.two.tipps++
+                titlesTwo[tipp.title.id]['tipps'] << restMappingService.mapObjectToJson(tipp, tipp_params)
+
+                if (!titlesOne[tipp.title.id]) {
+                  if (full) {
+                    result['new'] << restMappingService.mapObjectToJson(tipp, tipp_params)
+                  }
+                  else {
+                    result['new']++
+                  }
+                }
+              }
+              currentOffset++
+            }
+          }
+
+          cleanUpGorm()
+
+          if (Thread.currentThread().isInterrupted() || j?.isCancelled()) {
+            log.debug("cancelling Job #${j?.uuid}")
+            cancelled = true
+            break
+          }
+
+          if (j) {
+            j.setProgress(currentPkgNum, (listOne.size() + listTwo.size()))
+          }
+        }
+      }
+    }
+
+    log.debug("Finished collecting TIPPs. Starting comparison")
+
+    if (!cancelled) {
+      titlesOne.each { id, val ->
+        if (!titlesTwo[id]) {
+          if (full) {
+            result['missing'] << val
+          }
+          else {
+            result['missing']++
+          }
+        }
+        else {
+          if (full) {
+            result['both'] << ['id': val.id, 'name': val.name, 'old': val.tipps, 'new': titlesTwo[id].tipps]
+          }
+          else {
+            result['both']++
+          }
+        }
+      }
+
+      titlesTwo.each { id, val ->
+        if (!titlesOne[id]) {
+          if (full) {
+            result['new'] << val
+          }
+          else {
+            result['new']++
+          }
+        }
+      }
+    }
+
+    if (j) {
+      j.endTime = new Date()
+    }
+
+    log.debug("Added ${totals.two.titles} titles with ${totals.two.tipps} TIPPs!")
+    result
+  }
+
   @javax.annotation.PreDestroy
   def destroy() {
     log.debug("Destroy");
@@ -462,7 +663,7 @@ class PackageService {
   def restLookup(packageHeaderDTO, def user = null) {
     log.info("Upsert org with header ${packageHeaderDTO}");
     def result = [to_create: true];
-    def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+    def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
     def normname = Package.generateNormname(packageHeaderDTO.name)
 
     log.debug("Checking by normname ${normname} ..")
@@ -576,14 +777,9 @@ class PackageService {
    * status:'Current',
    * breakable:'Unknown',
    * consistent:'Unknown',
-   * fixed:'Unknown',
    * paymentType:'Unknown',
-   * global:'Global',
    * nominalPlatform:54678
    * provider:4325
-   * listVerifier:'',
-   * userListVerifier:'benjamin_ahlborn'
-   * listVerifierDate:'2015-06-19T00:00:00Z'
    * source:[
    *   url:'http://www.zeitschriftendatenbank.de'
    *   defaultAccessURL:''
@@ -607,7 +803,7 @@ class PackageService {
   @Transactional
   public Package upsertDTO(packageHeaderDTO, def user = null) {
     log.info("Upsert package with header ${packageHeaderDTO}");
-    def status_deleted = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Deleted')
+    def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
     def pkg_normname = Package.generateNormname(packageHeaderDTO.name)
 
     log.debug("Checking by normname ${pkg_normname} ..")
@@ -625,6 +821,7 @@ class PackageService {
 
           packageHeaderDTO.identifiers.each { rid ->
 
+            //TODO: MOE
             Identifier the_id = componentLookupService.lookupOrCreateCanonicalIdentifier(rid.type, rid.value);
 
             if (mp.ids.contains(the_id)) {
@@ -687,10 +884,8 @@ class PackageService {
             log.debug("Found existing package name for variantName ${it}")
           }
           else {
-
             def variant_normname = GOKbTextUtils.normaliseString(it)
             def variant_candidates = Package.executeQuery("select distinct p from Package as p join p.variantNames as v where v.normVariantName = ? and p.status <> ? ", [variant_normname, status_deleted]);
-
             if (variant_candidates.size() == 1) {
               log.debug("Found existing package variant name for variantName ${it}")
               result = variant_candidates[0]
@@ -702,20 +897,15 @@ class PackageService {
 
     if (!result) {
       log.debug("No existing package matched. Creating new package..")
-
       result = new Package(name: packageHeaderDTO.name, normname: pkg_normname)
-
       created = true
-
       if (packageHeaderDTO.uuid && packageHeaderDTO.uuid.trim().size() > 0) {
         result.uuid = packageHeaderDTO.uuid
       }
-
       result.save(flush: true, failOnError: true)
     }
     else if (user && !user.hasRole('ROLE_SUPERUSER') && result.curatoryGroups && result.curatoryGroups?.size() > 0) {
       def cur = user.curatoryGroups?.id.intersect(result.curatoryGroups?.id)
-
       if (!cur) {
         log.debug("No curator!")
         return result
@@ -728,28 +918,13 @@ class PackageService {
     changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.scope, result, 'scope')
     changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.breakable, result, 'breakable')
     changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.consistent, result, 'consistent')
-    changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.fixed, result, 'fixed')
     changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.paymentType, result, 'paymentType')
-    changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.global, result, 'global')
-    changed |= ClassUtils.setStringIfDifferent(result, 'listVerifier', packageHeaderDTO.listVerifier?.toString())
-    // User userListVerifier
-    changed |= ClassUtils.setDateIfPresent(packageHeaderDTO.listVerifiedDate, result, 'listVerifiedDate');
-
-    // ListVerifier
-
-    if (packageHeaderDTO.userListVerifier) {
-      def looked_up_user = User.findByUsername(packageHeaderDTO.userListVerifier)
-      if (looked_up_user && ((result.userListVerifier == null) || (result.userListVerifier?.id != looked_up_user?.id))) {
-        result.userListVerifier = looked_up_user
-        changed = true
-      }
-      else {
-        log.warn("Unable to find username for list verifier ${packageHeaderDTO.userListVerifier}");
-      }
-    }
+    changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.file, result, 'file')
+    changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.openAccess, result, 'openAccess')
+    changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.contentType, result, 'contentType')
 
     // Platform
-
+    Platform newPlatform = null
     if (packageHeaderDTO.nominalPlatform) {
       def platformDTO = [:];
 
@@ -765,7 +940,6 @@ class PackageService {
 
       if (platformDTO) {
         def np = null
-
         if (platformDTO.uuid) {
           np = Platform.findByUuid(platformDTO.uuid)
         }
@@ -775,13 +949,12 @@ class PackageService {
         else if (platformDTO.name) {
           np = Platform.findByName(platformDTO.name)
         }
-
         if (!np && platformDTO.name) {
           np = Platform.upsertDTO(platformDTO)
+          newPlatform = np
         }
-
         if (np) {
-          if (result.nominalPlatform != np) {
+          if (result.nominalPlatform == null) {
             result.nominalPlatform = np;
             changed = true
           }
@@ -810,24 +983,18 @@ class PackageService {
       else if (packageHeaderDTO.nominalProvider.name && packageHeaderDTO.nominalProvider.name.trim()) {
         providerDTO = packageHeaderDTO.nominalProvider
       }
-
       log.debug("Trying to set package provider.. ${providerDTO}")
       def prov = null
-
       if (providerDTO?.uuid) {
         prov = Org.findByUuid(providerDTO.uuid)
       }
-
       if (providerDTO && !prov) {
         def norm_prov_name = KBComponent.generateNormname(providerDTO.name)
-
         prov = Org.findByNormname(norm_prov_name)
-
         if (!prov) {
           log.debug("None found by Normname ${norm_prov_name}, trying variants")
           def variant_normname = GOKbTextUtils.normaliseString(providerDTO.name)
           def candidate_orgs = Org.executeQuery("select distinct o from Org as o join o.variantNames as v where v.normVariantName = ? and o.status = ?", [variant_normname, status_deleted]);
-
           if (candidate_orgs.size() == 1) {
             prov = candidate_orgs[0]
           }
@@ -840,11 +1007,9 @@ class PackageService {
           }
         }
       }
-
       if (prov) {
-        if (result.provider != prov) {
+        if (result.provider == null) {
           result.provider = prov;
-
           log.debug("Provider ${prov.name} set.")
           changed = true
         }
@@ -858,7 +1023,6 @@ class PackageService {
     }
 
     // Source
-
     // variantNames are handled in ComponentUpdateService
     // packageHeaderDTO.variantNames?.each {
     //   if ( it.trim().size() > 0 ) {
@@ -868,7 +1032,6 @@ class PackageService {
     // }
 
     // CuratoryGroups
-
     packageHeaderDTO.curatoryGroups?.each {
       def cg = null
       def cgname = null
@@ -879,7 +1042,6 @@ class PackageService {
       else if (it instanceof String) {
         String normname = CuratoryGroup.generateNormname(it)
         cgname = it
-
         cg = CuratoryGroup.findByNormname(normname)
       }
       else if (it.id) {
@@ -888,45 +1050,44 @@ class PackageService {
       else if (it.name) {
         String normname = CuratoryGroup.generateNormname(it.name)
         cgname = it.name
-
         cg = CuratoryGroup.findByNormname(normname)
       }
-
       if (cg) {
         if (result.curatoryGroups.find { it.name == cg.name }) {
         }
         else {
-
           result.curatoryGroups.add(cg)
           changed = true;
         }
+        //If new Platform set curatoryGroups
+        if(newPlatform) {
+          newPlatform.curatoryGroups.add(cg)
+        }
+
       }
       else if (cgname) {
         def new_cg = new CuratoryGroup(name: cgname).save(flush: true, failOnError: true)
         result.curatoryGroups.add(new_cg)
+        newPlatform.curatoryGroups.add(new_cg)
         changed = true
       }
     }
 
     if (packageHeaderDTO.source) {
       def src = null
-
       if (packageHeaderDTO.source instanceof Integer) {
         src = Source.get(packageHeaderDTO.source)
       }
       else if (packageHeaderDTO.source instanceof Map) {
         def sourceMap = packageHeaderDTO.source
-
         if (sourceMap.id) {
           src = Source.get(sourceMap.id)
         }
         else {
           def namespace = null
-
           if (sourceMap.targetNamespace instanceof Integer) {
             namespace = IdentifierNamespace.get(sourceMap.targetNamespace)
           }
-
           if (!result.source || result.source.name != result.name) {
             def source_config = [
                 name           : result.name,
@@ -937,41 +1098,43 @@ class PackageService {
                 automaticUpdate: (sourceMap.automaticUpdate ?: false),
                 targetNamespace: namespace
             ]
-
             src = new Source(source_config).save(flush: true)
-
             result.curatoryGroups.each { cg ->
               src.curatoryGroups.add(cg)
             }
           }
           else {
             src = result.source
-
             changed |= ClassUtils.setStringIfDifferent(src, 'frequency', sourceMap.frequency)
             changed |= ClassUtils.setStringIfDifferent(src, 'url', sourceMap.url)
             changed |= ClassUtils.setBooleanIfDifferent(src, 'ezbMatch', sourceMap.ezbMatch)
             changed |= ClassUtils.setBooleanIfDifferent(src, 'zdbMatch', sourceMap.zdbMatch)
             changed |= ClassUtils.setBooleanIfDifferent(src, 'automaticUpdate', sourceMap.automaticUpdate)
-
             if (namespace && namespace != src.targetNamespace) {
               src.targetNamespace = namespace
               changed = true
             }
-
             src.save(flush: true)
           }
         }
       }
-
       if (src && result.source != src) {
         result.source = src
         changed = true
       }
     }
 
+    if (packageHeaderDTO.ddcs) {
+      packageHeaderDTO.ddcs.each{ String ddc ->
+        RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.DDC, ddc)
+
+        if(refdataValue && !(refdataValue in result.ddcs)){
+          result.addToDdcs(refdataValue)
+        }
+      }
+    }
+
     result.save(flush: true)
-
-
     result
   }
 
@@ -979,22 +1142,10 @@ class PackageService {
   /**
    * collects the data of the given package into a KBART formatted TSV file for later download
    */
-  public void createKbartExport(Package pkg) {
+  /*void createKbartExport(Package pkg, def response) {
     if (pkg) {
-      def exportFileName = generateExportFileName(pkg, ExportType.KBART)
-      def path = exportFilePath()
       try {
-        def out = new File("${path}${exportFileName}")
-        if (out.isFile())
-          return
-        else {
-          new File(path).list().each { fileName ->
-            if (fileName.startsWith(exportFileName.substring(0, exportFileName.length() - 21))) {
-              if (!new File(path + fileName).delete())
-                log.warn("couldn't delete file ${path}${fileName}")
-            }
-          }
-        }
+        ServletOutputStream out = response.outputStream
         out.withWriter { writer ->
 
           def sanitize = { it ? "${it}".trim() : "" }
@@ -1031,8 +1182,8 @@ class PackageService {
               'gokb_title_uid\n');
 
           def session = sessionFactory.getCurrentSession()
-          def combo_tipps = RefdataCategory.lookup('Combo.Type', 'Package.Tipps')
-          def status_current = RefdataCategory.lookup('KBComponent.Status', 'Current')
+          def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
+          def status_current = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Current')
           def query = session.createQuery("select tipp.id from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=:p and c.toComponent=tipp  and tipp.status = :sc and c.type = :ct order by tipp.id")
           query.setReadOnly(true)
           query.setParameter('p', pkg.getId(), StandardBasicTypes.LONG)
@@ -1112,16 +1263,9 @@ class PackageService {
                     sanitize(tipp.name ?: tipp.title.name) + '\t' +
                         print_id + '\t' +
                         online_id + '\t' +
-                        sanitize(tipp.startDate) + '\t' +
-                        sanitize(tipp.startVolume) + '\t' +
-                        sanitize(tipp.startIssue) + '\t' +
-                        sanitize(tipp.endDate) + '\t' +
-                        sanitize(tipp.endVolume) + '\t' +
-                        sanitize(tipp.endIssue) + '\t' +
                         sanitize(tipp.url) + '\t' +
                         (tipp.title.hasProperty('firstAuthor') ? sanitize(tipp.title.firstAuthor) : '') + '\t' +
                         sanitize(tipp.title.getId()) + '\t' +
-                        sanitize(tipp.embargo) + '\t' +
                         sanitize(tipp.coverageDepth).toLowerCase() + '\t' +
                         sanitize(tipp.coverageNote) + '\t' +
                         sanitize(tipp.title.getCurrentPublisher()?.name) + '\t' +
@@ -1146,36 +1290,26 @@ class PackageService {
           writer.flush();
           writer.close();
         }
+        out.flush()
+        out.close()
       }
       catch (Exception e) {
         log.error("Problem with creating KBART export data", e);
       }
     }
-  }
+  }*/
 
-  public void createTsvExport(Package pkg) {
+  /*public void createTsvExport(Package pkg, def response) {
     def export_date = dateFormatService.formatDate(new Date());
-    String filename = generateExportFileName(pkg, ExportType.TSV)
-    String path = exportFilePath()
     try {
       if (pkg) {
         String lastUpdate = dateFormatService.formatDate(pkg.lastUpdated)
-        File out = new File("${path}${filename}")
-        if (out.isFile())
-          return
-        else {
-          new File(path).list().each { someFileName ->
-            if (someFileName.startsWith(filename.substring(0, filename.length() - 15))) {
-              if (!new File(path + someFileName).delete())
-                log.warn("couldn't delete file ${path}${someFileName}")
-            }
-          }
-        }
+        ServletOutputStream out = response.outputStream
         out.withWriter { writer ->
           def sanitize = { it ? "${it}".trim() : "" }
 
           // As per spec header at top of file / section
-          writer.write("GOKb Export : ${pkg.provider?.name} : ${pkg.name} : ${export_date}\n");
+          writer.write("we:kb Export : ${pkg.provider?.name} : ${pkg.name} : ${export_date}\n");
 
           writer.write('TIPP ID\t' +
               'TIPP URL\t' +
@@ -1220,8 +1354,8 @@ class PackageService {
               '\n');
 
           def session = sessionFactory.getCurrentSession()
-          def combo_tipps = RefdataCategory.lookup('Combo.Type', 'Package.Tipps')
-          def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+          def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
+          def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
           def query = session.createQuery("select tipp.id from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=:p and c.toComponent=tipp  and tipp.status <> :sd and c.type = :ct order by tipp.id")
           query.setReadOnly(true)
           query.setParameter('p', pkg.getId(), StandardBasicTypes.LONG)
@@ -1273,8 +1407,6 @@ class PackageService {
                           sanitize(tcs.coverageDepth) + '\t' +
                           sanitize(tcs.coverageNote) + '\t' +
                           sanitize(tipp.hostPlatform.primaryUrl) + '\t' +
-                          sanitize(tipp.format?.value) + '\t' +
-                          sanitize(tipp.paymentType?.value) + '\t' +
                           sanitize(tipp.getIdentifierValue('DOI') ?: tipp.title.getIdentifierValue('DOI')) + '\t' +
                           sanitize(tipp.getIdentifierValue('ISBN') ?: tipp.title.getIdentifierValue('ISBN')) + '\t' +
                           sanitize(tipp.getIdentifierValue('pISBN') ?: tipp.title.getIdentifierValue('pISBN')) +
@@ -1307,18 +1439,9 @@ class PackageService {
                         sanitize(tipp.editStatus?.value) + '\t' +
                         sanitize(tipp.accessStartDate) + '\t' +
                         sanitize(tipp.accessEndDate) + '\t' +
-                        sanitize(tipp.startDate) + '\t' +
-                        sanitize(tipp.startVolume) + '\t' +
-                        sanitize(tipp.startIssue) + '\t' +
-                        sanitize(tipp.endDate) + '\t' +
-                        sanitize(tipp.endVolume) + '\t' +
-                        sanitize(tipp.endIssue) + '\t' +
-                        sanitize(tipp.embargo) + '\t' +
                         sanitize(tipp.coverageDepth) + '\t' +
                         sanitize(tipp.coverageNote) + '\t' +
                         sanitize(tipp.hostPlatform?.primaryUrl) + '\t' +
-                        sanitize(tipp.format?.value) + '\t' +
-                        sanitize(tipp.paymentType?.value) + '\t' +
                         sanitize(tipp.getIdentifierValue('DOI') ?: tipp.title.getIdentifierValue('DOI')) + '\t' +
                         sanitize(tipp.getIdentifierValue('ISBN') ?: tipp.title.getIdentifierValue('ISBN')) + '\t' +
                         sanitize(tipp.getIdentifierValue('pISBN') ?: tipp.title.getIdentifierValue('pISBN')) +
@@ -1332,42 +1455,32 @@ class PackageService {
           writer.flush();
           writer.close();
         }
+        out.flush()
+        out.close()
       }
     }
     catch (Exception e) {
       log.error("Problem with writing tsv export file", e);
     }
-  }
+  }*/
 
-  public void sendFile(Package pkg, ExportType type, def response) {
+  /*void sendFile(Package pkg, ExportType type, def response) {
     String fileName = generateExportFileName(pkg, type)
+    response.setContentType('text/tab-separated-values');
+    response.setHeader("Content-Disposition", "attachment; filename=\"${fileName.substring(0, fileName.length() - 13)}.tsv\"")
+    response.setHeader("Content-Encoding", "UTF-8")
     try {
-      File file = new File(exportFilePath() + fileName)
-      if (!file.isFile()) {
         if (type == ExportType.KBART)
-          createKbartExport(pkg)
+          createKbartExport(pkg, response)
         else
-          createTsvExport(pkg)
-        file = new File(exportFilePath() + fileName)
-      }
-      InputStream inFile = new FileInputStream(file)
-
-      response.setContentType('text/tab-separated-values');
-      response.setHeader("Content-Disposition", "attachment; filename=\"${fileName.substring(0, fileName.length() - 13)}.tsv\"")
-      response.setHeader("Content-Encoding", "UTF-8")
-      response.setContentLength(file.bytes.length)
-
-      def out = response.outputStream
-      IOUtils.copy(inFile, out)
-      inFile.close()
-      out.close()
+          createTsvExport(pkg, response)
     }
     catch (Exception e) {
       log.error("Problem with sending export", e);
     }
-  }
+  }*/
 
-  public void sendZip(Collection packs, ExportType type, def response) {
+  /*public void sendZip(Collection packs, ExportType type, def response) {
     def pathPrefix = UUID.randomUUID().toString()
     File tempDir = new File(exportFilePath() + "/" + pathPrefix)
     tempDir.mkdir()
@@ -1378,9 +1491,9 @@ class PackageService {
         File src = new File(exportFilePath() + fileName)
         if (!src.isFile()) {
           if (type == ExportType.KBART)
-            createKbartExport(pkg)
+            createKbartExport(pkg, response)
           else
-            createTsvExport(pkg)
+            createTsvExport(pkg, response)
           src = new File(exportFilePath() + fileName)
         }
         File dest = new File("${exportFilePath()}/${pathPrefix}/${fileName.substring(0, fileName.length() - 13)}.tsv")
@@ -1419,7 +1532,7 @@ class PackageService {
     IOUtils.copy(input, output)
     output.close()
     input.close()
-  }
+  }*/
 
   def synchronized updateFromSource(Package p, def user = null, ignoreLastChanged = false) {
     log.debug("updateFromSource")
@@ -1427,6 +1540,7 @@ class PackageService {
     boolean started = false
     if (running == false) {
       running = true
+      //println("UpdateFromSource started")
       log.debug("UpdateFromSource started")
       result = startSourceUpdate(p, user, ignoreLastChanged) ? 'OK' : 'ERROR'
       running = false
@@ -1445,6 +1559,7 @@ class PackageService {
    */
   private boolean startSourceUpdate(Package p, def user = null, boolean ignoreLastChanged = false) {
     log.debug("Source update start..")
+    //println("Source update start..")
     boolean error = false
     def ygorBaseUrl = grailsApplication.config.gokb.ygorUrl
 
@@ -1559,12 +1674,12 @@ class PackageService {
     return !error
   }
 
-  private String generateExportFileName(Package pkg, ExportType type) {
+  /*private String generateExportFileName(Package pkg, ExportType type) {
     String lastUpdate = dateFormatService.formatTimestamp(pkg.lastUpdated)
     StringBuilder name = new StringBuilder()
     if (type == ExportType.KBART) {
-      name.append(toCamelCase(pkg.provider?.name ? pkg.provider.name : "unknown Provider")).append('_')
-          .append(toCamelCase(pkg.global.value)).append('_')
+      name.append(toCamelCase(pkg.provider ? pkg.provider.name : "unknown Provider")).append('_')
+          .append(toCamelCase(pkg.scope ? pkg.scope.value : '')).append('_')
           .append(toCamelCase(pkg.name))
     }
     else {
@@ -1572,13 +1687,13 @@ class PackageService {
     }
     name.append('_').append(lastUpdate).append('.tsv')
     return name.toString()
-  }
+  }*/
 
-  private String exportFilePath() {
+  /*private String exportFilePath() {
     String exportPath = grailsApplication.config.gokb.tsvExportTempDirectory ?: "/tmp/gokb/export"
     Files.createDirectories(Paths.get(exportPath))
     exportPath.endsWith('/') ? exportPath : exportPath + '/'
-  }
+  }*/
 
   private String toCamelCase(String before) {
     StringBuilder ret = new StringBuilder()

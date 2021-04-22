@@ -1,4 +1,3 @@
-import ch.qos.logback.classic.Level
 import grails.util.BuildSettings
 import grails.util.Environment
 import org.springframework.boot.logging.logback.ColorConverter
@@ -26,7 +25,7 @@ appender('STDOUT', ConsoleAppender) {
 if (Environment.isDevelopmentMode() || Environment.current == Environment.TEST) {
   logger('com.k_int', ERROR)
   logger('org.gokb', DEBUG)
-  logger('gokbg3', ERROR)
+  logger('gokbg3', DEBUG)
 
   logger('org.gokb.DomainClassExtender', WARN)
   logger('org.gokb.ClassExaminationService', WARN)
@@ -52,11 +51,19 @@ if (Environment.isDevelopmentMode() || Environment.current == Environment.TEST) 
   logger('gokbg3.UserDetailsInterceptor', ERROR)
   logger('gokbg3.PreferencesInterceptor', ERROR)
   logger('gokbg3.RestMappingService', ERROR)
+  logger('de.wekb', DEBUG)
+
+  //For Database Migration
+  logger ('liquibase', INFO)
 }
 else {
   logger('com.k_int', INFO)
   logger('org.gokb', INFO)
   logger('gokbg3', INFO)
+  logger('de.wekb', INFO)
+
+  //For Database Migration
+  logger ('liquibase', INFO)
 }
 
 def targetDir = BuildSettings.TARGET_DIR

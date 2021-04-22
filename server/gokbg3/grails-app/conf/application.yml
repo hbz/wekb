@@ -2,9 +2,7 @@
 grails:
     config:
         locations:
-            - ~/.grails/gokb-config.groovy
-            - ~/.grails/gokb-config.yml
-            - ~/.grails/gokb-config.properties
+            - ~/.grails/wekb-config.groovy
     cors:
         enabled: true
         mappings:
@@ -23,10 +21,10 @@ grails:
             events: false
     mime:
         file:
-            extensions: false
+            extensions: true
         use:
             accept:
-                header: true
+                header: false
         disable:
             accept:
                 header:
@@ -70,13 +68,13 @@ grails:
         encoding: UTF-8
     views:
         default:
-            codec: html
+            codec: none
         gsp:
             encoding: UTF-8
             htmlcodec: xml
             codecs:
                 expression: html
-                scriptlets: html
+                scriptlets: none
                 taglib: none
                 staticparts: none
     exceptionresolver:
@@ -124,7 +122,7 @@ hibernate:
 environments:
     development:
         dataSource:
-            dbCreate: update
+            dbCreate: none # update // none because of database migration
             url: jdbc:postgresql://pghost:5432/gokbg3dev
             username: knowint
             password: knowint
@@ -150,21 +148,14 @@ environments:
                             useFilter: true
             mail:
                 port: 3025
-        gokb:
-            ygorUrl: null
-            packageUpdate:
-                enabled: false
-            es:
-                index: gokbg3dev
-                cluster: gokbg3-dev
-                host: localhost
-            tsvExportTempDirectory: /tmp/gokb/export
         cache:
             headers:
                 enabled: false
+        gokb:
+            defaultCuratoryGroup: Local
     test:
         dataSource:
-            dbCreate: create-drop
+            dbCreate: none # create-drop // none because of database migration
             url: jdbc:postgresql://pghost:5432/gokbg3test
             username: knowint
             password: knowint
@@ -182,14 +173,6 @@ environments:
                 testOnReturn: true
                 validationQuery: select 1
                 defaultTransactionIsolation: java.sql.Connection.TRANSACTION_READ_COMMITTED
-        gokb:
-            ygorUrl: null
-            packageUpdate:
-                enabled: false
-            es:
-                index: gokbg3test
-                cluster: gokbg3-test
-                host: localhost
         grails:
             mail:
                 port: 3025
@@ -202,7 +185,7 @@ environments:
             disabled: true
     production:
         dataSource:
-            dbCreate: update
+            dbCreate: none #update // none because of database migration
             url: jdbc:postgresql://localhost:5432/gokbg3
             username: gokb
             password: knowint
@@ -224,21 +207,25 @@ environments:
             plugin:
                 greenmail:
                     disabled: true
-        gokb:
-            packageUpdate:
-                enabled: false
-            ygorUrl: null
-            es:
-                index: gokbg3
-                cluster: gokbg3-prod
-                host: localhost
 gokb:
-    defaultCuratoryGroup: Local
+    ygorUrl: null
+    languagesUrl: http://localhost:8070
     ftupdate_enabled: true
     decisionSupport:
         active: false
         otherVoters: false
     costInfo: false
+    packageUpdate:
+        enabled: false
+    es:
+        cluster: gokbg3-test
+        host: localhost
+        indices:
+            tipps: gokbtipps
+            orgs: gokborgs
+            packages: gokbpackages
+            platforms: gokbplatforms
+    tsvExportTempDirectory: /tmp/gokb/export
 
 quartz:
     autoStartup: true

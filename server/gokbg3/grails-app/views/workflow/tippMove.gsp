@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="layout" content="sb-admin" />
-<title>GOKb: Move TIPP</title>
+<title><g:message code="gokb.appname" default="we:kb"/>: Move TIPP</title>
 </head>
 <body>
 
@@ -112,13 +112,13 @@
             <h3>New Context:</h3>
 
 						<label>New Title:</label>
-						<g:simpleReferenceTypedown class="form-control" name="newtitle" baseClass="org.gokb.cred.TitleInstance" filter1="Current"/>
+						<gokb:simpleReferenceTypedown class="form-control" name="newtitle" baseClass="org.gokb.cred.TitleInstance" filter1="Current"/>
 
 						<label>New Platform:</label>
-						<g:simpleReferenceTypedown class="form-control" name="newplatform" baseClass="org.gokb.cred.Platform" filter1="Current"/>
+						<gokb:simpleReferenceTypedown class="form-control" name="newplatform" baseClass="org.gokb.cred.Platform" filter1="Current"/>
 
 						<label>New Package:</label>
-						<g:simpleReferenceTypedown class="form-control" name="newpackage" baseClass="org.gokb.cred.Package" filter1="Current"/>
+						<gokb:simpleReferenceTypedown class="form-control" name="newpackage" baseClass="org.gokb.cred.Package" filter1="Current"/>
 
 						<hr/>
 

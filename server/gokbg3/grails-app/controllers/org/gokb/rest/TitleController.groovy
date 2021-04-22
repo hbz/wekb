@@ -42,7 +42,7 @@ class TitleController {
   def index() {
     log.debug("Index with params: ${params}")
     def result = [:]
-    def base = grailsApplication.config.serverURL + "/rest"
+    def base = grailsApplication.config.serverUrl + "/rest"
     User user = null
 
     if (springSecurityService.isLoggedIn()) {
@@ -56,6 +56,7 @@ class TitleController {
 
     if (es_search) {
       params.remove('es')
+      params.remove('type')
       def start_es = LocalDateTime.now()
       result = ESSearchService.find(params)
       log.debug("ES duration: ${Duration.between(start_es, LocalDateTime.now()).toMillis();}")
@@ -157,7 +158,7 @@ class TitleController {
     def obj = null
     def user = User.get(springSecurityService.principal.id)
     def ids = reqBody.ids ?: reqBody.identifiers
-    def base = grailsApplication.config.serverURL + "/rest"
+    def base = grailsApplication.config.serverUrl + "/rest"
 
     def publisher_name = null
 
@@ -389,7 +390,7 @@ class TitleController {
           if (event.id) {
             def matched_event = current_history.find { it.id == event.id }
 
-            if (event.date && matched_event && event.date != dateFormatService.formatDate(matched_event.eventDate)) {
+            if (event.date && matched_event && event.date != dateFormatService.formatDate(matched_event.date)) {
               def he_obj = ComponentHistoryEvent.get(matched_event.id)
 
               if (he_obj) {
@@ -421,6 +422,16 @@ class TitleController {
 
                 errors.id << [message: "Unable to lookup event for ID ${event.id}", baddata: event]
               }
+            }
+            else if (!matched_event) {
+              log.debug("Matched event is not connected to this title!")
+              if (!errors.id)
+                errors.id = []
+
+              errors.id << [message: "Existing event with ID ${event.id} is not connected to this title!", baddata: event]
+            }
+            else {
+              events.add(matched_event.id)
             }
           }
           else {
@@ -524,7 +535,7 @@ class TitleController {
         }
         else if (remove) {
           current_history.each { ce ->
-            if (!events.contains(ce.id)) {
+            if (!events.find { it == ce.id }) {
               def event = ComponentHistoryEvent.get(ce.id)
               event.delete(flush:true, failOnError:true)
             }
@@ -617,7 +628,7 @@ class TitleController {
 
       if (history) {
         history.each { he ->
-          def mapped_event = [id: he.id, date: dateFormatService.formatDate(he.date), from: [], to: []]
+          def mapped_event = [id: he.id, date: he.date ? dateFormatService.formatDate(he.date) : null, from: [], to: []]
 
           he.from.each { f ->
             if (embeds.contains('history')) {
@@ -832,7 +843,7 @@ class TitleController {
 
     if (obj) {
       def context = "/titles/" + params.id + "/tipps"
-      def base = grailsApplication.config.serverURL + "/rest"
+      def base = grailsApplication.config.serverUrl + "/rest"
       def es_search = params.es ? true : false
 
       params.remove('id')

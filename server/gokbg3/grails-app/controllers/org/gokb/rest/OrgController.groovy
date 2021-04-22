@@ -1,5 +1,6 @@
 package org.gokb.rest
 
+import de.wekb.helper.RCConstants
 import grails.converters.*
 import grails.core.GrailsClass
 import grails.gorm.transactions.*
@@ -34,7 +35,7 @@ class OrgController {
   def index() {
     log.debug("Org index query: ${params}")
     def result = [:]
-    def base = grailsApplication.config.serverURL + "/rest"
+    def base = grailsApplication.config.serverUrl + "/rest"
     User user = null
 
     if (springSecurityService.isLoggedIn()) {
@@ -63,7 +64,7 @@ class OrgController {
   def show() {
     def result = [:]
     def obj = null
-    def base = grailsApplication.config.serverURL + "/rest"
+    def base = grailsApplication.config.serverUrl + "/rest"
     def is_curator = true
     User user = null
 
@@ -284,7 +285,7 @@ class OrgController {
     }
 
     if (reqBody.providedPlatforms instanceof Collection) {
-      def plt_combo_type = RefdataCategory.lookup('Combo.Type', 'Platform.Provider')
+      def plt_combo_type = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Platform.Provider')
       Set new_plts = []
 
       reqBody.providedPlatforms.each { plt ->

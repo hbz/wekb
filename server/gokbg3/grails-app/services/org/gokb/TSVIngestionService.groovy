@@ -1,34 +1,23 @@
 package org.gokb
 
-import java.util.Map;
-import java.util.Set;
-import java.util.GregorianCalendar;
-
+import de.wekb.helper.RCConstants
 import au.com.bytecode.opencsv.CSVReader
-import au.com.bytecode.opencsv.bean.CsvToBean
-import au.com.bytecode.opencsv.bean.HeaderColumnNameMappingStrategy
-import au.com.bytecode.opencsv.bean.HeaderColumnNameTranslateMappingStrategy
+
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
 import java.time.ZoneId
 
-import com.k_int.ConcurrencyManagerService;
-import com.k_int.ConcurrencyManagerService.Job
 import com.k_int.ClassUtils
 
 import grails.gorm.transactions.Transactional
 
-import org.gokb.cred.TitleInstance
 // Only in ebooks branch -- import org.gokb.cred.BookInstance
 import org.gokb.cred.ComponentPerson
-import org.gokb.cred.ComponentSubject
-import org.gokb.cred.IngestionProfile
 import org.gokb.cred.Identifier
 import org.gokb.cred.IdentifierNamespace
 import org.gokb.cred.KBComponent
 import org.gokb.cred.ComponentHistoryEvent
 import org.gokb.cred.ComponentHistoryEventParticipant
-import org.gokb.cred.KBComponentVariantName
+
 // import org.gokb.cred.KBartRecord
 import org.gokb.cred.Org
 import org.gokb.cred.Package;
@@ -37,16 +26,14 @@ import org.gokb.cred.Platform
 import org.gokb.cred.RefdataCategory;
 import org.gokb.cred.RefdataValue;
 import org.gokb.cred.ReviewRequest
-import org.gokb.cred.Subject
+
 import org.gokb.cred.TitleInstance;
 import org.gokb.cred.Combo;
 import org.gokb.cred.TitleInstancePackagePlatform;
 import org.gokb.cred.User;
 import org.gokb.cred.DataFile;
-import org.gokb.cred.IngestionProfile;
-import org.gokb.cred.CuratoryGroup;
-import org.gokb.exceptions.*;
-import com.k_int.TextUtils
+import org.gokb.cred.IngestionProfile
+import org.gokb.exceptions.*
 import grails.converters.JSON
 import org.apache.commons.io.ByteOrderMark
 
@@ -429,34 +416,6 @@ class TSVIngestionService {
     ti
   }
 
-  def TitleInstance addSubjects(the_subjects, the_title) {
-    if (the_subjects) {
-      for (the_subject in the_subjects) {
-
-        def norm_subj_name = KBComponent.generateNormname(the_subject)
-        def subject = Subject.findAllByNormname(norm_subj_name) //no alt names for subjects
-        // log.debug("this was found for subject: ${subject}")
-        if (!subject) {
-          // log.debug("subject not found, creating a new one")
-          subject = new Subject(name:the_subject, normname:norm_subj_name)
-          subject.save(failOnError:true, flush:true)
-        }
-        boolean done=false
-        def componentSubjects = the_title.subjects?:[]
-        for (cs in componentSubjects) {
-          if (!done && (cs.subject.id==subject.id)) {
-            done=true;
-          }
-        }
-        if (!done) {
-          def cs = new ComponentSubject(component:the_title, subject:subject);
-          cs.save(failOnError:true, flush:true)
-        }
-      }
-    }
-    the_title
-  }
-
   def TitleInstance addPublisher (publisher_name, ti, user = null, project = null) {
 
     if ( ( publisher_name != null ) &&
@@ -464,7 +423,7 @@ class TSVIngestionService {
 
       log.debug("Add publisher \"${publisher_name}\"")
       Org publisher = Org.findByName(publisher_name)
-      def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+      def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
       def norm_pub_name = Org.generateNormname(publisher_name);
 
       if ( !publisher ) {
@@ -916,9 +875,7 @@ class TSVIngestionService {
         DataFile.withNewTransaction {
           def writeable_datafile = DataFile.get(datafile.id)
           ReviewRequest req = new ReviewRequest (
-              status	: RefdataCategory.lookupOrCreate('ReviewRequest.Status', 'Open'),
-              raisedBy : user,
-              allocatedTo : user,
+              status	: RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STATUS, 'Open'),
               descriptionOfCause : "Ingest of datafile ${datafile.id} / ${datafile.name} failed preflight",
               reviewRequest : "Generate rules to handle error cases.",
               refineProject: null,
@@ -1049,7 +1006,17 @@ class TSVIngestionService {
         }
 
         if ( identifiers.size() > 0 ) {
-          def title = titleLookupService.findOrCreate(the_kbart.publication_title, the_kbart.publisher_name, identifiers, user, null, row_specific_config.defaultTypeName)
+          def title = titleLookupService.findOrCreate(
+              the_kbart.publication_title,
+              the_kbart.publisher_name,
+              identifiers,
+              user,
+              null,
+              row_specific_config.defaultTypeName,
+              null,
+              false,
+              the_kbart.language
+          )
 
           if ( title ) {
 
@@ -1083,9 +1050,6 @@ class TSVIngestionService {
               if ( the_kbart.first_editor && the_kbart.first_editor.trim().length() > 0 ) {
                 addPerson(the_kbart.first_editor, editor_role, title);
               }
-
-              log.debug("Adding subjects");
-              addSubjects(the_kbart.subjects, title)
 
               log.debug("Adding additional authors");
               the_kbart.additional_authors.each { author ->
@@ -1124,7 +1088,7 @@ class TSVIngestionService {
   }
 
   def addOtherFieldsToTitle(title, the_kbart, ingest_cfg) {
-    title.medium=RefdataCategory.lookupOrCreate("TitleInstance.Medium", ingest_cfg.defaultMedium ?: "eBook")
+    title.medium=RefdataCategory.lookupOrCreate(RCConstants.TITLEINSTANCE_MEDIUM, ingest_cfg.defaultMedium ?: "eBook")
     // title.editionNumber=the_kbart.monograph_edition
     // title.dateFirstInPrint=parseDate(the_kbart.date_monograph_published_print)
     // title.dateFirstOnline=parseDate(the_kbart.date_monograph_published_online)
@@ -1178,8 +1142,8 @@ class TSVIngestionService {
     def tipp = null;
 
     log.debug("Lookup existing TIPP");
-    def status_current = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Current')
-    def status_retired = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Retired')
+    def status_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current')
+    def status_retired = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Retired')
     def tipps = TitleInstance.executeQuery('select tipp from TitleInstancePackagePlatform as tipp, Combo as pkg_combo, Combo as title_combo, Combo as platform_combo  '+
                                            'where pkg_combo.toComponent=tipp and pkg_combo.fromComponent=? '+
                                            'and platform_combo.toComponent=tipp and platform_combo.fromComponent = ? '+
@@ -1234,7 +1198,7 @@ class TSVIngestionService {
 
       // These are immutable for a TIPP - only set at creation time
       // We are going to create tipl objects at the end instead if per title inline.
-      // tipp = TitleInstancePackagePlatform.tiplAwareCreate(tipp_values)
+      // tipp = TitleInstancePackagePlatform.tippCreate(tipp_values)
 
       // Copy the new tipp_values from the file into our new object
       def tipp_fields = [
@@ -1245,13 +1209,13 @@ class TSVIngestionService {
         name: the_kbart.publication_title
       ]
 
-      tipp = TitleInstancePackagePlatform.tiplAwareCreate(tipp_fields)
+      tipp = TitleInstancePackagePlatform.tippCreate(tipp_fields)
     }
 
     Set<String> ids = tipp.ids.collect { "${it.namespace?.value}|${it.value}".toString() }
-    RefdataValue combo_active = RefdataCategory.lookup(Combo.RD_STATUS, Combo.STATUS_ACTIVE)
-    RefdataValue combo_deleted = RefdataCategory.lookup(Combo.RD_STATUS, Combo.STATUS_DELETED)
-    RefdataValue combo_type_id = RefdataCategory.lookup('Combo.Type', 'KBComponent.Ids')
+    RefdataValue combo_active = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE)
+    RefdataValue combo_deleted = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_DELETED)
+    RefdataValue combo_type_id = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'KBComponent.Ids')
 
     identifiers.each { ci ->
       def namespace_val = ci.type ?: ci.namespace
@@ -1272,15 +1236,15 @@ class TSVIngestionService {
             } else if (duplicate.size() == 1 && duplicate[0].status == combo_deleted) {
 
               log.debug("Found a deleted identifier combo for ${canonical_identifier.value} -> ${component}")
-              reviewRequestService.raise(
+             /* reviewRequestService.raise(
                 component,
                 "Review ID status.",
                 "Identifier ${canonical_identifier} was previously connected to '${component}', but has since been manually removed.",
                 user,
                 null,
                 null,
-                RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'Removed Identifier')
-              )
+                RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Removed Identifier')
+              )*/
             } else {
               log.debug("Identifier combo is already present, probably via titleLookupService.")
             }
@@ -1341,7 +1305,7 @@ class TSVIngestionService {
           changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'coverageNote', tipp_values.coverageNote)
           changed |= com.k_int.ClassUtils.setDateIfPresent(parsedStart,tcs,'startDate')
           changed |= com.k_int.ClassUtils.setDateIfPresent(parsedEnd,tcs,'endDate')
-          changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_values.coverageDepth, tipp, 'coverageDepth', 'TIPPCoverageStatement.CoverageDepth')
+          changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_values.coverageDepth, tipp, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH)
         }
       }
       else {
@@ -1358,14 +1322,14 @@ class TSVIngestionService {
       def cov_depth = null
 
       if (tipp_values.coverageDepth instanceof String) {
-        cov_depth = RefdataCategory.lookup('TIPPCoverageStatement.CoverageDepth', tipp_values.coverageDepth) ?: RefdataCategory.lookup('TIPPCoverageStatement.CoverageDepth', "Fulltext")
+        cov_depth = RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, tipp_values.coverageDepth) ?: RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, "Fulltext")
       } else if (tipp_values.coverageDepth instanceof Integer) {
         cov_depth = RefdataValue.get(c.coverageDepth)
       } else if (tipp_values.coverageDepth instanceof Map) {
         if (tipp_values.coverageDepth.id) {
           cov_depth = RefdataValue.get(tipp_values.coverageDepth.id)
         } else {
-          cov_depth = RefdataCategory.lookup('TIPPCoverageStatement.CoverageDepth', (tipp_values.coverageDepth.name ?: tipp_values.coverageDepth.value))
+          cov_depth = RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, (tipp_values.coverageDepth.name ?: tipp_values.coverageDepth.value))
         }
       }
 
@@ -1458,7 +1422,7 @@ class TSVIngestionService {
     def result;
     def norm_pkg_name = KBComponent.generateNormname(packageName)
     log.debug("Attempt package match by normalised name: ${norm_pkg_name}");
-    def status_deleted = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Deleted')
+    def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
     def packages=Package.executeQuery("select p from Package as p where p.normname=? and p.status != ?",[norm_pkg_name, status_deleted],[readonly:false])
 
     switch (packages.size()) {
@@ -1468,7 +1432,7 @@ class TSVIngestionService {
 
         def newpkgid = null;
 
-        def status_current = RefdataCategory.lookupOrCreate('KBComponent.Status', 'Current')
+        def status_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current')
         def newpkg = new Package(
                                  name:packageName,
                                  normname:norm_pkg_name,

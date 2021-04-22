@@ -41,10 +41,10 @@ class GlobalSearchController {
 
         QueryBuilder esQuery = QueryBuilders.queryStringQuery(query_str)
 
-        log.debug("Using index ${grailsApplication.config.gokb?.es?.index /*?: 'gokbg3dev (auto)'*/}")
+        log.debug("Using indices ${grailsApplication.config.gokb?.es?.indices?.values().join(", ")}")
 
         SearchRequestBuilder es_request = esclient.prepareSearch("globalSearch")
-            .setIndices(grailsApplication.config.gokb?.es?.index ?: "gokbg3")
+            .setIndices(grailsApplication.config.gokb?.es?.indices?.values() as String[])
             .setTypes(grailsApplication.config.globalSearch.types ?: "component")
             .setSize(result.max)
             .setFrom(result.offset)
@@ -90,7 +90,7 @@ class GlobalSearchController {
             entry.buckets.each { bucket ->
                 log.debug("Bucket: ${bucket}");
                 bucket.each { bi ->
-                  def displayTerm = (bi.getKey() != 'TitleInstancePackagePlatform' ? bi.getKey() : 'TIPP')
+                  def displayTerm = (bi.getKey() != 'TitleInstancePackagePlatform' ? bi.getKey() : 'Titles')
                   log.debug("Bucket item: ${bi} ${bi.getKey()} ${bi.getDocCount()}");
                   facet_values.add([term:bi.getKey(),display:displayTerm,count:bi.getDocCount()])
                   }

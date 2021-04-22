@@ -1,7 +1,8 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <html>
   <head>
     <meta name="layout" content="sb-admin" />
-    <title>GOKb Direct Ingest Service</title>
+    <title><g:message code="gokb.appname" default="we:kb"/> Direct Ingest Service</title>
   </head>
   <body>
     <g:if test="${ip?.id}">
@@ -14,40 +15,40 @@
           <div class="panel-body">
             <dl class="dl-horizontal">
               <dt>
-                <g:annotatedLabel owner="${ip}" property="name">Profile Name</g:annotatedLabel>
+                <gokb:annotatedLabel owner="${ip}" property="name">Profile Name</gokb:annotatedLabel>
               </dt>
               <dd>
                 ${ip.name}
               </dd>
               <dt>
-                <g:annotatedLabel owner="${ip}" property="status">Status</g:annotatedLabel>
+                <gokb:annotatedLabel owner="${ip}" property="status">Status</gokb:annotatedLabel>
               </dt>
               <dd>
-                <g:xEditableRefData owner="${ip}" field="status" config='KBComponent.Status' />
+                <gokb:xEditableRefData owner="${ip}" field="status" config="${RCConstants.KBCOMPONENT_STATUS}" />
               </dd>
               <dt>
-                <g:annotatedLabel owner="${ip}" property="packageName">Package Name</g:annotatedLabel>
+                <gokb:annotatedLabel owner="${ip}" property="packageName">Package Name</gokb:annotatedLabel>
               </dt>
               <dd>
                 ${ip.packageName}
               </dd>
               <dt>
-                <g:annotatedLabel owner="${ip}" property="providerNamespace">Provider Namespace</g:annotatedLabel>
+                <gokb:annotatedLabel owner="${ip}" property="providerNamespace">Provider Namespace</gokb:annotatedLabel>
               </dt>
               <dd>
-                <g:manyToOneReferenceTypedown owner="${ip}" field="providerNamespace" baseClass="org.gokb.cred.IdentifierNamespace">${ip.providerNamespace?.value}</g:manyToOneReferenceTypedown>
+                <gokb:manyToOneReferenceTypedown owner="${ip}" field="providerNamespace" baseClass="org.gokb.cred.IdentifierNamespace">${ip.providerNamespace?.value}</gokb:manyToOneReferenceTypedown>
               </dd>
               <dt>
-                <g:annotatedLabel owner="${ip}" property="packageType">Data Format</g:annotatedLabel>
+                <gokb:annotatedLabel owner="${ip}" property="packageType">Data Format</gokb:annotatedLabel>
               </dt>
               <dd>
                 ${ip.packageType}
               </dd>
               <dt>
-                <g:annotatedLabel owner="${ip}" property="platformUrl">URL</g:annotatedLabel>
+                <gokb:annotatedLabel owner="${ip}" property="platformUrl">URL</gokb:annotatedLabel>
               </dt>
               <dd>
-                <g:xEditable class="ipe" owner="${ip}" field="platformUrl" />
+                <gokb:xEditable  owner="${ip}" field="platformUrl" />
               </dd>
             </dl>
           </div>

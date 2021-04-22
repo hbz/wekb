@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="layout" content="sb-admin" />
-<title>GOKb: File Upload</title>
+<title><g:message code="gokb.appname" default="we:kb"/>: File Upload</title>
 </head>
 <body>
 
@@ -10,7 +10,7 @@
 	<div id="mainarea" class="panel panel-default">
 		<div class="panel-body">
 			<p>
-				Use this form to upload any file to GOKb. After upload you will be able to link the file to components in the database. If GOKb can
+				Use this form to upload any file to <g:message code="gokb.appname" default="we:kb"/>. After upload you will be able to link the file to components in the database. If <g:message code="gokb.appname" default="we:kb"/> can
         interpret the contents of your file (For example, if the file is recognised as an ONIX license file) then the system will
         attempt to create the corresponding system objects and link them to the uploaded file.
       </p>

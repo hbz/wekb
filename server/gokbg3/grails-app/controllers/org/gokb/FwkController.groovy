@@ -1,5 +1,6 @@
 package org.gokb
 
+import de.wekb.helper.RCConstants
 import org.gokb.cred.*;
 import grails.converters.JSON
 import groovy.time.TimeCategory
@@ -21,6 +22,8 @@ class FwkController {
       result.timestamp = new Date()
       result.objectclass = obj.getClass().getSimpleName()
       result.label = obj.name ?: obj.id
+
+      result.name = obj.name ?: obj.id
 
       def qry_params = [ocn: obj.getClass().getSimpleName(), oid: params.id];
       def related_combos = null
@@ -86,7 +89,7 @@ class FwkController {
       events = AuditLogEvent.executeQuery("select e from org.gokb.cred.AuditLogEvent as e where (e.className= :ocn and e.persistedObjectId= :oid) OR (e.persistedObjectId IN (:comboids) AND (e.propertyName = 'fromComponent' OR e.propertyName = 'toComponent') AND (e.newValue NOT LIKE :oidt OR e.newValue IS NULL) AND (e.oldValue NOT LIKE :oidt OR e.oldValue IS NULL)) order by id desc",qry_params,['max':max,'offset':offset]);
     }
     else {
-      def combo_rdc = RefdataCategory.findByLabel('Combo.Type')
+      def combo_rdc = RefdataCategory.findByLabel(RCConstants.COMBO_TYPE)
       def criteria = AuditLogEvent.createCriteria()
 
       events = criteria.list ('max':max, 'offset':offset) {
@@ -303,6 +306,8 @@ class FwkController {
       def qry_params = [oid_components[0],Long.parseLong(oid_components[1])];
       result.ownerClass = oid_components[0]
       result.ownerId = oid_components[1]
+
+      result.name = obj.name ?: obj.id
 
       result.max = params.max ?: 20;
       result.offset = params.offset ?: 0;

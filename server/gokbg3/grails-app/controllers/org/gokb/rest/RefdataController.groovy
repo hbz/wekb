@@ -1,5 +1,6 @@
 package org.gokb.rest
 
+import de.wekb.helper.RCConstants
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
 import org.gokb.cred.RefdataCategory
@@ -16,7 +17,7 @@ class RefdataController {
 
   @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
   def index() {
-    def base = grailsApplication.config.serverURL + namespace
+    def base = grailsApplication.config.serverUrl + namespace
     def result = [:]
 
     result['_links'] = ['self': ['href': base + "/refdata/"]]
@@ -49,7 +50,7 @@ class RefdataController {
   def showCategory() {
     def result = [:]
     def cat = null
-    def base = grailsApplication.config.serverURL + namespace
+    def base = grailsApplication.config.serverUrl + namespace
 
     if (params.id.contains('.')) {
       cat = RefdataCategory.findByDesc(params.id)
@@ -84,7 +85,7 @@ class RefdataController {
   def showValue() {
     def result = [:]
     def val = null
-    def base = grailsApplication.config.serverURL + namespace
+    def base = grailsApplication.config.serverUrl + namespace
 
     if (params.id.contains(':')) {
       val = genericOIDService.resolveOID(params.id)
@@ -130,9 +131,9 @@ class RefdataController {
     def result = [:]
     def resultData = []
     def cat = null
-    def base = grailsApplication.config.serverURL + '/'+namespace
+    def base = grailsApplication.config.serverUrl + '/'+namespace
 
-    cat = RefdataCategory.findByLabel("Package.Scope")
+    cat = RefdataCategory.findByLabel(RCConstants.PACKAGE_SCOPE)
 
     if (cat) {
       result['_links'] = ['self': ['href': base + "/package-scopes"]]
@@ -160,9 +161,9 @@ class RefdataController {
     def result = [:]
     def resultData = []
     def cat = null
-    def base = grailsApplication.config.serverURL + '/'+namespace
+    def base = grailsApplication.config.serverUrl + '/'+namespace
 
-    cat = RefdataCategory.findByLabel("TIPPCoverageStatement.CoverageDepth")
+    cat = RefdataCategory.findByLabel(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH)
 
     if (cat) {
       result['_links'] = ['self': ['href': base + "/coverage-depth"]]
@@ -190,9 +191,9 @@ class RefdataController {
     def result = [:]
     def resultData = []
     def cat = null
-    def base = grailsApplication.config.serverURL + '/'+namespace
+    def base = grailsApplication.config.serverUrl + '/'+namespace
 
-    cat = RefdataCategory.findByLabel("ReviewRequest.StdDesc")
+    cat = RefdataCategory.findByLabel(RCConstants.REVIEW_REQUEST_STD_DESC)
 
     if (cat) {
       result['_links'] = ['self': ['href': base + "/review-types"]]

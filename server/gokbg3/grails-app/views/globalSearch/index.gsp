@@ -48,7 +48,7 @@
 <html>
   <head>
     <meta name="layout" content="sb-admin"/>
-    <title>GOKb: Global Search</title>
+    <title><g:message code="gokb.appname" default="we:kb"/>: Global Search</title>
   </head>
   <body>
   
@@ -78,7 +78,7 @@
       <p>
         <g:each in="${['componentType']}" var="facet">
           <g:each in="${params.list(facet)}" var="fv">
-            <span class="badge alert-info">${facet}:${fv} &nbsp; <g:link controller="${controller}" action="${action}" params="${removeFacet(params,facet,fv)}"><i class="fa fa-times"></i></g:link></span>
+            <span class="badge alert-info">${facet}:${fv == 'TitleInstancePackagePlatform' ? 'Titles' : fv  }&nbsp; <g:link controller="${controller}" action="${action}" params="${removeFacet(params,facet,fv)}"><i class="fa fa-times"></i></g:link></span>
           </g:each>
         </g:each>
       </p> 
@@ -118,18 +118,26 @@
            <table class="table table-striped table-bordered">
              <thead>
                <tr>
-                 <th>Component Name</th>
-                 <th>Component Type</th>
+                 <th>Name</th>
+                 <th>Type</th>
                  <th style="width:10%">Status</th>
                </tr>
              </thead>
              <tbody>
                <g:each in="${hits}" var="hit">
-                <g:set var="hitInst" value="${org.gokb.cred.KBComponent.get(hit.id.split(':')[1].toLong())}" />
                  <tr>
-                   <td> <g:if test="${hitInst}"><g:link controller="resource" action="show" id="${hit.id}">${hit.source.name ?: "- Not Set -"}</g:link></g:if><g:else>${hit.source.name ?: "- Not Set -"}</g:else></td>
-                   <td> ${hit.source.componentType} </td>
-                   <td> ${hitInst?.status?.value ?: 'Unknown'}</td>
+                   <td>
+                     <g:if test="${hit.source.uuid}">
+                       <g:link controller="resource" action="show" id="${hit.source.uuid}">
+                         ${hit.source.name ?: "- Not Set -"}
+                       </g:link>
+                     </g:if>
+                     <g:else>
+                       ${hit.source.name ?: "- Not Set -"}
+                     </g:else>
+                   </td>
+                   <td> ${hit.source.componentType == 'TitleInstancePackagePlatform' ? hit.source.titleType : hit.source.componentType  } </td>
+                   <td> ${hit.source.status?.value ?: 'Unknown'}</td>
                  </tr>
                </g:each>
              </tbody>

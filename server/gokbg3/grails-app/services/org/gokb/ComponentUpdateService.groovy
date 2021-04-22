@@ -1,16 +1,10 @@
 package org.gokb
 
-import grails.util.GrailsNameUtils
-import groovyx.net.http.URIBuilder
 
+import de.wekb.helper.RCConstants
 import org.gokb.cred.*
-import org.gokb.rest.RefdataController
-import org.grails.datastore.mapping.model.*
-import org.grails.datastore.mapping.model.types.*
 import groovy.transform.Synchronized
 import com.k_int.ClassUtils
-import grails.util.Holders
-
 import groovy.util.logging.*
 
 @Slf4j
@@ -50,9 +44,9 @@ class ComponentUpdateService {
     // Identifiers
     log.debug("Identifier processing ${data.identifiers}")
     Set<String> ids = component.ids.collect { "${it.namespace?.value}|${it.value}".toString() }
-    RefdataValue combo_active = RefdataCategory.lookup(Combo.RD_STATUS, Combo.STATUS_ACTIVE)
-    RefdataValue combo_deleted = RefdataCategory.lookup(Combo.RD_STATUS, Combo.STATUS_DELETED)
-    RefdataValue combo_type_id = RefdataCategory.lookup('Combo.Type', 'KBComponent.Ids')
+    RefdataValue combo_active = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE)
+    RefdataValue combo_deleted = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_DELETED)
+    RefdataValue combo_type_id = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'KBComponent.Ids')
 
     data.identifiers.each { ci ->
       def namespace_val = ci.type ?: ci.namespace
@@ -88,10 +82,11 @@ class ComponentUpdateService {
                 component,
                 "Review ID status.",
                 "Identifier ${canonical_identifier} was previously connected to '${component}', but has since been manually removed.",
-                user,
+                RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'Import Request'),
                 null,
                 null,
-                RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'Removed Identifier')
+                RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Removed Identifier'),
+                null
               )
             }
             else {
@@ -179,7 +174,7 @@ class ComponentUpdateService {
         if (!groups.find { it.name.toLowerCase() == name.toLowerCase() }) {
 
           def group = CuratoryGroup.findByNormname(CuratoryGroup.generateNormname(name))
-          def combo_type_cg = RefdataCategory.lookup('Combo.Type', component.getComboTypeValue('curatoryGroups'))
+          def combo_type_cg = RefdataCategory.lookup(RCConstants.COMBO_TYPE, component.getComboTypeValue('curatoryGroups'))
           // Only add if we have the group already in the system.
           if (group) {
             log.debug("Adding group ${name}..")
@@ -282,7 +277,7 @@ class ComponentUpdateService {
     hasChanged
   }
 
-  public boolean setAllRefdata(propNames, data, target, boolean createNew = false) {
+  boolean setAllRefdata(propNames, data, target, boolean createNew = false) {
     boolean changed = false
     propNames.each { String prop ->
       changed |= ClassUtils.setRefdataIfPresent(data[prop], target, prop, createNew)
@@ -314,8 +309,8 @@ class ComponentUpdateService {
             'software', 'service'
           ], source_data, located_or_new_source)
 
-          ClassUtils.setRefdataIfPresent(data.defaultSupplyMethod, located_or_new_source, 'defaultSupplyMethod', 'Source.DataSupplyMethod')
-          ClassUtils.setRefdataIfPresent(data.defaultDataFormat, located_or_new_source, 'defaultDataFormat', 'Source.DataFormat')
+          ClassUtils.setRefdataIfPresent(data.defaultSupplyMethod, located_or_new_source, 'defaultSupplyMethod', RCConstants.SOURCE_DATA_SUPPLY_METHOD)
+          ClassUtils.setRefdataIfPresent(data.defaultDataFormat, located_or_new_source, 'defaultDataFormat', RCConstants.SOURCE_DATA_FORMAT)
 
           log.debug("Variant names processing: ${data.variantNames}")
 

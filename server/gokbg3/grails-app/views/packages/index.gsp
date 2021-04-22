@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name='layout' content='public' />
-<title>GOKb: Packages</title>
+<title><g:message code="gokb.appname" default="we:kb"/>: Packages</title>
 </head>
 
 <body>
@@ -18,13 +18,13 @@
            <span class="icon-bar"></span>
          </button>
          <!-- navbar-brand is hidden on larger screens, but visible when the menu is collapsed -->
-         <a class="navbar-brand" href="index.html">GOKb</a>
+         <a class="navbar-brand" href="index.html"><g:message code="gokb.appname" default="we:kb"/></a>
        </div>
 
        <div class="collapse navbar-collapse" id="primary-nav">
          <ul class="nav navbar-nav">
            <li class="hidden active"><a href="#page-body"></a></li>
-           <li><span>GOKb Packages</span></li>
+           <li><span><g:message code="gokb.appname" default="we:kb"/> Packages</span></li>
          </ul>
        </div>
 
@@ -32,7 +32,7 @@
        <div class="row">
          <div class="span12">
 
-           <g:form controller="packages" class="form" role="form" action="index" method="get" params="${params}">
+           <g:form controller="packages" class="form"   action="index" method="get" params="${params}">
 
              <input type="hidden" name="offset" value="${params.offset}"/>
              <g:if test="${params.startYear && params.endYear}">
@@ -114,10 +114,10 @@
           <table class="table table-striped">
             <thead>
               <tr>
-                <th>Package name</th>
+                <th>Package Name</th>
                 <th>Provider</th>
-                <th>Title count</th>
-                <th>Last updated</th>
+                <th>Title Count</th>
+                <th>Last Updated</th>
               </tr>
             </thead>
             <tbody>

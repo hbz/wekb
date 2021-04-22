@@ -1,7 +1,7 @@
 <g:if test="${hide.contains('SEARCH_FORM')}">
 </g:if>
 <g:elseif test="${params.inline}">
-  <g:form method="get" class="form-horizontal" controller="search" role="form">
+  <g:form method="get" class="form-horizontal" controller="search"  >
     <input type="hidden" name="qbe" value="${params.qbe}"/>
 
     <g:each in="${hide}" var="hidden_var">
@@ -34,7 +34,7 @@
   </g:form>
 </g:elseif>
 <g:else>
-  <g:form method="get" class="form-horizontal" controller="search" role="form">
+  <g:form method="get" class="form-horizontal" controller="search"  >
 
     <input type="hidden" name="qbe" value="${params.qbe}"/>
 
@@ -56,7 +56,7 @@
                 <label class="col-sm-3 control-label" for="${fld.qparam}">${fld.prompt}</label>
                 <div class="col-sm-9">
                   <g:if test="${fld.type=='lookup'}">
-                    <g:simpleReferenceTypedown id="refdata_combo_${params.inline ? 'inline_': ''}${fld.qparam}"
+                    <gokb:simpleReferenceTypedown id="refdata_combo_${params.inline ? 'inline_': ''}${fld.qparam}"
                                               class="form-control"
                                               name="${fld.qparam}"
                                               baseClass="${fld.baseClass}"
@@ -100,6 +100,7 @@
           </g:if>
           <g:else>
             <div class="btn-group pull-right" role="group" aria-label="Search Buttons">
+              <g:link class="btn btn-success btn-sm" controller="search" params="[qbe: params.qbe]">Reset</g:link>
               <button name="searchAction" type="submit" class="btn btn-success btn-sm" value="search">Search</button>
               <div class="btn-group" role="group">
                 <button class="btn btn-success btn-sm"

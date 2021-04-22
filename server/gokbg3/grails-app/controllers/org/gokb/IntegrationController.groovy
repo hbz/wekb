@@ -1,15 +1,15 @@
 package org.gokb
 
+
+import de.wekb.helper.RCConstants
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
 import grails.plugin.springsecurity.annotation.Secured
 import groovy.json.JsonSlurper
-import org.apache.commons.lang.RandomStringUtils
 import org.springframework.web.servlet.support.RequestContextUtils
 import org.gokb.cred.*
 import au.com.bytecode.opencsv.CSVReader
 import com.k_int.ClassUtils
-import com.k_int.ConcurrencyManagerService
 import com.k_int.ConcurrencyManagerService.Job
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -166,7 +166,7 @@ class IntegrationController {
             if (located_entries?.size() == 0) {
               log.debug("No match on normalised name ${normname}.. Trying variant names");
               def variant_normname = GOKbTextUtils.normaliseString(name)
-              def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+              def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
               located_entries = Org.executeQuery("select distinct o from Org as o join o.variantNames as v where v.normVariantName = ? and o.status <> ?", [variant_normname, status_deleted]);
 
               if (located_entries?.size() == 0) {
@@ -311,7 +311,7 @@ class IntegrationController {
 
           // No match. One more attempt to match on norm_name only.
           def org_by_name = Org.findAllByNormname(orgNormName)
-          def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+          def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
 
           if (org_by_name.size() == 1) {
             located_or_new_org = org_by_name[0]
@@ -384,7 +384,7 @@ class IntegrationController {
 
       if (jsonOrg.mission) {
         log.debug("Mission ${jsonOrg.mission}");
-        located_or_new_org.mission = RefdataCategory.lookup('Org.Mission', jsonOrg.mission);
+        located_or_new_org.mission = RefdataCategory.lookup(RCConstants.ORG_MISSION, jsonOrg.mission);
       }
 
       if (jsonOrg.homepage) {
@@ -411,7 +411,7 @@ class IntegrationController {
         // Located a component.
         if ((located_component != null)) {
           def combo = new Combo(
-              type: RefdataCategory.lookup('Combo.Type', c.linkType),
+              type: RefdataCategory.lookup(RCConstants.COMBO_TYPE, c.linkType),
               fromComponent: located_or_new_org,
               toComponent: located_component,
               startDate: new Date()).save(flush: true, failOnError: true);
@@ -425,7 +425,7 @@ class IntegrationController {
       log.debug("Role Processing: ${jsonOrg.roles}");
       jsonOrg.roles.each { r ->
         log.debug("Adding role ${r}");
-        def role = RefdataCategory.lookup("Org.Role", r)
+        def role = RefdataCategory.lookup(RCConstants.ORG_ROLE, r)
 
         if (role) {
           located_or_new_org.addToRoles(role)
@@ -512,8 +512,8 @@ class IntegrationController {
               'software', 'service'
           ], source_data, located_or_new_source)
 
-          ClassUtils.setRefdataIfPresent(data.defaultSupplyMethod, located_or_new_source, 'defaultSupplyMethod', 'Source.DataSupplyMethod')
-          ClassUtils.setRefdataIfPresent(data.defaultDataFormat, located_or_new_source, 'defaultDataFormat', 'Source.DataFormat')
+          ClassUtils.setRefdataIfPresent(data.defaultSupplyMethod, located_or_new_source, 'defaultSupplyMethod', RCConstants.SOURCE_DATA_SUPPLY_METHOD)
+          ClassUtils.setRefdataIfPresent(data.defaultDataFormat, located_or_new_source, 'defaultDataFormat', RCConstants.SOURCE_DATA_FORMAT)
 
           log.debug("Variant names processing: ${data.variantNames}")
 
@@ -552,7 +552,7 @@ class IntegrationController {
 
         and {
           and {
-            eq 'ogcOwner.desc', 'Combo.Type'
+            eq 'ogcOwner.desc', RCConstants.COMBO_TYPE
             eq 'ogcType.value', 'KBComponent.Ids'
           }
           or {
@@ -653,231 +653,6 @@ class IntegrationController {
     render addVariantNameToComponent(org_to_update, request.JSON.name)
   }
 
-  private static def ensureCoreData(KBComponent component, data, boolean sync = false, user) {
-
-    // Set the name.
-    def hasChanged = false
-    component.lock()
-    component.refresh()
-
-    if (!component.name && data.name) {
-      component.name = data.name
-      hasChanged = true
-    }
-
-    // Core refdata.
-    hasChanged |= setAllRefdata([
-        'status', 'editStatus',
-    ], data, component)
-
-    // Identifiers
-    log.debug("Identifier processing ${data.identifiers}")
-    Set<String> ids = component.ids.collect { "${it.namespace?.value}|${it.value}".toString() }
-    RefdataValue combo_active = RefdataCategory.lookup(Combo.RD_STATUS, Combo.STATUS_ACTIVE)
-    RefdataValue combo_deleted = RefdataCategory.lookup(Combo.RD_STATUS, Combo.STATUS_DELETED)
-    RefdataValue combo_type_id = RefdataCategory.lookup('Combo.Type', 'KBComponent.Ids')
-
-    data.identifiers.each { ci ->
-      String testKey = "${ci.type}|${ci.value}".toString()
-
-      if (ci.type && ci.value && ci.type.toLowerCase() != "originediturl") {
-
-        if (!ids.contains(testKey)) {
-          def canonical_identifier = componentLookupService.lookupOrCreateCanonicalIdentifier(ci.type, ci.value)
-
-          log.debug("Checking identifiers of component ${component.id}")
-
-          def duplicate = Combo.executeQuery("from Combo as c where c.toComponent = ? and c.fromComponent = ?", [canonical_identifier, component])
-
-          if (duplicate.size() == 0) {
-            log.debug("adding identifier(${ci.type},${ci.value})(${canonical_identifier.id})")
-            def new_id = new Combo(fromComponent: component, toComponent: canonical_identifier, status: combo_active, type: combo_type_id).save(flush: true, failOnError: true)
-            hasChanged = true
-          }
-          else if (duplicate.size() == 1 && duplicate[0].status == combo_deleted) {
-
-            def additionalInfo = [:]
-
-            additionalInfo.vars = [canonical_identifier, component.name]
-
-            log.debug("Found a deleted identifier combo for ${canonical_identifier.value} -> ${component}")
-            reviewRequestService.raise(
-                component,
-                "Review ID status.",
-                "Identifier ${canonical_identifier} was previously connected to '${component}', but has since been manually removed.",
-                user,
-                null,
-                (additionalInfo as JSON).toString(),
-                RefdataCategory.lookupOrCreate('ReviewRequest.StdDesc', 'Removed Identifier')
-            )
-          }
-          else {
-            log.debug("Identifier combo is already present, probably via titleLookupService.")
-          }
-
-          // Add the value for comparison.
-          ids << testKey
-        }
-      }
-    }
-
-    if (sync) {
-      log.debug("Cleaning up deprecated IDs ..")
-      component.ids.each { cid ->
-        if (!data.identifiers.collect { "${it.type.toLowerCase()}|${Identifier.normalizeIdentifier(it.value)}".toString() }.contains("${cid.namespace?.value}|${Identifier.normalizeIdentifier(cid.value)}".toString())) {
-          def ctr = Combo.executeQuery("from Combo as c where c.toComponent = ? and c.fromComponent = ?", [cid, component])
-
-          if (ctr.size() == 1) {
-            ctr[0].delete()
-            hasChanged = true
-          }
-        }
-      }
-    }
-
-    // Flags
-    log.debug("Tag Processing: ${data.tags}");
-
-    data.tags?.each { t ->
-      log.debug("Adding tag ${t.type},${t.value}")
-
-      component.addToTags(
-          RefdataCategory.lookupOrCreate(t.type, t.value)
-      )
-    }
-
-    // handle the source.
-    if (!component.source && data.source && data.source?.size() > 0) {
-      component.source = createOrUpdateSource(data.source)?.get('component')
-    }
-
-    // Add each file upload too!
-    data.fileAttachments.each { fa ->
-
-      if (fa?.md5) {
-
-        DataFile file = DataFile.findByMd5(fa.md5) ?: new DataFile(guid: fa.guid, md5: fa.md5)
-
-        // Single properties.
-        file.with {
-          (name, uploadName, uploadMimeType, filesize, doctype) = [
-              fa.uploadName, fa.uploadName, fa.uploadMimeType, fa.filesize, fa.doctype
-          ]
-
-          // The contents of the file.
-          if (fa.content) {
-            fileData = fa.content.decodeBase64()
-          }
-
-          // Update.
-          save()
-        }
-
-        // Grab the attachments.
-        def attachments = component.getFileAttachments()
-        if (!attachments.contains(file)) {
-
-          // Add to the attached files.
-          attachments.add(file)
-        }
-      }
-    }
-
-    // If this is a component that supports curatoryGroups we should check for them.
-    if (KBComponent.has(component, 'curatoryGroups')) {
-      def groups = component.curatoryGroups.collect { [id: it.id, name: it.name] }
-
-      data.curatoryGroups?.each { String name ->
-        if (!groups.find { it.name.toLowerCase() == name.toLowerCase() }) {
-
-          def group = CuratoryGroup.findByNormname(CuratoryGroup.generateNormname(name))
-          // Only add if we have the group already in the system.
-          if (group) {
-            component.addToCuratoryGroups(group)
-            hasChanged = true
-            groups << [id: it.id, name: it.name]
-          }
-        }
-      }
-
-      if (sync) {
-        groups.each { cg ->
-          if (!data.curatoryGroups || !data.curatoryGroups.contains(cg.name)) {
-            log.debug("Removing deprecated CG ${cg.name}")
-            Combo.executeUpdate("delete from Combo as c where c.fromComponent = ? and c.toComponent.id = ?", [component, cg.id])
-            component.refresh()
-            hasChanged = true
-          }
-        }
-      }
-    }
-    else {
-      log.debug("Skipping CG handling ..")
-    }
-
-    if (data.additionalProperties) {
-      Set<String> props = component.additionalProperties.collect { "${it.propertyDefn?.propertyName}|${it.apValue}".toString() }
-      for (Map it : data.additionalProperties) {
-
-        if (it.name && it.value) {
-          String testKey = "${it.name}|${it.value}".toString()
-
-          if (!props.contains(testKey)) {
-            def pType = AdditionalPropertyDefinition.findByPropertyName(it.name)
-            if (!pType) {
-              pType = new AdditionalPropertyDefinition()
-              pType.propertyName = it.name
-              pType.save(failOnError: true)
-            }
-
-            component.refresh()
-            def prop = new KBComponentAdditionalProperty()
-            prop.propertyDefn = pType
-            prop.apValue = it.value
-            component.addToAdditionalProperties(prop)
-            component.save(failOnError: true)
-            props << testKey
-          }
-        }
-      }
-    }
-    def variants = component.variantNames.collect { [id: it.id, variantName: it.variantName] }
-
-    // Variant names.
-    if (data.variantNames) {
-      for (String name : data.variantNames) {
-        if (name?.trim().size() > 0 && !variants.find { it.variantName == name }) {
-          // Add the variant name.
-          log.debug("Adding variantName ${name} to ${component} ..")
-
-          def new_variant_name = component.ensureVariantName(name)
-
-          // Add to collection.
-          if (new_variant_name) {
-            variants << [id: new_variant_name.id, variantName: new_variant_name.variantName]
-          }
-        }
-      }
-    }
-
-    if (sync) {
-      variants.each { vn ->
-        if (!data.variantNames || !data.variantNames.contains(vn.variantName)) {
-          def vobj = KBComponentVariantName.get(vn.id)
-          vobj.delete()
-          component.refresh()
-          hasChanged = true
-        }
-      }
-    }
-
-    if (hasChanged) {
-      component.lastSeen = new Date().getTime()
-    }
-    component.save(flush: true)
-  }
-
-
   private static addVariantNameToComponent(KBComponent component, variant_name) {
     component.ensureVariantName(variant_name)
   }
@@ -943,7 +718,7 @@ class IntegrationController {
       }
       log.debug("Starting job ${background_job}..")
       background_job.description = "Package CrossRef (${rjson.packageHeader.name})"
-      background_job.type = RefdataCategory.lookupOrCreate('Job.Type', 'PackageCrossRef')
+      background_job.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'PackageCrossRef')
       background_job.linkedItem = [name: rjson.packageHeader.name,
                                    type: "Package"]
       background_job.message("Starting upsert for Package ${rjson.packageHeader.name}")
@@ -984,7 +759,7 @@ class IntegrationController {
           componentUpdateService.setAllRefdata([
               'software', 'service'
           ], platformJson, p)
-          ClassUtils.setRefdataIfPresent(platformJson.authentication, p, 'authentication', 'Platform.AuthMethod')
+          ClassUtils.setRefdataIfPresent(platformJson.authentication, p, 'authentication', RCConstants.PLATFORM_AUTH_METHOD)
 
           if (platformJson.provider) {
             def prov = null
@@ -1191,7 +966,7 @@ class IntegrationController {
 
       background_job.startOrQueue()
       background_job.description = "Title CrossRef"
-      background_job.type = RefdataCategory.lookupOrCreate('Job.Type', 'TitleCrossRef')
+      background_job.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'TitleCrossRef')
       background_job.startTime = new Date()
 
       if (async == false) {
@@ -1243,7 +1018,9 @@ class IntegrationController {
               user,
               null,
               title_class_name,
-              titleObj.uuid
+              titleObj.uuid,
+              false,
+              titleObj.language
           )
 
           if (title && !title.hasErrors()) {
@@ -1264,7 +1041,7 @@ class IntegrationController {
             componentUpdateService.ensureCoreData(title, titleObj, fullsync, user)
 
             title_changed |= componentUpdateService.setAllRefdata([
-                'OAStatus', 'medium', 'pureOA', 'continuingSeries', 'reasonRetired'
+                'OAStatus', 'medium', 'pureOA', 'continuingSeries', 'reasonRetired', 'language'
             ], titleObj, title)
 
             def pubFrom = GOKbTextUtils.completeDateString(titleObj.publishedFrom)
@@ -1409,7 +1186,7 @@ class IntegrationController {
         }
 
         def norm_pub_name = KBComponent.generateNormname(pub_to_add.name)
-        def status_deleted = RefdataCategory.lookup('KBComponent.Status', 'Deleted')
+        def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
 
         if (!publisher) {
           publisher = Org.findByNormname(norm_pub_name)
@@ -1454,14 +1231,14 @@ class IntegrationController {
 
             log.debug("Adding new combo for publisher ${publisher} (${propName}) to title ${ti} (${tiPropName})")
 
-            RefdataValue type = RefdataCategory.lookupOrCreate(Combo.RD_TYPE, ti.getComboTypeValue('publisher'))
+            RefdataValue type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, ti.getComboTypeValue('publisher'))
 
             def combo = null
 
             if (propName == "toComponent") {
               combo = new Combo(
                   type: (type),
-                  status: pub_to_add.status ? RefdataCategory.lookupOrCreate(Combo.RD_STATUS, pub_to_add.status) : DomainClassExtender.getComboStatusActive(),
+                  status: pub_to_add.status ? RefdataCategory.lookupOrCreate(RCConstants.COMBO_STATUS, pub_to_add.status) : DomainClassExtender.getComboStatusActive(),
                   startDate: pub_add_sd,
                   endDate: pub_add_ed,
                   toComponent: publisher,
@@ -1471,7 +1248,7 @@ class IntegrationController {
             else {
               combo = new Combo(
                   type: (type),
-                  status: pub_to_add.status ? RefdataCategory.lookupOrCreate(Combo.RD_STATUS, pub_to_add.status) : DomainClassExtender.getComboStatusActive(),
+                  status: pub_to_add.status ? RefdataCategory.lookupOrCreate(RCConstants.COMBO_STATUS, pub_to_add.status) : DomainClassExtender.getComboStatusActive(),
                   startDate: pub_add_sd,
                   endDate: pub_add_ed,
                   fromComponent: publisher,

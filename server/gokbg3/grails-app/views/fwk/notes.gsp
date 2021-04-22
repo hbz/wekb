@@ -3,14 +3,14 @@
   <!-- Default panel contents -->
   <div class="panel-heading modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h3 class="modal-title">Notes for ${params.id}</h3>
+    <h3 class="modal-title">Notes for ${name}</h3>
   </div>
 
   <div class="panel-body modal-body">
 
     <h4>New note</h4>
 
-    <g:form name="newNoteForm" controller="ajaxSupport" action="addToCollection" role="form" class="form">
+    <g:form name="newNoteForm" controller="ajaxSupport" action="addToCollection"   class="form">
       <input type="hidden" name="__context" value="${ownerClass}:${ownerId}"/>
       <input type="hidden" name="__newObjectClass" value="org.gokb.cred.Note"/>
       <input type="hidden" name="ownerClass" value="${ownerClass}"/>

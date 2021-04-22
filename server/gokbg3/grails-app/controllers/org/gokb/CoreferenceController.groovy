@@ -88,8 +88,4 @@ class CoreferenceController {
       xml { render api_response as XML }
     }
   }
-
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  def search() {
-  }
 }
