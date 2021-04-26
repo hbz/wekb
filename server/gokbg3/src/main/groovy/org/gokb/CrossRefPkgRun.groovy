@@ -50,6 +50,9 @@ class CrossRefPkgRun {
   def rr_TIPPs_retired
   def rr_TIPPs_invalid
   def status_ip
+  RefdataValue rr_type
+  CuratoryGroup curatoryGroup
+
 
   public CrossRefPkgRun(JSONObject json, Boolean add, Boolean full, Boolean isAutoUpdate, Locale loc, User u) {
     rjson = json
@@ -76,6 +79,8 @@ class CrossRefPkgRun {
       rr_TIPPs_retired = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'TIPPs Retired')
       rr_TIPPs_invalid = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Invalid TIPPs')
       status_ip = RefdataCategory.lookup(RCConstants.PACKAGE_LIST_STATUS, 'In Progress')
+      rr_type = RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'Import Request')
+
 
       springSecurityService.reauthenticate(user.username)
       user = User.get(user.id)
@@ -98,6 +103,8 @@ class CrossRefPkgRun {
         job?.endTime = new Date()
         return jsonResult
       }
+
+      //TODO: Permission AccessService!!!!!
 
       // Package Validation
       pkg_validation = Package.validateDTO(rjson.packageHeader, locale)
@@ -178,10 +185,11 @@ class CrossRefPkgRun {
             pkg,
             "TIPP rejected",
             "TIPP ${json_tipp.name ?: json_tipp.title.name} coudn't be imported. ${(currentTippError as JSON).toString()}",
-            user,
+            rr_type,
             null,
             (currentTippError as JSON).toString(),
-            rr_TIPPs_invalid
+            rr_TIPPs_invalid,
+            [curatoryGroup]
           )
           job?.message("skipped invalid title ${(currentTippError as JSON).toString()}")
         }
@@ -263,10 +271,11 @@ class CrossRefPkgRun {
               pkg,
               "TIPPs retired.",
               "An update to package ${pkg.id} did not contain ${removedNum} previously existing TIPPs.",
-              user,
+              rr_type,
               null,
               (additionalInfo as JSON).toString(),
-              rr_TIPPs_retired
+              rr_TIPPs_retired,
+              [curatoryGroup]
             )
           }
         }*/
@@ -360,6 +369,7 @@ class CrossRefPkgRun {
         log.debug("Got more than one cg candidate!")
         job?.groupId = curatory_group_ids[0]
       }
+      curatoryGroup = CuratoryGroup.get(job?.groupId)
       curated_pkg = true
     }
 
@@ -605,10 +615,11 @@ class CrossRefPkgRun {
               upserted_tipp,
               "Matched TIPP was marked as Deleted.",
               "Check TIPP Status.",
-              user,
+              rr_type,
               null,
               null,
-              rr_deleted
+              rr_deleted,
+              [curatoryGroup]
             )
           }
           upserted_tipp.status = status_current
@@ -622,10 +633,11 @@ class CrossRefPkgRun {
             upserted_tipp,
             "The existing platform matched for this TIPP (${upserted_tipp.hostPlatform}) is marked as ${upserted_tipp.hostPlatform.status?.value}! Please review the URL/Platform for validity.",
             "Platform not marked as current.",
-            user,
+            rr_type,
             null,
             (additionalInfo as JSON).toString(),
-            rr_nonCurrent
+            rr_nonCurrent,
+            [curatoryGroup]
           )
         }
       }
@@ -718,10 +730,11 @@ class CrossRefPkgRun {
                     upserted_tipp,
                     "Matched TIPP was marked as Deleted.",
                     "Check TIPP Status.",
-                    user,
+                    rr_type,
                     null,
                     null,
-                    rr_deleted
+                    rr_deleted,
+                    [curatoryGroup]
             )
           }
           upserted_tipp.status = status_current
@@ -735,10 +748,11 @@ class CrossRefPkgRun {
                   upserted_tipp,
                   "The existing platform matched for this TIPP (${upserted_tipp.hostPlatform}) is marked as ${upserted_tipp.hostPlatform.status?.value}! Please review the URL/Platform for validity.",
                   "Platform not marked as current.",
-                  user,
+                  rr_type,
                   null,
                   (additionalInfo as JSON).toString(),
-                  rr_nonCurrent
+                  rr_nonCurrent,
+                  [curatoryGroup]
           )
         }
       }

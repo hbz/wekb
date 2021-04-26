@@ -17,7 +17,7 @@
         </g:if>
         <g:if test="${pkg}">
             <h1>Package: <span style="font-weight:bolder;">${pkgName}</span></h1>
-            <div class="col-sm-9">
+            <div class="col-md-9">
                 <dl class="row">
                     <dt class="col-3 text-right">
                         <gokb:annotatedLabel owner="${pkg}" property="provider">Provider</gokb:annotatedLabel>
@@ -62,7 +62,7 @@
                     <dt class="col-3 text-right"> <gokb:annotatedLabel owner="${pkg}" property="descriptionURL">URL</gokb:annotatedLabel> </dt>
                     <dd class="col-9 text-left"> <gokb:xEditable  owner="${pkg}" field="descriptionURL" />
                         <g:if test="${pkg.descriptionURL}">
-                        &nbsp;<a href="${pkg.descriptionURL}" target="new"><i class="fas fa-external-link-alt"></i></a>
+                        &nbsp;<a aria-label="${pkg.descriptionURL}" href="${pkg.descriptionURL}" target="new"><i class="fas fa-external-link-alt"></i></a>
                         </g:if>
                     </dd>
 
@@ -85,50 +85,49 @@
     <g:if test="${pkg}">
         <div id="row">
             <ul id="tabs" class="nav nav-tabs">
-                <li role="presentation" class="nav-item">
+                <li class="nav-item">
                     <a class="nav-link active" href="#titledetails" data-toggle="tab">Titles
-                        <span class="badge badge-warning">${titleCount}</span>
+                        <span class="badge badge-pill badge-info">${titleCount}</span>
                     </a>
                 </li>
-                <li role="presentation" class="nav-item">
+                <li class="nav-item">
                     <a class="nav-link" href="#identifiers" data-toggle="tab">Identifiers
-                        <span  class="badge badge-warning">${pkg?.getCombosByPropertyNameAndStatus('ids', 'Active')?.size() ?: '0'}</span>
+                        <span  class="badge badge-pill badge-info">${pkg?.getCombosByPropertyNameAndStatus('ids', 'Active')?.size() ?: '0'}</span>
                     </a>
                 </li>
 
-                <li role="presentation" class="nav-item">
+                <li class="nav-item">
                     <a class="nav-link" href="#altnames" data-toggle="tab">Alternate Names
-                        <span class="badge badge-warning">${pkg.variantNames?.size() ?: '0'}</span>
+                        <span class="badge badge-pill badge-info">${pkg.variantNames?.size() ?: '0'}</span>
                     </a>
                 </li>
 
-                <li role="presentation" class="nav-item">
+                <li class="nav-item">
                     <a class="nav-link" href="#ddcs" data-toggle="tab">DDCs
-                        <span class="badge badge-warning">${pkg.ddcs?.size()}</span>
+                        <span class="badge badge-pill badge-info">${pkg.ddcs?.size() ?: '0'}</span>
                     </a>
                 </li>
 
             </ul>
             <div id="my-tab-content" class="tab-content">
                 <div class="tab-pane fade show active" id="titledetails">
-
-                    <h2>Titles (${titleCount})</h2>
-
-                    <g:form controller="public" class="form" role="form" action="${actionName}" method="get" params="${params}">
-                        <div class="form-group input-group-md">
-                            <div class="btn-group pull-right">
-                                <label for="newMax">Results on Page</label>
-                                <g:select name="newMax" from="[10, 25, 50, 100, 200, 500]" value="${params.max}" onChange="this.form.submit()"/>
-                            </div>
+                    <div class="row">
+                        <div class="col-sm">
+                            <h2>Titles (${titleCount})</h2>
                         </div>
-                    </g:form>
-                    <br>
-                    <br>
-
-                    <table class="table table-striped">
+                        <div class="col-sm">
+                            <g:form controller="public" class="form-group row justify-content-end"   action="${actionName}" method="get" params="${params}">
+                                <label class="col-sm-6 col-form-label text-right" for="newMax">Results on Page</label>
+                                <div class="col-sm-6">
+                                        <g:select class="form-control"  name="newMax" from="[10, 25, 50, 100, 200, 500]" value="${params.max}" onChange="this.form.submit()"/>
+                                </div>
+                            </g:form>
+                        </div>
+                    </div>
+                    <table class="table table-striped wekb-table-responsive-stack">
                             <thead>
                                 <tr>
-                                        <th></th>
+                                        <th>#</th>
                                         <g:sortableColumn property="tipp.title.name" title="Title"/>
                                         <g:sortableColumn property="tipp.title.ids" title="Identifiers"/>
                                         <g:sortableColumn property="tipp.hostPlatform.name" title="Platform"/>
@@ -150,7 +149,7 @@
                                             </td>
                                             <td>
                                                 <ul>
-                                                    <g:each in="${t.ids}" var="id">
+                                                    <g:each in="${t.ids.sort{it.namespace.value}}" var="id">
                                                         <li><strong>${id.namespace.value}</strong> : ${id.value}</li>
                                                     </g:each>
                                                 </ul>
@@ -199,7 +198,6 @@
                     </dl>
                 </div>
             </div>
-
             <g:render template="componentStatus" model="${[d: pkg]}"/>
         </div>
     </g:if>

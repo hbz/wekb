@@ -7,27 +7,27 @@
 <div id="content">
     <ul id="tabs" class="nav nav-tabs">
         <g:if test="${d.id}">
-            <li role="presentation" class="nav-item">
+            <li class="nav-item">
                 <a class="nav-link active" href="#titledetails" data-toggle="tab">Hosted TIPPs</a>
             </li>
             <li>
                 <a class="nav-link"  href="#packages" data-toggle="tab">Packages</a>
             </li>
-            <li role="presentation" class="nav-item">
+            <li class="nav-item">
                 <a class="nav-link"  href="#altnames" data-toggle="tab">Alternate Names <span
-                    class="badge badge-warning">${d.variantNames?.size() ?: '0'}</span></a>
+                    class="badge badge-pill badge-info">${d.variantNames?.size() ?: '0'}</span></a>
             </li>
             <g:if test="${controllerName != 'public'}">
                 <g:if test="${grailsApplication.config.gokb.decisionSupport?.active}">
 
-                    <li role="presentation" class="nav-item">
+                    <li class="nav-item">
                         <a class="nav-link"  href="#ds" data-toggle="tab">Decision Support</a>
                     </li>
                 </g:if>
 
-                <li role="presentation" class="nav-item">
+                <li class="nav-item">
                     <a class="nav-link" href="#review" data-toggle="tab">Review Tasks (Open/Total)<span
-                        class="badge badge-warning">
+                        class="badge badge-pill badge-info">
                     ${d.reviewRequests?.findAll { it.status == org.gokb.cred.RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STATUS, 'Open') }?.size() ?: '0'}/${d.reviewRequests.size()}
 
                 </span></a>
@@ -35,17 +35,17 @@
             </g:if>
         </g:if>
         <g:else>
-            <li role="presentation" class="nav-item disabled" title="${message(code: 'component.create.idMissing.label')}"><span
+            <li class="nav-item disabled" title="${message(code: 'component.create.idMissing.label')}"><span
                     class="nav-tab-disabled">Hosted TIPPs</span></li>
-            <li role="presentation" class="nav-item disabled" title="${message(code: 'component.create.idMissing.label')}"><span
+            <li class="nav-item disabled" title="${message(code: 'component.create.idMissing.label')}"><span
                     class="nav-tab-disabled">Packages</span></li>
-            <li role="presentation" class="nav-item disabled" title="${message(code: 'component.create.idMissing.label')}"><span
+            <li class="nav-item disabled" title="${message(code: 'component.create.idMissing.label')}"><span
                     class="nav-tab-disabled">Alternate Names</span></li>
             <g:if test="${grailsApplication.config.gokb.decisionSupport?.active}">
-                <li role="presentation" class="nav-item disabled" title="${message(code: 'component.create.idMissing.label')}"><span
+                <li class="nav-item disabled" title="${message(code: 'component.create.idMissing.label')}"><span
                         class="nav-tab-disabled">Decision Support</span></li>
             </g:if>
-            <li role="presentation" class="nav-item disabled" title="${message(code: 'component.create.idMissing.label')}"><span
+            <li class="nav-item disabled" title="${message(code: 'component.create.idMissing.label')}"><span
                     class="nav-tab-disabled">Review Tasks</span></li>
         </g:else>
     </ul>

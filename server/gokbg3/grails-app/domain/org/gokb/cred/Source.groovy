@@ -161,7 +161,11 @@ class Source extends KBComponent {
         if (today == due){
           return true
         }
+      }else {
+        log.info("Source needsUpdate(): Frequency (${frequency}) is not null but intervals is null")
       }
+    }else {
+      log.info("Source needsUpdate(): Frequency is null")
     }
     return false
   }

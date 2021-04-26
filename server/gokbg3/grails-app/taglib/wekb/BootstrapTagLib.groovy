@@ -31,7 +31,8 @@ class BootstrapTagLib {
         } else {
             out << '<button type="submit" class="btn btn-default" onclick="event.preventDefault(); $(\'#' + attrs.id + '\').find(\'form\').submit()">Add</button>'
         }
-
+        out << '</div>'
+        out << '</div>'
         out << '</div>'
         out << '</div>'
 

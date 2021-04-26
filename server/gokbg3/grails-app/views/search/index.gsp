@@ -42,9 +42,9 @@
 				<div class="panel-body">
 					<g:if test="${(qbetemplate.message != null)}">
 						<p style="text-align: center">
-							<bootstrap:alert class="alert-info">
+							<div class="alert-info">
 								${qbetemplate.message}
-							</bootstrap:alert>
+							</div>
 						</p>
 					</g:if>
 	

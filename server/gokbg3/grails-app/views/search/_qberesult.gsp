@@ -4,11 +4,12 @@
 
 <g:if test="${ request.isAjax() }">
 
-  <g:render template="pagination" model="${params}" />
+  <g:render template="/search/pagination" model="${params}" />
 
   <table class="table table-striped table-condensed table-bordered">
     <thead>
       <tr class="inline-nav">
+        <th>#</th>
         <g:each in="${qbeConfig.qbeResults}" var="c">
           <g:if test="${!params.hide || !params.hide.contains(c.qpEquiv)}">
             <th style="white-space:nowrap;">
@@ -47,6 +48,7 @@
         <g:set var="r" value="${r}" />
         <tr class="${++counter==det ? 'success':''}">
           <!-- Row ${counter} -->
+          <td>${counter}</td>
           <g:each in="${r.cols}" var="c">
             <td>
               <g:if test="${c.link != null }">
@@ -70,7 +72,7 @@
 <g:else>
   <div class="batch-all-info" style="display:none;"></div>
 
-  <g:render template="pagination" model="${params}" />
+  <g:render template="/search/pagination" model="${params}" />
 
   <g:form controller="workflow" action="action" method="post" params="${params}" class='action-form' >
 
@@ -78,6 +80,7 @@
       <thead>
         <tr>
           <th></th>
+          <th>#</th>
           <g:each in="${qbeConfig.qbeResults}" var="c">
             <g:set var="colcode" value="${baseClass + '.' + c.heading}" />
             <g:set var="colmsg" value="${message(code: colcode, default:c.heading)}" />
@@ -130,6 +133,7 @@
                     title="${ !row_obj?.isEditable() ? 'Component is read only' : 'No actions available' }"
                     disabled="disabled" readonly="readonly" />
                 </g:else></td>
+              <td>${counter}</td>
               <g:each in="${r.cols}" var="c">
                 <td style="vertical-align:middle;"><g:if test="${ c.link != null }">
                     <g:link controller="resource"
@@ -168,7 +172,7 @@
       </tbody>
     </table>
     </g:form>
-  <g:render template="pagination" model="${params + [dropup : true]}" />
+  <g:render template="/search/pagination" model="${params + [dropup : true]}" />
 </g:else>
 
 <script language="JavaScript">

@@ -23,40 +23,25 @@
                     <a data-toggle="modal" data-cache="false"
                        data-target="#ddcModal">Add Dewey Decimal Classification</a>
 
-                    <div id="ddcModal" class="qmodal modal modal-wide" role="dialog" tabindex="-1">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <g:form class="ui form" url="[controller: 'ajaxSupport', action: 'addDDC']" method="post">
-                                    <div class="modal-header">
-                                        <h3 class="modal-title">Add Dewey Decimal Classification</h3>
-                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                    </div>
+                    <bootStrap:modal id="ddcModal" title="Add Dewey Decimal Classification">
 
-                                    <div class="modal-body">
+                        <g:form class="ui form" url="[controller: 'ajaxSupport', action: 'addDDC']" method="post">
+                            <input type="hidden" name="object" value="${d.getClassName()}:${d.id}"/>
 
-                                        <input type="hidden" name="object" value="${d.getClassName()}:${d.id}"/>
+                                <div class="field">
+                                    <label>Dewey Decimal Classification:</label>
 
-                                        <div class="field">
-                                            <label>Dewey Decimal Classification:</label>
+                                    <g:select from="${RefdataCategory.lookup(RCConstants.DDC).sort {it.value}}"
+                                              class="ui dropdown fluid"
+                                              id="ddcSelection"
+                                              optionKey="id"
+                                              optionValue="${{ it.value +': '+ it.getI10n('value')}}"
+                                              name="ddc"
+                                              value=""/>
+                                </div>
+                        </g:form>
+                    </bootStrap:modal>
 
-                                            <g:select from="${RefdataCategory.lookup(RCConstants.DDC).sort {it.value}}"
-                                                      class="ui dropdown fluid"
-                                                      id="ddcSelection"
-                                                      optionKey="id"
-                                                      optionValue="${{ it.value +': '+ it.getI10n('value')}}"
-                                                      name="ddc"
-                                                      value=""/>
-                                        </div>
-
-                                    </div>
-
-                                    <div class="modal-footer">
-                                        <button type="submit" class="btn btn-default">Add</button>
-                                    </div>
-                                </g:form>
-                            </div>
-                        </div>
-                    </div>
                 </g:if>
             </dd>
         </dl>

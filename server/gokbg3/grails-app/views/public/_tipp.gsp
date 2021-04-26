@@ -45,7 +45,7 @@
     <dd class="col-9 text-left">
         <gokb:xEditable  owner="${d}" field="url"/>
         <g:if test="${d.url}">
-            &nbsp;<a href="${d.url}" target="new"><i class="fas fa-external-link-alt"></i></a>
+            &nbsp;<a aria-label="${d.url}" href="${d.url}" target="new"><i class="fas fa-external-link-alt"></i></a>
         </g:if>
 
     </dd>
@@ -144,6 +144,13 @@
     <dd class="col-9 text-left">
         <gokb:xEditableRefData owner="${d}" field="accessType"
                                config="${RCConstants.TIPP_ACCESS_TYPE}"/>
+    </dd>
+
+    <dt class="col-3 text-right">
+        <gokb:annotatedLabel owner="${d}" property="note">Notes</gokb:annotatedLabel>
+    </dt>
+    <dd class="col-9 text-left">
+        <gokb:xEditable owner="${d}" field="note"/>
     </dd>
 
     <dt class="col-3 text-right">

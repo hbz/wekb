@@ -426,6 +426,7 @@ class FTUpdateService {
         if (kbc.medium) result.medium = kbc.medium.value
         if (kbc.status) result.status = kbc.status.value
         if (kbc.publicationType) result.publicationType = kbc.publicationType.value
+        if (kbc.openAccess) result.openAccess = kbc.openAccess.value
 
         result.identifiers = []
         kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->

@@ -72,6 +72,7 @@ class RCConstants {
 
     public static final String REVIEW_REQUEST_STATUS = "ReviewRequest.Status"
     public static final String REVIEW_REQUEST_STD_DESC = "ReviewRequest.StdDesc"
+    public static final String REVIEW_REQUEST_TYPE = "ReviewRequest.Type"
 
     public static final String RDFDATA_TYPE = "RDFDataType"
 

@@ -1078,14 +1078,14 @@ class TitleInstancePackagePlatform extends KBComponent {
               }
             }
 
-            tipp.addToCoverageStatements('startVolume': c.startVolume,        \
-                   'startIssue': c.startIssue,        \
-                   'endVolume': c.endVolume,        \
-                   'endIssue': c.endIssue,        \
-                   'embargo': c.embargo,        \
-                   'coverageDepth': cov_depth,        \
-                   'coverageNote': c.coverageNote,        \
-                   'startDate': startAsDate,        \
+            tipp.addToCoverageStatements('startVolume': c.startVolume,
+                   'startIssue': c.startIssue,
+                   'endVolume': c.endVolume,
+                   'endIssue': c.endIssue,
+                   'embargo': c.embargo,
+                   'coverageDepth': cov_depth,
+                   'coverageNote': c.coverageNote,
+                   'startDate': startAsDate,
                    'endDate': endAsDate
             )
           }
@@ -1101,15 +1101,24 @@ class TitleInstancePackagePlatform extends KBComponent {
           }
         }
 
-        if (tipp_dto.ddcs) {
+        if (tipp_dto.ddc) {
+
+            RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.DDC, tipp_dto.ddc)
+
+            if(refdataValue && !(refdataValue in tipp.ddcs)){
+              tipp.addToDdcs(refdataValue)
+            }
+        }
+
+        /*if (tipp_dto.ddcs) {
             tipp_dto.ddcs.each{ String ddc ->
               RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.DDC, ddc)
 
-              if(refdataValue && !(refdataValue in result.ddcs)){
-                result.addToDdcs(refdataValue)
+              if(refdataValue && !(refdataValue in tipp.ddcs)){
+                tipp.addToDdcs(refdataValue)
               }
             }
-        }
+        }*/
 
         tipp.save(flush: true, failOnError: true);
       }

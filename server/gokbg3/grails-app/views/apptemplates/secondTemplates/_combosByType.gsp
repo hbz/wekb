@@ -60,27 +60,30 @@
 
             <g:if test="${editable && !noaction}">
                 <td>
-                    <span>
-                        <g:if test="${row.status?.value == 'Deleted'}">
-                            <g:link
-                                    controller='ajaxSupport'
-                                    action='genericSetRel'
-                                    params="${['pk': 'org.gokb.cred.Combo:' + row.id, 'name': 'status', 'fragment': fragment, value: 'org.gokb.cred.RefdataValue:' + org.gokb.cred.RefdataCategory.lookup(RCConstants.COMBO_STATUS, 'Active').id]}"
-                                    class="confirm-click btn-delete"
-                                    title="Reactivate deleted link"
-                                    data-confirm-message="Are you sure you wish to remove this ${row.toComponent.niceName}?">Reactivate</g:link>
-                        </g:if>
-                        <g:else>
-                            <g:link
-                                    controller='ajaxSupport'
-                                    action='deleteCombo'
-                                    params="${['id': row.id, 'fragment': fragment, 'keepLink': true, 'propagate': "true"]}"
-                                    class="confirm-click btn-delete"
-                                    title="Mark this link as 'Deleted'. This will prevent future automatic linkage of these components."
-                                    data-confirm-message="Are you sure you wish to remove this ${row.toComponent.niceName}?">Delete</g:link>
-                        </g:else>
-                    </span>
-                    &nbsp;–&nbsp;
+                    <g:if test="${!onlyUnlink}">
+                        <span>
+                            <g:if test="${row.status?.value == 'Deleted'}">
+                                <g:link
+                                        controller='ajaxSupport'
+                                        action='genericSetRel'
+                                        params="${['pk': 'org.gokb.cred.Combo:' + row.id, 'name': 'status', 'fragment': fragment, value: 'org.gokb.cred.RefdataValue:' + org.gokb.cred.RefdataCategory.lookup(RCConstants.COMBO_STATUS, 'Active').id]}"
+                                        class="confirm-click btn-delete"
+                                        title="Reactivate deleted link"
+                                        data-confirm-message="Are you sure you wish to remove this ${row.toComponent.niceName}?">Reactivate</g:link>
+                            </g:if>
+                            <g:else>
+                                <g:link
+                                        controller='ajaxSupport'
+                                        action='deleteCombo'
+                                        params="${['id': row.id, 'fragment': fragment, 'keepLink': true, 'propagate': "true"]}"
+                                        class="confirm-click btn-delete"
+                                        title="Mark this link as 'Deleted'. This will prevent future automatic linkage of these components."
+                                        data-confirm-message="Are you sure you wish to remove this ${row.toComponent.niceName}?">Delete</g:link>
+                            </g:else>
+                        </span>
+                        &nbsp;–&nbsp;
+                    </g:if>
+
                     <g:link
                             controller='ajaxSupport'
                             action='deleteCombo'

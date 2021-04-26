@@ -32,6 +32,7 @@ Package.Global;Package Global;Package Global
 Package.LinkType;Package Link Type;Package Link Type
 Package.ListStatus;Package List Status;Package List Status
 Package.OpenAccess;Package Open Access;Package Open Access
+Package.RegionalRange; Package RegionalRange; Package RegionalRange
 Package.PaymentType;Package Payment Type;Package Payment Type
 Package.Scope;Package Scope;Package Scope
 Platform.Authentication;Platform Authentication;Platform Authentication
@@ -44,6 +45,7 @@ Price.type;Price type;Price type
 RDFDataType;RDF Data Type;RDF Data Type
 ReviewRequest.Status;Review Request Status;Review Request Status
 ReviewRequest.StdDesc;Review Request Std Desc;Review Request Std Desc
+ReviewRequest.Type;Review Request Type;Review Request Type
 Source.DataFormat;Source Data Format;Source Data Format
 Source.DataSupplyMethod;Source Data Supply Method;Source Data Supply Method
 Source.Frequency;Source Frequency;Source Frequency
