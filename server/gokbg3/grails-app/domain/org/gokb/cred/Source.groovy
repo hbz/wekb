@@ -155,7 +155,7 @@ class Source extends KBComponent {
     }
     if (frequency != null) {
       Date today = new Date()
-      def interval = intervals.get(frequency)
+      def interval = intervals.get(frequency.value)
       if (interval != null){
         Date due = getUpdateDay(interval)
         if (today == due){
@@ -175,7 +175,7 @@ class Source extends KBComponent {
     Date today = new Date()
     // calculate from each first day of the year to not create a lag over the years
     Calendar cal = Calendar.getInstance()
-    cal.set(Calendar.YEAR, Calendar.get(Calendar.YEAR))
+    cal.set(Calendar.YEAR, cal.get(Calendar.YEAR))
     cal.set(Calendar.DAY_OF_YEAR, 1)
     Date nextUpdate = cal.getTime()
     while (nextUpdate.before(today)){

@@ -103,7 +103,7 @@
           <gokb:annotatedLabel owner="${d}" property="regionalRanges">Regional Range</gokb:annotatedLabel>
         </dt>
         <dd>
-          <g:if test="${RefdataCategory.lookup(RCConstants.COUNTRY, 'DE') in d.regionalRanges}">
+          <g:if test="${RefdataCategory.lookup(RCConstants.COUNTRY, 'DE') in d.nationalRanges}">
             <g:render template="/apptemplates/secondTemplates/regionalRange" />
           </g:if>
         </dd>
