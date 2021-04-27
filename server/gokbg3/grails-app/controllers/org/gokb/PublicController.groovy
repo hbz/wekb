@@ -89,7 +89,7 @@ class PublicController {
         params.max = session.getAttribute("newMax") ?: 10
 
         result.titleCount = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_current])[0]
-        result.tipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_current], params)
+        result.tipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY + "order by ${params.sort} ${params.order}",[result.pkgId, tipp_combo_rdv, status_current], params)
         log.debug("Tipp qry done ${result.tipps?.size()}")
 
       }else {
