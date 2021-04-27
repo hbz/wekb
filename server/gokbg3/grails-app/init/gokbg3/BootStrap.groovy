@@ -147,7 +147,7 @@ class BootStrap {
         migrateDiskFilesToDatabase()
 
         CuratoryGroup.withTransaction() {
-            if (grailsApplication.config.gokb.defaultCuratoryGroup != null) {
+            if (grailsApplication.config.gokb.defaultCuratoryGroup != null && grailsApplication.config.gokb.defaultCuratoryGroup != "") {
 
                 log.info("Ensure curatory group: ${grailsApplication.config.gokb?.defaultCuratoryGroup}");
 
@@ -1046,6 +1046,7 @@ class BootStrap {
         log.debug("Deleting any null refdata values")
         RefdataValue.executeUpdate('delete from RefdataValue where value is null')
 
+        log.debug("Languages Service initialize")
         LanguagesService.initialize()
     }
 

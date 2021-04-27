@@ -128,9 +128,9 @@
                             <thead>
                                 <tr>
                                         <th>#</th>
-                                        <g:sortableColumn property="tipp.title.name" title="Title"/>
-                                        <g:sortableColumn property="tipp.title.ids" title="Identifiers"/>
-                                        <g:sortableColumn property="tipp.hostPlatform.name" title="Platform"/>
+                                        <g:sortableColumn property="tipp.name" title="Title"/>
+                                        <th>Identifiers</th>
+                                        <th>Platform</th>
                                         <g:sortableColumn property="tipp.publicationType" title="Title Type"/>
                                         <g:sortableColumn property="tipp.medium" title="Medium"/>
                                         <th>Coverage</th>
