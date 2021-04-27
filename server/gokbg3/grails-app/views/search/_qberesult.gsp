@@ -138,8 +138,7 @@
                 <td style="vertical-align:middle;"><g:if test="${ c.link != null }">
                     <g:link controller="resource"
                       action="show"
-                      id="${c.link}"
-                      params="${c.link_params!=null?groovy.util.Eval.x(pageScope,c.link_params):[]}">
+                      id="${c.link}">
                       ${c.value}
                     </g:link>
                   </g:if>

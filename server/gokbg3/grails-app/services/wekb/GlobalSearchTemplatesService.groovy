@@ -40,6 +40,7 @@ class GlobalSearchTemplatesService {
         globalSearchTemplates.put('titles', titles())
         globalSearchTemplates.put('userOrganisation', userOrganisations())
         globalSearchTemplates.put('users', users())
+        globalSearchTemplates.put('userJobs', userJobs())
         globalSearchTemplates.put('userWatchedComponents', userWatchedComponents())
         globalSearchTemplates.put('works', works())
 
@@ -71,7 +72,7 @@ class GlobalSearchTemplatesService {
                         qbeGlobals: [
                         ],
                         qbeResults: [
-                                [heading: 'Property Name', property: 'propertyName', sort: 'propertyName', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
+                                [heading: 'Property Name', property: 'propertyName', sort: 'propertyName', link: true],
                                 // [heading:'Property Name', property:'propertyName', link:[controller:'search',action:'index',params:'x.params+[\'det\':x.counter]']]
                         ]
                 ]
@@ -132,7 +133,7 @@ class GlobalSearchTemplatesService {
                         qbeGlobals: [
                         ],
                         qbeResults: [
-                                [heading: 'Cause', property: 'review.descriptionOfCause', link: [controller: 'resource', action: 'show', id: 'x.r.review.class.name+\':\'+x.r.review.id']],
+                                [heading: 'Cause', property: 'review.descriptionOfCause', link: true],
                                 [heading: 'Request', property: 'review.reviewRequest'],
                                 [heading: 'Status', property: 'review.status?.value'],
                                 [heading: 'Type', property: 'review.type?.value'],
@@ -197,7 +198,7 @@ class GlobalSearchTemplatesService {
                         ],
                         qbeResults: [
                                 [heading: 'Type', property: 'niceName'],
-                                [heading: 'Name/Title', property: 'name', sort: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
+                                [heading: 'Name/Title', property: 'name', sort: 'name', link: true],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
                                 [heading: 'Edit Status', property: 'editStatus?.value', sort: 'editStatus'],
                         ]
@@ -243,7 +244,7 @@ class GlobalSearchTemplatesService {
                         qbeGlobals: [
                         ],
                         qbeResults: [
-                                [heading: 'Name/Title', property: 'name', sort: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
+                                [heading: 'Name/Title', property: 'name', sort: 'name', link: true],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
                                 [heading: 'Edit Status', property: 'editStatus?.value', sort: 'editStatus']
                         ]
@@ -269,7 +270,7 @@ class GlobalSearchTemplatesService {
                         qbeGlobals: [
                         ],
                         qbeResults: [
-                                [heading: 'Name', property: 'name', sort: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
+                                [heading: 'Name', property: 'name', sort: 'name', link: true],
                                 [heading: 'Created On', property: 'dateCreated', sort: 'dateCreated'],
                                 [heading: 'Mime Type', property: 'uploadMimeType', sort: 'uploadMimeType'],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
@@ -296,8 +297,8 @@ class GlobalSearchTemplatesService {
                         qbeGlobals: [
                         ],
                         qbeResults: [
-                                [heading: 'Code', property: 'code', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
-                                [heading: 'Description', property: 'description', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
+                                [heading: 'Code', property: 'code', link: true],
+                                [heading: 'Description', property: 'description', link: true],
                         ]
                 ]
         ]
@@ -321,7 +322,7 @@ class GlobalSearchTemplatesService {
                         qbeGlobals: [
                         ],
                         qbeResults: [
-                                [heading: 'Category', property: 'owner.description', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
+                                [heading: 'Category', property: 'owner.description', link: true],
                                 [heading: 'Title', property: 'title'],
                                 [heading: 'Description', property: 'description'],
                         ]
@@ -346,7 +347,7 @@ class GlobalSearchTemplatesService {
                         qbeGlobals: [
                         ],
                         qbeResults: [
-                                [heading: 'Name', property: 'dcName', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
+                                [heading: 'Name', property: 'dcName', link: true],
                                 [heading: 'Display Name', property: 'displayName'],
                                 [heading: 'Sort Key', property: 'dcSortOrder'],
                                 [heading: 'Type', property: 'type?.value'],
@@ -402,7 +403,7 @@ class GlobalSearchTemplatesService {
                                  'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
                         ],
                         qbeResults: [
-                                [heading: 'Title', property: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id'], sort: 'name'],
+                                [heading: 'Title', property: 'name', link: true, sort: 'name'],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
                                 [heading: 'Date Created', property: 'dateCreated', sort: 'dateCreated'],
                                 [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
@@ -442,7 +443,7 @@ class GlobalSearchTemplatesService {
                                  'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
                         ],
                         qbeResults: [
-                                [heading: 'Title', property: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id'], sort: 'name'],
+                                [heading: 'Title', property: 'name', link: true, sort: 'name'],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
                                 [heading: 'Date Created', property: 'dateCreated', sort: 'dateCreated'],
                                 [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
@@ -500,7 +501,7 @@ class GlobalSearchTemplatesService {
                                  'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
                         ],
                         qbeResults: [
-                                [heading: 'Title', property: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id'], sort: 'name'],
+                                [heading: 'Title', property: 'name', link: true, sort: 'name'],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
                                 [heading: 'Date Created', property: 'dateCreated', sort: 'dateCreated'],
                                 [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
@@ -529,7 +530,7 @@ class GlobalSearchTemplatesService {
                         qbeGlobals: [
                         ],
                         qbeResults: [
-                                [heading: 'Name/Title', property: 'displayName', link: [controller: 'resource', action: 'show', id: 'x.r.linkedItem.class.name+\':\'+x.r.linkedItem.id']],
+                                [heading: 'Name/Title', property: 'displayName', link: true],
                                 [heading: 'Availability', property: 'linkedItem.tipps?.size()?:"none"'],
                         ]
                 ]
@@ -555,7 +556,7 @@ class GlobalSearchTemplatesService {
                         qbeGlobals: [
                         ],
                         qbeResults: [
-                                [heading: 'Name', property: 'name', sort: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
+                                [heading: 'Name', property: 'name', sort: 'name', link: true],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
                         ]
                 ]
@@ -583,15 +584,14 @@ class GlobalSearchTemplatesService {
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'type']
                                 ],
                         ],
-                        qbeGlobals: [
-                                ['ctxtp': 'filter', 'prop': 'ownerId', 'comparator': 'eq', 'value': '__USERID', 'default': 'on', 'qparam': 'qp_owner', 'type': 'java.lang.Long', 'hidden': true]
-                        ],
                         qbeResults: [
-                                [heading: 'Description', property: 'description', link: [controller: 'resource', action: 'show', id: 'x.r.uuid']],
+                                [heading: 'Description', property: 'description', link: true],
+                                [heading: 'Component', property: 'linkedItem'],
                                 [heading: 'Type', property: 'type?.value', sort: 'type'],
                                 [heading: 'Status', property: 'statusText'],
                                 [heading: 'Start Time', property: 'startTime', sort: 'startTime'],
                                 [heading: 'End Time', property: 'endTime', sort: 'endTime'],
+                                [heading: 'Curatory Group', property: 'curatoryGroup'],
                         ]
                 ]
         ]
@@ -618,7 +618,7 @@ class GlobalSearchTemplatesService {
                                  'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
                         ],
                         qbeResults: [
-                                [heading: 'Name/Title', property: 'name', sort: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
+                                [heading: 'Name/Title', property: 'name', sort: 'name', link: true],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
                         ]
                 ]
@@ -646,7 +646,7 @@ class GlobalSearchTemplatesService {
                                  'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
                         ],
                         qbeResults: [
-                                [heading: 'Name/Title', property: 'name', sort: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
+                                [heading: 'Name/Title', property: 'name', sort: 'name', link: true],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
                         ]
                 ]
@@ -674,7 +674,7 @@ class GlobalSearchTemplatesService {
                         qbeGlobals: [
                         ],
                         qbeResults: [
-                                [heading: 'Value', property: 'value', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
+                                [heading: 'Value', property: 'value', link: true],
                                 [heading: 'Name', property: 'name'],
                                 [heading: 'RDF Datatype', property: 'datatype?.value'],
                                 [heading: 'Category', property: 'family'],
@@ -704,7 +704,7 @@ class GlobalSearchTemplatesService {
                                  'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
                         ],
                         qbeResults: [
-                                [heading: 'Name/Title', property: 'name', sort: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
+                                [heading: 'Name/Title', property: 'name', sort: 'name', link: true],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
                         ]
                 ]
@@ -753,7 +753,7 @@ class GlobalSearchTemplatesService {
                                  'qparam': 'qp_onlyCurrent', 'default': 'on']
                         ],
                         qbeResults: [
-                                [heading: 'Name', property: 'name', sort: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
+                                [heading: 'Name', property: 'name', sort: 'name', link: true],
                                 [heading: 'Status', sort: 'status', property: 'status?.value'],
                                 [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
                         ]
@@ -864,8 +864,8 @@ class GlobalSearchTemplatesService {
                         ],
                         qbeResults: [
                                 [heading: 'Provider', property: 'provider?.name', link: true],
-                                [heading: 'Name', property: 'name', sort: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
-                                [heading: 'Nominal Platform', property: 'nominalPlatform?.name'],
+                                [heading: 'Name', property: 'name', sort: 'name', link: true],
+                                [heading: 'Nominal Platform', property: 'nominalPlatform?.name', link: true],
                                 [heading: 'Content Type', property: 'contentType?.value', sort: 'contentType'],
                                 [heading: 'Availability', property: 'scope', sort: 'scope'],
                                 [heading: 'List Status', property: 'listStatus?.value', sort: 'listStatus'],
@@ -923,7 +923,7 @@ class GlobalSearchTemplatesService {
                                  'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
                         ],
                         qbeResults: [
-                                [heading: 'Name/Title', property: 'name', sort: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
+                                [heading: 'Name/Title', property: 'name', sort: 'name', link: true],
                                 [heading: 'Primary URL', property: 'primaryUrl'],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
                         ]
@@ -947,7 +947,7 @@ class GlobalSearchTemplatesService {
                                 ],
                         ],
                         qbeResults: [
-                                [heading: 'Name', property: 'name', sort: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
+                                [heading: 'Name', property: 'name', sort: 'name', link: true],
                                 [heading: 'Provider', sort: 'provider.name', property: 'provider?.name'],
                                 [heading: 'Status', sort: 'status', property: 'status?.value'],
                         ]
@@ -975,7 +975,7 @@ class GlobalSearchTemplatesService {
                                 ['ctxtp': 'filter', 'prop': 'desc', 'comparator': 'ilike', 'value': 'Combo.%', 'negate': true]
                         ],
                         qbeResults: [
-                                [heading: 'Description', sort: 'desc', property: 'desc', link: [controller: 'resource', action: 'show', id: 'x.r.className+\':\'+x.r.id']],
+                                [heading: 'Description', sort: 'desc', property: 'desc', link: true],
                         ]
                 ]
         ]
@@ -1027,7 +1027,7 @@ class GlobalSearchTemplatesService {
                         qbeGlobals: [
                         ],
                         qbeResults: [
-                                [heading: 'Cause', property: 'descriptionOfCause', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
+                                [heading: 'Cause', property: 'descriptionOfCause', link: true],
                                 [heading: 'Request', property: 'reviewRequest'],
                                 [heading: 'Status', property: 'status?.value'],
                                 [heading: 'Type', property: 'type?.value'],
@@ -1054,7 +1054,7 @@ class GlobalSearchTemplatesService {
                         ],
                         qbeResults: [
                                 [heading: 'Fingerprint', property: 'fingerprint'],
-                                [heading: 'Description', property: 'description', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
+                                [heading: 'Description', property: 'description', link: true],
                         ]
                 ]
         ]
@@ -1089,8 +1089,8 @@ class GlobalSearchTemplatesService {
                                  'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
                         ],
                         qbeResults: [
-                                [heading: 'ID', property: 'id', sort: 'id', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
-                                [heading: 'Name/Title', property: 'name', sort: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
+                                [heading: 'ID', property: 'id', sort: 'id', link: true],
+                                [heading: 'Name/Title', property: 'name', sort: 'name', link: true],
                                 [heading: 'Url', property: 'url', sort: 'url'],
                                 [heading: 'automatic Updates', property: 'automaticUpdates'],
                                 [heading: 'Frequency', property: 'frequency?.value'],
@@ -1179,8 +1179,8 @@ class GlobalSearchTemplatesService {
                                  'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
                         ],
                         qbeResults: [
-                                [heading: 'ID', property: 'id', link: [controller: 'resource', action: 'show', id: 'x.r?.class?.name+\':\'+x.r?.id'], sort: 'name'],
-                                [heading: 'Name/Title', property: 'name', sort: 'name', link: [controller: 'resource', action: 'show', id: 'x.r?.class?.name+\':\'+x.r?.id']],
+                                [heading: 'ID', property: 'id', link: true, sort: 'name'],
+                                [heading: 'Name/Title', property: 'name', sort: 'name', link: true],
                                 [heading: 'Type', property: 'medium?.value', sort: 'name'],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
                                 [heading: 'Date Created', property: 'dateCreated', sort: 'dateCreated'],
@@ -1293,12 +1293,12 @@ class GlobalSearchTemplatesService {
                                  'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
                         ],
                         qbeResults: [
-                                [heading: 'Title Persistent Id', property: 'persistentId', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
-                                [heading: 'Title', property: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
+                                [heading: 'Title Persistent Id', property: 'persistentId', link: true],
+                                [heading: 'Title', property: 'name', link: true],
                                 [heading: 'Type', property: 'publicationType?.value', sort: 'publicationType.value'],
                                 [heading: 'Medium', property: 'medium?.value', sort: 'medium.value'],
-                                [heading: 'Package', qpEquiv: 'qp_pkg_id', property: 'pkg?.name', link: [controller: 'resource', action: 'show', id: 'x.r.pkg?.class?.name+\':\'+x.r.pkg?.id']],
-                                [heading: 'Platform', qpEquiv: 'qp_plat_id', property: 'hostPlatform?.name', link: [controller: 'resource', action: 'show', id: 'x.r.hostPlatform?.class?.name+\':\'+x.r.hostPlatform?.id']],
+                                [heading: 'Package', qpEquiv: 'qp_pkg_id', property: 'pkg?.name', link: true],
+                                [heading: 'Platform', qpEquiv: 'qp_plat_id', property: 'hostPlatform?.name', link: true],
                                 [heading: 'Status', property: 'status?.value', sort: 'status.value']
                         ]
                 ]
@@ -1326,7 +1326,7 @@ class GlobalSearchTemplatesService {
                         qbeGlobals: [
                         ],
                         qbeResults: [
-                                [heading: 'Username', property: 'username', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
+                                [heading: 'Username', property: 'username', link: true],
                                 [heading: 'Enabled', property: 'enabled'],
                                 [heading: 'Contributor', property: 'contributorStatus'],
                                 [heading: 'Editor', property: 'editorStatus'],
@@ -1356,11 +1356,47 @@ class GlobalSearchTemplatesService {
                         qbeGlobals: [
                         ],
                         qbeResults: [
-                                [heading: 'Name', property: 'displayName', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id']],
+                                [heading: 'Name', property: 'displayName', link: true],
                         ]
                 ]
         ]
 
+        result
+    }
+
+    Map userJobs() {
+        Map result = [
+                baseclass   : 'org.gokb.cred.JobResult',
+                title       : 'User Jobs',
+                group       : 'Secondary',
+                defaultSort : 'id',
+                defaultOrder: 'desc',
+                qbeConfig   : [
+                        qbeForm   : [
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.RefdataValue',
+                                        filter1    : RCConstants.JOB_TYPE,
+                                        prompt     : 'Type',
+                                        qparam     : 'qp_type',
+                                        placeholder: 'Type of Job',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'type']
+                                ],
+                        ],
+                        qbeGlobals: [
+                                ['ctxtp': 'filter', 'prop': 'ownerId', 'comparator': 'eq', 'value': '__USERID', 'default': 'on', 'qparam': 'qp_owner', 'type': 'java.lang.Long', 'hidden': true]
+                        ],
+                        qbeResults: [
+                                [heading: 'Description', property: 'description', link: true],
+                                [heading: 'Component', property: 'linkedItem'],
+                                [heading: 'Type', property: 'type?.value', sort: 'type'],
+                                [heading: 'Status', property: 'statusText'],
+                                [heading: 'Start Time', property: 'startTime', sort: 'startTime'],
+                                [heading: 'End Time', property: 'endTime', sort: 'endTime'],
+                                [heading: 'Curatory Group', property: 'curatoryGroup'],
+                        ]
+                ]
+        ]
         result
     }
 
@@ -1384,7 +1420,7 @@ class GlobalSearchTemplatesService {
                                 ['ctxtp': 'filter', 'prop': 'user.id', 'comparator': 'eq', 'value': '__USERID', 'default': 'on', 'qparam': 'qp_user', 'type': 'java.lang.Long', 'hidden': true]
                         ],
                         qbeResults: [
-                                [heading: 'Name', property: 'component.name', link: [controller: 'resource', action: 'show', id: 'x.r.component.class.name+\':\'+x.r.component.id']],
+                                [heading: 'Name', property: 'component.name', link: true],
                                 [heading: 'Type', property: 'component.niceName'],
                                 [heading: 'Last Update on', property: 'component.lastUpdated'],
                                 [heading: 'Last Update by', property: 'component.lastUpdatedBy?.username'],
@@ -1416,7 +1452,7 @@ class GlobalSearchTemplatesService {
                                  'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
                         ],
                         qbeResults: [
-                                [heading: 'Title', property: 'name', link: [controller: 'resource', action: 'show', id: 'x.r.class.name+\':\'+x.r.id'], sort: 'name'],
+                                [heading: 'Title', property: 'name', link: true, sort: 'name'],
                                 [heading: 'Bucket Hash', property: 'bucketHash'],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
                         ]
