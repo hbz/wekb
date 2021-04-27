@@ -78,7 +78,7 @@
             <gokb:annotatedLabel owner="${d}" property="lastRun">Last Run</gokb:annotatedLabel>
         </dt>
         <dd>
-            <gokb:xEditable owner="${d}" type="date" field="lastRun"/>
+            <gokb:xEditable owner="${d}" type="date" field="lastRun">${d.lastRun}</gokb:xEditable>
         </dd>
     </g:if>
 </dl>
