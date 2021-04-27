@@ -41,4 +41,22 @@ class JobResult {
     }
     result;
   }
+
+  CuratoryGroup getCuratoryGroup() {
+    CuratoryGroup curatoryGroup = null
+    if (groupId) {
+      curatoryGroup = CuratoryGroup.get(groupId)
+    }
+
+    return curatoryGroup
+  }
+
+  KBComponent getLinkedItem() {
+    KBComponent kbComponent = null
+    if (linkedItemId) {
+      kbComponent = KBComponent.get(linkedItemId)
+    }
+
+    return kbComponent
+  }
 }

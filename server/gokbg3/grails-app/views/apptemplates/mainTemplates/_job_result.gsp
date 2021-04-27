@@ -47,7 +47,7 @@
       <div>Global</div>
       <ul>
         <g:each in="${json?.errors?.global}" var="ge">
-          <li>${ge.message}</li>
+          <li>${ge}</li>
         </g:each>
       </ul>
     </g:if>
@@ -55,7 +55,7 @@
       <div>Titles</div>
       <ul>
         <g:each in="${json?.errors?.tipps}" var="te">
-          <li>${ge.message}</li>
+          <li>${te}</li>
         </g:each>
       </ul>
     </g:if>
