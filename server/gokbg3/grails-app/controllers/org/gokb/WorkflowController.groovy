@@ -8,6 +8,7 @@ import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
+import wekb.AutoUpdatePackagesService
 import wekb.ExportService
 import wekb.GlobalSearchTemplatesService
 
@@ -21,6 +22,7 @@ class WorkflowController{
   def dateFormatService
   GlobalSearchTemplatesService globalSearchTemplatesService
   ExportService exportService
+  AutoUpdatePackagesService autoUpdatePackagesService
 
   def actionConfig = [
       'method::deleteSoft'     : [actionType: 'simple'],
@@ -1821,7 +1823,7 @@ class WorkflowController{
           }
 
           if (pkgObj?.isEditable() && (is_curator || !curated_pkg  || user.authorities.contains(Role.findByAuthority('ROLE_SUPERUSER')))) {
-            def result = packageService.updateFromSource(pkgObj, user, allTitles)
+            def result = autoUpdatePackagesService.updateFromSource(pkgObj, user, allTitles)
 
             if (result == 'OK'){
               flash.success = "Update successfully started!"

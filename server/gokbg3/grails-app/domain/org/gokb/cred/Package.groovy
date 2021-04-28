@@ -630,7 +630,7 @@ select tipp.id,
   }
 
   @Transient
-  public getRecentActivity(n) {
+  public getRecentActivity() {
     def result = [];
 
     if (this.id) {
@@ -654,10 +654,10 @@ select tipp.id,
       use(TimeCategory) {
         changes.each {
           if (it.isDeleted()) {
-            result.add([it, it.lastUpdated, 'Deleted (status)'])
+            result.add([it, it.lastUpdated, 'Deleted (Status)'])
           }
           else if (it.isRetired()) {
-            result.add([it, it.lastUpdated, it.accessEndDate ? "Retired (${it.accessEndDate})" : 'Retired (status)'])
+            result.add([it, it.lastUpdated, it.accessEndDate ? "Retired (${it.accessEndDate})" : 'Retired (Status)'])
           }
           else if (it.lastUpdated <= it.dateCreated + 1.minute) {
             result.add([it, it.dateCreated, it.accessStartDate ? "Added (${it.accessStartDate})" : 'Newly Added'])
@@ -670,9 +670,9 @@ select tipp.id,
 
 //       result.addAll(additions)
 //       result.addAll(deletions)
-      result.sort { it[1] }
+      //result.sort { it[1] }
       result = result.reverse();
-      result = result.take(n);
+      //result = result.take(n);
     }
 
     return result;

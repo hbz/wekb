@@ -13,12 +13,33 @@
     ${d.description}
   </dd>
   <dt>
+    <gokb:annotatedLabel owner="${d}" property="statusText">Status Text</gokb:annotatedLabel>
+  </dt>
+  <dd>
+    ${d.statusText}
+  </dd>
+  <dt>
+    <gokb:annotatedLabel owner="${d}" property="type">Type</gokb:annotatedLabel>
+  </dt>
+  <dd>
+    ${d.type?.value}
+  </dd>
+  <dt>
+    <gokb:annotatedLabel owner="${d}" property="curatoryGroup">Curatory Group</gokb:annotatedLabel>
+  </dt>
+  <dd>
+    <g:set var="curatoryGroup" value="${ d.getCuratoryGroup()}" />
+    <g:if test="${curatoryGroup}">
+      <g:link controller="resource" action="show" id="${curatoryGroup.uuid}">${curatoryGroup.name}</g:link>
+    </g:if>
+  </dd>
+  <dt>
     <gokb:annotatedLabel owner="${d}" property="linkedItemId">Linked Component</gokb:annotatedLabel>
   </dt>
   <dd>
-    <g:set var="item" value="${ d.linkedItemId ? org.gokb.cred.KBComponent.get(d.linkedItemId) : null }" />
-    <g:if test="item">
-      <g:link controller="resource" action="show" id="${item?.uuid}">${item?.name}</g:link>
+    <g:set var="item" value="${ d.getLinkedItem()}" />
+    <g:if test="${item}">
+      <g:link controller="resource" action="show" id="${item.uuid}">${item.name}</g:link>
     </g:if>
   </dd>
   <dt>
