@@ -5,7 +5,7 @@
 
 
 <div id="content">
-    <ul id="tabs" class="nav nav-tabs">
+    <ul id="tabs" class="nav nav-tabs" role="tablist">
         <g:if test="${d.id}">
             <li class="nav-item">
                 <a class="nav-link active" href="#titledetails" data-toggle="tab">Hosted TIPPs</a>
@@ -53,7 +53,7 @@
 
     <div id="my-tab-content" class="tab-content">
 
-        <div class="tab-pane fade show active" id="titledetails">
+        <div class="tab-pane fade show active" id="titledetails" role="tabpanel">
 
             <g:if test="${params.controller != 'create'}">
                 <g:link class="display-inline" controller="search" action="index"
@@ -65,7 +65,7 @@
             </g:else>
         </div>
 
-        <div class="tab-pane fade" id="packages">
+        <div class="tab-pane fade" id="packages" role="tabpanel">
             <dl>
                 <dt>
                     <gokb:annotatedLabel owner="${d}" property="packages">Packages</gokb:annotatedLabel>
@@ -82,11 +82,11 @@
                   model="${[d: d, showActions: true]}"/>
 
         <g:if test="${controllerName != 'public'}">
-            <div class="tab-pane fade" id="ds">
+            <div class="tab-pane fade" id="ds" role="tabpanel">
                 <g:render template="/apptemplates/secondTemplates/dstab" model="${[d: d]}"/>
             </div>
 
-            <div class="tab-pane fade" id="review">
+            <div class="tab-pane fade" id="review" role="tabpanel">
                 <g:render template="/apptemplates/secondTemplates/revreqtab"
                           model="${[d: d]}"/>
             </div>

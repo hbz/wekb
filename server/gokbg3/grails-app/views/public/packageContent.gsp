@@ -84,7 +84,7 @@
     </div>
     <g:if test="${pkg}">
         <div id="row">
-            <ul id="tabs" class="nav nav-tabs">
+            <ul id="tabs" class="nav nav-tabs" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link active" href="#titledetails" data-toggle="tab">Titles
                         <span class="badge badge-pill badge-info">${titleCount}</span>
@@ -110,7 +110,7 @@
 
             </ul>
             <div id="my-tab-content" class="tab-content">
-                <div class="tab-pane fade show active" id="titledetails">
+                <div class="tab-pane fade show active" id="titledetails" role="tabpanel">
                     <div class="row">
                         <div class="col-sm">
                             <h2>Titles (${titleCount})</h2>
@@ -183,7 +183,7 @@
 
                 <g:render template="/tabTemplates/showDDCs" model="${[d:pkg]}" />
 
-                <div class="tab-pane fade" id="identifiers">
+                <div class="tab-pane fade" id="identifiers" role="tabpanel">
                     <dl>
                         <dt>
                             <gokb:annotatedLabel owner="${pkg}"

@@ -2,7 +2,7 @@
 %{--<g:set var="editable"
        value="${d.isEditable() && ((request.curator != null ? request.curator.size() > 0 ? true : false : true) || (params.curationOverride == 'true' && request.user.isAdmin()))}"/>--}%
 
-<ul id="tabs" class="nav nav-tabs">
+<ul id="tabs" class="nav nav-tabs" role="tablist">
 
     <g:if test="${d.publicationType?.value == 'Serial'}">
         <li class=nav-item">
