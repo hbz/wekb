@@ -1,5 +1,5 @@
 <%@ page import="de.wekb.helper.RCConstants " %>
-<div class="tab-pane" id="prices">
+<div class="tab-pane" id="prices" role="tabpanel">
     <g:if test="${d.id != null}">
         <dl>
             <dt>
