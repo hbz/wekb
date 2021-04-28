@@ -7,7 +7,8 @@
 	</head>
 	<body>
 		<g:renderException exception="${exception}" />
-
-	<button class="btn btn-default btn-primary" onclick="window.history.back()">${message(code: 'default.button.back')}</button>
+		<div class="row justify-content-end">
+			<button class="btn btn-default btn-primary mb-5" onclick="window.history.back()">${message(code: 'default.button.back')}</button>
+		</div>
 	</body>
 </html>

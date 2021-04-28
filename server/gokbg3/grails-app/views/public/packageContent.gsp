@@ -201,6 +201,9 @@
             <g:render template="componentStatus" model="${[d: pkg]}"/>
         </div>
     </g:if>
+    <div class="row justify-content-end">
+        <button class="btn btn-default btn-primary mb-5" onclick="window.history.back()">${message(code: 'default.button.back')}</button>
+    </div>
 </div>
 </body>
 </html>
