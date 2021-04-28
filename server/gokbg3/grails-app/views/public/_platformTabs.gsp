@@ -8,25 +8,25 @@
     <ul id="tabs" class="nav nav-tabs" role="tablist">
         <g:if test="${d.id}">
             <li class="nav-item">
-                <a class="nav-link active" href="#titledetails" data-toggle="tab">Hosted TIPPs</a>
+                <a class="nav-link active" href="#titledetails" data-toggle="tab" role="tab">Hosted TIPPs</a>
             </li>
             <li>
-                <a class="nav-link"  href="#packages" data-toggle="tab">Packages</a>
+                <a class="nav-link"  href="#packages" data-toggle="tab" role="tab">Packages</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link"  href="#altnames" data-toggle="tab">Alternate Names <span
+                <a class="nav-link"  href="#altnames" data-toggle="tab" role="tab">Alternate Names <span
                     class="badge badge-pill badge-info">${d.variantNames?.size() ?: '0'}</span></a>
             </li>
             <g:if test="${controllerName != 'public'}">
                 <g:if test="${grailsApplication.config.gokb.decisionSupport?.active}">
 
                     <li class="nav-item">
-                        <a class="nav-link"  href="#ds" data-toggle="tab">Decision Support</a>
+                        <a class="nav-link"  href="#ds" data-toggle="tab" role="tab">Decision Support</a>
                     </li>
                 </g:if>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#review" data-toggle="tab">Review Tasks (Open/Total)<span
+                    <a class="nav-link" href="#review" data-toggle="tab" role="tab">Review Tasks (Open/Total)<span
                         class="badge badge-pill badge-info">
                     ${d.reviewRequests?.findAll { it.status == org.gokb.cred.RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STATUS, 'Open') }?.size() ?: '0'}/${d.reviewRequests.size()}
 
