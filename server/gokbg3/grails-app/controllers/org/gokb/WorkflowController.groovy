@@ -1560,9 +1560,9 @@ class WorkflowController{
 
   private writeExportLine(Writer writer, Closure<String> sanitize, TitleInstancePackagePlatform tipp, def tippCoverageStatement){
     writer.write(
-        sanitize(tipp.title.name) + '\t' +
-            (tipp.title.hasProperty('dateFirstInPrint') ? sanitize(tipp.title.getIdentifierValue('pISBN')) : sanitize(tipp.title.getIdentifierValue('ISSN'))) + '\t' +
-            (tipp.title.hasProperty('dateFirstInPrint') ? sanitize(tipp.title.getIdentifierValue('ISBN')) : sanitize(tipp.title.getIdentifierValue('eISSN'))) + '\t' +
+        sanitize(tipp.name) + '\t' +
+            (tipp.hasProperty('dateFirstInPrint') ? sanitize(tipp.getIdentifierValue('pISBN')) : sanitize(tipp.getIdentifierValue('ISSN'))) + '\t' +
+            (tipp.hasProperty('dateFirstInPrint') ? sanitize(tipp.getIdentifierValue('ISBN')) : sanitize(tipp.getIdentifierValue('eISSN'))) + '\t' +
             sanitize(tippCoverageStatement.startDate) + '\t' +
             sanitize(tippCoverageStatement.startVolume) + '\t' +
             sanitize(tippCoverageStatement.startIssue) + '\t' +

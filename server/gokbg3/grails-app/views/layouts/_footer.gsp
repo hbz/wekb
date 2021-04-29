@@ -31,12 +31,12 @@
                  <ul>
                      <%-- App version --%>
                      <li>
-                         <a target="_blank" class="content" href="https://github.com/hbz/laser-gokb/releases">Version: ${grailsApplication.metadata['info.app.version']}</a>
+                         <a target="_blank" class="content" href="https://github.com/hbz/wekb/releases">Version: ${grailsApplication.metadata['info.app.version']}</a>
                      </li>
                      <%-- Git branch --%>
                     <li>
                          <g:if test="${grailsApplication.metadata['build.git.branch']}">
-                             <a target="_blank" class="content"  href="https://github.com/hbz/laser-gokb/tree/${grailsApplication.metadata['git.branch']}">
+                             <a target="_blank" class="content"  href="https://github.com/hbz/wekb/tree/${grailsApplication.metadata['git.branch']}">
                                  Branch: ${grailsApplication.metadata['build.git.branch']}
                              </a>
                          </g:if>
@@ -44,7 +44,7 @@
                      <%-- Git Commit --%>
                      <li>
                          <g:if test="${grailsApplication.metadata['build.git.revision']}">
-                             <a target="_blank" class="content" href="https://github.com/hbz/laser-gokb/tree/${grailsApplication.metadata['build.git.revision']}">
+                             <a target="_blank" class="content" href="https://github.com/hbz/wekb/tree/${grailsApplication.metadata['build.git.revision']}">
                                  Git Commit: ${grailsApplication.metadata['build.git.revision']}
                              </a>
                          </g:if>

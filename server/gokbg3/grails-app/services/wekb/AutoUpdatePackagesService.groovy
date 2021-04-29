@@ -31,6 +31,9 @@ class AutoUpdatePackagesService {
         if (running == false) {
             running = true
             log.debug("UpdateFromSource started")
+            if(startSourceUpdate(p, user, ignoreLastChanged)){
+                result = [result: JobResult.STATUS_SUCCESS, message: 'Auto Update Packages success']
+            }
             startSourceUpdate(p, user, ignoreLastChanged)
             running = false
         }
@@ -43,7 +46,7 @@ class AutoUpdatePackagesService {
         if (!result_object) {
             def job_map = [
                     uuid        : uuid,
-                    description : "Auto Update Packages Job ${p.name}",
+                    description : "Auto Update Packages Job (${p.name})",
                     resultObject: (result as JSON).toString(),
                     type        : RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'AutoUpdatePackagesJob'),
                     statusText  : result.result,
@@ -63,7 +66,7 @@ class AutoUpdatePackagesService {
      * Bad configurations will result in failure.
      * The autoUpdate frequency in the source is ignored: the update starts immediately.
      */
-    private void startSourceUpdate(Package p, def user = null, boolean ignoreLastChanged = false) {
+    private boolean startSourceUpdate(Package p, def user = null, boolean ignoreLastChanged = false) {
         log.debug("Source update start..")
         //println("Source update start..")
         boolean error = false
@@ -185,6 +188,9 @@ class AutoUpdatePackagesService {
         else {
             result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "No user provided and no existing updateToken found!"]]]
             log.debug("No user provided and no existing updateToken found!")
+            error = true
         }
+
+        return !error
     }
 }

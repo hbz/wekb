@@ -52,7 +52,7 @@
           <tbody>
             <g:each in="${tipps}" var="t">
               <tr>
-                <td>${t.title.name}</th>
+                <td>${t.name}</th>
                 <td></th>
                 <td></th>
               </tr>
