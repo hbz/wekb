@@ -315,6 +315,8 @@ ingest.filetype;cufts;cufts;cufts
 ingest.filetype;ingram;ingram;ingram
 ingest.filetype;kbart2;kbart2;kbart3
 ingest.filetype;ybp;ybp;ybp
+Job.Type;AutoUpdatePackagesJob;AutoUpdatePackagesJob;AutoUpdatePackagesJob
+Job.Type;ManuellUpdatePackageJob;ManuellUpdatePackageJob;ManuellUpdatePackageJob
 Job.Type;BootstrapIdentifierCleanup;BootstrapIdentifierCleanup;BootstrapIdentifierCleanup
 Job.Type;CleanupDeletedComponents;CleanupDeletedComponents;CleanupDeletedComponents
 Job.Type;CleanupRejectedComponents;CleanupRejectedComponents;CleanupRejectedComponents

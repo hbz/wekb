@@ -3,7 +3,7 @@
 
 <g:render template="/tabTemplates/showIdentifiers" model="${[d: d]}"/>
 
-<div class="tab-pane" id="addprops">
+<div class="tab-pane" id="addprops" role="tabpanel">
     <g:render template="/apptemplates/secondTemplates/addprops"
               model="${[d: d]}"/>
 </div>
@@ -19,7 +19,7 @@
 <g:render template="/tabTemplates/showPrices" model="${[d: d]}"/>
 
 <g:if test="${controllerName != 'public'}">
-    <div class="tab-pane" id="review">
+    <div class="tab-pane" id="review" role="tabpanel">
         <g:render template="/apptemplates/secondTemplates/revreqtab" model="${[d: d]}"/>
     </div>
 </g:if>

@@ -1,11 +1,11 @@
 package org.gokb
 
-
 import org.gokb.cred.Package
+import wekb.AutoUpdatePackagesService
 
 class AutoUpdatePackagesJob {
 
-  def packageService
+  AutoUpdatePackagesService autoUpdatePackagesService
   // Allow only one run at a time.
   static concurrent = false
 
@@ -26,9 +26,8 @@ class AutoUpdatePackagesJob {
           "and (p.source.lastRun is null or p.source.lastRun < current_date)")
       updPacks.each { Package p ->
         if (p.source.needsUpdate()) {
-          def result = packageService.updateFromSource(p)
+          def result = autoUpdatePackagesService.updateFromSource(p)
           log.debug("Result of update: ${result}")
-
           sleep(10000)
         }
       }

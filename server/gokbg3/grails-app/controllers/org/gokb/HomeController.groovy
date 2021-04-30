@@ -20,7 +20,7 @@ class HomeController {
   static stats_timestamp = null;
 
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  def dashboard() {
+  def statistic() {
     if ( ( stats_timestamp == null )|| ( System.currentTimeMillis() - stats_timestamp > 3600000 ) || params.reset) {
       stats_timestamp = System.currentTimeMillis()
       // Initialise
@@ -38,12 +38,16 @@ class HomeController {
   def index () {
     log.debug("Home::index -- ${params}")
 
-    redirect(action:'dashboard')
+    redirect(action:'statistic')
   }
 
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   def userdash() {
     def result = [:]
+    result.user = springSecurityService.currentUser
+
+    result.saved_items = SavedSearch.executeQuery('Select ss from SavedSearch as ss where ss.owner = :user order by name',[user: result.user])
+
     result
   }
 

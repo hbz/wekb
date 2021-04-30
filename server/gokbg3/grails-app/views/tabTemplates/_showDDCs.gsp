@@ -1,5 +1,5 @@
 <%@ page import="de.wekb.helper.RCConstants; org.gokb.cred.RefdataCategory" %>
-<div class="tab-pane" id="ddcs">
+<div class="tab-pane" id="ddcs" role="tabpanel">
     <g:if test="${d.id != null}">
         <dl>
             <dt>

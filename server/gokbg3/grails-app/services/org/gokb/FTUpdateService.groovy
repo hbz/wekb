@@ -4,6 +4,7 @@ import com.k_int.ESSearchService
 import grails.gorm.transactions.Transactional
 import org.elasticsearch.action.bulk.BulkRequestBuilder
 import org.gokb.cred.KBComponentAdditionalProperty
+import org.gokb.cred.TIPPCoverageStatement
 
 @Transactional
 class FTUpdateService {
@@ -334,8 +335,8 @@ class FTUpdateService {
         result.url = kbc.url
         if (kbc.niceName == 'Journal') {
           result.coverage = []
-          ArrayList coverage_src = kbc.coverageStatements?.size() > 0 ? kbc.coverageStatements : [kbc]
-          coverage_src.each { tcs ->
+          ArrayList<TIPPCoverageStatement> coverage_src = kbc.coverageStatements
+          coverage_src.each { TIPPCoverageStatement tcs ->
             def cst = [:]
             if (tcs.startDate) cst.startDate = dateFormatService.formatIsoTimestamp(tcs.startDate)
             cst.startVolume = tcs.startVolume ?: ""

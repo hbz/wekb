@@ -4,6 +4,11 @@ import grails.converters.JSON
 
 class JobResult {
 
+  public static final String STATUS_OK        = 'OK'
+  public static final String STATUS_ERROR     = 'ERROR'
+  public static final String STATUS_SUCCESS   = 'SUCCESS'
+  public static final String STATUS_FAIL      = 'FAIL'
+
   String uuid
   String description
   String statusText
@@ -40,5 +45,23 @@ class JobResult {
       result = JSON.parse(resultObject);
     }
     result;
+  }
+
+  CuratoryGroup getCuratoryGroup() {
+    CuratoryGroup curatoryGroup = null
+    if (groupId) {
+      curatoryGroup = CuratoryGroup.get(groupId)
+    }
+
+    return curatoryGroup
+  }
+
+  KBComponent getLinkedItem() {
+    KBComponent kbComponent = null
+    if (linkedItemId) {
+      kbComponent = KBComponent.get(linkedItemId)
+    }
+
+    return kbComponent
   }
 }

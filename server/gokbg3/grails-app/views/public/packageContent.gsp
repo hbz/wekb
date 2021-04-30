@@ -84,33 +84,33 @@
     </div>
     <g:if test="${pkg}">
         <div id="row">
-            <ul id="tabs" class="nav nav-tabs">
+            <ul id="tabs" class="nav nav-tabs" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" href="#titledetails" data-toggle="tab">Titles
+                    <a class="nav-link active" href="#titledetails" data-toggle="tab" role="tab">Titles
                         <span class="badge badge-pill badge-info">${titleCount}</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#identifiers" data-toggle="tab">Identifiers
+                    <a class="nav-link" href="#identifiers" data-toggle="tab" role="tab">Identifiers
                         <span  class="badge badge-pill badge-info">${pkg?.getCombosByPropertyNameAndStatus('ids', 'Active')?.size() ?: '0'}</span>
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#altnames" data-toggle="tab">Alternate Names
+                    <a class="nav-link" href="#altnames" data-toggle="tab" role="tab">Alternate Names
                         <span class="badge badge-pill badge-info">${pkg.variantNames?.size() ?: '0'}</span>
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#ddcs" data-toggle="tab">DDCs
+                    <a class="nav-link" href="#ddcs" data-toggle="tab" role="tab">DDCs
                         <span class="badge badge-pill badge-info">${pkg.ddcs?.size() ?: '0'}</span>
                     </a>
                 </li>
 
             </ul>
             <div id="my-tab-content" class="tab-content">
-                <div class="tab-pane fade show active" id="titledetails">
+                <div class="tab-pane fade show active" id="titledetails" role="tabpanel">
                     <div class="row">
                         <div class="col-sm">
                             <h2>Titles (${titleCount})</h2>
@@ -128,10 +128,10 @@
                             <thead>
                                 <tr>
                                         <th>#</th>
-                                        <g:sortableColumn property="tipp.title.name" title="Title"/>
-                                        <g:sortableColumn property="tipp.title.ids" title="Identifiers"/>
-                                        <g:sortableColumn property="tipp.hostPlatform.name" title="Platform"/>
-                                        <g:sortableColumn property="tipp.publicationType" title="Title Type"/>
+                                        <g:sortableColumn property="tipp.name" title="Title"/>
+                                        <th>Identifiers</th>
+                                        <th>Platform</th>
+                                        <g:sortableColumn property="tipp.publicationType" title="Publication Type"/>
                                         <g:sortableColumn property="tipp.medium" title="Medium"/>
                                         <th>Coverage</th>
                                     </tr>
@@ -160,7 +160,7 @@
                                                     ${t.hostPlatform?.name}
                                                 </g:link>
                                             </td>
-                                            <td>${t.niceName}</td>
+                                            <td>${t.publicationType?.value}</td>
                                             <td>${t.medium?.value}</td>
                                             <td>
                                                 ${t.coverageDepth?.value}<br/>${t.coverageNote}
@@ -183,7 +183,7 @@
 
                 <g:render template="/tabTemplates/showDDCs" model="${[d:pkg]}" />
 
-                <div class="tab-pane fade" id="identifiers">
+                <div class="tab-pane fade" id="identifiers" role="tabpanel">
                     <dl>
                         <dt>
                             <gokb:annotatedLabel owner="${pkg}"
@@ -201,6 +201,9 @@
             <g:render template="componentStatus" model="${[d: pkg]}"/>
         </div>
     </g:if>
+    <div class="row justify-content-end">
+        <button class="btn btn-default btn-primary mb-5" onclick="window.history.back()">${message(code: 'default.button.back')}</button>
+    </div>
 </div>
 </body>
 </html>

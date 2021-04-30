@@ -67,7 +67,7 @@
           </li>
         </sec:ifAnyGranted>
 
-        <li class="${controllerName == "home" && (actionName == 'index' || actionName == 'dashboard') ? 'active' : ''}"><g:link controller="home"><i class="fas fa-chart-line"></i> Statistics</g:link></li>
+        <li class="${controllerName == "home" && (actionName == 'index' || actionName == 'statistic') ? 'active' : ''}"><g:link controller="home"><i class="fas fa-chart-line"></i> Statistics</g:link></li>
 
         <li><g:link controller="welcome"><i class="fa fa-tasks fa-fw"></i> To Do<span class="fa arrow"></span></g:link>
 
@@ -97,7 +97,7 @@
           <li><a href="#"><i class="fa fa-search fa-fw"></i> Admin Search<span class="fa arrow"></span></a>
             <ul class="nav nav-second-level">
               <li class="divider"></li>
-                <g:each in="${session.menus.admin.search}" var="item">
+                <g:each in="${session.menus.admin.search.sort{it.text}}" var="item">
                   <li class="menu-search-admin">${ g.link(item.link + item.attr) { "<i class='fa fa-angle-double-right fa-fw'></i> ${item.text}" } }</li>
                 </g:each>
             </ul> <!-- /.nav-second-level -->
@@ -107,7 +107,7 @@
         <g:if test="${session.menus?.admin?.create}">
           <li><a href="#"><i class="fa fa-plus fa-fw"></i> Admin Create<span class="fa arrow"></span></a>
             <ul class="nav nav-second-level">
-                <g:each in="${session.menus.admin.create}" var="item">
+                <g:each in="${session.menus.admin.create.sort{it.text}}" var="item">
                   <li class="menu-create-admin">${ g.link(item.link + item.attr) { "<i class='fa fa-angle-double-right fa-fw'></i> ${item.text}" } }</li>
                 </g:each>
 
@@ -140,7 +140,8 @@
                 <li><g:link controller="admin" action="ensureTipls" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Ensure TIPLs</g:link></li>
                 <li><g:link controller="admin" action="addPackageTypes" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Ensure Package Content Types</g:link></li>
                 <li><g:link controller="admin" action="triggerEnrichments" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Trigger enrichments</g:link></li>
-                %{--<li><g:link controller="admin" action="logViewer"><i class="fa fa-angle-double-right fa-fw"></i> Log Viewer</g:link></li>--}%
+              <li><g:link controller="admin" action="autoUpdatePackages" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i>Auto Update Packages</g:link></li>
+              %{--<li><g:link controller="admin" action="logViewer"><i class="fa fa-angle-double-right fa-fw"></i> Log Viewer</g:link></li>--}%
               <%--      <li><g:link controller="admin" action="housekeeping" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Housekeeping</g:link></li> --%>
 
               <!--

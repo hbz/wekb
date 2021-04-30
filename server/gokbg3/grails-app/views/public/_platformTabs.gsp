@@ -5,28 +5,28 @@
 
 
 <div id="content">
-    <ul id="tabs" class="nav nav-tabs">
+    <ul id="tabs" class="nav nav-tabs" role="tablist">
         <g:if test="${d.id}">
             <li class="nav-item">
-                <a class="nav-link active" href="#titledetails" data-toggle="tab">Hosted TIPPs</a>
+                <a class="nav-link active" href="#titledetails" data-toggle="tab" role="tab">Hosted Titles</a>
             </li>
             <li>
-                <a class="nav-link"  href="#packages" data-toggle="tab">Packages</a>
+                <a class="nav-link"  href="#packages" data-toggle="tab" role="tab">Packages</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link"  href="#altnames" data-toggle="tab">Alternate Names <span
+                <a class="nav-link"  href="#altnames" data-toggle="tab" role="tab">Alternate Names <span
                     class="badge badge-pill badge-info">${d.variantNames?.size() ?: '0'}</span></a>
             </li>
             <g:if test="${controllerName != 'public'}">
                 <g:if test="${grailsApplication.config.gokb.decisionSupport?.active}">
 
                     <li class="nav-item">
-                        <a class="nav-link"  href="#ds" data-toggle="tab">Decision Support</a>
+                        <a class="nav-link"  href="#ds" data-toggle="tab" role="tab">Decision Support</a>
                     </li>
                 </g:if>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#review" data-toggle="tab">Review Tasks (Open/Total)<span
+                    <a class="nav-link" href="#review" data-toggle="tab" role="tab">Review Tasks (Open/Total)<span
                         class="badge badge-pill badge-info">
                     ${d.reviewRequests?.findAll { it.status == org.gokb.cred.RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STATUS, 'Open') }?.size() ?: '0'}/${d.reviewRequests.size()}
 
@@ -36,7 +36,7 @@
         </g:if>
         <g:else>
             <li class="nav-item disabled" title="${message(code: 'component.create.idMissing.label')}"><span
-                    class="nav-tab-disabled">Hosted TIPPs</span></li>
+                    class="nav-tab-disabled">Hosted Titles</span></li>
             <li class="nav-item disabled" title="${message(code: 'component.create.idMissing.label')}"><span
                     class="nav-tab-disabled">Packages</span></li>
             <li class="nav-item disabled" title="${message(code: 'component.create.idMissing.label')}"><span
@@ -53,19 +53,19 @@
 
     <div id="my-tab-content" class="tab-content">
 
-        <div class="tab-pane fade show active" id="titledetails">
+        <div class="tab-pane fade show active" id="titledetails" role="tabpanel">
 
             <g:if test="${params.controller != 'create'}">
                 <g:link class="display-inline" controller="search" action="index"
                         params="[qbe: 'g:tipps', qp_plat_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_cp', 'qp_pub_id', 'qp_plat', 'qp_plat_id']]"
-                        id="">TIPPs on this Platform</g:link>
+                        id="">Titles on this Platform</g:link>
             </g:if>
             <g:else>
-                TIPPs can be added after the creation process has been finished.
+                Titles can be added after the creation process has been finished.
             </g:else>
         </div>
 
-        <div class="tab-pane fade" id="packages">
+        <div class="tab-pane fade" id="packages" role="tabpanel">
             <dl>
                 <dt>
                     <gokb:annotatedLabel owner="${d}" property="packages">Packages</gokb:annotatedLabel>
@@ -73,7 +73,7 @@
                 <dd>
                     <g:link class="display-inline" controller="search" action="index"
                             params="[qbe: 'g:packages', qp_platform_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_platform', 'qp_platform_id']]"
-                            id="">TIPPs on this Platform</g:link>
+                            id="">Packages on this Platform</g:link>
                 </dd>
             </dl>
         </div>
@@ -82,11 +82,11 @@
                   model="${[d: d, showActions: true]}"/>
 
         <g:if test="${controllerName != 'public'}">
-            <div class="tab-pane fade" id="ds">
+            <div class="tab-pane fade" id="ds" role="tabpanel">
                 <g:render template="/apptemplates/secondTemplates/dstab" model="${[d: d]}"/>
             </div>
 
-            <div class="tab-pane fade" id="review">
+            <div class="tab-pane fade" id="review" role="tabpanel">
                 <g:render template="/apptemplates/secondTemplates/revreqtab"
                           model="${[d: d]}"/>
             </div>

@@ -1,6 +1,6 @@
 <%@ page import="de.wekb.helper.RCConstants;" %>
 <g:if test="${d.publicationType?.value == 'Serial'}">
-	<div class="tab-pane active" id="tippcoverage">
+	<div class="tab-pane active" id="tippcoverage" role="tabpanel">
 		<dl class="dl-horizontal">
 			<dt>
 				<gokb:annotatedLabel owner="${d}" property="coverage">Coverage</gokb:annotatedLabel>

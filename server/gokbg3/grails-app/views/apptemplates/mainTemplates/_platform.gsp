@@ -93,7 +93,7 @@
 <div id="content">
     <ul id="tabs" class="nav nav-tabs">
         <g:if test="${d.id}">
-            <li class="active"><a href="#titledetails" data-toggle="tab">Hosted TIPPs</a></li>
+            <li class="active"><a href="#titledetails" data-toggle="tab">Hosted Titles</a></li>
             <li><a href="#packages" data-toggle="tab">Packages</a></li>
             <li><a href="#altnames" data-toggle="tab">Alternate Names <span
                     class="badge badge-warning">${d.variantNames?.size() ?: '0'}</span></a></li>
@@ -112,7 +112,7 @@
         </g:if>
         <g:else>
             <li class="disabled" title="${message(code: 'component.create.idMissing.label')}"><span
-                    class="nav-tab-disabled">Hosted TIPPs</span></li>
+                    class="nav-tab-disabled">Hosted Titles</span></li>
             <li class="disabled" title="${message(code: 'component.create.idMissing.label')}"><span
                     class="nav-tab-disabled">Packages</span></li>
             <li class="disabled" title="${message(code: 'component.create.idMissing.label')}"><span
@@ -133,10 +133,10 @@
             <g:if test="${params.controller != 'create'}">
                 <g:link class="display-inline" controller="search" action="index"
                         params="[qbe: 'g:tipps', qp_plat_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_cp', 'qp_pub_id', 'qp_plat', 'qp_plat_id']]"
-                        id="">TIPPs on this Platform</g:link>
+                        id="">Titles on this Platform</g:link>
             </g:if>
             <g:else>
-                TIPPs can be added after the creation process has been finished.
+                Titles can be added after the creation process has been finished.
             </g:else>
         </div>
 
@@ -148,7 +148,7 @@
                 <dd>
                     <g:link class="display-inline" controller="search" action="index"
                             params="[qbe: 'g:packages', qp_platform_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_platform', 'qp_platform_id']]"
-                            id="">TIPPs on this Platform</g:link>
+                            id="">Packages on this Platform</g:link>
                 </dd>
             </dl>
         </div>

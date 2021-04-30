@@ -37,8 +37,7 @@ class SearchService {
 
         if ( params.refOid && !params.refOid.endsWith('null')) {
             result.refOid = params.refOid
-
-            result.refName = KBComponent.get(Long.valueOf(params.refOid.split(':')[1])).name
+            result.refObject = KBComponent.get(Long.valueOf(params.refOid.split(':')[1]))
         }
 
         result.max = params.max ? Integer.parseInt(params.max) : ( user.defaultPageSize ?: 10 );
@@ -182,7 +181,7 @@ class SearchService {
                 def cobj = r
                 def final_oid = "${cobj.class.name}:${cobj.id}"
 
-                if (!params.hide || !params.hide.contains(rh.qpEquiv)) {
+                if (!params.hide || (params.hide instanceof String ? (params.hide != rh.qpEquiv) : !params.hide.contains(rh.qpEquiv))) {
 
                     ppath.eachWithIndex { prop, idx ->
                         def sp = prop.minus('?')

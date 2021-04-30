@@ -715,7 +715,7 @@ class PackageController {
 
   @Transactional
   @Secured(value = ["IS_AUTHENTICATED_ANONYMOUSLY"])
-  def updateTipps() {
+  /*def updateTipps() {
     def result = ['result': 'OK']
     def async = params.async ? params.boolean('async') : true
     def update = request.method == 'PATCH' || (params.addOnly ? params.boolean('addOnly') : false)
@@ -1312,7 +1312,7 @@ class PackageController {
     }
 
     render result as JSON
-  }
+  }*/
 
   private def cleanUpGorm(session) {
     log.debug("Clean up GORM");

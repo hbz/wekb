@@ -137,7 +137,7 @@ class CrossRefPkgRun {
 
       handleUpdateToken()
 
-      existing_tipp_ids = TitleInstance.executeQuery(
+      existing_tipp_ids = TitleInstancePackagePlatform.executeQuery(
         "select tipp.id from TitleInstancePackagePlatform tipp, Combo combo where " +
           "tipp.status in :status and " +
           "combo.toComponent = tipp and " +
@@ -320,6 +320,10 @@ class CrossRefPkgRun {
     }
     job?.endTime = new Date()
 
+    if (job?.messages?.size() > 0) {
+      jsonResult << [messages: job?.messages]
+    }
+
     JobResult.withNewSession {
       def result_object = JobResult.findByUuid(job?.uuid)
       if (!result_object) {
@@ -393,6 +397,7 @@ class CrossRefPkgRun {
     }
   }
 
+  @Deprecated
   private Map handleTitle(JSONObject tippJson) {
     Map titleErrorMap = [:] // [<jsonPropertyName>: [message: <msg>, baddata: <jsonPropertyValue>], ..]
     def title_validation = Class.forName(IntegrationController.determineTitleClass(tippJson.title)).validateDTO(tippJson.title, locale)
@@ -558,8 +563,9 @@ class CrossRefPkgRun {
     return pltError
   }
 
+  @Deprecated
   private Map handleTIPP(JSONObject tippJson) {
-    Map tippError = [:]
+    /*Map tippError = [:]
     def validation_result = TitleInstancePackagePlatform.validateDTONew(tippJson, locale)
     log.debug("validate TIPP ${tippJson.name ?: tippJson.title.name}")
     if (!validation_result.valid) {
@@ -651,7 +657,7 @@ class CrossRefPkgRun {
         return tipp_error
       }
     }
-    return tippError
+    return tippError*/
   }
 
 
@@ -711,10 +717,10 @@ class CrossRefPkgRun {
         return tipp_error
       }
       if (upserted_tipp) {
-        if (existing_tipp_ids.size() > 0 && existing_tipp_ids.contains(upserted_tipp.id)) {
+        /*if (existing_tipp_ids.size() > 0 && existing_tipp_ids.contains(upserted_tipp.id)) {
           log.debug("Existing TIPP matched!")
           existing_tipp_ids.removeElement(upserted_tipp.id)
-        }
+        }*/
         if (upserted_tipp.status != status_deleted && tippJson.status == "Deleted") {
           upserted_tipp.deleteSoft()
           removedNum++;
