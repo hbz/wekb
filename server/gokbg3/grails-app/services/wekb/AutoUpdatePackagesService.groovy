@@ -33,13 +33,11 @@ class AutoUpdatePackagesService {
         if (running == false) {
             running = true
             log.debug("UpdateFromSource started")
-            if(startSourceUpdate(p, user, ignoreLastChanged)){
+            if (startSourceUpdate(p, user, ignoreLastChanged)) {
                 result = [result: JobResult.STATUS_SUCCESS, message: 'Auto Update Packages success']
             }
-            startSourceUpdate(p, user, ignoreLastChanged)
             running = false
-        }
-        else {
+        } else {
             log.debug("update skipped - already running")
             result = [result: JobResult.STATUS_FAIL, message: 'Auto Update Packages already running']
         }
@@ -48,9 +46,9 @@ class AutoUpdatePackagesService {
         if (!result_object) {
             def job_map = [
                     uuid        : uuid,
-                    description : "Auto Update Packages Job (${p.name})",
+                    description : (user ? "Manuell" : "Auto") + " Update Packages Job (${p.name})",
                     resultObject: (result as JSON).toString(),
-                    type        : RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'AutoUpdatePackagesJob'),
+                    type        : user ? RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'ManuellUpdatePackageJob') : RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'AutoUpdatePackagesJob'),
                     statusText  : result.result,
                     startTime   : startTime,
                     endTime     : new Date(),
@@ -86,31 +84,27 @@ class AutoUpdatePackagesService {
             tokenValue = RandomStringUtils.random(255, charset.toCharArray())
 
 
-                if (p.updateToken) {
-                    UpdateToken currentToken = p.updateToken
-                    currentToken.updateUser = user
-                    currentToken.value = tokenValue
-                    currentToken.save(flush: true)
-                    //p.updateToken = null
-                    //p.save(flush: true)
-                    //currentToken.delete(flush: true)
-                    //UpdateToken.executeUpdate("DELETE FROM UpdateToken WHERE id = :deletedID", [deletedID: currentToken.id ])
-                }else{
-                    UpdateToken newToken = new UpdateToken(pkg: p, updateUser: user, value: tokenValue).save(flush: true)
-                }
+            if (p.updateToken) {
+                UpdateToken currentToken = p.updateToken
+                currentToken.updateUser = user
+                currentToken.value = tokenValue
+                currentToken.save(flush: true)
+            } else {
+                UpdateToken newToken = new UpdateToken(pkg: p, updateUser: user, value: tokenValue).save(flush: true)
+            }
 
         }
 
 
         if (tokenValue && ygorBaseUrl) {
             def path = "/enrichment/processGokbPackage?pkgId=${p.id}&updateToken=${tokenValue}"
-            if(ignoreLastChanged){
+            if (ignoreLastChanged) {
                 path = "/enrichment/processGokbPackage?pkgId=${p.id}&ignoreLastChanged=true&updateToken=${tokenValue}"
             }
             updateTrigger = new RESTClient(ygorBaseUrl + path)
 
             try {
-                log.debug("GET ygor"+path)
+                log.debug("GET ygor" + path)
                 updateTrigger.request(GET) { request ->
                     response.success = { resp, data ->
                         log.debug("GET ygor${path} => success")
@@ -143,52 +137,9 @@ class AutoUpdatePackagesService {
                                     if (statusData.gokbJobId) {
                                         processing = false
                                         task {
-                                            log.debug("task start...")
-                                            ConcurrencyManagerService.Job job = concurrencyManagerService.getJob(Integer.parseInt(statusData.gokbJobId))
-                                            while (!job.isDone() && job.get() == null) {
-                                                sleep(5000) // 5 sec
-                                                log.debug("checking xRefPackage status...")
-                                            }
-                                            log.debug("xRefPackage Job done!")
-                                            def xRefResult = job.get()
-                                            if (xRefResult) {
-                                                if (xRefResult.result == "OK") {
-                                                    log.debug("xRefPackage result OK")
-                                                    Package.withNewSession {
-                                                        Package pkg = Package.get(xRefResult.pkgId)
-                                                        if(pkg){
-                                                            Source source = pkg.source
-                                                            List<URL> updateUrls
-                                                            if (pkg.currentTippCount == 0){
-                                                                // this is obviously a new package --> update with older timestamp
-                                                                updateUrls = new ArrayList<>()
-                                                                updateUrls.add(new URL(source.url))
-                                                            }
-                                                            else{
-                                                                // this package had already been filled with data
-                                                                updateUrls = getUpdateUrls(source.url, source.lastRun, pkg.dateCreated)
-                                                            }
-                                                            log.info("Got ${updateUrls}")
-                                                            updateUrls = UrlToolkit.removeNonExistentURLs(updateUrls)
-                                                            Iterator urlsIterator = updateUrls.listIterator(updateUrls.size())
-                                                            if (updateUrls.size() > 0) {
-                                                                while (urlsIterator.hasPrevious()) {
-                                                                    URL url = urlsIterator.previous()
-                                                                    println(url)
-                                                                }
-                                                            }
-                                                            pkg.source.lastRun = new Date()
-                                                            pkg.source.save()
-                                                        }
-
-
-                                                    }
-                                                    log.debug("set ${p.source.getNormname()}.lastRun = now")
-                                                }
-                                            }
+                                            checkPackageJob(statusData.gokbJobId, p)
                                         }
-                                    }
-                                    else {
+                                    } else {
                                         sleep(10000) // 10 sec
                                     }
                                 }
@@ -216,8 +167,7 @@ class AutoUpdatePackagesService {
                 result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "SourceUpdate Exception"]]]
                 error = true
             }
-        }
-        else {
+        } else {
             result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "No user provided and no existing updateToken found!"]]]
             log.debug("No user provided and no existing updateToken found!")
             error = true
@@ -227,18 +177,56 @@ class AutoUpdatePackagesService {
     }
 
 
-    static List<URL> getUpdateUrls(String url, String lastProcessingDate, String packageCreationDate){
-        if (StringUtils.isEmpty(lastProcessingDate)){
+    static List<URL> getUpdateUrls(String url, String lastProcessingDate, String packageCreationDate) {
+        if (StringUtils.isEmpty(lastProcessingDate)) {
             lastProcessingDate = packageCreationDate
         }
-        if (StringUtils.isEmpty(url) || StringUtils.isEmpty(lastProcessingDate)){
+        if (StringUtils.isEmpty(url) || StringUtils.isEmpty(lastProcessingDate)) {
             return new ArrayList<URL>()
         }
-        if (UrlToolkit.containsDateStamp(url) || UrlToolkit.containsDateStampPlaceholder(url)){
+        if (UrlToolkit.containsDateStamp(url) || UrlToolkit.containsDateStampPlaceholder(url)) {
             return UrlToolkit.getUpdateUrlList(url, lastProcessingDate)
-        }
-        else{
+        } else {
             return Arrays.asList(new URL(url))
+        }
+    }
+
+    private void checkPackageJob(String gokbJobId, Package aPackage) {
+        log.debug("task start...")
+        ConcurrencyManagerService.Job job = concurrencyManagerService.getJob(gokbJobId)
+        while (!job.isDone() && job.get() == null) {
+            this.wait(5000) // 5 sec
+            log.debug("checking xRefPackage status...")
+        }
+        log.debug("xRefPackage Job done!")
+        def xRefResult = job.get()
+        if (xRefResult) {
+            if (xRefResult.result == "OK") {
+                log.debug("xRefPackage result OK")
+                Source source = aPackage.source
+                List<URL> updateUrls
+                if (aPackage.currentTippCount == 0) {
+                    // this is obviously a new package --> update with older timestamp
+                    updateUrls = new ArrayList<>()
+                    updateUrls.add(new URL(source.url))
+                } else {
+                    // this package had already been filled with data
+                    updateUrls = getUpdateUrls(source.url, source.lastRun, aPackage.dateCreated)
+                }
+                log.info("Got ${updateUrls}")
+                updateUrls = UrlToolkit.removeNonExistentURLs(updateUrls)
+                Iterator urlsIterator = updateUrls.listIterator(updateUrls.size())
+                if (updateUrls.size() > 0) {
+                    while (urlsIterator.hasPrevious()) {
+                        URL url = urlsIterator.previous()
+                        println(url)
+                    }
+                }
+                aPackage.source.lastRun = new Date()
+                aPackage.source.save()
+
+                log.debug("set ${aPackage.source.getNormname()}.lastRun = now")
+            }
         }
     }
 

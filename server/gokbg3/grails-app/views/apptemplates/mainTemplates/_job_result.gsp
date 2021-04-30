@@ -61,6 +61,28 @@
     ${json?.message}
   </dd>
   <dt>
+    <gokb:annotatedLabel owner="${d}" property="resultJson">Messages</gokb:annotatedLabel>
+  </dt>
+  <dd>
+    <g:if test="${json?.messages}">
+      messages:
+      <ul>
+        <g:each in="${json.messages}" var="m">
+          <g:if test="${m instanceof String}">
+            <li>${m}</li>
+          </g:if>
+          <g:else>
+            <li>${m.message}</li>
+          </g:else>
+        </g:each>
+      </ul>
+    </g:if>
+    <g:if test="${!json?.messages}">
+      No Messages
+    </g:if>
+  </dd>
+
+  <dt>
     <gokb:annotatedLabel owner="${d}" property="resultJson">Errors</gokb:annotatedLabel>
   </dt>
   <dd>
