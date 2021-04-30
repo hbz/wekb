@@ -320,6 +320,10 @@ class CrossRefPkgRun {
     }
     job?.endTime = new Date()
 
+    if (job?.messages?.size() > 0) {
+      jsonResult << [messages: job?.messages]
+    }
+
     JobResult.withNewSession {
       def result_object = JobResult.findByUuid(job?.uuid)
       if (!result_object) {

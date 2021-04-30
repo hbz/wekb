@@ -272,24 +272,13 @@
       </div>
 
       <div class="tab-pane" id="activity">
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Action</th>
-              <th>Title</th>
-            </tr>
-          </thead>
-          <tbody>
-            <g:each in="${d?.getRecentActivity(40)}" var="h">
-              <tr>
-                <td>${h[1]}</td>
-                <td>${h[2]}</td>
-                <td>${h[0].title?.name} (<g:link controller="resource" action="show" id="${h[0].getClassName()+':'+h[0].id}">TIPP ${h[0].id}</g:link>)</td>
-              </tr>
-            </g:each>
-          </tbody>
-        </table>
+        <g:set var="recentActivitys" value="${d?.getRecentActivity()}"/>
+        <g:if test="${recentActivitys.size() > 25}">
+          <g:link controller="package" action="recentActivity" id="${d.id}">All Recent Activitys (${recentActivitys.size()})</g:link>
+          <g:set var="recentActivitys" value="${recentActivitys.take(25)}"/>
+          <br><br>
+        </g:if>
+        <g:render template="/apptemplates/secondTemplates/recentActivity" model="[recentActivitys: recentActivitys]"/>
       </div>
 
       <div class="tab-pane" id="review">

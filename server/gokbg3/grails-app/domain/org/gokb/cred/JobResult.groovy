@@ -4,6 +4,11 @@ import grails.converters.JSON
 
 class JobResult {
 
+  public static final String STATUS_OK        = 'OK'
+  public static final String STATUS_ERROR     = 'ERROR'
+  public static final String STATUS_SUCCESS   = 'SUCCESS'
+  public static final String STATUS_FAIL      = 'FAIL'
+
   String uuid
   String description
   String statusText

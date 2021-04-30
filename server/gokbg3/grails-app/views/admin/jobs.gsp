@@ -16,6 +16,18 @@
 
             <div class="panel panel-default">
                 <div class="panel-heading clearfix">
+                    <h3 class="panel-title">Finished Upload Jobs</h3>
+                </div>
+
+                <div class="panel-body">
+                    <g:link class="display-inline" controller="search" action="index"
+                            params="[qbe: 'g:jobResults', inline: true]"
+                            id="">Finished Upload Jobs</g:link>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
                     <h3 class="panel-title">Current Jobs</h3>
                 </div>
 
@@ -89,19 +101,6 @@
                         </g:each>
                         </tbody>
                     </table>
-                </div>
-            </div>
-
-
-            <div class="panel panel-default">
-                <div class="panel-heading clearfix">
-                    <h3 class="panel-title">Finished Upload Jobs</h3>
-                </div>
-
-                <div class="panel-body">
-                    <g:link class="display-inline" controller="search" action="index"
-                            params="[qbe: 'g:jobResults', inline: true]"
-                            id="">Finished Upload Jobs</g:link>
                 </div>
             </div>
 

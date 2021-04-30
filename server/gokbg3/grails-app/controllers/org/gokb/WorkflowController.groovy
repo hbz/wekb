@@ -8,6 +8,7 @@ import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
+import wekb.AutoUpdatePackagesService
 import wekb.ExportService
 import wekb.GlobalSearchTemplatesService
 
@@ -21,6 +22,7 @@ class WorkflowController{
   def dateFormatService
   GlobalSearchTemplatesService globalSearchTemplatesService
   ExportService exportService
+  AutoUpdatePackagesService autoUpdatePackagesService
 
   def actionConfig = [
       'method::deleteSoft'     : [actionType: 'simple'],
@@ -1558,9 +1560,9 @@ class WorkflowController{
 
   private writeExportLine(Writer writer, Closure<String> sanitize, TitleInstancePackagePlatform tipp, def tippCoverageStatement){
     writer.write(
-        sanitize(tipp.title.name) + '\t' +
-            (tipp.title.hasProperty('dateFirstInPrint') ? sanitize(tipp.title.getIdentifierValue('pISBN')) : sanitize(tipp.title.getIdentifierValue('ISSN'))) + '\t' +
-            (tipp.title.hasProperty('dateFirstInPrint') ? sanitize(tipp.title.getIdentifierValue('ISBN')) : sanitize(tipp.title.getIdentifierValue('eISSN'))) + '\t' +
+        sanitize(tipp.name) + '\t' +
+            (tipp.hasProperty('dateFirstInPrint') ? sanitize(tipp.getIdentifierValue('pISBN')) : sanitize(tipp.getIdentifierValue('ISSN'))) + '\t' +
+            (tipp.hasProperty('dateFirstInPrint') ? sanitize(tipp.getIdentifierValue('ISBN')) : sanitize(tipp.getIdentifierValue('eISSN'))) + '\t' +
             sanitize(tippCoverageStatement.startDate) + '\t' +
             sanitize(tippCoverageStatement.startVolume) + '\t' +
             sanitize(tippCoverageStatement.startIssue) + '\t' +
@@ -1821,16 +1823,16 @@ class WorkflowController{
           }
 
           if (pkgObj?.isEditable() && (is_curator || !curated_pkg  || user.authorities.contains(Role.findByAuthority('ROLE_SUPERUSER')))) {
-            def result = packageService.updateFromSource(pkgObj, user, allTitles)
+            Map result = autoUpdatePackagesService.updateFromSource(pkgObj, user, allTitles)
 
-            if (result == 'OK'){
-              flash.success = "Update successfully started!"
+            if (result.result == JobResult.STATUS_SUCCESS){
+              flash.success = result.message
             }
-            else if (result == 'ALREADY_RUNNING'){
-              flash.warning = "Another update is already running. Please try again later."
+            else if (result.result == JobResult.STATUS_FAIL){
+              flash.warning = result.message
             }
             else{
-              flash.error = "There have been errors running the job. Please check Source & Package info."
+              flash.error = "There have been errors running the job. Please check Source info & Package info."
             }
           }
           else{
