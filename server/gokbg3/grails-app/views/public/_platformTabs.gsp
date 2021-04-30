@@ -8,7 +8,7 @@
     <ul id="tabs" class="nav nav-tabs" role="tablist">
         <g:if test="${d.id}">
             <li class="nav-item">
-                <a class="nav-link active" href="#titledetails" data-toggle="tab" role="tab">Hosted TIPPs</a>
+                <a class="nav-link active" href="#titledetails" data-toggle="tab" role="tab">Hosted Titles</a>
             </li>
             <li>
                 <a class="nav-link"  href="#packages" data-toggle="tab" role="tab">Packages</a>
@@ -36,7 +36,7 @@
         </g:if>
         <g:else>
             <li class="nav-item disabled" title="${message(code: 'component.create.idMissing.label')}"><span
-                    class="nav-tab-disabled">Hosted TIPPs</span></li>
+                    class="nav-tab-disabled">Hosted Titles</span></li>
             <li class="nav-item disabled" title="${message(code: 'component.create.idMissing.label')}"><span
                     class="nav-tab-disabled">Packages</span></li>
             <li class="nav-item disabled" title="${message(code: 'component.create.idMissing.label')}"><span
@@ -58,10 +58,10 @@
             <g:if test="${params.controller != 'create'}">
                 <g:link class="display-inline" controller="search" action="index"
                         params="[qbe: 'g:tipps', qp_plat_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_cp', 'qp_pub_id', 'qp_plat', 'qp_plat_id']]"
-                        id="">TIPPs on this Platform</g:link>
+                        id="">Titles on this Platform</g:link>
             </g:if>
             <g:else>
-                TIPPs can be added after the creation process has been finished.
+                Titles can be added after the creation process has been finished.
             </g:else>
         </div>
 
@@ -73,7 +73,7 @@
                 <dd>
                     <g:link class="display-inline" controller="search" action="index"
                             params="[qbe: 'g:packages', qp_platform_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_platform', 'qp_platform_id']]"
-                            id="">TIPPs on this Platform</g:link>
+                            id="">Packages on this Platform</g:link>
                 </dd>
             </dl>
         </div>

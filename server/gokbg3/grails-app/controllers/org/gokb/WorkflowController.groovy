@@ -1823,16 +1823,16 @@ class WorkflowController{
           }
 
           if (pkgObj?.isEditable() && (is_curator || !curated_pkg  || user.authorities.contains(Role.findByAuthority('ROLE_SUPERUSER')))) {
-            def result = autoUpdatePackagesService.updateFromSource(pkgObj, user, allTitles)
+            Map result = autoUpdatePackagesService.updateFromSource(pkgObj, user, allTitles)
 
-            if (result == 'OK'){
-              flash.success = "Update successfully started!"
+            if (result.result == JobResult.STATUS_SUCCESS){
+              flash.success = result.message
             }
-            else if (result == 'ALREADY_RUNNING'){
-              flash.warning = "Another update is already running. Please try again later."
+            else if (result.result == JobResult.STATUS_FAIL){
+              flash.warning = result.message
             }
             else{
-              flash.error = "There have been errors running the job. Please check Source & Package info."
+              flash.error = "There have been errors running the job. Please check Source info & Package info."
             }
           }
           else{

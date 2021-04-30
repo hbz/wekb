@@ -648,7 +648,7 @@ select tipp.id,
 //                        [pkg: this], [max:n]);
 
       def changes = TitleInstancePackagePlatform.executeQuery('select tipp from TitleInstancePackagePlatform as tipp, Combo as c ' +
-        'where c.fromComponent= ? and c.toComponent=tipp order by tipp.lastUpdated DESC',
+        'where c.fromComponent= ? and c.toComponent=tipp',
         [this]);
 
       use(TimeCategory) {
@@ -670,7 +670,7 @@ select tipp.id,
 
 //       result.addAll(additions)
 //       result.addAll(deletions)
-      //result.sort { it[1] }
+      result.sort { it[1] }
       result = result.reverse();
       //result = result.take(n);
     }

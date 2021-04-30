@@ -1,21 +1,23 @@
 package wekb
 
 import com.k_int.ConcurrencyManagerService
+import de.hbznrw.ygor.tools.UrlToolkit
 import de.wekb.helper.RCConstants
 import grails.converters.JSON
-import grails.gorm.transactions.Transactional
 import groovyx.net.http.RESTClient
 import org.apache.commons.lang.RandomStringUtils
+import org.apache.commons.lang.StringUtils
 import org.gokb.cred.JobResult
 import org.gokb.cred.Package
 import org.gokb.cred.RefdataCategory
+import org.gokb.cred.Source
 import org.gokb.cred.UpdateToken
+import org.gokb.cred.User
 
 import static grails.async.Promises.task
 import static groovyx.net.http.Method.GET
-import static groovyx.net.http.Method.GET
 
-@Transactional
+
 class AutoUpdatePackagesService {
 
     public static boolean running = false;
@@ -23,7 +25,7 @@ class AutoUpdatePackagesService {
     ConcurrencyManagerService concurrencyManagerService
     Map result = [result: JobResult.STATUS_SUCCESS]
 
-    def synchronized updateFromSource(Package p, def user = null, ignoreLastChanged = false) {
+    Map updateFromSource(Package p, User user = null, ignoreLastChanged = false) {
         log.debug("updateFromSource")
 
         Date startTime = new Date()
@@ -54,10 +56,8 @@ class AutoUpdatePackagesService {
                     endTime     : new Date(),
                     linkedItemId: p.id
             ]
-            new JobResult(job_map).save()
+            new JobResult(job_map).save(flush: true)
         }
-
-
         result
     }
 
@@ -66,7 +66,7 @@ class AutoUpdatePackagesService {
      * Bad configurations will result in failure.
      * The autoUpdate frequency in the source is ignored: the update starts immediately.
      */
-    private boolean startSourceUpdate(Package p, def user = null, boolean ignoreLastChanged = false) {
+    private boolean startSourceUpdate(Package p, User user = null, boolean ignoreLastChanged = false) {
         log.debug("Source update start..")
         //println("Source update start..")
         boolean error = false
@@ -85,14 +85,22 @@ class AutoUpdatePackagesService {
             String charset = (('a'..'z') + ('0'..'9')).join()
             tokenValue = RandomStringUtils.random(255, charset.toCharArray())
 
-            if (p.updateToken) {
-                def currentToken = p.updateToken
-                p.updateToken = null
-                currentToken.delete(flush: true)
-            }
 
-            def newToken = new UpdateToken(pkg: p, updateUser: user, value: tokenValue).save(flush: true)
+                if (p.updateToken) {
+                    UpdateToken currentToken = p.updateToken
+                    currentToken.updateUser = user
+                    currentToken.value = tokenValue
+                    currentToken.save(flush: true)
+                    //p.updateToken = null
+                    //p.save(flush: true)
+                    //currentToken.delete(flush: true)
+                    //UpdateToken.executeUpdate("DELETE FROM UpdateToken WHERE id = :deletedID", [deletedID: currentToken.id ])
+                }else{
+                    UpdateToken newToken = new UpdateToken(pkg: p, updateUser: user, value: tokenValue).save(flush: true)
+                }
+
         }
+
 
         if (tokenValue && ygorBaseUrl) {
             def path = "/enrichment/processGokbPackage?pkgId=${p.id}&updateToken=${tokenValue}"
@@ -138,7 +146,7 @@ class AutoUpdatePackagesService {
                                             log.debug("task start...")
                                             ConcurrencyManagerService.Job job = concurrencyManagerService.getJob(Integer.parseInt(statusData.gokbJobId))
                                             while (!job.isDone() && job.get() == null) {
-                                                this.wait(5000) // 5 sec
+                                                sleep(5000) // 5 sec
                                                 log.debug("checking xRefPackage status...")
                                             }
                                             log.debug("xRefPackage Job done!")
@@ -147,9 +155,33 @@ class AutoUpdatePackagesService {
                                                 if (xRefResult.result == "OK") {
                                                     log.debug("xRefPackage result OK")
                                                     Package.withNewSession {
-                                                        def pkg = Package.get(xRefResult.pkgId)
-                                                        pkg.source.lastRun = new Date()
-                                                        pkg.source.save(flush: true)
+                                                        Package pkg = Package.get(xRefResult.pkgId)
+                                                        if(pkg){
+                                                            Source source = pkg.source
+                                                            List<URL> updateUrls
+                                                            if (pkg.currentTippCount == 0){
+                                                                // this is obviously a new package --> update with older timestamp
+                                                                updateUrls = new ArrayList<>()
+                                                                updateUrls.add(new URL(source.url))
+                                                            }
+                                                            else{
+                                                                // this package had already been filled with data
+                                                                updateUrls = getUpdateUrls(source.url, source.lastRun, pkg.dateCreated)
+                                                            }
+                                                            log.info("Got ${updateUrls}")
+                                                            updateUrls = UrlToolkit.removeNonExistentURLs(updateUrls)
+                                                            Iterator urlsIterator = updateUrls.listIterator(updateUrls.size())
+                                                            if (updateUrls.size() > 0) {
+                                                                while (urlsIterator.hasPrevious()) {
+                                                                    URL url = urlsIterator.previous()
+                                                                    println(url)
+                                                                }
+                                                            }
+                                                            pkg.source.lastRun = new Date()
+                                                            pkg.source.save()
+                                                        }
+
+
                                                     }
                                                     log.debug("set ${p.source.getNormname()}.lastRun = now")
                                                 }
@@ -157,7 +189,7 @@ class AutoUpdatePackagesService {
                                         }
                                     }
                                     else {
-                                        this.wait(10000) // 10 sec
+                                        sleep(10000) // 10 sec
                                     }
                                 }
                                 response.failure = { statusResp, statusData ->
@@ -193,4 +225,21 @@ class AutoUpdatePackagesService {
 
         return !error
     }
+
+
+    static List<URL> getUpdateUrls(String url, String lastProcessingDate, String packageCreationDate){
+        if (StringUtils.isEmpty(lastProcessingDate)){
+            lastProcessingDate = packageCreationDate
+        }
+        if (StringUtils.isEmpty(url) || StringUtils.isEmpty(lastProcessingDate)){
+            return new ArrayList<URL>()
+        }
+        if (UrlToolkit.containsDateStamp(url) || UrlToolkit.containsDateStampPlaceholder(url)){
+            return UrlToolkit.getUpdateUrlList(url, lastProcessingDate)
+        }
+        else{
+            return Arrays.asList(new URL(url))
+        }
+    }
+
 }
