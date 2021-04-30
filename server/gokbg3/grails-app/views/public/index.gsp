@@ -39,11 +39,11 @@
                                         <g:set var="kbc"
                                                value="${v.term.startsWith('org.gokb.cred') ? org.gokb.cred.KBComponent.get(v.term.split(':')[1].toLong()) : null}"/>
                                         <g:if test="${params.list(facet.key).contains(v.term.toString())}">
-                                            <option value="${v.term}"
+                                            <option value="${'"'+v.term+'"'}"
                                                     selected="selected">${kbc?.name ?: v.display} (${v.count})</option>
                                         </g:if>
                                         <g:else>
-                                            <option value="${v.term}">${kbc?.name ?: v.display} (${v.count})</option>
+                                            <option value="${'"'+v.term+'"'}">${kbc?.name ?: v.display} (${v.count})</option>
                                         </g:else>
                                     </g:each>
                                 </select>
@@ -56,7 +56,7 @@
             <div class="form-group row justify-content-end">
                 <div class="col-4">
                     <div class="float-right">
-                        <a class="btn btn-dark" href="${grailsApplication.config.server.contextPath ?: ''}"/>Reset</a>
+                        <g:link class="btn btn-dark" controller="public">Reset</g:link>
                         <button class="btn btn-primary " type="submit" value="yes" name="search">Search</button>
                     </div>
                 </div>

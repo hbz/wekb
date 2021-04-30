@@ -213,6 +213,7 @@ class PublicController {
     params.max = mutableParams.max
     params.offset = mutableParams.offset
     params.remove('newMax')
+    params.remove('search')
 
     result
   }
