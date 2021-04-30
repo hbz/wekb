@@ -857,6 +857,24 @@ class GlobalSearchTemplatesService {
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'nominalPlatform.id', 'type': 'java.lang.Long'],
                                         hide       : true
                                 ],
+
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.Source',
+                                        prompt     : 'Source',
+                                        qparam     : 'qp_source',
+                                        placeholder: 'Source',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'source'],
+                                        hide       : false
+                                ],
+
+                                [
+                                        prompt     : 'Source ID',
+                                        qparam     : 'qp_source_id',
+                                        placeholder: 'Source ID',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'source.id', 'type': 'java.lang.Long'],
+                                        hide       : true
+                                ],
                         ],
                         qbeGlobals: [
                                 ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
@@ -872,6 +890,7 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
                                 [heading: 'Titles', property: 'currentTippCount'],
+                                [heading: 'Source', property: 'source?.name', link: true],
                         ],
                         actions   : [
                                 [name: 'Register Web Hook for all Packages', code: 'general::registerWebhook', iconClass: 'glyphicon glyphicon-link']
@@ -1403,7 +1422,7 @@ class GlobalSearchTemplatesService {
     Map userWatchedComponents() {
         Map result = [
                 baseclass   : 'org.gokb.cred.ComponentWatch',
-                title       : 'My Components',
+                title       : 'My Watched Components',
                 group       : 'Tertiary',
                 defaultSort : 'component.lastUpdated',
                 defaultOrder: 'desc',

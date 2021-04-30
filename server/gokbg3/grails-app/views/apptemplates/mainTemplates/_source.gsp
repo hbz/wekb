@@ -80,5 +80,29 @@
         <dd>
             <gokb:xEditable owner="${d}" type="date" field="lastRun">${d.lastRun}</gokb:xEditable>
         </dd>
+
     </g:if>
 </dl>
+
+
+<g:if test="${d.id}">
+    <div id="content">
+        <ul id="tabs" class="nav nav-tabs">
+            <li class="active"><a href="#packages" data-toggle="tab">Packages</a></li>
+        </ul>
+
+        <div class="tab-pane active" id="packages">
+            <dl>
+                <dt>
+                    <gokb:annotatedLabel owner="${d}" property="packages">Packages</gokb:annotatedLabel>
+                </dt>
+                <dd>
+                    <g:link class="display-inline" controller="search" action="index"
+                            params="[qbe: 'g:packages', qp_source_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_source', 'qp_source_id']]"
+                            id="">Packages on this Source</g:link>
+                </dd>
+            </dl>
+        </div>
+    </div>
+</g:if>
+

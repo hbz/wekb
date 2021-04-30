@@ -12,6 +12,7 @@ import org.springframework.security.acls.domain.BasePermission
 import org.springframework.security.acls.model.ObjectIdentity
 import org.springframework.security.acls.model.Permission
 import wekb.AdminService
+import wekb.AutoUpdatePackagesService
 
 import java.util.concurrent.CancellationException
 
@@ -28,6 +29,7 @@ class AdminController {
   ConcurrencyManagerService concurrencyManagerService
   CleanupService cleanupService
   AdminService adminService
+  AutoUpdatePackagesService autoUpdatePackagesService
 
   @Deprecated
   def tidyOrgData() {
@@ -528,10 +530,9 @@ class AdminController {
                       "and (p.source.lastRun is null or p.source.lastRun < current_date)")
       updPacks.each { Package p ->
         if (p.source.needsUpdate()) {
-          def result = packageService.updateFromSource(p)
-          log.debug("Result of update: ${result}")
-
-          sleep(10000)
+            def result = autoUpdatePackagesService.updateFromSource(p)
+            log.debug("Result of update: ${result}")
+            sleep(10000)
         }
       }
       log.info("auto update packages job completed.")

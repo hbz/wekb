@@ -1,6 +1,8 @@
 <%@ page import="grails.converters.JSON"%>
 
 <g:set var="counter" value="${offset}" />
+<g:set var="s_action" value="${s_action?:'index'}"/>
+<g:set var="s_controller" value="${s_controller?:'search'}"/>
 
 <g:if test="${ request.isAjax() }">
 
@@ -15,20 +17,20 @@
             <th style="white-space:nowrap;">
               <g:if test="${c.sort}">
                 <g:if test="${params.sort==c.sort && params.order=='asc'}">
-                  <g:link params="${params+['sort':c.sort,order:'desc']}">
+                  <g:link controller="${s_controller}" action="${s_action}" params="${params+['sort':c.sort,order:'desc']}">
                     ${c.heading}
                     <i class="fas fa-sort-up"></i>
                   </g:link>
                 </g:if>
                 <g:else>
                   <g:if test="${params.sort==c.sort && params.order=='desc'}">
-                    <g:link params="${params+['sort':c.sort,order:'asc']}">
+                    <g:link controller="${s_controller}" action="${s_action}" params="${params+['sort':c.sort,order:'asc']}">
                       ${c.heading}
                       <i class="fas fa-sort-down"></i>
                     </g:link>
                   </g:if>
                   <g:else>
-                    <g:link params="${params+['sort':c.sort,order:'desc']}">
+                    <g:link controller="${s_controller}" action="${s_action}" params="${params+['sort':c.sort,order:'desc']}">
                       ${c.heading}
                       <i class="fas fa-sort"></i>
                     </g:link>
@@ -87,20 +89,20 @@
             <g:if test="${!params.hide || !params.hide.contains(c.qpEquiv)}">
               <th style="white-space:nowrap"><g:if test="${c.sort}">
                   <g:if test="${params.sort==c.sort && params.order=='asc'}">
-                    <g:link params="${params+['sort':c.sort,order:'desc']}">
+                    <g:link controller="${s_controller}" action="${s_action}" params="${params+['sort':c.sort,order:'desc']}">
                       ${colmsg == colcode ? c.heading : colmsg}
                       <i class="fas fa-sort-up"></i>
                     </g:link>
                   </g:if>
                   <g:else>
                     <g:if test="${params.sort==c.sort && params.order=='desc'}">
-                      <g:link params="${params+['sort':c.sort,order:'asc']}">
+                      <g:link controller="${s_controller}" action="${s_action}" params="${params+['sort':c.sort,order:'asc']}">
                         ${colmsg == colcode ? c.heading : colmsg}
                         <i class="fas fa-sort-down"></i>
                       </g:link>
                     </g:if>
                     <g:else>
-                      <g:link params="${params+['sort':c.sort,order:'desc']}">
+                      <g:link controller="${s_controller}" action="${s_action}" params="${params+['sort':c.sort,order:'desc']}">
                         ${colmsg == colcode ? c.heading : colmsg}
                         <i class="fas fa-sort"></i>
                       </g:link>
@@ -154,12 +156,12 @@
                     ${c.value}
                   </g:else></td>
               </g:each>
-              <g:if test="${request.user?.showQuickView?.value=='Yes'}">
+              %{--<g:if test="${request.user?.showQuickView?.value=='Yes'}">
                 <td>
                   <g:link class="btn btn-xs btn-default pull-right desktop-only" controller="search"
                     action="index" params="${params+['det':counter]}"><i class="fa fa-eye" ></i></g:link>
                 </td>
-              </g:if>
+              </g:if>--}%
             </tr>
           </g:if>
           <g:else>
