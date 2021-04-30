@@ -61,6 +61,11 @@
 						<g:render template="qbeempty" />
 					</div>
 				</g:elseif>
+				<g:else>
+					<div class='no-results' >
+						<p>No results.</p>
+					</div>
+				</g:else>
 			</g:else>
 	 </div>
   </div>

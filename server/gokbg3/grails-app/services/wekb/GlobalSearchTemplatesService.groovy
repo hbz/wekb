@@ -1422,7 +1422,7 @@ class GlobalSearchTemplatesService {
     Map userWatchedComponents() {
         Map result = [
                 baseclass   : 'org.gokb.cred.ComponentWatch',
-                title       : 'My Components',
+                title       : 'My Watched Components',
                 group       : 'Tertiary',
                 defaultSort : 'component.lastUpdated',
                 defaultOrder: 'desc',

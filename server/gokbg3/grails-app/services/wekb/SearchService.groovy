@@ -181,7 +181,7 @@ class SearchService {
                 def cobj = r
                 def final_oid = "${cobj.class.name}:${cobj.id}"
 
-                if (!params.hide || !params.hide.contains(rh.qpEquiv)) {
+                if (!params.hide || (params.hide instanceof String ? (params.hide != rh.qpEquiv) : !params.hide.contains(rh.qpEquiv))) {
 
                     ppath.eachWithIndex { prop, idx ->
                         def sp = prop.minus('?')
