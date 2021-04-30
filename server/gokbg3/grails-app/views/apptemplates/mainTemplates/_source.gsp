@@ -99,7 +99,7 @@
                 <dd>
                     <g:link class="display-inline" controller="search" action="index"
                             params="[qbe: 'g:packages', qp_source_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_source', 'qp_source_id']]"
-                            id="">Packages on this Platform</g:link>
+                            id="">Packages on this Source</g:link>
                 </dd>
             </dl>
         </div>
