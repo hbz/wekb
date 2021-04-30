@@ -44,6 +44,10 @@ class HomeController {
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   def userdash() {
     def result = [:]
+    result.user = springSecurityService.currentUser
+
+    result.saved_items = SavedSearch.executeQuery('Select ss from SavedSearch as ss where ss.owner = :user order by name',[user: result.user])
+
     result
   }
 
