@@ -292,7 +292,7 @@ class ExportService {
 
     private File kbartFromUrl(String urlString) throws Exception{
         URL url = new URL(urlString)
-        File folder = new File("/tmp/wekb")
+        File folder = new File("/tmp/wekb/kbartExport")
         HttpURLConnection connection
         try {
             connection = (HttpURLConnection) url.openConnection()
@@ -302,8 +302,6 @@ class ExportService {
             throw new RuntimeException("URL Connection was not established.")
         }
         connection.connect()
-        // connection.setConnectTimeout(2000)
-        // connection.setReadTimeout(30000)
         connection = UrlToolkit.resolveRedirects(connection, 5)
         log.debug("Final URL after redirects: ${connection.getURL()}")
 
@@ -312,7 +310,7 @@ class ExportService {
         File file = new File(fileName)
 
         byte[] content = getByteContent(connection.getInputStream())
-        InputStream inputStream = new ByteArrayInputStream(content)
+        //InputStream inputStream = new ByteArrayInputStream(content)
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK){
             FileUtils.copyInputStreamToFile(new ByteArrayInputStream(content), file)
             // copy content to local file
