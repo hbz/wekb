@@ -22,6 +22,7 @@ class Source extends KBComponent {
   RefdataValue defaultDataFormat
   IdentifierNamespace targetNamespace
   Date lastRun
+  String lastUpdateUrl
   Boolean zdbMatch = false
   Boolean ezbMatch = false
   Org responsibleParty
@@ -34,6 +35,7 @@ class Source extends KBComponent {
     includes KBComponent.mapping
     url column:'source_url'
     ruleset column:'source_ruleset', type:'text'
+    lastUpdateUrl column: 'source_last_update_url'
   }
 
   static constraints = {
@@ -51,6 +53,7 @@ class Source extends KBComponent {
     ezbMatch(nullable:true, default: false)
     zdbMatch(nullable:true,default: false)
     automaticUpdates(nullable: true,default: false)
+    lastUpdateUrl(nullable:true, blank:true)
     name(validator: { val, obj ->
       if (obj.hasChanged('name')) {
         if (val && val.trim()) {

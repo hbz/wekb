@@ -295,6 +295,7 @@ class CrossRefPkgRun {
         if (autoUpdate && pkg.source) {
           Source src = Source.get(pkg.source.id)
           src.lastRun = new Date()
+          src.lastUpdateUrl = rjson.updateURL
           src.merge(flush: true)
         }
       }

@@ -81,6 +81,16 @@
             <gokb:xEditable owner="${d}" type="date" field="lastRun">${d.lastRun}</gokb:xEditable>
         </dd>
 
+        <dt>
+            <gokb:annotatedLabel owner="${d}" property="lastUpdateUrl">Last Update Url</gokb:annotatedLabel>
+        </dt>
+        <dd>
+            <gokb:xEditable owner="${d}" field="lastUpdateUrl" overwriteEditable="${false}"/>
+            <g:if test="${d.lastUpdateUrl}">
+                &nbsp;<a href="${d.lastUpdateUrl}" target="new">Follow Link</a>
+            </g:if>
+        </dd>
+
     </g:if>
 </dl>
 
