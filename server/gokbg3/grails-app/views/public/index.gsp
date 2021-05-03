@@ -104,8 +104,6 @@
                         <td>
                             <g:link controller="public" action="packageContent"
                                     id="${hit.id}">${hit.source.name}</g:link>
-                            <!-- <g:link controller="public" action="kbart"
-                                         id="${hit.id}">(Download Kbart File)</g:link>-->
 
                         </td>
                         <td>${hit.source.cpname}</td>

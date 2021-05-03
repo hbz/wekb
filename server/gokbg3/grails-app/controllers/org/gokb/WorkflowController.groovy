@@ -1538,18 +1538,17 @@ class WorkflowController{
 
     def export_date = dateFormatService.formatDate(new Date())
     if (packages_to_export.size() == 1){
-      filename = "kbart_${packages_to_export[0].provider?.name}_${packages_to_export[0].name}_${export_date}.tsv"
+      filename = "kbart_${packages_to_export[0].provider?.name}_${packages_to_export[0].name}_${export_date}"
     }
     else{
       filename = "kbart_multiple_packages_${export_date}.tsv"
+      response.setContentType('text/tab-separated-values')
     }
 
     try{
-      response.setContentType('text/tab-separated-values')
       response.setHeader("Content-disposition", "attachment; filename=\"${filename}\"")
-      response.contentType = "text/tab-separated-values" // "text/tsv"
       packages_to_export.each{ pkg ->
-        exportService.exportPackageTippsAsKBART(response.outputStream, pkg)
+        exportService.exportOriginalKBART(response.outputStream, pkg)
       }
     }
     catch (Exception e){
