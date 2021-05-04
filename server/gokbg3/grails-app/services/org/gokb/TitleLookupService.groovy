@@ -476,8 +476,7 @@ class TitleLookupService {
         publisher_name: publisher_name,
         identifiers: identifiers,
         uuid: uuid,
-        fullsync: fullsync,
-        language: language
+        fullsync: fullsync
     ], user, project, newTitleClassName, fullsync)
   }
 
