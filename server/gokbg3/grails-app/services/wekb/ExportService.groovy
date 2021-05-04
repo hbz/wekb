@@ -1,12 +1,16 @@
 package wekb
 
+import de.hbznrw.ygor.tools.UrlToolkit
 import de.wekb.helper.RCConstants
 import gokbg3.DateFormatService
 import grails.gorm.transactions.Transactional
+import org.apache.commons.io.FileUtils
 import org.gokb.cred.Package
 import org.gokb.cred.RefdataCategory
 import org.gokb.cred.TIPPCoverageStatement
 import org.gokb.cred.TitleInstancePackagePlatform
+
+import java.nio.file.Files
 
 
 @Transactional
@@ -235,5 +239,98 @@ class ExportService {
             writer.close();
         }
         outputStream.close()
+    }
+
+
+    public void exportOriginalKBART(def outputStream, Package pkg) {
+
+        if((pkg.source.lastUpdateUrl || pkg.source.url)){
+            if(pkg.source.lastUpdateUrl){
+                File file = kbartFromUrl(pkg.source.lastUpdateUrl)
+                outputStream << file.bytes
+            }else{
+                File file = kbartFromUrl(pkg.source.url)
+                outputStream << file.bytes
+            }
+        }else {
+
+            outputStream.withWriter { writer ->
+
+                writer.write('publication_title\t' +
+                        'print_identifier\t' +
+                        'online_identifier\t' +
+                        'date_first_issue_online\t' +
+                        'num_first_vol_online\t' +
+                        'num_first_issue_online\t' +
+                        'date_last_issue_online\t' +
+                        'num_last_vol_online\t' +
+                        'num_last_issue_online\t' +
+                        'title_url\t' +
+                        'first_author\t' +
+                        'title_id\t' +
+                        'embargo_info\t' +
+                        'coverage_depth\t' +
+                        'notes\t' +
+                        'publisher_name\t' +
+                        'publication_type\t' +
+                        'date_monograph_published_print\t' +
+                        'date_monograph_published_online\t' +
+                        'monograph_volume\t' +
+                        'monograph_edition\t' +
+                        'first_editor\t' +
+                        'parent_publication_title_id\t' +
+                        'preceding_publication_title_id\t' +
+                        'access_type\t' +
+                        '\n'
+                )
+                writer.flush();
+                writer.close();
+            }
+            outputStream.close()
+        }
+    }
+
+    private File kbartFromUrl(String urlString) throws Exception{
+        URL url = new URL(urlString)
+        File folder = new File("/tmp/wekb/kbartExport")
+        HttpURLConnection connection
+        try {
+            connection = (HttpURLConnection) url.openConnection()
+            connection.addRequestProperty("User-Agent", "Mozilla/5.0")
+        }
+        catch (IOException e) {
+            throw new RuntimeException("URL Connection was not established.")
+        }
+        connection.connect()
+        connection = UrlToolkit.resolveRedirects(connection, 5)
+        log.debug("Final URL after redirects: ${connection.getURL()}")
+
+        String fileName = folder.absolutePath.concat(File.separator).concat(urlStringToFileString(url.toExternalForm()))
+        fileName = fileName.split("\\?")[0]
+        File file = new File(fileName)
+
+        byte[] content = getByteContent(connection.getInputStream())
+        //InputStream inputStream = new ByteArrayInputStream(content)
+        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK){
+            FileUtils.copyInputStreamToFile(new ByteArrayInputStream(content), file)
+            // copy content to local file
+            Files.write(file.toPath(), content)
+        }
+        return file
+    }
+
+    private byte[] getByteContent(InputStream inputStream){
+        ByteArrayOutputStream baos = new ByteArrayOutputStream()
+        byte[] buf = new byte[4096]
+        int n = 0
+        while ((n = inputStream.read(buf)) >= 0){
+            baos.write(buf, 0, n)
+        }
+        baos.toByteArray()
+    }
+
+
+    static String urlStringToFileString(String url){
+        url.replace("://", "_").replace(".", "_").replace("/", "_")
     }
 }

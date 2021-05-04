@@ -22,7 +22,9 @@
 
             <div style="clear:both;">
 
-                <g:link controller="public" action="kbart" id="${params.id}">KBart File</g:link> &nbsp;
+                <g:if test="${d.source && (d.source.lastUpdateUrl || d.source.url)}">
+                    <g:link controller="public" action="kbart" id="${params.id}">KBart File</g:link> &nbsp;
+                </g:if>
                 <g:link controller="public" action="packageTSVExport" id="${params.id}"><g:message
                         code="gokb.appname" default="we:kb"/> File</g:link>
             </div>
