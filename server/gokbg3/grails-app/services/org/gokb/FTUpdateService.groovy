@@ -482,6 +482,7 @@ class FTUpdateService {
     catch (Exception e) {
       log.error("Problem", e)
     }
+
     running = false
   }
 

@@ -19,11 +19,9 @@ import java.util.concurrent.CancellationException
 class AdminController {
 
   def uploadAnalysisService
-  def FTUpdateService
+  FTUpdateService ftUpdateService
   def packageService
-  def gokbAclService
   def componentStatisticService
-  def aclUtilService
   def grailsCacheAdminService
   def titleAugmentService
   ConcurrencyManagerService concurrencyManagerService
@@ -539,4 +537,16 @@ class AdminController {
 
     redirect(controller: 'admin', action: 'jobs');
   }
+
+  @Secured(['ROLE_SUPERUSER', 'IS_AUTHENTICATED_FULLY'])
+  def manageFTControl() {
+    Map<String, Object> result = [:]
+    log.debug("manageFTControle ..")
+    result.ftControls = FTControl.list()
+    result.ftUpdateService = [:]
+    result.editable = true
+
+    result
+  }
+
 }
