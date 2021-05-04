@@ -922,13 +922,10 @@ class TitleInstancePackagePlatform extends KBComponent {
       }
 
       if (tipp) {
-        def changed = false
-
         if (tipp.isRetired() && tipp_dto.status == "Current") {
           if (tipp.accessEndDate) {
             tipp.accessEndDate = null
           }
-          changed = true
         }
 
         if (tipp_dto.accessType && tipp_dto.accessType.length() > 0) {
@@ -944,26 +941,26 @@ class TitleInstancePackagePlatform extends KBComponent {
           if (access_ref) tipp.accessType = access_ref
         }
 
-        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'url', trimmed_url)
-        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'name', tipp_dto.name)
-        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'firstAuthor', tipp_dto.firstAuthor)
-        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'firstEditor', tipp_dto.firstEditor)
-        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'publisherName', tipp_dto.publisherName)
-        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'volumeNumber', tipp_dto.volumeNumber)
-        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'editionStatement', tipp_dto.editionStatement)
-        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'series', tipp_dto.series)
-        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'subjectArea', tipp_dto.subjectArea)
-        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'parentPublicationTitleId', tipp_dto.parentPublicationTitleId)
-        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'precedingPublicationTitleId', tipp_dto.precedingPublicationTitleId)
+        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'url', trimmed_url)
+        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'name', tipp_dto.name)
+        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'firstAuthor', tipp_dto.firstAuthor)
+        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'firstEditor', tipp_dto.firstEditor)
+        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'publisherName', tipp_dto.publisherName)
+        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'volumeNumber', tipp_dto.volumeNumber)
+        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'editionStatement', tipp_dto.editionStatement)
+        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'series', tipp_dto.series)
+        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'subjectArea', tipp_dto.subjectArea)
+        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'parentPublicationTitleId', tipp_dto.parentPublicationTitleId)
+        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'precedingPublicationTitleId', tipp_dto.precedingPublicationTitleId)
 
-        changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.accessStartDate, tipp, 'accessStartDate')
-        changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.accessEndDate, tipp, 'accessEndDate')
-        changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.dateFirstInPrint, tipp, 'dateFirstInPrint')
-        changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.dateFirstOnline, tipp, 'dateFirstOnline')
-        changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.last_changed, tipp, 'lastChangedExternal')
+        com.k_int.ClassUtils.setDateIfPresent(tipp_dto.accessStartDate, tipp, 'accessStartDate')
+        com.k_int.ClassUtils.setDateIfPresent(tipp_dto.accessEndDate, tipp, 'accessEndDate')
+        com.k_int.ClassUtils.setDateIfPresent(tipp_dto.dateFirstInPrint, tipp, 'dateFirstInPrint')
+        com.k_int.ClassUtils.setDateIfPresent(tipp_dto.dateFirstOnline, tipp, 'dateFirstOnline')
+        com.k_int.ClassUtils.setDateIfPresent(tipp_dto.last_changed, tipp, 'lastChangedExternal')
 
-        changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.medium, tipp, 'medium', RCConstants.TITLEINSTANCE_MEDIUM)
-        changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.publicationType, tipp, 'publicationType', RCConstants.TIPP_PUBLICATION_TYPE)
+        com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.medium, tipp, 'medium', RCConstants.TITLEINSTANCE_MEDIUM)
+        com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.publicationType, tipp, 'publicationType', RCConstants.TIPP_PUBLICATION_TYPE)
 
         if (tipp_dto.coverageStatements && !tipp_dto.coverage) {
           tipp_dto.coverage = tipp_dto.coverageStatements
@@ -978,8 +975,8 @@ class TitleInstancePackagePlatform extends KBComponent {
           if (c.id) {
             new_ids.add(c.id)
           }
-          changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'coverageNote', c.coverageNote)
-          changed |= com.k_int.ClassUtils.setRefdataIfPresent(c.coverageDepth, tipp, 'coverageDepth', RCConstants.TIPP_COVERAGE_DEPTH)
+          com.k_int.ClassUtils.setStringIfDifferent(tipp, 'coverageNote', c.coverageNote)
+          com.k_int.ClassUtils.setRefdataIfPresent(c.coverageDepth, tipp, 'coverageDepth', RCConstants.TIPP_COVERAGE_DEPTH)
 
           def cs_match = false
           def conflict = false
@@ -990,17 +987,17 @@ class TitleInstancePackagePlatform extends KBComponent {
           tipp.coverageStatements?.each { tcs ->
             if (c.id && tcs.id == c.id) {
 
-              changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startIssue', c.startIssue)
-              changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endIssue', c.endIssue)
-              changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startVolume', c.startVolume)
-              changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endVolume', c.endVolume)
-              changed |= com.k_int.ClassUtils.setDateIfPresent(parsedStart, tcs, 'startDate')
-              changed |= com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tcs, 'endDate')
+              com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startIssue', c.startIssue)
+              com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endIssue', c.endIssue)
+              com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startVolume', c.startVolume)
+              com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endVolume', c.endVolume)
+              com.k_int.ClassUtils.setDateIfPresent(parsedStart, tcs, 'startDate')
+              com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tcs, 'endDate')
 
-              changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'embargo', c.embargo)
+              com.k_int.ClassUtils.setStringIfDifferent(tcs, 'embargo', c.embargo)
 
-              changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'coverageNote', c.coverageNote)
-              changed |= com.k_int.ClassUtils.setRefdataIfPresent(tcs.coverageDepth, tcs, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH)
+              com.k_int.ClassUtils.setStringIfDifferent(tcs, 'coverageNote', c.coverageNote)
+              com.k_int.ClassUtils.setRefdataIfPresent(tcs.coverageDepth, tcs, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH)
 
               cs_match = true
             } else if (!cs_match) {
@@ -1026,15 +1023,15 @@ class TitleInstancePackagePlatform extends KBComponent {
               if (conflict) {
                 conflicting_statements.add(tcs)
               } else if (cs_match) {
-                changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startIssue', c.startIssue)
-                changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endIssue', c.endIssue)
-                changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startVolume', c.startVolume)
-                changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endVolume', c.endVolume)
-                changed |= com.k_int.ClassUtils.setDateIfPresent(parsedStart, tcs, 'startDate')
-                changed |= com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tcs, 'endDate')
-                changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'embargo', c.embargo)
-                changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'coverageNote', c.coverageNote)
-                changed |= com.k_int.ClassUtils.setRefdataIfPresent(tcs.coverageDepth, tcs, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH)
+                com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startIssue', c.startIssue)
+                com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endIssue', c.endIssue)
+                com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startVolume', c.startVolume)
+                com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endVolume', c.endVolume)
+                com.k_int.ClassUtils.setDateIfPresent(parsedStart, tcs, 'startDate')
+                com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tcs, 'endDate')
+                com.k_int.ClassUtils.setStringIfDifferent(tcs, 'embargo', c.embargo)
+                com.k_int.ClassUtils.setStringIfDifferent(tcs, 'coverageNote', c.coverageNote)
+                com.k_int.ClassUtils.setRefdataIfPresent(tcs.coverageDepth, tcs, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH)
               }
             } else {
               log.debug("Matched new coverage ${c} on multiple existing coverages!")
