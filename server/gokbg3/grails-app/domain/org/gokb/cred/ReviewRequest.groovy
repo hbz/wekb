@@ -1,11 +1,14 @@
 package org.gokb.cred
 
+import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
 
 import javax.persistence.Transient
 import org.gokb.refine.RefineProject
 import grails.converters.JSON
 import grails.plugins.orm.auditable.Auditable
+
+import java.sql.Ref
 
 class ReviewRequest implements Auditable {
 
@@ -19,33 +22,23 @@ class ReviewRequest implements Auditable {
   String reviewRequest
   RefdataValue status
   RefdataValue stdDesc
-  User raisedBy
-  User allocatedTo
-  User closedBy
-  User reviewedBy
   Boolean needsNotify
   RefineProject refineProject
   String additionalInfo
 
-  Org raisedByOrg
-  Org allocatedToOrg
-  Org closedByOrg
-  Org reviewedByOrg
 
   // Timestamps
   Date dateCreated
   Date lastUpdated
+
+  @RefdataAnnotation(cat = RCConstants.CURATORY_GROUP_TYPE)
+  RefdataValue type
 
   static mapping = {
     id column:'rr_id'
     descriptionOfCause column:'rr_cause_txt', type:'text'
     reviewRequest column:'rr_req_txt', type:'text'
     additionalInfo column:'rr_additional_info', type:'text'
-
-    raisedByOrg column:'rr_raised_by_org_fk'
-    reviewedByOrg column:'rr_reviewed_by_org_fk'
-    allocatedToOrg column:'rr_allocated_to_org_fk'
-    closedByOrg column:'rr_closed_by_org_fk'
 
   }
 
@@ -55,25 +48,16 @@ class ReviewRequest implements Auditable {
     reviewRequest(nullable:false, blank:false)
     status(nullable:false, blank:false)
     stdDesc(nullable:true, blank:false)
-    raisedBy(nullable:true, blank:false)
-    reviewedBy(nullable:true, blank:false)
-    allocatedTo(nullable:true, blank:false)
-    closedBy(nullable:true, blank:false)
     dateCreated(nullable:true, blank:true)
     lastUpdated(nullable:true, blank:true)
     needsNotify(nullable:true, blank:true)
     refineProject(nullable:true, blank:true)
     additionalInfo(nullable:true, blank:true)
-    raisedByOrg(nullable:true, blank:false)
-    reviewedByOrg(nullable:true, blank:false)
-    allocatedToOrg(nullable:true, blank:false)
-    closedByOrg(nullable:true, blank:false)
   }
 
   public static ReviewRequest raise (KBComponent forComponent,
                                      String actionRequired,
                                      String cause = null,
-                                     User raisedBy = null,
                                      refineProject = null,
                                      additionalInfo = null,
                                      RefdataValue stdDesc = null) {
@@ -81,7 +65,6 @@ class ReviewRequest implements Auditable {
     // Create a request.
     ReviewRequest req = new ReviewRequest (
         status : RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STATUS, 'Open'),
-        raisedBy : (raisedBy),
         descriptionOfCause : (cause),
         reviewRequest : (actionRequired),
         refineProject : (refineProject),
@@ -91,10 +74,6 @@ class ReviewRequest implements Auditable {
         ).save(failOnError:true);
 
     // Just return the request.
-
-    if ( req && raisedBy ) {
-      new ReviewRequestAllocationLog(allocatedTo:raisedBy, rr:req).save(failOnError:true)
-    }
 
     req
   }
@@ -137,9 +116,8 @@ class ReviewRequest implements Auditable {
     log.debug("Close review request ${id} (${this.class.name}) - user=${rrcontext.user}");
 
     setStatus(RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STATUS, 'Closed'))
-    setClosedBy(rrcontext.user)
     save(failOnError:true)
-    log.debug("Changed status - ${status} ${closedBy}")
+    log.debug("Changed status - ${status}")
   }
 
   public String getNiceName() {
@@ -181,17 +159,12 @@ class ReviewRequest implements Auditable {
   }
 
   def afterInsert() {
-    def user = springSecurityService?.currentUser
-    if ( user != null ) {
-      if ( raisedBy == null )
-        raisedBy = user
-    }
+
   }
 
   def beforeUpdate() {
     if ( isDirty('status') ) {
       log.debug("RR Status changed > ${this.status}")
-      reviewedBy = springSecurityService.currentUser
     }
   }
 

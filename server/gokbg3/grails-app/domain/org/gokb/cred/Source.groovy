@@ -22,6 +22,7 @@ class Source extends KBComponent {
   RefdataValue defaultDataFormat
   IdentifierNamespace targetNamespace
   Date lastRun
+  String lastUpdateUrl
   Boolean zdbMatch = false
   Boolean ezbMatch = false
   Org responsibleParty
@@ -34,6 +35,7 @@ class Source extends KBComponent {
     includes KBComponent.mapping
     url column:'source_url'
     ruleset column:'source_ruleset', type:'text'
+    lastUpdateUrl column: 'source_last_update_url'
   }
 
   static constraints = {
@@ -51,6 +53,7 @@ class Source extends KBComponent {
     ezbMatch(nullable:true, default: false)
     zdbMatch(nullable:true,default: false)
     automaticUpdates(nullable: true,default: false)
+    lastUpdateUrl(nullable:true, blank:true)
     name(validator: { val, obj ->
       if (obj.hasChanged('name')) {
         if (val && val.trim()) {
@@ -155,13 +158,17 @@ class Source extends KBComponent {
     }
     if (frequency != null) {
       Date today = new Date()
-      def interval = intervals.get(frequency)
+      def interval = intervals.get(frequency.value)
       if (interval != null){
         Date due = getUpdateDay(interval)
         if (today == due){
           return true
         }
+      }else {
+        log.info("Source needsUpdate(): Frequency (${frequency}) is not null but intervals is null")
       }
+    }else {
+      log.info("Source needsUpdate(): Frequency is null")
     }
     return false
   }
@@ -171,7 +178,7 @@ class Source extends KBComponent {
     Date today = new Date()
     // calculate from each first day of the year to not create a lag over the years
     Calendar cal = Calendar.getInstance()
-    cal.set(Calendar.YEAR, Calendar.get(Calendar.YEAR))
+    cal.set(Calendar.YEAR, cal.get(Calendar.YEAR))
     cal.set(Calendar.DAY_OF_YEAR, 1)
     Date nextUpdate = cal.getTime()
     while (nextUpdate.before(today)){

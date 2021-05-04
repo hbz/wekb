@@ -23,19 +23,20 @@
 
         <h1>Title: <span style="font-weight:bolder;">${tipp.name}</span></h1>
         <div class="row">
-            <div class="col-sm-9">
+            <div class="col-md-9">
                 <g:render template="tipp"  model="${[d: tipp]}"/>
             </div>
 
-            <g:render template="rightBox" model="${[d: tipp.pkg]}"/>
+            <g:render template="rightBox" model="${[d: tipp]}"/>
         </div>
         <g:render template="tippTabs"  model="${[d: tipp]}"/>
 
 
 
     </g:if>
-
-
+    <div class="row justify-content-end">
+            <button class="btn btn-default btn-primary mb-5" onclick="window.history.back()">${message(code: 'default.button.back')}</button>
+    </div>
 </div>
 </body>
 </html>

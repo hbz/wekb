@@ -17,7 +17,7 @@
         </g:if>
         <g:if test="${pkg}">
             <h1>Package: <span style="font-weight:bolder;">${pkgName}</span></h1>
-            <div class="col-sm-9">
+            <div class="col-md-9">
                 <dl class="row">
                     <dt class="col-3 text-right">
                         <gokb:annotatedLabel owner="${pkg}" property="provider">Provider</gokb:annotatedLabel>
@@ -62,7 +62,7 @@
                     <dt class="col-3 text-right"> <gokb:annotatedLabel owner="${pkg}" property="descriptionURL">URL</gokb:annotatedLabel> </dt>
                     <dd class="col-9 text-left"> <gokb:xEditable  owner="${pkg}" field="descriptionURL" />
                         <g:if test="${pkg.descriptionURL}">
-                        &nbsp;<a href="${pkg.descriptionURL}" target="new"><i class="fas fa-external-link-alt"></i></a>
+                        &nbsp;<a aria-label="${pkg.descriptionURL}" href="${pkg.descriptionURL}" target="new"><i class="fas fa-external-link-alt"></i></a>
                         </g:if>
                     </dd>
 
@@ -84,55 +84,54 @@
     </div>
     <g:if test="${pkg}">
         <div id="row">
-            <ul id="tabs" class="nav nav-tabs">
-                <li role="presentation" class="nav-item">
-                    <a class="nav-link active" href="#titledetails" data-toggle="tab">Titles
-                        <span class="badge badge-warning">${titleCount}</span>
+            <ul id="tabs" class="nav nav-tabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#titledetails" data-toggle="tab" role="tab">Titles
+                        <span class="badge badge-pill badge-info">${titleCount}</span>
                     </a>
                 </li>
-                <li role="presentation" class="nav-item">
-                    <a class="nav-link" href="#identifiers" data-toggle="tab">Identifiers
-                        <span  class="badge badge-warning">${pkg?.getCombosByPropertyNameAndStatus('ids', 'Active')?.size() ?: '0'}</span>
-                    </a>
-                </li>
-
-                <li role="presentation" class="nav-item">
-                    <a class="nav-link" href="#altnames" data-toggle="tab">Alternate Names
-                        <span class="badge badge-warning">${pkg.variantNames?.size() ?: '0'}</span>
+                <li class="nav-item">
+                    <a class="nav-link" href="#identifiers" data-toggle="tab" role="tab">Identifiers
+                        <span  class="badge badge-pill badge-info">${pkg?.getCombosByPropertyNameAndStatus('ids', 'Active')?.size() ?: '0'}</span>
                     </a>
                 </li>
 
-                <li>
-                    <a href="#ddcs" data-toggle="tab">DDCs
-                        <span class="badge badge-warning">${pkg.ddcs?.size() ?: '0'}</span>
+                <li class="nav-item">
+                    <a class="nav-link" href="#altnames" data-toggle="tab" role="tab">Alternate Names
+                        <span class="badge badge-pill badge-info">${pkg.variantNames?.size() ?: '0'}</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#ddcs" data-toggle="tab" role="tab">DDCs
+                        <span class="badge badge-pill badge-info">${pkg.ddcs?.size() ?: '0'}</span>
                     </a>
                 </li>
 
             </ul>
             <div id="my-tab-content" class="tab-content">
-                <div class="tab-pane fade show active" id="titledetails">
-
-                    <h2>Titles (${titleCount})</h2>
-
-                    <g:form controller="public" class="form" role="form" action="${actionName}" method="get" params="${params}">
-                        <div class="form-group input-group-md">
-                            <div class="btn-group pull-right">
-                                <label for="newMax">Results on Page</label>
-                                <g:select name="newMax" from="[10, 25, 50, 100, 200, 500]" value="${params.max}" onChange="this.form.submit()"/>
-                            </div>
+                <div class="tab-pane fade show active" id="titledetails" role="tabpanel">
+                    <div class="row">
+                        <div class="col-sm">
+                            <h2>Titles (${titleCount})</h2>
                         </div>
-                    </g:form>
-                    <br>
-                    <br>
-
-                    <table class="table table-striped">
+                        <div class="col-sm">
+                            <g:form controller="public" class="form-group row justify-content-end"   action="${actionName}" method="get" params="${params}">
+                                <label class="col-sm-6 col-form-label text-right" for="newMax">Results on Page</label>
+                                <div class="col-sm-6">
+                                        <g:select class="form-control"  name="newMax" from="[10, 25, 50, 100, 200, 500]" value="${params.max}" onChange="this.form.submit()"/>
+                                </div>
+                            </g:form>
+                        </div>
+                    </div>
+                    <table class="table table-striped wekb-table-responsive-stack">
                             <thead>
                                 <tr>
-                                        <th></th>
-                                        <g:sortableColumn property="tipp.title.name" title="Title"/>
-                                        <g:sortableColumn property="tipp.title.ids" title="Identifiers"/>
-                                        <g:sortableColumn property="tipp.hostPlatform.name" title="Platform"/>
-                                        <g:sortableColumn property="tipp.publicationType" title="Title Type"/>
+                                        <th>#</th>
+                                        <g:sortableColumn property="tipp.name" title="Title"/>
+                                        <th>Identifiers</th>
+                                        <th>Platform</th>
+                                        <g:sortableColumn property="tipp.publicationType" title="Publication Type"/>
                                         <g:sortableColumn property="tipp.medium" title="Medium"/>
                                         <th>Coverage</th>
                                     </tr>
@@ -150,7 +149,7 @@
                                             </td>
                                             <td>
                                                 <ul>
-                                                    <g:each in="${t.ids}" var="id">
+                                                    <g:each in="${t.ids.sort{it.namespace.value}}" var="id">
                                                         <li><strong>${id.namespace.value}</strong> : ${id.value}</li>
                                                     </g:each>
                                                 </ul>
@@ -161,7 +160,7 @@
                                                     ${t.hostPlatform?.name}
                                                 </g:link>
                                             </td>
-                                            <td>${t.niceName}</td>
+                                            <td>${t.publicationType?.value}</td>
                                             <td>${t.medium?.value}</td>
                                             <td>
                                                 ${t.coverageDepth?.value}<br/>${t.coverageNote}
@@ -184,7 +183,7 @@
 
                 <g:render template="/tabTemplates/showDDCs" model="${[d:pkg]}" />
 
-                <div class="tab-pane fade" id="identifiers">
+                <div class="tab-pane fade" id="identifiers" role="tabpanel">
                     <dl>
                         <dt>
                             <gokb:annotatedLabel owner="${pkg}"
@@ -202,6 +201,9 @@
             <g:render template="componentStatus" model="${[d: pkg]}"/>
         </div>
     </g:if>
+    <div class="row justify-content-end">
+        <button class="btn btn-default btn-primary mb-5" onclick="window.history.back()">${message(code: 'default.button.back')}</button>
+    </div>
 </div>
 </body>
 </html>

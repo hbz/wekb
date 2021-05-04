@@ -1,29 +1,29 @@
 <g:set var="ctxoid" value="${org.gokb.cred.KBComponent.deproxy(d).class.name}:${d.id}"/>
 
 <g:if test="${d.id}">
-  <dl class="dl-horizontal">
-    <g:form controller="ajaxSupport" action="addIdentifier" class="form-inline">
-      <input type="hidden" name="hash" value="${hash}"/>
+   <a data-toggle="modal" data-cache="false"
+       data-target="#identifiersModal">Add Identifier</a>
 
-      <input type="hidden" name="__context" value="${ctxoid}" />
+    <bootStrap:modal id="identifiersModal" title="Add Identifier">
 
-      <dt class="dt-label">Identifier Namespace</dt>
-      <dd>
+      <g:form controller="ajaxSupport" action="addIdentifier" class="form-inline">
+        <input type="hidden" name="hash" value="${hash}"/>
+
+        <input type="hidden" name="__context" value="${ctxoid}" />
+
+        <dt class="dt-label">Identifier Namespace</dt>
+        <dd>
           <gokb:simpleReferenceTypedown class="form-control" name="identifierNamespace" baseClass="org.gokb.cred.IdentifierNamespace" />
-      </dd>
+        </dd>
 
-      <dt class="dt-label">Identifier Value</dt>
-      <dd>
-        <input type="text" class="form-control" name="identifierValue" required />
-      </dd>
+        <dt class="dt-label">Identifier Value</dt>
+        <dd>
+          <input type="text" class="form-control" name="identifierValue" required />
+        </dd>
 
-      <dt></dt>
-      <dd>
-        <button type="submit" class="btn btn-default btn-primary">Add</button>
-      </dd>
+      </g:form>
+    </bootStrap:modal>
 
-    </g:form>
-  </dl>
 </g:if>
 <g:else>
   Identifiers can be added after the creation process is finished.

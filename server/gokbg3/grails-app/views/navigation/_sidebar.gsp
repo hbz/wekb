@@ -23,13 +23,18 @@
         <li class="${controllerName == "home" && (actionName == 'userdash') ? 'active' : ''}"><g:link controller="home" action="userdash"><i class="far fa-chart-bar"></i> My Dashboard</g:link></li>
 
         <g:if test="${session.curatorialGroups && ( session.curatorialGroups.size() > 0 ) }">
-          <li class="${(controllerName == "group")  ? 'active' : ''}"><a href="#"><i class="fas fa-globe"></i> My Groups<span class="fa arrow"></span></a>
-            <ul class="nav nav-second-level">
-              <g:each in="${session.curatorialGroups}" var="cg">
-                <li><g:link controller="group" action="index" id="${cg.id}">${cg.name}</g:link></li>
-              </g:each>
-            </ul>
-          </li>
+          <g:if test="${session.curatorialGroups && ( session.curatorialGroups.size() == 1 ) }">
+            <li class="${(controllerName == "group")  ? 'active' : ''}"><g:link controller="group" action="index" id="${session.curatorialGroups[0].id}"><i class="fas fa-globe"></i> My Group </li></g:link>
+          </g:if>
+          <g:else>
+            <li class="${(controllerName == "group")  ? 'active' : ''}"><a href="#"><i class="fas fa-globe"></i> My Groups<span class="fa arrow"></span></a>
+              <ul class="nav nav-second-level">
+                <g:each in="${session.curatorialGroups}" var="cg">
+                  <li><g:link controller="group" action="index" id="${cg.id}">${cg.name}</g:link></li>
+                </g:each>
+              </ul>
+            </li>
+          </g:else>
         </g:if>
 
         <li class="${(controllerName == "search")  ? 'active' : ''}"><a href="#"><i class="fa fa-search fa-fw"></i> Search<span class="fa arrow"></span></a>
@@ -62,18 +67,18 @@
           </li>
         </sec:ifAnyGranted>
 
-        <li class="${controllerName == "home" && (actionName == 'index' || actionName == 'dashboard') ? 'active' : ''}"><g:link controller="home"><i class="fas fa-chart-line"></i> Statistics</g:link></li>
+        <li class="${controllerName == "home" && (actionName == 'index' || actionName == 'statistic') ? 'active' : ''}"><g:link controller="home"><i class="fas fa-chart-line"></i> Statistics</g:link></li>
 
         <li><g:link controller="welcome"><i class="fa fa-tasks fa-fw"></i> To Do<span class="fa arrow"></span></g:link>
 
           <ul class="nav nav-second-level">
-            <li><g:link controller="search" action="index"
+            %{--<li><g:link controller="search" action="index"
                         params="[
                                 qbe:'g:reviewRequests',
                                 qp_allocatedto:'org.gokb.cred.User:'+ applicationContext.springSecurityService.principal.id,
                                 qp_status: ('org.gokb.cred.RefdataValue:'+(RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STATUS, 'Open').id))
                         ]">
-              <i class="fa fa-angle-double-right fa-fw"></i> My ToDos</g:link></li>
+              <i class="fa fa-angle-double-right fa-fw"></i> My ToDos</g:link></li>--}%
             <li><g:link controller="search" action="index"
                         params="${[
                                 qbe:'g:reviewRequests',
@@ -92,7 +97,7 @@
           <li><a href="#"><i class="fa fa-search fa-fw"></i> Admin Search<span class="fa arrow"></span></a>
             <ul class="nav nav-second-level">
               <li class="divider"></li>
-                <g:each in="${session.menus.admin.search}" var="item">
+                <g:each in="${session.menus.admin.search.sort{it.text}}" var="item">
                   <li class="menu-search-admin">${ g.link(item.link + item.attr) { "<i class='fa fa-angle-double-right fa-fw'></i> ${item.text}" } }</li>
                 </g:each>
             </ul> <!-- /.nav-second-level -->
@@ -102,7 +107,7 @@
         <g:if test="${session.menus?.admin?.create}">
           <li><a href="#"><i class="fa fa-plus fa-fw"></i> Admin Create<span class="fa arrow"></span></a>
             <ul class="nav nav-second-level">
-                <g:each in="${session.menus.admin.create}" var="item">
+                <g:each in="${session.menus.admin.create.sort{it.text}}" var="item">
                   <li class="menu-create-admin">${ g.link(item.link + item.attr) { "<i class='fa fa-angle-double-right fa-fw'></i> ${item.text}" } }</li>
                 </g:each>
 
@@ -116,6 +121,7 @@
               <li><g:link controller="user" action="search"><i class="fa fa-angle-double-right fa-fw"></i> User Management Console</g:link></li>
               <%-- <li><g:link controller="admin" action="tidyOrgData" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Tidy Orgs Data</g:link></li> --%>
                 <li><g:link controller="admin" action="jobs"><i class="fa fa-angle-double-right fa-fw"></i> Manage Jobs</g:link></li>
+                <li><g:link controller="admin" action="manageFTControl"><i class="fa fa-angle-double-right fa-fw"></i> Manage FT Control</g:link></li>
                 <li class="divider">Jobs</li>
                 <li><g:link controller="admin" action="reSummariseLicenses" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Regenerate License Summaries</g:link></li>
                 <li><g:link controller="admin" action="updateTextIndexes" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Update Free Text Indexes</g:link></li>
@@ -135,7 +141,8 @@
                 <li><g:link controller="admin" action="ensureTipls" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Ensure TIPLs</g:link></li>
                 <li><g:link controller="admin" action="addPackageTypes" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Ensure Package Content Types</g:link></li>
                 <li><g:link controller="admin" action="triggerEnrichments" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Trigger enrichments</g:link></li>
-                %{--<li><g:link controller="admin" action="logViewer"><i class="fa fa-angle-double-right fa-fw"></i> Log Viewer</g:link></li>--}%
+              <li><g:link controller="admin" action="autoUpdatePackages" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i>Auto Update Packages</g:link></li>
+              %{--<li><g:link controller="admin" action="logViewer"><i class="fa fa-angle-double-right fa-fw"></i> Log Viewer</g:link></li>--}%
               <%--      <li><g:link controller="admin" action="housekeeping" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Housekeeping</g:link></li> --%>
 
               <!--

@@ -1,6 +1,6 @@
 package org.gokb.cred
 
-import javax.persistence.Transient
+
 import groovy.json.JsonSlurper
 
 class SavedSearch {

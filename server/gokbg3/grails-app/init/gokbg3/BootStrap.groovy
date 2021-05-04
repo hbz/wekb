@@ -147,7 +147,7 @@ class BootStrap {
         migrateDiskFilesToDatabase()
 
         CuratoryGroup.withTransaction() {
-            if (grailsApplication.config.gokb.defaultCuratoryGroup != null) {
+            if (grailsApplication.config.gokb.defaultCuratoryGroup != null && grailsApplication.config.gokb.defaultCuratoryGroup != "") {
 
                 log.info("Ensure curatory group: ${grailsApplication.config.gokb?.defaultCuratoryGroup}");
 
@@ -208,7 +208,10 @@ class BootStrap {
                 [value: 'issnl', name: 'ISSN-L', family: 'isxn', pattern: "^\\d{4}\\-\\d{3}[\\dX]\$"],
                 [value: 'doi', name: 'DOI'],
                 [value: 'zdb', name: 'ZDB-ID', pattern: "^\\d+-[\\dxX]\$"],
-                [value: 'isil', name: 'ISIL', pattern: "^(?=[0-9A-Z-]{4,16}\$)[A-Z]{1,4}-[A-Z0-9]{1,11}(-[A-Z0-9]+)?\$"]
+                [value: 'isil', name: 'ISIL', pattern: "^(?=[0-9A-Z-]{4,16}\$)[A-Z]{1,4}-[A-Z0-9]{1,11}(-[A-Z0-9]+)?\$"],
+                [value: 'package_ezb_anchor', name: 'EZB Anchor'],
+                [value: 'ezb', name: 'EZB-ID'],
+                [value: 'package_isci', name: 'Package ISCI'],
         ]
 
         namespaces.each { ns ->
@@ -1043,6 +1046,7 @@ class BootStrap {
         log.debug("Deleting any null refdata values")
         RefdataValue.executeUpdate('delete from RefdataValue where value is null')
 
+        log.debug("Languages Service initialize")
         LanguagesService.initialize()
     }
 

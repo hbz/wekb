@@ -975,7 +975,7 @@ class TitleLookupService {
         }
         if (rr_map) {
           log.info("New RR for title ${the_title}")
-          reviewRequestService.raise(
+          /*reviewRequestService.raise(
             the_title,
             rr_map.review,
             rr_map.cause,
@@ -983,7 +983,7 @@ class TitleLookupService {
             project,
             (rr_map.additionalInfo as JSON).toString(),
             rr_map.type
-          )
+          )*/
         }
 
         if (results.other_types.size() > 0) {
@@ -995,7 +995,7 @@ class TitleLookupService {
             combo_ids.add(tlm.id)
           }
           additionalInfo.cstring = combo_ids.sort().join('_')
-          reviewRequestService.raise(
+          /*reviewRequestService.raise(
               the_title,
               "Identifier match.",
               "A provided identifier matched an existing component of another type!",
@@ -1003,7 +1003,7 @@ class TitleLookupService {
               project,
               (additionalInfo as JSON).toString(),
               RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Type Mismatch')
-          )
+          )*/
         }
       }
       else {
@@ -1268,12 +1268,12 @@ class TitleLookupService {
 
         // Raise a review request
         if (added) {
-          reviewRequestService.raise(
+          /*reviewRequestService.raise(
               ti,
               "'${title}' added as a variant of '${ti.name}'.",
               "Match was made on 1st class identifier but title name seems to be very different.",
               user, project
-          )
+          )*/
         }
         break
     }

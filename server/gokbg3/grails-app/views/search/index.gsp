@@ -6,7 +6,7 @@
 </head>
 <body>
 	<g:if test="${qbetemplate}">
-		<h1 class="page-header">${qbetemplate?.title ?:''} <g:if test="${refOid}">for <g:link controller="resource" action="show" id="${refOid}">${refName ?: refOid}</g:link></g:if></h1>
+		<h1 class="page-header">${qbetemplate?.title ?:''} <g:if test="${refObject}">for ${refObject.niceName}: <g:link controller="resource" action="show" id="${refObject.id}">${refObject.name}</g:link></g:if></h1>
 	</g:if>
 	<g:else>
 		<h1 class="page-header">Search</h1>
@@ -42,9 +42,9 @@
 				<div class="panel-body">
 					<g:if test="${(qbetemplate.message != null)}">
 						<p style="text-align: center">
-							<bootstrap:alert class="alert-info">
+							<div class="alert-info">
 								${qbetemplate.message}
-							</bootstrap:alert>
+							</div>
 						</p>
 					</g:if>
 	
@@ -61,6 +61,11 @@
 						<g:render template="qbeempty" />
 					</div>
 				</g:elseif>
+				<g:else>
+					<div class='no-results' >
+						<p>No results.</p>
+					</div>
+				</g:else>
 			</g:else>
 	 </div>
   </div>

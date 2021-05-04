@@ -8,6 +8,8 @@ import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
+import wekb.AutoUpdatePackagesService
+import wekb.ExportService
 import wekb.GlobalSearchTemplatesService
 
 
@@ -19,6 +21,8 @@ class WorkflowController{
   def packageService
   def dateFormatService
   GlobalSearchTemplatesService globalSearchTemplatesService
+  ExportService exportService
+  AutoUpdatePackagesService autoUpdatePackagesService
 
   def actionConfig = [
       'method::deleteSoft'     : [actionType: 'simple'],
@@ -792,7 +796,7 @@ class WorkflowController{
         ], user).save(flush: true, failOnError: true)
 
         if (newtipp.review == 'on'){
-          reviewRequestService.raise(new_tipp, 'New tipp - please review', 'A Title change cause this new tipp to be created', request.user)
+          reviewRequestService.raise(new_tipp, 'New tipp - please review', 'A Title change cause this new tipp to be created', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, new_tipp.curatoryGroups)
         }
       }
 
@@ -816,12 +820,12 @@ class WorkflowController{
         log.debug("Retiring old tipp")
         current_tipp.status = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_RETIRED)
         if (params["oldtipp_review:${tipp_map_entry.key}"] == 'on'){
-          reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title change has affected this tipp [new tipps have been generated]. The user chose to retire this tipp', request.user)
+          reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title change has affected this tipp [new tipps have been generated]. The user chose to retire this tipp', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, current_tipp.curatoryGroups)
         }
       }
       else{
         if (params["oldtipp_review:${tipp_map_entry.key}"] == 'on'){
-          reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title change has affected this tipp [new tipps have been generated]. The user did not retire this tipp', request.user)
+          reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title change has affected this tipp [new tipps have been generated]. The user did not retire this tipp', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, current_tipp.curatoryGroups)
         }
       }
     }
@@ -958,7 +962,6 @@ class WorkflowController{
           tipp_dto.package = ['internalId': old_tipp.pkg.id]
           tipp_dto.platform = ['internalId': old_tipp.hostPlatform.id]
           tipp_dto.title = ['internalId': new_ti.id]
-          if (old_tipp.paymentType?.value) tipp_dto.paymentType = old_tipp.paymentType?.value
           if (old_tipp.accessType?.value) tipp_dto.accessType = old_tipp.accessType?.value
           tipp_dto.url = old_tipp.url ?: ""
           tipp_dto.coverage = []
@@ -1032,7 +1035,7 @@ class WorkflowController{
 
         if (newtipp.review == 'on'){
           log.debug("User requested a review request be generated for this new tipp")
-          reviewRequestService.raise(new_tipp, 'New tipp - please review', 'A Title transfer cause this new tipp to be created', request.user)
+          reviewRequestService.raise(new_tipp, 'New tipp - please review', 'A Title transfer cause this new tipp to be created', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, new_tipp.curatoryGroups)
         }
       }
 
@@ -1042,12 +1045,12 @@ class WorkflowController{
         log.debug("Retiring old tipp")
         current_tipp.status = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_RETIRED)
         if (params["oldtipp_review:${tipp_map_entry.key}"] == 'on'){
-          reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title transfer has affected this tipp [new tipps have been generated]. The user chose to retire this tipp', request.user)
+          reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title transfer has affected this tipp [new tipps have been generated]. The user chose to retire this tipp', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, current_tipp.curatoryGroups)
         }
       }
       else{
         if (params["oldtipp_review:${tipp_map_entry.key}"] == 'on'){
-          reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title transfer has affected this tipp [new tipps have been generated]. The user did not retire this tipp', request.user)
+          reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title transfer has affected this tipp [new tipps have been generated]. The user did not retire this tipp', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, current_tipp.curatoryGroups)
         }
       }
 
@@ -1421,7 +1424,6 @@ class WorkflowController{
         def ReviewRequest rr = ReviewRequest.get(tt)
         log.debug("Process ${tt} - ${rr}")
         rr.needsNotify = true
-        rr.allocatedTo = new_user_alloc
         rr.save(flush: true)
         def rra = new ReviewRequestAllocationLog(note: params.note, allocatedTo: new_user_alloc, rr: rr).save(flush: true)
       }
@@ -1446,7 +1448,9 @@ class WorkflowController{
         component = KBComponent.get(params.long('id'))
       }
 
-      new_rr = reviewRequestService.raise(component, params.request, "Manual Request", user, null, null, stdDesc)
+      List<CuratoryGroup> curatoryGroups = component.respondsTo('curatoryGroups')
+
+      new_rr = reviewRequestService.raise(component, params.request, "Manual Request", RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, stdDesc, curatoryGroups)
     }
 
     redirect(url: request.getHeader('referer') + '#review')
@@ -1532,22 +1536,19 @@ class WorkflowController{
       return
     }
 
-    def status_current = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Current')
-    def combo_pkg_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
     def export_date = dateFormatService.formatDate(new Date())
     if (packages_to_export.size() == 1){
-      filename = "we:kb Export : ${packages_to_export[0].provider?.name} : ${packages_to_export[0].name} : ${export_date}.tsv"
+      filename = "kbart_${packages_to_export[0].provider?.name}_${packages_to_export[0].name}_${export_date}"
     }
     else{
-      filename = "we:kb Export : multiple_packages : ${export_date}.tsv"
+      filename = "kbart_multiple_packages_${export_date}.tsv"
+      response.setContentType('text/tab-separated-values')
     }
 
     try{
-      response.setContentType('text/tab-separated-values')
       response.setHeader("Content-disposition", "attachment; filename=\"${filename}\"")
-      response.contentType = "text/tab-separated-values" // "text/tsv"
       packages_to_export.each{ pkg ->
-        packageService.sendFile(pkg, PackageService.ExportType.KBART, response)
+        exportService.exportOriginalKBART(response.outputStream, pkg)
       }
     }
     catch (Exception e){
@@ -1558,9 +1559,9 @@ class WorkflowController{
 
   private writeExportLine(Writer writer, Closure<String> sanitize, TitleInstancePackagePlatform tipp, def tippCoverageStatement){
     writer.write(
-        sanitize(tipp.title.name) + '\t' +
-            (tipp.title.hasProperty('dateFirstInPrint') ? sanitize(tipp.title.getIdentifierValue('pISBN')) : sanitize(tipp.title.getIdentifierValue('ISSN'))) + '\t' +
-            (tipp.title.hasProperty('dateFirstInPrint') ? sanitize(tipp.title.getIdentifierValue('ISBN')) : sanitize(tipp.title.getIdentifierValue('eISSN'))) + '\t' +
+        sanitize(tipp.name) + '\t' +
+            (tipp.hasProperty('dateFirstInPrint') ? sanitize(tipp.getIdentifierValue('pISBN')) : sanitize(tipp.getIdentifierValue('ISSN'))) + '\t' +
+            (tipp.hasProperty('dateFirstInPrint') ? sanitize(tipp.getIdentifierValue('ISBN')) : sanitize(tipp.getIdentifierValue('eISSN'))) + '\t' +
             sanitize(tippCoverageStatement.startDate) + '\t' +
             sanitize(tippCoverageStatement.startVolume) + '\t' +
             sanitize(tippCoverageStatement.startIssue) + '\t' +
@@ -1595,14 +1596,12 @@ class WorkflowController{
       return
     }
 
-    def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
-    def combo_pkg_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
     def export_date = dateFormatService.formatDate(new Date())
     if (packages_to_export.size() == 1){
-      filename = "we:kb Export : ${packages_to_export[0].provider?.name} : ${packages_to_export[0].name} : ${export_date}.tsv"
+      filename = "wekb_package_${packages_to_export[0].provider?.name}_${packages_to_export[0].name}_${export_date}.tsv"
     }
     else{
-      filename = "we:kb Export : multiple_packages : ${export_date}.tsv"
+      filename = "wekb_package_multiple_packages_${export_date}.tsv"
     }
 
     try{
@@ -1611,7 +1610,7 @@ class WorkflowController{
       response.contentType = "text/tab-separated-values" // "text/tsv"
 
       packages_to_export.each{ pkg ->
-        packageService.sendFile(pkg, PackageService.ExportType.TSV, response)
+        exportService.exportPackageTippsAsTSV(response.outputStream, pkg)
       }
     }
     catch (Exception e){
@@ -1823,16 +1822,16 @@ class WorkflowController{
           }
 
           if (pkgObj?.isEditable() && (is_curator || !curated_pkg  || user.authorities.contains(Role.findByAuthority('ROLE_SUPERUSER')))) {
-            def result = packageService.updateFromSource(pkgObj, user, allTitles)
+            Map result = autoUpdatePackagesService.updateFromSource(pkgObj, user, allTitles)
 
-            if (result == 'OK'){
-              flash.success = "Update successfully started!"
+            if (result.result == JobResult.STATUS_SUCCESS){
+              flash.success = result.message
             }
-            else if (result == 'ALREADY_RUNNING'){
-              flash.warning = "Another update is already running. Please try again later."
+            else if (result.result == JobResult.STATUS_FAIL){
+              flash.warning = result.message
             }
             else{
-              flash.error = "There have been errors running the job. Please check Source & Package info."
+              flash.error = "There have been errors running the job. Please check Source info & Package info."
             }
           }
           else{

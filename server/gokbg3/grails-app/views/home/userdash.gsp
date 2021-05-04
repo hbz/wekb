@@ -10,7 +10,7 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-12">
-          <div class="panel panel-default">
+          %{--<div class="panel panel-default">
             <div class="panel-heading clearfix">
               <h3 class="panel-title">Your Most Recent Review Tasks</h3>
             </div>
@@ -19,7 +19,29 @@
                 params="[qbe:'g:reviewRequests', qp_allocatedto:'org.gokb.cred.User:' + Long.toString(request.user.id), qp_status:'org.gokb.cred.RefdataValue:' + Long.toString(org.gokb.cred.RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STATUS, 'Open').id), inline:true, hide:['qp_project', 'qp_allocatedto']]"
                 id="">Your Review Tasks</g:link>
             </div>
+          </div>--}%
+
+          <div class="panel panel-default">
+            <div class="panel-heading clearfix">
+              <h3 class="panel-title">Saved Searchs</h3>
+            </div>
+            <div class="panel-body">
+              <g:if test="${saved_items.size() > 8}">
+                <g:link controller="savedItems" action="index">All Saved Searchs (${saved_items.size()})</g:link>
+                <g:set var="saved_items" value="${saved_items.take(8)}"/>
+                <br><br>
+              </g:if>
+
+              <g:each in="${saved_items}" var="itm">
+                <g:set var="savedParams" value="${itm.toParam()}"/>
+                <div class="col-md-3 center-block center-text">
+                  <i class="fa fa-search fa-fw"></i>
+                  <g:link controller="${savedParams.controller ?: 'search'}" action="${savedParams.action ?: 'index'}" params="${savedParams}">${itm.name}</g:link>
+                </div>
+              </g:each>
+            </div>
           </div>
+
           <div class="panel panel-default">
             <div class="panel-heading clearfix">
               <h3 class="panel-title">Most recently updated Watched Components</h3>
@@ -36,7 +58,7 @@
             </div>
             <div class="panel-body">
               <g:link class="display-inline" controller="search" action="index"
-                params="[qbe:'g:jobResults', inline:true]"
+                params="[qbe:'g:userJobs', inline:true]"
                 id="">Finished Upload Jobs</g:link>
             </div>
           </div>

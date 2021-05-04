@@ -72,6 +72,7 @@ class RCConstants {
 
     public static final String REVIEW_REQUEST_STATUS = "ReviewRequest.Status"
     public static final String REVIEW_REQUEST_STD_DESC = "ReviewRequest.StdDesc"
+    public static final String REVIEW_REQUEST_TYPE = "ReviewRequest.Type"
 
     public static final String RDFDATA_TYPE = "RDFDataType"
 
@@ -82,11 +83,10 @@ class RCConstants {
     public static final String TIPP_ACCESS_TYPE = "TitleInstancePackagePlatform.AccessType"
     public static final String TIPP_COVERAGE_DEPTH = "TitleInstancePackagePlatform.CoverageDepth"
     public static final String TIPP_DELAYED_OA = "TitleInstancePackagePlatform.DelayedOA"
-    public static final String TIPP_FORMAT = "TitleInstancePackagePlatform.Format"
     public static final String TIPP_HYBRIDA_OA = "TitleInstancePackagePlatform.HybridOA"
     public static final String TIPP_MEDIUM = "TitleInstancePackagePlatform.Medium"
+    public static final String TIPP_OPEN_ACCESS = "TitleInstancePackagePlatform.OpenAccess"
     public static final String TIPP_PRIMARY = "TitleInstancePackagePlatform.Primary"
-    public static final String TIPP_PAYMENT_TYPE = "TitleInstancePackagePlatform.PaymentType"
     public static final String TIPP_PUBLICATION_TYPE = "TitleInstancePackagePlatform.PublicationType"
 
     public static final String TIPP_LINK_TYPE = "Tipp.LinkType"

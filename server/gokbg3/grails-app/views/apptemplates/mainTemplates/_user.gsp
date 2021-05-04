@@ -1,4 +1,4 @@
-<g:set var="editable" value="${ d.isEditable() || d.isAdministerable() }" />
+%{--<g:set var="editable" value="${ d.isEditable() || d.isAdministerable() }" />--}%
 <g:if test="${d.id != null}">
   <dl class="dl-horizontal">
     <dt><gokb:annotatedLabel owner="${d}" property="username">User Name</gokb:annotatedLabel></dt>

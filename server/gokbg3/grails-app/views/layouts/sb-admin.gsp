@@ -89,12 +89,11 @@
               <i class="fa fa-caret-down fa-fw"></i>
           	</a>
             <ul class="dropdown-menu dropdown-user">
-              <li class="divider"></li>
+
               <li><g:link controller="home" action="profile"><i class="fa fa-user fa-fw"></i>  My Profile</g:link></li>
               <li><g:link controller="home" action="preferences"><i class="fa fa-cog fa-fw"></i>  My Preferences</g:link></li>
-              <li class="divider"></li>
               <li><g:link controller="logoff"><i class="fa fa-sign-out fa-fw"></i> Logout</g:link></li>
-              <li class="divider"></li>
+
             </ul> <!-- /.dropdown-user -->
           </li>
           <!-- /.dropdown -->

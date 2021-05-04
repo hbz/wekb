@@ -12,22 +12,22 @@ import org.springframework.security.acls.domain.BasePermission
 import org.springframework.security.acls.model.ObjectIdentity
 import org.springframework.security.acls.model.Permission
 import wekb.AdminService
+import wekb.AutoUpdatePackagesService
 
 import java.util.concurrent.CancellationException
 
 class AdminController {
 
   def uploadAnalysisService
-  def FTUpdateService
+  FTUpdateService ftUpdateService
   def packageService
-  def gokbAclService
   def componentStatisticService
-  def aclUtilService
   def grailsCacheAdminService
   def titleAugmentService
   ConcurrencyManagerService concurrencyManagerService
   CleanupService cleanupService
   AdminService adminService
+  AutoUpdatePackagesService autoUpdatePackagesService
 
   @Deprecated
   def tidyOrgData() {
@@ -516,4 +516,37 @@ class AdminController {
 
     redirect(controller: 'admin', action: 'jobs');
   }
+
+  @Secured(['ROLE_SUPERUSER', 'IS_AUTHENTICATED_FULLY'])
+  def autoUpdatePackages() {
+      log.debug("Beginning scheduled auto update packages job.")
+      // find all updateable packages
+      def updPacks = Package.executeQuery(
+              "from Package p " +
+                      "where p.source is not null and " +
+                      "p.source.automaticUpdates = true " +
+                      "and (p.source.lastRun is null or p.source.lastRun < current_date)")
+      updPacks.each { Package p ->
+        if (p.source.needsUpdate()) {
+            def result = autoUpdatePackagesService.updateFromSource(p)
+            log.debug("Result of update: ${result}")
+            sleep(10000)
+        }
+      }
+      log.info("auto update packages job completed.")
+
+    redirect(controller: 'admin', action: 'jobs');
+  }
+
+  @Secured(['ROLE_SUPERUSER', 'IS_AUTHENTICATED_FULLY'])
+  def manageFTControl() {
+    Map<String, Object> result = [:]
+    log.debug("manageFTControle ..")
+    result.ftControls = FTControl.list()
+    result.ftUpdateService = [:]
+    result.editable = true
+
+    result
+  }
+
 }

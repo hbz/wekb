@@ -13,12 +13,33 @@
     ${d.description}
   </dd>
   <dt>
+    <gokb:annotatedLabel owner="${d}" property="statusText">Status Text</gokb:annotatedLabel>
+  </dt>
+  <dd>
+    ${d.statusText}
+  </dd>
+  <dt>
+    <gokb:annotatedLabel owner="${d}" property="type">Type</gokb:annotatedLabel>
+  </dt>
+  <dd>
+    ${d.type?.value}
+  </dd>
+  <dt>
+    <gokb:annotatedLabel owner="${d}" property="curatoryGroup">Curatory Group</gokb:annotatedLabel>
+  </dt>
+  <dd>
+    <g:set var="curatoryGroup" value="${ d.getCuratoryGroup()}" />
+    <g:if test="${curatoryGroup}">
+      <g:link controller="resource" action="show" id="${curatoryGroup.uuid}">${curatoryGroup.name}</g:link>
+    </g:if>
+  </dd>
+  <dt>
     <gokb:annotatedLabel owner="${d}" property="linkedItemId">Linked Component</gokb:annotatedLabel>
   </dt>
   <dd>
-    <g:set var="item" value="${ d.linkedItemId ? org.gokb.cred.KBComponent.get(d.linkedItemId) : null }" />
-    <g:if test="item">
-      <g:link controller="resource" action="show" id="${item?.uuid}">${item?.name}</g:link>
+    <g:set var="item" value="${ d.getLinkedItem()}" />
+    <g:if test="${item}">
+      <g:link controller="resource" action="show" id="${item.uuid}">${item.name}</g:link>
     </g:if>
   </dd>
   <dt>
@@ -40,6 +61,28 @@
     ${json?.message}
   </dd>
   <dt>
+    <gokb:annotatedLabel owner="${d}" property="resultJson">Messages</gokb:annotatedLabel>
+  </dt>
+  <dd>
+    <g:if test="${json?.messages}">
+      messages:
+      <ul>
+        <g:each in="${json.messages}" var="m">
+          <g:if test="${m instanceof String}">
+            <li>${m}</li>
+          </g:if>
+          <g:else>
+            <li>${m.message}</li>
+          </g:else>
+        </g:each>
+      </ul>
+    </g:if>
+    <g:if test="${!json?.messages}">
+      No Messages
+    </g:if>
+  </dd>
+
+  <dt>
     <gokb:annotatedLabel owner="${d}" property="resultJson">Errors</gokb:annotatedLabel>
   </dt>
   <dd>
@@ -47,7 +90,7 @@
       <div>Global</div>
       <ul>
         <g:each in="${json?.errors?.global}" var="ge">
-          <li>${ge.message}</li>
+          <li>${ge}</li>
         </g:each>
       </ul>
     </g:if>
@@ -55,7 +98,7 @@
       <div>Titles</div>
       <ul>
         <g:each in="${json?.errors?.tipps}" var="te">
-          <li>${ge.message}</li>
+          <li>${te}</li>
         </g:each>
       </ul>
     </g:if>

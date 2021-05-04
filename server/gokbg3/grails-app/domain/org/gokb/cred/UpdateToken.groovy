@@ -6,7 +6,7 @@ class UpdateToken {
   Package pkg
   User updateUser
 
-  static belongsTo = [Package, User]
+  static belongsTo = [pkg: Package, updateUser: User]
 
   static mapping = {
     id column:'ut_id'
