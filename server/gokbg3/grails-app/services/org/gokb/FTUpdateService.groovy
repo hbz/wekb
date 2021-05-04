@@ -115,14 +115,6 @@ class FTUpdateService {
                            value_en  : ddc.value_de])
         }
 
-        result.additionalProperties = []
-
-        kbc.additionalProperties.each { KBComponentAdditionalProperty kbComponentAdditionalProperty ->
-          result.additionalProperties.add([value    : kbComponentAdditionalProperty.apValue,
-                                          name      : kbComponentAdditionalProperty.propertyDefn.propertyName])
-        }
-
-
         result
       }
 
@@ -162,6 +154,14 @@ class FTUpdateService {
           platform.name = plt.name ?: ""
           result.platforms.add(platform)
         }
+
+        result.additionalProperties = []
+
+        kbc.additionalProperties.each { KBComponentAdditionalProperty kbComponentAdditionalProperty ->
+          result.additionalProperties.add([value    : kbComponentAdditionalProperty.apValue,
+                                           name      : kbComponentAdditionalProperty.propertyDefn.propertyName])
+        }
+
         result
       }
 
