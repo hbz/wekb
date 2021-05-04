@@ -319,7 +319,15 @@ class TitleInstancePackagePlatform extends KBComponent {
     if (tipp_fields.type) {
       tipp_publicationType = determinePublicationType(tipp_fields)
     }
-    def tipp_language = tipp_fields.language ? RefdataCategory.lookup('KBComponent.Language', tipp_fields.language) : null
+    def tipp_language = new HashSet<RefdataValue>()
+    if (tipp_fields.language){
+      for (lan in tipp_fields.language){
+        def tipp_lan = RefdataCategory.lookup('KBComponent.Language', lan)
+        if (tipp_lan){
+          tipp_language << tipp_lan
+        }
+      }
+    }
     TitleInstancePackagePlatform result = new TitleInstancePackagePlatform(
             uuid: tipp_fields.uuid,
             status: tipp_status,
@@ -1421,10 +1429,11 @@ class TitleInstancePackagePlatform extends KBComponent {
     }
 
     if (titleDTO.language) {
-      RefdataValue languageRef = RefdataCategory.lookup('KBComponent.Language', titleDTO.language)
-
-      if (!languageRef) {
-        valErrors.put('language', [message: "cannot parse", baddata: titleDTO.remove('language')])
+      for (def lan in titleDTO.language){
+        RefdataValue languageRef = RefdataCategory.lookup('KBComponent.Language', lan)
+        if (!languageRef) {
+          valErrors.put('language', [message: "cannot parse", baddata: titleDTO.remove('language')])
+        }
       }
     }
 
