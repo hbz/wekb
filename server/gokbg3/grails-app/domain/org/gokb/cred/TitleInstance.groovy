@@ -675,10 +675,14 @@ class TitleInstance extends KBComponent {
       }
     }
 
-    def ti_language = titleDTO.language ? RefdataCategory.lookup('KBComponent.Language', titleDTO.language) : null
-    if (ti_language){
-      titleDTO.language = ti_language
+    def allLanguages = []
+    for (def lan in titleDTO.language){
+      def ti_lan = RefdataCategory.lookup('KBComponent.Language', lan)
+      if (ti_lan){
+        allLanguages << ti_lan
+      }
     }
+    titleDTO.language = allLanguages
 
     if (valErrors.size() > 0) {
       if (result.errors) {

@@ -329,7 +329,6 @@ class TitleInstancePackagePlatform extends KBComponent {
             medium: tipp_medium,
             publicationType: tipp_publicationType,
             url: tipp_fields.url).save(failOnError: true)
-
     if (result) {
 
       def pkg_combo_type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Package.Tipps')
@@ -933,9 +932,7 @@ class TitleInstancePackagePlatform extends KBComponent {
         }
 
         if (tipp_dto.accessType && tipp_dto.accessType.length() > 0) {
-
           def access_statement
-
           if (tipp_dto.accessType == 'P') {
             access_statement = 'Paid'
           } else if (tipp_dto.accessType == 'F') {
@@ -943,9 +940,7 @@ class TitleInstancePackagePlatform extends KBComponent {
           } else {
             access_statement = tipp_dto.accessType
           }
-
           def access_ref = RefdataCategory.lookup(RCConstants.TIPP_ACCESS_TYPE, access_statement)
-
           if (access_ref) tipp.accessType = access_ref
         }
 
@@ -969,7 +964,6 @@ class TitleInstancePackagePlatform extends KBComponent {
 
         changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.medium, tipp, 'medium', RCConstants.TITLEINSTANCE_MEDIUM)
         changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.publicationType, tipp, 'publicationType', RCConstants.TIPP_PUBLICATION_TYPE)
-        changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.language, tipp, 'language')
 
         if (tipp_dto.coverageStatements && !tipp_dto.coverage) {
           tipp_dto.coverage = tipp_dto.coverageStatements
@@ -1038,9 +1032,7 @@ class TitleInstancePackagePlatform extends KBComponent {
                 changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endVolume', c.endVolume)
                 changed |= com.k_int.ClassUtils.setDateIfPresent(parsedStart, tcs, 'startDate')
                 changed |= com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tcs, 'endDate')
-
                 changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'embargo', c.embargo)
-
                 changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'coverageNote', c.coverageNote)
                 changed |= com.k_int.ClassUtils.setRefdataIfPresent(tcs.coverageDepth, tcs, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH)
               }
@@ -1054,9 +1046,7 @@ class TitleInstancePackagePlatform extends KBComponent {
           }
 
           if (!cs_match) {
-
             def cov_depth = null
-
             if (c.coverageDepth instanceof String) {
               cov_depth = RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, c.coverageDepth) ?: RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, "Fulltext")
             } else if (c.coverageDepth instanceof Integer) {
@@ -1095,11 +1085,18 @@ class TitleInstancePackagePlatform extends KBComponent {
         if (tipp_dto.ddcs) {
             tipp_dto.ddcs.each{ String ddc ->
               RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.DDC, ddc)
-
               if(refdataValue && !(refdataValue in result.ddcs)){
                 result.addToDdcs(refdataValue)
               }
             }
+        }
+
+        if (tipp_dto.language) {
+          tipp_dto.language.each{ RefdataValue lan ->
+            if(lan && !(lan in result.language)){
+              result.addToLanguage(lan)
+            }
+          }
         }
 
         tipp.save(flush: true, failOnError: true);
@@ -1162,7 +1159,11 @@ class TitleInstancePackagePlatform extends KBComponent {
         builder.'precedingPublicationTitleId'(precedingPublicationTitleId?.trim())
         builder.'lastChangedExternal'(lastChangedExternal?.trim())
         builder.'medium'(medium?.value.trim())
-        builder.'language'(language?.value.trim())
+        builder.'language' {
+          language.each { lan ->
+            builder.'language'(lan?.value.trim())
+          }
+        }
         builder.'title'([id: ti.id, uuid: ti.uuid]) {
           builder.'name'(ti.name?.trim())
           builder.'type'(titleClass)

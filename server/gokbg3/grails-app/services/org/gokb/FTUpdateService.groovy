@@ -4,6 +4,7 @@ import com.k_int.ESSearchService
 import grails.gorm.transactions.Transactional
 import org.elasticsearch.action.bulk.BulkRequestBuilder
 import org.gokb.cred.KBComponentAdditionalProperty
+import org.gokb.cred.RefdataValue
 
 @Transactional
 class FTUpdateService {
@@ -112,6 +113,13 @@ class FTUpdateService {
           result.ddcs.add([value     : ddc.value,
                            value_de  : ddc.value_de,
                            value_en  : ddc.value_de])
+        }
+
+        result.languages = []
+        kbc.language.each { RefdataValue lan ->
+          result.languages.add([value     : lan.value,
+                                value_de  : lan.value_de,
+                                value_en  : lan.value_de])
         }
 
         result.additionalProperties = []
