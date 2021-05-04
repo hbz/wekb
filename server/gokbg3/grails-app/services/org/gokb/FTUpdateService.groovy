@@ -103,28 +103,28 @@ class FTUpdateService {
         kbc.nationalRanges.each { nationalRange ->
           result.nationalRanges.add([value     : nationalRange.value,
                                     value_de  : nationalRange.value_de,
-                                    value_en  : nationalRange.value_de])
+                                    value_en  : nationalRange.value_en])
         }
 
         result.regionalRanges = []
         kbc.regionalRanges.each { regionalRange ->
           result.regionalRanges.add([value     : regionalRange.value,
                                     value_de  : regionalRange.value_de,
-                                    value_en  : regionalRange.value_de])
+                                    value_en  : regionalRange.value_en])
         }
 
         result.ddcs = []
         kbc.ddcs.each { ddc ->
           result.ddcs.add([value     : ddc.value,
                            value_de  : ddc.value_de,
-                           value_en  : ddc.value_de])
+                           value_en  : ddc.value_en])
         }
 
         result.languages = []
         kbc.languages.each { RefdataValue lan ->
           result.languages.add([value     : lan.value,
                                 value_de  : lan.value_de,
-                                value_en  : lan.value_de])
+                                value_en  : lan.value_en])
         }
 
 
@@ -493,7 +493,14 @@ class FTUpdateService {
         kbc.ddcs.each { ddc ->
           result.ddcs.add([value     : ddc.value,
                            value_de  : ddc.value_de,
-                           value_en  : ddc.value_de])
+                           value_en  : ddc.value_en])
+        }
+
+        result.languages = []
+        kbc.languages.each { RefdataValue lan ->
+          result.languages.add([value     : lan.value,
+                                value_de  : lan.value_de,
+                                value_en  : lan.value_en])
         }
 
         result

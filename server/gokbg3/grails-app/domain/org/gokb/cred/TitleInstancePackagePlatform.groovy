@@ -145,7 +145,7 @@ class TitleInstancePackagePlatform extends KBComponent {
       'supersedingPublicationTitleId':"supersedingPublicationTitleId",
       'lastChangedExternal'   : "lastChangedExternal",
       'medium'                : "medium",
-      'language'              : "language"
+      'languages'              : "languages"
     ],
     'defaultLinks' : [
       'pkg',
@@ -323,21 +323,12 @@ class TitleInstancePackagePlatform extends KBComponent {
     if (tipp_fields.type) {
       tipp_publicationType = determinePublicationType(tipp_fields)
     }
-    def tipp_language = new HashSet<RefdataValue>()
-    if (tipp_fields.language){
-      for (lan in tipp_fields.language){
-        def tipp_lan = RefdataCategory.lookup('KBComponent.Language', lan)
-        if (tipp_lan){
-          tipp_language << tipp_lan
-        }
-      }
-    }
+
     TitleInstancePackagePlatform result = new TitleInstancePackagePlatform(
             uuid: tipp_fields.uuid,
             status: tipp_status,
             editStatus: tipp_editstatus,
             name: tipp_fields.name,
-            language: tipp_language,
             medium: tipp_medium,
             publicationType: tipp_publicationType,
             url: tipp_fields.url).save(failOnError: true)
@@ -919,7 +910,6 @@ class TitleInstancePackagePlatform extends KBComponent {
           'status'      : (tipp_dto.status ?: null),
           'name'        : (tipp_dto.name ?: null),
           'editStatus'  : (tipp_dto.editStatus ?: null),
-          'language'    : (tipp_dto.language ?: null),
           'type'        : (tipp_dto.type ?: null),
           'medium'    : (tipp_dto.medium ?: null),
 
@@ -1115,8 +1105,8 @@ class TitleInstancePackagePlatform extends KBComponent {
 
         if (tipp_dto.language) {
           tipp_dto.language.each{ RefdataValue lan ->
-            if(lan && !(lan in result.language)){
-              result.addToLanguage(lan)
+            if(lan && !(lan in result.languages)){
+              result.addToLanguages(lan)
             }
           }
         }
@@ -1181,8 +1171,8 @@ class TitleInstancePackagePlatform extends KBComponent {
         builder.'supersedingPublicationTitleId'(supersedingPublicationTitleId?.trim())
         builder.'lastChangedExternal'(lastChangedExternal?.trim())
         builder.'medium'(medium?.value.trim())
-        builder.'language' {
-          language.each { lan ->
+        builder.'languages' {
+          languages.each { lan ->
             builder.'language'(lan?.value.trim())
           }
         }

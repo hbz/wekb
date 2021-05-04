@@ -297,9 +297,9 @@ abstract class KBComponent implements Auditable{
   Source source
 
   /**
-   * Component language. Linked to refdata table. Only applicable for TitleInstance and TitleInstancePackagePlatform.
+   * Component languages. Linked to refdata table. Only applicable for TitleInstance and TitleInstancePackagePlatform.
    */
-  Set language
+  Set languages
   String lastUpdateComment
 
   // Set tags = []
@@ -364,7 +364,7 @@ abstract class KBComponent implements Auditable{
       reviewRequests      : ReviewRequest,
       people              : ComponentPerson,
       prices              : ComponentPrice,
-      language            : RefdataValue
+      languages            : RefdataValue
   ]
 
 
@@ -398,7 +398,7 @@ abstract class KBComponent implements Auditable{
     variantNames cascade: "all,delete-orphan", lazy: false
     //dateCreatedYearMonth formula: "DATE_FORMAT(kbc_date_created, '%Y-%m')"
     //lastUpdatedYearMonth formula: "DATE_FORMAT(kbc_last_updated, '%Y-%m')"
-    language             joinTable: [
+    languages             joinTable: [
         name:   'kbc_language',
         key:    'kbc_fk',
         column: 'kbc_language_rv_fk', type:   'BIGINT'
@@ -423,7 +423,7 @@ abstract class KBComponent implements Auditable{
     bucketHash(nullable: true, blank: false)
     componentDiscriminator(nullable: true, blank: false)
     componentHash(nullable: true, blank: false)
-    language(nullable:true)
+    languages(nullable:true)
   }
 
 
@@ -1311,9 +1311,9 @@ abstract class KBComponent implements Auditable{
     builder.'name'(name)
     builder.'status'(status?.value)
     builder.'editStatus'(editStatus?.value)
-    if (language){
-      builder.'language'{
-        language.each{ lan ->
+    if (languages){
+      builder.'languages'{
+        languages.each{ lan ->
           builder.'language'(lan.value)
         }
       }
