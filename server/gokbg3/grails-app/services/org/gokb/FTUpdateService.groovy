@@ -3,6 +3,7 @@ package org.gokb
 import com.k_int.ESSearchService
 import grails.gorm.transactions.Transactional
 import org.elasticsearch.action.bulk.BulkRequestBuilder
+import org.gokb.cred.CuratoryGroup
 import org.gokb.cred.KBComponentAdditionalProperty
 import org.gokb.cred.TIPPCoverageStatement
 
@@ -81,10 +82,13 @@ class FTUpdateService {
             result.source.lastRun = dateFormatService.formatIsoTimestamp(kbc.source.lastRun)
           }
         }
+
         result.curatoryGroups = []
-        kbc.curatoryGroups?.each { cg ->
-          result.curatoryGroups.add(cg.name)
+        kbc.curatoryGroups?.each { CuratoryGroup cg ->
+          result.curatoryGroups.add([name: cg.name,
+                                    type: cg.type.value])
         }
+
         result.status = kbc.status?.value
         result.identifiers = []
         kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
@@ -115,14 +119,6 @@ class FTUpdateService {
                            value_en  : ddc.value_de])
         }
 
-        result.additionalProperties = []
-
-        kbc.additionalProperties.each { KBComponentAdditionalProperty kbComponentAdditionalProperty ->
-          result.additionalProperties.add([value    : kbComponentAdditionalProperty.apValue,
-                                          name      : kbComponentAdditionalProperty.propertyDefn.propertyName])
-        }
-
-
         result
       }
 
@@ -143,9 +139,11 @@ class FTUpdateService {
           result.roles.add(role.value)
         }
         result.curatoryGroups = []
-        kbc.curatoryGroups?.each { cg ->
-          result.curatoryGroups.add(cg.name)
+        kbc.curatoryGroups?.each { CuratoryGroup cg ->
+          result.curatoryGroups.add([name: cg.name,
+                                     type: cg.type.value])
         }
+
         result.status = kbc.status?.value
         result.identifiers = []
         kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
@@ -162,6 +160,14 @@ class FTUpdateService {
           platform.name = plt.name ?: ""
           result.platforms.add(platform)
         }
+
+        result.additionalProperties = []
+
+        kbc.additionalProperties.each { KBComponentAdditionalProperty kbComponentAdditionalProperty ->
+          result.additionalProperties.add([value    : kbComponentAdditionalProperty.apValue,
+                                           name      : kbComponentAdditionalProperty.propertyDefn.propertyName])
+        }
+
         result
       }
 
@@ -176,10 +182,13 @@ class FTUpdateService {
         result.provider = kbc.provider ? kbc.provider.getLogEntityId() : ""
         result.providerUuid = kbc.provider ? kbc.provider?.uuid : ""
         result.lastUpdatedDisplay = dateFormatService.formatIsoTimestamp(kbc.lastUpdated)
+
         result.curatoryGroups = []
-        kbc.curatoryGroups?.each { cg ->
-          result.curatoryGroups.add(cg.name)
+        kbc.curatoryGroups?.each { CuratoryGroup cg ->
+          result.curatoryGroups.add([name: cg.name,
+                                     type: cg.type.value])
         }
+
         result.altname = []
         kbc.variantNames.each { vn ->
           result.altname.add(vn.variantName)
@@ -327,9 +336,11 @@ class FTUpdateService {
         result.componentType = kbc.class.simpleName
 
         result.curatoryGroups = []
-        kbc.pkg?.curatoryGroups?.each { cg ->
-          result.curatoryGroups.add(cg.name)
+        kbc.pkg?.curatoryGroups?.each { CuratoryGroup cg ->
+          result.curatoryGroups.add([name: cg.name,
+                                     type: cg.type.value])
         }
+
         result.titleType = kbc.niceName ?: 'Unknown'
         result.lastUpdatedDisplay = dateFormatService.formatIsoTimestamp(kbc.lastUpdated)
         result.url = kbc.url
@@ -482,6 +493,7 @@ class FTUpdateService {
     catch (Exception e) {
       log.error("Problem", e)
     }
+
     running = false
   }
 
