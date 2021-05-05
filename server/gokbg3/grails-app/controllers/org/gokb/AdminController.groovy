@@ -594,7 +594,7 @@ class AdminController {
   @Secured(['ROLE_SUPERUSER', 'IS_AUTHENTICATED_FULLY'])
   def deleteIndex() {
     Map<String, Object> result = [:]
-    log.debug("manageFTControle ..")
+    log.debug("deleteIndex ..")
     Map typePerIndex = [
             "gokbtipps": "TitleInstancePackagePlatform",
             "gokborgs": "Org" ,
@@ -602,7 +602,6 @@ class AdminController {
             "gokbplatforms": "Platform"
     ]
 
-    println(params.name)
     if(params.name) {
       Client esclient = ESWrapperService.getClient()
 
