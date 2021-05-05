@@ -34,22 +34,10 @@
 <g:set var="currentServer" scope="page" value="${ServerUtils.getCurrentServer()}"/>
 
 <body id="page-body" class="theme-${ grailsApplication.config.gokb.theme }">
-<main>
-    <g:if test="${currentServer == ServerUtils.SERVER_DEV}">
-        <div class="text-success label big wb-server-label">
-            <span>DEV</span>
-        </div>
-    </g:if>
-    <g:if test="${currentServer == ServerUtils.SERVER_QA}">
-        <div class="text-danger label big wb-server-label">
-            <span>QA</span>
-        </div>
-    </g:if>
-    <g:if test="${currentServer == ServerUtils.SERVER_LOCAL}">
-        <div class="text-primary wb-server-label">
-            <span>LOCAL</span>
-        </div>
-    </g:if>
+<wekb:serverlabel server="${currentServer}"/>
+
+<main class="${serverLabel}">
+
 
     <nav class="navbar navbar-expand-sm navbar-dark bg-dark mb-3" id="primary-nav-bar" role="navigation">
          <div class="container">
@@ -76,6 +64,7 @@
 
          </div>
        </nav>
+
     <g:layoutBody />
 </main>
 <g:render template="/layouts/footer"   />

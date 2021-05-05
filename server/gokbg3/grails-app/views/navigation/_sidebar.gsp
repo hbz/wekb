@@ -1,7 +1,7 @@
 <%@ page import="de.wekb.helper.RCConstants; org.gokb.cred.RefdataCategory" %>
 <%@page expressionCodec="none" %>
-
-<div class="navbar-default sidebar" role="navigation">
+<wekb:serverlabel server="${currentServer}"/>
+<div class="navbar-default sidebar ${serverLabel}" role="navigation">
   <div class="sidebar-nav navbar-collapse">
     <ul class="nav" id="side-menu">
       <sec:ifLoggedIn>

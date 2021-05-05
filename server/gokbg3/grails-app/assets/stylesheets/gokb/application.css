@@ -16,6 +16,7 @@
 *= encoding UTF-8
 */
 
+
 /** PUBLIC START **/
 /* Mobile Tables START */
 
@@ -202,6 +203,16 @@ ul.select2-choices:after {
 }
 
 /** PUBLIC END **/
+
+.wekb-local{
+  border-left: 10px solid #5bc0de;
+}
+.wekb-dev{
+  border-left: 10px solid #5cb85c;
+}
+.wekb-qa{
+  border-left: 10px solid #d9534f;
+}
 /* list group-item font is to small in yeti theme */
 .list-group {
     font-size: 1.5rem;
