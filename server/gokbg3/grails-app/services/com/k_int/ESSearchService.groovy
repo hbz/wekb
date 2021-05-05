@@ -638,7 +638,7 @@ class ESSearchService{
 
       if( !errors && exactQuery.hasClauses() ) {
         Client esclient = ESWrapperService.getClient()
-        SearchRequestBuilder es_request =  esclient.prepareSearch("exact")
+        SearchRequestBuilder es_request =  esclient.prepareSearch()
 
         es_request.setIndices(grailsApplication.config.gokb.es.indices.values() as String[])
         es_request.setTypes(grailsApplication.config.globalSearch.types)
