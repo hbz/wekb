@@ -353,12 +353,6 @@ class TitleInstancePackagePlatform extends KBComponent {
     return name ?: "${pkg?.name} / ${title?.name} / ${hostPlatform?.name}"
   }
 
-
-  @Transient
-  List<CuratoryGroup> getCuratoryGroups() {
-    return pkg ? pkg.curatoryGroups  : null
-  }
-
   /**
    * Please see https://github.com/openlibraryenvironment/gokb/wiki/tipp_dto
    */
@@ -840,7 +834,7 @@ class TitleInstancePackagePlatform extends KBComponent {
     def status_retired = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Retired')
     def trimmed_url = tipp_dto.url ? tipp_dto.url.trim() : null
     //TODO: Moe
-    def curator = pkg?.curatoryGroups?.size() > 0 ? (user.adminStatus || user.curatoryGroups?.id.intersect(pkg?.curatoryGroups?.id)) : true
+    def curator = pkg?.curatoryGroups?.size() > 0 ? (user.adminStatus || user.curatoryGroups?.id.intersect(pkg?.curatoryGroups?.id)) : false
 
     if (pkg && plt && ti && curator) {
       log.debug("See if we already have a tipp")

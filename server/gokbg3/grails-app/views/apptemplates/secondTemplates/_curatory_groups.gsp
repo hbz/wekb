@@ -3,6 +3,9 @@
 <g:set var="cur_editable" value="${ CuratoryGroup.isTypeAdministerable() || ( (editable && d.class.name != 'org.gokb.cred.User' ) && ((d.curatoryGroups?.size() == 0) || (request.curator?.size() > 0) || (params.curationOverride == "true" && request.user.isAdmin()))) }" />
 <g:set var="editable" value="${d.isAdministerable() || d == user || (editable && ((d.curatoryGroups ? (request.curator != null && request.curator.size() > 0) : true) || (params.curationOverride == 'true' && request.user.isAdmin())) ) }" />
 
+<g:set var="curatoryGroups" value="${d instanceof TitleInstancePackagePlatform ? d.pkg.curatoryGroups : d.curatoryGroups }" />
+
+
 <table class="table table-bordered" style="max-width:100%">
   <thead>
     <tr>
@@ -13,8 +16,8 @@
     </tr>
   </thead>
   <tbody>
-    <g:if test="${ d.curatoryGroups?.size() > 0 }" >
-      <g:each in="${d.curatoryGroups}" var="t">
+    <g:if test="${ curatoryGroups.size() > 0 }" >
+      <g:each in="${curatoryGroups}" var="t">
         <tr>
           <td><g:link controller="resource" action="show" id="${t.getClassName()}:${t.id}"> ${t.name}</g:link></td>
           <g:if test="${cur_editable && editable && !(d instanceof TitleInstancePackagePlatform)}">

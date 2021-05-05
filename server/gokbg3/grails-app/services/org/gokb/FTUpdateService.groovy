@@ -355,7 +355,7 @@ class FTUpdateService {
         result.componentType = kbc.class.simpleName
 
         result.curatoryGroups = []
-        kbc.getCuratoryGroups()?.each { KBComponent cg ->
+        kbc.pkg.getCuratoryGroups()?.each { KBComponent cg ->
           result.curatoryGroups.add([name: cg.name,
                                      type: cg.type?.value,
                                        curatoryGroup: cg.getLogEntityId()])
