@@ -35,15 +35,13 @@
                                 <select name="${facet.key}" class="wekb-multiselect" multiple
                                         aria-label="Default select example">
                                     <g:each in="${facet.value?.sort { it.display.toLowerCase() }}" var="v">
-                                        <g:set var="fname" value="facet:${facet.key + ':' + v.term}"/>
-                                        <g:set var="kbc"
-                                               value="${v.term.startsWith('org.gokb.cred') ? org.gokb.cred.KBComponent.get(v.term.split(':')[1].toLong()) : null}"/>
-                                        <g:if test="${params.list(facet.key).contains(v.term.toString())}">
+
+                                        <g:if test="${params.list(facet.key).contains('"'+v.term+'"')}">
                                             <option value="${'"'+v.term+'"'}"
-                                                    selected="selected">${kbc?.name ?: v.display} (${v.count})</option>
+                                                    selected="selected">${v.display} (${v.count})</option>
                                         </g:if>
                                         <g:else>
-                                            <option value="${'"'+v.term+'"'}">${kbc?.name ?: v.display} (${v.count})</option>
+                                            <option value="${'"'+v.term+'"'}">${v.display} (${v.count})</option>
                                         </g:else>
                                     </g:each>
                                 </select>
@@ -111,7 +109,10 @@
                             <g:if test="${hit.source.curatoryGroups?.size() > 0}">
                                 <g:each in="${hit.source.curatoryGroups}" var="cg" status="c">
                                     <g:if test="${c > 0}"><br></g:if>
-                                    ${cg}
+                                    ${cg.name}
+                                    <g:if test="${cg.value}">
+                                    (${cg.value})
+                                    </g:if>
                                 </g:each>
                             </g:if>
                             <g:else>

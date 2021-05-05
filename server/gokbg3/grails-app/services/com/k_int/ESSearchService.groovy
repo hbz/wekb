@@ -1,5 +1,6 @@
 package com.k_int
 
+import de.wekb.helper.RCConstants
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
 import groovyx.net.http.URIBuilder
@@ -23,8 +24,7 @@ import java.text.SimpleDateFormat
 class ESSearchService{
 // Map the parameter names we use in the webapp with the ES fields
   def reversemap = [
-      'type':'rectype',
-      'curatoryGroups':'curatoryGroups',
+      'curatoryGroup':'curatoryGroups.curatoryGroup',
       'cpname':'cpname',
       'provider':'provider',
       'componentType':'componentType',
@@ -108,7 +108,7 @@ class ESSearchService{
     Client esclient = ESWrapperService.getClient()
 
     try {
-      if ( (params.q && params.q.length() > 0) || params.rectype) {
+      if ( (params.q && params.q.length() > 0)) {
 
         if ((!params.all) || (!params.all?.equals("yes"))) {
           params.max = Math.min(params.max ? params.max : 15, 100)
@@ -141,9 +141,15 @@ class ESSearchService{
           }
           log.debug("srb start to add query and aggregration query string is ${query_str}")
 
+          List providerRoles = [RefdataCategory.lookup(RCConstants.ORG_ROLE, 'Content Provider'), RefdataCategory.lookup(RCConstants.ORG_ROLE, 'Platform Provider'), RefdataCategory.lookup(RCConstants.ORG_ROLE, 'Publisher')]
+
+          Integer countCuratoryGroups = CuratoryGroup.executeQuery("select count(o.id) from CuratoryGroup as o where status != :forbiddenStatus", [forbiddenStatus : RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED)], [readOnly: true])[0]
+          Integer countProvider = Org.executeQuery("select count(o.id) from Org as o join o.roles rdv where rdv in (:roles) and o.status != :forbiddenStatus", [forbiddenStatus : RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED), roles: providerRoles], [readOnly: true])[0]
+
+
           srb.setQuery(QueryBuilders.queryStringQuery(query_str))//QueryBuilders.wrapperQuery(query_str)
-              .addAggregation(AggregationBuilders.terms('curatoryGroups').size(25).field('curatoryGroups'))
-              .addAggregation(AggregationBuilders.terms('provider').size(25).field('provider'))
+              .addAggregation(AggregationBuilders.terms('curatoryGroup').size(countCuratoryGroups).field('curatoryGroups.curatoryGroup'))
+              .addAggregation(AggregationBuilders.terms('provider').size(countProvider).field('provider'))
               .setFrom(params.offset)
               .setSize(params.max)
 
@@ -170,7 +176,8 @@ class ESSearchService{
               def facet_values = []
               entry.buckets.each { bucket ->
                 bucket.each { bi ->
-                  facet_values.add([term:bi.getKey(),display:bi.getKey(),count:bi.getDocCount()])
+                  String display = bi.getKey().startsWith('org.gokb.cred') ? org.gokb.cred.KBComponent.get(bi.getKey().split(':')[1].toLong()).name : "Unknow"
+                  facet_values.add([term:bi.getKey(), display:display , count:bi.getDocCount()])
                 }
               }
               result.facets[entry.getName()] = facet_values
@@ -202,11 +209,6 @@ class ESSearchService{
 
     if ( params?.q != null ){
       sw.write("name:${params.q}")
-    }
-
-    if(params?.rectype){
-      if(sw.toString()) sw.write(" AND ");
-      sw.write(" rectype:${params.rectype} ")
     }
 
     field_map.each { mapping ->

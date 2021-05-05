@@ -88,7 +88,8 @@ class FTUpdateService {
           result.curatoryGroups = []
           kbc.curatoryGroups?.each { KBComponent cg ->
             result.curatoryGroups.add([name: cg.name,
-                                       type: cg.type?.value])
+                                       type: cg.type?.value,
+                                       curatoryGroup: cg.getLogEntityId()])
           }
         }
 
@@ -154,7 +155,8 @@ class FTUpdateService {
           result.curatoryGroups = []
           kbc.curatoryGroups?.each { KBComponent cg ->
             result.curatoryGroups.add([name: cg.name,
-                                       type: cg.type?.value])
+                                       type: cg.type?.value,
+                                       curatoryGroup: cg.getLogEntityId()])
           }
         }
 
@@ -201,7 +203,8 @@ class FTUpdateService {
           result.curatoryGroups = []
           kbc.curatoryGroups?.each { KBComponent cg ->
             result.curatoryGroups.add([name: cg.name,
-                                       type: cg.type?.value])
+                                       type: cg.type?.value,
+                                       curatoryGroup: cg.getLogEntityId()])
           }
         }
 
@@ -354,7 +357,8 @@ class FTUpdateService {
         result.curatoryGroups = []
         kbc.getCuratoryGroups()?.each { KBComponent cg ->
           result.curatoryGroups.add([name: cg.name,
-                                     type: cg.type?.value])
+                                     type: cg.type?.value,
+                                       curatoryGroup: cg.getLogEntityId()])
         }
 
         result.titleType = kbc.niceName ?: 'Unknown'
