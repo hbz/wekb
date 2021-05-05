@@ -15,17 +15,17 @@ class WekbInjectionTagLib {
 
     def serverlabel = {attrs, body ->
         switch (attrs.server) {
-            case 'ServerUtils.SERVER_DEV':
+            case ServerUtils.SERVER_DEV:
                 g.set( var:'serverLabel', value: 'wekb-dev' )
                 break
-            case 'ServerUtils.SERVER_QA':
+            case ServerUtils.SERVER_QA:
                 g.set( var:'serverLabel', value: 'wekb-qa' )
                 break
             case ServerUtils.SERVER_LOCAL:
                 g.set( var:'serverLabel', value: 'wekb-local' )
                 break
             default:
-                g.set( var:'serverLabel', value: 'test' )
+                g.set( var:'serverLabel', value: '' )
                 break
         }
     }
