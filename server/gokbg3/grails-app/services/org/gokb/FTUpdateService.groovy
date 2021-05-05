@@ -3,8 +3,10 @@ package org.gokb
 import com.k_int.ESSearchService
 import grails.gorm.transactions.Transactional
 import org.elasticsearch.action.bulk.BulkRequestBuilder
+import org.gokb.cred.KBComponent
 import org.gokb.cred.KBComponentAdditionalProperty
 import org.gokb.cred.TIPPCoverageStatement
+import org.gokb.cred.RefdataValue
 
 @Transactional
 class FTUpdateService {
@@ -81,10 +83,15 @@ class FTUpdateService {
             result.source.lastRun = dateFormatService.formatIsoTimestamp(kbc.source.lastRun)
           }
         }
-        result.curatoryGroups = []
-        kbc.curatoryGroups?.each { cg ->
-          result.curatoryGroups.add(cg.name)
+
+        if(kbc.respondsTo('getCuratoryGroups')) {
+          result.curatoryGroups = []
+          kbc.curatoryGroups?.each { KBComponent cg ->
+            result.curatoryGroups.add([name: cg.name,
+                                       type: cg.type?.value])
+          }
         }
+
         result.status = kbc.status?.value
         result.identifiers = []
         kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
@@ -98,28 +105,28 @@ class FTUpdateService {
         kbc.nationalRanges.each { nationalRange ->
           result.nationalRanges.add([value     : nationalRange.value,
                                     value_de  : nationalRange.value_de,
-                                    value_en  : nationalRange.value_de])
+                                    value_en  : nationalRange.value_en])
         }
 
         result.regionalRanges = []
         kbc.regionalRanges.each { regionalRange ->
           result.regionalRanges.add([value     : regionalRange.value,
                                     value_de  : regionalRange.value_de,
-                                    value_en  : regionalRange.value_de])
+                                    value_en  : regionalRange.value_en])
         }
 
         result.ddcs = []
         kbc.ddcs.each { ddc ->
           result.ddcs.add([value     : ddc.value,
                            value_de  : ddc.value_de,
-                           value_en  : ddc.value_de])
+                           value_en  : ddc.value_en])
         }
 
-        result.additionalProperties = []
-
-        kbc.additionalProperties.each { KBComponentAdditionalProperty kbComponentAdditionalProperty ->
-          result.additionalProperties.add([value    : kbComponentAdditionalProperty.apValue,
-                                          name      : kbComponentAdditionalProperty.propertyDefn.propertyName])
+        result.languages = []
+        kbc.languages.each { RefdataValue lan ->
+          result.languages.add([value     : lan.value,
+                                value_de  : lan.value_de,
+                                value_en  : lan.value_en])
         }
 
 
@@ -142,10 +149,15 @@ class FTUpdateService {
         kbc.roles.each { role ->
           result.roles.add(role.value)
         }
-        result.curatoryGroups = []
-        kbc.curatoryGroups?.each { cg ->
-          result.curatoryGroups.add(cg.name)
+
+        if(kbc.respondsTo('getCuratoryGroups')) {
+          result.curatoryGroups = []
+          kbc.curatoryGroups?.each { KBComponent cg ->
+            result.curatoryGroups.add([name: cg.name,
+                                       type: cg.type?.value])
+          }
         }
+
         result.status = kbc.status?.value
         result.identifiers = []
         kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
@@ -162,6 +174,14 @@ class FTUpdateService {
           platform.name = plt.name ?: ""
           result.platforms.add(platform)
         }
+
+        result.additionalProperties = []
+
+        kbc.additionalProperties.each { KBComponentAdditionalProperty kbComponentAdditionalProperty ->
+          result.additionalProperties.add([value    : kbComponentAdditionalProperty.apValue,
+                                           name      : kbComponentAdditionalProperty.propertyDefn.propertyName])
+        }
+
         result
       }
 
@@ -176,10 +196,15 @@ class FTUpdateService {
         result.provider = kbc.provider ? kbc.provider.getLogEntityId() : ""
         result.providerUuid = kbc.provider ? kbc.provider?.uuid : ""
         result.lastUpdatedDisplay = dateFormatService.formatIsoTimestamp(kbc.lastUpdated)
-        result.curatoryGroups = []
-        kbc.curatoryGroups?.each { cg ->
-          result.curatoryGroups.add(cg.name)
+
+        if(kbc.respondsTo('getCuratoryGroups')) {
+          result.curatoryGroups = []
+          kbc.curatoryGroups?.each { KBComponent cg ->
+            result.curatoryGroups.add([name: cg.name,
+                                       type: cg.type?.value])
+          }
         }
+
         result.altname = []
         kbc.variantNames.each { vn ->
           result.altname.add(vn.variantName)
@@ -327,9 +352,11 @@ class FTUpdateService {
         result.componentType = kbc.class.simpleName
 
         result.curatoryGroups = []
-        kbc.pkg?.curatoryGroups?.each { cg ->
-          result.curatoryGroups.add(cg.name)
+        kbc.getCuratoryGroups()?.each { KBComponent cg ->
+          result.curatoryGroups.add([name: cg.name,
+                                     type: cg.type?.value])
         }
+
         result.titleType = kbc.niceName ?: 'Unknown'
         result.lastUpdatedDisplay = dateFormatService.formatIsoTimestamp(kbc.lastUpdated)
         result.url = kbc.url
@@ -473,7 +500,14 @@ class FTUpdateService {
         kbc.ddcs.each { ddc ->
           result.ddcs.add([value     : ddc.value,
                            value_de  : ddc.value_de,
-                           value_en  : ddc.value_de])
+                           value_en  : ddc.value_en])
+        }
+
+        result.languages = []
+        kbc.languages.each { RefdataValue lan ->
+          result.languages.add([value     : lan.value,
+                                value_de  : lan.value_de,
+                                value_en  : lan.value_en])
         }
 
         result
@@ -482,6 +516,7 @@ class FTUpdateService {
     catch (Exception e) {
       log.error("Problem", e)
     }
+
     running = false
   }
 

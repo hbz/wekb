@@ -4,6 +4,7 @@ import groovy.json.JsonSlurper
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.settings.Settings
 import org.elasticsearch.common.transport.InetSocketTransportAddress
+import org.grails.web.json.parser.JSONParser
 
 import static groovy.json.JsonOutput.*
 
@@ -20,16 +21,16 @@ class ESWrapperService {
 
 
   def getSettings() {
-    File settingsFile = new File(getClass().getResource(
-        "${File.separator}elasticsearch${File.separator}es_settings.json").toURI())
-    return new JsonSlurper().parse(settingsFile)
+    JSONParser jsonParser = new JSONParser(this.class.classLoader.getResourceAsStream("${File.separator}elasticsearch${File.separator}es_settings.json"))
+
+    jsonParser.parse()
   }
 
 
   def getMapping() {
-    File mappingFile = new File(getClass().getResource(
-        "${File.separator}elasticsearch${File.separator}es_mapping.json").toURI())
-    return new JsonSlurper().parse(mappingFile)
+    JSONParser jsonParser = new JSONParser(this.class.classLoader.getResourceAsStream("${File.separator}elasticsearch${File.separator}es_mapping.json"))
+
+    jsonParser.parse()
   }
 
 

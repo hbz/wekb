@@ -125,7 +125,7 @@
                 <tr>
                   <td>
                       <g:link controller="packages" action="packageContent" id="${hit.source._id}">${hit.source.name}</g:link>
-                      <g:link controller="packages" action="kbart" id="${hit.source._id}">(Download Kbart File)</g:link>
+
                   </td>
                   <td></td>
                   <td></td>
