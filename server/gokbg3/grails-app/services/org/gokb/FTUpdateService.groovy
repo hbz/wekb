@@ -3,7 +3,7 @@ package org.gokb
 import com.k_int.ESSearchService
 import grails.gorm.transactions.Transactional
 import org.elasticsearch.action.bulk.BulkRequestBuilder
-import org.gokb.cred.CuratoryGroup
+import org.gokb.cred.KBComponent
 import org.gokb.cred.KBComponentAdditionalProperty
 import org.gokb.cred.TIPPCoverageStatement
 import org.gokb.cred.RefdataValue
@@ -84,10 +84,12 @@ class FTUpdateService {
           }
         }
 
-        result.curatoryGroups = []
-        kbc.curatoryGroups?.each { CuratoryGroup cg ->
-          result.curatoryGroups.add([name: cg.name,
-                                    type: cg.type.value])
+        if(kbc.respondsTo('getCuratoryGroups')) {
+          result.curatoryGroups = []
+          kbc.curatoryGroups?.each { KBComponent cg ->
+            result.curatoryGroups.add([name: cg.name,
+                                       type: cg.type?.value])
+          }
         }
 
         result.status = kbc.status?.value
@@ -147,10 +149,13 @@ class FTUpdateService {
         kbc.roles.each { role ->
           result.roles.add(role.value)
         }
-        result.curatoryGroups = []
-        kbc.curatoryGroups?.each { CuratoryGroup cg ->
-          result.curatoryGroups.add([name: cg.name,
-                                     type: cg.type.value])
+
+        if(kbc.respondsTo('getCuratoryGroups')) {
+          result.curatoryGroups = []
+          kbc.curatoryGroups?.each { KBComponent cg ->
+            result.curatoryGroups.add([name: cg.name,
+                                       type: cg.type?.value])
+          }
         }
 
         result.status = kbc.status?.value
@@ -192,10 +197,12 @@ class FTUpdateService {
         result.providerUuid = kbc.provider ? kbc.provider?.uuid : ""
         result.lastUpdatedDisplay = dateFormatService.formatIsoTimestamp(kbc.lastUpdated)
 
-        result.curatoryGroups = []
-        kbc.curatoryGroups?.each { CuratoryGroup cg ->
-          result.curatoryGroups.add([name: cg.name,
-                                     type: cg.type.value])
+        if(kbc.respondsTo('getCuratoryGroups')) {
+          result.curatoryGroups = []
+          kbc.curatoryGroups?.each { KBComponent cg ->
+            result.curatoryGroups.add([name: cg.name,
+                                       type: cg.type?.value])
+          }
         }
 
         result.altname = []
@@ -345,9 +352,9 @@ class FTUpdateService {
         result.componentType = kbc.class.simpleName
 
         result.curatoryGroups = []
-        kbc.pkg?.curatoryGroups?.each { CuratoryGroup cg ->
+        kbc.getCuratoryGroups()?.each { KBComponent cg ->
           result.curatoryGroups.add([name: cg.name,
-                                     type: cg.type.value])
+                                     type: cg.type?.value])
         }
 
         result.titleType = kbc.niceName ?: 'Unknown'
