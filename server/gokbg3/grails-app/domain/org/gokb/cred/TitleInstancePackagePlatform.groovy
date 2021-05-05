@@ -1211,7 +1211,7 @@ class TitleInstancePackagePlatform extends KBComponent {
               builder.'nominalPlatform'()
             }
             builder.'curatoryGroups' {
-              curatoryGroups.each { cg ->
+              pkg.curatoryGroups.each { cg ->
                 builder.'group' {
                   builder.'name'(cg.name)
                 }
