@@ -108,7 +108,7 @@ class ExportService {
                             sanitize(tipp.getTitleID()) + '\t' +
                             sanitize(tipp.getIdentifierValue('DOI')) + '\t' +
                             sanitize(tipp.subjectArea) + '\t' +
-                            sanitize(tipp.language?.value) + '\t' +
+                            sanitize(tipp.languages?.value.join(',')) + '\t' +
                             sanitize(tipp.accessType?.value) + '\t' +
                             sanitize(tipp.coverageDepth?.value) + '\t' +
                             sanitize(tipp.pkg.name) + '\t' +

@@ -11,7 +11,7 @@ class AutoUpdatePackagesJob {
 
   static triggers = {
     // Cron timer.
-    cron name: 'AutoUpdatePackageTrigger', cronExpression: "0 0 6 * * ? *" // daily at 6:00 am
+    cron name: 'AutoUpdatePackageTrigger', cronExpression: "0 0 20 * * ? *" // daily at 8:00 pm
 // for testing: every 5 minutes   cron name: 'AutoUpdatePackageTrigger', cronExpression: "0 1/5 * * * ? *" // daily at 6:00 am
   }
 
