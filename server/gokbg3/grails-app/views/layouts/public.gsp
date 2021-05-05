@@ -46,13 +46,13 @@
                      <img  alt="Logo wekb"  src="${resource(dir: 'images', file: 'logo.svg')}"/>
                  </a>
              </div>
-             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample03" aria-controls="navbarsExample03" aria-label="Toggle navigation">
+             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#public-navigation" aria-controls="navbarsExample03" aria-label="Toggle navigation">
                  <span class="navbar-toggler-icon"></span>
              </button>
 
 
 
-            <div class="collapse navbar-collapse flex-grow-1 text-right">
+            <div class="collapse navbar-collapse flex-grow-1 text-right" id="public-navigation">
                <ul class="navbar-nav ml-auto flex-nowrap">
                   <g:if test="${grailsApplication.config.gokb.ygorUrl}">
                     <li class="nav-item"><a class="nav-link" href ="${grailsApplication.config.gokb.ygorUrl}">Ygor</a></li>
