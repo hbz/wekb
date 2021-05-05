@@ -446,7 +446,7 @@ class CrossRefPkgRun {
         componentUpdateService.ensureCoreData(ti, titleObj, fullsync, user)
 
         title_changed |= componentUpdateService.setAllRefdata([
-          'OAStatus', 'medium', 'language',
+          'OAStatus', 'medium',
           'pureOA', 'continuingSeries',
           'reasonRetired'
         ], titleObj, ti)

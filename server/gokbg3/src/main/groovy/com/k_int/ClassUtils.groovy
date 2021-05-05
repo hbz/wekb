@@ -149,12 +149,23 @@ class ClassUtils {
     else if (value instanceof Integer && cat) {
       try {
         def candidate = RefdataValue.get(value)
-
         if (candidate && candidate.owner == cat) {
           v = candidate
         }
       }
       catch (Exception e) {}
+    }
+    else if (value instanceof Set && cat) {
+      v = new HashSet<RefdataValue>()
+      for (def entry in value){
+        try {
+          def candidate = RefdataValue.get(entry)
+          if (candidate && candidate.owner == cat) {
+            v << candidate
+          }
+        }
+        catch (Exception e) {}
+      }
     }
     else if (value instanceof Map && cat) {
       if (value.id) {
