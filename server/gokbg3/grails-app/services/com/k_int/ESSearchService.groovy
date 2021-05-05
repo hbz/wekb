@@ -42,7 +42,7 @@ class ESSearchService{
           "listStatus"
       ],
       simpleMap: [
-          "curatoryGroup": "curatoryGroups",
+          "curatoryGroup": "curatoryGroups.name",
           "role": "roles"
       ],
       complex: [
