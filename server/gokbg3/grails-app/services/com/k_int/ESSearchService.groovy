@@ -1150,6 +1150,9 @@ class ESSearchService{
     if (!params || !params.q){
       return null
     }
+
+    params.q = URLEncoder.encode(params.q, "UTF-8");
+
     int port = grailsApplication.config.searchApi.port
     def indices = grailsApplication?.config?.gokb?.es?.indices?.values()
     String host = grailsApplication?.config?.gokb?.es?.host
