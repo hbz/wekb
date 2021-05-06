@@ -176,7 +176,11 @@ class ESSearchService{
               def facet_values = []
               entry.buckets.each { bucket ->
                 bucket.each { bi ->
-                  String display = bi.getKey().startsWith('org.gokb.cred') ? org.gokb.cred.KBComponent.get(bi.getKey().split(':')[1].toLong()).name : "Unknow"
+                  String display = "Unknow"
+                  if(bi.getKey().startsWith('org.gokb.cred') && KBComponent.get(bi.getKey().split(':')[1].toLong()))
+                  {
+                    display =  KBComponent.get(bi.getKey().split(':')[1].toLong()).name
+                  }
                   facet_values.add([term:bi.getKey(), display:display , count:bi.getDocCount()])
                 }
               }
