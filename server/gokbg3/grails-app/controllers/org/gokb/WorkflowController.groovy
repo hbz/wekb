@@ -796,7 +796,7 @@ class WorkflowController{
         ], user).save(flush: true, failOnError: true)
 
         if (newtipp.review == 'on'){
-          reviewRequestService.raise(new_tipp, 'New tipp - please review', 'A Title change cause this new tipp to be created', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, new_tipp.curatoryGroups)
+          reviewRequestService.raise(new_tipp, 'New tipp - please review', 'A Title change cause this new tipp to be created', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, new_tipp.pkg.curatoryGroups)
         }
       }
 
@@ -820,12 +820,12 @@ class WorkflowController{
         log.debug("Retiring old tipp")
         current_tipp.status = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_RETIRED)
         if (params["oldtipp_review:${tipp_map_entry.key}"] == 'on'){
-          reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title change has affected this tipp [new tipps have been generated]. The user chose to retire this tipp', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, current_tipp.curatoryGroups)
+          reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title change has affected this tipp [new tipps have been generated]. The user chose to retire this tipp', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, current_tipp.pkg.curatoryGroups)
         }
       }
       else{
         if (params["oldtipp_review:${tipp_map_entry.key}"] == 'on'){
-          reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title change has affected this tipp [new tipps have been generated]. The user did not retire this tipp', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, current_tipp.curatoryGroups)
+          reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title change has affected this tipp [new tipps have been generated]. The user did not retire this tipp', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, current_tipp.pkg.curatoryGroups)
         }
       }
     }
@@ -1035,7 +1035,7 @@ class WorkflowController{
 
         if (newtipp.review == 'on'){
           log.debug("User requested a review request be generated for this new tipp")
-          reviewRequestService.raise(new_tipp, 'New tipp - please review', 'A Title transfer cause this new tipp to be created', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, new_tipp.curatoryGroups)
+          reviewRequestService.raise(new_tipp, 'New tipp - please review', 'A Title transfer cause this new tipp to be created', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, new_tipp.pkg.curatoryGroups)
         }
       }
 
@@ -1045,12 +1045,12 @@ class WorkflowController{
         log.debug("Retiring old tipp")
         current_tipp.status = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_RETIRED)
         if (params["oldtipp_review:${tipp_map_entry.key}"] == 'on'){
-          reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title transfer has affected this tipp [new tipps have been generated]. The user chose to retire this tipp', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, current_tipp.curatoryGroups)
+          reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title transfer has affected this tipp [new tipps have been generated]. The user chose to retire this tipp', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, current_tipp.pkg.curatoryGroups)
         }
       }
       else{
         if (params["oldtipp_review:${tipp_map_entry.key}"] == 'on'){
-          reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title transfer has affected this tipp [new tipps have been generated]. The user did not retire this tipp', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, current_tipp.curatoryGroups)
+          reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title transfer has affected this tipp [new tipps have been generated]. The user did not retire this tipp', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, current_tipp.pkg.curatoryGroups)
         }
       }
 

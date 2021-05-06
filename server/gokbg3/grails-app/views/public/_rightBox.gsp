@@ -1,12 +1,15 @@
+<%@page import="org.gokb.cred.TitleInstancePackagePlatform;"%>
+<g:set var="curatoryGroups" value="${d instanceof TitleInstancePackagePlatform ? d.pkg.curatoryGroups : d.curatoryGroups }" />
+
 <div class="col-md-3">
     <div class="card p-4">
         <h2>Curated By</h2>
         <ul>
-            <g:each in="${d.curatoryGroups}" var="cg">
+            <g:each in="${curatoryGroups}" var="cg">
                 <li>${cg.name}</li>
             </g:each>
 
-            <g:if test="${!d.curatoryGroups}">
+            <g:if test="${!curatoryGroups}">
                 <li>There are currently no linked Curatory Groups</li>
             </g:if>
         </ul>
