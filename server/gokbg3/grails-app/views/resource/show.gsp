@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%@ page import="org.gokb.cred.TitleInstancePackagePlatform" %>
 <html>
 <head>
     <meta name="layout" content="sb-admin"/>
@@ -131,7 +132,7 @@
                 </g:if>
 
 
-                <g:if test="${displayobj.respondsTo('getCuratoryGroups')}">
+                <g:if test="${displayobj.respondsTo('getCuratoryGroups') || displayobj instanceof TitleInstancePackagePlatform}">
                     <div>
                         <h4>Curatory Groups</h4>
 
