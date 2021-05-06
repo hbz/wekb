@@ -176,7 +176,11 @@ class ESSearchService{
               def facet_values = []
               entry.buckets.each { bucket ->
                 bucket.each { bi ->
-                  String display = bi.getKey().startsWith('org.gokb.cred') ? org.gokb.cred.KBComponent.get(bi.getKey().split(':')[1].toLong()).name : "Unknow"
+                  String display = "Unknown"
+                  if(bi.getKey().startsWith('org.gokb.cred') && KBComponent.get(bi.getKey().split(':')[1].toLong()))
+                  {
+                    display =  KBComponent.get(bi.getKey().split(':')[1].toLong()).name
+                  }
                   facet_values.add([term:bi.getKey(), display:display , count:bi.getDocCount()])
                 }
               }
@@ -1146,6 +1150,9 @@ class ESSearchService{
     if (!params || !params.q){
       return null
     }
+
+    params.q = URLEncoder.encode(params.q, "UTF-8");
+
     int port = grailsApplication.config.searchApi.port
     def indices = grailsApplication?.config?.gokb?.es?.indices?.values()
     String host = grailsApplication?.config?.gokb?.es?.host
