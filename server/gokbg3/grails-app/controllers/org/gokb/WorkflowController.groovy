@@ -12,7 +12,7 @@ import wekb.AutoUpdatePackagesService
 import wekb.ExportService
 import wekb.GlobalSearchTemplatesService
 
-
+@Secured(['IS_AUTHENTICATED_FULLY'])
 class WorkflowController{
 
   def genericOIDService

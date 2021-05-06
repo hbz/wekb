@@ -6,7 +6,7 @@ import grails.converters.*
 import org.gokb.cred.*
 
 
-
+@Secured(['IS_AUTHENTICATED_FULLY'])
 class UploadController {
 
   def uploadAnalysisService

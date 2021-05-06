@@ -1,5 +1,8 @@
 package org.gokb
 
+import org.springframework.security.access.annotation.Secured
+
+@Secured(['IS_AUTHENTICATED_FULLY'])
 class FileController {
 
   def fileLocations

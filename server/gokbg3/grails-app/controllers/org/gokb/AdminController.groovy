@@ -25,6 +25,7 @@ import wekb.DeletedKBComponent
 
 import java.util.concurrent.CancellationException
 
+@Secured(['IS_AUTHENTICATED_FULLY'])
 class AdminController {
 
   def uploadAnalysisService

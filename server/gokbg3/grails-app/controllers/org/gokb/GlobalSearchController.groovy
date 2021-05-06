@@ -4,7 +4,9 @@ import grails.converters.*
 import org.elasticsearch.action.search.*
 import org.elasticsearch.search.aggregations.AggregationBuilders
 import org.elasticsearch.index.query.*
+import org.springframework.security.access.annotation.Secured
 
+@Secured(['IS_AUTHENTICATED_FULLY'])
 class GlobalSearchController {
 
   static def reversemap = ['subject':'subjectKw','componentType':'componentType','status':'status']
