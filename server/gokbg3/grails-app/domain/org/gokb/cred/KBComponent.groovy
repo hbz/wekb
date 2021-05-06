@@ -1257,6 +1257,13 @@ abstract class KBComponent implements Auditable{
     // ComponentHistoryEventParticipant.executeUpdate("delete from ComponentHistoryEventParticipant as c where c.participant = :component",[component:this])
     if (this?.class == CuratoryGroup){
       AllocatedReviewGroup.removeAll(this)
+      Set curatoryGroups = [this]
+      User.withTransaction {
+          User.findAllByCuratoryGroups(curatoryGroups).each { User user ->
+            user.removeFromCuratoryGroups(CuratoryGroup)
+          user.save()
+          }
+        }
     }
     ReviewRequest.executeUpdate("delete from ReviewRequest as c where c.componentToReview=:component", [component: this])
     ComponentPerson.executeUpdate("delete from ComponentPerson as c where c.component=:component", [component: this])
@@ -1267,7 +1274,7 @@ abstract class KBComponent implements Auditable{
     result
   }
 
-
+  @Deprecated
   static def expungeAll(List components){
     log.debug("Component bulk expunge")
     def result = [num_requested: components.size(), num_expunged: 0]

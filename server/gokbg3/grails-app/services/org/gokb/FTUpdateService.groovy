@@ -7,6 +7,7 @@ import org.gokb.cred.KBComponent
 import org.gokb.cred.KBComponentAdditionalProperty
 import org.gokb.cred.TIPPCoverageStatement
 import org.gokb.cred.RefdataValue
+import wekb.DeletedKBComponent
 
 @Transactional
 class FTUpdateService {

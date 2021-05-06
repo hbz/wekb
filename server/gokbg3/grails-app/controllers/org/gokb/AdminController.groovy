@@ -3,12 +3,14 @@ package org.gokb
 import com.k_int.ConcurrencyManagerService
 import com.k_int.ConcurrencyManagerService.Job
 import de.wekb.helper.RCConstants
+import gokbg3.DateFormatService
 import grails.converters.JSON
+import org.elasticsearch.action.DocWriteResponse
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequestBuilder
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse
-import org.elasticsearch.action.search.SearchRequestBuilder
+import org.elasticsearch.action.index.IndexResponse
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.client.Client
 import org.elasticsearch.client.IndicesAdminClient
@@ -17,11 +19,9 @@ import org.gokb.cred.*
 import org.hibernate.criterion.CriteriaSpecification
 
 import org.springframework.security.access.annotation.Secured
-import org.springframework.security.acls.domain.BasePermission
-import org.springframework.security.acls.model.ObjectIdentity
-import org.springframework.security.acls.model.Permission
 import wekb.AdminService
 import wekb.AutoUpdatePackagesService
+import wekb.DeletedKBComponent
 
 import java.util.concurrent.CancellationException
 
@@ -38,6 +38,15 @@ class AdminController {
   AdminService adminService
   AutoUpdatePackagesService autoUpdatePackagesService
   def ESWrapperService
+  DateFormatService dateFormatService
+
+  static Map typePerIndex = [
+          "gokbtipps": "TitleInstancePackagePlatform",
+          "gokborgs": "Org" ,
+          "gokbpackages": "Package",
+          "gokbplatforms": "Platform",
+          "gokbdeletedcomponents": "DeletedKBComponent"
+  ]
 
   @Deprecated
   def tidyOrgData() {
@@ -558,13 +567,6 @@ class AdminController {
 
     RefdataValue status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
 
-    Map typePerIndex = [
-            "gokbtipps": "TitleInstancePackagePlatform",
-            "gokborgs": "Org" ,
-            "gokbpackages": "Package",
-            "gokbplatforms": "Platform"
-    ]
-
     Client esclient = ESWrapperService.getClient()
 
     result.indices = []
@@ -595,12 +597,6 @@ class AdminController {
   def deleteIndex() {
     Map<String, Object> result = [:]
     log.debug("deleteIndex ..")
-    Map typePerIndex = [
-            "gokbtipps": "TitleInstancePackagePlatform",
-            "gokborgs": "Org" ,
-            "gokbpackages": "Package",
-            "gokbplatforms": "Platform"
-    ]
 
     if(params.name) {
       Client esclient = ESWrapperService.getClient()
@@ -628,19 +624,44 @@ class AdminController {
         log.debug("Adding index mappings..")
         createIndexRequestBuilder.addMapping("component", ESWrapperService.getMapping())
 
-        CreateIndexResponse indexResponse = createIndexRequestBuilder.execute().actionGet()
+        CreateIndexResponse createIndexResponse = createIndexRequestBuilder.execute().actionGet()
 
-        if (indexResponse.isAcknowledged()) {
+        if (createIndexResponse.isAcknowledged()) {
           log.debug("Index ${indexName} successfully created!")
 
-          FTControl.withTransaction {
-            def res = FTControl.executeUpdate("delete FTControl c where c.domainClassName = :deleteFT", [deleteFT: "org.gokb.cred.${typePerIndex.get(indexName)}"])
-            log.debug("Result: ${res}")
+          if(typePerIndex.get(indexName) == DeletedKBComponent.class.simpleName){
+            DeletedKBComponent.list().each { DeletedKBComponent deletedKBComponent ->
+              Map idx_record = [:]
+              String recid = "${deletedKBComponent.class.name}:${deletedKBComponent.id}"
+
+              idx_record.uuid = deletedKBComponent.uuid
+              idx_record.name = deletedKBComponent.name
+              idx_record.componentType = deletedKBComponent.componentType
+              idx_record.status = deletedKBComponent.status
+              idx_record.dateCreated = dateFormatService.formatIsoTimestamp(deletedKBComponent.dateCreated)
+              idx_record.lastUpdated = dateFormatService.formatIsoTimestamp(deletedKBComponent.lastUpdated)
+              idx_record.oldDateCreated = dateFormatService.formatIsoTimestamp(deletedKBComponent.oldDateCreated)
+              idx_record.oldLastUpdated = dateFormatService.formatIsoTimestamp(deletedKBComponent.oldLastUpdated)
+              idx_record.oldId = deletedKBComponent.oldId
+
+              IndexResponse indexResponse = esclient.prepareIndex("gokbdeletedcomponents", 'component', recid).setSource(idx_record).get()
+
+              if (indexResponse.getResult() != DocWriteResponse.Result.CREATED) {
+                log.error("Error on record DeletedKBComponent in Index 'gokbdeletedcomponents'")
+              }
+            }
+
+          }else {
+            FTControl.withTransaction {
+              def res = FTControl.executeUpdate("delete FTControl c where c.domainClassName = :deleteFT", [deleteFT: "org.gokb.cred.${typePerIndex.get(indexName)}"])
+              log.debug("Result: ${res}")
+            }
+
+            FTUpdateService.updateFTIndexes()
           }
-          FTUpdateService.updateFTIndexes()
 
         } else {
-          log.debug("Index creation failed: ${indexResponse}")
+          log.debug("Index creation failed: ${createIndexResponse}")
         }
     }
     redirect(action: 'manageFTControl')

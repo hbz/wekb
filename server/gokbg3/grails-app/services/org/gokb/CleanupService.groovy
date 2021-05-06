@@ -3,16 +3,21 @@ package org.gokb
 import com.k_int.ConcurrencyManagerService.Job
 import com.k_int.ESSearchService
 import de.wekb.helper.RCConstants
+import gokbg3.DateFormatService
 import grails.gorm.DetachedCriteria
 import grails.gorm.transactions.Transactional
+import org.elasticsearch.action.DocWriteResponse
 import org.elasticsearch.action.delete.DeleteRequest
+import org.elasticsearch.action.index.IndexResponse
 import org.elasticsearch.client.Requests
 import org.gokb.cred.*
+import wekb.DeletedKBComponent
 
 class CleanupService {
   def sessionFactory
   def ESWrapperService
   def grailsApplication
+  DateFormatService dateFormatService
 
   def tidyMissnamedPublishers () {
 
@@ -118,16 +123,19 @@ class CleanupService {
       try {
         KBComponent.withNewTransaction {
           log.debug("Expunging ${component_id}");
-          def component = KBComponent.get(component_id);
-          def c_id = "${component.class.name}:${component.id}"
-          def expunge_result = component.expunge();
-          log.debug("${expunge_result}");
-          DeleteRequest req = Requests.deleteRequest(ESSearchService.indicesPerType.get(kbc['type']))
-                .type('component')
-                .id(c_id)
-          def es_response = esclient.delete(req)
-          log.debug("${es_response}")
-          result.report.add(expunge_result)
+          KBComponent component = KBComponent.get(component_id);
+          String c_id = "${component.class.name}:${component.id}"
+
+          if(recordDeletedKBComponent(component)) {
+            def expunge_result = component.expunge();
+            log.debug("${expunge_result}");
+            DeleteRequest req = Requests.deleteRequest(ESSearchService.indicesPerType.get(component.class.simpleName))
+                    .type('component')
+                    .id(c_id)
+            def es_response = esclient.delete(req)
+            log.debug("${es_response}")
+            result.report.add(expunge_result)
+          }
         }
         j?.setProgress(idx,ids.size())
       }
@@ -701,9 +709,9 @@ class CleanupService {
       ComponentPrice.executeUpdate("delete from ComponentPrice as cp where cp.owner.id IN (:component)", [component: batch])
 
       batch.each {
-        def kbc = KBComponent.get(it)
+        KBComponent kbc = KBComponent.get(it)
         def oid = "${kbc.class.name}:${it}"
-        DeleteRequest req = new DeleteRequest(ESSearchService.indicesPerType.get(kbc['type']))
+        DeleteRequest req = new DeleteRequest(ESSearchService.indicesPerType.get(kbc.class.simpleName))
               .type('component')
               .id(oid)
         def es_response = esclient.delete(req)
@@ -712,5 +720,49 @@ class CleanupService {
       j?.setProgress(result.num_expunged, result.num_requested)
     }
     result
+  }
+
+  private boolean recordDeletedKBComponent(KBComponent kbComponent){
+
+    DeletedKBComponent deletedKBComponent
+    DeletedKBComponent.withTransaction {
+      deletedKBComponent = new DeletedKBComponent(uuid: kbComponent.uuid,
+              name: kbComponent.name,
+              oldDateCreated: kbComponent.dateCreated,
+              oldLastUpdated: kbComponent.lastUpdated,
+              oldId: kbComponent.id,
+              componentType: kbComponent.class.simpleName,
+              status: RefdataCategory.lookup(RCConstants.DELETED_KBCOMPONENT_STATUS, "Permanently Deleted"))
+
+      if(!deletedKBComponent.save()){
+        return false
+      }
+    }
+
+    def esclient = ESWrapperService.getClient()
+
+    String recid = "${deletedKBComponent.class.name}:${deletedKBComponent.id}"
+
+    Map idx_record = [:]
+
+    idx_record.uuid = deletedKBComponent.uuid
+    idx_record.name = deletedKBComponent.name
+    idx_record.componentType = deletedKBComponent.componentType
+    idx_record.status = deletedKBComponent.status
+    idx_record.dateCreated = dateFormatService.formatIsoTimestamp(deletedKBComponent.dateCreated)
+    idx_record.lastUpdated = dateFormatService.formatIsoTimestamp(deletedKBComponent.lastUpdated)
+    idx_record.oldDateCreated = dateFormatService.formatIsoTimestamp(deletedKBComponent.oldDateCreated)
+    idx_record.oldLastUpdated = dateFormatService.formatIsoTimestamp(deletedKBComponent.oldLastUpdated)
+    idx_record.oldId = deletedKBComponent.oldId
+
+    IndexResponse indexResponse = esclient.prepareIndex("gokbdeletedcomponents", 'component', recid).setSource(idx_record).get()
+
+    if (indexResponse.getResult() != DocWriteResponse.Result.CREATED) {
+      DeletedKBComponent.withTransaction {
+        deletedKBComponent.delete()
+      }
+      return false
+    }
+    return true
   }
 }

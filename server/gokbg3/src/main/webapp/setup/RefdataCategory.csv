@@ -9,6 +9,7 @@ CuratoryGroup.Type;CuratoryGroup Type;CuratoryGroup Type
 Currency;Currency;Currency
 DCType;DCType;DCType
 DDC;Dewey-Dezimalklassifikation;Dewey Decimal Classification
+DeletedKBComponent.Status;DeletedKBComponent Status;DeletedKBComponent Status
 IdentifierNamespace.TargetType;Identifier Namespace Target Type;Identifier Namespace Target Type
 ingest.filetype;ingest filetype;ingest filetype
 Job.Type;Job Type;Job Type
