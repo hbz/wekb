@@ -4,7 +4,9 @@ import de.wekb.helper.RCConstants
 import org.gokb.cred.*;
 import grails.converters.JSON
 import groovy.time.TimeCategory
+import org.springframework.security.access.annotation.Secured
 
+@Secured(['IS_AUTHENTICATED_FULLY'])
 class FwkController {
 
   def springSecurityService

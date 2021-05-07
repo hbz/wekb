@@ -51,7 +51,7 @@
     <gokb:annotatedLabel owner="${d}" property="language">Language</gokb:annotatedLabel>
   </dt>
   <dd>
-    <gokb:xEditableRefData owner="${d}" field="language" config="${RCConstants.KBCOMPONENT_LANGUAGE}"/>
+    <g:render template="/apptemplates/secondTemplates/languages"/>
   </dd>
 
   <dt>

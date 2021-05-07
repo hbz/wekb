@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%@ page import="org.gokb.cred.TitleInstancePackagePlatform" %>
 <html>
 <head>
     <meta name="layout" content="sb-admin"/>
@@ -45,7 +46,7 @@
                                 id="watchCounter" class="badge badge-warning">${num_watch}</span></a></li>
 
                     <li><a data-toggle="modal" data-cache="false"
-                           title="Show History (with Combos)"
+                           title="Show History (with Titles)"
                            data-remote='<g:createLink controller="fwk" action="history"
                                                       id="${displayobj.class.name}:${displayobj.id}"
                                                       params="[withCombos: true]"/>'
@@ -131,7 +132,7 @@
                 </g:if>
 
 
-                <g:if test="${displayobj.respondsTo('getCuratoryGroups')}">
+                <g:if test="${displayobj.respondsTo('getCuratoryGroups') || displayobj instanceof TitleInstancePackagePlatform}">
                     <div>
                         <h4>Curatory Groups</h4>
 

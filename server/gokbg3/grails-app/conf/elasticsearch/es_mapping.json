@@ -93,6 +93,15 @@
         }
       },
       {
+        "curatoryGroup": {
+          "match": "curatoryGroup",
+          "match_mapping_type": "string",
+          "mapping": {
+            "type": "keyword"
+          }
+        }
+      },
+      {
         "nominalPlatform": {
           "match": "nominalPlatform*",
           "match_mapping_type": "string",

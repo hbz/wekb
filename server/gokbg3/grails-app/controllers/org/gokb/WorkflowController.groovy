@@ -12,7 +12,7 @@ import wekb.AutoUpdatePackagesService
 import wekb.ExportService
 import wekb.GlobalSearchTemplatesService
 
-
+@Secured(['IS_AUTHENTICATED_FULLY'])
 class WorkflowController{
 
   def genericOIDService
@@ -796,7 +796,7 @@ class WorkflowController{
         ], user).save(flush: true, failOnError: true)
 
         if (newtipp.review == 'on'){
-          reviewRequestService.raise(new_tipp, 'New tipp - please review', 'A Title change cause this new tipp to be created', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, new_tipp.curatoryGroups)
+          reviewRequestService.raise(new_tipp, 'New tipp - please review', 'A Title change cause this new tipp to be created', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, new_tipp.pkg.curatoryGroups)
         }
       }
 
@@ -820,12 +820,12 @@ class WorkflowController{
         log.debug("Retiring old tipp")
         current_tipp.status = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_RETIRED)
         if (params["oldtipp_review:${tipp_map_entry.key}"] == 'on'){
-          reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title change has affected this tipp [new tipps have been generated]. The user chose to retire this tipp', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, current_tipp.curatoryGroups)
+          reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title change has affected this tipp [new tipps have been generated]. The user chose to retire this tipp', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, current_tipp.pkg.curatoryGroups)
         }
       }
       else{
         if (params["oldtipp_review:${tipp_map_entry.key}"] == 'on'){
-          reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title change has affected this tipp [new tipps have been generated]. The user did not retire this tipp', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, current_tipp.curatoryGroups)
+          reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title change has affected this tipp [new tipps have been generated]. The user did not retire this tipp', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, current_tipp.pkg.curatoryGroups)
         }
       }
     }
@@ -1035,7 +1035,7 @@ class WorkflowController{
 
         if (newtipp.review == 'on'){
           log.debug("User requested a review request be generated for this new tipp")
-          reviewRequestService.raise(new_tipp, 'New tipp - please review', 'A Title transfer cause this new tipp to be created', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, new_tipp.curatoryGroups)
+          reviewRequestService.raise(new_tipp, 'New tipp - please review', 'A Title transfer cause this new tipp to be created', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, new_tipp.pkg.curatoryGroups)
         }
       }
 
@@ -1045,12 +1045,12 @@ class WorkflowController{
         log.debug("Retiring old tipp")
         current_tipp.status = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_RETIRED)
         if (params["oldtipp_review:${tipp_map_entry.key}"] == 'on'){
-          reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title transfer has affected this tipp [new tipps have been generated]. The user chose to retire this tipp', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, current_tipp.curatoryGroups)
+          reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title transfer has affected this tipp [new tipps have been generated]. The user chose to retire this tipp', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, current_tipp.pkg.curatoryGroups)
         }
       }
       else{
         if (params["oldtipp_review:${tipp_map_entry.key}"] == 'on'){
-          reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title transfer has affected this tipp [new tipps have been generated]. The user did not retire this tipp', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, current_tipp.curatoryGroups)
+          reviewRequestService.raise(current_tipp, 'please review TIPP record', 'A Title transfer has affected this tipp [new tipps have been generated]. The user did not retire this tipp', RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'), null, null, null, current_tipp.pkg.curatoryGroups)
         }
       }
 
@@ -1538,18 +1538,17 @@ class WorkflowController{
 
     def export_date = dateFormatService.formatDate(new Date())
     if (packages_to_export.size() == 1){
-      filename = "kbart_${packages_to_export[0].provider?.name}_${packages_to_export[0].name}_${export_date}.tsv"
+      filename = "kbart_${packages_to_export[0].provider?.name}_${packages_to_export[0].name}_${export_date}"
     }
     else{
       filename = "kbart_multiple_packages_${export_date}.tsv"
+      response.setContentType('text/tab-separated-values')
     }
 
     try{
-      response.setContentType('text/tab-separated-values')
       response.setHeader("Content-disposition", "attachment; filename=\"${filename}\"")
-      response.contentType = "text/tab-separated-values" // "text/tsv"
       packages_to_export.each{ pkg ->
-        exportService.exportPackageTippsAsKBART(response.outputStream, pkg)
+        exportService.exportOriginalKBART(response.outputStream, pkg)
       }
     }
     catch (Exception e){

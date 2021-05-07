@@ -177,10 +177,6 @@ class PublicController {
     // params.remove('q');
     // params.isPublic="Yes"
 
-    if(mutableParams.lastUpdated){
-      mutableParams.lastModified ="[${params.lastUpdated} TO 2100]"
-    }
-
     if(mutableParams.search.equals('yes')){
       //when searching make sure results start from first page
       mutableParams.offset = 0
@@ -228,15 +224,15 @@ class PublicController {
 
     String export_date = dateFormatService.formatDate(new Date());
 
-    String filename = "kbart_${pkg.name}_${export_date}.tsv"
+    String filename = "kbart_${pkg.name}_${export_date}"
 
     try {
-      response.setContentType('text/tab-separated-values');
+
       response.setHeader("Content-disposition", "attachment; filename=\"${filename}\"")
 
       def out = response.outputStream
 
-      exportService.exportPackageTippsAsKBART(out, pkg)
+      exportService.exportOriginalKBART(out, pkg)
 
     }
     catch ( Exception e ) {

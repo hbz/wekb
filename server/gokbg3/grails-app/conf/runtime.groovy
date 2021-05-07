@@ -465,7 +465,7 @@ globalSearch = [
 
 searchApi = [
   'path'        : '/',
-  'indices'     : ['gokbtipps', 'gokborgs', 'gokbpackages', 'gokbplatforms'],
+  'indices'     : ['gokbtipps', 'gokborgs', 'gokbpackages', 'gokbplatforms', 'gokbdeletedcomponents'],
   'types'       : 'component',
   'typingField' : 'componentType',
   'port'        : 9200

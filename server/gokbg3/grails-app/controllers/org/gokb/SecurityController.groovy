@@ -14,7 +14,7 @@ import org.springframework.security.acls.domain.BasePermission
 import org.springframework.transaction.annotation.Transactional
 
 
-
+@Secured(['IS_AUTHENTICATED_FULLY'])
 class SecurityController {
   
   def genericOIDService

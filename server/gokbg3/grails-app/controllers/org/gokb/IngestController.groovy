@@ -6,6 +6,7 @@ import java.security.MessageDigest
 import com.k_int.ConcurrencyManagerService
 import com.k_int.ConcurrencyManagerService.Job
 
+@Secured(['IS_AUTHENTICATED_FULLY'])
 class IngestController {
 
   def concurrencyManagerService

@@ -246,6 +246,7 @@ class GlobalSearchTemplatesService {
                         qbeResults: [
                                 [heading: 'Name/Title', property: 'name', sort: 'name', link: true],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
+                                [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
                                 [heading: 'Edit Status', property: 'editStatus?.value', sort: 'editStatus']
                         ]
                 ]
@@ -944,6 +945,7 @@ class GlobalSearchTemplatesService {
                         qbeResults: [
                                 [heading: 'Name/Title', property: 'name', sort: 'name', link: true],
                                 [heading: 'Primary URL', property: 'primaryUrl'],
+                                [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
                         ]
                 ]
@@ -1318,6 +1320,7 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Medium', property: 'medium?.value', sort: 'medium.value'],
                                 [heading: 'Package', qpEquiv: 'qp_pkg_id', property: 'pkg?.name', link: true],
                                 [heading: 'Platform', qpEquiv: 'qp_plat_id', property: 'hostPlatform?.name', link: true],
+                                [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
                                 [heading: 'Status', property: 'status?.value', sort: 'status.value']
                         ]
                 ]

@@ -304,6 +304,7 @@ Currency;USD;USD;USD
 DCType;Admin;Admin;Admin
 DCType;Standard;Standard;Standard
 DCType;Support;Support;Support
+DeletedKBComponent.Status;Permanently Deleted;Permanently Deleted;Permanently Deleted
 IdentifierNamespace.TargetType;Book;Book;Book
 IdentifierNamespace.TargetType;Database;Database;Database
 IdentifierNamespace.TargetType;Journal;Journal;Journal

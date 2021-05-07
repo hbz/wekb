@@ -35,6 +35,7 @@ class CrossRefPkgRun {
   Map errors = [global: [], tipps: []]
   def existing_tipp_ids = []
   int removedNum = 0
+  int addNewNum = 0
   def invalidTipps = []
   Package pkg
   def pkg_validation
@@ -282,7 +283,7 @@ class CrossRefPkgRun {
 
         log.debug("Removed ${removedNum} TIPPS from the matched package!")
         jsonResult.result = 'OK'
-        def msg = messageService.resolveCode('crossRef.package.success', [rjson.packageHeader.name, rjson.tipps.size(), existing_tipp_ids.size(), removedNum], locale)
+        def msg = messageService.resolveCode('crossRef.package.success', [rjson.packageHeader.name, rjson.tipps.size(), existing_tipp_ids.size(), removedNum, addNewNum], locale)
         jsonResult.message = msg
         job?.message(msg)
 
@@ -295,6 +296,7 @@ class CrossRefPkgRun {
         if (autoUpdate && pkg.source) {
           Source src = Source.get(pkg.source.id)
           src.lastRun = new Date()
+          src.lastUpdateUrl = rjson.updateURL
           src.merge(flush: true)
         }
       }
@@ -444,7 +446,7 @@ class CrossRefPkgRun {
         componentUpdateService.ensureCoreData(ti, titleObj, fullsync, user)
 
         title_changed |= componentUpdateService.setAllRefdata([
-          'OAStatus', 'medium', 'language',
+          'OAStatus', 'medium',
           'pureOA', 'continuingSeries',
           'reasonRetired'
         ], titleObj, ti)
@@ -717,6 +719,11 @@ class CrossRefPkgRun {
         return tipp_error
       }
       if (upserted_tipp) {
+
+        if(autoUpdate && (pkg.source && (upserted_tipp.dateCreated > pkg.source.lastRun || pkg.source.lastRun == null))){
+          addNewNum++
+        }
+
         /*if (existing_tipp_ids.size() > 0 && existing_tipp_ids.contains(upserted_tipp.id)) {
           log.debug("Existing TIPP matched!")
           existing_tipp_ids.removeElement(upserted_tipp.id)

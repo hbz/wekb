@@ -7,6 +7,7 @@ import grails.converters.JSON
 import groovy.util.logging.*
 
 @Slf4j
+@Secured(['IS_AUTHENTICATED_FULLY'])
 class ComponentController {
 
   def springSecurityService

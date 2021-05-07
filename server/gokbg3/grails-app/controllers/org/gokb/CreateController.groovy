@@ -13,6 +13,7 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.LocalDateTime
 
+@Secured(['IS_AUTHENTICATED_FULLY'])
 class CreateController {
 
   def genericOIDService
