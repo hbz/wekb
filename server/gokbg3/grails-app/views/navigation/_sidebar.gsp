@@ -69,8 +69,7 @@
 
         <li class="${controllerName == "home" && (actionName == 'index' || actionName == 'statistic') ? 'active' : ''}"><g:link controller="home"><i class="fas fa-chart-line"></i> Statistics</g:link></li>
 
-        <li><g:link controller="welcome"><i class="fa fa-tasks fa-fw"></i> To Do<span class="fa arrow"></span></g:link>
-
+        <li><a href="#"><i class="fa fa-tasks fa-fw"></i> To Do<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
             %{--<li><g:link controller="search" action="index"
                         params="[
@@ -92,6 +91,8 @@
 
         <li class="${controllerName == "coreference" ? 'active' : ''}"><g:link controller="coreference" action="index"><i class="fa fa-list-alt fa-fw"></i> Coreference</g:link></li>
 
+
+        <sec:ifAnyGranted roles="ROLE_ADMIN">
 
         <g:if test="${session.menus?.admin?.search}">
           <li><a href="#"><i class="fa fa-search fa-fw"></i> Admin Search<span class="fa arrow"></span></a>
@@ -115,13 +116,14 @@
           </li>
         </g:if>
 
-        <sec:ifAnyGranted roles="ROLE_ADMIN">
+
           <li class="${controllerName == "admin" ? 'active' : ''}"><a href="#"><i class="fa fa-wrench fa-fw"></i> Admin<span class="fa arrow"></span></a>
             <ul class="nav nav-second-level">
               <li><g:link controller="user" action="search"><i class="fa fa-angle-double-right fa-fw"></i> User Management Console</g:link></li>
               <%-- <li><g:link controller="admin" action="tidyOrgData" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Tidy Orgs Data</g:link></li> --%>
                 <li><g:link controller="admin" action="jobs"><i class="fa fa-angle-double-right fa-fw"></i> Manage Jobs</g:link></li>
                 <li><g:link controller="admin" action="manageFTControl"><i class="fa fa-angle-double-right fa-fw"></i> Manage FT Control</g:link></li>
+              <li><g:link controller="admin" action="packagesChanges"><i class="fa fa-angle-double-right fa-fw"></i> Packages Changes</g:link></li>
             </ul>
           </li>
           <li><a href="#"><i class="fa fa-wrench fa-fw"></i>Admin Jobs<span class="fa arrow"></span></a>
@@ -146,15 +148,24 @@
              %{-- <li><g:link controller="admin" action="triggerEnrichments" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Trigger enrichments</g:link></li>
               --}%
               <li><g:link controller="admin" action="autoUpdatePackages" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i>Auto Update Packages</g:link></li>
-              %{--<li><g:link controller="admin" action="logViewer"><i class="fa fa-angle-double-right fa-fw"></i> Log Viewer</g:link></li>--}%
               <%--      <li><g:link controller="admin" action="housekeeping" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Housekeeping</g:link></li> --%>
 
               <!--
+
                   <li><g:link controller="api" action="downloadUpdate"><i class="fa fa-angle-double-right fa-fw"></i> Get Refine Extension</g:link></li>
                   -->
               %{--<li><a href="https://github.com/openlibraryenvironment/gokb/wiki/Integration-APIs:-Telling-GOKb-about-new-or-corresponding-resources-and-local-identifiers"><i class="fa fa-database fa-fw"></i> Integration API</a></li>--}%
+
+              <li><g:link controller="api" action="downloadUpdate"><i class="fa fa-angle-double-right fa-fw"></i> Get Refine Extension</g:link></li>
+              -->
+              <li class="divider"></li>
+              <li><a href="https://github.com/openlibraryenvironment/gokb/wiki/Integration-APIs:-Telling-GOKb-about-new-or-corresponding-resources-and-local-identifiers"><i class="fa fa-database fa-fw"></i> Integration API</a></li>
+              <li class="divider"></li>
+              
+
             </ul>
           </li>
+          <li><g:link controller="admin" action="frontend"><i class="fa fa-angle-double-right fa-fw"></i> Frontend</g:link></li>
           <li class="${controllerName == "home" && actionName == 'about' ? 'active' : ''}" ><g:link controller="home" action="about"><i class="fa fa-info fa-fw"></i> Operating environment</g:link></li>
         </sec:ifAnyGranted>
 
