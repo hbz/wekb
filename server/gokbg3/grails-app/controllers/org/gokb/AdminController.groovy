@@ -5,6 +5,7 @@ import com.k_int.ConcurrencyManagerService.Job
 import de.wekb.helper.RCConstants
 import gokbg3.DateFormatService
 import grails.converters.JSON
+import grails.plugin.springsecurity.SpringSecurityService
 import org.elasticsearch.action.DocWriteResponse
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse
@@ -25,7 +26,7 @@ import wekb.DeletedKBComponent
 
 import java.util.concurrent.CancellationException
 
-@Secured(['IS_AUTHENTICATED_FULLY'])
+@Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
 class AdminController {
 
   def uploadAnalysisService
@@ -40,6 +41,7 @@ class AdminController {
   AutoUpdatePackagesService autoUpdatePackagesService
   def ESWrapperService
   DateFormatService dateFormatService
+  SpringSecurityService springSecurityService
 
   static Map typePerIndex = [
           "gokbtipps": "TitleInstancePackagePlatform",
@@ -118,13 +120,6 @@ class AdminController {
     j.description = "Tidy Orgs Data"
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'TidyOrgsData')
 
-    redirect(controller: 'admin', action: 'jobs');
-  }
-
-  def logViewer() {
-    // cache "until_changed"
-    // def f = new File ("${grailsApplication.config.log_location}")
-    // return [file: "${f.canonicalPath}"]
     redirect(controller: 'admin', action: 'jobs');
   }
 
@@ -529,7 +524,7 @@ class AdminController {
     redirect(controller: 'admin', action: 'jobs');
   }
 
-  @Secured(['ROLE_SUPERUSER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_SUPERUSER'])
   def setupAcl() {
 
     adminService.setupDefaultAcl()
@@ -537,7 +532,7 @@ class AdminController {
     redirect(controller: 'admin', action: 'jobs');
   }
 
-  @Secured(['ROLE_SUPERUSER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_SUPERUSER'])
   def autoUpdatePackages() {
       log.debug("Beginning scheduled auto update packages job.")
       // find all updateable packages
@@ -558,7 +553,7 @@ class AdminController {
     redirect(controller: 'admin', action: 'jobs');
   }
 
-  @Secured(['ROLE_SUPERUSER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_SUPERUSER'])
   def manageFTControl() {
     Map<String, Object> result = [:]
     log.debug("manageFTControle ..")
@@ -594,7 +589,7 @@ class AdminController {
     result
   }
 
-  @Secured(['ROLE_SUPERUSER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_SUPERUSER'])
   def deleteIndex() {
     Map<String, Object> result = [:]
     log.debug("deleteIndex ..")
@@ -666,6 +661,25 @@ class AdminController {
         }
     }
     redirect(action: 'manageFTControl')
+  }
+
+  def packagesChanges() {
+    log.debug("packageChanges::${params}")
+    def result = [:]
+
+    User user = springSecurityService.getCurrentUser()
+
+    String query = 'from Package as pkg where pkg.status != :status'
+
+    RefdataValue status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
+
+    params.offset = params.offset ?: 0
+    params.max = params.max ? Integer.parseInt(params.max) : (user.defaultPageSize ?: 10)
+
+    result.packagesCount = Package.executeQuery('select count(pkg) ' + query, [status: status_deleted])[0]
+    result.packages = Package.executeQuery('select pkg ' + query + " order by pkg.lastUpdated desc", [status: status_deleted], params)
+
+    result
   }
 
 }

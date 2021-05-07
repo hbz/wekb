@@ -7,7 +7,6 @@
     <thead>
       <tr>
         <th>Event ID</th>
-        <th>Agent</th>
         <th>Date</th>
         <th>Event</th>
         <th>Field</th>
@@ -19,7 +18,6 @@
       <g:each in="${historyLines}" var="hl">
         <tr>
           <td>${hl.id}</td>
-          <td style="white-space:nowrap;">${hl.actor}</td>
           <td style="white-space:nowrap;">${hl.dateCreated}</td>
           <td style="white-space:nowrap;">${hl.eventName}</td>
           <td style="white-space:nowrap;">${hl.propertyName}</td>
