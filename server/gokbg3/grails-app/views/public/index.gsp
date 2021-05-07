@@ -110,8 +110,8 @@
                                 <g:each in="${hit.source.curatoryGroups}" var="cg" status="c">
                                     <g:if test="${c > 0}"><br></g:if>
                                     ${cg.name}
-                                    <g:if test="${cg.value}">
-                                    (${cg.value})
+                                    <g:if test="${cg.type}">
+                                    (${cg.type})
                                     </g:if>
                                 </g:each>
                             </g:if>
