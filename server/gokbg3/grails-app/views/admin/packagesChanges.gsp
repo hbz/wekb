@@ -68,17 +68,17 @@
                         </td>
                         <td>
                             <a data-toggle="modal" data-cache="false"
-                               title="Show History (with Combos)"
+                               title="Show History (with Titles)"
                                data-remote='<g:createLink controller="fwk" action="history"
                                                           id="${pkg.class.name}:${pkg.id}"
                                                           params="[withCombos: true]"/>'
-                               data-target="#infoModal"><i class="fas fa-history"></i></a>
+                               data-target="#infoModal">Show History with Title</a>
 
-                            <br>
+                            <br><br>
                             <a data-toggle="modal" data-cache="false"
                                title="Show History"
                                data-remote='<g:createLink controller="fwk" action="history" id="${pkg.class.name}:${pkg.id}"/>'
-                               data-target="#infoModal"><i class="far fa-clock"></i></a>
+                               data-target="#infoModal">Show History</a>
 
                         </td>
                     </tr>
