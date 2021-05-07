@@ -682,4 +682,10 @@ class AdminController {
     result
   }
 
+
+  def frontend() {
+    log.debug("frontend::${params}")
+    def result = [:]
+    result
+  }
 }
