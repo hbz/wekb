@@ -225,6 +225,7 @@ gokb:
             orgs: gokborgs
             packages: gokbpackages
             platforms: gokbplatforms
+            deletedKBComponent: gokbdeletedcomponents
     tsvExportTempDirectory: /tmp/gokb/export
 
 quartz:
