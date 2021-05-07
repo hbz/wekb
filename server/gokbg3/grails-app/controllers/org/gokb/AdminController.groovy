@@ -645,5 +645,9 @@ class AdminController {
     }
     redirect(action: 'manageFTControl')
   }
-
+  def frontend() {
+    log.debug("frontend::${params}")
+    def result = [:]
+    result
+  }
 }

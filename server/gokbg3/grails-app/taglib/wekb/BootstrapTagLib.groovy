@@ -38,4 +38,7 @@ class BootstrapTagLib {
 
 
     }
+    def tab = { attrs, body ->
+
+    }
 }
