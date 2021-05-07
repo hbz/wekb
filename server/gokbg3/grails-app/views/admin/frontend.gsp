@@ -13,9 +13,9 @@
        <div class="col-md-12">
             <div id="content">
                 <ul id="tabs" class="nav nav-tabs">
-                    <li class="active"><a href="https://www.spiegel.de" data-toggle="tab" aria-expanded="false" >Tab 1</a></li>
-                    <li class=""><a href="https://www.express.de" data-toggle="tab" aria-expanded="false" >Tab 2</a></li>
-                    <li class=""><a href="http://localhost:8080/gokb/admin/frontend" data-toggle="tab" aria-expanded="false">Tab 3</a></li>
+                    <li class="active"><a href="" data-toggle="tab" aria-expanded="false" >Tab 1</a></li>
+                    <li class=""><a href="" data-toggle="tab" aria-expanded="false" >Tab 2</a></li>
+                    <li class=""><a href="" data-toggle="tab" aria-expanded="false">Tab 3</a></li>
                 </ul>
 
                 <div id="my-tab-content" class="tab-content" >
@@ -35,10 +35,12 @@
 
     </div>
 </div>
-<script>
+<wekb:script file="${this.getGroovyPageFileName()}">
+alert ("test");
+    function test(){
+    }
 
-
-</script>
+</wekb:script>
 
 
 </body>
