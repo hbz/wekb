@@ -1,6 +1,8 @@
 package wekb
 
+import asset.pipeline.grails.AssetsTagLib
 import de.wekb.helper.ServerUtils
+import org.grails.io.support.GrailsResourceUtils
 
 class WekbInjectionTagLib {
     static namespace = 'wekb'
@@ -28,6 +30,21 @@ class WekbInjectionTagLib {
                 g.set( var:'serverLabel', value: '' )
                 break
         }
+    }
+    def script = { attrs, body ->
+
+
+        Map<String, Object> map = [:]
+
+        if (ServerUtils.getCurrentServer() != ServerUtils.SERVER_PROD) {
+            if (attrs.file) {
+                map = [file: GrailsResourceUtils.getPathFromBaseDir(attrs.file)]
+            }
+            else {
+                map = [uri: request.getRequestURI()]
+            }
+        }
+        asset.script(map, body())
     }
 
 }
