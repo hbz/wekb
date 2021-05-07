@@ -6,7 +6,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.gokb.cred.*
 import wekb.SearchService
 
-
+@Secured(['IS_AUTHENTICATED_FULLY'])
 class GroupController {
 
     def springSecurityService

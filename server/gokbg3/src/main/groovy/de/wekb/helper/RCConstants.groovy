@@ -25,6 +25,8 @@ class RCConstants {
 
     public static final String DDC = "DDC"
 
+    public static final String DELETED_KBCOMPONENT_STATUS = "DeletedKBComponent.Status"
+
     public static final String IDENTIFIER_NAMESPACE_TARGET_TYPE = "IdentifierNamespace.TargetType"
 
     public static final String INGEST_FILE_TYPE = "ingest.filetype"

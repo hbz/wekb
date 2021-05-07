@@ -124,7 +124,7 @@ class ESSearchService{
           params.remove("tempFQ") //remove from GSP access
         }
 
-        def es_indices = grailsApplication.config.gokb?.es?.indices?.values()
+        def es_indices = grailsApplication.config.globalSearch.indices
         log.debug("start to build srb with indices: ${es_indices.join(", ")} query: ${query_str}");
 
         def search_results = null
@@ -646,8 +646,8 @@ class ESSearchService{
         Client esclient = ESWrapperService.getClient()
         SearchRequestBuilder es_request =  esclient.prepareSearch()
 
-        es_request.setIndices(grailsApplication.config.gokb.es.indices.values() as String[])
-        es_request.setTypes(grailsApplication.config.globalSearch.types)
+        es_request.setIndices(grailsApplication.config.searchApi.indices as String[])
+        es_request.setTypes(grailsApplication.config.searchApi.types)
         es_request.setQuery(exactQuery)
 
         checkInt(result, errors, params.max, 'max')
@@ -1154,8 +1154,8 @@ class ESSearchService{
     params.q = URLEncoder.encode(params.q, "UTF-8");
 
     int port = grailsApplication.config.searchApi.port
-    def indices = grailsApplication?.config?.gokb?.es?.indices?.values()
-    String host = grailsApplication?.config?.gokb?.es?.host
+    def indices = grailsApplication.config.searchApi.indices
+    String host = grailsApplication.config.gokb.es.host
     String url = "http://${host}:${port}/${indices.join(',')}/_search?q=${params.q}"
     if (params.size){
       url = url + "&size=${params.size}"

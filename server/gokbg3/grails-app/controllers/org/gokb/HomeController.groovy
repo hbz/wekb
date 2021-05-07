@@ -8,7 +8,7 @@ import grails.converters.JSON
 import org.gokb.cred.*
 import org.hibernate.transform.AliasToEntityMapResultTransformer
 
-
+@Secured(['IS_AUTHENTICATED_FULLY'])
 class HomeController {
 
   def springSecurityService

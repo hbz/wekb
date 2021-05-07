@@ -11,6 +11,7 @@ import org.gokb.cred.*
 import grails.converters.JSON
 import wekb.AccessService
 
+@Secured(['IS_AUTHENTICATED_FULLY'])
 class ResourceController {
 
   def genericOIDService

@@ -11,6 +11,7 @@ import org.gokb.cred.*
 import wekb.GlobalSearchTemplatesService
 import wekb.SearchService
 
+@Secured(['IS_AUTHENTICATED_FULLY'])
 class SearchController {
 
   def genericOIDService

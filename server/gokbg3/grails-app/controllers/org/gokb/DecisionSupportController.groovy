@@ -6,6 +6,7 @@ import org.gokb.cred.*
 import org.hibernate.SessionFactory;
 import org.hibernate.transform.AliasToEntityMapResultTransformer
 
+@Secured(['IS_AUTHENTICATED_FULLY'])
 class DecisionSupportController {
 
   def springSecurityService

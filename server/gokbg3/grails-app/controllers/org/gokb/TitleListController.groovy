@@ -16,7 +16,7 @@ import org.hibernate.type.*
 import org.hibernate.Hibernate
 
 
-
+@Secured(['IS_AUTHENTICATED_FULLY'])
 class TitleListController {
 
   def genericOIDService

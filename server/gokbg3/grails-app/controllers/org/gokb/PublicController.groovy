@@ -177,10 +177,6 @@ class PublicController {
     // params.remove('q');
     // params.isPublic="Yes"
 
-    if(mutableParams.lastUpdated){
-      mutableParams.lastModified ="[${params.lastUpdated} TO 2100]"
-    }
-
     if(mutableParams.search.equals('yes')){
       //when searching make sure results start from first page
       mutableParams.offset = 0

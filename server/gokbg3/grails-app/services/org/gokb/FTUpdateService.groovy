@@ -1,12 +1,15 @@
 package org.gokb
 
 import com.k_int.ESSearchService
+import de.wekb.annotations.RefdataAnnotation
+import de.wekb.helper.RCConstants
 import grails.gorm.transactions.Transactional
 import org.elasticsearch.action.bulk.BulkRequestBuilder
 import org.gokb.cred.KBComponent
 import org.gokb.cred.KBComponentAdditionalProperty
 import org.gokb.cred.TIPPCoverageStatement
 import org.gokb.cred.RefdataValue
+import wekb.DeletedKBComponent
 
 @Transactional
 class FTUpdateService {
@@ -48,14 +51,12 @@ class FTUpdateService {
         result._id = "${kbc.class.name}:${kbc.id}"
         result.uuid = kbc.uuid
         result.name = kbc.name
-        result.contentType = kbc.contentType?.value
+
         result.description = kbc.description
         result.descriptionURL = kbc.descriptionURL
         result.sortname = kbc.name
         result.altname = []
-        result.listStatus = kbc.listStatus?.value
-        result.openAccess = kbc.openAccess?.value
-        result.file = kbc.file?.value
+
         result.lastUpdatedDisplay = dateFormatService.formatIsoTimestamp(kbc.lastUpdated)
         kbc.variantNames.each { vn ->
           result.altname.add(vn.variantName)
@@ -70,6 +71,12 @@ class FTUpdateService {
         result.nominalPlatformName = kbc.nominalPlatform?.name ?: ""
         result.nominalPlatformUuid = kbc.nominalPlatform?.uuid ?: ""
         result.scope = kbc.scope ? kbc.scope.value : ""
+        result.breakable = kbc.breakable ? kbc.breakable.value : ""
+        result.paymentType = kbc.paymentType ? kbc.paymentType.value : ""
+        result.listStatus = kbc.listStatus?.value
+        result.openAccess = kbc.openAccess?.value
+        result.file = kbc.file?.value
+        result.contentType = kbc.contentType?.value
 
         if (kbc.source) {
           result.source = [

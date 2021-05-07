@@ -46,7 +46,7 @@
                                 id="watchCounter" class="badge badge-warning">${num_watch}</span></a></li>
 
                     <li><a data-toggle="modal" data-cache="false"
-                           title="Show History (with Combos)"
+                           title="Show History (with Titles)"
                            data-remote='<g:createLink controller="fwk" action="history"
                                                       id="${displayobj.class.name}:${displayobj.id}"
                                                       params="[withCombos: true]"/>'
