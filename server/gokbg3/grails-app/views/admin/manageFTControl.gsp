@@ -57,7 +57,7 @@
                         <td>${indexInfo.countIndex}</td>
                         <td>${indexInfo.countDB}</td>
                         <td>${indexInfo.countDeletedInDB}</td>
-                        <td><g:link action="deleteIndex" params="[name: indexInfo.name]">Delete Index</g:link></td>
+                        <td><g:link action="deleteIndex" params="[name: indexInfo.name]">Delete and refill Index</g:link></td>
                     </tr>
                 </g:each>
                 </tbody>
