@@ -1116,7 +1116,10 @@ class ESSearchService{
     QueryBuilder idQuery = QueryBuilders.boolQuery()
 
     params.each { k,v ->
-      idQuery.must(QueryBuilders.termQuery(k, v))
+      if(k == 'identifiers.namespace')
+        idQuery.must(QueryBuilders.termQuery(k, v))
+      else
+        idQuery.must(QueryBuilders.matchQuery(k, v))
     }
 
     return idQuery
