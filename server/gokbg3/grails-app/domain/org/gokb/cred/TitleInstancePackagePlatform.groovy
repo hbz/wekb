@@ -1098,9 +1098,10 @@ class TitleInstancePackagePlatform extends KBComponent {
         }
 
         if (tipp_dto.language) {
-          tipp_dto.language.each{ RefdataValue lan ->
-            if(lan && !(lan in result.languages)){
-              result.addToLanguages(lan)
+          tipp_dto.language.each{ String lan ->
+            RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.KBCOMPONENT_LANGUAGE, lan)
+            if(refdataValue && !(refdataValue in result.languages)){
+              result.addToLanguages(refdataValue)
             }
           }
         }
