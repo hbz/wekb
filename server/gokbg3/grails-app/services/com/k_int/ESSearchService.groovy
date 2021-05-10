@@ -1127,7 +1127,7 @@ class ESSearchService{
       if(k == 'identifiers.namespace')
         idQuery.must(QueryBuilders.termQuery(k, v))
       else
-        idQuery.must(QueryBuilders.matchQuery(k, v))
+        idQuery.must(QueryBuilders.wildcardQuery(k, v))
     }
 
     return idQuery
