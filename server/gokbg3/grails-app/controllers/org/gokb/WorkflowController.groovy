@@ -1828,7 +1828,7 @@ class WorkflowController{
               flash.success = result.message
             }
             else if (result.result == JobResult.STATUS_FAIL){
-              flash.warning = result.message
+              flash.error = result.message
             }
             else{
               flash.error = "There have been errors running the job. Please check Source info & Package info."
