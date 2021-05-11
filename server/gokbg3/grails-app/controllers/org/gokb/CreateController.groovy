@@ -18,6 +18,8 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.LocalDateTime
 
+import org.mozilla.universalchardet.UniversalDetector
+
 @Secured(['IS_AUTHENTICATED_FULLY'])
 class CreateController {
 
@@ -305,8 +307,8 @@ class CreateController {
         User user = springSecurityService.currentUser
         MultipartFile csvFile = request.getFile("csvFile")
         if(csvFile && csvFile.size > 0) {
-          String encoding //= UniversalDetector.detectCharset(csvFile.getInputStream())
-          if(true) {
+          String encoding = UniversalDetector.detectCharset(csvFile.getInputStream())
+          if(encoding == "UTF-8") {
             Map packagesData = packageBatchImport(csvFile, user)
 
             render view: 'packageBatchCompleted', model: packagesData
@@ -381,12 +383,14 @@ class CreateController {
 
     rows.remove(0)
 
+    RefdataValue status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
+
     rows.each { row ->
         List<String> cols = row.split(';')
         if (colMap.name != null) {
           String name = cols[colMap.name].trim()
 
-          def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
+
           def dupes = Package.findAllByNameIlikeAndStatusNotEqual(name, status_deleted)
 
           if (dupes && dupes.size() > 0) {
@@ -508,7 +512,7 @@ class CreateController {
                 Identifier canonical_identifier = componentLookupService.lookupOrCreateCanonicalIdentifier("Anbieter_Produkt_ID", value)
                 if (canonical_identifier) {
                   if(pkg.save()) {
-                    def new_id = new Combo(fromComponent: pkg, toComponent: canonical_identifier, status: RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE), type: combo_type_id).save()
+                    def new_id = new Combo(fromComponent: pkg, toComponent: canonical_identifier, status: combo_active, type: combo_type_id).save()
                   }
                 }
               }
@@ -517,6 +521,13 @@ class CreateController {
             if (colMap.ddcs) {
               List<String> ddcs = cols[colMap.ddcs].split(',')
               ddcs.each { String value ->
+                if(value.toInteger() < 10){
+                  value = "00"+value
+                }
+
+                if(value.toInteger() >= 10 && value.toInteger() < 100){
+                  value = "0"+value
+                }
                 RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.DDC, value)
                 if (refdataValue) {
                   pkg.addToDdcs(refdataValue)
