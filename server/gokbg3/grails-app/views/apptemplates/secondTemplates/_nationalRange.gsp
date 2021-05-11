@@ -17,14 +17,14 @@
        data-target="#nationalRangeModal">Add National Range</a>
 
     <bootStrap:modal id="nationalRangeModal" title="Add National Range">
-                <g:form class="ui form" url="[controller: 'ajaxSupport', action: 'addNationalRange']" method="post">
+                <g:form class="form" url="[controller: 'ajaxSupport', action: 'addNationalRange']" method="post">
                     <input type="hidden" name="package" value="${d.id}"/>
 
                         <div class="field">
                             <label>National Range:</label>
 
                             <g:select from="${RefdataCategory.lookup(RCConstants.COUNTRY).sort {it.getI10n('value')}}"
-                                      class="ui dropdown fluid"
+                                      class="dropdown fluid"
                                       id="nationalRangeSelection"
                                       optionKey="id"
                                       optionValue="${{ it.getI10n('value') }}"

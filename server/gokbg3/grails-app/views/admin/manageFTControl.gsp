@@ -11,7 +11,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <table class="ui celled la-table table">
+            <table class="celled la-table table">
                 <thead>
                 <tr>
                     <th>domainClassName</th>
@@ -38,7 +38,7 @@
 
             <h3>Indices</h3>
 
-            <table class="ui celled la-table table">
+            <table class="celled la-table table">
                 <thead>
                 <tr>
                     <th>index</th>
