@@ -756,10 +756,10 @@ class TitleInstancePackagePlatform extends KBComponent {
       }
     }
 
-    if (tipp_dto.last_changed) {
-      LocalDateTime lce = GOKbTextUtils.completeDateString(tipp_dto.last_changed, false)
+    if (tipp_dto.lastChanged) {
+      LocalDateTime lce = GOKbTextUtils.completeDateString(tipp_dto.lastChanged, false)
       if (!lce) {
-        errors.put('last_changed', [message: "Unable to parse", baddata: tipp_dto.remove('last_changed')])
+        errors.put('lastChanged', [message: "Unable to parse", baddata: tipp_dto.remove('lastChanged')])
       }
     }
 
@@ -955,7 +955,7 @@ class TitleInstancePackagePlatform extends KBComponent {
         com.k_int.ClassUtils.setDateIfPresent(tipp_dto.accessEndDate, tipp, 'accessEndDate')
         com.k_int.ClassUtils.setDateIfPresent(tipp_dto.dateFirstInPrint, tipp, 'dateFirstInPrint')
         com.k_int.ClassUtils.setDateIfPresent(tipp_dto.dateFirstOnline, tipp, 'dateFirstOnline')
-        com.k_int.ClassUtils.setDateIfPresent(tipp_dto.last_changed, tipp, 'lastChangedExternal')
+        com.k_int.ClassUtils.setDateIfPresent(tipp_dto.lastChanged, tipp, 'lastChangedExternal')
 
         com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.medium, tipp, 'medium', RCConstants.TITLEINSTANCE_MEDIUM)
         com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.publicationType, tipp, 'publicationType', RCConstants.TIPP_PUBLICATION_TYPE)
