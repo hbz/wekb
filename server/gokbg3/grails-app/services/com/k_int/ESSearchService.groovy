@@ -480,7 +480,7 @@ class ESSearchService{
       return result
     }
     // now search
-    int scrollSize = 5000
+    int scrollSize = params.int("max")
     result.result = "OK"
     result.scrollSize = scrollSize
     def esClient = ESWrapperService.getClient()
