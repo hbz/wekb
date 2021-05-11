@@ -18,7 +18,7 @@
 
     <bootStrap:modal id="regionalRangeModal" title="Add Regional Range">
 
-                <g:form class="ui form" url="[controller: 'ajaxSupport', action: 'addRegionalRange']" method="post">
+                <g:form class="form" url="[controller: 'ajaxSupport', action: 'addRegionalRange']" method="post">
 
                         <input type="hidden" name="package" value="${d.id}"/>
 
@@ -26,7 +26,7 @@
                             <label>Regional Range:</label>
 
                             <g:select from="${RefdataCategory.lookup(RCConstants.PACKAGE_REGIONAL_RANGE)?.sort {it.getI10n('value')}}"
-                                      class="ui dropdown fluid"
+                                      class="dropdown fluid"
                                       id="regionalRangeSelection"
                                       optionKey="id"
                                       optionValue="${{ it.getI10n('value') }}"
