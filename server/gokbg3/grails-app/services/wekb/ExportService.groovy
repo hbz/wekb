@@ -5,6 +5,15 @@ import de.wekb.helper.RCConstants
 import gokbg3.DateFormatService
 import grails.gorm.transactions.Transactional
 import org.apache.commons.io.FileUtils
+import org.apache.poi.ss.usermodel.Cell
+import org.apache.poi.ss.usermodel.Row
+import org.apache.poi.ss.util.CellRangeAddressList
+import org.apache.poi.xssf.usermodel.XSSFDataValidation
+import org.apache.poi.xssf.usermodel.XSSFDataValidationConstraint
+import org.apache.poi.xssf.usermodel.XSSFDataValidationHelper
+import org.apache.poi.xssf.usermodel.XSSFSheet
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import org.gokb.cred.IdentifierNamespace
 import org.gokb.cred.Package
 import org.gokb.cred.RefdataCategory
 import org.gokb.cred.TIPPCoverageStatement
@@ -332,5 +341,88 @@ class ExportService {
 
     static String urlStringToFileString(String url){
         url.replace("://", "_").replace(".", "_").replace("/", "_")
+    }
+
+    def exportPackageBatchImportTemplate(def outputStream) {
+
+        List titles = ["package_name", "provider_uuid", "nominal_platform_uuid", "description", "url", "breakable", "consistent", "content_type",
+                              "file", "open_access", "payment_type", "scope", "national_range", "regional_range", "anbieter_produkt_id", "ddc", "source_url", "frequency", "title_id_namespace"]
+
+
+        XSSFWorkbook workbook = new XSSFWorkbook()
+        XSSFSheet sheet = workbook.createSheet("Packages")
+
+        Row headerRow = sheet.createRow(0)
+        headerRow.setHeightInPoints(16.75f)
+        titles.eachWithIndex{ titleName, int i ->
+            Cell cell = headerRow.createCell(i)
+            cell.setCellValue(titleName)
+        }
+        sheet.createFreezePane(0,1)
+
+        titles.eachWithIndex{ titleName, int i ->
+            String[] datas
+            switch(titleName) {
+                case 'breakable': datas = RefdataCategory.lookup(RCConstants.PACKAGE_BREAKABLE).sort{it.value}.collect { it -> it.value }
+                    break
+                case 'consistent': datas = RefdataCategory.lookup(RCConstants.PACKAGE_CONSISTENT).sort{it.value}.collect { it -> it.value }
+                    break
+                case 'content_type': datas = RefdataCategory.lookup(RCConstants.PACKAGE_CONTENT_TYPE).sort{it.value}.collect { it -> it.value }
+                    break
+                case 'file': datas = RefdataCategory.lookup(RCConstants.PACKAGE_FILE).sort{it.value}.collect { it -> it.value }
+                    break
+                case 'open_access': datas = RefdataCategory.lookup(RCConstants.PACKAGE_OPEN_ACCESS).sort{it.value}.collect { it -> it.value }
+                    break
+                case 'payment_type': datas = RefdataCategory.lookup(RCConstants.PACKAGE_PAYMENT_TYPE).sort{it.value}.collect { it -> it.value }
+                    break
+                case 'scope': datas = RefdataCategory.lookup(RCConstants.PACKAGE_SCOPE).sort{it.value}.collect { it -> it.value }
+                    break
+                case 'national_range': //Because many to many
+                    break
+                case 'regional_range': //Because many to many
+                    break
+                case 'ddc': //Because many to many
+                    break
+                case 'frequency': datas = RefdataCategory.lookup(RCConstants.SOURCE_FREQUENCY).sort{it.value}.collect { it -> it.value }
+                    break
+                case 'title_id_namespace': datas = IdentifierNamespace.findAllByFamily('ttl_prv').sort{it.value}.collect{ it -> it.value}
+                    break
+            }
+
+            if(datas){
+                setInExcelDropDownList(sheet, datas, i)
+            }
+
+        }
+
+        try {
+
+            workbook.write(outputStream)
+            outputStream.flush()
+            outputStream.close()
+            workbook.dispose()
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private setInExcelDropDownList(XSSFSheet sheet, String[] datas, Integer column){
+
+        println(datas)
+        XSSFDataValidationHelper dvHelper = new XSSFDataValidationHelper(sheet)
+        XSSFDataValidationConstraint dvConstraint = (XSSFDataValidationConstraint) dvHelper.createExplicitListConstraint(datas)
+        CellRangeAddressList addressList = null
+        XSSFDataValidation validation = null
+
+        addressList = new CellRangeAddressList(1, 500, column, column)
+        validation = (XSSFDataValidation) dvHelper.createValidation(dvConstraint, addressList)
+
+        // These two lines set the cell can only be a table of contents, otherwise an error
+        validation.setSuppressDropDownArrow(true)
+        validation.setShowErrorBox(true)
+
+        sheet.addValidationData(validation)
+
     }
 }
