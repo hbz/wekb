@@ -271,7 +271,7 @@ class CreateController {
   @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
   def exportPackageBatchImportTemplate() {
 
-    String filename = "Moe.xlsx"
+    String filename = "template_package_import.xlsx"
 
     try {
 
