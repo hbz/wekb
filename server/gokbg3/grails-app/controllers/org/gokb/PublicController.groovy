@@ -1,11 +1,12 @@
 package org.gokb
 
 import de.wekb.helper.RCConstants
+import grails.core.GrailsApplication
+import grails.plugins.mail.MailService
 import org.gokb.cred.*
 import org.hibernate.ScrollMode
 import org.hibernate.ScrollableResults
-
-
+import wekb.ExportService
 
 
 class PublicController {
@@ -15,26 +16,43 @@ class PublicController {
   def dateFormatService
   def sessionFactory
   def classExaminationService
+  ExportService exportService
+  MailService mailService
 
   public static String TIPPS_QRY = 'from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=? and c.toComponent=tipp and c.type = ? and tipp.status = ?';
+
   def wcagPlainEnglish() {
     log.debug("wcagPlainEnglish::${params}")
     def result = [:]
-    println(params)
+    //println(params)
     result
   }
+
   def sendFeedbackForm() {
-    log.debug("sendFeedbackFormh::${params}")
     def result = [:]
-    println(params)
+    try {
+
+      mailService.sendMail {
+        to 'barrierefreiheitsbelange@hbz-nrw.de'
+        from 'laser@hbz-nrw.de'
+        subject grailsApplication.config.systemId + ' - Feedback-Mechanismus Barrierefreiheit'
+        body (view: '/mailTemplate/text/wcagFeedback', model: [name:params.name, email:params.eMail, url:params.url, comment:params.comment])
+
+      }
+    }
+    catch (Exception e) {
+      println "Unable to perform email due to exception ${e.message}"
+    }
     result
   }
+
   def wcagFeedbackForm() {
     log.debug("wcagFeedbackForm::${params}")
     def result = [:]
-    println(params)
+    //println(params)
     result
   }
+
   def packageContent() {
     log.debug("packageContent::${params}")
     def result = [:]
@@ -71,7 +89,7 @@ class PublicController {
         params.max = session.getAttribute("newMax") ?: 10
 
         result.titleCount = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_current])[0]
-        result.tipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_current], params)
+        result.tipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY + " order by ${params.sort} ${params.order}",[result.pkgId, tipp_combo_rdv, status_current], params)
         log.debug("Tipp qry done ${result.tipps?.size()}")
 
       }else {
@@ -159,10 +177,6 @@ class PublicController {
     // params.remove('q');
     // params.isPublic="Yes"
 
-    if(mutableParams.lastUpdated){
-      mutableParams.lastModified ="[${params.lastUpdated} TO 2100]"
-    }
-
     if(mutableParams.search.equals('yes')){
       //when searching make sure results start from first page
       mutableParams.offset = 0
@@ -189,111 +203,42 @@ class PublicController {
         result.countComponent."${component.toLowerCase()}" = KBComponent.executeQuery(fetch_all.toString(), query_params, [readOnly: true])[0]
       }
 
+
     }
 
     params.max = mutableParams.max
     params.offset = mutableParams.offset
     params.remove('newMax')
+    params.remove('search')
 
     result
   }
 
-
-  // @Transactional(readOnly = true)
   def kbart() {
 
-    def pkg = genericOIDService.resolveOID(params.id)
+    Package pkg = genericOIDService.resolveOID(params.id)
 
-    def export_date = dateFormatService.formatDate(new Date());
+    if(!pkg){
+      pkg = Package.findByUuid(params.id)
+    }
 
-    def filename = "we:kb Export : ${pkg.name} : ${export_date}.tsv"
+    if(!pkg){
+      response.sendError(404)
+      return
+    }
+
+    String export_date = dateFormatService.formatDate(new Date());
+
+    String filename = "kbart_${pkg.name}_${export_date}"
 
     try {
-      response.setContentType('text/tab-separated-values');
+
       response.setHeader("Content-disposition", "attachment; filename=\"${filename}\"")
-      response.contentType = "text/tab-separated-values" // "text/tsv"
 
       def out = response.outputStream
-      out.withWriter { writer ->
 
-        def sanitize = { it ? "${it}".trim() : "" }
+      exportService.exportOriginalKBART(out, pkg)
 
-          // As per spec header at top of file / section
-          // II: Need to add in preceding_publication_title_id
-          writer.write('publication_title\t'+
-                       'print_identifier\t'+
-                       'online_identifier\t'+
-                       'date_first_issue_online\t'+
-                       'num_first_vol_online\t'+
-                       'num_first_issue_online\t'+
-                       'date_last_issue_online\t'+
-                       'num_last_vol_online\t'+
-                       'num_last_issue_online\t'+
-                       'title_url\t'+
-                       'first_author\t'+
-                       'title_id\t'+
-                       'embargo_info\t'+
-                       'coverage_depth\t'+
-                       'coverage_notes\t'+
-                       'publisher_name\t'+
-                       'preceding_publication_title_id\t'+
-                       'date_monograph_published_print\t'+
-                       'date_monograph_published_online\t'+
-                       'monograph_volume\t'+
-                       'monograph_edition\t'+
-                       'first_editor\t'+
-                       'parent_publication_title_id\t'+
-                       'publication_type\t'+
-                       'access_type\n');
-
-          // scroll(ScrollMode.FORWARD_ONLY)
-          def session = sessionFactory.getCurrentSession()
-          def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
-          def combo_pkg_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
-          def query = session.createQuery("select tipp.id from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=:p and c.toComponent=tipp  and tipp.status <> :sd and c.type = :ct order by tipp.id")
-          query.setReadOnly(true)
-          query.setParameter('p',pkg.getId(), StandardBasicTypes.LONG)
-          query.setParameter('sd', status_deleted)
-          query.setParameter('ct', combo_pkg_tipps)
-
-
-          ScrollableResults tipps = query.scroll(ScrollMode.FORWARD_ONLY)
-
-          while (tipps.next()) {
-            def tipp_id = tipps.get(0);
-
-              TitleInstancePackagePlatform.withNewSession {
-                def tipp = TitleInstancePackagePlatform.get(tipp_id)
-                writer.write(
-                            sanitize( tipp.title.name ) + '\t' +
-                            sanitize( tipp.title.getIdentifierValue('ISSN') ) + '\t' +
-                            sanitize( tipp.title.getIdentifierValue('eISSN') ) + '\t' +
-                            sanitize( tipp.url ) + '\t' +
-                            '\t'+  // First Author
-                            sanitize( tipp.title.getId() ) + '\t' +
-                            sanitize( tipp.coverageDepth ) + '\t' +
-                            sanitize( tipp.coverageNote ) + '\t' +
-                            sanitize( tipp.title.getCurrentPublisher()?.name ) + '\t' +
-                            sanitize( tipp.title.getPrecedingTitleId() ) + '\t' +
-                            '\t' +  // date_monograph_published_print
-                            '\t' +  // date_monograph_published_online
-                            '\t' +  // monograph_volume
-                            '\t' +  // monograph_edition
-                            '\t' +  // first_editor
-                            '\t' +  // parent_publication_title_id
-                            sanitize( tipp.title?.medium?.value ) + '\t' +  // publication_type
-                            sanitize( tipp.accessType?.value ) +  // access_type
-                            '\n');
-                tipp.discard();
-              }
-          }
-
-          tipps.close()
-
-          writer.flush();
-          writer.close();
-        }
-      out.close()
     }
     catch ( Exception e ) {
       log.error("Problem with export",e);
@@ -302,72 +247,29 @@ class PublicController {
 
   def packageTSVExport() {
 
-    def export_date = dateFormatService.formatDate(new Date());
+    Package pkg = genericOIDService.resolveOID(params.id)
 
-    def pkg = genericOIDService.resolveOID(params.id)
+    if(!pkg){
+      pkg = Package.findByUuid(params.id)
+    }
 
-    if ( pkg == null )
-      return;
+    if(!pkg){
+      response.sendError(404)
+      return
+    }
 
-    def filename = "GoKBPackage-${params.id}.tsv";
+    String export_date = dateFormatService.formatDate(new Date());
+
+    String filename = "wekb_package_${pkg.name.toLowerCase()}_${export_date}.tsv"
 
     try {
       response.setContentType('text/tab-separated-values');
       response.setHeader("Content-disposition", "attachment; filename=\"${filename}\"")
-      response.contentType = "text/tab-separated-values" // "text/tsv"
 
       def out = response.outputStream
-      out.withWriter { writer ->
 
-        def sanitize = { it ? "${it}".trim() : "" }
+      exportService.exportPackageTippsAsTSV(out, pkg)
 
-
-
-
-          // As per spec header at top of file / section
-          writer.write("we:kb Export : ${pkg.provider?.name} : ${pkg.name} : ${export_date}\n");
-
-          writer.write('TIPP ID	TIPP URL	Title ID	Title	TIPP Status	[TI] Publisher	[TI] Imprint	[TI] Published From	[TI] Published to	[TI] Medium	[TI] OA Status	'+
-                     '[TI] Continuing series	[TI] ISSN	[TI] EISSN	Package	Package ID	Package URL	Platform	'+
-                     'Platform URL	Platform ID	Reference	Edit Status	Access Start Date	Access End Date	Coverage Start Date	'+
-                     'Coverage Start Volume	Coverage Start Issue	Coverage End Date	Coverage End Volume	Coverage End Issue	'+
-                     'Embargo	Coverage note	Host Platform URL	Format	Payment Type\n');
-
-          def session = sessionFactory.getCurrentSession()
-          def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
-          def combo_pkg_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
-          def query = session.createQuery("select tipp.id from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=:p and c.toComponent=tipp  and tipp.status <> :sd and c.type = :ct order by tipp.id")
-          query.setReadOnly(true)
-          query.setParameter('p',pkg.getId(), StandardBasicTypes.LONG)
-          query.setParameter('sd', status_deleted)
-          query.setParameter('ct', combo_pkg_tipps)
-
-          ScrollableResults tipps = query.scroll(ScrollMode.FORWARD_ONLY)
-
-          while (tipps.next()) {
-
-            def tipp_id = tipps.get(0);
-
-            TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.get(tipp_id)
-
-            writer.write( sanitize( tipp.getId() ) + '\t' + sanitize( tipp.url ) + '\t' + sanitize( tipp.title.getId() ) + '\t' + sanitize( tipp.title.name ) + '\t' +
-                          sanitize( tipp.status.value ) + '\t' + sanitize( tipp.title.getCurrentPublisher()?.name ) + '\t' + sanitize( tipp.title.imprint?.name ) + '\t' + sanitize( tipp.title.publishedFrom ) + '\t' +
-                          sanitize( tipp.title.publishedTo ) + '\t' + sanitize( tipp.title.medium?.value ) + '\t' + sanitize( tipp.title.oa?.status ) + '\t' +
-                          sanitize( tipp.title.continuingSeries?.value ) + '\t' +
-                          sanitize( tipp.title.getIdentifierValue('ISSN') ) + '\t' +
-                          sanitize( tipp.title.getIdentifierValue('eISSN') ) + '\t' +
-                          sanitize( pkg.name ) + '\t' + sanitize( pkg.getId() ) + '\t' + '\t' + sanitize( tipp.hostPlatform.name ) + '\t' +
-                          sanitize( tipp.hostPlatform.primaryUrl ) + '\t' + sanitize( tipp.hostPlatform.getId() ) + '\t\t' + sanitize( tipp.status?.value ) + '\t' + sanitize( tipp.accessStartDate )  + '\t' +
-                          sanitize( tipp.accessEndDate ) + '\t' + sanitize( tipp.coverageNote ) + '\t' + sanitize( tipp.hostPlatform.primaryUrl ) + '\t' +
-                          sanitize( tipp.format?.value ) + '\t' + sanitize( tipp.paymentType?.value ) +
-                          '\n');
-            tipp.discard();
-          }
-        }
-
-        writer.flush();
-        writer.close();
-      out.close()
     }
     catch ( Exception e ) {
       log.error("Problem with export",e);

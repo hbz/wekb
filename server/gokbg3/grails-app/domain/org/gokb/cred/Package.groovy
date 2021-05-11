@@ -87,6 +87,7 @@ class Package extends KBComponent {
   static hasMany = [
           nationalRanges : RefdataValue,
           regionalRanges : RefdataValue,
+          ddcs : RefdataValue,
   ]
 
   static mapping = {
@@ -101,6 +102,12 @@ class Package extends KBComponent {
     descriptionURL column: 'pkg_descr_url'
     openAccess column: 'pkg_open_access'
     file column: 'pkg_file'
+
+    ddcs             joinTable: [
+            name:   'package_dewey_decimal_classification',
+            key:    'package_fk',
+            column: 'ddc_rv_fk', type:   'BIGINT'
+    ], lazy: false
 
     nationalRanges             joinTable: [
             name:   'package_national_range',
@@ -144,6 +151,7 @@ class Package extends KBComponent {
     })
     nationalRanges(nullable:true)
     regionalRanges(nullable:true)
+    ddcs(nullable:true)
   }
 
   public String getRestPath() {
@@ -206,6 +214,7 @@ class Package extends KBComponent {
     result
   }
 
+  @Deprecated
   @Transient
   public getTitles(def onlyCurrent = true, int max = 10, offset = 0) {
     def all_titles = null
@@ -245,6 +254,7 @@ class Package extends KBComponent {
     return all_titles;
   }
 
+  @Deprecated
   @Transient
   public getCurrentTitleCount() {
     def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current');
@@ -364,7 +374,6 @@ select tipp.id,
        tipp.status,
        tipp.accessStartDate,
        tipp.accessEndDate,
-       tipp.format,
        plat.primaryUrl,
        tipp.lastUpdated,
        tipp.uuid,
@@ -621,7 +630,7 @@ select tipp.id,
   }
 
   @Transient
-  public getRecentActivity(n) {
+  public getRecentActivity() {
     def result = [];
 
     if (this.id) {
@@ -639,16 +648,16 @@ select tipp.id,
 //                        [pkg: this], [max:n]);
 
       def changes = TitleInstancePackagePlatform.executeQuery('select tipp from TitleInstancePackagePlatform as tipp, Combo as c ' +
-        'where c.fromComponent= ? and c.toComponent=tipp order by tipp.lastUpdated DESC',
+        'where c.fromComponent= ? and c.toComponent=tipp',
         [this]);
 
       use(TimeCategory) {
         changes.each {
           if (it.isDeleted()) {
-            result.add([it, it.lastUpdated, 'Deleted (status)'])
+            result.add([it, it.lastUpdated, 'Deleted (Status)'])
           }
           else if (it.isRetired()) {
-            result.add([it, it.lastUpdated, it.accessEndDate ? "Retired (${it.accessEndDate})" : 'Retired (status)'])
+            result.add([it, it.lastUpdated, it.accessEndDate ? "Retired (${it.accessEndDate})" : 'Retired (Status)'])
           }
           else if (it.lastUpdated <= it.dateCreated + 1.minute) {
             result.add([it, it.dateCreated, it.accessStartDate ? "Added (${it.accessStartDate})" : 'Newly Added'])
@@ -663,7 +672,7 @@ select tipp.id,
 //       result.addAll(deletions)
       result.sort { it[1] }
       result = result.reverse();
-      result = result.take(n);
+      //result = result.take(n);
     }
 
     return result;

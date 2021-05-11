@@ -1,7 +1,10 @@
+<g:set var="s_action" value="${s_action?:'index'}"/>
+<g:set var="s_controller" value="${s_controller?:'search'}"/>
+
 <g:if test="${hide.contains('SEARCH_FORM')}">
 </g:if>
 <g:elseif test="${params.inline}">
-  <g:form method="get" class="form-horizontal" controller="search" role="form">
+  <g:form method="get" class="form-horizontal" controller="${s_controller}" action="${s_action}" id="${params.id}">
     <input type="hidden" name="qbe" value="${params.qbe}"/>
 
     <g:each in="${hide}" var="hidden_var">
@@ -34,7 +37,7 @@
   </g:form>
 </g:elseif>
 <g:else>
-  <g:form method="get" class="form-horizontal" controller="search" role="form">
+  <g:form method="get" class="form-horizontal" controller="${s_controller}" action="${s_action}" id="${params.id}">
 
     <input type="hidden" name="qbe" value="${params.qbe}"/>
 
@@ -100,6 +103,7 @@
           </g:if>
           <g:else>
             <div class="btn-group pull-right" role="group" aria-label="Search Buttons">
+              <g:link class="btn btn-success btn-sm" controller="${s_controller}" action="${s_action}" params="[id: params.id, qbe: params.qbe]">Reset</g:link>
               <button name="searchAction" type="submit" class="btn btn-success btn-sm" value="search">Search</button>
               <div class="btn-group" role="group">
                 <button class="btn btn-success btn-sm"

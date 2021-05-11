@@ -14,7 +14,7 @@
     <h1>Filter</h1>
 
     <div class="card wekb-filter mb-4">
-        <g:form controller="public" class="form" role="form" action="index" method="get" params="${params}">
+        <g:form controller="public" class="form"   action="index" method="get" params="${params}">
             <div class="row">
                 <div class="col-sm-4">
                     <div class="form-group input-group-md">
@@ -35,15 +35,13 @@
                                 <select name="${facet.key}" class="wekb-multiselect" multiple
                                         aria-label="Default select example">
                                     <g:each in="${facet.value?.sort { it.display.toLowerCase() }}" var="v">
-                                        <g:set var="fname" value="facet:${facet.key + ':' + v.term}"/>
-                                        <g:set var="kbc"
-                                               value="${v.term.startsWith('org.gokb.cred') ? org.gokb.cred.KBComponent.get(v.term.split(':')[1].toLong()) : null}"/>
-                                        <g:if test="${params.list(facet.key).contains(v.term.toString())}">
-                                            <option value="${v.term}"
-                                                    selected="selected">${kbc?.name ?: v.display} (${v.count})</option>
+
+                                        <g:if test="${params.list(facet.key).contains('"'+v.term+'"')}">
+                                            <option value="${'"'+v.term+'"'}"
+                                                    selected="selected">${v.display} (${v.count})</option>
                                         </g:if>
                                         <g:else>
-                                            <option value="${v.term}">${kbc?.name ?: v.display} (${v.count})</option>
+                                            <option value="${'"'+v.term+'"'}">${v.display} (${v.count})</option>
                                         </g:else>
                                     </g:each>
                                 </select>
@@ -53,18 +51,11 @@
                 </g:each>
             </div>
 
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="form-group">
-                        <div class="btn-group pull-right">
-                            <button class="btn btn-primary " type="submit" value="yes" name="search">Search</button>
-                        </div>
-
-                        <div class="btn-group pull-right" style="margin-right: 5px;">
-                            <a class="btn btn-dark"
-                               href="${grailsApplication.config.server.contextPath ?: ''}"/>Reset</a>
-                        </div>
-
+            <div class="form-group row justify-content-end">
+                <div class="col-4">
+                    <div class="float-right">
+                        <g:link class="btn btn-dark" controller="public">Reset</g:link>
+                        <button class="btn btn-primary " type="submit" value="yes" name="search">Search</button>
                     </div>
                 </div>
             </div>
@@ -75,13 +66,14 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-sm-12">
-            <g:form controller="public" class="form" role="form" action="index" method="get" params="${params}">
-                <div class="form-group input-group-md">
-                    <div class="btn-group pull-right">
-                        <label for="newMax">Results on Page</label>
-                        <g:select name="newMax" from="[10, 25, 50, 100, 200, 500]" value="${params.max}" onChange="this.form.submit()"/>
-                    </div>
+        <div class="col-sm">
+            <h1>Results <span class="label label-default">${resultsTotal}</span></h1>
+        </div>
+        <div class="col-sm">
+            <g:form controller="public" class="form-group row justify-content-end"   action="${actionName}" method="get" params="${params}">
+                <label class="col-sm-6 col-form-label text-right" for="newMax">Results on Page</label>
+                <div class="col-sm-6">
+                    <g:select class="form-control"  name="newMax" from="[10, 25, 50, 100, 200, 500]" value="${params.max}" onChange="this.form.submit()"/>
                 </div>
             </g:form>
         </div>
@@ -89,11 +81,10 @@
 
     <div class="row">
         <div class="col-md-12">
-            <h1>Results <span class="label label-default">${resultsTotal}</span></h1>
-            <table class="table table-striped">
+            <table class="table table-striped wekb-table-responsive-stack">
                 <thead>
                 <tr>
-                    <th></th>
+                    <th>#</th>
                     <g:sortableColumn property="sortname" title="Package Name"/>
                     <g:sortableColumn property="cpname" title="Provider"/>
                     <g:sortableColumn property="curatoryGroups" title="Curatory Groups"/>
@@ -111,8 +102,6 @@
                         <td>
                             <g:link controller="public" action="packageContent"
                                     id="${hit.id}">${hit.source.name}</g:link>
-                            <!-- <g:link controller="public" action="kbart"
-                                         id="${hit.id}">(Download Kbart File)</g:link>-->
 
                         </td>
                         <td>${hit.source.cpname}</td>
@@ -120,7 +109,10 @@
                             <g:if test="${hit.source.curatoryGroups?.size() > 0}">
                                 <g:each in="${hit.source.curatoryGroups}" var="cg" status="c">
                                     <g:if test="${c > 0}"><br></g:if>
-                                    ${cg}
+                                    ${cg.name}
+                                    <g:if test="${cg.type}">
+                                    (${cg.type})
+                                    </g:if>
                                 </g:each>
                             </g:if>
                             <g:else>

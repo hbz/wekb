@@ -157,7 +157,7 @@
                               </li>
                             </g:each>
                             <li class="list-group-item">
-                              <form role="form" class="form" onsubmit='return addNote("${c['appliedTo']}_${id}", "${user.username}", "${user?.org?.name}")'>
+                              <form   class="form" onsubmit='return addNote("${c['appliedTo']}_${id}", "${user.username}", "${user?.org?.name}")'>
                                 <div class="form-group">
                                   <div class="input-group">
                                     <span class="input-group-addon">Add note</span>

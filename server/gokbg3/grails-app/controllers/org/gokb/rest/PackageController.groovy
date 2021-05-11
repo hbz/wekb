@@ -715,7 +715,7 @@ class PackageController {
 
   @Transactional
   @Secured(value = ["IS_AUTHENTICATED_ANONYMOUSLY"])
-  def updateTipps() {
+  /*def updateTipps() {
     def result = ['result': 'OK']
     def async = params.async ? params.boolean('async') : true
     def update = request.method == 'PATCH' || (params.addOnly ? params.boolean('addOnly') : false)
@@ -861,7 +861,7 @@ class PackageController {
                               componentUpdateService.ensureCoreData(ti, titleObj, fullsync, user)
 
                               title_changed |= componentUpdateService.setAllRefdata([
-                                'OAStatus', 'medium', 'language',
+                                'OAStatus', 'medium',
                                 'pureOA', 'continuingSeries',
                                 'reasonRetired'
                               ], titleObj, ti)
@@ -1208,10 +1208,11 @@ class PackageController {
                           the_pkg,
                           "TIPPs retired.",
                           "An update to package ${the_pkg.id} did not contain ${num_removed_tipps} previously existing TIPPs.",
-                          user,
+                          RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'),
                           null,
                           null,
-                          RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'TIPPs Retired')
+                          RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'TIPPs Retired'),
+                          the_pkg.curatoryGroups
                         )
                       }
                     }
@@ -1250,10 +1251,11 @@ class PackageController {
                       the_pkg,
                       "Invalid TIPPs.",
                       "An update for this package failed because of invalid TIPP information (JOB ${job.uuid}).",
-                      user,
+                      RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'User Request'),
                       null,
                       (additionalInfo as JSON).toString(),
-                      RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Invalid TIPPs')
+                      RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Invalid TIPPs'),
+                      the_pkg.curatoryGroups
                     )
                   }
                 }
@@ -1310,7 +1312,7 @@ class PackageController {
     }
 
     render result as JSON
-  }
+  }*/
 
   private def cleanUpGorm(session) {
     log.debug("Clean up GORM");

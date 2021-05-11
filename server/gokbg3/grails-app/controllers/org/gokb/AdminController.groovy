@@ -3,31 +3,53 @@ package org.gokb
 import com.k_int.ConcurrencyManagerService
 import com.k_int.ConcurrencyManagerService.Job
 import de.wekb.helper.RCConstants
+import gokbg3.DateFormatService
 import grails.converters.JSON
+import grails.plugin.springsecurity.SpringSecurityService
+import org.elasticsearch.action.DocWriteResponse
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder
+import org.elasticsearch.action.admin.indices.create.CreateIndexResponse
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequestBuilder
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse
+import org.elasticsearch.action.index.IndexResponse
+import org.elasticsearch.action.search.SearchResponse
+import org.elasticsearch.client.Client
+import org.elasticsearch.client.IndicesAdminClient
+import org.elasticsearch.search.SearchHits
 import org.gokb.cred.*
 import org.hibernate.criterion.CriteriaSpecification
 
 import org.springframework.security.access.annotation.Secured
-import org.springframework.security.acls.domain.BasePermission
-import org.springframework.security.acls.model.ObjectIdentity
-import org.springframework.security.acls.model.Permission
 import wekb.AdminService
+import wekb.AutoUpdatePackagesService
+import wekb.DeletedKBComponent
 
 import java.util.concurrent.CancellationException
 
+@Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
 class AdminController {
 
   def uploadAnalysisService
   def FTUpdateService
   def packageService
-  def gokbAclService
   def componentStatisticService
-  def aclUtilService
   def grailsCacheAdminService
   def titleAugmentService
   ConcurrencyManagerService concurrencyManagerService
   CleanupService cleanupService
   AdminService adminService
+  AutoUpdatePackagesService autoUpdatePackagesService
+  def ESWrapperService
+  DateFormatService dateFormatService
+  SpringSecurityService springSecurityService
+
+  static Map typePerIndex = [
+          "gokbtipps": "TitleInstancePackagePlatform",
+          "gokborgs": "Org" ,
+          "gokbpackages": "Package",
+          "gokbplatforms": "Platform",
+          "gokbdeletedcomponents": "DeletedKBComponent"
+  ]
 
   @Deprecated
   def tidyOrgData() {
@@ -98,13 +120,6 @@ class AdminController {
     j.description = "Tidy Orgs Data"
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'TidyOrgsData')
 
-    redirect(controller: 'admin', action: 'jobs');
-  }
-
-  def logViewer() {
-    // cache "until_changed"
-    // def f = new File ("${grailsApplication.config.log_location}")
-    // return [file: "${f.canonicalPath}"]
     redirect(controller: 'admin', action: 'jobs');
   }
 
@@ -509,11 +524,166 @@ class AdminController {
     redirect(controller: 'admin', action: 'jobs');
   }
 
-  @Secured(['ROLE_SUPERUSER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_SUPERUSER'])
   def setupAcl() {
 
     adminService.setupDefaultAcl()
 
     redirect(controller: 'admin', action: 'jobs');
+  }
+
+  @Secured(['ROLE_SUPERUSER'])
+  def autoUpdatePackages() {
+      log.debug("Beginning scheduled auto update packages job.")
+      // find all updateable packages
+      def updPacks = Package.executeQuery(
+              "from Package p " +
+                      "where p.source is not null and " +
+                      "p.source.automaticUpdates = true " +
+                      "and (p.source.lastRun is null or p.source.lastRun < current_date)")
+      updPacks.each { Package p ->
+        if (p.source.needsUpdate()) {
+            def result = autoUpdatePackagesService.updateFromSource(p)
+            log.debug("Result of update: ${result}")
+            sleep(10000)
+        }
+      }
+      log.info("auto update packages job completed.")
+
+    redirect(controller: 'admin', action: 'jobs');
+  }
+
+  @Secured(['ROLE_SUPERUSER'])
+  def manageFTControl() {
+    Map<String, Object> result = [:]
+    log.debug("manageFTControl ...")
+    result.ftControls = FTControl.list()
+    result.ftUpdateService = [:]
+    result.editable = true
+
+    RefdataValue status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
+
+    Client esclient = ESWrapperService.getClient()
+
+    result.indices = []
+    def esIndices = grailsApplication.config.gokb.es.indices?.values()
+
+    esIndices.each{ String indexName ->
+      Map indexInfo = [:]
+      indexInfo.name = indexName
+      indexInfo.type = typePerIndex.get(indexName)
+
+      SearchResponse response = esclient.prepareSearch(indexName)
+              .setSize(0)
+              .execute().actionGet()
+
+      SearchHits hits = response.getHits()
+      indexInfo.countIndex = hits.getTotalHits()
+
+      String query = "select count(id) from ${typePerIndex.get(indexName)}"
+      indexInfo.countDB = FTControl.executeQuery(query)[0]
+      indexInfo.countDeletedInDB = FTControl.executeQuery(query+ " where status = :status", [status: status_deleted]) ? FTControl.executeQuery(query+ " where status = :status", [status: status_deleted])[0] : 0
+      result.indices << indexInfo
+    }
+
+    result
+  }
+
+
+  @Secured(['ROLE_SUPERUSER'])
+  def deleteIndex() {
+    Job j = concurrencyManagerService.createJob {
+      Map<String, Object> result = [:]
+      if(params.name) {
+        String indexName = params.name
+        log.debug("deleteIndex ${indexName} ...")
+        Client esclient = ESWrapperService.getClient()
+        IndicesAdminClient adminClient = esclient.admin().indices()
+
+        if (adminClient.prepareExists(indexName).execute().actionGet().isExists()) {
+          DeleteIndexRequestBuilder deleteIndexRequestBuilder = adminClient.prepareDelete(indexName)
+          DeleteIndexResponse deleteIndexResponse = deleteIndexRequestBuilder.execute().actionGet()
+          if (deleteIndexResponse.isAcknowledged()) {
+            log.debug("Index ${indexName} successfully deleted!")
+          }
+          else {
+            log.debug("Index deletetion failed: ${deleteIndexResponse}")
+          }
+        }
+        log.debug("ES index ${indexName} did not exist, creating..")
+        CreateIndexRequestBuilder createIndexRequestBuilder = adminClient.prepareCreate(indexName)
+        log.debug("Adding index settings..")
+        createIndexRequestBuilder.setSettings(ESWrapperService.getSettings().get("settings"))
+        log.debug("Adding index mappings..")
+        createIndexRequestBuilder.addMapping("component", ESWrapperService.getMapping())
+
+        CreateIndexResponse createIndexResponse = createIndexRequestBuilder.execute().actionGet()
+        if (createIndexResponse.isAcknowledged()) {
+          log.debug("Index ${indexName} successfully created!")
+          if(typePerIndex.get(indexName) == DeletedKBComponent.class.simpleName){
+            DeletedKBComponent.list().each { DeletedKBComponent deletedKBComponent ->
+              Map idx_record = [:]
+              String recid = "${deletedKBComponent.class.name}:${deletedKBComponent.id}"
+              idx_record.uuid = deletedKBComponent.uuid
+              idx_record.name = deletedKBComponent.name
+              idx_record.componentType = deletedKBComponent.componentType
+              idx_record.status = deletedKBComponent.status
+              idx_record.dateCreated = dateFormatService.formatIsoTimestamp(deletedKBComponent.dateCreated)
+              idx_record.lastUpdated = dateFormatService.formatIsoTimestamp(deletedKBComponent.lastUpdated)
+              idx_record.oldDateCreated = dateFormatService.formatIsoTimestamp(deletedKBComponent.oldDateCreated)
+              idx_record.oldLastUpdated = dateFormatService.formatIsoTimestamp(deletedKBComponent.oldLastUpdated)
+              idx_record.oldId = deletedKBComponent.oldId
+
+              IndexResponse indexResponse = esclient.prepareIndex("gokbdeletedcomponents", 'component', recid).setSource(idx_record).get()
+              if (indexResponse.getResult() != DocWriteResponse.Result.CREATED) {
+                log.error("Error on record DeletedKBComponent in Index 'gokbdeletedcomponents'")
+              }
+            }
+          }
+          else {
+            FTControl.withTransaction {
+              def res = FTControl.executeUpdate("delete FTControl c where c.domainClassName = :deleteFT", [deleteFT: "org.gokb.cred.${typePerIndex.get(indexName)}"])
+              log.debug("Result: ${res}")
+            }
+            FTUpdateService.updateFTIndexes()
+          }
+        }
+        else {
+          log.debug("Index creation failed: ${createIndexResponse}")
+        }
+      }
+    }.startOrQueue()
+    j.description = "Delete index ${params.name}"
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'ResetFreeTextIndexes')
+    j.startTime = new Date()
+
+    redirect(action: 'manageFTControl')
+  }
+
+
+  def packagesChanges() {
+    log.debug("packageChanges::${params}")
+    def result = [:]
+
+    User user = springSecurityService.getCurrentUser()
+
+    String query = 'from Package as pkg where pkg.status != :status'
+
+    RefdataValue status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
+
+    params.offset = params.offset ?: 0
+    params.max = params.max ? Integer.parseInt(params.max) : (user.defaultPageSize ?: 10)
+
+    result.packagesCount = Package.executeQuery('select count(pkg) ' + query, [status: status_deleted])[0]
+    result.packages = Package.executeQuery('select pkg ' + query + " order by pkg.lastUpdated desc", [status: status_deleted], params)
+
+    result
+  }
+
+
+  def frontend() {
+    log.debug("frontend::${params}")
+    def result = [:]
+    result
   }
 }

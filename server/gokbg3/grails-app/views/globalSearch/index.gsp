@@ -125,15 +125,19 @@
              </thead>
              <tbody>
                <g:each in="${hits}" var="hit">
-
                  <tr>
                    <td>
-                        <g:link controller="resource" action="show" id="${hit.uuid}">
-                          ${hit.source.name ?: "- Not Set -"}
-                        </g:link>
+                     <g:if test="${hit.source.uuid}">
+                       <g:link controller="resource" action="show" id="${hit.source.uuid}">
+                         ${hit.source.name ?: "- Not Set -"}
+                       </g:link>
+                     </g:if>
+                     <g:else>
+                       ${hit.source.name ?: "- Not Set -"}
+                     </g:else>
                    </td>
                    <td> ${hit.source.componentType == 'TitleInstancePackagePlatform' ? hit.source.titleType : hit.source.componentType  } </td>
-                   <td> ${hitInst?.status?.value ?: 'Unknown'}</td>
+                   <td> ${hit.source.status?.value ?: 'Unknown'}</td>
                  </tr>
                </g:each>
              </tbody>

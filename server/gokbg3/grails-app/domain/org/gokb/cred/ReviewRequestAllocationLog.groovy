@@ -1,5 +1,6 @@
 package org.gokb.cred
 
+@Deprecated
 class ReviewRequestAllocationLog {
 
   ReviewRequest rr

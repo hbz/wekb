@@ -1,8 +1,15 @@
 package org.gokb
 
 import com.k_int.ESSearchService
+import de.wekb.annotations.RefdataAnnotation
+import de.wekb.helper.RCConstants
 import grails.gorm.transactions.Transactional
 import org.elasticsearch.action.bulk.BulkRequestBuilder
+import org.gokb.cred.KBComponent
+import org.gokb.cred.KBComponentAdditionalProperty
+import org.gokb.cred.TIPPCoverageStatement
+import org.gokb.cred.RefdataValue
+import wekb.DeletedKBComponent
 
 @Transactional
 class FTUpdateService {
@@ -44,14 +51,12 @@ class FTUpdateService {
         result._id = "${kbc.class.name}:${kbc.id}"
         result.uuid = kbc.uuid
         result.name = kbc.name
-        result.contentType = kbc.contentType?.value
+
         result.description = kbc.description
         result.descriptionURL = kbc.descriptionURL
         result.sortname = kbc.name
         result.altname = []
-        result.listStatus = kbc.listStatus?.value
-        result.openAccess = kbc.openAccess?.value
-        result.file = kbc.file?.value
+
         result.lastUpdatedDisplay = dateFormatService.formatIsoTimestamp(kbc.lastUpdated)
         kbc.variantNames.each { vn ->
           result.altname.add(vn.variantName)
@@ -66,6 +71,12 @@ class FTUpdateService {
         result.nominalPlatformName = kbc.nominalPlatform?.name ?: ""
         result.nominalPlatformUuid = kbc.nominalPlatform?.uuid ?: ""
         result.scope = kbc.scope ? kbc.scope.value : ""
+        result.breakable = kbc.breakable ? kbc.breakable.value : ""
+        result.paymentType = kbc.paymentType ? kbc.paymentType.value : ""
+        result.listStatus = kbc.listStatus?.value
+        result.openAccess = kbc.openAccess?.value
+        result.file = kbc.file?.value
+        result.contentType = kbc.contentType?.value
 
         if (kbc.source) {
           result.source = [
@@ -79,10 +90,16 @@ class FTUpdateService {
             result.source.lastRun = dateFormatService.formatIsoTimestamp(kbc.source.lastRun)
           }
         }
-        result.curatoryGroups = []
-        kbc.curatoryGroups?.each { cg ->
-          result.curatoryGroups.add(cg.name)
+
+        if(kbc.respondsTo('getCuratoryGroups')) {
+          result.curatoryGroups = []
+          kbc.curatoryGroups?.each { KBComponent cg ->
+            result.curatoryGroups.add([name: cg.name,
+                                       type: cg.type?.value,
+                                       curatoryGroup: cg.getLogEntityId()])
+          }
         }
+
         result.status = kbc.status?.value
         result.identifiers = []
         kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
@@ -91,6 +108,36 @@ class FTUpdateService {
                                   namespaceName: idc.toComponent.namespace.name])
         }
         result.componentType = kbc.class.simpleName
+
+        result.nationalRanges = []
+        kbc.nationalRanges.each { nationalRange ->
+          result.nationalRanges.add([value     : nationalRange.value,
+                                    value_de  : nationalRange.value_de,
+                                    value_en  : nationalRange.value_en])
+        }
+
+        result.regionalRanges = []
+        kbc.regionalRanges.each { regionalRange ->
+          result.regionalRanges.add([value     : regionalRange.value,
+                                    value_de  : regionalRange.value_de,
+                                    value_en  : regionalRange.value_en])
+        }
+
+        result.ddcs = []
+        kbc.ddcs.each { ddc ->
+          result.ddcs.add([value     : ddc.value,
+                           value_de  : ddc.value_de,
+                           value_en  : ddc.value_en])
+        }
+
+        result.languages = []
+        kbc.languages.each { RefdataValue lan ->
+          result.languages.add([value     : lan.value,
+                                value_de  : lan.value_de,
+                                value_en  : lan.value_en])
+        }
+
+
         result
       }
 
@@ -110,10 +157,16 @@ class FTUpdateService {
         kbc.roles.each { role ->
           result.roles.add(role.value)
         }
-        result.curatoryGroups = []
-        kbc.curatoryGroups?.each { cg ->
-          result.curatoryGroups.add(cg.name)
+
+        if(kbc.respondsTo('getCuratoryGroups')) {
+          result.curatoryGroups = []
+          kbc.curatoryGroups?.each { KBComponent cg ->
+            result.curatoryGroups.add([name: cg.name,
+                                       type: cg.type?.value,
+                                       curatoryGroup: cg.getLogEntityId()])
+          }
         }
+
         result.status = kbc.status?.value
         result.identifiers = []
         kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
@@ -130,6 +183,14 @@ class FTUpdateService {
           platform.name = plt.name ?: ""
           result.platforms.add(platform)
         }
+
+        result.additionalProperties = []
+
+        kbc.additionalProperties.each { KBComponentAdditionalProperty kbComponentAdditionalProperty ->
+          result.additionalProperties.add([value    : kbComponentAdditionalProperty.apValue,
+                                           name      : kbComponentAdditionalProperty.propertyDefn.propertyName])
+        }
+
         result
       }
 
@@ -144,10 +205,16 @@ class FTUpdateService {
         result.provider = kbc.provider ? kbc.provider.getLogEntityId() : ""
         result.providerUuid = kbc.provider ? kbc.provider?.uuid : ""
         result.lastUpdatedDisplay = dateFormatService.formatIsoTimestamp(kbc.lastUpdated)
-        result.curatoryGroups = []
-        kbc.curatoryGroups?.each { cg ->
-          result.curatoryGroups.add(cg.name)
+
+        if(kbc.respondsTo('getCuratoryGroups')) {
+          result.curatoryGroups = []
+          kbc.curatoryGroups?.each { KBComponent cg ->
+            result.curatoryGroups.add([name: cg.name,
+                                       type: cg.type?.value,
+                                       curatoryGroup: cg.getLogEntityId()])
+          }
         }
+
         result.altname = []
         kbc.variantNames.each { vn ->
           result.altname.add(vn.variantName)
@@ -295,16 +362,19 @@ class FTUpdateService {
         result.componentType = kbc.class.simpleName
 
         result.curatoryGroups = []
-        kbc.pkg?.curatoryGroups?.each { cg ->
-          result.curatoryGroups.add(cg.name)
+        kbc.pkg?.curatoryGroups?.each { KBComponent cg ->
+          result.curatoryGroups.add([name: cg.name,
+                                     type: cg.type?.value,
+                                       curatoryGroup: cg.getLogEntityId()])
         }
+
         result.titleType = kbc.niceName ?: 'Unknown'
         result.lastUpdatedDisplay = dateFormatService.formatIsoTimestamp(kbc.lastUpdated)
         result.url = kbc.url
         if (kbc.niceName == 'Journal') {
           result.coverage = []
-          ArrayList coverage_src = kbc.coverageStatements?.size() > 0 ? kbc.coverageStatements : [kbc]
-          coverage_src.each { tcs ->
+          ArrayList<TIPPCoverageStatement> coverage_src = kbc.coverageStatements
+          coverage_src.each { TIPPCoverageStatement tcs ->
             def cst = [:]
             if (tcs.startDate) cst.startDate = dateFormatService.formatIsoTimestamp(tcs.startDate)
             cst.startVolume = tcs.startVolume ?: ""
@@ -395,6 +465,7 @@ class FTUpdateService {
         if (kbc.medium) result.medium = kbc.medium.value
         if (kbc.status) result.status = kbc.status.value
         if (kbc.publicationType) result.publicationType = kbc.publicationType.value
+        if (kbc.openAccess) result.openAccess = kbc.openAccess.value
 
         result.identifiers = []
         kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
@@ -417,6 +488,8 @@ class FTUpdateService {
         if (kbc.firstEditor) result.firstEditor = kbc.firstEditor
         if (kbc.parentPublicationTitleId) result.parentPublicationTitleId = kbc.parentPublicationTitleId
         if (kbc.precedingPublicationTitleId) result.precedingPublicationTitleId = kbc.precedingPublicationTitleId
+        if (kbc.supersedingPublicationTitleId) result.supersedingPublicationTitleId = kbc.supersedingPublicationTitleId
+        if (kbc.note) result.note = kbc.note
 
         // prices
         result.prices = []
@@ -434,12 +507,27 @@ class FTUpdateService {
           result.prices.add(price)
         }
 
+        result.ddcs = []
+        kbc.ddcs.each { ddc ->
+          result.ddcs.add([value     : ddc.value,
+                           value_de  : ddc.value_de,
+                           value_en  : ddc.value_en])
+        }
+
+        result.languages = []
+        kbc.languages.each { RefdataValue lan ->
+          result.languages.add([value     : lan.value,
+                                value_de  : lan.value_de,
+                                value_en  : lan.value_en])
+        }
+
         result
       }
     }
     catch (Exception e) {
       log.error("Problem", e)
     }
+
     running = false
   }
 
@@ -510,14 +598,15 @@ class FTUpdateService {
           bulkRequest = esclient.prepareBulk()
           log.debug("BulkResponse: ${bulkResponse}")
           FTControl.withNewTransaction {
-            latest_ft_record = FTControl.get(latest_ft_record.id)
+            Long id = latest_ft_record.id
+            latest_ft_record = FTControl.get(id)
             if (latest_ft_record) {
               latest_ft_record.lastTimestamp = highest_timestamp
               latest_ft_record.lastId = highest_id
               latest_ft_record.save(flush: true, failOnError: true)
             }
             else {
-              log.error("Unable to locate free text control record with ID ${latest_ft_record.id}. Possibe parallel FT update")
+              log.error("Unable to locate free text control record with ID ${id}. Possibe parallel FT update")
             }
           }
           cleanUpGorm()

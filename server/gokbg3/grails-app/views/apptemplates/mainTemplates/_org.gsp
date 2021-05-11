@@ -42,19 +42,67 @@
   <dd>
     <gokb:manyToOneReferenceTypedown owner="${d}" field="packageNamespace" baseClass="org.gokb.cred.IdentifierNamespace">${(d.packageNamespace?.name)?:d.packageNamespace?.value}</gokb:manyToOneReferenceTypedown>
   </dd>
+
+  <dt>
+    <gokb:annotatedLabel owner="${d}" property="mission">Mission</gokb:annotatedLabel>
+  </dt>
+  <dd>
+    <gokb:xEditableRefData owner="${d}" field="mission" config="${RCConstants.ORG_MISSION}" />
+  </dd>
+  <dt>
+    <gokb:annotatedLabel owner="${d}" property="homepage">Homepage</gokb:annotatedLabel>
+  </dt>
+  <dd>
+    <gokb:xEditable  owner="${d}" field="homepage" />
+  </dd>
+  <dt class="dt-label">
+    <gokb:annotatedLabel owner="${d}" property="roles">Roles</gokb:annotatedLabel>
+  </dt>
+  <dd>
+    <g:if test="${d.id != null}">
+      <g:if test="${d.roles}">
+        <ul>
+          <g:each in="${d.roles?.sort{it.getI10n('value')}}" var="t">
+            <li>
+              ${t.value}
+            <g:if test="${editable}">
+              <g:link controller='ajaxSupport'
+                      action='unlinkManyToMany'
+                      params="${ ["__context" : "${d.class.name}:${d.id}", "__property" : "roles", "__itemToRemove" : "${t.getClassName()}:${t.id}" ] }">Unlink</g:link>
+            </g:if>
+            </li>
+          </g:each>
+        </ul>
+      </g:if>
+
+      <g:if test="${editable}">
+        <a data-toggle="modal" data-cache="false"
+           data-target="#rolesModal">Add Role</a>
+
+        <bootStrap:modal id="rolesModal" title="Add Role">
+
+          <g:form controller="ajaxSupport" action="addToStdCollection" class="form-inline">
+            <input type="hidden" name="__context" value="${d.class.name}:${d.id}" />
+            <input type="hidden" name="__property" value="roles" />
+            Role: <gokb:simpleReferenceTypedown class="form-inline" style="display:inline-block;" name="__relatedObject"
+                                          baseClass="org.gokb.cred.RefdataValue" filter1="${RCConstants.ORG_ROLE}" />
+          </g:form>
+        </bootStrap:modal>
+      </g:if>
+    </g:if>
+  </dd>
 </dl>
 <div id="content">
     <ul id="tabs" class="nav nav-tabs">
-      <li class="active"><a href="#orgdetails" data-toggle="tab">Organization</a></li>
       <g:if test="${d.id}">
+        <li class="active">
+          <a href="#identifiers" data-toggle="tab">Identifiers <span class="badge badge-warning"> ${d.getCombosByPropertyNameAndStatus('ids','Active')?.size() ?: '0'} </span></a>
+        </li>
         <li>
           <a href="#altnames" data-toggle="tab">
             Alternate Names
             <span class="badge badge-warning"> ${d.variantNames?.size() ?: '0'}</span>
           </a>
-        </li>
-        <li>
-          <a href="#identifiers" data-toggle="tab">Identifiers <span class="badge badge-warning"> ${d.getCombosByPropertyNameAndStatus('ids','Active')?.size() ?: '0'} </span></a>
         </li>
         <li><a href="#relationships" data-toggle="tab">Relations</a></li>
         <li>
@@ -92,8 +140,8 @@
         </li>
       </g:if>
       <g:else>
-        <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Alternate Names </span></li>
         <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">IDs </span></li>
+        <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Alternate Names </span></li>
         <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Relations </span></li>
         <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Packages </span></li>
         <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Published Titles </span></li>
@@ -105,52 +153,8 @@
     </ul>
 
     <div id="my-tab-content" class="tab-content">
-      <div class="tab-pane active" id="orgdetails">
-        <dl class="dl-horizontal">
-          <dt>
-            <gokb:annotatedLabel owner="${d}" property="mission">Mission</gokb:annotatedLabel>
-          </dt>
-          <dd>
-            <gokb:xEditableRefData owner="${d}" field="mission" config="${RCConstants.ORG_MISSION}" />
-          </dd>
-          <dt>
-            <gokb:annotatedLabel owner="${d}" property="homepage">Homepage</gokb:annotatedLabel>
-          </dt>
-          <dd>
-            <gokb:xEditable  owner="${d}" field="homepage" />
-          </dd>
-            <dt class="dt-label">
-              <gokb:annotatedLabel owner="${d}" property="roles">Roles</gokb:annotatedLabel>
-            </dt>
-            <dd>
-              <g:if test="${d.id != null}">
-                <g:if test="${d.roles}">
-                  <ul>
-                      <g:each in="${d.roles?.sort({"${it.value}"})}" var="t">
-                          <li>
-                              ${t.value}
-                          </li>
-                      </g:each>
-                  </ul>
-                </g:if>
 
-                <g:if test="${d.isEditable()}">
-                  <g:form controller="ajaxSupport" action="addToStdCollection" class="form-inline">
-                    <input type="hidden" name="__context" value="${d.class.name}:${d.id}" />
-                    <input type="hidden" name="__property" value="roles" />
-                    <gokb:simpleReferenceTypedown class="form-inline" style="display:inline-block;" name="__relatedObject"
-                            baseClass="org.gokb.cred.RefdataValue" filter1="${RCConstants.ORG_ROLE}" />
-                    <input type="submit" value="Add..." class="btn btn-default btn-primary" />
-                  </g:form>
-                </g:if>
-              </g:if>
-            </dd>
-          </dl>
-        </div>
-
-        <g:render template="/tabTemplates/showVariantnames" model="${[d:d, showActions:true]}" />
-
-        <div class="tab-pane" id="identifiers">
+        <div class="tab-pane active" id="identifiers">
           <dl>
             <dt>
               <gokb:annotatedLabel owner="${d}" property="ids">Identifiers</gokb:annotatedLabel>
@@ -161,14 +165,13 @@
                           [expr:'toComponent.namespace.value', colhead:'Namespace'],
                           [expr:'toComponent.value', colhead:'ID', action:'link']]]}" />
               <g:if test="${editable}">
-                <h4>
-                  <gokb:annotatedLabel owner="${d}" property="addIdentifier">Add new Identifier</gokb:annotatedLabel>
-                </h4>
                 <g:render template="/apptemplates/secondTemplates/addIdentifier" model="${[d:d, hash:'#identifiers']}"/>
               </g:if>
             </dd>
           </dl>
         </div>
+
+      <g:render template="/tabTemplates/showVariantnames" model="${[d:d, showActions:true]}" />
 
         <div class="tab-pane" id="relationships">
           <g:if test="${d.id != null}">

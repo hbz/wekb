@@ -1,4 +1,4 @@
-<%@ page import="de.wekb.helper.RCConstants" %>
+<%@ page import="org.gokb.cred.RefdataCategory; de.wekb.helper.RCConstants" %>
 
   <dl class="dl-horizontal">
   <dt>
@@ -10,8 +10,10 @@
         ${d.name}<br/>
         <span style="white-space:nowrap;">(Modify title through <i>Alternate Names</i> below)</span>
       </div>
-      <g:link controller="packages" action="kbart" id="${params.id}">KBart File</g:link> &nbsp;
-      <g:link controller="packages" action="packageTSVExport" id="${params.id}"><g:message code="gokb.appname" default="we:kb"/> File</g:link>
+      <g:if test="${d.source && (d.source.lastUpdateUrl || d.source.url)}">
+      <g:link controller="public" action="kbart" id="${params.id}">KBart File</g:link> &nbsp;
+      </g:if>
+      <g:link controller="public" action="packageTSVExport" id="${params.id}"><g:message code="gokb.appname" default="we:kb"/> File</g:link>
     </g:if>
     <g:else>
       <gokb:xEditable  owner="${d}" field="name" />
@@ -94,14 +96,18 @@
           <gokb:annotatedLabel owner="${d}" property="nationalRanges">National Range</gokb:annotatedLabel>
         </dt>
         <dd>
-          <g:render template="/apptemplates/secondTemplates/nationalRange" />
+          <g:if test="${d.scope?.value == 'National'}">
+            <g:render template="/apptemplates/secondTemplates/nationalRange" />
+          </g:if>
         </dd>
 
         <dt>
           <gokb:annotatedLabel owner="${d}" property="regionalRanges">Regional Range</gokb:annotatedLabel>
         </dt>
         <dd>
-          <g:render template="/apptemplates/secondTemplates/regionalRange" />
+          <g:if test="${RefdataCategory.lookup(RCConstants.COUNTRY, 'DE') in d.nationalRanges}">
+            <g:render template="/apptemplates/secondTemplates/regionalRange" />
+          </g:if>
         </dd>
     </g:if>
 
@@ -117,6 +123,13 @@
         <li role="presentation"><a href="#altnames" data-toggle="tab">Alternate Names
           <span class="badge badge-warning"> ${d.variantNames?.size() ?: '0'}</span>
         </a></li>
+
+        <li>
+          <a href="#ddcs" data-toggle="tab">DDCs
+            <span class="badge badge-warning">${d.ddcs.size()}</span>
+          </a>
+        </li>
+
         <li><a href="#relationships" data-toggle="tab">Relations</a></li>
         <g:if test="${grailsApplication.config.gokb.decisionSupport?.active}">
           <li role="presentation"><a href="#ds" data-toggle="tab">Decision Support</a></li>
@@ -187,6 +200,8 @@
 
       <g:render template="/tabTemplates/showVariantnames" model="${[d:displayobj, showActions:true]}" />
 
+      <g:render template="/tabTemplates/showDDCs" model="${[d:displayobj, showActions:true]}" />
+
       <div class="tab-pane" id="identifiers">
         <dl>
           <dt>
@@ -198,9 +213,6 @@
                         [expr:'toComponent.namespace.value', colhead:'Namespace'],
                         [expr:'toComponent.value', colhead:'ID', action:'link']]]}" />
             <g:if test="${editable}">
-              <h4>
-                <gokb:annotatedLabel owner="${d}" property="addIdentifier">Add new Identifier</gokb:annotatedLabel>
-              </h4>
               <g:render template="/apptemplates/secondTemplates/addIdentifier" model="${[d:d, hash:'#identifiers']}"/>
             </g:if>
           </dd>
@@ -262,24 +274,13 @@
       </div>
 
       <div class="tab-pane" id="activity">
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Action</th>
-              <th>Title</th>
-            </tr>
-          </thead>
-          <tbody>
-            <g:each in="${d?.getRecentActivity(40)}" var="h">
-              <tr>
-                <td>${h[1]}</td>
-                <td>${h[2]}</td>
-                <td>${h[0].title?.name} (<g:link controller="resource" action="show" id="${h[0].getClassName()+':'+h[0].id}">TIPP ${h[0].id}</g:link>)</td>
-              </tr>
-            </g:each>
-          </tbody>
-        </table>
+        <g:set var="recentActivitys" value="${d?.getRecentActivity()}"/>
+        <g:if test="${recentActivitys.size() > 25}">
+          <g:link controller="package" action="recentActivity" id="${d.id}">All Recent Activitys (${recentActivitys.size()})</g:link>
+          <g:set var="recentActivitys" value="${recentActivitys.take(25)}"/>
+          <br><br>
+        </g:if>
+        <g:render template="/apptemplates/secondTemplates/recentActivity" model="[recentActivitys: recentActivitys]"/>
       </div>
 
       <div class="tab-pane" id="review">

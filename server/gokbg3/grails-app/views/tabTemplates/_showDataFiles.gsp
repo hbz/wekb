@@ -1,5 +1,5 @@
 
-<div class="tab-pane" id="files">
+<div class="tab-pane" id="files" role="tabpanel">
 	<table class="table table-bordered">
 		<thead>
 			<tr>

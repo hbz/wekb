@@ -10,18 +10,18 @@
     <div class="row justify-content-md-center">
       <div class="col-lg-6">
             <g:form class="card p-5 m-5" controller="login" action="authenticate" method="post" name="loginForm" elementId="loginForm" autocomplete="off">
-            <h2>Login</h2>
+            <h1>Login</h1>
               <g:if test="${params.login_error}">
                 <div class="alert alert-danger"><g:message code='springSecurity.login.error.message'/></div>
               </g:if>
                <div class="form-group">
                  <label for="username"><g:message code='springSecurity.login.username.label'/></label>
-                 <input type="text" class="form-control" id="username" aria-describedby="usernameHelp" placeholder="Username" name="${securityConfig.apf.usernameParameter}">
+                 <input type="text" class="form-control" id="username"  placeholder="Username" name="${securityConfig.apf.usernameParameter}">
                </div>
 
                <div class="form-group">
                  <label for="password"><g:message code='springSecurity.login.password.label'/></label>
-                 <input type="password" class="form-control" id="password" aria-describedby="passwordHelp" placeholder="" name="${securityConfig.apf.passwordParameter}">
+                 <input type="password" class="form-control" id="password"  placeholder="" name="${securityConfig.apf.passwordParameter}">
                </div>
 
                <!-- input type="checkbox" class="checkbox" name="${securityConfig.rememberMe.parameter}" id="remember_me" checked="checked"-->

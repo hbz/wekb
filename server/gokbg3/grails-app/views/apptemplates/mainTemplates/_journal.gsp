@@ -55,7 +55,7 @@
     <gokb:annotatedLabel owner="${d}" property="language">Language</gokb:annotatedLabel>
   </dt>
   <dd>
-    <gokb:xEditableRefData owner="${d}" field="language" config="${RCConstants.KBCOMPONENT_LANGUAGE}"/>
+    <g:render template="/apptemplates/secondTemplates/languages"/>
   </dd>
 
   <dt>
@@ -337,9 +337,6 @@
                         [expr: 'toComponent.namespace.value', colhead: 'Namespace'],
                         [expr: 'toComponent.value', colhead: 'ID', action: 'link']]]}"/>
           <g:if test="${d.isEditable()}">
-            <h4>
-              <gokb:annotatedLabel owner="${d}" property="addIdentifier">Add new Identifier</gokb:annotatedLabel>
-            </h4>
             <g:render template="/apptemplates/secondTemplates/addIdentifier" model="${[d: d, hash: '#identifiers']}"/>
           </g:if>
         </dd>

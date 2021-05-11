@@ -1,9 +1,9 @@
 package org.gokb
 
-import groovy.json.JsonSlurper
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.settings.Settings
 import org.elasticsearch.common.transport.InetSocketTransportAddress
+import org.grails.web.json.parser.JSONParser
 
 import static groovy.json.JsonOutput.*
 
@@ -19,17 +19,23 @@ class ESWrapperService {
   }
 
 
-  def getSettings() {
-    File settingsFile = new File(getClass().getResource(
-        "${File.separator}elasticsearch${File.separator}es_settings.json").toURI())
-    return new JsonSlurper().parse(settingsFile)
+  def getSettings(){
+    parseResource("${File.separator}elasticsearch${File.separator}es_settings.json")
   }
 
 
-  def getMapping() {
-    File mappingFile = new File(getClass().getResource(
-        "${File.separator}elasticsearch${File.separator}es_mapping.json").toURI())
-    return new JsonSlurper().parse(mappingFile)
+  def getMapping(){
+    parseResource("${File.separator}elasticsearch${File.separator}es_mapping.json")
+  }
+
+
+  private def parseResource(String resourcePath){
+    def resource = this.class.classLoader.getResourceAsStream(resourcePath)
+    if (resource == null){
+      resource = getClass().getResource(resourcePath)
+    }
+    JSONParser jsonParser = new JSONParser(resource.openStream())
+    jsonParser.parse()
   }
 
 

@@ -1,33 +1,36 @@
 <%@ page import="grails.converters.JSON"%>
 
 <g:set var="counter" value="${offset}" />
+<g:set var="s_action" value="${s_action?:'index'}"/>
+<g:set var="s_controller" value="${s_controller?:'search'}"/>
 
 <g:if test="${ request.isAjax() }">
 
-  <g:render template="pagination" model="${params}" />
+  <g:render template="/search/pagination" model="${params}" />
 
   <table class="table table-striped table-condensed table-bordered">
     <thead>
       <tr class="inline-nav">
+        <th>#</th>
         <g:each in="${qbeConfig.qbeResults}" var="c">
           <g:if test="${!params.hide || !params.hide.contains(c.qpEquiv)}">
             <th style="white-space:nowrap;">
               <g:if test="${c.sort}">
                 <g:if test="${params.sort==c.sort && params.order=='asc'}">
-                  <g:link params="${params+['sort':c.sort,order:'desc']}">
+                  <g:link controller="${s_controller}" action="${s_action}" params="${params+['sort':c.sort,order:'desc']}">
                     ${c.heading}
                     <i class="fas fa-sort-up"></i>
                   </g:link>
                 </g:if>
                 <g:else>
                   <g:if test="${params.sort==c.sort && params.order=='desc'}">
-                    <g:link params="${params+['sort':c.sort,order:'asc']}">
+                    <g:link controller="${s_controller}" action="${s_action}" params="${params+['sort':c.sort,order:'asc']}">
                       ${c.heading}
                       <i class="fas fa-sort-down"></i>
                     </g:link>
                   </g:if>
                   <g:else>
-                    <g:link params="${params+['sort':c.sort,order:'desc']}">
+                    <g:link controller="${s_controller}" action="${s_action}" params="${params+['sort':c.sort,order:'desc']}">
                       ${c.heading}
                       <i class="fas fa-sort"></i>
                     </g:link>
@@ -47,6 +50,7 @@
         <g:set var="r" value="${r}" />
         <tr class="${++counter==det ? 'success':''}">
           <!-- Row ${counter} -->
+          <td>${counter}</td>
           <g:each in="${r.cols}" var="c">
             <td>
               <g:if test="${c.link != null }">
@@ -70,7 +74,7 @@
 <g:else>
   <div class="batch-all-info" style="display:none;"></div>
 
-  <g:render template="pagination" model="${params}" />
+  <g:render template="/search/pagination" model="${params}" />
 
   <g:form controller="workflow" action="action" method="post" params="${params}" class='action-form' >
 
@@ -78,26 +82,27 @@
       <thead>
         <tr>
           <th></th>
+          <th>#</th>
           <g:each in="${qbeConfig.qbeResults}" var="c">
             <g:set var="colcode" value="${baseClass + '.' + c.heading}" />
             <g:set var="colmsg" value="${message(code: colcode, default:c.heading)}" />
             <g:if test="${!params.hide || !params.hide.contains(c.qpEquiv)}">
               <th style="white-space:nowrap"><g:if test="${c.sort}">
                   <g:if test="${params.sort==c.sort && params.order=='asc'}">
-                    <g:link params="${params+['sort':c.sort,order:'desc']}">
+                    <g:link controller="${s_controller}" action="${s_action}" params="${params+['sort':c.sort,order:'desc']}">
                       ${colmsg == colcode ? c.heading : colmsg}
                       <i class="fas fa-sort-up"></i>
                     </g:link>
                   </g:if>
                   <g:else>
                     <g:if test="${params.sort==c.sort && params.order=='desc'}">
-                      <g:link params="${params+['sort':c.sort,order:'asc']}">
+                      <g:link controller="${s_controller}" action="${s_action}" params="${params+['sort':c.sort,order:'asc']}">
                         ${colmsg == colcode ? c.heading : colmsg}
                         <i class="fas fa-sort-down"></i>
                       </g:link>
                     </g:if>
                     <g:else>
-                      <g:link params="${params+['sort':c.sort,order:'desc']}">
+                      <g:link controller="${s_controller}" action="${s_action}" params="${params+['sort':c.sort,order:'desc']}">
                         ${colmsg == colcode ? c.heading : colmsg}
                         <i class="fas fa-sort"></i>
                       </g:link>
@@ -130,12 +135,12 @@
                     title="${ !row_obj?.isEditable() ? 'Component is read only' : 'No actions available' }"
                     disabled="disabled" readonly="readonly" />
                 </g:else></td>
+              <td>${counter}</td>
               <g:each in="${r.cols}" var="c">
                 <td style="vertical-align:middle;"><g:if test="${ c.link != null }">
                     <g:link controller="resource"
                       action="show"
-                      id="${c.link}"
-                      params="${c.link_params!=null?groovy.util.Eval.x(pageScope,c.link_params):[]}">
+                      id="${c.link}">
                       ${c.value}
                     </g:link>
                   </g:if>
@@ -151,12 +156,12 @@
                     ${c.value}
                   </g:else></td>
               </g:each>
-              <g:if test="${request.user?.showQuickView?.value=='Yes'}">
+              %{--<g:if test="${request.user?.showQuickView?.value=='Yes'}">
                 <td>
                   <g:link class="btn btn-xs btn-default pull-right desktop-only" controller="search"
                     action="index" params="${params+['det':counter]}"><i class="fa fa-eye" ></i></g:link>
                 </td>
-              </g:if>
+              </g:if>--}%
             </tr>
           </g:if>
           <g:else>
@@ -168,7 +173,7 @@
       </tbody>
     </table>
     </g:form>
-  <g:render template="pagination" model="${params + [dropup : true]}" />
+  <g:render template="/search/pagination" model="${params + [dropup : true]}" />
 </g:else>
 
 <script language="JavaScript">

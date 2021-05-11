@@ -1,5 +1,7 @@
 package org.gokb.cred
 
+import de.wekb.annotations.HbzKbartAnnotation
+import de.wekb.annotations.KbartAnnotation
 import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
 import org.grails.web.json.JSONObject
@@ -18,76 +20,85 @@ class TitleInstancePackagePlatform extends KBComponent {
 
   def dateFormatService
 
-
-  String delayedOAEmbargo
   String hybridOAUrl
-  String subjectArea
-  String series
-  String publisherName
-  String url
-
-  Date accessStartDate
-  Date accessEndDate
-
-  Date lastChangedExternal
-
-  String firstAuthor
-
   String coverageNote
-
-  String parentPublicationTitleId
-  String precedingPublicationTitleId
-
-
-  //OtherInstance && BookInstance
-  //not in KBART-File
-  //String summaryOfContent
-  Date dateFirstOnline
-
-  //BookInstance
-  String volumeNumber
-  String editionStatement
-  String firstEditor
-  Date dateFirstInPrint
-  //not in KBART-File
-  //String editionNumber
-  //String editionDifferentiator
-
-  //TitleInstance
-  //not in KBART-File
-  //RefdataValue pureOA
-  //RefdataValue continuingSeries
-  //RefdataValue reasonRetired
-  //RefdataValue OAStatus
-
-  //Date publishedFrom
-  //Date publishedTo
-
-
-  @RefdataAnnotation(cat = RCConstants.TIPP_ACCESS_TYPE)
-  RefdataValue accessType
-
-  @RefdataAnnotation(cat = RCConstants.TIPP_COVERAGE_DEPTH)
-  RefdataValue coverageDepth
-
-  @RefdataAnnotation(cat = RCConstants.TIPP_FORMAT)
-  RefdataValue format
-
-  @RefdataAnnotation(cat = RCConstants.TIPP_DELAYED_OA)
-  RefdataValue delayedOA
-
-  @RefdataAnnotation(cat = RCConstants.TIPP_HYBRIDA_OA)
-  RefdataValue hybridOA
-
-  @RefdataAnnotation(cat = RCConstants.TIPP_MEDIUM)
-  RefdataValue medium
 
   @RefdataAnnotation(cat = RCConstants.TIPP_PRIMARY)
   RefdataValue primary
 
-  @RefdataAnnotation(cat = RCConstants.TIPP_PAYMENT_TYPE)
-  RefdataValue paymentType
+  @RefdataAnnotation(cat = RCConstants.TIPP_HYBRIDA_OA)
+  RefdataValue hybridOA
 
+  @RefdataAnnotation(cat = RCConstants.TIPP_DELAYED_OA)
+  RefdataValue delayedOA
+
+  @RefdataAnnotation(cat = RCConstants.TIPP_OPEN_ACCESS)
+  RefdataValue openAccess
+
+  @HbzKbartAnnotation(kbartField = 'subject_area' , type='all')
+  String subjectArea
+
+  @HbzKbartAnnotation(kbartField = 'monograph_parent_collection_title' , type='monographs')
+  String series
+
+  @KbartAnnotation(kbartField = 'publisher_name' , type='all')
+  String publisherName
+
+  @KbartAnnotation(kbartField = 'title_url' , type='all')
+  String url
+
+  @HbzKbartAnnotation(kbartField = 'access_start_date' , type='all')
+  Date accessStartDate
+
+  @HbzKbartAnnotation(kbartField = 'access_end_date' , type='all')
+  Date accessEndDate
+
+  @HbzKbartAnnotation(kbartField = 'last_changed' , type='all')
+  Date lastChangedExternal
+
+  @KbartAnnotation(kbartField = 'first_author' , type='monographs')
+  String firstAuthor
+
+  @KbartAnnotation(kbartField = 'first_editor' , type='monographs')
+  String firstEditor
+
+  @KbartAnnotation(kbartField = 'parent_publication_title_id' , type='monographs')
+  String parentPublicationTitleId
+
+  @KbartAnnotation(kbartField = 'preceding_publication_title_id' , type='serials')
+  String precedingPublicationTitleId
+
+  @HbzKbartAnnotation(kbartField = 'superseding_publication_title_id' , type='all')
+  String supersedingPublicationTitleId
+
+  @KbartAnnotation(kbartField = 'notes' , type='all')
+  String note
+
+  @KbartAnnotation(kbartField = 'monograph_volume' , type='monographs')
+  String volumeNumber
+
+  @KbartAnnotation(kbartField = 'monograph_edition' , type='monographs')
+  String editionStatement
+
+  @KbartAnnotation(kbartField = 'date_monograph_published_print' , type='monographs')
+  Date dateFirstInPrint
+
+  @KbartAnnotation(kbartField = 'date_monograph_published_online' , type='monographs')
+  Date dateFirstOnline
+
+  @KbartAnnotation(kbartField = 'access_type' , type='all')
+  @RefdataAnnotation(cat = RCConstants.TIPP_ACCESS_TYPE)
+  RefdataValue accessType
+
+  @KbartAnnotation(kbartField = 'coverage_depth' , type='all')
+  @RefdataAnnotation(cat = RCConstants.TIPP_COVERAGE_DEPTH)
+  RefdataValue coverageDepth
+
+  @KbartAnnotation(kbartField = 'medium' , type='all')
+  @RefdataAnnotation(cat = RCConstants.TIPP_MEDIUM)
+  RefdataValue medium
+
+  @KbartAnnotation(kbartField = 'publication_type' , type='all')
   @RefdataAnnotation(cat = RCConstants.TIPP_PUBLICATION_TYPE)
   RefdataValue publicationType
 
@@ -95,24 +106,19 @@ class TitleInstancePackagePlatform extends KBComponent {
   private static SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd")
 
 /*  private static refdataDefaults = [
-    "format"       : "Electronic",
     "delayedOA"    : "Unknown",
     "hybridOA"     : "Unknown",
     "primary"      : "No",
-    "paymentType"  : "Paid",
     "coverageDepth": "Fulltext"
   ]*/
 
   static jsonMapping = [
     'ignore'       : [
-      'format',
-      'paymentType',
       'accessType',
       'delayedOA',
       'hybridOA',
       'coverageNote',
       'primary',
-      'delayedOAEmbargo',
       'coverageDepth',
       'description',
       'hybridOAUrl'
@@ -121,13 +127,10 @@ class TitleInstancePackagePlatform extends KBComponent {
       'hostPlatformUuid'      : "hostPlatform.uuid",
       'hostPlatformName'      : "hostPlatform.name",
       'hostPlatform'          : "hostPlatform.id",
-      'tippTitleUuid'         : "title.uuid",
-      'tippTitleName'         : "title.name",
-      'tippTitle'             : "title.id",
       'tippPackageUuid'       : "pkg.uuid",
       'tippPackageName'       : "pkg.name",
       'tippPackage'           : "pkg.id",
-      'titleType'             : "title.niceName",
+      'titleType'             : "niceName",
       'coverage'              : "coverageStatements",
       'publisherName'         : "publisherName",
       'dateFirstInPrint'      : "dateFirstInPrint",
@@ -139,9 +142,10 @@ class TitleInstancePackagePlatform extends KBComponent {
       'firstEditor'           : "firstEditor",
       'parentPublicationTitleId'   : "parentPublicationTitleId",
       'precedingPublicationTitleId': "precedingPublicationTitleId",
+      'supersedingPublicationTitleId':"supersedingPublicationTitleId",
       'lastChangedExternal'   : "lastChangedExternal",
       'medium'                : "medium",
-      'language'              : "language"
+      'languages'              : "languages"
     ],
     'defaultLinks' : [
       'pkg',
@@ -179,7 +183,9 @@ class TitleInstancePackagePlatform extends KBComponent {
   ]
 
   static hasMany = [
-    coverageStatements: TIPPCoverageStatement
+    coverageStatements: TIPPCoverageStatement,
+    ddcs: RefdataValue
+
   ]
 
   static mappedBy = [
@@ -198,14 +204,12 @@ class TitleInstancePackagePlatform extends KBComponent {
     includes KBComponent.mapping
     coverageDepth column: 'tipp_coverage_depth'
     coverageNote column: 'tipp_coverage_note', type: 'text'
-    format column: 'tipp_format_rv_fk'
+    note column: 'tipp_note', type: 'text'
     delayedOA column: 'tipp_delayed_oa'
-    delayedOAEmbargo column: 'tipp_delayed_oa_embargo'
     hybridOA column: 'tipp_hybrid_oa'
     hybridOAUrl column: 'tipp_hybrid_oa_url'
     primary column: 'tipp_primary'
     accessType column: 'tipp_access_type'
-    paymentType column: 'tipp_payment_type'
     accessStartDate column: 'tipp_access_start_date'
     accessEndDate column: 'tipp_access_end_date'
     firstAuthor column: 'tipp_first_author', type: 'text'
@@ -215,24 +219,31 @@ class TitleInstancePackagePlatform extends KBComponent {
     firstEditor column: 'tipp_first_editor', type: 'text'
     parentPublicationTitleId column: 'tipp_parent_publication_id'
     precedingPublicationTitleId column: 'tipp_preceding_publication_id'
+    supersedingPublicationTitleId column: 'tipp_superseding_publication_title_id'
     lastChangedExternal column: 'tipp_last_change_ext'
     medium column: 'tipp_medium_rv_fk'
     series column: 'series', type: 'text'
     url column: 'url', type: 'text'
     subjectArea column: 'subject_area', type: 'text'
+    openAccess column: 'tipp_open_access_rv_fk'
+    note column: 'tipp_note'
+
+    ddcs             joinTable: [
+            name:   'tipp_dewey_decimal_classification',
+            key:    'tipp_fk',
+            column: 'ddc_rv_fk', type:   'BIGINT'
+    ], lazy: false
   }
 
   static constraints = {
     coverageDepth(nullable: true, blank: true)
     coverageNote(nullable: true, blank: true)
-    format(nullable: true, blank: true)
+    note(nullable: true, blank: true)
     delayedOA(nullable: true, blank: true)
-    delayedOAEmbargo(nullable: true, blank: true)
     hybridOA(nullable: true, blank: true)
     hybridOAUrl(nullable: true, blank: true)
     primary(nullable: true, blank: true)
     accessType (nullable: true, blank: true)
-    paymentType(nullable: true, blank: true)
     accessStartDate(nullable: true, blank: false)
     accessEndDate(validator: { val, obj ->
       if (obj.accessStartDate && val && (obj.hasChanged('accessEndDate') || obj.hasChanged('accessStartDate')) && obj.accessStartDate > val) {
@@ -247,8 +258,10 @@ class TitleInstancePackagePlatform extends KBComponent {
     firstEditor(nullable: true, blank: true)
     parentPublicationTitleId(nullable: true, blank: true)
     precedingPublicationTitleId(nullable: true, blank: true)
+    supersedingPublicationTitleId (nullable: true, blank: true)
     lastChangedExternal(nullable: true, blank: true)
     medium(nullable: true, blank: true)
+    ddcs(nullable: true)
   }
 
   public static final String restPath = "/package-titles"
@@ -310,17 +323,15 @@ class TitleInstancePackagePlatform extends KBComponent {
     if (tipp_fields.type) {
       tipp_publicationType = determinePublicationType(tipp_fields)
     }
-    def tipp_language = tipp_fields.language ? RefdataCategory.lookup('KBComponent.Language', tipp_fields.language) : null
+
     TitleInstancePackagePlatform result = new TitleInstancePackagePlatform(
             uuid: tipp_fields.uuid,
             status: tipp_status,
             editStatus: tipp_editstatus,
             name: tipp_fields.name,
-            language: tipp_language,
             medium: tipp_medium,
             publicationType: tipp_publicationType,
             url: tipp_fields.url).save(failOnError: true)
-
     if (result) {
 
       def pkg_combo_type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Package.Tipps')
@@ -340,12 +351,6 @@ class TitleInstancePackagePlatform extends KBComponent {
   @Transient
   String getDisplayName() {
     return name ?: "${pkg?.name} / ${title?.name} / ${hostPlatform?.name}"
-  }
-
-
-  @Transient
-  List<CuratoryGroup> getCuratoryGroups() {
-    return pkg ? pkg.curatoryGroups  : null
   }
 
   /**
@@ -751,10 +756,10 @@ class TitleInstancePackagePlatform extends KBComponent {
       }
     }
 
-    if (tipp_dto.lastChangedExternal) {
-      LocalDateTime lce = GOKbTextUtils.completeDateString(tipp_dto.lastChangedExternal, false)
+    if (tipp_dto.last_changed) {
+      LocalDateTime lce = GOKbTextUtils.completeDateString(tipp_dto.last_changed, false)
       if (!lce) {
-        errors.put('lastChangedExternal', [message: "Unable to parse", baddata: tipp_dto.remove('lastChangedExternal')])
+        errors.put('last_changed', [message: "Unable to parse", baddata: tipp_dto.remove('last_changed')])
       }
     }
 
@@ -829,13 +834,13 @@ class TitleInstancePackagePlatform extends KBComponent {
     def status_retired = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Retired')
     def trimmed_url = tipp_dto.url ? tipp_dto.url.trim() : null
     //TODO: Moe
-    def curator = pkg?.curatoryGroups?.size() > 0 ? (user.adminStatus || user.curatoryGroups?.id.intersect(pkg?.curatoryGroups?.id)) : true
+    def curator = pkg?.curatoryGroups?.size() > 0 ? (user.adminStatus || user.curatoryGroups?.id.intersect(pkg?.curatoryGroups?.id)) : false
 
     if (pkg && plt && ti && curator) {
       log.debug("See if we already have a tipp")
       def tipps = TitleInstancePackagePlatform.executeQuery('select tipp from TitleInstancePackagePlatform as tipp, Combo as pkg_combo, Combo as platform_combo  ' +
-        'where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg' +
-        'and platform_combo.toComponent=tipp and platform_combo.fromComponent = :platform' +
+        'where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg ' +
+        'and platform_combo.toComponent=tipp and platform_combo.fromComponent = :platform ' +
         'and tipp.name in (:tiName, :tiDtoName)',
         [pkg: pkg, platform: plt, tiName: ti.name, tiDtoName: tipp_dto.name])
       def uuid_tipp = tipp_dto.uuid ? TitleInstancePackagePlatform.findByUuid(tipp_dto.uuid) : null
@@ -899,7 +904,6 @@ class TitleInstancePackagePlatform extends KBComponent {
           'status'      : (tipp_dto.status ?: null),
           'name'        : (tipp_dto.name ?: null),
           'editStatus'  : (tipp_dto.editStatus ?: null),
-          'language'    : (tipp_dto.language ?: null),
           'type'        : (tipp_dto.type ?: null),
           'medium'    : (tipp_dto.medium ?: null),
 
@@ -914,19 +918,14 @@ class TitleInstancePackagePlatform extends KBComponent {
       }
 
       if (tipp) {
-        def changed = false
-
         if (tipp.isRetired() && tipp_dto.status == "Current") {
           if (tipp.accessEndDate) {
             tipp.accessEndDate = null
           }
-          changed = true
         }
 
         if (tipp_dto.accessType && tipp_dto.accessType.length() > 0) {
-
           def access_statement
-
           if (tipp_dto.accessType == 'P') {
             access_statement = 'Paid'
           } else if (tipp_dto.accessType == 'F') {
@@ -934,33 +933,32 @@ class TitleInstancePackagePlatform extends KBComponent {
           } else {
             access_statement = tipp_dto.accessType
           }
-
           def access_ref = RefdataCategory.lookup(RCConstants.TIPP_ACCESS_TYPE, access_statement)
-
           if (access_ref) tipp.accessType = access_ref
         }
 
-        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'url', trimmed_url)
-        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'name', tipp_dto.name)
-        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'firstAuthor', tipp_dto.firstAuthor)
-        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'firstEditor', tipp_dto.firstEditor)
-        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'publisherName', tipp_dto.publisherName)
-        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'volumeNumber', tipp_dto.volumeNumber)
-        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'editionStatement', tipp_dto.editionStatement)
-        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'series', tipp_dto.series)
-        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'subjectArea', tipp_dto.subjectArea)
-        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'parentPublicationTitleId', tipp_dto.parentPublicationTitleId)
-        changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'precedingPublicationTitleId', tipp_dto.precedingPublicationTitleId)
+        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'url', trimmed_url)
+        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'name', tipp_dto.name)
+        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'firstAuthor', tipp_dto.firstAuthor)
+        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'firstEditor', tipp_dto.firstEditor)
+        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'publisherName', tipp_dto.publisherName)
+        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'volumeNumber', tipp_dto.volumeNumber)
+        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'editionStatement', tipp_dto.editionStatement)
+        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'series', tipp_dto.series)
+        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'subjectArea', tipp_dto.subjectArea)
+        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'parentPublicationTitleId', tipp_dto.parentPublicationTitleId)
+        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'precedingPublicationTitleId', tipp_dto.precedingPublicationTitleId)
+        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'supersedingPublicationTitleId', tipp_dto.supersedingPublicationTitleId)
+        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'note', tipp_dto.notes)
 
-        changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.accessStartDate, tipp, 'accessStartDate')
-        changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.accessEndDate, tipp, 'accessEndDate')
-        changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.dateFirstInPrint, tipp, 'dateFirstInPrint')
-        changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.dateFirstOnline, tipp, 'dateFirstOnline')
-        changed |= com.k_int.ClassUtils.setDateIfPresent(tipp_dto.last_changed, tipp, 'lastChangedExternal')
+        com.k_int.ClassUtils.setDateIfPresent(tipp_dto.accessStartDate, tipp, 'accessStartDate')
+        com.k_int.ClassUtils.setDateIfPresent(tipp_dto.accessEndDate, tipp, 'accessEndDate')
+        com.k_int.ClassUtils.setDateIfPresent(tipp_dto.dateFirstInPrint, tipp, 'dateFirstInPrint')
+        com.k_int.ClassUtils.setDateIfPresent(tipp_dto.dateFirstOnline, tipp, 'dateFirstOnline')
+        com.k_int.ClassUtils.setDateIfPresent(tipp_dto.last_changed, tipp, 'lastChangedExternal')
 
-        changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.medium, tipp, 'medium', RCConstants.TITLEINSTANCE_MEDIUM)
-        changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.publicationType, tipp, 'publicationType', RCConstants.TIPP_PUBLICATION_TYPE)
-        changed |= com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.language, tipp, 'language')
+        com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.medium, tipp, 'medium', RCConstants.TITLEINSTANCE_MEDIUM)
+        com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.publicationType, tipp, 'publicationType', RCConstants.TIPP_PUBLICATION_TYPE)
 
         if (tipp_dto.coverageStatements && !tipp_dto.coverage) {
           tipp_dto.coverage = tipp_dto.coverageStatements
@@ -975,8 +973,8 @@ class TitleInstancePackagePlatform extends KBComponent {
           if (c.id) {
             new_ids.add(c.id)
           }
-          changed |= com.k_int.ClassUtils.setStringIfDifferent(tipp, 'coverageNote', c.coverageNote)
-          changed |= com.k_int.ClassUtils.setRefdataIfPresent(c.coverageDepth, tipp, 'coverageDepth', RCConstants.TIPP_COVERAGE_DEPTH)
+          com.k_int.ClassUtils.setStringIfDifferent(tipp, 'coverageNote', c.coverageNote)
+          com.k_int.ClassUtils.setRefdataIfPresent(c.coverageDepth, tipp, 'coverageDepth', RCConstants.TIPP_COVERAGE_DEPTH)
 
           def cs_match = false
           def conflict = false
@@ -987,17 +985,17 @@ class TitleInstancePackagePlatform extends KBComponent {
           tipp.coverageStatements?.each { tcs ->
             if (c.id && tcs.id == c.id) {
 
-              changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startIssue', c.startIssue)
-              changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endIssue', c.endIssue)
-              changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startVolume', c.startVolume)
-              changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endVolume', c.endVolume)
-              changed |= com.k_int.ClassUtils.setDateIfPresent(parsedStart, tcs, 'startDate')
-              changed |= com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tcs, 'endDate')
+              com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startIssue', c.startIssue)
+              com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endIssue', c.endIssue)
+              com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startVolume', c.startVolume)
+              com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endVolume', c.endVolume)
+              com.k_int.ClassUtils.setDateIfPresent(parsedStart, tcs, 'startDate')
+              com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tcs, 'endDate')
 
-              changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'embargo', c.embargo)
+              com.k_int.ClassUtils.setStringIfDifferent(tcs, 'embargo', c.embargo)
 
-              changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'coverageNote', c.coverageNote)
-              changed |= com.k_int.ClassUtils.setRefdataIfPresent(tcs.coverageDepth, tcs, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH)
+              com.k_int.ClassUtils.setStringIfDifferent(tcs, 'coverageNote', c.coverageNote)
+              com.k_int.ClassUtils.setRefdataIfPresent(tcs.coverageDepth, tcs, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH)
 
               cs_match = true
             } else if (!cs_match) {
@@ -1023,17 +1021,15 @@ class TitleInstancePackagePlatform extends KBComponent {
               if (conflict) {
                 conflicting_statements.add(tcs)
               } else if (cs_match) {
-                changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startIssue', c.startIssue)
-                changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endIssue', c.endIssue)
-                changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startVolume', c.startVolume)
-                changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endVolume', c.endVolume)
-                changed |= com.k_int.ClassUtils.setDateIfPresent(parsedStart, tcs, 'startDate')
-                changed |= com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tcs, 'endDate')
-
-                changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'embargo', c.embargo)
-
-                changed |= com.k_int.ClassUtils.setStringIfDifferent(tcs, 'coverageNote', c.coverageNote)
-                changed |= com.k_int.ClassUtils.setRefdataIfPresent(tcs.coverageDepth, tcs, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH)
+                com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startIssue', c.startIssue)
+                com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endIssue', c.endIssue)
+                com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startVolume', c.startVolume)
+                com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endVolume', c.endVolume)
+                com.k_int.ClassUtils.setDateIfPresent(parsedStart, tcs, 'startDate')
+                com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tcs, 'endDate')
+                com.k_int.ClassUtils.setStringIfDifferent(tcs, 'embargo', c.embargo)
+                com.k_int.ClassUtils.setStringIfDifferent(tcs, 'coverageNote', c.coverageNote)
+                com.k_int.ClassUtils.setRefdataIfPresent(tcs.coverageDepth, tcs, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH)
               }
             } else {
               log.debug("Matched new coverage ${c} on multiple existing coverages!")
@@ -1060,14 +1056,14 @@ class TitleInstancePackagePlatform extends KBComponent {
               }
             }
 
-            tipp.addToCoverageStatements('startVolume': c.startVolume,        \
-                   'startIssue': c.startIssue,        \
-                   'endVolume': c.endVolume,        \
-                   'endIssue': c.endIssue,        \
-                   'embargo': c.embargo,        \
-                   'coverageDepth': cov_depth,        \
-                   'coverageNote': c.coverageNote,        \
-                   'startDate': startAsDate,        \
+            tipp.addToCoverageStatements('startVolume': c.startVolume,
+                   'startIssue': c.startIssue,
+                   'endVolume': c.endVolume,
+                   'endIssue': c.endIssue,
+                   'embargo': c.embargo,
+                   'coverageDepth': cov_depth,
+                   'coverageNote': c.coverageNote,
+                   'startDate': startAsDate,
                    'endDate': endAsDate
             )
           }
@@ -1082,9 +1078,35 @@ class TitleInstancePackagePlatform extends KBComponent {
             }
           }
         }
-      }
 
-      tipp.save(flush: true, failOnError: true);
+        if (tipp_dto.ddc) {
+
+            RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.DDC, tipp_dto.ddc)
+
+            if(refdataValue && !(refdataValue in tipp.ddcs)){
+              tipp.addToDdcs(refdataValue)
+            }
+        }
+
+        if (tipp_dto.ddcs) {
+            tipp_dto.ddcs.each{ String ddc ->
+              RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.DDC, ddc)
+              if(refdataValue && !(refdataValue in result.ddcs)){
+                result.addToDdcs(refdataValue)
+              }
+            }
+        }
+
+        if (tipp_dto.language) {
+          tipp_dto.language.each{ RefdataValue lan ->
+            if(lan && !(lan in result.languages)){
+              result.addToLanguages(lan)
+            }
+          }
+        }
+
+        tipp.save(flush: true, failOnError: true);
+      }
 
       result = tipp
     } else {
@@ -1126,7 +1148,6 @@ class TitleInstancePackagePlatform extends KBComponent {
 
         addCoreGOKbXmlFields(builder, attr)
         builder.'lastUpdated'(lastUpdated ? dateFormatService.formatIsoTimestamp(lastUpdated) : null)
-        builder.'format'(format?.value)
         builder.'type'(titleClass)
         builder.'url'(url ?: "")
         builder.'subjectArea'(subjectArea?.trim())
@@ -1141,9 +1162,14 @@ class TitleInstancePackagePlatform extends KBComponent {
         builder.'firstEditor'(firstEditor?.trim())
         builder.'parentPublicationTitleId'(parentPublicationTitleId?.trim())
         builder.'precedingPublicationTitleId'(precedingPublicationTitleId?.trim())
+        builder.'supersedingPublicationTitleId'(supersedingPublicationTitleId?.trim())
         builder.'lastChangedExternal'(lastChangedExternal?.trim())
         builder.'medium'(medium?.value.trim())
-        builder.'language'(language?.value.trim())
+        builder.'languages' {
+          languages.each { lan ->
+            builder.'language'(lan?.value.trim())
+          }
+        }
         builder.'title'([id: ti.id, uuid: ti.uuid]) {
           builder.'name'(ti.name?.trim())
           builder.'type'(titleClass)
@@ -1165,7 +1191,6 @@ class TitleInstancePackagePlatform extends KBComponent {
             'breakable'(breakable?.value)
             'consistent'(consistent?.value)
             'accessType'(accessType?.value)
-            'paymentType'(paymentType?.value)
             'globalNote'(globalNote)
             'contentType'(contentType?.value)
             'lastUpdated'(lastUpdated ? dateFormatService.formatIsoTimestamp(lastUpdated) : null)
@@ -1186,7 +1211,7 @@ class TitleInstancePackagePlatform extends KBComponent {
               builder.'nominalPlatform'()
             }
             builder.'curatoryGroups' {
-              curatoryGroups.each { cg ->
+              pkg.curatoryGroups.each { cg ->
                 builder.'group' {
                   builder.'name'(cg.name)
                 }
@@ -1404,10 +1429,11 @@ class TitleInstancePackagePlatform extends KBComponent {
     }
 
     if (titleDTO.language) {
-      RefdataValue languageRef = RefdataCategory.lookup('KBComponent.Language', titleDTO.language)
-
-      if (!languageRef) {
-        valErrors.put('language', [message: "cannot parse", baddata: titleDTO.remove('language')])
+      for (def lan in titleDTO.language){
+        RefdataValue languageRef = RefdataCategory.lookup('KBComponent.Language', lan)
+        if (!languageRef) {
+          valErrors.put('language', [message: "cannot parse", baddata: titleDTO.remove('language')])
+        }
       }
     }
 
@@ -1435,4 +1461,83 @@ class TitleInstancePackagePlatform extends KBComponent {
     }
     result
   }
+
+  @Transient
+  public String getTitleID(){
+      String result = null
+      if(pkg.source && pkg.source.targetNamespace){
+        result = getIdentifierValue(pkg.source.targetNamespace.value)
+      }
+    return result
+  }
+
+  @Transient
+  public String getListPriceInEUR(){
+    RefdataValue listType = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'list')
+
+    RefdataValue currency = RefdataCategory.lookup(RCConstants.CURRENCY, 'EUR')
+
+    return retrievePriceOfCategory(listType, currency)
+  }
+
+  @Transient
+  public String getListPriceInUSD(){
+    RefdataValue listType = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'list')
+
+    RefdataValue currency = RefdataCategory.lookup(RCConstants.CURRENCY, 'USD')
+
+    return retrievePriceOfCategory(listType, currency)
+  }
+
+
+  @Transient
+  public String getListPriceInGBP(){
+    RefdataValue listType = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'list')
+
+    RefdataValue currency = RefdataCategory.lookup(RCConstants.CURRENCY, 'GBP')
+
+    return retrievePriceOfCategory(listType, currency)
+  }
+
+  @Transient
+  public String getOAAPCPriceInEUR(){
+    RefdataValue listType = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'open access apc')
+
+    RefdataValue currency = RefdataCategory.lookup(RCConstants.CURRENCY, 'EUR')
+
+    return retrievePriceOfCategory(listType, currency)
+  }
+
+  @Transient
+  public String getOAAPCPriceInUSD(){
+    RefdataValue listType = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'open access apc')
+
+    RefdataValue currency = RefdataCategory.lookup(RCConstants.CURRENCY, 'USD')
+
+    return retrievePriceOfCategory(listType, currency)
+  }
+
+
+  @Transient
+  public String getOAAPCPriceInGBP(){
+    RefdataValue listType = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'open access apc')
+
+    RefdataValue currency = RefdataCategory.lookup(RCConstants.CURRENCY, 'GBP')
+
+    return retrievePriceOfCategory(listType, currency)
+  }
+
+  @Transient
+  public String retrievePriceOfCategory(RefdataValue listType, RefdataValue currency){
+    String result = null
+
+    ComponentPrice existPrice = ComponentPrice.findWhere(owner: this, priceType: listType, currency: currency)
+
+    if(existPrice){
+      result = existPrice.price.toString()
+    }
+    return result
+
+  }
+
 }

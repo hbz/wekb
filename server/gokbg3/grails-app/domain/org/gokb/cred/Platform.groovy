@@ -370,7 +370,7 @@ class Platform extends KBComponent {
         log.debug("Creating new platform for: ${platformDTO}")
         result = new Platform(name: platformDTO.name, normname: KBComponent.generateNormname(platformDTO.name), primaryUrl: (viable_url ? platformDTO.primaryUrl : null), uuid: platformDTO.uuid ?: null).save(flush: true, failOnError: true)
 
-        ReviewRequest.raise(
+       /* ReviewRequest.raise(
           result,
           "The platform ${result} did not exist and was newly created.",
           "New platform created",
@@ -378,7 +378,7 @@ class Platform extends KBComponent {
           project,
           null,
           RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'New Platform')
-        )
+        )*/
       }
     }
 

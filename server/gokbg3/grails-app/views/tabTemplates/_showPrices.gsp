@@ -1,5 +1,5 @@
 <%@ page import="de.wekb.helper.RCConstants " %>
-<div class="tab-pane" id="prices">
+<div class="tab-pane" id="prices" role="tabpanel">
     <g:if test="${d.id != null}">
         <dl>
             <dt>
@@ -40,45 +40,41 @@
                 </table>
 
                 <g:if test="${editable}">
-                    <h4>
-                        <gokb:annotatedLabel owner="${d}" property="addPrice">Add Price</gokb:annotatedLabel>
-                    </h4>
-                    <dl class="dl-horizontal">
-                        <g:form controller="ajaxSupport" action="addToCollection"
-                                class="form-inline">
-                            <input type="hidden" name="__context"
-                                   value="${d.class.name}:${d.id}"/>
-                            <input type="hidden" name="__newObjectClass"
-                                   value="org.gokb.cred.ComponentPrice"/>
-                            <input type="hidden" name="__recip" value="owner"/>
-                            <dt class="dt-label">Price Type</dt>
-                            <dd>
-                                <gokb:simpleReferenceTypedown class="form-control"
-                                                           name="priceType"
-                                                           baseClass="org.gokb.cred.RefdataValue"
-                                                           filter1="${RCConstants.PRICE_TYPE}"/>
-                            </dd>
-                            <dt class="dt-label">Price</dt>
-                            <dd>
-                                <input type="number" class="form-control select-m" name="price" step="0.01"/>
-                            </dd>
-                            <dt class="dt-label">Currency</dt>
-                            <dd>
-                                <gokb:simpleReferenceTypedown class="form-control" name="currency"
-                                                           baseClass="org.gokb.cred.RefdataValue"
-                                                           filter1="${RCConstants.CURRENCY}"/>
-                            </dd>
-                            <dt class="dt-label">Start Date</dt>
-                            <dd>
-                                <input type="date" class="form-control select-m" format="yyyy-MM-dd" name="startDate" value="${java.util.Calendar.instance.time}"/>
-                            </dd>
-                            <dt></dt>
-                            <dd>
-                                <button type="submit"
-                                        class="btn btn-default btn-primary">Add</button>
-                            </dd>
-                        </g:form>
-                    </dl>
+                        <a data-toggle="modal" data-cache="false"
+                           data-target="#pricesModal">Add Price</a>
+
+                        <bootStrap:modal id="pricesModal" title="Add Price">
+
+                            <g:form controller="ajaxSupport" action="addToCollection"
+                                    class="form-inline">
+                                <input type="hidden" name="__context"
+                                       value="${d.class.name}:${d.id}"/>
+                                <input type="hidden" name="__newObjectClass"
+                                       value="org.gokb.cred.ComponentPrice"/>
+                                <input type="hidden" name="__recip" value="owner"/>
+                                <dt class="dt-label">Price Type</dt>
+                                <dd>
+                                    <gokb:simpleReferenceTypedown class="form-control"
+                                                                  name="priceType"
+                                                                  baseClass="org.gokb.cred.RefdataValue"
+                                                                  filter1="${RCConstants.PRICE_TYPE}"/>
+                                </dd>
+                                <dt class="dt-label">Price</dt>
+                                <dd>
+                                    <input type="number" class="form-control select-m" name="price" step="0.01"/>
+                                </dd>
+                                <dt class="dt-label">Currency</dt>
+                                <dd>
+                                    <gokb:simpleReferenceTypedown class="form-control" name="currency"
+                                                                  baseClass="org.gokb.cred.RefdataValue"
+                                                                  filter1="${RCConstants.CURRENCY}"/>
+                                </dd>
+                                <dt class="dt-label">Start Date</dt>
+                                <dd>
+                                    <input type="date" class="form-control select-m" format="yyyy-MM-dd" name="startDate" value="${java.util.Calendar.instance.time}"/>
+                                </dd>
+                            </g:form>
+                        </bootStrap:modal>
                 </g:if>
             </dd>
         </dl>

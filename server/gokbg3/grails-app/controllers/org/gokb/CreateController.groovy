@@ -13,6 +13,7 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.LocalDateTime
 
+@Secured(['IS_AUTHENTICATED_FULLY'])
 class CreateController {
 
   def genericOIDService
@@ -149,7 +150,7 @@ class CreateController {
             result.newobj.postCreateClosure.call([user:user])
           }*/
 
-          if (result.newobj instanceof TitleInstancePackagePlatform && (params.pkg == null || params.hostPlatform == null || params.url == null)) {
+          if (result.newobj instanceof TitleInstancePackagePlatform && (params.pkg == null || params.hostPlatform == null || params.url == null || params.name == null)) {
             flash.error="Please fill Package, Platform and Host Platform URL to create the component."
             result.uri = g.createLink([controller: 'create', action:'index', params:[tmpl:params.cls]])
           }

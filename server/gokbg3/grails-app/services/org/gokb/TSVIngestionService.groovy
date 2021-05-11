@@ -876,8 +876,6 @@ class TSVIngestionService {
           def writeable_datafile = DataFile.get(datafile.id)
           ReviewRequest req = new ReviewRequest (
               status	: RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STATUS, 'Open'),
-              raisedBy : user,
-              allocatedTo : user,
               descriptionOfCause : "Ingest of datafile ${datafile.id} / ${datafile.name} failed preflight",
               reviewRequest : "Generate rules to handle error cases.",
               refineProject: null,
@@ -1238,7 +1236,7 @@ class TSVIngestionService {
             } else if (duplicate.size() == 1 && duplicate[0].status == combo_deleted) {
 
               log.debug("Found a deleted identifier combo for ${canonical_identifier.value} -> ${component}")
-              reviewRequestService.raise(
+             /* reviewRequestService.raise(
                 component,
                 "Review ID status.",
                 "Identifier ${canonical_identifier} was previously connected to '${component}', but has since been manually removed.",
@@ -1246,7 +1244,7 @@ class TSVIngestionService {
                 null,
                 null,
                 RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Removed Identifier')
-              )
+              )*/
             } else {
               log.debug("Identifier combo is already present, probably via titleLookupService.")
             }

@@ -32,7 +32,7 @@
        <div class="row">
          <div class="span12">
 
-           <g:form controller="packages" class="form" role="form" action="index" method="get" params="${params}">
+           <g:form controller="packages" class="form"   action="index" method="get" params="${params}">
 
              <input type="hidden" name="offset" value="${params.offset}"/>
              <g:if test="${params.startYear && params.endYear}">
@@ -125,7 +125,7 @@
                 <tr>
                   <td>
                       <g:link controller="packages" action="packageContent" id="${hit.source._id}">${hit.source.name}</g:link>
-                      <g:link controller="packages" action="kbart" id="${hit.source._id}">(Download Kbart File)</g:link>
+
                   </td>
                   <td></td>
                   <td></td>

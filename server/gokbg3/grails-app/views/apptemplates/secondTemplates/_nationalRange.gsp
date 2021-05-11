@@ -1,6 +1,6 @@
 <%@ page import="de.wekb.helper.RCConstants; org.gokb.cred.RefdataCategory" %>
 <ul>
-    <g:each in="${d.nationalRanges?.sort { it.value }}" var="nationalRange">
+    <g:each in="${d.nationalRanges.sort { it.getI10n('value') }}" var="nationalRange">
         <li>${nationalRange.value}
         <g:if test="${editable}">
             <g:link controller="ajaxSupport" action="deleteNationalRange"
@@ -16,38 +16,21 @@
     <a data-toggle="modal" data-cache="false"
        data-target="#nationalRangeModal">Add National Range</a>
 
-    <div id="nationalRangeModal" class="qmodal modal modal-wide" role="dialog" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
+    <bootStrap:modal id="nationalRangeModal" title="Add National Range">
                 <g:form class="ui form" url="[controller: 'ajaxSupport', action: 'addNationalRange']" method="post">
-                    <div class="modal-header">
-                        <h3 class="modal-title">Add National Range</h3>
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    </div>
-
-                    <div class="modal-body">
-
-                        <input type="hidden" name="package" value="${d.id}"/>
+                    <input type="hidden" name="package" value="${d.id}"/>
 
                         <div class="field">
                             <label>National Range:</label>
 
-                            <g:select from="${RefdataCategory.lookup(RCConstants.COUNTRY)}"
+                            <g:select from="${RefdataCategory.lookup(RCConstants.COUNTRY).sort {it.getI10n('value')}}"
                                       class="ui dropdown fluid"
                                       id="nationalRangeSelection"
                                       optionKey="id"
-                                      optionValue="${{ it.value }}"
+                                      optionValue="${{ it.getI10n('value') }}"
                                       name="nationalRange"
                                       value=""/>
                         </div>
-
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-default">Add</button>
-                    </div>
                 </g:form>
-            </div>
-        </div>
-    </div>
+    </bootStrap:modal>
 </g:if>

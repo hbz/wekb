@@ -14,6 +14,7 @@ import java.util.concurrent.ThreadLocalRandom
 /**
  * Generates dummy kbart data for testing
  */
+@Secured(['IS_AUTHENTICATED_FULLY'])
 class DummyKbartDownloadController {
 
   private static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("YYYY-MM-dd")

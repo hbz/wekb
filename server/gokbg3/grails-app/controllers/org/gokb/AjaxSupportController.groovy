@@ -38,7 +38,7 @@ class AjaxSupportController {
         def user = springSecurityService.currentUser
 
         if (target) {
-          def editable = checkEditable(target,user)
+          def editable = checkEditable(target)
 
           if (editable) {
             target[params.name] = params.value
@@ -277,7 +277,7 @@ class AjaxSupportController {
 
     if (domain_class && (domain_class.getClazz().isTypeCreatable() || domain_class.getClazz().isTypeAdministerable())) {
       if (contextObj) {
-        def editable = checkEditable(contextObj, user)
+        def editable = checkEditable(contextObj)
 
         if (editable || contextObj.id == user.id) {
           log.debug("Create a new instance of ${params.__newObjectClass}");
@@ -502,7 +502,7 @@ class AjaxSupportController {
    */
 
   @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
   def addToStdCollection() {
     log.debug("addToStdCollection(${params})");
     // Adds a link to a collection that is not mapped through a join object
@@ -511,7 +511,7 @@ class AjaxSupportController {
     def relatedObj = resolveOID2(params.__relatedObject)
     def result = ['result': 'OK', 'params': params]
     if (relatedObj != null && contextObj != null) {
-      def editable = checkEditable(contextObj, user)
+      def editable = checkEditable(contextObj)
 
       if (editable || user.id == contextObj.id) {
         if (!contextObj["${params.__property}"].contains(relatedObj)) {
@@ -575,7 +575,7 @@ class AjaxSupportController {
     def user = springSecurityService.currentUser
     def result = ['result': 'OK', 'params': params]
     if (contextObj) {
-      def editable = checkEditable(contextObj, user)
+      def editable = checkEditable(contextObj)
 
       if (editable || contextObj.id == user.id) {
         def item_to_remove = resolveOID2(params.__itemToRemove)
@@ -687,7 +687,7 @@ class AjaxSupportController {
     def result = ['result': 'OK', 'params': params]
 
     if ( contextObj ) {
-      def editable = checkEditable(contextObj, user)
+      def editable = checkEditable(contextObj)
 
       if (editable && contextObj.isDeletable()) {
         if(contextObj.respondsTo('deleteSoft')) {
@@ -810,7 +810,7 @@ class AjaxSupportController {
     def result = ['result': 'OK', 'params': params]
     def errors = [:]
     if (target_object) {
-      def editable = checkEditable(target_object, user)
+      def editable = checkEditable(target_object)
 
       if (editable || target_object == user) {
         if (params.type == 'date') {
@@ -874,17 +874,8 @@ class AjaxSupportController {
     }
   }
 
-  private boolean checkEditable(obj, user) {
-    def editable = obj.isEditable()
-
-    if (editable) {
-      def curatedObj = obj.respondsTo("getCuratoryGroups") ? obj : ( KBComponent.has(obj, 'pkg') ? obj.pkg : null )
-
-      if (curatedObj && curatedObj.curatoryGroups?.size() > 0) {
-
-        editable = (user.curatoryGroups?.id.intersect(curatedObj.curatoryGroups?.id).size() > 0 || user.isAdmin()) ? true : false
-      }
-    }
+  private boolean checkEditable(obj) {
+    def editable = accessService.checkEditableObject(obj, params)
 
     editable
   }
@@ -916,7 +907,7 @@ class AjaxSupportController {
     def result = ['result':'OK']
 
     if ( target != null) {
-      def editable = checkEditable(target, user)
+      def editable = checkEditable(target)
 
       if (editable) {
         // def binding_properties = [ "${params.name}":value ]
@@ -1025,7 +1016,7 @@ class AjaxSupportController {
       def ns = genericOIDService.resolveOID(params.identifierNamespace)
       def owner = genericOIDService.resolveOID(params.__context)
       if ( ( ns != null ) && ( owner != null ) ) {
-        def editable = checkEditable(owner, user)
+        def editable = checkEditable(owner)
 
         if (editable) {
           // Lookup or create Identifier
@@ -1240,7 +1231,7 @@ class AjaxSupportController {
 
     if ( variant != null) {
       def owner = variant.owner
-      def editable = checkEditable(owner, user)
+      def editable = checkEditable(owner)
 
       if (editable) {
         // Does the current owner.name exist in a variant? If not, we should create one so we don't loose the info
@@ -1331,7 +1322,7 @@ class AjaxSupportController {
     def variantOwner = variant?.owner ?: null
 
     if ( variant != null ) {
-      def editable = checkEditable(variantOwner, user)
+      def editable = checkEditable(variantOwner)
 
       if (editable) {
         def variantName = variant.variantName
@@ -1392,7 +1383,7 @@ class AjaxSupportController {
     def tipp = tcs.owner
 
     if ( tcs != null) {
-      def editable = checkEditable(tipp, user)
+      def editable = checkEditable(tipp)
 
       if (editable) {
         tcs.delete()
@@ -1447,7 +1438,7 @@ class AjaxSupportController {
 
     if (c && c.fromComponent) {
       def owner = c.fromComponent
-      def editable = checkEditable(owner, user)
+      def editable = checkEditable(owner)
 
       if (editable) {
         log.debug("Delete combo..")
@@ -1511,7 +1502,7 @@ class AjaxSupportController {
     def user = springSecurityService.currentUser
 
     if (c) {
-      def editable = checkEditable(c.owner, user)
+      def editable = checkEditable(c.owner)
 
       if (editable) {
         log.debug("Delete Price..")
@@ -1661,6 +1652,56 @@ class AjaxSupportController {
       if(regionalRange && (regionalRange in pkgInstance.regionalRanges)) {
         pkgInstance.removeFromRegionalRanges(regionalRange)
         pkgInstance.save()
+      }
+    }
+
+    redirect(url: request.getHeader('referer'))
+  }
+
+  @Transactional
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
+  def addDDC() {
+    Map<String, Object> result = [:]
+
+    def object = resolveOID2(params.object)
+
+    if (!object) {
+      flash.message = message(code: 'default.not.found.message', args: ['Object', params.id]) as String
+      redirect(url: request.getHeader('referer'))
+      return
+    }
+    result.editable = accessService.checkEditableObject(object, params)
+
+    if (result.editable) {
+      RefdataValue ddc = RefdataValue.get(params.ddc)
+      if(ddc && !(ddc in object.ddcs)) {
+        object.addToDdcs(ddc)
+        object.save()
+      }
+    }
+
+    redirect(url: request.getHeader('referer'))
+  }
+
+  @Transactional
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
+  def deleteDDC() {
+    Map<String, Object> result = [:]
+
+    def object = resolveOID2(params.object)
+
+    if (!object) {
+      flash.message = message(code: 'default.not.found.message', args: ['Object', params.id]) as String
+      redirect(url: request.getHeader('referer'))
+      return
+    }
+    result.editable = accessService.checkEditableObject(object, params)
+
+    if (result.editable) {
+      RefdataValue ddc = RefdataValue.get(params.removeDDC)
+      if(ddc && (ddc in object.ddcs)) {
+        object.removeFromDdcs(ddc)
+        object.save()
       }
     }
 

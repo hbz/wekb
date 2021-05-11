@@ -297,9 +297,9 @@ abstract class KBComponent implements Auditable{
   Source source
 
   /**
-   * Component language. Linked to refdata table. Only applicable for TitleInstance and TitleInstancePackagePlatform.
+   * Component languages. Linked to refdata table. Only applicable for TitleInstance and TitleInstancePackagePlatform.
    */
-  RefdataValue language
+  Set languages
   String lastUpdateComment
 
   // Set tags = []
@@ -363,7 +363,8 @@ abstract class KBComponent implements Auditable{
       variantNames        : KBComponentVariantName,
       reviewRequests      : ReviewRequest,
       people              : ComponentPerson,
-      prices              : ComponentPrice
+      prices              : ComponentPrice,
+      languages            : RefdataValue
   ]
 
 
@@ -379,7 +380,6 @@ abstract class KBComponent implements Auditable{
     description column: 'kbc_description', type: 'text'
     source column: 'kbc_source_fk'
     status column: 'kbc_status_rv_fk', index: 'kbc_status_idx'
-    language column: 'kbc_language_rv_fk'
     shortcode column: 'kbc_shortcode', index: 'kbc_shortcode_idx'
     // tags joinTable: [name: 'kb_component_tags_value', key: 'kbctgs_kbc_id', column: 'kbctgs_rdv_id']
     dateCreated column: 'kbc_date_created', index: 'kbc_date_created_idx'
@@ -398,6 +398,11 @@ abstract class KBComponent implements Auditable{
     variantNames cascade: "all,delete-orphan", lazy: false
     //dateCreatedYearMonth formula: "DATE_FORMAT(kbc_date_created, '%Y-%m')"
     //lastUpdatedYearMonth formula: "DATE_FORMAT(kbc_last_updated, '%Y-%m')"
+    languages             joinTable: [
+        name:   'kbc_language',
+        key:    'kbc_fk',
+        column: 'kbc_language_rv_fk', type:   'BIGINT'
+    ], lazy: false
   }
 
 
@@ -418,6 +423,7 @@ abstract class KBComponent implements Auditable{
     bucketHash(nullable: true, blank: false)
     componentDiscriminator(nullable: true, blank: false)
     componentHash(nullable: true, blank: false)
+    languages(nullable:true)
   }
 
 
@@ -1251,6 +1257,13 @@ abstract class KBComponent implements Auditable{
     // ComponentHistoryEventParticipant.executeUpdate("delete from ComponentHistoryEventParticipant as c where c.participant = :component",[component:this])
     if (this?.class == CuratoryGroup){
       AllocatedReviewGroup.removeAll(this)
+      Set curatoryGroups = [this]
+      User.withTransaction {
+          User.findAllByCuratoryGroups(curatoryGroups).each { User user ->
+            user.removeFromCuratoryGroups(CuratoryGroup)
+          user.save()
+          }
+        }
     }
     ReviewRequest.executeUpdate("delete from ReviewRequest as c where c.componentToReview=:component", [component: this])
     ComponentPerson.executeUpdate("delete from ComponentPerson as c where c.component=:component", [component: this])
@@ -1261,7 +1274,7 @@ abstract class KBComponent implements Auditable{
     result
   }
 
-
+  @Deprecated
   static def expungeAll(List components){
     log.debug("Component bulk expunge")
     def result = [num_requested: components.size(), num_expunged: 0]
@@ -1305,7 +1318,13 @@ abstract class KBComponent implements Auditable{
     builder.'name'(name)
     builder.'status'(status?.value)
     builder.'editStatus'(editStatus?.value)
-    builder.'language'(language?.value)
+    if (languages){
+      builder.'languages'{
+        languages.each{ lan ->
+          builder.'language'(lan.value)
+        }
+      }
+    }
     builder.'shortcode'(shortcode)
 
     // Identifiers

@@ -1,17 +1,17 @@
 package org.gokb
 
-
 import org.gokb.cred.Package
+import wekb.AutoUpdatePackagesService
 
 class AutoUpdatePackagesJob {
 
-  def packageService
+  AutoUpdatePackagesService autoUpdatePackagesService
   // Allow only one run at a time.
   static concurrent = false
 
   static triggers = {
     // Cron timer.
-    cron name: 'AutoUpdatePackageTrigger', cronExpression: "0 0 6 * * ? *" // daily at 6:00 am
+    cron name: 'AutoUpdatePackageTrigger', cronExpression: "0 0 20 * * ? *" // daily at 8:00 pm
 // for testing: every 5 minutes   cron name: 'AutoUpdatePackageTrigger', cronExpression: "0 1/5 * * * ? *" // daily at 6:00 am
   }
 
@@ -26,9 +26,8 @@ class AutoUpdatePackagesJob {
           "and (p.source.lastRun is null or p.source.lastRun < current_date)")
       updPacks.each { Package p ->
         if (p.source.needsUpdate()) {
-          def result = packageService.updateFromSource(p)
+          def result = autoUpdatePackagesService.updateFromSource(p)
           log.debug("Result of update: ${result}")
-
           sleep(10000)
         }
       }

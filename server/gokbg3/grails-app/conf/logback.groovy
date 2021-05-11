@@ -52,6 +52,7 @@ if (Environment.isDevelopmentMode() || Environment.current == Environment.TEST) 
   logger('gokbg3.PreferencesInterceptor', ERROR)
   logger('gokbg3.RestMappingService', ERROR)
   logger('de.wekb', DEBUG)
+  logger('wekb', DEBUG)
 
   //For Database Migration
   logger ('liquibase', INFO)

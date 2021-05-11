@@ -6,9 +6,24 @@
 </head>
 <body>
   <h1 class="page-header">${group?.name}</h1>
-  <div id="mainarea" class="panel panel-default">
+  <div id="mainarea" class="panel">
 
-    <g:render template="/search/pagination" model="${[s_controller:'group',offset_param:'pkg_offset',offset:pkg_offset,records:packages,jumpToPage:'pkg_jumpToPage',page:pkg_page,page_max:pkg_page_max,lasthit:(pkg_offset.toInteger() + packages.size()),recset:true,max:max,params:params,reccount:package_count,hideActions:true]}"/>
+    <div class="list-group list-group-flush">
+      <div class="col-md-4">
+        <g:link class="list-group-item list-group-item-action" controller="group" action="myPackages" id="${group.id}">My Packages</g:link>
+        <g:link class="list-group-item list-group-item-action"  controller="group" action="myPlatforms" id="${group.id}">My Platforms</g:link>
+      </div>
+      <div class="col-md-4">
+        <g:link class="list-group-item list-group-item-action"  controller="group" action="myOrgs" id="${group.id}">My Orgs</g:link>
+        <g:link class="list-group-item list-group-item-action"  controller="group" action="myTitles" id="${group.id}">My Titles</g:link>
+      </div>
+      <div class="col-md-4">
+        <g:link class="list-group-item list-group-item-action"  controller="group" action="mySources" id="${group.id}">My Sources</g:link>
+        <g:link class="list-group-item list-group-item-action"  controller="group" action="myReviewRequests" id="${group.id}">My Review Requests</g:link>
+      </div>
+    </div>
+
+    %{--<g:render template="/search/pagination" model="${[s_controller:'group',offset_param:'pkg_offset',offset:pkg_offset,records:packages,jumpToPage:'pkg_jumpToPage',page:pkg_page,page_max:pkg_page_max,lasthit:(pkg_offset.toInteger() + packages.size()),recset:true,max:max,params:params,reccount:package_count,hideActions:true]}"/>
 
     <table class="table table-striped table-condensed table-bordered">
       <thead style="white-space:nowrap;">
@@ -88,7 +103,7 @@
             </tr>
         </g:each>
       </tbody>
-    </table>
+    </table>--}%
   </div>
 %{--   <g:link class="display-inline" controller="search" action="index"
           params="[qbe:'g:reviewRequests']"

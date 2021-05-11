@@ -17,9 +17,15 @@ class RCConstants {
 
     public static final String COUNTRY = "Country"
 
+    public static final String CURATORY_GROUP_TYPE = "CuratoryGroup.Type"
+
     public static final String CURRENCY = "Currency"
 
     public static final String DC_TYPE = "DCType"
+
+    public static final String DDC = "DDC"
+
+    public static final String DELETED_KBCOMPONENT_STATUS = "DeletedKBComponent.Status"
 
     public static final String IDENTIFIER_NAMESPACE_TARGET_TYPE = "IdentifierNamespace.TargetType"
 
@@ -68,6 +74,7 @@ class RCConstants {
 
     public static final String REVIEW_REQUEST_STATUS = "ReviewRequest.Status"
     public static final String REVIEW_REQUEST_STD_DESC = "ReviewRequest.StdDesc"
+    public static final String REVIEW_REQUEST_TYPE = "ReviewRequest.Type"
 
     public static final String RDFDATA_TYPE = "RDFDataType"
 
@@ -78,11 +85,10 @@ class RCConstants {
     public static final String TIPP_ACCESS_TYPE = "TitleInstancePackagePlatform.AccessType"
     public static final String TIPP_COVERAGE_DEPTH = "TitleInstancePackagePlatform.CoverageDepth"
     public static final String TIPP_DELAYED_OA = "TitleInstancePackagePlatform.DelayedOA"
-    public static final String TIPP_FORMAT = "TitleInstancePackagePlatform.Format"
     public static final String TIPP_HYBRIDA_OA = "TitleInstancePackagePlatform.HybridOA"
     public static final String TIPP_MEDIUM = "TitleInstancePackagePlatform.Medium"
+    public static final String TIPP_OPEN_ACCESS = "TitleInstancePackagePlatform.OpenAccess"
     public static final String TIPP_PRIMARY = "TitleInstancePackagePlatform.Primary"
-    public static final String TIPP_PAYMENT_TYPE = "TitleInstancePackagePlatform.PaymentType"
     public static final String TIPP_PUBLICATION_TYPE = "TitleInstancePackagePlatform.PublicationType"
 
     public static final String TIPP_LINK_TYPE = "Tipp.LinkType"
@@ -94,6 +100,7 @@ class RCConstants {
     public static final String TITLEINSTANCE_OA_STATUS = "TitleInstance.OAStatus"
     public static final String TITLEINSTANCE_PURE_OA = "TitleInstance.PureOA"
     public static final String TITLEINSTANCE_REASON_RETIRED = "TitleInstance.ReasonRetired"
+    public static final String TITLEINSTANCE_CONTINUING_SERIES = "TitleInstance.ContinuingSeries"
     public static final String TITLEINSTANCE_REL = "TitleInstance.Rel"
 
     public static final String USER_ORGANISATION_MISSION = "UserOrganisation.Mission"

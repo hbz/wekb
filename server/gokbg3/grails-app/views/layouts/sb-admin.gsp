@@ -40,22 +40,6 @@
 
 <body class="theme-${ grailsApplication.config.gokb.theme }">
 
-<g:if test="${currentServer == ServerUtils.SERVER_DEV}">
-  <div class="text-success label big wb-server-label">
-    <span>DEV</span>
-  </div>
-</g:if>
-<g:if test="${currentServer == ServerUtils.SERVER_QA}">
-  <div class="text-danger label big wb-server-label">
-    <span>QA</span>
-  </div>
-</g:if>
-<g:if test="${currentServer == ServerUtils.SERVER_LOCAL}">
-  <div class="text-primary wb-server-label">
-    <span>LOCAL</span>
-  </div>
-</g:if>
-
   <div id="wrapper">
 
     <!-- Navigation -->
@@ -89,12 +73,11 @@
               <i class="fa fa-caret-down fa-fw"></i>
           	</a>
             <ul class="dropdown-menu dropdown-user">
-              <li class="divider"></li>
+
               <li><g:link controller="home" action="profile"><i class="fa fa-user fa-fw"></i>  My Profile</g:link></li>
               <li><g:link controller="home" action="preferences"><i class="fa fa-cog fa-fw"></i>  My Preferences</g:link></li>
-              <li class="divider"></li>
               <li><g:link controller="logoff"><i class="fa fa-sign-out fa-fw"></i> Logout</g:link></li>
-              <li class="divider"></li>
+
             </ul> <!-- /.dropdown-user -->
           </li>
           <!-- /.dropdown -->
