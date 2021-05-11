@@ -25,14 +25,14 @@
 
                     <bootStrap:modal id="ddcModal" title="Add Dewey Decimal Classification">
 
-                        <g:form class="ui form" url="[controller: 'ajaxSupport', action: 'addDDC']" method="post">
+                        <g:form class="form" url="[controller: 'ajaxSupport', action: 'addDDC']" method="post">
                             <input type="hidden" name="object" value="${d.getClassName()}:${d.id}"/>
 
                                 <div class="field">
                                     <label>Dewey Decimal Classification:</label>
 
                                     <g:select from="${RefdataCategory.lookup(RCConstants.DDC).sort {it.value}}"
-                                              class="ui dropdown fluid"
+                                              class="dropdown fluid"
                                               id="ddcSelection"
                                               optionKey="id"
                                               optionValue="${{ it.value +': '+ it.getI10n('value')}}"

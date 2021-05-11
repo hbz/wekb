@@ -11,7 +11,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <table class="ui celled la-table table">
+            <table class="celled la-table table">
                 <thead>
                 <tr>
                     <th>domainClassName</th>
@@ -38,7 +38,7 @@
 
             <h3>Indices</h3>
 
-            <table class="ui celled la-table table">
+            <table class="celled la-table table">
                 <thead>
                 <tr>
                     <th>index</th>
@@ -57,7 +57,7 @@
                         <td>${indexInfo.countIndex}</td>
                         <td>${indexInfo.countDB}</td>
                         <td>${indexInfo.countDeletedInDB}</td>
-                        <td><g:link action="deleteIndex" params="[name: indexInfo.name]">Delete Index</g:link></td>
+                        <td><g:link action="deleteIndex" params="[name: indexInfo.name]">Delete and refill Index</g:link></td>
                     </tr>
                 </g:each>
                 </tbody>
