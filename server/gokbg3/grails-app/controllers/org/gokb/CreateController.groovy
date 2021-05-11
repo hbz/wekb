@@ -561,6 +561,10 @@ class CreateController {
                 }
                 Package.withTransaction { TransactionStatus ts ->
                   if (source.save()) {
+                    user.curatoryGroups.each { CuratoryGroup cg ->
+                      source.curatoryGroups.add(cg)
+                    }
+
                     pkg.source = source
                   }
                 }
