@@ -496,6 +496,7 @@ class CreateController {
               if (colMap.national_ranges) {
                 List<String> national_ranges = cols[colMap.national_ranges].split(',')
                 national_ranges.each { String value ->
+                  value = value.trim()
                   RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.COUNTRY, value)
                   if (refdataValue) {
                     pkg.addToNationalRanges(refdataValue)
@@ -506,6 +507,7 @@ class CreateController {
               if (colMap.regional_ranges) {
                 List<String> regional_ranges = cols[colMap.regional_ranges].split(',')
                 regional_ranges.each { String value ->
+                  value = value.trim()
                   RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.PACKAGE_REGIONAL_RANGE, value)
                   if (refdataValue) {
                     pkg.addToRegionalRanges(refdataValue)
@@ -528,6 +530,7 @@ class CreateController {
               if (colMap.ddcs) {
                 List<String> ddcs = cols[colMap.ddcs].split(',')
                 ddcs.each { String value ->
+                  value = value.trim()
                   if (value != "") {
                     if (value.toInteger() < 10) {
                       value = "00" + value

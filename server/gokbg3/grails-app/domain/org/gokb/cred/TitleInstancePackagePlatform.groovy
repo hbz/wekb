@@ -4,6 +4,7 @@ import de.wekb.annotations.HbzKbartAnnotation
 import de.wekb.annotations.KbartAnnotation
 import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
+import org.gokb.ComponentLookupService
 import org.grails.web.json.JSONObject
 
 import javax.persistence.Transient
@@ -227,7 +228,6 @@ class TitleInstancePackagePlatform extends KBComponent {
     url column: 'url', type: 'text'
     subjectArea column: 'subject_area', type: 'text'
     openAccess column: 'tipp_open_access_rv_fk'
-    note column: 'tipp_note'
 
     ddcs             joinTable: [
             name:   'tipp_dewey_decimal_classification',
@@ -633,7 +633,7 @@ class TitleInstancePackagePlatform extends KBComponent {
 
     //publicationType
     if (tipp_dto.type) {
-      def publicationType = determinePublicationType(tipp_dto)
+      RefdataValue publicationType = determinePublicationType(tipp_dto)
       if (!publicationType) {
         result.valid = false
         errors.title = [[message: "Unknown publicationType", baddata: tipp_dto.type, code: 404]]
@@ -938,6 +938,14 @@ class TitleInstancePackagePlatform extends KBComponent {
           if (access_ref) tipp.accessType = access_ref
         }
 
+        //publicationType
+        if (tipp_dto.type) {
+          RefdataValue publicationType = determinePublicationType(tipp_dto)
+          if (!publicationType) {
+            com.k_int.ClassUtils.setRefdataIfPresent(publicationType.value, tipp, 'publicationType', RCConstants.TIPP_PUBLICATION_TYPE)
+          }
+        }
+
         com.k_int.ClassUtils.setStringIfDifferent(tipp, 'url', trimmed_url)
         com.k_int.ClassUtils.setStringIfDifferent(tipp, 'name', tipp_dto.name)
         com.k_int.ClassUtils.setStringIfDifferent(tipp, 'firstAuthor', tipp_dto.firstAuthor)
@@ -950,7 +958,7 @@ class TitleInstancePackagePlatform extends KBComponent {
         com.k_int.ClassUtils.setStringIfDifferent(tipp, 'parentPublicationTitleId', tipp_dto.parentPublicationTitleId)
         com.k_int.ClassUtils.setStringIfDifferent(tipp, 'precedingPublicationTitleId', tipp_dto.precedingPublicationTitleId)
         com.k_int.ClassUtils.setStringIfDifferent(tipp, 'supersedingPublicationTitleId', tipp_dto.supersedingPublicationTitleId)
-        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'note', tipp_dto.notes)
+        com.k_int.ClassUtils.setStringIfDifferent(tipp, 'note', tipp_dto.coverage_notes)
 
         com.k_int.ClassUtils.setDateIfPresent(tipp_dto.accessStartDate, tipp, 'accessStartDate')
         com.k_int.ClassUtils.setDateIfPresent(tipp_dto.accessEndDate, tipp, 'accessEndDate')
@@ -1105,6 +1113,13 @@ class TitleInstancePackagePlatform extends KBComponent {
             if(refdataValue && !(refdataValue in tipp.languages)){
               tipp.addToLanguages(refdataValue)
             }
+          }
+        }
+
+        if (tipp_dto.package_ezb_anchor) {
+          Identifier canonical_identifier = ComponentLookupService.lookupOrCreateCanonicalIdentifier("package_ezb_anchor", tipp_dto.package_ezb_anchor)
+          if (canonical_identifier) {
+              def new_id = new Combo(fromComponent: tipp, toComponent: canonical_identifier, status: RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE), type: RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'KBComponent.Ids')).save()
           }
         }
 
@@ -1343,7 +1358,7 @@ class TitleInstancePackagePlatform extends KBComponent {
     }
   }
 
-  private static determinePublicationType(tippObj) {
+  private static RefdataValue determinePublicationType(tippObj) {
     if (tippObj.type) {
       switch (tippObj.type) {
         case "serial":
