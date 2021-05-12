@@ -1,4 +1,4 @@
-<%@ page import="de.wekb.helper.RCConstants" %>
+<%@ page import="de.wekb.helper.RCConstants; org.gokb.cred.RefdataCategory;" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -76,6 +76,24 @@
 
                     <g:render template="/apptemplates/secondTemplates/refdataprops"
                               model="${[d: pkg, rd: refdata_properties, dtype: pkg.class.simpleName, notShowProps: [RCConstants.PACKAGE_LIST_STATUS]]}"/>
+
+                    <dt class="col-3 text-right">
+                        <gokb:annotatedLabel owner="${pkg}" property="nationalRanges">National Range</gokb:annotatedLabel>
+                    </dt>
+                    <dd>
+                        <g:if test="${pkg.scope?.value == 'National'}">
+                            <g:render template="/apptemplates/secondTemplates/nationalRange" />
+                        </g:if>
+                    </dd>
+
+                    <dt class="col-3 text-right">
+                        <gokb:annotatedLabel owner="${pkg}" property="regionalRanges">Regional Range</gokb:annotatedLabel>
+                    </dt>
+                    <dd>
+                        <g:if test="${RefdataCategory.lookup(RCConstants.COUNTRY, 'DE') in pkg.nationalRanges && pkg.scope?.value == 'National'}">
+                            <g:render template="/apptemplates/secondTemplates/regionalRange" />
+                        </g:if>
+                    </dd>
 
                 </dl>
             </div>
