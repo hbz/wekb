@@ -1,7 +1,7 @@
 <%@ page import="de.wekb.helper.RCConstants; org.gokb.cred.RefdataCategory" %>
 <ul>
     <g:each in="${d.nationalRanges.sort { it.getI10n('value') }}" var="nationalRange">
-        <li>${nationalRange.value}
+        <li>${nationalRange.value}: ${nationalRange.getI10n('value')}
         <g:if test="${editable}">
             <g:link controller="ajaxSupport" action="deleteNationalRange"
                     params="[package: d.id, removeNationalRange: nationalRange.id]">
@@ -17,14 +17,14 @@
        data-target="#nationalRangeModal">Add National Range</a>
 
     <bootStrap:modal id="nationalRangeModal" title="Add National Range">
-                <g:form class="ui form" url="[controller: 'ajaxSupport', action: 'addNationalRange']" method="post">
+                <g:form class="form" url="[controller: 'ajaxSupport', action: 'addNationalRange']" method="post">
                     <input type="hidden" name="package" value="${d.id}"/>
 
                         <div class="field">
                             <label>National Range:</label>
 
                             <g:select from="${RefdataCategory.lookup(RCConstants.COUNTRY).sort {it.getI10n('value')}}"
-                                      class="ui dropdown fluid"
+                                      class="dropdown fluid"
                                       id="nationalRangeSelection"
                                       optionKey="id"
                                       optionValue="${{ it.getI10n('value') }}"

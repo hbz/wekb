@@ -121,6 +121,11 @@ dependencies {
     //database-migration
     compile 'org.grails.plugins:database-migration:3.0.4'
     compile 'org.liquibase:liquibase-core:3.5.5'
+
+    compile 'com.github.albfernandez:juniversalchardet:2.4.0'
+    // https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
+    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.0.0'
+
 }
 
 bootRun {

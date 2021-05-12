@@ -7,6 +7,10 @@
 <body>
   <h1 class="page-header">
           Create New ${displayobj?.getNiceName() ?: 'Component'}
+
+    <g:if test="${displayobj instanceof org.gokb.cred.Package}">
+      <g:link controller="create" action="packageBatch" class="btn btn-default pull-right btn-sm">Package batch processing</g:link>
+    </g:if>
   </h1>
   <div id="mainarea" class="panel panel-default">
     <div class="panel-body">

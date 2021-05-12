@@ -439,6 +439,16 @@ class BootStrap {
         List ddcList = getParsedCsvData('setup/DDC.csv', 'RefdataValue')
 
         ddcList.each { map ->
+            if(map.get('token').toInteger() < 10)
+            {
+                map.token = "00"+map.get('token')
+            }
+
+            if(map.get('token').toInteger() < 100 && map.get('token').toInteger() >= 10)
+            {
+                map.token = "0"+map.get('token')
+            }
+
             RefdataValue.construct(map)
         }
 

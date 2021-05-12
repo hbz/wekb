@@ -219,7 +219,12 @@ class PublicController {
     Package pkg = genericOIDService.resolveOID(params.id)
 
     if(!pkg){
-      pkg = KBComponent.findByUuid(params.id)
+      pkg = Package.findByUuid(params.id)
+    }
+
+    if(!pkg){
+      response.sendError(404)
+      return
     }
 
     String export_date = dateFormatService.formatDate(new Date());
@@ -245,7 +250,12 @@ class PublicController {
     Package pkg = genericOIDService.resolveOID(params.id)
 
     if(!pkg){
-      pkg = KBComponent.findByUuid(params.id)
+      pkg = Package.findByUuid(params.id)
+    }
+
+    if(!pkg){
+      response.sendError(404)
+      return
     }
 
     String export_date = dateFormatService.formatDate(new Date());
