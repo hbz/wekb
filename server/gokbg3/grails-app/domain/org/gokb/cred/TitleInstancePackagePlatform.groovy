@@ -1119,7 +1119,11 @@ class TitleInstancePackagePlatform extends KBComponent {
         if (tipp_dto.package_ezb_anchor) {
           Identifier canonical_identifier = ComponentLookupService.lookupOrCreateCanonicalIdentifier("package_ezb_anchor", tipp_dto.package_ezb_anchor)
           if (canonical_identifier) {
+            def duplicate = Combo.executeQuery("from Combo as c where c.toComponent = ? and c.fromComponent = ?", [canonical_identifier, tipp])
+
+            if (duplicate.size() == 0) {
               def new_id = new Combo(fromComponent: tipp, toComponent: canonical_identifier, status: RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE), type: RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'KBComponent.Ids')).save()
+            }
           }
         }
 
