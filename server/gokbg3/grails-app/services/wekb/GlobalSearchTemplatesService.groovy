@@ -1445,7 +1445,6 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Name', property: 'component.name', link: true],
                                 [heading: 'Type', property: 'component.niceName'],
                                 [heading: 'Last Update on', property: 'component.lastUpdated'],
-                                [heading: 'Last Update by', property: 'component.lastUpdatedBy?.username'],
                                 [heading: 'Last Update Comment', property: 'component.lastUpdateComment']
                         ]
                 ]

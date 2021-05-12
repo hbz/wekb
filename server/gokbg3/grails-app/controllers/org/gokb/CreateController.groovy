@@ -3,6 +3,7 @@ package org.gokb
 import com.k_int.apis.SecurityApi
 import de.wekb.helper.RCConstants
 import grails.converters.JSON
+import org.apache.commons.lang.RandomStringUtils
 import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.security.access.annotation.Secured;
 import org.gokb.cred.*
@@ -296,7 +297,7 @@ class CreateController {
     User user = springSecurityService.currentUser
 
     result.mappingCols = ["package_name", "provider_uuid", "nominal_platform_uuid", "description", "url", "breakable", "consistent", "content_type",
-            "file", "open_access", "payment_type", "scope", "national_range", "regional_range", "anbieter_produkt_id", "ddc", "source_url", "frequency", "title_id_namespace"]
+            "file", "open_access", "payment_type", "scope", "national_range", "regional_range", "anbieter_produkt_id", "ddc", "source_url", "frequency", "title_id_namespace", "automated_updates"]
 
     result
   }
@@ -331,7 +332,6 @@ class CreateController {
     Map colMap = [:]
     Set<String> globalErrors = []
     List<Package> packageList = []
-    RefdataValue combo_active = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE)
     RefdataValue combo_type_id = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'KBComponent.Ids')
 
     InputStream fileContent = csvFile.getInputStream()
@@ -381,6 +381,8 @@ class CreateController {
           break
         case "title_id_namespace": colMap.title_id_namespace = c
           break
+        case "automated_updates": colMap.automated_updates = c
+          break
       }
     }
 
@@ -402,190 +404,211 @@ class CreateController {
           }
 
           if (name) {
-            String pkg_normname = Package.generateNormname(name)
-            Package pkg = new Package(name: name, normname: pkg_normname)
+            try {
 
-            if (colMap.provider_uuid != null) {
-              Org provider = Org.findByUuid(cols[colMap.provider_uuid].trim())
-              if (provider)
-                pkg.provider = provider
-            }
+              String pkg_normname = Package.generateNormname(name)
+              Package pkg = new Package(name: name, normname: pkg_normname)
 
-            if (colMap.nominal_platform_uuid != null) {
-              Platform platform = Platform.findByUuid(cols[colMap.nominal_platform_uuid].trim())
-              if (platform)
-                pkg.nominalPlatform = platform
-            }
-
-            if (colMap.description != null) {
-              pkg.description = cols[colMap.description].trim()
-            }
-
-            if (colMap.url != null) {
-              pkg.descriptionURL = cols[colMap.url].trim()
-            }
-
-            if (colMap.breakable != null) {
-              String value = cols[colMap.breakable].trim()
-              if (value) {
-                RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.PACKAGE_BREAKABLE, value)
-                if (refdataValue)
-                  pkg.breakable = refdataValue
+              if (colMap.provider_uuid != null) {
+                Org provider = Org.findByUuid(cols[colMap.provider_uuid].trim())
+                if (provider)
+                  pkg.provider = provider
               }
-            }
 
-            if (colMap.consistent != null) {
-              String value = cols[colMap.consistent].trim()
-              if (value) {
-                RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.PACKAGE_CONSISTENT, value)
-                if (refdataValue)
-                  pkg.consistent = refdataValue
+              if (colMap.nominal_platform_uuid != null) {
+                Platform platform = Platform.findByUuid(cols[colMap.nominal_platform_uuid].trim())
+                if (platform)
+                  pkg.nominalPlatform = platform
               }
-            }
 
-            if (colMap.content_type != null) {
-              String value = cols[colMap.content_type].trim()
-              if (value) {
-                RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.PACKAGE_CONTENT_TYPE, value)
-                if (refdataValue)
-                  pkg.contentType = refdataValue
+              if (colMap.description != null) {
+                pkg.description = cols[colMap.description].trim()
               }
-            }
 
-            if (colMap.file != null) {
-              String value = cols[colMap.file].trim()
-              if (value) {
-                RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.PACKAGE_FILE, value)
-                if (refdataValue)
-                  pkg.file = refdataValue
+              if (colMap.url != null) {
+                pkg.descriptionURL = cols[colMap.url].trim()
               }
-            }
 
-            if (colMap.open_access != null) {
-              String value = cols[colMap.open_access].trim()
-              if (value) {
-                RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.PACKAGE_OPEN_ACCESS, value)
-                if (refdataValue)
-                  pkg.openAccess = refdataValue
-              }
-            }
-
-            if (colMap.payment_type != null) {
-              String value = cols[colMap.payment_type].trim()
-              if (value) {
-                RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.PACKAGE_PAYMENT_TYPE, value)
-                if (refdataValue)
-                  pkg.paymentType = refdataValue
-              }
-            }
-
-            if (colMap.scope != null) {
-              String value = cols[colMap.scope].trim()
-              if (value) {
-                RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.PACKAGE_SCOPE, value)
-                if (refdataValue)
-                  pkg.scope = refdataValue
-              }
-            }
-
-
-            if (colMap.national_ranges) {
-              List<String> national_ranges = cols[colMap.national_ranges].split(',')
-              national_ranges.each { String value ->
-                RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.COUNTRY, value)
-                if (refdataValue) {
-                  pkg.addToNationalRanges(refdataValue)
+              if (colMap.breakable != null) {
+                String value = cols[colMap.breakable].trim()
+                if (value) {
+                  RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.PACKAGE_BREAKABLE, value)
+                  if (refdataValue)
+                    pkg.breakable = refdataValue
                 }
               }
-            }
 
-            if (colMap.regional_ranges) {
-              List<String> regional_ranges = cols[colMap.regional_ranges].split(',')
-              regional_ranges.each { String value ->
-                RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.PACKAGE_REGIONAL_RANGE, value)
-                if (refdataValue) {
-                  pkg.addToRegionalRanges(refdataValue)
+              if (colMap.consistent != null) {
+                String value = cols[colMap.consistent].trim()
+                if (value) {
+                  RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.PACKAGE_CONSISTENT, value)
+                  if (refdataValue)
+                    pkg.consistent = refdataValue
                 }
               }
-            }
 
-            if (colMap.anbieter_produkt_id != null) {
-              String value = cols[colMap.anbieter_produkt_id].trim()
-              if (value) {
-                Identifier canonical_identifier = componentLookupService.lookupOrCreateCanonicalIdentifier("Anbieter_Produkt_ID", value)
-                if (canonical_identifier) {
-                  if(pkg.save()) {
-                    def new_id = new Combo(fromComponent: pkg, toComponent: canonical_identifier, status: combo_active, type: combo_type_id).save()
-                  }
+              if (colMap.content_type != null) {
+                String value = cols[colMap.content_type].trim()
+                if (value) {
+                  RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.PACKAGE_CONTENT_TYPE, value)
+                  if (refdataValue)
+                    pkg.contentType = refdataValue
                 }
               }
-            }
 
-            if (colMap.ddcs) {
-              List<String> ddcs = cols[colMap.ddcs].split(',')
-              ddcs.each { String value ->
-                if(value != "") {
-                  if (value.toInteger() < 10) {
-                    value = "00" + value
-                  }
+              if (colMap.file != null) {
+                String value = cols[colMap.file].trim()
+                if (value) {
+                  RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.PACKAGE_FILE, value)
+                  if (refdataValue)
+                    pkg.file = refdataValue
+                }
+              }
 
-                  if (value.toInteger() >= 10 && value.toInteger() < 100) {
-                    value = "0" + value
-                  }
-                  RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.DDC, value)
+              if (colMap.open_access != null) {
+                String value = cols[colMap.open_access].trim()
+                if (value) {
+                  RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.PACKAGE_OPEN_ACCESS, value)
+                  if (refdataValue)
+                    pkg.openAccess = refdataValue
+                }
+              }
+
+              if (colMap.payment_type != null) {
+                String value = cols[colMap.payment_type].trim()
+                if (value) {
+                  RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.PACKAGE_PAYMENT_TYPE, value)
+                  if (refdataValue)
+                    pkg.paymentType = refdataValue
+                }
+              }
+
+              if (colMap.scope != null) {
+                String value = cols[colMap.scope].trim()
+                if (value) {
+                  RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.PACKAGE_SCOPE, value)
+                  if (refdataValue)
+                    pkg.scope = refdataValue
+                }
+              }
+
+
+              if (colMap.national_ranges) {
+                List<String> national_ranges = cols[colMap.national_ranges].split(',')
+                national_ranges.each { String value ->
+                  RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.COUNTRY, value)
                   if (refdataValue) {
-                    pkg.addToDdcs(refdataValue)
+                    pkg.addToNationalRanges(refdataValue)
                   }
                 }
               }
-            }
 
-            if (colMap.source_url != null) {
-              String source_url = cols[colMap.source_url].trim()
-              if (source_url) {
-
-                Source source = new Source(name: pkg.name)
-                source.url = source_url
-
-                if (colMap.frequency != null) {
-                  String value = cols[colMap.frequency].trim()
-                  if (value) {
-                    RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.SOURCE_FREQUENCY, value)
-                    if (refdataValue)
-                      source.frequency = refdataValue
+              if (colMap.regional_ranges) {
+                List<String> regional_ranges = cols[colMap.regional_ranges].split(',')
+                regional_ranges.each { String value ->
+                  RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.PACKAGE_REGIONAL_RANGE, value)
+                  if (refdataValue) {
+                    pkg.addToRegionalRanges(refdataValue)
                   }
                 }
+              }
 
-                if (colMap.title_id_namespace != null) {
-                  String value = cols[colMap.title_id_namespace].trim()
-                  if (value) {
-                    IdentifierNamespace identifierNamespace = IdentifierNamespace.findByValue(value)
-                    if (identifierNamespace)
-                      source.targetNamespace = identifierNamespace
+              if (colMap.anbieter_produkt_id != null) {
+                String value = cols[colMap.anbieter_produkt_id].trim()
+                if (value) {
+                  Identifier canonical_identifier = componentLookupService.lookupOrCreateCanonicalIdentifier("Anbieter_Produkt_ID", value)
+                  if (canonical_identifier) {
+                    if (pkg.save()) {
+                      def new_id = new Combo(fromComponent: pkg, toComponent: canonical_identifier, status: RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE), type: combo_type_id).save()
+                    }
                   }
                 }
-                Package.withTransaction { TransactionStatus ts ->
-                  if (source.save()) {
-                    user.curatoryGroups.each { CuratoryGroup cg ->
-                      source.curatoryGroups.add(cg)
+              }
+
+              if (colMap.ddcs) {
+                List<String> ddcs = cols[colMap.ddcs].split(',')
+                ddcs.each { String value ->
+                  if (value != "") {
+                    if (value.toInteger() < 10) {
+                      value = "00" + value
                     }
 
-                    pkg.source = source
+                    if (value.toInteger() >= 10 && value.toInteger() < 100) {
+                      value = "0" + value
+                    }
+                    RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.DDC, value)
+                    if (refdataValue) {
+                      pkg.addToDdcs(refdataValue)
+                    }
                   }
                 }
-
               }
-            }
-            Package.withTransaction { TransactionStatus ts ->
-              if (pkg.save()) {
 
-                user.curatoryGroups.each { CuratoryGroup cg ->
-                  pkg.curatoryGroups.add(cg)
+              if (colMap.source_url != null) {
+                String source_url = cols[colMap.source_url].trim()
+                if (source_url) {
+
+                  Source source = new Source(name: pkg.name)
+                  source.url = source_url
+
+                  if (colMap.frequency != null) {
+                    String value = cols[colMap.frequency].trim()
+                    if (value) {
+                      RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.SOURCE_FREQUENCY, value)
+                      if (refdataValue)
+                        source.frequency = refdataValue
+                    }
+                  }
+
+                  if (colMap.automated_updates != null) {
+                    String value = cols[colMap.automated_updates].trim()
+                    if (value) {
+                      RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.YN, value)
+                      if (refdataValue)
+                        source.automaticUpdates = (refdataValue.value == "Yes") ? true : false
+                    }
+                  }
+
+                  if (colMap.title_id_namespace != null) {
+                    String value = cols[colMap.title_id_namespace].trim()
+                    if (value) {
+                      IdentifierNamespace identifierNamespace = IdentifierNamespace.findByValue(value)
+                      if (identifierNamespace)
+                        source.targetNamespace = identifierNamespace
+                    }
+                  }
+                  Package.withTransaction { TransactionStatus ts ->
+                    if (source.save()) {
+                      user.curatoryGroups.each { CuratoryGroup cg ->
+                        source.curatoryGroups.add(cg)
+                      }
+
+                      if (source.automaticUpdates) {
+                        String charset = (('a'..'z') + ('0'..'9')).join()
+                        String tokenValue = RandomStringUtils.random(255, charset.toCharArray())
+                        UpdateToken newToken = new UpdateToken(pkg: pkg, updateUser: user, value: tokenValue).save()
+                      }
+
+                      pkg.source = source
+                    }
+                  }
+
                 }
-
-                packageList << pkg
-
               }
+              Package.withTransaction { TransactionStatus ts ->
+                if (pkg.save()) {
+
+                  user.curatoryGroups.each { CuratoryGroup cg ->
+                    pkg.curatoryGroups.add(cg)
+                  }
+
+                  packageList << pkg
+
+                }
+              }
+            }catch ( Exception e ) {
+              e.printStackTrace()
+              globalErrors << "Error on package with the name '${name}'. Please try agian!"
             }
           }
         }
