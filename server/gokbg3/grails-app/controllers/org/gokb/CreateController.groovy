@@ -271,7 +271,7 @@ class CreateController {
   @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
   def exportPackageBatchImportTemplate() {
 
-    String filename = "Moe.xlsx"
+    String filename = "template_package_import.xlsx"
 
     try {
 
@@ -308,18 +308,21 @@ class CreateController {
         MultipartFile csvFile = request.getFile("csvFile")
         if(csvFile && csvFile.size > 0) {
           String encoding = UniversalDetector.detectCharset(csvFile.getInputStream())
-          if(encoding == "UTF-8") {
+          if(encoding in ["UTF-8", "US-ASCII"]) {
             Map packagesData = packageBatchImport(csvFile, user)
 
             render view: 'packageBatchCompleted', model: packagesData
           }
           else {
-            flash.error = "The file you have uploaded has a wrong character encoding! Please ensure that your file is encoded in UTF-8. Guessed encoding has been: ${encoding}"
+            String errorText = "The file you have uploaded has a wrong character encoding! Please ensure that your file is encoded in UTF-8. Guessed encoding has been: ${encoding}"
+            flash.error = errorText
             redirect(url: request.getHeader('referer'))
           }
         }
         else {
-          flash.error = "You have not uploaded a valid file!"
+          String errorText = "You have not uploaded a valid file!"
+          flash.error = errorText
+
           redirect(url: request.getHeader('referer'))
         }
   }
@@ -521,16 +524,18 @@ class CreateController {
             if (colMap.ddcs) {
               List<String> ddcs = cols[colMap.ddcs].split(',')
               ddcs.each { String value ->
-                if(value.toInteger() < 10){
-                  value = "00"+value
-                }
+                if(value != "") {
+                  if (value.toInteger() < 10) {
+                    value = "00" + value
+                  }
 
-                if(value.toInteger() >= 10 && value.toInteger() < 100){
-                  value = "0"+value
-                }
-                RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.DDC, value)
-                if (refdataValue) {
-                  pkg.addToDdcs(refdataValue)
+                  if (value.toInteger() >= 10 && value.toInteger() < 100) {
+                    value = "0" + value
+                  }
+                  RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.DDC, value)
+                  if (refdataValue) {
+                    pkg.addToDdcs(refdataValue)
+                  }
                 }
               }
             }
@@ -561,6 +566,10 @@ class CreateController {
                 }
                 Package.withTransaction { TransactionStatus ts ->
                   if (source.save()) {
+                    user.curatoryGroups.each { CuratoryGroup cg ->
+                      source.curatoryGroups.add(cg)
+                    }
+
                     pkg.source = source
                   }
                 }
