@@ -19,6 +19,7 @@ class SearchService {
     DisplayTemplateService displayTemplateService
     ClassExaminationService classExaminationService
     GokbAclService gokbAclService
+    AccessService accessService
 
     def doQuery (qbetemplate, params, result) {
         def target_class = grailsApplication.getArtefact("Domain",qbetemplate.baseclass);
@@ -86,7 +87,7 @@ class SearchService {
             if ( result.qbetemplate) {
 
                 Class target_class = Class.forName(result.qbetemplate.baseclass);
-                def read_perm = target_class.isTypeReadable()
+                def read_perm = accessService.checkReadable(result.qbetemplate.baseclass)
 
                 if (read_perm && !params.init) {
 

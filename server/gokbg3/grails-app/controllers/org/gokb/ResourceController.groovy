@@ -57,7 +57,7 @@ class ResourceController {
 
       if ( displayobj ) {
 
-        read_perm = displayobj.isTypeReadable()
+        read_perm = accessService.checkReadable(displayobj.class.name)
 
         if (read_perm) {
 
