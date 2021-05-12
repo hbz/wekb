@@ -11,6 +11,8 @@
     Package batch processing
 </h1>
 
+<g:render template="/apptemplates/secondTemplates/messages"/>
+
 <div class="panel panel-default">
     <div class="panel-heading clearfix">
         <h3 class="panel-title">Information</h3>
@@ -19,7 +21,7 @@
     <div class="panel-body">
         This option allows batch processing packages. It understands the following column mappings in the uploaded file.
         <br>
-        Important: please use semicolon as separator and comma may be used as separators for multiple entries!
+        Important: please export the excel file as csv-file. comma may be used as separators for multiple entries!
         <br>
         <g:link action="exportPackageBatchImportTemplate"><p>The template file for the batch processing package can be downloaded here</p></g:link>
     </div>
