@@ -32,6 +32,7 @@ class TitleInstancePackagePlatform extends KBComponent {
   @RefdataAnnotation(cat = RCConstants.TIPP_DELAYED_OA)
   RefdataValue delayedOA
 
+  @HbzKbartAnnotation(kbartField = 'oa_type' , type='all')
   @RefdataAnnotation(cat = RCConstants.TIPP_OPEN_ACCESS)
   RefdataValue openAccess
 
@@ -959,6 +960,7 @@ class TitleInstancePackagePlatform extends KBComponent {
 
         com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.medium, tipp, 'medium', RCConstants.TITLEINSTANCE_MEDIUM)
         com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.publicationType, tipp, 'publicationType', RCConstants.TIPP_PUBLICATION_TYPE)
+        com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.oaType, tipp, 'openAccess', RCConstants.TIPP_OPEN_ACCESS)
 
         if (tipp_dto.coverageStatements && !tipp_dto.coverage) {
           tipp_dto.coverage = tipp_dto.coverageStatements
