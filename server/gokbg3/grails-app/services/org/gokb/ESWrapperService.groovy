@@ -34,8 +34,14 @@ class ESWrapperService {
     if (resource == null){
       resource = getClass().getResource(resourcePath)
     }
-    JSONParser jsonParser = new JSONParser(resource.openStream())
-    jsonParser.parse()
+    JSONParser jsonParser
+    if(resource instanceof URL)
+      jsonParser = new JSONParser(resource.openStream())
+    else if(resource instanceof InputStream)
+      jsonParser = new JSONParser(resource)
+    if(jsonParser)
+      jsonParser.parse()
+    else log.error("resource at path ${resourcePath} unable to locate!")
   }
 
 
