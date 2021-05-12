@@ -80,18 +80,18 @@
                     <dt class="col-3 text-right">
                         <gokb:annotatedLabel owner="${pkg}" property="nationalRanges">National Range</gokb:annotatedLabel>
                     </dt>
-                    <dd>
+                    <dd class="col-9 text-left">
                         <g:if test="${pkg.scope?.value == 'National'}">
-                            <g:render template="/apptemplates/secondTemplates/nationalRange" />
+                            <g:render template="/apptemplates/secondTemplates/nationalRange" model="[d: pkg]"/>
                         </g:if>
                     </dd>
 
                     <dt class="col-3 text-right">
                         <gokb:annotatedLabel owner="${pkg}" property="regionalRanges">Regional Range</gokb:annotatedLabel>
                     </dt>
-                    <dd>
+                    <dd class="col-9 text-left">
                         <g:if test="${RefdataCategory.lookup(RCConstants.COUNTRY, 'DE') in pkg.nationalRanges && pkg.scope?.value == 'National'}">
-                            <g:render template="/apptemplates/secondTemplates/regionalRange" />
+                            <g:render template="/apptemplates/secondTemplates/regionalRange" model="[d: pkg]"/>
                         </g:if>
                     </dd>
 
