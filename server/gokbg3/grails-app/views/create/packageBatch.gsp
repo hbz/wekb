@@ -19,12 +19,10 @@
     </div>
 
     <div class="panel-body">
-        The option Package batch processing allows you to create several packages at once via the provided package template below.
+        The option "Package batch processing" allows you to create several packages at once via the provided package template below.
         <br><br>
-        In order to create your package, download the template below and type in the name of the packages. Give all the relevant information for each individual package and save the template file as a csv file (semicolon separated and UTF-8 coded).
+        In order to create your packages, download the template below and type in the name of the packages. Give all the relevant information for each individual package and save the template file as a csv file (semicolon separated and UTF-8 coded).
         <br>
-        (Comma may be used as separators for multiple entries)
-        <br><br>
         For the upload of the package template, click on „Durchsuchen“ to choose the file you created and Upload it to the we:kb.
         <br><br>
         <g:link action="exportPackageBatchImportTemplate"><p>The template file for the batch processing package can be downloaded here</p></g:link>
@@ -84,7 +82,7 @@
                             break
                         case 'regional_range': args.addAll(RefdataCategory.lookup(RCConstants.PACKAGE_REGIONAL_RANGE).sort { it.value }.collect { it -> it.value })
                             break
-                        case 'ddc': args.addAll(["001"])
+                        case 'ddc': args.addAll(["001", "101", "202"])
                             break
                         case 'frequency': args.addAll(RefdataCategory.lookup(RCConstants.SOURCE_FREQUENCY).sort { it.value }.collect { it -> it.value })
                             break
