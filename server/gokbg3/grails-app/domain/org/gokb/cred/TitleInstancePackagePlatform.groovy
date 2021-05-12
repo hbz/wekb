@@ -311,7 +311,7 @@ class TitleInstancePackagePlatform extends KBComponent {
   /**
    * Create a new TIPP
    */
-  static tippCreate(tipp_fields = [:]) {
+  static TitleInstancePackagePlatform tippCreate(tipp_fields = [:]) {
 
     def tipp_status = tipp_fields.status ? RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, tipp_fields.status) : null
     def tipp_editstatus = tipp_fields.editStatus ? RefdataCategory.lookup(RCConstants.KBCOMPONENT_EDIT_STATUS, tipp_fields.editStatus) : null
@@ -844,7 +844,7 @@ class TitleInstancePackagePlatform extends KBComponent {
         'and tipp.name in (:tiName, :tiDtoName)',
         [pkg: pkg, platform: plt, tiName: ti.name, tiDtoName: tipp_dto.name])
       def uuid_tipp = tipp_dto.uuid ? TitleInstancePackagePlatform.findByUuid(tipp_dto.uuid) : null
-      def tipp = null
+      TitleInstancePackagePlatform tipp = null
 
       //TODO: MOE
       if (uuid_tipp && uuid_tipp.pkg == pkg && uuid_tipp.hostPlatform == plt && (uuid_tipp.name == ti.name || uuid_tipp.name == tipp_dto.name)) {
@@ -1091,8 +1091,8 @@ class TitleInstancePackagePlatform extends KBComponent {
         if (tipp_dto.ddcs) {
             tipp_dto.ddcs.each{ String ddc ->
               RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.DDC, ddc)
-              if(refdataValue && !(refdataValue in result.ddcs)){
-                result.addToDdcs(refdataValue)
+              if(refdataValue && !(refdataValue in tipp.ddcs)){
+                tipp.addToDdcs(refdataValue)
               }
             }
         }
@@ -1100,8 +1100,8 @@ class TitleInstancePackagePlatform extends KBComponent {
         if (tipp_dto.language) {
           tipp_dto.language.each{ String lan ->
             RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.KBCOMPONENT_LANGUAGE, lan)
-            if(refdataValue && !(refdataValue in result.languages)){
-              result.addToLanguages(refdataValue)
+            if(refdataValue && !(refdataValue in tipp.languages)){
+              tipp.addToLanguages(refdataValue)
             }
           }
         }
