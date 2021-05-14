@@ -110,19 +110,19 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#identifiers" data-toggle="tab" role="tab">Identifiers
-                        <span  class="badge badge-pill badge-info">${pkg?.getCombosByPropertyNameAndStatus('ids', 'Active')?.size() ?: '0'}</span>
+                        <span  class="badge badge-pill badge-info">${pkg?.getCombosByPropertyNameAndStatus('ids', 'Active').size()}</span>
                     </a>
                 </li>
 
                 <li class="nav-item">
                     <a class="nav-link" href="#altnames" data-toggle="tab" role="tab">Alternate Names
-                        <span class="badge badge-pill badge-info">${pkg.variantNames?.size() ?: '0'}</span>
+                        <span class="badge badge-pill badge-info">${pkg.variantNames.size()}</span>
                     </a>
                 </li>
 
                 <li class="nav-item">
                     <a class="nav-link" href="#ddcs" data-toggle="tab" role="tab">DDCs
-                        <span class="badge badge-pill badge-info">${pkg.ddcs?.size() ?: '0'}</span>
+                        <span class="badge badge-pill badge-info">${pkg.ddcs.size()}</span>
                     </a>
                 </li>
 

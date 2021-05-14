@@ -13,13 +13,13 @@
     <li class=nav-item">
         <a class="nav-link ${d.publicationType?.value != 'Serial' ? 'active' : ''}" href="#identifiers"
            data-toggle="tab" role="tab">Identifiers <span
-                class="badge badge-pill badge-info">${d?.getCombosByPropertyNameAndStatus('ids', 'Active')?.size() ?: '0'}</span>
+                class="badge badge-pill badge-info">${d?.getCombosByPropertyNameAndStatus('ids', 'Active').size()}</span>
         </a>
     </li>
 
     <li class=nav-item">
         <a class="nav-link" href="#addprops" data-toggle="tab" role="tab">Additional Properties
-            <span class="badge badge-pill badge-info">${d.additionalProperties?.size() ?: '0'}</span>
+            <span class="badge badge-pill badge-info">${d.additionalProperties.size()}</span>
         </a>
     </li>
 
@@ -43,14 +43,14 @@
 
     <li class=nav-item">
         <a class="nav-link" href="#prices" data-toggle="tab" role="tab">Prices
-            <span class="badge badge-pill badge-info">${d.prices?.size() ?: '0'}</span>
+            <span class="badge badge-pill badge-info">${d.prices.size()}</span>
         </a>
     </li>
 
     <g:if test="${controllerName != 'public'}">
         <li class=nav-item">
             <a class="nav-link" href="#review" data-toggle="tab" role="tab">Review Requests
-                <span class="badge badge-pill badge-info">${d.reviewRequests?.size() ?: '0'}</span>
+                <span class="badge badge-pill badge-info">${d.reviewRequests.size()}</span>
             </a>
         </li>
     </g:if>

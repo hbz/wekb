@@ -449,11 +449,22 @@ Platform.AuthMethod;IP;IP;IP
 Platform.AuthMethod;Shibboleth;Shibboleth;Shibboleth
 Platform.AuthMethod;Unknown;Unknown;Unknown
 Platform.AuthMethod;User Password;User Password;User Password
+Platform.IPAuthentication;IPv4;IPv4;IPv4
+Platform.IPAuthentication;IPv6;IPv6;IPv6
+Platform.IPAuthentication;IPv4/IPv6;IPv4/IPv6;IPv4/IPv6
 Platform.Role;Admin;Admin;Admin
 Platform.Role;Host;Host;Host
 Platform.Roles;Host;Host;Host
 Platform.Service;Highwire;Highwire;Highwire
 Platform.Software;Atupon;Atupon;Atupon
+Platform.Statistics.Format;COUNTER;COUNTER;COUNTER
+Platform.Statistics.Format; Document; Document;  Document
+Platform.Statistics.Format;Diagram;Diagram;Diagram
+Platform.Statistics.Update;Weekly;Weekly;Weekly
+Platform.Statistics.Update;Monthly;Monthly;Monthly
+Platform.Statistics.Update;Quarterly;Quarterly;Quarterly
+Platform.Statistics.Update;Half-Yearly;Half-Yearly;Half-Yearly
+Platform.Statistics.Update;Yearly;Yearly;Yearly
 Price.type;list;list;list
 Price.type;on-off;on-off;on-off
 Price.type;open access apc;open access apc;open access apc
