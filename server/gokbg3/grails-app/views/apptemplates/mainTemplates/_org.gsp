@@ -96,46 +96,46 @@
     <ul id="tabs" class="nav nav-tabs">
       <g:if test="${d.id}">
         <li class="active">
-          <a href="#identifiers" data-toggle="tab">Identifiers <span class="badge badge-warning"> ${d.getCombosByPropertyNameAndStatus('ids','Active')?.size() ?: '0'} </span></a>
+          <a href="#identifiers" data-toggle="tab">Identifiers <span class="badge badge-warning"> ${d.getCombosByPropertyNameAndStatus('ids','Active').size()} </span></a>
         </li>
         <li>
           <a href="#altnames" data-toggle="tab">
             Alternate Names
-            <span class="badge badge-warning"> ${d.variantNames?.size() ?: '0'}</span>
+            <span class="badge badge-warning"> ${d.variantNames.size()}</span>
           </a>
         </li>
         <li><a href="#relationships" data-toggle="tab">Relations</a></li>
         <li>
           <a href="#packages" data-toggle="tab">Packages
-            <span class="badge badge-warning"> ${d.getCombosByPropertyNameAndStatus('providedPackages','Active')?.size() ?: '0'}</span>
+            <span class="badge badge-warning"> ${d.getCombosByPropertyNameAndStatus('providedPackages','Active').size()}</span>
           </a>
         </li>
         <li>
           <a href="#titles" data-toggle="tab">Published Titles
-            <span class="badge badge-warning"> ${d.getCombosByPropertyNameAndStatus('publishedTitles','Active')?.size() ?: '0'}</span>
+            <span class="badge badge-warning"> ${d.getCombosByPropertyNameAndStatus('publishedTitles','Active').size()}</span>
           </a>
         </li>
         <li>
           <a href="#platforms" data-toggle="tab">Platforms
-            <span class="badge badge-warning"> ${d.getCombosByPropertyNameAndStatus('providedPlatforms','Active')?.size() ?: '0'}</span>
+            <span class="badge badge-warning"> ${d.getCombosByPropertyNameAndStatus('providedPlatforms','Active').size()}</span>
           </a>
         </li>
         <li>
           <a href="#addprops" data-toggle="tab">
             Custom Fields
-            <span class="badge badge-warning"> ${d.additionalProperties?.size() ?: '0'}</span>
+            <span class="badge badge-warning"> ${d.additionalProperties.size()}</span>
           </a>
         </li>
         <li>
           <a href="#review" data-toggle="tab">
             Review Tasks (Open/Total)
-            <span class="badge badge-warning"> ${d.reviewRequests?.findAll { it.status == org.gokb.cred.RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STATUS,'Open') }?.size() ?: '0'}/${d.reviewRequests.size()} </span>
+            <span class="badge badge-warning"> ${d.reviewRequests?.findAll { it.status == org.gokb.cred.RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STATUS,'Open') }.size()}/${d.reviewRequests.size()} </span>
           </a>
         </li>
         <li>
           <a href="#offices" data-toggle="tab">
             Offices
-            <span class="badge badge-warning"> ${d.offices?.size() ?: '0'}</span>
+            <span class="badge badge-warning"> ${d.offices.size()}</span>
           </a>
         </li>
       </g:if>

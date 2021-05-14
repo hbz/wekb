@@ -229,6 +229,20 @@ class FTUpdateService {
                                   namespaceName: idc.toComponent.namespace.name])
         }
         result.componentType = kbc.class.simpleName
+
+        result.statisticsFormat = kbc.statisticsFormat?.value
+        result.counterR3Supported = kbc.counterR3Supported?.value
+        result.counterR4Supported = kbc.counterR4Supported?.value
+        result.counterR5Supported = kbc.counterR5Supported?.value
+        result.counterR4SushiApiSupported = kbc.counterR4SushiApiSupported?.value
+        result.counterR5SushiApiSupported = kbc.counterR5SushiApiSupported?.value
+        result.counterR4SushiServerUrl = kbc.counterR4SushiServerUrl
+        result.counterR5SushiServerUrl = kbc.counterR5SushiServerUrl
+        result.counterRegistryUrl = kbc.counterRegistryUrl
+        result.statisticsAdminPortalUrl = kbc.statisticsAdminPortalUrl
+        result.statisticsUpdate = kbc.statisticsUpdate?.value
+        result.proxySupported = kbc.proxySupported?.value
+        
         result
       }
 

@@ -118,10 +118,10 @@
     <ul id="tabs" class="nav nav-tabs">
       <g:if test="${d.id}">
         <li role="presentation" class="active"><a href="#titledetails" data-toggle="tab">Titles <span class="badge badge-warning"> ${d.currentTippCount} </span></a></li>
-        <li role="presentation"><a href="#identifiers" data-toggle="tab">Identifiers <span class="badge badge-warning"> ${d?.getCombosByPropertyNameAndStatus('ids','Active')?.size() ?: '0'} </span></a></li>
+        <li role="presentation"><a href="#identifiers" data-toggle="tab">Identifiers <span class="badge badge-warning"> ${d?.getCombosByPropertyNameAndStatus('ids','Active').size()} </span></a></li>
 
         <li role="presentation"><a href="#altnames" data-toggle="tab">Alternate Names
-          <span class="badge badge-warning"> ${d.variantNames?.size() ?: '0'}</span>
+          <span class="badge badge-warning"> ${d.variantNames.size()}</span>
         </a></li>
 
         <li>
@@ -249,7 +249,7 @@
               <gokb:manyToOneReferenceTypedown owner="${d}" field="parent" baseClass="org.gokb.cred.Package">${d.parent?.name}</gokb:manyToOneReferenceTypedown>
             </dd>
 
-            <g:if test="${d.children?.size() > 0}">
+            <g:if test="${d.children.size() > 0}">
               <dt>
                 <gokb:annotatedLabel owner="${d}" property="children">Subsidiaries</gokb:annotatedLabel>
               </dt>

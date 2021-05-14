@@ -204,7 +204,7 @@
         </g:if>
         <li class="${d.publicationType?.value != 'Serial' ? 'active' : ''}"><a href="#identifiers"
                                                                                data-toggle="tab">Identifiers <span
-                    class="badge badge-warning">${d.getCombosByPropertyNameAndStatus('ids', 'Active')?.size() ?: '0'}</span>
+                    class="badge badge-warning">${d.getCombosByPropertyNameAndStatus('ids', 'Active').size()}</span>
         </a>
         </li>
 
