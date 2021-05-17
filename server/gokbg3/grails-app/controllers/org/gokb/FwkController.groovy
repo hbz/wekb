@@ -189,11 +189,9 @@ class FwkController {
       def allOidEvents = AuditLogEvent.findAllByPersistedObjectId(evt.persistedObjectId)
       def skip = false
 
-      println("allOidEvents: ${allOidEvents.size()}")
+     event.oldValue = getComboValueMaps(evt.oldValue)
 
-      event.oldValue = evt.oldValue ? getComboValueMaps(evt.oldValue) : [val: "", oid: null]
-
-      event.newValue = evt.newValue ? getComboValueMaps(evt.newValue) : [val: "", oid: null]
+     event.newValue = getComboValueMaps(evt.newValue)
 
       if ( evt.className == 'Combo' ) {
         def hasOwnerRef = allOidEvents.collect {( it.newValue?.contains(params.id) || it.oldValue?.contains(params.id)) && it.propertyName == evt.propertyName}.any { it == true }
@@ -228,7 +226,7 @@ class FwkController {
         skippedLines++
       }
     }
-    println("stagingHistoryLines ${stagingHistoryLines.size()}")
+    
     stagingHistoryLines.eachWithIndex { hl, idx ->
       if(hl.className == 'Combo') {
         log.debug("Combo line: ${hl}")
