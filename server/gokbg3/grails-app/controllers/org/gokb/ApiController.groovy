@@ -277,7 +277,7 @@ class ApiController {
 
     log.debug("Entering SearchController:index");
 
-    result.max = params.max ? Integer.parseInt(params.max) : ( user.defaultPageSize ?: 10 );
+    result.max = params.max ? Integer.parseInt(params.max) : user.defaultPageSizeAsInteger
     result.offset = params.offset ? Integer.parseInt(params.offset) : 0;
 
     if ( request.JSON ) {

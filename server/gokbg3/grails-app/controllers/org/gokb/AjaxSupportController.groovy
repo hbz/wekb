@@ -769,7 +769,8 @@ class AjaxSupportController {
   def lookup() {
     log.debug("AjaxController::lookup ${params}");
     def result = [:]
-    params.max = params.max ?: 10;
+    User user = springSecurityService.getCurrentUser()
+    params.max = params.max ?: user.defaultPageSizeAsInteger
     def domain_class = grailsApplication.getArtefact('Domain',params.baseClass)
     if ( domain_class && domain_class.getClazz().isTypeReadable() ) {
       result.values = domain_class.getClazz().refdataFind(params);

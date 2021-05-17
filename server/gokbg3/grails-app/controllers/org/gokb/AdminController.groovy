@@ -672,7 +672,7 @@ class AdminController {
     RefdataValue status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
 
     params.offset = params.offset ?: 0
-    params.max = params.max ? Integer.parseInt(params.max) : (user.defaultPageSize ?: 10)
+    params.max = params.max ? Integer.parseInt(params.max) : user.defaultPageSizeAsInteger
 
     result.packagesCount = Package.executeQuery('select count(pkg) ' + query, [status: status_deleted])[0]
     result.packages = Package.executeQuery('select pkg ' + query + " order by pkg.lastUpdated desc", [status: status_deleted], params)
