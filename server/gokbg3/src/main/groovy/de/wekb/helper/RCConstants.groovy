@@ -1,7 +1,9 @@
 package de.wekb.helper
 
+import de.wekb.annotations.RefdataAnnotation
 import groovy.transform.CompileStatic
 import org.gokb.cred.RefdataCategory
+import org.gokb.cred.RefdataValue
 
 //Constants of RefdataCategory
 @CompileStatic
@@ -65,10 +67,13 @@ class RCConstants {
 
     public static final String PLATFORM_AUTHENTICATION = "Platform.Authentication"
     public static final String PLATFORM_AUTH_METHOD= "Platform.AuthMethod"
+    public static final String PLATFORM_IP_AUTH= "Platform.IPAuthentication"
     public static final String PLATFORM_ROLE = "Platform.Role"
     public static final String PLATFORM_ROLES = "Platform.Roles"
     public static final String PLATFORM_SERVICE = "Platform.Service"
     public static final String PLATFORM_SOFTWARE = "Platform.Software"
+    public static final String PLATFORM_STATISTICS_FORMAT = "Platform.Statistics.Format"
+    public static final String PLATFORM_STATISTICS_UPDATE = "Platform.Statistics.Update"
 
     public static final String PRICE_TYPE = "Price.type"
 

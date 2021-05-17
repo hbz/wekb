@@ -19,10 +19,12 @@
     </div>
 
     <div class="panel-body">
-        This option allows batch processing packages. It understands the following column mappings in the uploaded file.
+        The option "Package batch processing" allows you to create several packages at once via the provided package template below.
+        <br><br>
+        In order to create your packages, download the template below and type in the name of the packages. Give all the relevant information for each individual package and save the template file as a csv file (semicolon separated and UTF-8 coded).
         <br>
-        Important: please export the excel file as csv-file. comma may be used as separators for multiple entries!
-        <br>
+        For the upload of the package template, click on „Durchsuchen“ to choose the file you created and Upload it to the we:kb.
+        <br><br>
         <g:link action="exportPackageBatchImportTemplate"><p>The template file for the batch processing package can be downloaded here</p></g:link>
     </div>
 </div>
@@ -35,12 +37,7 @@
     <div class="panel-body">
         <g:uploadForm action="processPackageBatch" method="post">
             <dl>
-                <div class="field">
-                    <dt>Upload CSV-Template File according to the column definitions above</dt>
-                    <dd>
-                        <input type="file" class="btn btn-default" name="csvFile"/>
-                    </dd>
-                </div>
+                <input type="file" class="btn btn-default" name="csvFile"/>
                 <br>
                 <button class="btn btn-default btn-sm" type="submit">Upload</button>
             </dl>
@@ -85,11 +82,13 @@
                             break
                         case 'regional_range': args.addAll(RefdataCategory.lookup(RCConstants.PACKAGE_REGIONAL_RANGE).sort { it.value }.collect { it -> it.value })
                             break
-                        case 'ddc': args.addAll(["001"])
+                        case 'ddc': args.addAll(["001", "101", "202"])
                             break
                         case 'frequency': args.addAll(RefdataCategory.lookup(RCConstants.SOURCE_FREQUENCY).sort { it.value }.collect { it -> it.value })
                             break
                         case 'title_id_namespace': args.addAll(IdentifierNamespace.findAllByFamily('ttl_prv').sort { it.value }.collect { it -> it.value })
+                            break
+                        case 'automated_updates': args.addAll(RefdataCategory.lookup(RCConstants.YN).sort { it.value }.collect { it -> it.value })
                             break
                     }
                 %>

@@ -40,7 +40,7 @@ class PackageController {
 
             if ( pkg ) {
 
-                read_perm = pkg.isTypeReadable()
+                read_perm = accessService.checkReadable(pkg.class.name)
 
                 if (read_perm) {
 

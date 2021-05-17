@@ -76,7 +76,7 @@
 
     <dt class="col-3 text-right"><gokb:annotatedLabel owner="${d}"
                              property="ipAuthentication">IP Auth Supported</gokb:annotatedLabel></dt>
-    <dd class="col-9 text-left"><gokb:xEditableRefData owner="${d}" field="ipAuthentication" config="${RCConstants.YN}"/></dd>
+    <dd class="col-9 text-left"><gokb:xEditableRefData owner="${d}" field="ipAuthentication" config="${RCConstants.PLATFORM_IP_AUTH}"/></dd>
 
     <dt class="col-3 text-right"><gokb:annotatedLabel owner="${d}"
                              property="shibbolethAuthentication">Shibboleth Supported</gokb:annotatedLabel></dt>

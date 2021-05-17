@@ -38,10 +38,13 @@ Package.PaymentType;Package Payment Type;Package Payment Type
 Package.Scope;Package Scope;Package Scope
 Platform.Authentication;Platform Authentication;Platform Authentication
 Platform.AuthMethod;Platform AuthMethod;Platform AuthMethod
+Platform.IPAuthentication;Platform IP Authentication;Platform IP Authentication
 Platform.Role;Platform Role;Platform Role
 Platform.Roles;Platform Roles;Platform Roles
 Platform.Service;Platform Service;Platform Service
 Platform.Software;Platform Software;Platform Software
+Platform.Statistics.Format;Platform Statistics Format;Platform Statistics Format
+Platform.Statistics.Update;Platform Statistics Update;Platform Statistics Update
 Price.type;Price type;Price type
 RDFDataType;RDF Data Type;RDF Data Type
 ReviewRequest.Status;Review Request Status;Review Request Status

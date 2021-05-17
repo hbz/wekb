@@ -1,4 +1,4 @@
-<%@ page import="de.wekb.helper.RCConstants" %>
+<%@ page import="de.wekb.helper.RCConstants; org.gokb.cred.RefdataCategory;" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -77,6 +77,24 @@
                     <g:render template="/apptemplates/secondTemplates/refdataprops"
                               model="${[d: pkg, rd: refdata_properties, dtype: pkg.class.simpleName, notShowProps: [RCConstants.PACKAGE_LIST_STATUS]]}"/>
 
+                    <dt class="col-3 text-right">
+                        <gokb:annotatedLabel owner="${pkg}" property="nationalRanges">National Range</gokb:annotatedLabel>
+                    </dt>
+                    <dd class="col-9 text-left">
+                        <g:if test="${pkg.scope?.value == 'National'}">
+                            <g:render template="/apptemplates/secondTemplates/nationalRange" model="[d: pkg]"/>
+                        </g:if>
+                    </dd>
+
+                    <dt class="col-3 text-right">
+                        <gokb:annotatedLabel owner="${pkg}" property="regionalRanges">Regional Range</gokb:annotatedLabel>
+                    </dt>
+                    <dd class="col-9 text-left">
+                        <g:if test="${RefdataCategory.lookup(RCConstants.COUNTRY, 'DE') in pkg.nationalRanges && pkg.scope?.value == 'National'}">
+                            <g:render template="/apptemplates/secondTemplates/regionalRange" model="[d: pkg]"/>
+                        </g:if>
+                    </dd>
+
                 </dl>
             </div>
             <g:render template="rightBox" model="${[d: pkg]}"/>
@@ -92,19 +110,19 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#identifiers" data-toggle="tab" role="tab">Identifiers
-                        <span  class="badge badge-pill badge-info">${pkg?.getCombosByPropertyNameAndStatus('ids', 'Active')?.size() ?: '0'}</span>
+                        <span  class="badge badge-pill badge-info">${pkg?.getCombosByPropertyNameAndStatus('ids', 'Active').size()}</span>
                     </a>
                 </li>
 
                 <li class="nav-item">
                     <a class="nav-link" href="#altnames" data-toggle="tab" role="tab">Alternate Names
-                        <span class="badge badge-pill badge-info">${pkg.variantNames?.size() ?: '0'}</span>
+                        <span class="badge badge-pill badge-info">${pkg.variantNames.size()}</span>
                     </a>
                 </li>
 
                 <li class="nav-item">
                     <a class="nav-link" href="#ddcs" data-toggle="tab" role="tab">DDCs
-                        <span class="badge badge-pill badge-info">${pkg.ddcs?.size() ?: '0'}</span>
+                        <span class="badge badge-pill badge-info">${pkg.ddcs.size()}</span>
                     </a>
                 </li>
 

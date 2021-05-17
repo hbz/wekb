@@ -1,5 +1,6 @@
 package org.gokb.cred
 
+import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
 
 import javax.persistence.Transient
@@ -10,12 +11,48 @@ import org.gokb.GOKbTextUtils
 class Platform extends KBComponent {
 
   String primaryUrl
+
+
   RefdataValue authentication
   RefdataValue software
   RefdataValue service
+
   RefdataValue ipAuthentication
+
+  @RefdataAnnotation(cat = RCConstants.PLATFORM_IP_AUTH)
   RefdataValue shibbolethAuthentication
   RefdataValue passwordAuthentication
+
+  @RefdataAnnotation(cat = RCConstants.PLATFORM_STATISTICS_FORMAT)
+  RefdataValue statisticsFormat
+
+  @RefdataAnnotation(cat = RCConstants.YN)
+  RefdataValue counterR3Supported
+
+  @RefdataAnnotation(cat = RCConstants.YN)
+  RefdataValue counterR4Supported
+
+  @RefdataAnnotation(cat = RCConstants.YN)
+  RefdataValue counterR5Supported
+
+  @RefdataAnnotation(cat = RCConstants.YN)
+  RefdataValue counterR4SushiApiSupported
+
+  @RefdataAnnotation(cat = RCConstants.YN)
+  RefdataValue counterR5SushiApiSupported
+
+  String counterR4SushiServerUrl
+
+  String counterR5SushiServerUrl
+  String counterRegistryUrl
+
+  String statisticsAdminPortalUrl
+
+  @RefdataAnnotation(cat = RCConstants.PLATFORM_STATISTICS_UPDATE)
+  RefdataValue statisticsUpdate
+
+  @RefdataAnnotation(cat = RCConstants.YN)
+  RefdataValue proxySupported
 
   static hasMany = [roles: RefdataValue]
 
@@ -48,6 +85,19 @@ class Platform extends KBComponent {
     ipAuthentication column: 'plat_auth_by_ip_fk_rv'
     shibbolethAuthentication column: 'plat_auth_by_shib_fk_rv'
     passwordAuthentication column: 'plat_auth_by_pass_fk_rv'
+    statisticsFormat column: 'plat_statistics_format_fk_rv'
+    counterR3Supported column: 'plat_counter_r3_supported_fk_rv'
+    counterR4Supported column: 'plat_counter_r4_supported_fk_rv'
+    counterR5Supported column: 'plat_counter_r5_supported_fk_rv'
+    counterR4SushiApiSupported column: 'plat_counter_r4_sushi_api_supported_fk_rv'
+    counterR5SushiApiSupported column: 'plat_counter_r5_sushi_api_supported_fk_rv'
+    counterR4SushiServerUrl column: 'plat_counter_r4_sushi_server_url'
+    counterR5SushiServerUrl column: 'plat_counter_r5_sushi_server_url'
+    counterRegistryUrl column: 'plat_counter_registry_url'
+    statisticsAdminPortalUrl column: 'plat_statistics_admin_portal_url'
+    statisticsUpdate column: 'plat_statistics_update_fk_rv'
+    proxySupported column: 'plat_proxy_supported_fk_rv'
+
   }
 
   static constraints = {
@@ -71,6 +121,19 @@ class Platform extends KBComponent {
         }
       }
     })
+    statisticsFormat(nullable: true, blank: false)
+    counterR3Supported(nullable: true, blank: false)
+    counterR4Supported(nullable: true, blank: false)
+    counterR5Supported(nullable: true, blank: false)
+    counterR4SushiApiSupported(nullable: true, blank: false)
+    counterR5SushiApiSupported(nullable: true, blank: false)
+    counterR4SushiServerUrl(nullable: true, blank: false)
+    counterR5SushiServerUrl(nullable: true, blank: false)
+    counterRegistryUrl(nullable: true, blank: false)
+    statisticsAdminPortalUrl(nullable: true, blank: false)
+    statisticsUpdate(nullable: true, blank: false)
+    proxySupported(nullable: true, blank: false)
+
   }
 
   public static final String restPath = "/platforms"
@@ -383,5 +446,16 @@ class Platform extends KBComponent {
     }
 
     result;
+  }
+
+  @Transient
+  public getCurrentTippCount() {
+    def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current');
+    def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Platform.HostedTipps')
+
+    int result = Combo.executeQuery("select count(c.id) from Combo as c where c.fromComponent = ? and c.type = ? and c.toComponent.status = ?"
+            , [this, combo_tipps, refdata_current])[0]
+
+    result
   }
 }

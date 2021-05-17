@@ -31,6 +31,7 @@
                 <th>Source</th>
                 <th>Frequency</th>
                 <th>Title ID Namespace</th>
+                <th>Automated Updates</th>
             </tr>
             </thead>
             <tbody>
@@ -68,6 +69,12 @@
                     <td>
                         <g:if test="${pkg.source}">
                             ${pkg.source.targetNamespace.value}
+                        </g:if>
+                    </td>
+
+                    <td>
+                        <g:if test="${pkg.source}">
+                            ${pkg.source.automaticUpdates ? 'Yes' : 'No'}
                         </g:if>
                     </td>
 
