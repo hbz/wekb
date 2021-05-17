@@ -1,7 +1,7 @@
 <%@ page import="de.wekb.helper.RCConstants;" %>
 <div class="tab-pane" id="openAccess" role="tabpanel">
     <g:if test="${d.id != null}">
-        <dl class="dl-horizontal">
+        <dl>
             <dt>
                 <gokb:annotatedLabel owner="${d}" property="openAccess">Open Access</gokb:annotatedLabel>
             </dt>

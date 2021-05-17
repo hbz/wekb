@@ -551,11 +551,6 @@ class BootStrap {
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_OPEN_ACCESS, "White OA").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_OPEN_ACCESS, "Yellow OA").save(flush: true, failOnError: true)
 
-        RefdataCategory.lookupOrCreate(RCConstants.PLATFORM_AUTH_METHOD, "IP").save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.PLATFORM_AUTH_METHOD, "Shibboleth").save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.PLATFORM_AUTH_METHOD, "User Password").save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.PLATFORM_AUTH_METHOD, "Unknown").save(flush: true, failOnError: true)
-
         RefdataCategory.lookupOrCreate(RCConstants.PLATFORM_ROLE, "Admin").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PLATFORM_ROLE, "Host").save(flush: true, failOnError: true)
 

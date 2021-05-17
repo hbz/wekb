@@ -14,13 +14,14 @@ class Platform extends KBComponent {
 
 
   RefdataValue authentication
-  RefdataValue software
-  RefdataValue service
-
-  RefdataValue ipAuthentication
 
   @RefdataAnnotation(cat = RCConstants.PLATFORM_IP_AUTH)
+  RefdataValue ipAuthentication
+
+  @RefdataAnnotation(cat = RCConstants.YN)
   RefdataValue shibbolethAuthentication
+
+  @RefdataAnnotation(cat = RCConstants.YN)
   RefdataValue passwordAuthentication
 
   @RefdataAnnotation(cat = RCConstants.PLATFORM_STATISTICS_FORMAT)
@@ -80,8 +81,6 @@ class Platform extends KBComponent {
     includes KBComponent.mapping
     primaryUrl column: 'plat_primary_url', index: 'platform_primary_url_idx'
     authentication column: 'plat_authentication_fk_rv'
-    software column: 'plat_sw_fk_rv'
-    service column: 'plat_svc_fk_rv'
     ipAuthentication column: 'plat_auth_by_ip_fk_rv'
     shibbolethAuthentication column: 'plat_auth_by_shib_fk_rv'
     passwordAuthentication column: 'plat_auth_by_pass_fk_rv'
@@ -103,8 +102,6 @@ class Platform extends KBComponent {
   static constraints = {
     primaryUrl(url: true, nullable: true, blank: false)
     authentication(nullable: true, blank: false)
-    software(nullable: true, blank: false)
-    service(nullable: true, blank: false)
     ipAuthentication(nullable: true, blank: false)
     shibbolethAuthentication(nullable: true, blank: false)
     passwordAuthentication(nullable: true, blank: false)
@@ -140,8 +137,6 @@ class Platform extends KBComponent {
 
   static jsonMapping = [
     'ignore'       : [
-      'service',
-      'software'
     ],
     'es'           : [
       'providerUuid': "provider.uuid",
@@ -192,8 +187,6 @@ class Platform extends KBComponent {
 
         builder.'primaryUrl'(primaryUrl)
         builder.'authentication'(authentication?.value)
-        builder.'software'(software?.value)
-        builder.'service'(service?.value)
 
         if (ipAuthentication) builder.'ipAuthentication'(ipAuthentication.value)
         if (shibbolethAuthentication) builder.'shibbolethAuthentication'(shibbolethAuthentication.value)

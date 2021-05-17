@@ -12,7 +12,7 @@ while ( moredata ) {
     body?.'ListRecords'?.'record'.eachWithIndex { rec, index ->
 
       def data = rec.metadata.gokb.platform
-      def directFields = ['authentication', 'software', 'service']
+      def directFields = ['authentication']
 
       println("Record ${index + 1}")
 

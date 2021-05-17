@@ -756,11 +756,6 @@ class IntegrationController {
         if (p) {
           log.debug("created or looked up platform ${p}!")
 
-          componentUpdateService.setAllRefdata([
-              'software', 'service'
-          ], platformJson, p)
-          ClassUtils.setRefdataIfPresent(platformJson.authentication, p, 'authentication', RCConstants.PLATFORM_AUTH_METHOD)
-
           if (platformJson.provider) {
             def prov = null
 
