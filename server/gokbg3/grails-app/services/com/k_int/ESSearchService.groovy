@@ -49,6 +49,10 @@ class ESSearchService{
           "identifier",
           "ids",
           "identifiers",
+          "ddcs",
+          "ddc",
+          "languages",
+          "language",
           "status",
           "componentType",
           "platform",
@@ -351,29 +355,32 @@ class ESSearchService{
 
   private void addIdentifierQuery(query, errors, qpars) {
     def id_params = [:]
-    def val = null
+    List valList = []
 
     if (qpars.identifier) {
-      val = qpars.identifier
+      valList.addAll(qpars.list("identifier"))
     }
     else if (qpars.ids) {
-      val = qpars.ids
+      valList.addAll(qpars.list("ids"))
     }
     else if (qpars.identifiers) {
-      val = qpars.identifiers
+      valList.addAll(qpars.list("identifiers"))
     }
 
-    if ( val?.trim() ) {
-      if (val.contains(',')) {
-        id_params['identifiers.namespace'] = val.split(',')[0]
-        id_params['identifiers.value'] = val.split(',')[1]
-      }else{
-        id_params['identifiers.value'] = val
+    valList.each { String val ->
+      if ( val.trim() ) {
+        if (val.contains(',')) {
+          id_params['identifiers.namespace'] = val.split(',')[0]
+          id_params['identifiers.value'] = val.split(',')[1]
+        }else{
+          id_params['identifiers.value'] = val
+        }
+
+        log.debug("Query ids for ${id_params}")
+        query.must(QueryBuilders.nestedQuery("identifiers", addIdQueries(id_params), ScoreMode.Max))
       }
-
-      log.debug("Query ids for ${id_params}")
-      query.must(QueryBuilders.nestedQuery("identifiers", addIdQueries(id_params), ScoreMode.Max))
     }
+
   }
 
   private void processNameFields(query, errors, qpars) {
@@ -433,6 +440,28 @@ class ESSearchService{
       genericQuery.minimumNumberShouldMatch(1)
 
       query.must(genericQuery)
+    }
+  }
+
+  private void processNestedFields(query, errors, qpars) {
+    //QueryBuilder subQuery = QueryBuilders.boolQuery()
+    String field
+    Map<String, String> subQueryParams = [:]
+    //TODO this may be extended upon free-text (then, I need wildcardQuery as second field)
+    if(qpars.ddc) {
+      subQueryParams['ddcs.value'] = qpars.ddc
+    }
+    else if(qpars.ddcs) {
+      subQueryParams['ddcs.value'] = qpars.ddcs
+    }
+    if(qpars.language) {
+      subQueryParams['languages.value'] = qpars.language
+    }
+    else if(qpars.languages) {
+      subQueryParams['languages.value'] = qpars.languages
+    }
+    subQueryParams.each { String k, String v ->
+      query.must(QueryBuilders.termQuery(k, v))
     }
   }
 
@@ -634,6 +663,7 @@ class ESSearchService{
       addStatusQuery(exactQuery, errors, params.status)
       addDateQueries(exactQuery, errors, params)
       processNameFields(exactQuery, errors, params)
+      processNestedFields(exactQuery, errors, params)
       processGenericFields(exactQuery, errors, params)
       addIdentifierQuery(exactQuery, errors, params)
       specifyQueryWithParams(params, exactQuery, errors, unknown_fields)
