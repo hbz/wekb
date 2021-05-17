@@ -18,18 +18,7 @@
       ${d.status?.value ?: 'Not Set'}
     </sec:ifNotGranted>
   </dd>
-  <dt>
-          <gokb:annotatedLabel owner="${d}" property="reference">Reference</gokb:annotatedLabel>
-  </dt>
-  <dd>
-          <gokb:xEditable  owner="${d}" field="reference" />
-  </dd>
-  <dt>
-    <gokb:annotatedLabel owner="${d}" property="source">Source</gokb:annotatedLabel>
-  </dt>
-  <dd>
-    <gokb:manyToOneReferenceTypedown owner="${d}" field="source" baseClass="org.gokb.cred.Source">${d.source?.name}</gokb:manyToOneReferenceTypedown>
-  </dd>
+
   <dt>
     <gokb:annotatedLabel owner="${d}" property="titleNamespace">Title Namespace</gokb:annotatedLabel>
   </dt>
