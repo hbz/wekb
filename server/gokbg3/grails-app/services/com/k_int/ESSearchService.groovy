@@ -368,7 +368,7 @@ class ESSearchService{
     }
 
     valList.each { String val ->
-      if ( val?.trim() ) {
+      if ( val.trim() ) {
         if (val.contains(',')) {
           id_params['identifiers.namespace'] = val.split(',')[0]
           id_params['identifiers.value'] = val.split(',')[1]
