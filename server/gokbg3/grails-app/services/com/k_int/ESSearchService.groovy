@@ -355,29 +355,32 @@ class ESSearchService{
 
   private void addIdentifierQuery(query, errors, qpars) {
     def id_params = [:]
-    def val = null
+    List valList = []
 
     if (qpars.identifier) {
-      val = qpars.identifier
+      valList.addAll(qpars.list("identifier"))
     }
     else if (qpars.ids) {
-      val = qpars.ids
+      valList.addAll(qpars.list("ids"))
     }
     else if (qpars.identifiers) {
-      val = qpars.identifiers
+      valList.addAll(qpars.list("identifiers"))
     }
 
-    if ( val?.trim() ) {
-      if (val.contains(',')) {
-        id_params['identifiers.namespace'] = val.split(',')[0]
-        id_params['identifiers.value'] = val.split(',')[1]
-      }else{
-        id_params['identifiers.value'] = val
+    valList.each { String val ->
+      if ( val?.trim() ) {
+        if (val.contains(',')) {
+          id_params['identifiers.namespace'] = val.split(',')[0]
+          id_params['identifiers.value'] = val.split(',')[1]
+        }else{
+          id_params['identifiers.value'] = val
+        }
+
+        log.debug("Query ids for ${id_params}")
+        query.must(QueryBuilders.nestedQuery("identifiers", addIdQueries(id_params), ScoreMode.Max))
       }
-
-      log.debug("Query ids for ${id_params}")
-      query.must(QueryBuilders.nestedQuery("identifiers", addIdQueries(id_params), ScoreMode.Max))
     }
+
   }
 
   private void processNameFields(query, errors, qpars) {
