@@ -444,11 +444,6 @@ Package.Scope;Consortium;Consortium;Consortium
 Package.Scope;Global;Global;Global
 Package.Scope;Individual;Individual;Individual
 Package.Scope;National;National;National
-Platform.Authentication;Unknown;Unknown;Unknown
-Platform.AuthMethod;IP;IP;IP
-Platform.AuthMethod;Shibboleth;Shibboleth;Shibboleth
-Platform.AuthMethod;Unknown;Unknown;Unknown
-Platform.AuthMethod;User Password;User Password;User Password
 Platform.IPAuthentication;IPv4;IPv4;IPv4
 Platform.IPAuthentication;IPv6;IPv6;IPv6
 Platform.IPAuthentication;IPv4/IPv6;IPv4/IPv6;IPv4/IPv6

@@ -36,8 +36,6 @@ Package.OpenAccess;Package Open Access;Package Open Access
 Package.RegionalRange; Package RegionalRange; Package RegionalRange
 Package.PaymentType;Package Payment Type;Package Payment Type
 Package.Scope;Package Scope;Package Scope
-Platform.Authentication;Platform Authentication;Platform Authentication
-Platform.AuthMethod;Platform AuthMethod;Platform AuthMethod
 Platform.IPAuthentication;Platform IP Authentication;Platform IP Authentication
 Platform.Role;Platform Role;Platform Role
 Platform.Roles;Platform Roles;Platform Roles
