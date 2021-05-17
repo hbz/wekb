@@ -29,9 +29,10 @@
 
             <g:render template="rightBox" model="${[d: tipp]}"/>
         </div>
-        <g:render template="tippTabs"  model="${[d: tipp]}"/>
+        <g:render template="/tabTemplates/tippTabs" model="${[d: tipp]}"/>
 
-
+        <g:render template="componentStatus"
+                  model="${[d: tipp]}"/>
 
     </g:if>
     <div class="row justify-content-end">

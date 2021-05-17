@@ -1,7 +1,7 @@
 <%@ page import="de.wekb.helper.RCConstants;" %>
 <g:if test="${d.publicationType?.value == 'Serial'}">
 	<div class="tab-pane active" id="tippcoverage" role="tabpanel">
-		<dl class="dl-horizontal">
+		<dl>
 			<dt>
 				<gokb:annotatedLabel owner="${d}" property="coverage">Coverage</gokb:annotatedLabel>
 			</dt>
@@ -60,7 +60,7 @@
 					</tbody>
 				</table>
 				<g:if test="${editable}">
-					<dl class="dl-horizontal">
+					<dl>
 						<a data-toggle="modal" data-cache="false"
 						   data-target="#coverageStatementsModal">Add Coverage Statement</a>
 

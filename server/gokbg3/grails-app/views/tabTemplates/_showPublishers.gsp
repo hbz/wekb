@@ -37,7 +37,7 @@
       <h4>
         <gokb:annotatedLabel owner="${d}" property="addPublisher">Add new Publisher</gokb:annotatedLabel>
       </h4>
-      <dl class="dl-horizontal">
+      <dl>
 
         <a data-toggle="modal" data-cache="false"
            data-target="#publishersModal">Add new Publisher</a>

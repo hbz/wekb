@@ -69,7 +69,7 @@
 
 
             <div class="tab-pane fade" id="statistic" role="tabpanel">
-                <dl class="dl-horizontal">
+                <dl>
                     <dt>
                         <gokb:annotatedLabel owner="${d}"
                                              property="statisticsFormat">Statistics Format</gokb:annotatedLabel>

@@ -195,64 +195,9 @@
 </dl>
 
 <g:if test="${d.id != null}">
-    <ul id="tabs" class="nav nav-tabs">
 
-        <g:if test="${d.publicationType?.value == 'Serial'}">
-            <li class="active">
-                <a href="#tippcoverage" data-toggle="tab">Coverage</a>
-            </li>
-        </g:if>
-        <li class="${d.publicationType?.value != 'Serial' ? 'active' : ''}"><a href="#identifiers"
-                                                                               data-toggle="tab">Identifiers <span
-                    class="badge badge-warning">${d.getCombosByPropertyNameAndStatus('ids', 'Active').size()}</span>
-        </a>
-        </li>
+    <g:render template="/tabTemplates/tippTabs" model="${[d: d]}"/>
 
-        <li>
-            <a href="#addprops" data-toggle="tab">Additional Properties
-                <span class="badge badge-warning">${d.additionalProperties.size()}</span>
-            </a>
-        </li>
-
-        <li>
-            <a href="#subjectArea" data-toggle="tab">Subject Area</a>
-        </li>
-
-        <li>
-            <a href="#ddcs" data-toggle="tab">DDCs
-                <span class="badge badge-warning">${d.ddcs.size()}</span>
-            </a>
-        </li>
-
-        <li>
-            <a href="#series" data-toggle="tab">Series</a>
-        </li>
-
-        <li>
-            <a href="#openAccess" data-toggle="tab">Open Access</a>
-        </li>
-
-        <li>
-            <a href="#prices" data-toggle="tab">Prices
-                <span class="badge badge-warning">${d.prices.size()}</span>
-            </a>
-        </li>
-
-        <g:if test="${controllerName != 'public'}">
-            <li>
-                <a href="#review" data-toggle="tab">Review Requests
-                    <span class="badge badge-warning">${d.reviewRequests.size()}</span>
-                </a>
-            </li>
-        </g:if>
-    </ul>
-
-
-    <div id="my-tab-content" class="tab-content">
-
-        <g:render template="/tabTemplates/tippTabs" model="${[d: d]}"/>
-
-    </div>
     <g:render template="/apptemplates/secondTemplates/componentStatus"
               model="${[d: d]}"/>
 </g:if>
