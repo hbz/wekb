@@ -11,7 +11,7 @@
     type="image/x-icon">
   
   <g:layoutHead />
-  <asset:javascript src="application.grass.js" />
+  <asset:javascript src="base.js" />
   <asset:stylesheet src="sb-admin-2.css"/>
   <asset:stylesheet src="gokb/themes/${ grailsApplication.config.gokb.theme }/theme.css"/>
   <asset:stylesheet src="application.css"/>

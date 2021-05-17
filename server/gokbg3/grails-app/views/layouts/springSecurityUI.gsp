@@ -7,7 +7,7 @@
 	<meta http-equiv="x-ua-compatible" content="ie=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
   <asset:script> var contextPath="${grailsApplication.config.server.contextPath ?: '/gokb'}"; </asset:script>
-  <asset:javascript src="gokb/application.grass.js" />
+  <asset:javascript src="base.js" />
   <asset:stylesheet src="gokb/sb-admin-2.css"/>
   <asset:stylesheet src="gokb/application.css"/>
   <s2ui:stylesheet src='spring-security-ui'/>

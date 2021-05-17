@@ -11,7 +11,7 @@
     <link rel="shortcut icon" href="${resource(dir: 'images', file: 'favicon.ico')}" type="image/x-icon">
     <asset:script> var contextPath="${grailsApplication.config.server.contextPath ?: '/'}"; </asset:script>
     <g:layoutHead />
-    <asset:javascript src="gokb/application-public.js" />
+    <asset:javascript src="public/application-public.js" />
 %{--    <asset:stylesheet src="gokb/themes/${ grailsApplication.config.gokb.theme }/theme.css"/>--}%
     <asset:stylesheet src="gokb/bootstrap-yeti.min.css"/>
     <asset:stylesheet src="gokb/fontawesome.css" />
