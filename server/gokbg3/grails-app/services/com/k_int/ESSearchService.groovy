@@ -49,6 +49,10 @@ class ESSearchService{
           "identifier",
           "ids",
           "identifiers",
+          "ddcs",
+          "ddc",
+          "languages",
+          "language",
           "status",
           "componentType",
           "platform",
@@ -436,6 +440,28 @@ class ESSearchService{
     }
   }
 
+  private void processNestedFields(query, errors, qpars) {
+    //QueryBuilder subQuery = QueryBuilders.boolQuery()
+    String field
+    Map<String, String> subQueryParams = [:]
+    //TODO this may be extended upon free-text (then, I need wildcardQuery as second field)
+    if(qpars.ddc) {
+      subQueryParams['ddcs.value'] = qpars.ddc
+    }
+    else if(qpars.ddcs) {
+      subQueryParams['ddcs.value'] = qpars.ddcs
+    }
+    if(qpars.language) {
+      subQueryParams['languages.value'] = qpars.language
+    }
+    else if(qpars.languages) {
+      subQueryParams['languages.value'] = qpars.languages
+    }
+    subQueryParams.each { String k, String v ->
+      query.must(QueryBuilders.termQuery(k, v))
+    }
+  }
+
   private void processLinkedField(query, field, val) {
     QueryBuilder linkedFieldQuery = QueryBuilders.boolQuery()
     def finalVal = val
@@ -634,6 +660,7 @@ class ESSearchService{
       addStatusQuery(exactQuery, errors, params.status)
       addDateQueries(exactQuery, errors, params)
       processNameFields(exactQuery, errors, params)
+      processNestedFields(exactQuery, errors, params)
       processGenericFields(exactQuery, errors, params)
       addIdentifierQuery(exactQuery, errors, params)
       specifyQueryWithParams(params, exactQuery, errors, unknown_fields)
