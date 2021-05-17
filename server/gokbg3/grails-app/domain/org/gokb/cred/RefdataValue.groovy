@@ -76,12 +76,12 @@ class RefdataValue  extends AbstractI10n implements Auditable {
     // ql = RefdataValue.findAllByValueIlikeOrDescriptionIlike("%${params.q}%","%${params.q}%",params)
     // ql = RefdataValue.findWhere("%${params.q}%","%${params.q}%",params)
 
-    def query = "from RefdataValue as rv where rv.useInstead is null and lower(rv.value) like ?"
-    def query_params = ["%${params.q.toLowerCase()}%"]
+    def query = "from RefdataValue as rv where rv.useInstead is null and (lower(rv.value) like :value OR lower(rv.value_de) like :value OR lower(rv.value_en) like :value)"
+    Map query_params = [value: "%${params.q.toLowerCase()}%"]
 
     if ( ( params.filter1 != null ) && ( params.filter1.length() > 0 ) ) {
-      query += " and rv.owner.desc = ? order by rv.sortKey, rv.description"
-      query_params.add(params.filter1);
+      query += " and rv.owner.desc = :desc order by rv.value, rv.description"
+      query_params.desc = params.filter1
     }
 
     ql = RefdataValue.findAll(query, query_params, params)

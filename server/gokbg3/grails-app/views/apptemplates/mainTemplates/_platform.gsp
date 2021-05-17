@@ -22,7 +22,7 @@
         </g:else>
     </dd>
 
-    <dt><gokb:annotatedLabel owner="${d}" property="source">Provider</gokb:annotatedLabel></dt>
+    <dt><gokb:annotatedLabel owner="${d}" property="provider">Provider</gokb:annotatedLabel></dt>
     <dd><gokb:manyToOneReferenceTypedown owner="${d}" field="provider"
                                          baseClass="org.gokb.cred.Org">${d.provider?.name}</gokb:manyToOneReferenceTypedown></dd>
 
