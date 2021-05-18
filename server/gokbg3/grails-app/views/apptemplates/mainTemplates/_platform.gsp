@@ -65,11 +65,7 @@
 
 <g:render template="/tabTemplates/platformTabs" model="${[d: d]}"/>
 
+<g:render template="/apptemplates/secondTemplates/componentStatus"/>
 
-
-<g:if test="${d.id}">
-    <g:render template="/apptemplates/secondTemplates/componentStatus"
-              model="${[d: d]}"/>
-</g:if>
 
 </div>

@@ -9,7 +9,7 @@
                             class="badge badge-warning">${d.currentTippCount}</span></a></li>
                 <li class="nav-item"><a class="nav-link" href="#packages" data-toggle="tab" role="tab">Packages <span
                         class="badge badge-warning">${d.hostedPackages.size()}</span></a></li>
-                <li><a class="nav-link" href="#altnames" data-toggle="tab" role="tab">Alternate Names <span
+                <li class="nav-item"><a class="nav-link" href="#altnames" data-toggle="tab" role="tab">Alternate Names <span
                         class="badge badge-warning">${d.variantNames.size()}</span></a></li>
 
                 <li class="nav-item"><a class="nav-link" href="#statistic" data-toggle="tab">Statistic</a></li>

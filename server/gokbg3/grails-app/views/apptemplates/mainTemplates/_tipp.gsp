@@ -198,6 +198,6 @@
 
     <g:render template="/tabTemplates/tippTabs" model="${[d: d]}"/>
 
-    <g:render template="/apptemplates/secondTemplates/componentStatus"
-              model="${[d: d]}"/>
+    <g:render template="/apptemplates/secondTemplates/componentStatus"/>
+
 </g:if>

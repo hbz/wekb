@@ -306,10 +306,9 @@
       </div>
 
     </div>
-    <g:if test="${d.id}">
-      <g:render template="/apptemplates/secondTemplates/componentStatus"
-        model="${[d:d]}" />
-    </g:if>
+
+      <g:render template="/apptemplates/secondTemplates/componentStatus">
+
   </div>
 
     <g:javascript>
