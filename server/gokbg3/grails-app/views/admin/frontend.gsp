@@ -10,37 +10,50 @@
 <h2 class="page-header">Tabulators</h2>
 <div class="container-fluid">
     <div class="row">
-       <div class="col-md-12">
+        <div class="col-md-12">
             <div id="content">
-                <ul id="tabs" class="nav nav-tabs">
-                    <li class="active"><a href="" data-toggle="tab" aria-expanded="false" >Tab 1</a></li>
-                    <li class=""><a href="" data-toggle="tab" aria-expanded="false" >Tab 2</a></li>
-                    <li class=""><a href="" data-toggle="tab" aria-expanded="false">Tab 3</a></li>
-                </ul>
 
-                <div id="my-tab-content" class="tab-content" >
-                    <div class="tab-pane active" id="panel1"  role="tabpanel">
-                        Panel 1
-                    </div>
-                    <div class="tab-pane" id="panel2" role="tabpanel">
-                        Panel 2
-                    </div>
-                    <div class="tab-pane fade" id="panel3" role="tabpanel">
-                        Panel 3
+                <h3>Bootstrap 3.3.7</h3>
+                <!-- Nav tabs -->
+                <div id="js-tabPanelWidget">
+                    <bootStrap:tabs>
+                        <li class="active"><a  href="#home" role="tab">Home</a></li>
+                        <bootStrap:tabsItem href="#profile" controller="home" action="userdash" text="Profile" />
+                        <bootStrap:tabsItem href="#messages" controller="home" action="index" text="Messages" />
+                    </bootStrap:tabs>
+
+                <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane fade in active" id="home">1</div>
+                        <div role="tabpanel" class="tab-pane fade" id="profile">2</div>
+                        <div role="tabpanel" class="tab-pane fade" id="messages">3</div>
                     </div>
                 </div>
+
             </div>
         </div>
 
-
     </div>
 </div>
-<wekb:script file="${this.getGroovyPageFileName()}">
-alert ("test");
-    function test(){
-    }
 
-</wekb:script>
+
+<script>
+  //AJAX for Tab Panel Widget
+  $('#js-tabPanelWidget').on('click','#js-tabList a',function (e) {
+    e.preventDefault();
+    var url = $(this).attr("data-url");
+    if (typeof url !== "undefined") {
+      var pane = $(this),
+          href = this.hash;
+      // ajax load from data-url
+      $(href).load(url,function(result){
+        pane.tab('show');
+      });
+    } else {
+      $(this).tab('show');
+    }
+  });
+</script>
 
 
 </body>
