@@ -13,7 +13,7 @@
   <link rel="shortcut icon" href="${resource(dir: 'images', file: 'favicon.ico')}" type="image/x-icon">
   <g:layoutHead />
   <asset:script> var contextPath="${grailsApplication.config.server.contextPath ?: ''}"; </asset:script>
-  <asset:javascript src="base.js.js" />
+  <asset:javascript src="base.js" />
   <asset:stylesheet src="gokb/sb-admin-2.css"/>
   <asset:stylesheet src="gokb/themes/${ grailsApplication.config.gokb.theme }/theme.css"/>
   <asset:stylesheet src="gokb/application.css"/>
