@@ -19,7 +19,7 @@
             </tr>
           </thead>
           <tbody>
-            <g:each in="${d.variantNames}" var="v">
+            <g:each in="${d.variantNames.sort{it.variantName}}" var="v">
               <tr>
                 <td>
                   ${v.variantName}

@@ -1,5 +1,5 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
-<g:render template="/apptemplates/mainTemplates/kbcomponent" model="${[d:displayobj, rd:refdata_properties, dtype:'KBComponent']}" />
+<g:render template="/apptemplates/mainTemplates/kbcomponent" model="${[rd:refdata_properties, dtype:'KBComponent']}" />
 <g:if test="${d.id != null}">
 	<dl class="dl-horizontal">
 		<dt>
@@ -36,7 +36,7 @@
 			</g:if>
 		</div>
 
-		<g:render template="/tabTemplates/showDataFiles" model="${[d:displayobj, allowEdit:true]}" />
+		<g:render template="/tabTemplates/showDataFiles" model="${[allowEdit:true]}" />
 	</div>
 	<g:javascript>
 	$('.trigger').each(function(){

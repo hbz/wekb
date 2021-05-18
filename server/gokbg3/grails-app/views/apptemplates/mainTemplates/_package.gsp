@@ -198,26 +198,11 @@
         </g:if>
       </div>
 
-      <g:render template="/tabTemplates/showVariantnames" model="${[d:displayobj, showActions:true]}" />
+      <g:render template="/tabTemplates/showVariantnames" model="${[showActions:true]}" />
 
-      <g:render template="/tabTemplates/showDDCs" model="${[d:displayobj, showActions:true]}" />
+      <g:render template="/tabTemplates/showDDCs" model="${[showActions:true]}" />
 
-      <div class="tab-pane" id="identifiers">
-        <dl>
-          <dt>
-            <gokb:annotatedLabel owner="${d}" property="ids">Identifiers</gokb:annotatedLabel>
-          </dt>
-          <dd>
-            <g:render template="/apptemplates/secondTemplates/combosByType"
-              model="${[d:d, property:'ids', fragment:'identifiers', cols:[
-                        [expr:'toComponent.namespace.value', colhead:'Namespace'],
-                        [expr:'toComponent.value', colhead:'ID', action:'link']]]}" />
-            <g:if test="${editable}">
-              <g:render template="/apptemplates/secondTemplates/addIdentifier" model="${[d:d, hash:'#identifiers']}"/>
-            </g:if>
-          </dd>
-        </dl>
-      </div>
+      <g:render template="/tabTemplates/showIdentifiers" model="${[]}" />
 
       <div class="tab-pane" id="relationships">
         <g:if test="${d.id != null}">
@@ -307,7 +292,7 @@
 
     </div>
 
-      <g:render template="/apptemplates/secondTemplates/componentStatus">
+      <g:render template="/apptemplates/secondTemplates/componentStatus"/>
 
   </div>
 
