@@ -18,8 +18,8 @@
                 <div id="js-tabPanelWidget">
                     <bootStrap:tabs>
                         <li class="active"><a  href="#home" role="tab">Home</a></li>
-                        <bootStrap:tabsItem href="#profile" controller="home" action="userdash" text="Profile" />
-                        <bootStrap:tabsItem href="#messages" controller="home" action="index" text="Messages" />
+                        <bootStrap:tabsItem href="#profile" controller="frontend" action="tabExample" text="Profile" />
+                        <bootStrap:tabsItem href="#messages" controller="frontend" action="tabExample" text="Messages" />
                     </bootStrap:tabs>
 
                 <!-- Tab panes -->
