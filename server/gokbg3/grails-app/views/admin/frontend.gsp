@@ -13,7 +13,7 @@
         <div class="col-md-12">
             <div id="content">
 
-                <h3>Bootstrap 3.3.7</h3>
+                <h3>Bootstrap 3.3.7 </h3>
                 <!-- Nav tabs -->
                 <div id="js-tabPanelWidget">
                     <bootStrap:tabs>
