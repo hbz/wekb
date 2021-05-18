@@ -17,7 +17,11 @@ class RCConstants {
     public static final String COMBO_STATUS = "Combo.Status"
     public static final String COMBO_TYPE = "Combo.Type"
 
+    public static final String CONTACT_CONTENT_TYPE   = 'Contact.Content.Type'
+    public static final String CONTACT_TYPE           = 'Contact.Type'
+
     public static final String COUNTRY = "Country"
+
 
     public static final String CURATORY_GROUP_TYPE = "CuratoryGroup.Type"
 

@@ -47,7 +47,7 @@
 
             <div class="tab-pane fade active" id="titledetails" role="tabpanel">
                 <g:link class="display-inline" controller="search" action="index"
-                        params="[qbe: 'g:tipps', qp_plat_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_cp', 'qp_pub_id', 'qp_plat', 'qp_plat_id']]"
+                        params="[qbe: 'g:tipps', qp_plat_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_plat', 'qp_plat_id']]"
                         id="">Titles on this Platform</g:link>
             </div>
 

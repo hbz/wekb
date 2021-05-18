@@ -2,6 +2,7 @@ package org.gokb.cred
 
 import de.wekb.helper.RCConstants
 import groovy.util.logging.Slf4j
+import wekb.Contact
 
 import javax.persistence.Transient
 import org.gokb.GOKbTextUtils
@@ -12,7 +13,6 @@ class Org extends KBComponent {
 
   RefdataValue mission
   String homepage
-  IdentifierNamespace titleNamespace
   IdentifierNamespace packageNamespace
 
   def availableActions() {
@@ -71,6 +71,7 @@ class Org extends KBComponent {
 
   static hasMany = [
     roles: RefdataValue,
+    contacts: Contact,
   ]
 
   static mapping = {
@@ -96,7 +97,6 @@ class Org extends KBComponent {
         }
       }
     })
-    titleNamespace(nullable: true)
     packageNamespace(nullable: true)
   }
 
@@ -215,8 +215,6 @@ class Org extends KBComponent {
 
         addCoreGOKbXmlFields(builder, attr)
         builder.'homepage'(homepage)
-        if (titleNamespace)
-          builder.'titleNamespace'('namespaceName': titleNamespace.name, 'value': titleNamespace.value, 'id': titleNamespace.id)
         if (packageNamespace)
           builder.'packageNamespace'('namespaceName': packageNamespace.name, 'value': packageNamespace.value, 'id': packageNamespace.id)
         if (roles) {
@@ -340,6 +338,17 @@ class Org extends KBComponent {
     def result = [:]
     Combo.executeUpdate("delete from Combo where toComponent.id = ?", [this.getId()]);
     Combo.executeUpdate("delete from Combo where fromComponent.id = ?", [this.getId()]);
+    result
+  }
+
+  @Transient
+  public getCurrentTippCount() {
+    def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current');
+    def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
+
+    int result = Combo.executeQuery("select count(c.id) from Combo as c where c.fromComponent in :packages and c.type = :combo_type and c.toComponent.status = :status"
+            , [packages: getProvidedPackages(), combo_type: combo_tipps, status: refdata_current])[0]
+
     result
   }
 }
