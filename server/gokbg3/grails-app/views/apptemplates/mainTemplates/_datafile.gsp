@@ -7,7 +7,7 @@
 <div id="content">
   <ul id="tabs" class="nav nav-tabs">
     <li class="active"><a href="#details" data-toggle="tab">Datafile Details</a></li>
-    <li><a href="#addprops" data-toggle="tab">Custom Fields <span class="badge badge-warning">${d.additionalProperties?.size()}</span></a></li>
+    <li><a href="#addprops" data-toggle="tab">Additional Properties <span class="badge badge-warning">${d.additionalProperties?.size()}</span></a></li>
     <li><a href="#review" data-toggle="tab">Review Requests <span class="badge badge-warning">${d.reviewRequests?.size()}</span></a></li>
   </ul>
   <div id="my-tab-content" class="tab-content">
@@ -67,7 +67,9 @@
 
 
   </div>
-  <g:render template="/apptemplates/secondTemplates/componentStatus" model="${[d:displayobj]}" />
+
+  <g:render template="/apptemplates/secondTemplates/componentStatus"/>
+
 </div>
 
 

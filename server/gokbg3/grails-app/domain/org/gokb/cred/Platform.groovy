@@ -12,6 +12,7 @@ class Platform extends KBComponent {
 
   String primaryUrl
 
+  IdentifierNamespace titleNamespace
 
   RefdataValue authentication
 
@@ -96,6 +97,7 @@ class Platform extends KBComponent {
     statisticsAdminPortalUrl column: 'plat_statistics_admin_portal_url'
     statisticsUpdate column: 'plat_statistics_update_fk_rv'
     proxySupported column: 'plat_proxy_supported_fk_rv'
+    titleNamespace column: 'plat_title_namespace_fk'
 
   }
 
@@ -130,6 +132,7 @@ class Platform extends KBComponent {
     statisticsAdminPortalUrl(nullable: true, blank: false)
     statisticsUpdate(nullable: true, blank: false)
     proxySupported(nullable: true, blank: false)
+    titleNamespace(nullable: true)
 
   }
 

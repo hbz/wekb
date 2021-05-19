@@ -147,11 +147,6 @@ class PackagesController {
           def source = Source.findByName(params.source) ?: new Source(name: params.source).save(flush: true, failOnError: true);
           def providerName = params.providerName
           def providerObj = Org.findByName(providerName) ?: null
-          def providerIdentifierNamespace = IdentifierNamespace.findByValue(params.providerIdentifierNamespace)
-
-          if (providerObj?.titleNamespace) {
-            providerIdentifierNamespace = providerObj?.titleNamespace
-          }
 
           def info = analyse(temp_file);
 
@@ -160,8 +155,7 @@ class PackagesController {
             new java.net.URL(platformUrl),
             source,
             request.getFile("content"),
-            providerName,
-            providerIdentifierNamespace)
+            providerName)
 
         }
       }
@@ -209,11 +203,6 @@ class PackagesController {
             def source = Source.findByName(params.source) ?: new Source(name: params.source).save(flush: true, failOnError: true);
             def providerName = params.providerName
             def providerObj = Org.findByName(providerName) ?: null
-            def providerIdentifierNamespace = IdentifierNamespace.findByValue(params.providerIdentifierNamespace)
-
-            if (providerObj?.titleNamespace) {
-              providerIdentifierNamespace = providerObj?.titleNamespace
-            }
 
             def info = analyse(temp_file);
 
@@ -281,7 +270,7 @@ class PackagesController {
                   new_datafile_id,
                   job,
                   providerName,
-                  providerIdentifierNamespace,
+                  null,
                   null, //  ip_id
                   null, //  ingest_cfg
                   incremental_flag,

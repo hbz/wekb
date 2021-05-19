@@ -201,20 +201,7 @@
 
                 <g:render template="/tabTemplates/showDDCs" model="${[d:pkg]}" />
 
-                <div class="tab-pane fade" id="identifiers" role="tabpanel">
-                    <dl>
-                        <dt>
-                            <gokb:annotatedLabel owner="${pkg}"
-                                                 property="ids">Identifiers</gokb:annotatedLabel>
-                        </dt>
-                        <dd>
-                            <g:render template="/apptemplates/secondTemplates/combosByType"
-                                      model="${[d: pkg, property: 'ids', fragment: 'identifiers', cols: [
-                                              [expr: 'toComponent.namespace.value', colhead: 'Namespace'],
-                                              [expr: 'toComponent.value', colhead: 'ID', action: 'link']]]}"/>
-                        </dd>
-                    </dl>
-                </div>
+                <g:render template="/tabTemplates/showIdentifiers" model="${[d:pkg]}" />
             </div>
             <g:render template="componentStatus" model="${[d: pkg]}"/>
         </div>

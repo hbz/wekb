@@ -41,6 +41,13 @@
         </g:if>
     </dd>
 
+    <dt>
+        <gokb:annotatedLabel owner="${d}" property="titleNamespace">Title Namespace</gokb:annotatedLabel>
+    </dt>
+    <dd>
+        <gokb:manyToOneReferenceTypedown owner="${d}" field="titleNamespace" baseClass="org.gokb.cred.IdentifierNamespace">${(d.titleNamespace?.name)?:d.titleNamespace?.value}</gokb:manyToOneReferenceTypedown>
+    </dd>
+
 
     <dt><gokb:annotatedLabel owner="${d}"
                              property="ipAuthentication">IP Auth Supported</gokb:annotatedLabel></dt>
@@ -65,11 +72,7 @@
 
 <g:render template="/tabTemplates/platformTabs" model="${[d: d]}"/>
 
+<g:render template="/apptemplates/secondTemplates/componentStatus"/>
 
-
-<g:if test="${d.id}">
-    <g:render template="/apptemplates/secondTemplates/componentStatus"
-              model="${[d: d]}"/>
-</g:if>
 
 </div>

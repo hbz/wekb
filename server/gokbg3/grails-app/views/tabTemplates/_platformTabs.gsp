@@ -9,7 +9,7 @@
                             class="badge badge-warning">${d.currentTippCount}</span></a></li>
                 <li class="nav-item"><a class="nav-link" href="#packages" data-toggle="tab" role="tab">Packages <span
                         class="badge badge-warning">${d.hostedPackages.size()}</span></a></li>
-                <li><a class="nav-link" href="#altnames" data-toggle="tab" role="tab">Alternate Names <span
+                <li class="nav-item"><a class="nav-link" href="#altnames" data-toggle="tab" role="tab">Alternate Names <span
                         class="badge badge-warning">${d.variantNames.size()}</span></a></li>
 
                 <li class="nav-item"><a class="nav-link" href="#statistic" data-toggle="tab">Statistic</a></li>
@@ -47,7 +47,7 @@
 
             <div class="tab-pane fade active" id="titledetails" role="tabpanel">
                 <g:link class="display-inline" controller="search" action="index"
-                        params="[qbe: 'g:tipps', qp_plat_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_cp', 'qp_pub_id', 'qp_plat', 'qp_plat_id']]"
+                        params="[qbe: 'g:tipps', qp_plat_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_plat', 'qp_plat_id']]"
                         id="">Titles on this Platform</g:link>
             </div>
 

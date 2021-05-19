@@ -834,6 +834,13 @@ class GlobalSearchTemplatesService {
                                         hide       : false
                                 ],
                                 [
+                                        prompt     : 'Provider ID',
+                                        qparam     : 'qp_provider_id',
+                                        placeholder: 'Provider ID',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'provider.id', 'type': 'java.lang.Long'],
+                                        hide       : true
+                                ],
+                                [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.CuratoryGroup',
                                         prompt     : 'Curatory Group',
@@ -936,6 +943,22 @@ class GlobalSearchTemplatesService {
                                         placeholder: 'Curatory Group',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'curatoryGroups'],
                                         hide       : false
+                                ],
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.Org',
+                                        prompt     : 'Provider',
+                                        qparam     : 'qp_provider',
+                                        placeholder: 'Provider',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'provider'],
+                                        hide       : false
+                                ],
+                                [
+                                        prompt     : 'Provider ID',
+                                        qparam     : 'qp_provider_id',
+                                        placeholder: 'Provider ID',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'provider.id', 'type': 'java.lang.Long'],
+                                        hide       : true
                                 ],
                         ],
                         qbeGlobals: [
@@ -1158,13 +1181,6 @@ class GlobalSearchTemplatesService {
                                         hide       : false
                                 ],
                                 [
-                                        prompt     : 'Title Publisher ID',
-                                        qparam     : 'qp_pub_id',
-                                        placeholder: 'Title Publisher ID',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'publisher.id', 'type': 'java.lang.Long'],
-                                        hide       : true
-                                ],
-                                [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.RefdataValue',
                                         filter1    : RCConstants.TITLEINSTANCE_MEDIUM,
@@ -1253,10 +1269,18 @@ class GlobalSearchTemplatesService {
                                 [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.Org',
-                                        prompt     : 'Content Provider',
-                                        qparam     : 'qp_cp',
-                                        placeholder: 'Content Provider',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'pkg.provider']
+                                        prompt     : 'Provider',
+                                        qparam     : 'qp_provider',
+                                        placeholder: 'Provider',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'pkg.provider'],
+                                        hide       : false
+                                ],
+                                [
+                                        prompt     : 'Provider ID',
+                                        qparam     : 'qp_provider_id',
+                                        placeholder: 'Provider ID',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'pkg.provider.id', 'type': 'java.lang.Long'],
+                                        hide       : true
                                 ],
                                 [
                                         prompt     : 'Package ID',

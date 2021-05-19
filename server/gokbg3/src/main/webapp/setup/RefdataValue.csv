@@ -47,6 +47,13 @@ Combo.Type;TitleInstance.Tipps;TitleInstance.Tipps;TitleInstance.Tipps
 Combo.Type;TitleInstance.TranslatedFrom;TitleInstance.TranslatedFrom;TitleInstance.TranslatedFrom
 Combo.Type;TitleInstancePackagePlatform.DerivedFrom;TitleInstancePackagePlatform.DerivedFrom;TitleInstancePackagePlatform.DerivedFrom
 Combo.Type;TitleInstancePackagePlatform.MasterTipp;TitleInstancePackagePlatform.MasterTipp;TitleInstancePackagePlatform.MasterTipp
+Contact.Content.Type;E-Mail;E-Mail;E-Mail
+Contact.Content.Type;Fax;Fax;Fax
+Contact.Content.Type;Phone;Phone;Phone
+Contact.Content.Type;Url;Url;Url
+Contact.Content.Type;Mobil;Mobil;Mobil
+Contact.Content.Type;Phone 2;Phone 2;Phone 2
+Contact.Type;Technical Support;Technical Support;Technical Support
 Country;AD;Andorra;Andorra
 Country;AE;Vereinigte Arabische Emirate;United Arab Emirates
 Country;AF;Afghanistan;Afghanistan
