@@ -33,12 +33,12 @@
                         <span class="badge badge-warning">${d.getCombosByPropertyNameAndStatus('providedPlatforms', 'Active').size()}</span>
                     </a>
                 </li>
-                <li class="nav-item">
+               %{-- <li class="nav-item">
                     <a class="nav-link" href="#addprops" data-toggle="tab" role="tab">
                         Additional Properties
                         <span class="badge badge-warning">${d.additionalProperties.size()}</span>
                     </a>
-                </li>
+                </li>--}%
                 <li class="nav-item">
                     <a class="nav-link" href="#review" data-toggle="tab" role="tab">
                         Review Tasks (Open/Total)
@@ -74,8 +74,8 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#titles" data-toggle="tab">Published Titles
-                        <span class="badge badge-warning">${d.getCurrentTippCount()}}</span>
+                    <a href="#titles" data-toggle="tab">Titles
+                        <span class="badge badge-warning">${d.getCurrentTippCount()}</span>
                     </a>
                 </li>
                 <li>
@@ -83,12 +83,12 @@
                         <span class="badge badge-warning">${d.getCombosByPropertyNameAndStatus('providedPlatforms', 'Active').size()}</span>
                     </a>
                 </li>
-                <li>
+                %{--<li>
                     <a href="#addprops" data-toggle="tab">
                         Additional Properties
                         <span class="badge badge-warning">${d.additionalProperties.size()}</span>
                     </a>
-                </li>
+                </li>--}%
                 <li>
                     <a href="#review" data-toggle="tab">
                         Review Tasks (Open/Total)
@@ -187,10 +187,10 @@
                            </dl>
                    </div>--}%
 
-            <div class="tab-pane" id="addprops" role="tabpanel">
+           %{-- <div class="tab-pane" id="addprops" role="tabpanel">
                 <g:render template="/apptemplates/secondTemplates/addprops"
                           model="${[d: d]}"/>
-            </div>
+            </div>--}%
 
             <div class="tab-pane" id="review">
                 <dl>

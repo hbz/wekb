@@ -9,6 +9,7 @@ import org.gokb.cred.KBComponent
 import org.gokb.cred.KBComponentAdditionalProperty
 import org.gokb.cred.TIPPCoverageStatement
 import org.gokb.cred.RefdataValue
+import wekb.Contact
 import wekb.DeletedKBComponent
 
 @Transactional
@@ -189,6 +190,14 @@ class FTUpdateService {
         kbc.additionalProperties.each { KBComponentAdditionalProperty kbComponentAdditionalProperty ->
           result.additionalProperties.add([value    : kbComponentAdditionalProperty.apValue,
                                            name      : kbComponentAdditionalProperty.propertyDefn.propertyName])
+        }
+
+        result.contacts = []
+        kbc.contacts.each { Contact contact ->
+          result.contacts.add([  content: contact.content,
+                                 contentType: contact.contentType?.value,
+                                 type: contact.type,
+                                 language: contact.language?.value])
         }
 
         result
