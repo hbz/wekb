@@ -4,9 +4,19 @@ class AdditionalPropertyDefinition {
 
   String propertyName
 
+  Date dateCreated
+  Date lastUpdated
+
   static mapping = {
               id column:'apd_id'
     propertyName column:'apd_prop_name', index:'apd_prop_name_idx'
+    dateCreated column: 'apd_date_created'
+    lastUpdated column: 'apd_last_updated'
+  }
+
+  static constraints = {
+    dateCreated(nullable:true, blank:true)
+    lastUpdated(nullable:true, blank:true)
   }
 
   /**

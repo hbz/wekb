@@ -7,6 +7,21 @@ class UserRole implements Serializable {
 	User user
 	Role role
 
+	Date dateCreated
+	Date lastUpdated
+
+	static constraints = {
+		dateCreated(nullable:true, blank:true)
+		lastUpdated(nullable:true, blank:true)
+	}
+
+	static mapping = {
+		id composite: ['role', 'user']
+		version false
+		dateCreated column:'ur_date_created'
+		lastUpdated column:'ur_last_updated'
+	}
+
 	boolean equals(other) {
 		if (!(other instanceof UserRole)) {
 			return false
@@ -50,8 +65,5 @@ class UserRole implements Serializable {
 		executeUpdate 'DELETE FROM UserRole WHERE role=:role', [role: role]
 	}
 
-	static mapping = {
-		id composite: ['role', 'user']
-		version false
-	}
+
 }

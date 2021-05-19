@@ -12,11 +12,17 @@ class WebHookEndpoint {
   String credentials
   User owner
 
+  Date dateCreated
+  Date lastUpdated
+
   static mapping = {
     url column:'ep_url'
     authmethod column:'ep_authmethod'
     principal column:'ep_prin'
     credentials column:'ep_cred'
+
+    dateCreated column:'ep_date_created'
+    lastUpdated column:'ep_last_updated'
   }
 
   static constraints = {
@@ -25,6 +31,8 @@ class WebHookEndpoint {
     authmethod(nullable:true, blank:true)
     principal(nullable:true, blank:true)
     credentials(nullable:true, blank:true)
+    dateCreated(nullable:true, blank:true)
+    lastUpdated(nullable:true, blank:true)
   }
 
   static def refdataFind(params) {

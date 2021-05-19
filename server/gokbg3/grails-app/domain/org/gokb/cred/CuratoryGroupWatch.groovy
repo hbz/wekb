@@ -12,6 +12,9 @@ class CuratoryGroupWatch {
   KBComponent component
   CuratoryGroup curatoryGroup
 
+  Date dateCreated
+  Date lastUpdated
+
   static hasMany = [
   ]
 
@@ -21,12 +24,18 @@ class CuratoryGroupWatch {
   static constraints = {
     component blank: false, nullable:false
     curatoryGroup blank: false, nullable:false
+
+    dateCreated(nullable:true, blank:true)
+    lastUpdated(nullable:true, blank:true)
   }
 
   static mapping = {
     id column:'cgw_id'
     component column: 'cgw_component'
     curatoryGroup column: 'cgw_cg_fk'
+
+    dateCreated column: 'cgw_date_created'
+    lastUpdated column: 'cgw_last_updated'
   }
 
  

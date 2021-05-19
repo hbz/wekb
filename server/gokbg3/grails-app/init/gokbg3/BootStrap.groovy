@@ -235,9 +235,6 @@ class BootStrap {
         }
 
 
-        // log.info("Default batch loader config");
-        // defaultBulkLoaderConfig();
-
         /*log.info("Register users and override default admin password");
         registerUsers()*/
 
@@ -261,20 +258,6 @@ class BootStrap {
         ComponentStatisticService.updateCompStats()
 
         log.info("------------------------------------Init End--------------------------------------------")
-    }
-
-    def defaultBulkLoaderConfig() {
-        // BulkLoaderConfig
-        grailsApplication.config.kbart2.mappings.each { k, v ->
-            log.debug("Process ${k}");
-            def existing_cfg = BulkLoaderConfig.findByCode(k)
-            if (existing_cfg) {
-                log.debug("Got existing config");
-            } else {
-                def cfg = v as JSON
-                existing_cfg = new BulkLoaderConfig(code: k, cfg: cfg?.toString()).save(flush: true, failOnError: true)
-            }
-        }
     }
 
     def migrateDiskFilesToDatabase() {

@@ -19,6 +19,9 @@ class TIPPCoverageStatement {
   String embargo
   String coverageNote
 
+  Date dateCreated
+  Date lastUpdated
+
   @RefdataAnnotation(cat = RCConstants.TIPP_COVERAGE_DEPTH)
   RefdataValue coverageDepth
 
@@ -36,6 +39,9 @@ class TIPPCoverageStatement {
     embargo column:'tipp_embargo'
     coverageNote column:'tipp_coverage_note',type: 'text'
     coverageDepth column:'tipp_coverage_depth'
+
+    dateCreated column:'tipp_coverage_date_created'
+    lastUpdated column:'tipp_coverage_last_updated'
   }
 
   static constraints = {
@@ -52,6 +58,9 @@ class TIPPCoverageStatement {
     embargo (nullable:true, blank:true)
     coverageNote (nullable:true, blank:true)
     coverageDepth (nullable:true, blank:true)
+
+    dateCreated(nullable:true, blank:true)
+    lastUpdated(nullable:true, blank:true)
   }
 
   def afterUpdate() {

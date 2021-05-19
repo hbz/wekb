@@ -19,6 +19,9 @@ class RefdataValue  extends AbstractI10n implements Auditable {
   RefdataValue useInstead
   RefdataCategory owner
 
+  Date dateCreated
+  Date lastUpdated
+
   // indicates this object is created via current bootstrap
   boolean isHardData = false
 
@@ -34,6 +37,10 @@ class RefdataValue  extends AbstractI10n implements Auditable {
     value_de column: 'rdv_value_de'
     value_en column: 'rdv_value_en'
     isHardData column: 'rdv_is_hard_data'
+
+    dateCreated column: 'rdv_date_created'
+    lastUpdated column: 'rdv_last_updated'
+
   }
 
   static constraints = {
@@ -41,6 +48,9 @@ class RefdataValue  extends AbstractI10n implements Auditable {
     description(nullable:true, blank:true, maxSize:64)
     useInstead(nullable:true, blank:false)
     sortKey(nullable:true, blank:false)
+
+    dateCreated(nullable:true, blank:true)
+    lastUpdated(nullable:true, blank:true)
   }
 
   String getLogEntityId() {
