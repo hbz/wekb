@@ -49,7 +49,6 @@
                   <td>
                     <g:link controller="resource" action="show" id="${st.uuid}">${st.name}</g:link>
                     <ul>
-                      <li>Edit Status: ${st.editStatus?.value ?: 'Not Set'}</li>
                       <li>Latest Publisher: ${st.currentPublisher?.name ?: 'None'}</li>
                     </ul>
                   </td>

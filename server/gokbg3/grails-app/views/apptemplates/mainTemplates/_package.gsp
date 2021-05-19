@@ -72,9 +72,6 @@
     <dt> <gokb:annotatedLabel owner="${d}" property="lastUpdateComment">Last Update Comment</gokb:annotatedLabel> </dt>
     <dd> <gokb:xEditable  owner="${d}" field="lastUpdateComment" /> </dd>
 
-    <dt> <gokb:annotatedLabel owner="${d}" property="editStatus">Edit Status</gokb:annotatedLabel> </dt>
-    <dd> <gokb:xEditableRefData owner="${d}" field="editStatus" config="${RCConstants.KBCOMPONENT_EDIT_STATUS}" /> </dd>
-
     <dt> <gokb:annotatedLabel owner="${d}" property="description">Description</gokb:annotatedLabel> </dt>
     <dd> <gokb:xEditable  owner="${d}" field="description" /> </dd>
 
@@ -89,7 +86,7 @@
     </dd>
 
     <g:render template="/apptemplates/secondTemplates/refdataprops"
-              model="${[d:(d), rd:(rd), dtype:(dtype), notShowProps: [RCConstants.PACKAGE_LIST_STATUS]]}" />
+              model="${[d:(d), rd:(rd), dtype:(dtype)]}" />
 
     <g:if test="${controllerName != 'create'}">
         <dt>

@@ -15,7 +15,6 @@ DeletedKBComponent.Status;DeletedKBComponent Status;DeletedKBComponent Status
 IdentifierNamespace.TargetType;Identifier Namespace Target Type;Identifier Namespace Target Type
 ingest.filetype;ingest filetype;ingest filetype
 Job.Type;Job Type;Job Type
-KBComponent.EditStatus;KBComponent EditStatus;KBComponent EditStatus
 KBComponent.Language;KBComponent Language;KBComponent Language
 KBComponent.Status;KBComponent Status;KBComponent Status
 KBComponentVariantName.Locale;KBComponent VariantName Locale;KBComponent VariantName Locale
@@ -30,10 +29,10 @@ Org.Role;Org Role;Org Role
 Package.Breakable;Package Breakable;Package Breakable
 Package.Consistent;Package Consistent;Package Consistent
 Package.ContentType;Package Content Type;Package Content Type
+Package.Editing.Status;Package Editing Status;Package Editing Status
 Package.File;Package File;Package File
 Package.Global;Package Global;Package Global
 Package.LinkType;Package Link Type;Package Link Type
-Package.ListStatus;Package List Status;Package List Status
 Package.OpenAccess;Package Open Access;Package Open Access
 Package.RegionalRange; Package RegionalRange; Package RegionalRange
 Package.PaymentType;Package Payment Type;Package Payment Type

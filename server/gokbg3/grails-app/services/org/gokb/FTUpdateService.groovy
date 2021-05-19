@@ -74,7 +74,6 @@ class FTUpdateService {
         result.scope = kbc.scope ? kbc.scope.value : ""
         result.breakable = kbc.breakable ? kbc.breakable.value : ""
         result.paymentType = kbc.paymentType ? kbc.paymentType.value : ""
-        result.listStatus = kbc.listStatus?.value
         result.openAccess = kbc.openAccess?.value
         result.file = kbc.file?.value
         result.contentType = kbc.contentType?.value
@@ -102,6 +101,7 @@ class FTUpdateService {
         }
 
         result.status = kbc.status?.value
+        result.editingStatus = kbc.editingStatus?.value
         result.identifiers = []
         kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
           result.identifiers.add([namespace    : idc.toComponent.namespace.value,

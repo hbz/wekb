@@ -39,15 +39,6 @@
         }
       },
       {
-        "listStatus": {
-          "match": "listStatus",
-          "match_mapping_type": "string",
-          "mapping": {
-            "type": "keyword"
-          }
-        }
-      },
-      {
         "package": {
           "match": "tippPackage*",
           "match_mapping_type": "string",

@@ -271,11 +271,6 @@ abstract class KBComponent implements Auditable{
   RefdataValue status
 
   /**
-   * Edit Status. Linked to refdata table.
-   */
-  RefdataValue editStatus
-
-  /**
    *  Provenance
    */
   String provenance
@@ -414,7 +409,6 @@ abstract class KBComponent implements Auditable{
     duplicateOf(nullable: true, blank: false)
     normname(nullable: true, blank: false, maxSize: 2048)
     status(nullable: true, blank: false)
-    editStatus(nullable: true, blank: false)
     source(nullable: true, blank: false)
     lastSeen(nullable: true, blank: false)
     lastUpdateComment(nullable: true, blank: false)
@@ -1317,7 +1311,6 @@ abstract class KBComponent implements Auditable{
     // Single props.
     builder.'name'(name)
     builder.'status'(status?.value)
-    builder.'editStatus'(editStatus?.value)
     if (languages){
       builder.'languages'{
         languages.each{ lan ->

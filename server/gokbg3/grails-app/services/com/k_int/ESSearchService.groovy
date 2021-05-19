@@ -38,8 +38,7 @@ class ESSearchService{
   def requestMapping = [
       generic: [
           "id",
-          "uuid",
-          "listStatus"
+          "uuid"
       ],
       simpleMap: [
           "curatoryGroup": "curatoryGroups.name",
@@ -920,7 +919,7 @@ class ESSearchService{
         else if (field == "identifiers" && !toSkip) {
           domainMapping['_embedded']['ids'] = mapIdentifiers(val)
         }
-        else if (!toSkip && (field == "status" || field == "editStatus")) {
+        else if (!toSkip && (field == "status")) {
           domainMapping[field] = [id: RefdataCategory.lookup("KBComponent.${field}", val).id, name: val]
         }
         else if (esMapping[field] == false) {

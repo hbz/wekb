@@ -536,7 +536,6 @@ class TitleLookupService {
             the_title = ti_class.newInstance()
             the_title.name = metadata.title
             the_title.normname = KBComponent.generateNormname(metadata.title);
-            // the_title.editStatus =
             the_title.ids = []
           }
 

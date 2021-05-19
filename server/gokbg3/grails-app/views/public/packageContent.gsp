@@ -53,9 +53,6 @@
                     <dt class="col-3 text-right"> <gokb:annotatedLabel owner="${pkg}" property="lastUpdateComment">Last Update Comment</gokb:annotatedLabel> </dt>
                     <dd class="col-9 text-left"> <gokb:xEditable  owner="${pkg}" field="lastUpdateComment" /> </dd>
 
-                    <dt class="col-3 text-right"> <gokb:annotatedLabel owner="${pkg}" property="editStatus">Edit Status</gokb:annotatedLabel> </dt>
-                    <dd class="col-9 text-left"> <gokb:xEditableRefData owner="${pkg}" field="editStatus" config="${RCConstants.KBCOMPONENT_EDIT_STATUS}" /> </dd>
-
                     <dt class="col-3 text-right"> <gokb:annotatedLabel owner="${pkg}" property="description">Description</gokb:annotatedLabel> </dt>
                     <dd class="col-9 text-left"> <gokb:xEditable  owner="${pkg}" field="description" /> </dd>
 
@@ -75,7 +72,7 @@
 
 
                     <g:render template="/apptemplates/secondTemplates/refdataprops"
-                              model="${[d: pkg, rd: refdata_properties, dtype: pkg.class.simpleName, notShowProps: [RCConstants.PACKAGE_LIST_STATUS]]}"/>
+                              model="${[d: pkg, rd: refdata_properties, dtype: pkg.class.simpleName]}"/>
 
                     <dt class="col-3 text-right">
                         <gokb:annotatedLabel owner="${pkg}" property="nationalRanges">National Range</gokb:annotatedLabel>

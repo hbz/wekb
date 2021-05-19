@@ -503,8 +503,7 @@ class AdminController {
       result["${group.name}"] = [
               users     : group.users.collect { it.username },
               owner     : group.owner?.username,
-              status    : group.status?.value,
-              editStatus: group.editStatus?.value
+              status    : group.status?.value
       ]
     }
 

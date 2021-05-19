@@ -38,7 +38,7 @@ class ComponentUpdateService {
 
     // Core refdata.
     hasChanged |= setAllRefdata([
-      'status', 'editStatus',
+      'status',
     ], data, component)
 
     // Identifiers

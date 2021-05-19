@@ -460,11 +460,6 @@ class BootStrap {
             ]
         )
 
-        RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_EDIT_STATUS, KBComponent.EDIT_STATUS_APPROVED).save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_EDIT_STATUS, KBComponent.EDIT_STATUS_IN_PROGRESS).save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_EDIT_STATUS, KBComponent.EDIT_STATUS_REJECTED).save(flush: true, failOnError: true)
-
-
         RefdataCategory.lookupOrCreate(RCConstants.TIPP_ACCESS_TYPE, "Free").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.TIPP_ACCESS_TYPE, "Paid").save(flush: true, failOnError: true)
 
@@ -508,8 +503,6 @@ class BootStrap {
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "National").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "Individual").save(flush: true, failOnError: true)
 
-        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_LIST_STATUS, "Checked").save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_LIST_STATUS, "In Progress").save(flush: true, failOnError: true)
 
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_BREAKABLE, "No").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_BREAKABLE, "Yes").save(flush: true, failOnError: true)

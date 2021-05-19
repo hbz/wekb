@@ -174,16 +174,6 @@ class AjaxSupportController {
       cols:['value'],
       format:'simple'
     ],
-    'KBComponent.EditStatus' : [
-      domain:'RefdataValue',
-      countQry:"select count(rdv) from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
-      rowQry:"select rdv from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
-      required:true,
-      qryParams:[],
-      rdvCat: "KBComponent.EditStatus",
-      cols:['value'],
-      format:'simple'
-    ],
     'VariantNameType' : [
       domain:'RefdataValue',
       countQry:"select count(rdv) from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",

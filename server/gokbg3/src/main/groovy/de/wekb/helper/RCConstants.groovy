@@ -39,7 +39,6 @@ class RCConstants {
 
     public static final String JOB_TYPE = "Job.Type"
 
-    public static final String KBCOMPONENT_EDIT_STATUS = "KBComponent.EditStatus"
     public static final String KBCOMPONENT_LANGUAGE = "KBComponent.Language"
     public static final String KBCOMPONENT_STATUS   = "KBComponent.Status"
 
@@ -61,9 +60,9 @@ class RCConstants {
     public static final String PACKAGE_CONSISTENT = "Package.Consistent"
     public static final String PACKAGE_CONTENT_TYPE = "Package.ContentType"
     public static final String PACKAGE_GLOBAL = "Package.Global"
+    public static final String PACKAGE_EDITING_STATUS = "Package.Editing.Status"
     public static final String PACKAGE_FILE = "Package.File"
     public static final String PACKAGE_LINK_TYPE = "Package.LinkType"
-    public static final String PACKAGE_LIST_STATUS = "Package.ListStatus"
     public static final String PACKAGE_REGIONAL_RANGE = "Package.RegionalRange"
     public static final String PACKAGE_PAYMENT_TYPE = "Package.PaymentType"
     public static final String PACKAGE_OPEN_ACCESS = "Package.OpenAccess"

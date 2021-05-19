@@ -367,6 +367,8 @@ class CreateController {
           break
         case "scope": colMap.scope = c
           break
+        case "editing_status": colMap.editing_status = c
+          break
         case "national_range": colMap.national_ranges = c
           break
         case "regional_range": colMap.regional_ranges = c
@@ -489,6 +491,15 @@ class CreateController {
                   RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.PACKAGE_SCOPE, value)
                   if (refdataValue)
                     pkg.scope = refdataValue
+                }
+              }
+
+              if (colMap.editing_status != null) {
+                String value = cols[colMap.editing_status].trim()
+                if (value) {
+                  RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.PACKAGE_EDITING_STATUS, value)
+                  if (refdataValue)
+                    pkg.editingStatus = refdataValue
                 }
               }
 

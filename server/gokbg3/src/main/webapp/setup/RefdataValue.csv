@@ -351,9 +351,6 @@ Job.Type;TitleCrossRef;TitleCrossRef;TitleCrossRef
 Job.Type;Undefined;Undefined;Undefined
 Job.Type;Unknown;Unknown;Unknown
 Job.Type;UpdateFreeTextIndexes;UpdateFreeTextIndexes;UpdateFreeTextIndexes
-KBComponent.EditStatus;Approved;Approved;Approved
-KBComponent.EditStatus;In Progress;In Progress;In Progress
-KBComponent.EditStatus;Rejected;Rejected;Rejected
 KBComponent.Status;Current;Current;Current
 KBComponent.Status;Deleted;Deleted;Deleted
 KBComponent.Status;Expected;Expected;Expected
@@ -410,6 +407,8 @@ Package.ContentType;Database;Database;Database
 Package.ContentType;Journal;Journal;Journal
 Package.ContentType;Mixed;Mixed;Mixed
 Package.ContentType;Other;Other;Other
+Package.Editing.Status;Concluded;Concluded;Concluded
+Package.Editing.Status;Ongoing;Ongoing;Ongoing
 Package.File;Back File;Back File;Back File
 Package.File;Front File;Front File;Front File
 Package.File;Master File;Master File;Master File
@@ -419,7 +418,6 @@ Package.Global;Other;Other;Other
 Package.Global;Regional;Regional;Regional
 Package.LinkType;Parent;Parent;Parent
 Package.LinkType;Previous;Previous;Previous
-Package.ListStatus;Checked;Checked;Checked
 Package.OpenAccess;Blue OA;Blue OA;Blue OA
 Package.OpenAccess;Empty;Empty;Empty
 Package.OpenAccess;Gold OA;Gold OA;Gold OA

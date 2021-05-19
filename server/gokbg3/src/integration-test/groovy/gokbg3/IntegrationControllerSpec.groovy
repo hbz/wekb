@@ -310,7 +310,6 @@ class IntegrationControllerSpec extends Specification {
       "packageHeader": [
         "breakable"      : "No",
         "consistent"     : "Yes",
-        "editStatus"     : "In Progress",
         "scope"         : "Consortium",
         "identifiers"    : [
           [
@@ -318,7 +317,6 @@ class IntegrationControllerSpec extends Specification {
             "value": "ZDB-1-ACS"
           ]
         ],
-        "listStatus"     : "In Progress",
         "name"           : "American Chemical Society: ACS Legacy Archives",
         "nominalPlatform": [
           "name"      : "ACS Publications",
@@ -403,7 +401,6 @@ class IntegrationControllerSpec extends Specification {
       "packageHeader": [
         "breakable"      : "No",
         "consistent"     : "Yes",
-        "editStatus"     : "In Progress",
         "scope"         : "Consortium",
         "identifiers"    : [
           [
@@ -411,7 +408,6 @@ class IntegrationControllerSpec extends Specification {
             "value": "ZDB-1-ACS"
           ]
         ],
-        "listStatus"     : "In Progress",
         "name"           : "American Chemical Society: ACS Legacy Archives: CompleteDates",
         "nominalPlatform": [
           "name"      : "ACS Publications",
@@ -488,7 +484,6 @@ class IntegrationControllerSpec extends Specification {
       "packageHeader": [
         "breakable"      : "No",
         "consistent"     : "Yes",
-        "editStatus"     : "In Progress",
         "scope"         : "Consortium",
         "identifiers"    : [
           [
@@ -496,7 +491,6 @@ class IntegrationControllerSpec extends Specification {
             "value": "ZDB-5-ACS"
           ]
         ],
-        "listStatus"     : "In Progress",
         "name"           : "American Chemical Society: additional Props",
         "nominalPlatform": [
           "name"      : "ACS Publications",
@@ -773,8 +767,6 @@ class IntegrationControllerSpec extends Specification {
       "packageHeader": [
         "breakable"      : "No",
         "consistent"     : "Yes",
-        "editStatus"     : "In Progress",
-        "listStatus"     : "Checked",
         "scope"         : "Consortium",
         "identifiers"    : [
           [
@@ -872,7 +864,6 @@ class IntegrationControllerSpec extends Specification {
     pkg.tipps[0].name == "TIPP Name"
     pkg.tipps[0].subjectArea == "Fringe"
     pkg.tipps[0].prices.size() == 2
-    pkg.listStatus?.value == "In Progress"
   }
 
   void "test update package via token"() {
@@ -882,8 +873,6 @@ class IntegrationControllerSpec extends Specification {
       "packageHeader": [
         "breakable"      : "No",
         "consistent"     : "Yes",
-        "editStatus"     : "In Progress",
-        "listStatus"     : "Checked",
         "scope"         : "Consortium",
         "identifiers"    : [
           [
@@ -1080,7 +1069,6 @@ class IntegrationControllerSpec extends Specification {
       "packageHeader": [
         "breakable"      : "No",
         "consistent"     : "Yes",
-        "editStatus"     : "In Progress",
         "scope"         : "Consortium",
         "identifiers"    : [
           [
@@ -1088,7 +1076,6 @@ class IntegrationControllerSpec extends Specification {
             "value": "ZDB-1-ACS"
           ]
         ],
-        "listStatus"     : "In Progress",
         "name"           : "American Chemical Society: ACS Legacy Archives",
         "nominalPlatform": [
           "name"      : "ACS Publications",
