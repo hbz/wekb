@@ -144,7 +144,7 @@ class BootStrap {
 
         registerDomainClasses()
 
-        migrateDiskFilesToDatabase()
+        //migrateDiskFilesToDatabase()
 
         CuratoryGroup.withTransaction() {
             if (grailsApplication.config.gokb.defaultCuratoryGroup != null && grailsApplication.config.gokb.defaultCuratoryGroup != "") {
@@ -193,11 +193,11 @@ class BootStrap {
         int num_c = Combo.executeUpdate("update Combo set status = ? where status is null", [status_active])
         log.debug("${num_c} combos updated");
 
-        log.info("GoKB defaultSortKeys()");
-        defaultSortKeys()
+        /*log.info("GoKB defaultSortKeys()");
+        defaultSortKeys()*/
 
-        log.info("GoKB sourceObjects()");
-        sourceObjects()
+       /* log.info("GoKB sourceObjects()");
+        sourceObjects()*/
 
         log.info("Ensure default Identifier namespaces")
         def namespaces = [
@@ -278,7 +278,7 @@ class BootStrap {
     }
 
     def migrateDiskFilesToDatabase() {
-        log.info("Migrate Disk Files");
+        /*log.info("Migrate Disk Files");
         def baseUploadDir = grailsApplication.config.baseUploadDir ?: '.'
 
         DataFile.findAll("from DataFile as df where df.fileData is null").each { df ->
@@ -299,7 +299,7 @@ class BootStrap {
             } catch (Exception e) {
                 log.error("Exception while migrating files to database. File ${temp_file_name}", e)
             }
-        }
+        }*/
     }
 
     def cleanUpMissingDomains() {
@@ -395,7 +395,7 @@ class BootStrap {
 
     }
 
-    def defaultSortKeys() {
+    /*def defaultSortKeys() {
         def vals = RefdataValue.executeQuery("select o from RefdataValue o where o.sortKey is null or trim(o.sortKey) = ''")
 
         // Default the sort key to 0.
@@ -412,7 +412,7 @@ class BootStrap {
             it.dcSortOrder = "0"
             it.save(flush: true, failOnError: true)
         }
-    }
+    }*/
 
     def destroy = {
     }
@@ -1055,7 +1055,7 @@ class BootStrap {
         LanguagesService.initialize()
     }
 
-    def sourceObjects() {
+   /* def sourceObjects() {
         log.debug("Lookup or create source objects")
         def ybp_source = Source.findByName('YBP') ?: new Source(name: 'YBP').save(flush: true, failOnError: true)
         def cup_source = Source.findByName('CUP') ?: new Source(name: 'CUP').save(flush: true, failOnError: true)
@@ -1063,7 +1063,7 @@ class BootStrap {
         def cufts_source = Source.findByName('CUFTS') ?: new Source(name: 'CUFTS').save(flush: true, failOnError: true)
         def askews_source = Source.findByName('ASKEWS') ?: new Source(name: 'ASKEWS').save(flush: true, failOnError: true)
         def ebsco_source = Source.findByName('EBSCO') ?: new Source(name: 'EBSCO').save(flush: true, failOnError: true)
-    }
+    }*/
 
 
     def DSConfig() {
