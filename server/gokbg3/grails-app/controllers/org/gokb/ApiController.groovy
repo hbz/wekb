@@ -876,7 +876,7 @@ class ApiController {
 
 
   /**
-   * See the service method {@link com.k_int.ESSearchService#getApiTunnel(def params)} for usage instructions.
+   * See the service method {@link com.k_int.ESSearchService#getApiTunnel(java.lang.Object)} for usage instructions.
    */
   def elasticsearchTunnel() {
     def result = [:]

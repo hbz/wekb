@@ -353,8 +353,7 @@ class ESSearchService{
   }
 
 
-  private void addIdentifierQuery(query, errors, qpars) {
-    def id_params = [:]
+  private void addIdentifierQuery(query, errors, qpars, boolean orLinked) {
     List valList = []
 
     if (qpars.identifier) {
@@ -369,6 +368,7 @@ class ESSearchService{
 
     valList.each { String val ->
       if ( val.trim() ) {
+        Map id_params = [:]
         if (val.contains(',')) {
           id_params['identifiers.namespace'] = val.split(',')[0]
           id_params['identifiers.value'] = val.split(',')[1]
@@ -377,7 +377,10 @@ class ESSearchService{
         }
 
         log.debug("Query ids for ${id_params}")
-        query.must(QueryBuilders.nestedQuery("identifiers", addIdQueries(id_params), ScoreMode.Max))
+        if(orLinked)
+          query.should(QueryBuilders.nestedQuery("identifiers", addIdQueries(id_params), ScoreMode.Max))
+        else
+          query.must(QueryBuilders.nestedQuery("identifiers", addIdQueries(id_params), ScoreMode.Max))
       }
     }
 
@@ -662,10 +665,18 @@ class ESSearchService{
       filterByComponentType(exactQuery, component_type, params)
       addStatusQuery(exactQuery, errors, params.status)
       addDateQueries(exactQuery, errors, params)
-      processNameFields(exactQuery, errors, params)
       processNestedFields(exactQuery, errors, params)
       processGenericFields(exactQuery, errors, params)
-      addIdentifierQuery(exactQuery, errors, params)
+      if(params.name && ["ids","identifier","identifiers"].any { String identifierKey -> params.keySet().contains(identifierKey) }) {
+        QueryBuilder nameIdentifierQuery = QueryBuilders.boolQuery()
+        nameIdentifierQuery.should(QueryBuilders.matchQuery('name', params.name))
+        addIdentifierQuery(nameIdentifierQuery, errors, params, true)
+        exactQuery.must(nameIdentifierQuery).boost(2)
+      }
+      else {
+        processNameFields(exactQuery, errors, params)
+        addIdentifierQuery(exactQuery, errors, params, false)
+      }
       specifyQueryWithParams(params, exactQuery, errors, unknown_fields)
 
       if(unknown_fields.size() > 0){
@@ -1153,12 +1164,8 @@ class ESSearchService{
 
     QueryBuilder idQuery = QueryBuilders.boolQuery()
 
-    params.each { k,v ->
-      if(k == 'identifiers.namespace')
-        idQuery.must(QueryBuilders.termQuery(k, v))
-      else
-        idQuery.must(QueryBuilders.wildcardQuery(k, v))
-    }
+    idQuery.must(QueryBuilders.termQuery('identifiers.namespace',params['identifiers.namespace']))
+    idQuery.must(QueryBuilders.wildcardQuery('identifiers.value', params['identifiers.value']))
 
     return idQuery
   }
