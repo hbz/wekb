@@ -12,7 +12,7 @@
                         <g:if test="${editable}">
                             <g:link controller='ajaxSupport'
                                     action='unlinkManyToMany'
-                                    params="${ ["__context" : "${d.class.name}:${d.id}", "__property" : "ddcs", "__itemToRemove" : "${ddc.getClassName()}:${ddc.id}" ] }">Unlink</g:link>
+                                    params="${ ["__context" : "${d.class.name}:${d.id}", "__property" : "ddcs", "__itemToRemove" : "${ddc.getClassName()}:${ddc.id}", fragment: 'ddcs' ] }">Unlink</g:link>
                         </g:if>
                         </li>
                     </g:each>
@@ -24,7 +24,7 @@
 
                     <bootStrap:modal id="ddcModal" title="Add Dewey Decimal Classification">
 
-                        <g:form controller="ajaxSupport" action="addToStdCollection" class="form-inline">
+                        <g:form controller="ajaxSupport" action="addToStdCollection" class="form-inline" params="[fragment: 'ddcs']">
                             <input type="hidden" name="__context" value="${d.class.name}:${d.id}" />
                             <input type="hidden" name="__property" value="ddcs" />
                             <input type="hidden" name="object" value="${d.getClassName()}:${d.id}"/>
