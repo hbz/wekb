@@ -6,8 +6,8 @@
 
             <ul id="tabs" class="nav nav-tabs" role="tablist">
 
-                <li class="nav-item active">
-                    <a class="nav-link" href="#identifiers" data-toggle="tab" role="tab">Identifiers <span
+                <li class="nav-item">
+                    <a class="nav-link active" href="#identifiers" data-toggle="tab" role="tab">Identifiers <span
                             class="badge badge-warning">${d.getCombosByPropertyNameAndStatus('ids', 'Active').size()}</span>
                     </a>
                 </li>
@@ -39,12 +39,6 @@
                         <span class="badge badge-warning">${d.additionalProperties.size()}</span>
                     </a>
                 </li>--}%
-                <li class="nav-item">
-                    <a class="nav-link" href="#review" data-toggle="tab" role="tab">
-                        Review Tasks (Open/Total)
-                        <span class="badge badge-warning">${d.reviewRequests?.findAll { it.status == org.gokb.cred.RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STATUS, 'Open') }.size()}/${d.reviewRequests.size()}</span>
-                    </a>
-                </li>
                 %{--<li class="nav-item">
                     <a class="nav-link" href="#offices" data-toggle="tab" role="tab">
                         Offices

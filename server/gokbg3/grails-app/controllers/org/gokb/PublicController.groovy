@@ -77,7 +77,7 @@ class PublicController {
         result.refdata_properties = classExaminationService.getRefdataPropertyNames(result.pkg.class.name)
 
         Map newParams = [:]
-        params.sort = params.sort ? "${params.sort}" : 'lower(tipp.name)'
+        params.sort = params.sort ? "${params.sort}" : 'tipp.name'
         params.order = params.order ? "${params.order}" : 'asc'
 
         if (params.newMax) {
@@ -113,6 +113,26 @@ class PublicController {
       }
 
       if (!result.tipp) {
+        flash.error = "Tipp not found"
+      }
+    }
+    result
+  }
+
+  def orgContent() {
+    log.debug("orgContent::${params}")
+    def result = [:]
+    if ( params.id ) {
+      def org_id_components = params.id.split(':');
+
+      if ( org_id_components?.size() == 2 ) {
+        result.org = Org.get(Long.parseLong(org_id_components[1]));
+      }
+      else {
+        result.org = Org.findByUuid(params.id)
+      }
+
+      if (!result.org) {
         flash.error = "Tipp not found"
       }
     }

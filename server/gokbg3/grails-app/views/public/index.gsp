@@ -104,7 +104,13 @@
                                     id="${hit.id}">${hit.source.name}</g:link>
 
                         </td>
-                        <td>${hit.source.cpname}</td>
+                        <td>
+                            <g:if test="${hit.source.providerUuid}">
+                                <g:link controller="public" action="orgContent"
+                                        id="${hit.source.providerUuid}">${hit.source.cpname}</g:link>
+                            </g:if>
+
+                        </td>
                         <td>
                             <g:if test="${hit.source.curatoryGroups?.size() > 0}">
                                 <g:each in="${hit.source.curatoryGroups}" var="cg" status="c">

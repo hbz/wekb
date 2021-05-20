@@ -23,7 +23,10 @@
                         <gokb:annotatedLabel owner="${pkg}" property="provider">Provider</gokb:annotatedLabel>
                     </dt>
                     <dd class="col-9 text-left">
-                        <gokb:manyToOneReferenceTypedown owner="${pkg}" field="provider" baseClass="org.gokb.cred.Org" >${pkg.provider?.name}</gokb:manyToOneReferenceTypedown>
+                        <g:if test="${pkg.provider}">
+                            <g:link controller="public" action="orgContent"
+                                    id="${pkg.provider.uuid}">${pkg.provider.name}</g:link>
+                        </g:if>
                     </dd>
 
                     <dt class="col-3 text-right">
@@ -37,9 +40,10 @@
                         <gokb:annotatedLabel owner="${pkg}" property="nominalPlatform">Nominal Platform</gokb:annotatedLabel>
                     </dt>
                     <dd class="col-9 text-left">
-                        <gokb:manyToOneReferenceTypedown owner="${pkg}" field="nominalPlatform" baseClass="org.gokb.cred.Platform" >
-                            ${pkg.nominalPlatform?.name ?: ''}
-                        </gokb:manyToOneReferenceTypedown>
+                        <g:if test="${pkg.nominalPlatform}">
+                            <g:link controller="public" action="platformContent"
+                                    id="${pkg.nominalPlatform.uuid}">${pkg.nominalPlatform.name}</g:link>
+                        </g:if>
                     </dd>
                     <g:if test="${pkg}">
                         <dt class="col-3 text-right">
@@ -155,7 +159,7 @@
                                     <g:each in="${tipps}" var="t" status="i">
                                         <tr>
                                             <td>
-                                            ${ (params.offset ?: 0)  + i + 1 }
+                                            ${ (params.offset ? params.offset.toInteger(): 0)  + i + 1 }
                                             </td>
                                             <td>
                                                 <g:link controller="public" action="tippContent" id="${t.uuid}">
@@ -187,7 +191,7 @@
 
                     <g:if test="${titleCount ?: 0 > 0}">
                         <div class="pagination mb-4 d-flex justify-content-center">
-                            <g:paginate controller="public" action="index" params="${params}" next="&raquo;" prev="&laquo;"
+                            <g:paginate controller="public" action="packageContent" params="${params}" next="&raquo;" prev="&laquo;"
                                         max="${max}" total="${titleCount}"/>
                         </div>
                     </g:if>
