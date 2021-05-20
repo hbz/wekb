@@ -83,18 +83,17 @@ databaseChangeLog = {
                 RefdataValue type = RefdataCategory.lookup(RCConstants.CONTACT_TYPE, 'Technical Support')
 
                 List<Long> deletedIDs = []
-                println('Mow')
+
 
                 KBComponentAdditionalProperty.list().each { KBComponentAdditionalProperty additionalProperty ->
                     if(additionalProperty.propertyDefn == technicalSupport){
                         count++
-                        println('Mo1w')
+
                         Contact.withTransaction {
                             Contact contact = new Contact(content: additionalProperty.apValue,
                                     contentType: contentType,
                                     type: type)
                             if(contact.save()){
-                                println('Mow23')
                                 countSuccess++
                                 deletedIDs << additionalProperty.id
                             }
