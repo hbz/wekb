@@ -4,7 +4,7 @@
 
         <g:if test="${controllerName == 'public'}">
             <ul id="tabs" class="nav nav-tabs" role="tablist">
-                <li class="nav-item active"><a class="nav-link active" href="#titledetails" data-toggle="tab"
+                <li class="nav-item"><a class="nav-link active" href="#titledetails" data-toggle="tab"
                                                role="tab">Hosted Titles <span
                             class="badge badge-warning">${d.currentTippCount}</span></a></li>
                 <li class="nav-item"><a class="nav-link" href="#packages" data-toggle="tab" role="tab">Packages <span

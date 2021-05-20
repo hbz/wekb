@@ -22,10 +22,15 @@
         </g:else>
     </dd>
 
-    <dt class="col-3 text-right"><gokb:annotatedLabel owner="${d}" property="provider">Provider</gokb:annotatedLabel></dt>
-    <dd class="col-9 text-left"><gokb:manyToOneReferenceTypedown owner="${d}" field="provider"
-                                         baseClass="org.gokb.cred.Org">${d.provider?.name}</gokb:manyToOneReferenceTypedown></dd>
-
+    <dt class="col-3 text-right">
+        <gokb:annotatedLabel owner="${d}" property="provider">Provider</gokb:annotatedLabel>
+    </dt>
+    <dd class="col-9 text-left">
+        <g:if test="${d.provider}">
+            <g:link controller="public" action="orgContent"
+                    id="${d.provider.uuid}">${d.provider.name}</g:link>
+        </g:if>
+    </dd>
     <dt class="col-3 text-right">
         <gokb:annotatedLabel owner="${d}" property="primaryURL">Primary URL</gokb:annotatedLabel>
     </dt>
@@ -39,6 +44,13 @@
                 &nbsp; <span class="badge badge-warning">!Unknown URL format!</span>
             </g:else>
         </g:if>
+    </dd>
+
+    <dt class="col-3 text-right">
+        <gokb:annotatedLabel owner="${d}" property="titleNamespace">Title Namespace</gokb:annotatedLabel>
+    </dt>
+    <dd class="col-9 text-left">
+        <gokb:manyToOneReferenceTypedown owner="${d}" field="titleNamespace" baseClass="org.gokb.cred.IdentifierNamespace">${(d.titleNamespace?.name)?:d.titleNamespace?.value}</gokb:manyToOneReferenceTypedown>
     </dd>
 
     <dt class="col-3 text-right"><gokb:annotatedLabel owner="${d}"
