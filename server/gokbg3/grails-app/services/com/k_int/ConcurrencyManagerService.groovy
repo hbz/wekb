@@ -54,6 +54,7 @@ class ConcurrencyManagerService {
     RefdataValue type
     int ownerId
     int groupId
+    String status
 
     public message(String message) {
       log.debug(message);
@@ -91,7 +92,15 @@ class ConcurrencyManagerService {
      */
     @Override
     public synchronized boolean isDone () {
-      this.task.done
+      boolean done = this.task.done
+      if(done){
+        if(!this.endTime) {
+          this.endTime = new Date()
+        }
+        this.status = JobResult.STATUS_SUCCESS
+        persistJobResult(this)
+      }
+      done
     }
 
     @Override
@@ -120,14 +129,29 @@ class ConcurrencyManagerService {
 
     @Override
     public boolean cancel (boolean mayInterruptIfRunning) {
-      this.task.cancel(mayInterruptIfRunning)
       message("cancel Job ($uuid)")
-      endTime = new Date()
+      boolean cancel = this.task.cancel(mayInterruptIfRunning)
+      if(cancel){
+        if(!this.endTime) {
+          this.endTime = new Date()
+        }
+        this.status = JobResult.STATUS_FAIL
+        persistJobResult(this)
+      }
+      cancel
     }
 
     @Override
     public boolean isCancelled () {
-      this.task.isCancelled();
+      boolean cancelled = this.task.isCancelled()
+      if(cancelled){
+        if(!this.endTime) {
+          this.endTime = new Date()
+        }
+        this.status = JobResult.STATUS_FAIL
+        persistJobResult(this)
+      }
+      cancelled
     }
 
     /**
@@ -242,6 +266,9 @@ class ConcurrencyManagerService {
     String jobid = UUID.randomUUID().toString()
 
     Job j = map.get(jobid)
+
+    Thread.currentThread().setName('wekb-Job-'+jobid+'-'+j.type?.value)
+
     j
   }
 
@@ -377,29 +404,30 @@ class ConcurrencyManagerService {
   }
 
   public JobResult persistJobResult(Job j, def result_object = null) {
-    def jobResult = JobResult.findByUuid(j.uuid)
+    JobResult jobResult = JobResult.findByUuid(j.uuid)
+
+    def job_map = [
+            uuid: (j.uuid),
+            description: (j.description),
+            resultObject: (result_object ? (result_object as JSON).toString() : null),
+            type: (j.type),
+            statusText: (result_object ? (result_object.result) : j.status),
+            ownerId: (j.ownerId),
+            groupId: (j.groupId),
+            startTime: (j.startTime),
+            endTime: (j.endTime),
+            linkedItemId: (j.linkedItem?.id)
+    ]
 
     if (!jobResult) {
       log.debug("Persisting Job result for Job '${j.description}'")
-      if (!result_object) {
-        result_object = j.get()
-      }
-
-      def job_map = [
-        uuid: (j.uuid),
-        description: (j.description),
-        resultObject: (result_object as JSON).toString(),
-        type: (j.type),
-        statusText: (result_object.result),
-        ownerId: (j.ownerId),
-        groupId: (j.groupId),
-        startTime: (j.startTime),
-        endTime: (j.endTime),
-        linkedItemId: (j.linkedItem?.id)
-      ]
-
       jobResult = new JobResult(job_map).save(flush: true, failOnError: true)
+    }else {
+
+      jobResult.save(job_map).save(flush: true, failOnError: true)
+
     }
+
     jobResult
   }
 

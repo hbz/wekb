@@ -934,22 +934,27 @@ class IntegrationController {
         job.message("Finished processing ${job_result?.results?.size()} titles.".toString())
 
         JobResult.withNewSession {
-          def result_object = JobResult.findByUuid(job.uuid)
+          JobResult result_object = JobResult.findByUuid(job.uuid)
+
+          def job_map = [
+                  uuid: (job.uuid),
+                  description: (job.description),
+                  resultObject: (job_result ? (job_result as JSON).toString() : null),
+                  type: (job.type),
+                  statusText: (job_result ? (job_result.result) : job.status),
+                  ownerId: (job.ownerId),
+                  groupId: (job.groupId),
+                  startTime: (job.startTime),
+                  endTime: (job.endTime),
+                  linkedItemId: (job.linkedItem?.id)
+          ]
 
           if (!result_object) {
-            def job_map = [
-                uuid        : (job.uuid),
-                description : (job.description),
-                resultObject: (job_result as JSON).toString(),
-                type        : (job.type),
-                statusText  : (job_result?.result),
-                ownerId     : (job.ownerId),
-                groupId     : (job.groupId),
-                startTime   : (job.startTime),
-                endTime     : (job.endTime)
-            ]
+            result_object = new JobResult(job_map).save()
+          }else {
 
-            result_object = new JobResult(job_map).save(flush: true, failOnError: true)
+            result_object.save(job_map).save()
+
           }
         }
 
