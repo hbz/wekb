@@ -1252,7 +1252,7 @@ abstract class KBComponent implements Auditable{
     if (this instanceof CuratoryGroup){
       AllocatedReviewGroup.removeAll(this)
       User.withTransaction {
-         this.users?.each{ User user ->
+         this.users.each{ User user ->
             user.removeFromCuratoryGroups(this)
           user.save()
           }
