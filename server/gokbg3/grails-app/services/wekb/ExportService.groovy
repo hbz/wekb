@@ -345,8 +345,8 @@ class ExportService {
 
     def exportPackageBatchImportTemplate(def outputStream) {
 
-        List titles = ["package_name", "provider_uuid", "nominal_platform_uuid", "description", "url", "breakable", "consistent", "content_type",
-                              "file", "open_access", "payment_type", "scope", "editing_status", "national_range", "regional_range", "anbieter_produkt_id", "ddc", "source_url", "frequency", "title_id_namespace", "automated_updates"]
+        List titles = ["package_name", "provider_uuid", "nominal_platform_uuid", "description", "url", "breakable", "content_type",
+                              "file", "open_access", "payment_type", "scope", "national_range", "regional_range", "anbieter_produkt_id", "ddc", "source_url", "frequency", "title_id_namespace", "automated_updates"]
 
 
         XSSFWorkbook workbook = new XSSFWorkbook()

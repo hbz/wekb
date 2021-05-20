@@ -86,7 +86,7 @@
     </dd>
 
     <g:render template="/apptemplates/secondTemplates/refdataprops"
-              model="${[d:(d), rd:(rd), dtype:(dtype)]}" />
+              model="${[d:(d), rd:(rd), dtype:(dtype), notShowProps: [RCConstants.PACKAGE_EDITING_STATUS, RCConstants.PACKAGE_CONSISTENT]]}" />
 
     <g:if test="${controllerName != 'create'}">
         <dt>

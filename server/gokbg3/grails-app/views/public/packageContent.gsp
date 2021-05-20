@@ -72,7 +72,7 @@
 
 
                     <g:render template="/apptemplates/secondTemplates/refdataprops"
-                              model="${[d: pkg, rd: refdata_properties, dtype: pkg.class.simpleName]}"/>
+                              model="${[d: pkg, rd: refdata_properties, dtype: pkg.class.simpleName, notShowProps: [RCConstants.PACKAGE_EDITING_STATUS, RCConstants.PACKAGE_CONSISTENT]]}"/>
 
                     <dt class="col-3 text-right">
                         <gokb:annotatedLabel owner="${pkg}" property="nationalRanges">National Range</gokb:annotatedLabel>
