@@ -296,7 +296,7 @@ class CreateController {
     def result=[:]
     User user = springSecurityService.currentUser
 
-    result.mappingCols = ["package_name", "provider_uuid", "nominal_platform_uuid", "description", "url", "breakable", "consistent", "content_type",
+    result.mappingCols = ["package_name", "provider_uuid", "nominal_platform_uuid", "description", "url", "breakable", "content_type",
             "file", "open_access", "payment_type", "scope", "national_range", "regional_range", "anbieter_produkt_id", "ddc", "source_url", "frequency", "title_id_namespace", "automated_updates"]
 
     result
@@ -440,14 +440,14 @@ class CreateController {
                 }
               }
 
-              if (colMap.consistent != null) {
+             /* if (colMap.consistent != null) {
                 String value = cols[colMap.consistent].trim()
                 if (value) {
                   RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.PACKAGE_CONSISTENT, value)
                   if (refdataValue)
                     pkg.consistent = refdataValue
                 }
-              }
+              }*/
 
               if (colMap.content_type != null) {
                 String value = cols[colMap.content_type].trim()
@@ -494,14 +494,14 @@ class CreateController {
                 }
               }
 
-              if (colMap.editing_status != null) {
+             /* if (colMap.editing_status != null) {
                 String value = cols[colMap.editing_status].trim()
                 if (value) {
                   RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.PACKAGE_EDITING_STATUS, value)
                   if (refdataValue)
                     pkg.editingStatus = refdataValue
                 }
-              }
+              }*/
 
 
               if (colMap.national_ranges) {

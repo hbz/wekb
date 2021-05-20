@@ -320,21 +320,27 @@ class CrossRefPkgRun {
     }
 
     JobResult.withNewSession {
-      def result_object = JobResult.findByUuid(job?.uuid)
+      JobResult result_object = JobResult.findByUuid(job.uuid)
+
+      def job_map = [
+              uuid: (job.uuid),
+              description: (job.description),
+              resultObject: (jsonResult ? (jsonResult as JSON).toString() : null),
+              type: (job.type),
+              statusText: (jsonResult ? (jsonResult.result) : job.status),
+              ownerId: (job.ownerId),
+              groupId: (job.groupId),
+              startTime: (job.startTime),
+              endTime: (job.endTime),
+              linkedItemId: (job.linkedItem?.id)
+      ]
+
       if (!result_object) {
-        def job_map = [
-          uuid        : (job?.uuid),
-          description : (job?.description),
-          resultObject: (jsonResult as JSON).toString(),
-          type        : (job?.type),
-          statusText  : (jsonResult.result),
-          ownerId     : (job?.ownerId),
-          groupId     : (job?.groupId),
-          startTime   : (job?.startTime),
-          endTime     : (job?.endTime),
-          linkedItemId: (job?.linkedItem?.id)
-        ]
-        new JobResult(job_map).save(flush: true, failOnError: true)
+        result_object = new JobResult(job_map).save(flush: true, failOnError: true)
+      }else {
+
+        result_object.save(job_map).save(flush: true, failOnError: true)
+
       }
     }
 

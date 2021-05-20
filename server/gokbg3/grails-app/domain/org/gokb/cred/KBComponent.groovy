@@ -1249,12 +1249,11 @@ abstract class KBComponent implements Auditable{
       ComponentHistoryEvent.executeUpdate("delete from ComponentHistoryEvent as c where c.id = ?", [it.id])
     }
     // ComponentHistoryEventParticipant.executeUpdate("delete from ComponentHistoryEventParticipant as c where c.participant = :component",[component:this])
-    if (this?.class == CuratoryGroup){
+    if (this instanceof CuratoryGroup){
       AllocatedReviewGroup.removeAll(this)
-      Set curatoryGroups = [this]
       User.withTransaction {
-          User.findAllByCuratoryGroups(curatoryGroups).each { User user ->
-            user.removeFromCuratoryGroups(CuratoryGroup)
+         this.users.each{ User user ->
+            user.removeFromCuratoryGroups(this)
           user.save()
           }
         }
