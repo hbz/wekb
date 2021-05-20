@@ -164,7 +164,7 @@
 
             </ul>
           </li>
-          <li><g:link controller="admin" action="frontend"><i class="fa fa-angle-double-right fa-fw"></i> Frontend</g:link></li>
+          <li  class="${controllerName == "frontend" && actionName == 'index' ? 'active' : ''}" ><g:link controller="frontend" action="index"><i class="fa fa-angle-double-right fa-fw"></i> Frontend</g:link></li>
           <li class="${controllerName == "home" && actionName == 'about' ? 'active' : ''}" ><g:link controller="home" action="about"><i class="fa fa-info fa-fw"></i> Operating environment</g:link></li>
         </sec:ifAnyGranted>
 

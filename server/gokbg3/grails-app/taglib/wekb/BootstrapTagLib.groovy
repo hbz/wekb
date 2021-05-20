@@ -38,7 +38,28 @@ class BootstrapTagLib {
 
 
     }
-    def tab = { attrs, body ->
+    def tabs = { attrs, body ->
+        out << '<ul  class="nav nav-tabs"  id="js-tabList" role="tablist">'
+        out << body()
+        out << '</ul>'
+    }
+    def tabsItem = { attrs, body ->
+        String linkBody = attrs.text ?: ''
+        String href = attrs.href ?: ''
+        String controller = attrs.controller ?: ''
+        String action = attrs.action ?: ''
 
+        out << '<li>'
+        out << '<a  role="tab" data-url="'
+        if (controller) {
+            out << g.createLink(
+                    controller: controller,
+                    action: action
+            )
+        }
+        out << '" href="' + href + '">'
+        out << linkBody
+        out << '</a>'
+        out << '</li>'
     }
 }
