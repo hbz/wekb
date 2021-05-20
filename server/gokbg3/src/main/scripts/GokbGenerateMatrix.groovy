@@ -52,8 +52,7 @@ target(main: "Generate the property matrix for KBComponents") {
       matrix.add(genMatrixRow(csc, propertyNames))
     }
 
-    // Add any special additional 
-    componentClasses.add(application.getDomainClass('org.gokb.cred.OrgRole'));
+    // Add any special additional
     componentClasses.add(application.getDomainClass('org.gokb.cred.User'));
 
 

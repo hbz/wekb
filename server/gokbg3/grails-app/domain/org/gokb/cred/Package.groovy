@@ -29,8 +29,6 @@ class Package extends KBComponent {
   // Refdata
   @RefdataAnnotation(cat = RCConstants.PACKAGE_SCOPE)
   RefdataValue scope
-  @RefdataAnnotation(cat = RCConstants.PACKAGE_LIST_STATUS)
-  RefdataValue listStatus
   @RefdataAnnotation(cat = RCConstants.PACKAGE_CONTENT_TYPE)
   RefdataValue contentType
   @RefdataAnnotation(cat = RCConstants.PACKAGE_BREAKABLE)
@@ -46,6 +44,9 @@ class Package extends KBComponent {
   @RefdataAnnotation(cat = RCConstants.PACKAGE_FILE)
   RefdataValue file
 
+  @RefdataAnnotation(cat = RCConstants.PACKAGE_EDITING_STATUS)
+  RefdataValue editingStatus
+
   RefineProject lastProject
   String globalNote
 
@@ -53,7 +54,6 @@ class Package extends KBComponent {
 
 /*  private static refdataDefaults = [
     "scope"      : "Front File",
-    "listStatus" : "Checked",
     "breakable"  : "Unknown",
     "consistent" : "Unknown",
     "paymentType": "Unknown"
@@ -92,7 +92,6 @@ class Package extends KBComponent {
 
   static mapping = {
     includes KBComponent.mapping
-    listStatus column: 'pkg_list_status_rv_fk'
     lastProject column: 'pkg_refine_project_fk'
     scope column: 'pkg_scope_rv_fk'
     breakable column: 'pkg_breakable_rv_fk'
@@ -102,6 +101,7 @@ class Package extends KBComponent {
     descriptionURL column: 'pkg_descr_url'
     openAccess column: 'pkg_open_access'
     file column: 'pkg_file'
+    editingStatus column: 'pkg_editing_status_rv_fk'
 
     ddcs             joinTable: [
             name:   'package_dewey_decimal_classification',
@@ -125,13 +125,13 @@ class Package extends KBComponent {
   static constraints = {
     lastProject(nullable: true, blank: false)
     scope(nullable: true, blank: false)
-    listStatus(nullable: true, blank: false)
     breakable(nullable: true, blank: false)
     consistent(nullable: true, blank: false)
     paymentType(nullable: true, blank: false)
     globalNote(nullable: true, blank: true)
     openAccess (nullable: true, blank: true)
     file (nullable: true, blank: true)
+    editingStatus (nullable: true, blank: true)
     lastProject(nullable: true, blank: false)
     descriptionURL(nullable: true, blank: true)
     name(validator: { val, obj ->
@@ -173,8 +173,8 @@ class Package extends KBComponent {
       'providerUuid'       : "provider.uuid",
       'titleCount'         : false,
       'paymentType'        : false,
-      'listStatus'         : "refdata",
       'file'               : "refdata",
+      'editingStatus'      : "refdata",
       'openAccess'         : "refdata",
       'contentType'        : "refdata",
       'scope'              : "refdata"
@@ -511,7 +511,6 @@ select tipp.id,
         addCoreGOKbXmlFields(builder, attr)
 
         'scope'(scope?.value)
-        'listStatus'(listStatus?.value)
         'breakable'(breakable?.value)
         'consistent'(consistent?.value)
         'paymentType'(paymentType?.value)
@@ -519,6 +518,7 @@ select tipp.id,
         'contentType'(contentType?.value)
         'openAccess'(openAccess?.value)
         'file'(file?.value)
+        'editingStatus'(editingStatus?.value)
 
         if (nominalPlatform) {
           builder.'nominalPlatform'([id: nominalPlatform.id, uuid: nominalPlatform.uuid]) {

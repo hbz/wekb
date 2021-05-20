@@ -768,7 +768,6 @@ class PackageService {
   /**
    * Definitive rules for taking a package header DTO and inserting or updating an existing package based on package name
    *
-   * listStatus:'Checked',
    * status:'Current',
    * breakable:'Unknown',
    * consistent:'Unknown',
@@ -907,9 +906,7 @@ class PackageService {
       }
     }
 
-    changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.listStatus, result, 'listStatus')
     changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.status, result, 'status')
-    changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.editStatus, result, 'editStatus')
     changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.scope, result, 'scope')
     changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.breakable, result, 'breakable')
     changed |= ClassUtils.setRefdataIfPresent(packageHeaderDTO.consistent, result, 'consistent')
@@ -1389,7 +1386,6 @@ class PackageService {
                           sanitize(tipp.hostPlatform.primaryUrl) + '\t' +
                           sanitize(tipp.hostPlatform.getId()) + '\t' +
                           '\t' +
-                          sanitize(tipp.editStatus?.value) + '\t' +
                           sanitize(tipp.accessStartDate) + '\t' +
                           sanitize(tipp.accessEndDate) + '\t' +
                           sanitize(tcs.startDate) + '\t' +
@@ -1431,7 +1427,6 @@ class PackageService {
                         sanitize(tipp.hostPlatform?.primaryUrl) + '\t' +
                         sanitize(tipp.hostPlatform?.getId()) + '\t' +
                         '\t' +
-                        sanitize(tipp.editStatus?.value) + '\t' +
                         sanitize(tipp.accessStartDate) + '\t' +
                         sanitize(tipp.accessEndDate) + '\t' +
                         sanitize(tipp.coverageDepth) + '\t' +

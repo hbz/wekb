@@ -10,10 +10,9 @@
                     <g:each in="${d.ddcs.sort { it.value }}" var="ddc">
                         <li>${ddc.value}: ${ddc.getI10n('value')}
                         <g:if test="${editable}">
-                            <g:link controller="ajaxSupport" action="deleteDDC"
-                                    params="${[object: "${d.getClassName()}:${d.id}", removeDDC: ddc.id]}">
-                                Unlink
-                            </g:link>
+                            <g:link controller='ajaxSupport'
+                                    action='unlinkManyToMany'
+                                    params="${ ["__context" : "${d.class.name}:${d.id}", "__property" : "ddcs", "__itemToRemove" : "${ddc.getClassName()}:${ddc.id}", fragment: 'ddcs' ] }">Unlink</g:link>
                         </g:if>
                         </li>
                     </g:each>
@@ -25,7 +24,9 @@
 
                     <bootStrap:modal id="ddcModal" title="Add Dewey Decimal Classification">
 
-                        <g:form class="form" url="[controller: 'ajaxSupport', action: 'addDDC']" method="post">
+                        <g:form controller="ajaxSupport" action="addToStdCollection" class="form-inline" params="[fragment: 'ddcs']">
+                            <input type="hidden" name="__context" value="${d.class.name}:${d.id}" />
+                            <input type="hidden" name="__property" value="ddcs" />
                             <input type="hidden" name="object" value="${d.getClassName()}:${d.id}"/>
 
                                 <div class="field">
@@ -34,9 +35,9 @@
                                     <g:select from="${RefdataCategory.lookup(RCConstants.DDC).sort {it.value}}"
                                               class="dropdown fluid"
                                               id="ddcSelection"
-                                              optionKey="id"
+                                              optionKey="${{ it.class.name+':'+it.id}}"
                                               optionValue="${{ it.value +': '+ it.getI10n('value')}}"
-                                              name="ddc"
+                                              name="__relatedObject"
                                               value=""/>
                                 </div>
                         </g:form>

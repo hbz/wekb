@@ -29,9 +29,9 @@
                 <td><gokb:xEditableRefData owner="${v}" field="locale" config="${RCConstants.KBCOMPONENT_VARIANTNAME_LOCAL}" overWriteEditable="${editable}"/></td>
                   <g:if test="${ editable && showActions }">
                     <td>
-                              <g:link controller="ajaxSupport" action="authorizeVariant" id="${v.id}">Make Authorized</g:link>,
+                              <g:link controller="ajaxSupport" action="authorizeVariant" id="${v.id}" params="[fragment: 'altnames']">Make Authorized</g:link>,
                               <g:link controller="ajaxSupport" class="confirm-click" data-confirm-message="Are you sure you wish to delete this Variant?"
-                                action="deleteVariant" id="${v.id}" >Delete</g:link>
+                                action="deleteVariant" id="${v.id}" params="[fragment: 'altnames']">Delete</g:link>
                     </td>
                   </g:if>
               </tr>

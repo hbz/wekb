@@ -9,6 +9,9 @@ class KBComponentFolderEntry extends FolderEntry {
 
   KBComponent linkedComponent
 
+  Date dateCreated
+  Date lastUpdated
+
   @Transient
   @Override
   public Object getLinkedItem() {
@@ -19,6 +22,16 @@ class KBComponentFolderEntry extends FolderEntry {
   @Override
   public String getDisplayName() {
     linkedComponent.name?.toString()
+  }
+
+  static mapping = {
+    dateCreated column: 'kbcfe_date_created'
+    lastUpdated column: 'kbcfe_last_updated'
+  }
+
+  static constraints = {
+    dateCreated(nullable:true, blank:true)
+    lastUpdated(nullable:true, blank:true)
   }
 
 }

@@ -37,7 +37,6 @@ class Identifier extends KBComponent {
     'ignore'      : [
       'lastUpdatedBy',
       'dateCreated',
-      'editStatus',
       'name',
       'status',
       'lastUpdated',

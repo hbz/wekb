@@ -144,7 +144,7 @@ class BootStrap {
 
         registerDomainClasses()
 
-        migrateDiskFilesToDatabase()
+        //migrateDiskFilesToDatabase()
 
         CuratoryGroup.withTransaction() {
             if (grailsApplication.config.gokb.defaultCuratoryGroup != null && grailsApplication.config.gokb.defaultCuratoryGroup != "") {
@@ -193,11 +193,11 @@ class BootStrap {
         int num_c = Combo.executeUpdate("update Combo set status = ? where status is null", [status_active])
         log.debug("${num_c} combos updated");
 
-        log.info("GoKB defaultSortKeys()");
-        defaultSortKeys()
+        /*log.info("GoKB defaultSortKeys()");
+        defaultSortKeys()*/
 
-        log.info("GoKB sourceObjects()");
-        sourceObjects()
+       /* log.info("GoKB sourceObjects()");
+        sourceObjects()*/
 
         log.info("Ensure default Identifier namespaces")
         def namespaces = [
@@ -235,9 +235,6 @@ class BootStrap {
         }
 
 
-        // log.info("Default batch loader config");
-        // defaultBulkLoaderConfig();
-
         /*log.info("Register users and override default admin password");
         registerUsers()*/
 
@@ -263,22 +260,8 @@ class BootStrap {
         log.info("------------------------------------Init End--------------------------------------------")
     }
 
-    def defaultBulkLoaderConfig() {
-        // BulkLoaderConfig
-        grailsApplication.config.kbart2.mappings.each { k, v ->
-            log.debug("Process ${k}");
-            def existing_cfg = BulkLoaderConfig.findByCode(k)
-            if (existing_cfg) {
-                log.debug("Got existing config");
-            } else {
-                def cfg = v as JSON
-                existing_cfg = new BulkLoaderConfig(code: k, cfg: cfg?.toString()).save(flush: true, failOnError: true)
-            }
-        }
-    }
-
     def migrateDiskFilesToDatabase() {
-        log.info("Migrate Disk Files");
+        /*log.info("Migrate Disk Files");
         def baseUploadDir = grailsApplication.config.baseUploadDir ?: '.'
 
         DataFile.findAll("from DataFile as df where df.fileData is null").each { df ->
@@ -299,7 +282,7 @@ class BootStrap {
             } catch (Exception e) {
                 log.error("Exception while migrating files to database. File ${temp_file_name}", e)
             }
-        }
+        }*/
     }
 
     def cleanUpMissingDomains() {
@@ -395,7 +378,7 @@ class BootStrap {
 
     }
 
-    def defaultSortKeys() {
+    /*def defaultSortKeys() {
         def vals = RefdataValue.executeQuery("select o from RefdataValue o where o.sortKey is null or trim(o.sortKey) = ''")
 
         // Default the sort key to 0.
@@ -412,7 +395,7 @@ class BootStrap {
             it.dcSortOrder = "0"
             it.save(flush: true, failOnError: true)
         }
-    }
+    }*/
 
     def destroy = {
     }
@@ -460,11 +443,6 @@ class BootStrap {
             ]
         )
 
-        RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_EDIT_STATUS, KBComponent.EDIT_STATUS_APPROVED).save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_EDIT_STATUS, KBComponent.EDIT_STATUS_IN_PROGRESS).save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_EDIT_STATUS, KBComponent.EDIT_STATUS_REJECTED).save(flush: true, failOnError: true)
-
-
         RefdataCategory.lookupOrCreate(RCConstants.TIPP_ACCESS_TYPE, "Free").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.TIPP_ACCESS_TYPE, "Paid").save(flush: true, failOnError: true)
 
@@ -508,8 +486,6 @@ class BootStrap {
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "National").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_SCOPE, "Individual").save(flush: true, failOnError: true)
 
-        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_LIST_STATUS, "Checked").save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_LIST_STATUS, "In Progress").save(flush: true, failOnError: true)
 
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_BREAKABLE, "No").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.PACKAGE_BREAKABLE, "Yes").save(flush: true, failOnError: true)
@@ -1055,7 +1031,7 @@ class BootStrap {
         LanguagesService.initialize()
     }
 
-    def sourceObjects() {
+   /* def sourceObjects() {
         log.debug("Lookup or create source objects")
         def ybp_source = Source.findByName('YBP') ?: new Source(name: 'YBP').save(flush: true, failOnError: true)
         def cup_source = Source.findByName('CUP') ?: new Source(name: 'CUP').save(flush: true, failOnError: true)
@@ -1063,7 +1039,7 @@ class BootStrap {
         def cufts_source = Source.findByName('CUFTS') ?: new Source(name: 'CUFTS').save(flush: true, failOnError: true)
         def askews_source = Source.findByName('ASKEWS') ?: new Source(name: 'ASKEWS').save(flush: true, failOnError: true)
         def ebsco_source = Source.findByName('EBSCO') ?: new Source(name: 'EBSCO').save(flush: true, failOnError: true)
-    }
+    }*/
 
 
     def DSConfig() {

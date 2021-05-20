@@ -12,6 +12,9 @@ class KBComponentVariantName {
   String variantName
   String normVariantName
 
+    Date dateCreated
+    Date lastUpdated
+
   static mapping = {
         id column:'cvn_id'
         version column:'cvn_version'
@@ -21,6 +24,9 @@ class KBComponentVariantName {
         variantType column:'cvn_type_rv_fk'
         locale column:'cvn_locale_rv_fk'
         status column:'cvn_status_rv_fk'
+
+      dateCreated column:'cvn_date_created'
+      lastUpdated column:'cvn_last_updated'
   }
 
   static constraints = {
@@ -29,6 +35,9 @@ class KBComponentVariantName {
         variantType (nullable:true, blank:false)
         locale (nullable:true, blank:false)
         status (nullable:true, blank:false)
+
+      dateCreated(nullable:true, blank:true)
+      lastUpdated(nullable:true, blank:true)
   }
 
   String getLogEntityId() {

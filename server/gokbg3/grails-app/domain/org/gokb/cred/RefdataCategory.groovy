@@ -18,6 +18,9 @@ class RefdataCategory extends AbstractI10n {
   String label
   Set values
 
+  Date dateCreated
+  Date lastUpdated
+
   // indicates this object is created via current bootstrap
   boolean isHardData = false
 
@@ -31,6 +34,9 @@ class RefdataCategory extends AbstractI10n {
     desc_de column: 'rdc_desc_de'
     isHardData column: 'rdc_is_hard_data'
 
+    dateCreated column: 'rdc_date_created'
+    lastUpdated column: 'rdc_last_updated'
+
   }
 
   static hasMany = [
@@ -43,6 +49,8 @@ class RefdataCategory extends AbstractI10n {
 
   static constraints = {
     label(nullable: true, blank: true)
+    dateCreated(nullable:true, blank:true)
+    lastUpdated(nullable:true, blank:true)
   }
 
   String getLogEntityId() {

@@ -181,16 +181,7 @@ class GlobalSearchTemplatesService {
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'status'],
                                         // II: Default not yet implemented
                                         default    : [type: 'query', query: 'select r from RefdataValue where r.value=:v and r.owner.description=:o', params: ['Current', RCConstants.KBCOMPONENT_STATUS]]
-                                ],
-                                [
-                                        type       : 'lookup',
-                                        baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : 'KBComponent.EditStatus',
-                                        prompt     : 'Edit Status',
-                                        qparam     : 'qp_editstatus',
-                                        placeholder: 'Component Edit Status',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'editStatus']
-                                ],
+                                ]
                         ],
                         qbeGlobals: [
                                 ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
@@ -200,7 +191,6 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Type', property: 'niceName'],
                                 [heading: 'Name/Title', property: 'name', sort: 'name', link: true],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
-                                [heading: 'Edit Status', property: 'editStatus?.value', sort: 'editStatus'],
                         ]
                 ]
         ]
@@ -246,8 +236,7 @@ class GlobalSearchTemplatesService {
                         qbeResults: [
                                 [heading: 'Name/Title', property: 'name', sort: 'name', link: true],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
-                                [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
-                                [heading: 'Edit Status', property: 'editStatus?.value', sort: 'editStatus']
+                                [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated']
                         ]
                 ]
         ]
@@ -800,19 +789,10 @@ class GlobalSearchTemplatesService {
                                 [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : RCConstants.PACKAGE_LIST_STATUS,
-                                        prompt     : 'List Status',
-                                        qparam     : 'qp_liststatus',
-                                        placeholder: 'List Status',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'listStatus'],
-                                ],
-                                [
-                                        type       : 'lookup',
-                                        baseClass  : 'org.gokb.cred.RefdataValue',
                                         filter1    : RCConstants.PACKAGE_SCOPE,
-                                        prompt     : 'Availability',
+                                        prompt     : 'Scope',
                                         qparam     : 'qp_scope',
-                                        placeholder: 'Availability',
+                                        placeholder: 'Scope',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'scope'],
                                 ],
                                 [
@@ -893,8 +873,7 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Name', property: 'name', sort: 'name', link: true],
                                 [heading: 'Nominal Platform', property: 'nominalPlatform?.name', link: true],
                                 [heading: 'Content Type', property: 'contentType?.value', sort: 'contentType'],
-                                [heading: 'Availability', property: 'scope', sort: 'scope'],
-                                [heading: 'List Status', property: 'listStatus?.value', sort: 'listStatus'],
+                                [heading: 'Scope', property: 'scope', sort: 'scope'],
                                 [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
                                 [heading: 'Titles', property: 'currentTippCount'],

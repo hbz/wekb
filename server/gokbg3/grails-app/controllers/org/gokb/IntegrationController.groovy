@@ -473,7 +473,6 @@ class IntegrationController {
    *      [
    *         name:'',
    *         shortcode:'',
-   *         editStatus:'',
    *         url:'',
    *         defaultAccessURL:'',
    *         explanationAtSource:'',
@@ -873,7 +872,6 @@ class IntegrationController {
  *    'imprint':'the_publisher',
  *    'publishedFrom':'yyyy-MM-dd' 'HH:mm:ss.SSS',
  *    'publishedTo':'yyyy-MM-dd' 'HH:mm:ss.SSS',
- *    'editStatus':'edit_status_value',
  *    'status':'status_value',
  *    'historyEvents':[
  *    ],

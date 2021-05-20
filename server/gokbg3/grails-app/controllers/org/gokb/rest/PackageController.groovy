@@ -163,9 +163,7 @@ class PackageController {
         else if (obj) {
           def jsonMap = obj.jsonMapping
 
-          jsonMap.immutable = [
-            'listStatus'
-          ]
+          jsonMap.immutable = []
 
           log.debug("Updating ${obj}")
           obj = restMappingService.updateObject(obj, jsonMap, reqBody)
@@ -274,9 +272,7 @@ class PackageController {
           'lastProject',
         ]
 
-        jsonMap.immutable = [
-          'listStatus'
-        ]
+        jsonMap.immutable = []
 
         obj = restMappingService.updateObject(obj, jsonMap, reqBody)
 
@@ -357,25 +353,6 @@ class PackageController {
 
       if (cg_errors.size() > 0) {
         errors['curatoryGroups'] = cg_errors
-      }
-    }
-
-    if (reqBody.listStatus) {
-      def new_val = null
-
-      if (reqBody.listStatus instanceof String) {
-        new_val = RefdataCategory.lookup(RCConstants.PACKAGE_LIST_STATUS, reqBody.listStatus)
-      }
-      else if (reqBody.listStatus instanceof Integer) {
-        def rdv = RefdataValue.get(reqBody.listStatus)
-
-        if (rdv.owner == RefdataCategory.findByLabel(RCConstants.PACKAGE_LIST_STATUS)) {
-          new_val = rdv
-        }
-
-        if (new_val && new_val != obj.listStatus) {
-          obj.listStatus = new_val
-        }
       }
     }
 
@@ -1077,17 +1054,7 @@ class PackageController {
                   def tipp_upsert_start_time = System.currentTimeMillis()
                   def tipp_fails = 0
 
-                  if (json?.size() > 0) {
-                    Package.withNewSession {
-                      def pkg_new = Package.get(the_pkg.id)
-                      def status_ip = RefdataCategory.lookup(RCConstants.PACKAGE_LIST_STATUS, 'In Progress')
 
-                      if (pkg_new.status == status_current && pkg_new?.listStatus != status_ip) {
-                        pkg_new.listStatus = status_ip
-                        pkg_new.save(flush: true)
-                      }
-                    }
-                  }
 
                   // If valid, upsert tipps
                   json.eachWithIndex { tipp, idx ->

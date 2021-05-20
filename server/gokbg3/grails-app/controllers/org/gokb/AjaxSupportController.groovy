@@ -83,7 +83,7 @@ class AjaxSupportController {
       config = [
       domain:'RefdataValue',
       countQry:"select count(rdv) from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
-      rowQry:"select rdv from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=? order by rdv.sortKey asc, rdv.description asc",
+      rowQry:"select rdv from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=? order by rdv.value asc, rdv.description asc",
       rdvCat: "${params.id}",
       qryParams:[],
       cols:['value'],
@@ -171,16 +171,6 @@ class AjaxSupportController {
       required:true,
       qryParams:[],
       rdvCat: RCConstants.KBCOMPONENT_STATUS,
-      cols:['value'],
-      format:'simple'
-    ],
-    'KBComponent.EditStatus' : [
-      domain:'RefdataValue',
-      countQry:"select count(rdv) from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
-      rowQry:"select rdv from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
-      required:true,
-      qryParams:[],
-      rdvCat: "KBComponent.EditStatus",
       cols:['value'],
       format:'simple'
     ],
@@ -1559,153 +1549,4 @@ class AjaxSupportController {
     render result as JSON
   }
 
-  @Transactional
-  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
-  def addNationalRange() {
-    Map<String, Object> result = [:]
-
-    Package pkgInstance = Package.get(params.package)
-
-    if (!pkgInstance) {
-      flash.message = message(code: 'default.not.found.message', args: ['Package', params.id]) as String
-      redirect(url: request.getHeader('referer'))
-      return
-    }
-    result.editable = accessService.checkEditableObject(pkgInstance, params)
-
-    if (result.editable) {
-      RefdataValue nationalRange = RefdataValue.get(params.nationalRange)
-      if(nationalRange && !(nationalRange in pkgInstance.nationalRanges)) {
-        pkgInstance.addToNationalRanges(nationalRange)
-        pkgInstance.save()
-      }
-    }
-
-    redirect(url: request.getHeader('referer'))
-  }
-
-  @Transactional
-  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
-  def addRegionalRange() {
-    Map<String, Object> result = [:]
-
-    Package pkgInstance = Package.get(params.package)
-
-    if (!pkgInstance) {
-      flash.message = message(code: 'default.not.found.message', args: ['Package', params.id]) as String
-      redirect(url: request.getHeader('referer'))
-      return
-    }
-    result.editable = accessService.checkEditableObject(pkgInstance, params)
-
-    if (result.editable) {
-      RefdataValue regionalRange = RefdataValue.get(params.regionalRange)
-      if(regionalRange && !(regionalRange in pkgInstance.regionalRanges)) {
-        pkgInstance.addToRegionalRanges(regionalRange)
-        pkgInstance.save()
-      }
-    }
-
-    redirect(url: request.getHeader('referer'))
-  }
-
-  @Transactional
-  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
-  def deleteNationalRange() {
-    Map<String, Object> result = [:]
-
-    Package pkgInstance = Package.get(params.package)
-
-    if (!pkgInstance) {
-      flash.message = message(code: 'default.not.found.message', args: ['Package', params.id]) as String
-      redirect(url: request.getHeader('referer'))
-      return
-    }
-    result.editable = accessService.checkEditableObject(pkgInstance, params)
-
-    if (result.editable) {
-      RefdataValue nationalRange = RefdataValue.get(params.removeNationalRange)
-      if(nationalRange && (nationalRange in pkgInstance.nationalRanges)) {
-        pkgInstance.removeFromNationalRanges(nationalRange)
-        pkgInstance.save()
-      }
-    }
-
-    redirect(url: request.getHeader('referer'))
-  }
-
-  @Transactional
-  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
-  def deleteRegionalRange() {
-    Map<String, Object> result = [:]
-
-    Package pkgInstance = Package.get(params.package)
-
-    if (!pkgInstance) {
-      flash.message = message(code: 'default.not.found.message', args: ['Package', params.id]) as String
-      redirect(url: request.getHeader('referer'))
-      return
-    }
-    result.editable = accessService.checkEditableObject(pkgInstance, params)
-
-    if (result.editable) {
-      RefdataValue regionalRange = RefdataValue.get(params.regionalRange)
-      if(regionalRange && (regionalRange in pkgInstance.regionalRanges)) {
-        pkgInstance.removeFromRegionalRanges(regionalRange)
-        pkgInstance.save()
-      }
-    }
-
-    redirect(url: request.getHeader('referer'))
-  }
-
-  @Transactional
-  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
-  def addDDC() {
-    Map<String, Object> result = [:]
-
-    def object = resolveOID2(params.object)
-
-    if (!object) {
-      flash.message = message(code: 'default.not.found.message', args: ['Object', params.id]) as String
-      redirect(url: request.getHeader('referer'))
-      return
-    }
-    result.editable = accessService.checkEditableObject(object, params)
-
-    if (result.editable) {
-      RefdataValue ddc = RefdataValue.get(params.ddc)
-      if(ddc && !(ddc in object.ddcs)) {
-        object.addToDdcs(ddc)
-        object.save()
-      }
-    }
-
-    redirect(url: request.getHeader('referer'))
-  }
-
-  @Transactional
-  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
-  def deleteDDC() {
-    Map<String, Object> result = [:]
-
-    def object = resolveOID2(params.object)
-
-    if (!object) {
-      flash.message = message(code: 'default.not.found.message', args: ['Object', params.id]) as String
-      redirect(url: request.getHeader('referer'))
-      return
-    }
-    result.editable = accessService.checkEditableObject(object, params)
-
-    if (result.editable) {
-      RefdataValue ddc = RefdataValue.get(params.removeDDC)
-      if(ddc && (ddc in object.ddcs)) {
-        object.removeFromDdcs(ddc)
-        object.save()
-      }
-    }
-
-    redirect(url: request.getHeader('referer'))
-  }
 }

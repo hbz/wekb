@@ -14,11 +14,11 @@
             </a>
         </li>
 
-        <li class="nav-item">
+       %{-- <li class="nav-item">
             <a class="nav-link" href="#addprops" data-toggle="tab" role="tab">Additional Properties
                 <span class="badge badge-pill badge-info">${d.additionalProperties.size()}</span>
             </a>
-        </li>
+        </li>--}%
 
         <li class="nav-item">
             <a class="nav-link" href="#subjectArea" data-toggle="tab" role="tab">Subject Area</a>
@@ -60,11 +60,11 @@
         </a>
         </li>
 
-        <li>
+       %{-- <li>
             <a href="#addprops" data-toggle="tab">Additional Properties
                 <span class="badge badge-warning">${d.additionalProperties.size()}</span>
             </a>
-        </li>
+        </li>--}%
 
         <li>
             <a href="#subjectArea" data-toggle="tab">Subject Area</a>
@@ -102,10 +102,10 @@
 
     <g:render template="/tabTemplates/showIdentifiers" model="${[d: d]}"/>
 
-    <div class="tab-pane" id="addprops" role="tabpanel">
+   %{-- <div class="tab-pane" id="addprops" role="tabpanel">
         <g:render template="/apptemplates/secondTemplates/addprops"
                   model="${[d: d]}"/>
-    </div>
+    </div>--}%
 
     <g:render template="/tabTemplates/showSubjectArea" model="${[d: d]}"/>
 

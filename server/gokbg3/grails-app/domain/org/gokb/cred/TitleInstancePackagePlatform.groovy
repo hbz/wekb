@@ -315,7 +315,7 @@ class TitleInstancePackagePlatform extends KBComponent {
   static TitleInstancePackagePlatform tippCreate(tipp_fields = [:]) {
 
     def tipp_status = tipp_fields.status ? RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, tipp_fields.status) : null
-    def tipp_editstatus = tipp_fields.editStatus ? RefdataCategory.lookup(RCConstants.KBCOMPONENT_EDIT_STATUS, tipp_fields.editStatus) : null
+
     RefdataValue tipp_medium = null
     if (tipp_fields.medium) {
       tipp_medium = determineMediumRef(tipp_fields)
@@ -328,7 +328,6 @@ class TitleInstancePackagePlatform extends KBComponent {
     TitleInstancePackagePlatform result = new TitleInstancePackagePlatform(
             uuid: tipp_fields.uuid,
             status: tipp_status,
-            editStatus: tipp_editstatus,
             name: tipp_fields.name,
             medium: tipp_medium,
             publicationType: tipp_publicationType,
@@ -904,7 +903,6 @@ class TitleInstancePackagePlatform extends KBComponent {
           'uuid'        : (tipp_dto.uuid ?: null),
           'status'      : (tipp_dto.status ?: null),
           'name'        : (tipp_dto.name ?: null),
-          'editStatus'  : (tipp_dto.editStatus ?: null),
           'type'        : (tipp_dto.type ?: null),
           'medium'    : (tipp_dto.medium ?: null),
 
@@ -1207,7 +1205,6 @@ class TitleInstancePackagePlatform extends KBComponent {
             addCoreGOKbXmlFields(builder, attr)
 
             'scope'(scope?.value)
-            'listStatus'(listStatus?.value)
             'openAccess'(openAccess?.value)
             'file'(file?.value)
             'breakable'(breakable?.value)

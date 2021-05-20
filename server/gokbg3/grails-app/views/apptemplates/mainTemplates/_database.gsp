@@ -36,14 +36,6 @@
   </dd>
 
   <dt>
-    <gokb:annotatedLabel owner="${d}" property="editStatus">Edit Status</gokb:annotatedLabel>
-  </dt>
-  <dd>
-    <gokb:xEditableRefData owner="${d}" field="editStatus"
-      config="${RCConstants.KBCOMPONENT_EDIT_STATUS}" />
-  </dd>
-
-  <dt>
     <gokb:annotatedLabel owner="${d}" property="language">Language</gokb:annotatedLabel>
   </dt>
   <dd>
@@ -114,10 +106,10 @@
           class="badge badge-warning">
             ${d.tipps?.size() ?: '0'}
         </span></a></li>
-      <li><a href="#addprops" data-toggle="tab">Additional Properties <span
+      %{--<li><a href="#addprops" data-toggle="tab">Additional Properties <span
           class="badge badge-warning">
             ${d.additionalProperties?.size() ?: '0'}
-        </span></a></li>
+        </span></a></li>--}%
       <li><a href="#review" data-toggle="tab">Review Tasks (Open/Total)
         <span class="badge badge-warning">
           ${d.reviewRequests?.findAll { it.status == org.gokb.cred.RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STATUS,'Open') }?.size() ?: '0'}/${d.reviewRequests.size()}
@@ -247,10 +239,10 @@
 
     <g:render template="/tabTemplates/showIdentifiers" model="${[d: d]}" />
 
-    <div class="tab-pane" id="addprops">
+   %{-- <div class="tab-pane" id="addprops">
       <g:render template="/apptemplates/secondTemplates/addprops"
         model="${[d:d]}" />
-    </div>
+    </div>--}%
 
     <div class="tab-pane" id="review">
       <g:render template="/apptemplates/secondTemplates/revreqtab"

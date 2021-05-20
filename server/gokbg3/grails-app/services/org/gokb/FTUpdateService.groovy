@@ -9,6 +9,7 @@ import org.gokb.cred.KBComponent
 import org.gokb.cred.KBComponentAdditionalProperty
 import org.gokb.cred.TIPPCoverageStatement
 import org.gokb.cred.RefdataValue
+import wekb.Contact
 import wekb.DeletedKBComponent
 
 @Transactional
@@ -73,7 +74,6 @@ class FTUpdateService {
         result.scope = kbc.scope ? kbc.scope.value : ""
         result.breakable = kbc.breakable ? kbc.breakable.value : ""
         result.paymentType = kbc.paymentType ? kbc.paymentType.value : ""
-        result.listStatus = kbc.listStatus?.value
         result.openAccess = kbc.openAccess?.value
         result.file = kbc.file?.value
         result.contentType = kbc.contentType?.value
@@ -101,6 +101,7 @@ class FTUpdateService {
         }
 
         result.status = kbc.status?.value
+        result.editingStatus = kbc.editingStatus?.value
         result.identifiers = []
         kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
           result.identifiers.add([namespace    : idc.toComponent.namespace.value,
@@ -189,6 +190,14 @@ class FTUpdateService {
         kbc.additionalProperties.each { KBComponentAdditionalProperty kbComponentAdditionalProperty ->
           result.additionalProperties.add([value    : kbComponentAdditionalProperty.apValue,
                                            name      : kbComponentAdditionalProperty.propertyDefn.propertyName])
+        }
+
+        result.contacts = []
+        kbc.contacts.each { Contact contact ->
+          result.contacts.add([  content: contact.content,
+                                 contentType: contact.contentType?.value,
+                                 type: contact.type,
+                                 language: contact.language?.value])
         }
 
         result

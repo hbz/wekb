@@ -50,7 +50,6 @@ class CrossRefPkgRun {
   def rr_nonCurrent
   def rr_TIPPs_retired
   def rr_TIPPs_invalid
-  def status_ip
   RefdataValue rr_type
   CuratoryGroup curatoryGroup
 
@@ -79,7 +78,6 @@ class CrossRefPkgRun {
       rr_nonCurrent = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Platform Noncurrent')
       rr_TIPPs_retired = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'TIPPs Retired')
       rr_TIPPs_invalid = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Invalid TIPPs')
-      status_ip = RefdataCategory.lookup(RCConstants.PACKAGE_LIST_STATUS, 'In Progress')
       rr_type = RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'Import Request')
 
 
@@ -229,11 +227,6 @@ class CrossRefPkgRun {
         }
 
         if (rjson.tipps?.size() > 0 && rjson.tipps.size() > invalidTipps.size()) {
-          if (pkg.status == status_current && pkg?.listStatus != status_ip) {
-            //Macht kein Sinn vorerst
-            //pkg.listStatus = status_ip
-            //pkg.merge(flush: true)
-          }
         }
         else {
           log.debug("imported Package $pkg.name contains no valid TIPPs")

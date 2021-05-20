@@ -9,6 +9,9 @@ class Annotation {
     String viewType
     String propertyName
     String value
+
+    Date dateCreated
+    Date lastUpdated
     
     def afterUpdate() {
       // Update listener that removes updates the cache for this item.
@@ -17,6 +20,8 @@ class Annotation {
 
     static mapping = {
       value column:'value', type:'text'
+      dateCreated column:'an_date_created'
+      lastUpdated column:'an_last_updated'
     }
 
     static constraints = {
@@ -24,6 +29,8 @@ class Annotation {
       viewType      (nullable:false,  blank:false)
       propertyName  (nullable:false,  blank:false)
       value         (nullable:true,   blank:false)
+      dateCreated(nullable:true, blank:true)
+      lastUpdated(nullable:true, blank:true)
     }
     
     private static final Map<String, Annotation> ANNOTATION_CACHE = [:]

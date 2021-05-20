@@ -120,9 +120,7 @@
                             </g:else>
                         </td>
                         <td>${hit.source.contentType}</td>
-                        <td>${hit.source.titleCount}
-                        %{--                        <g:if test="${hit.source.listStatus != 'Checked'}">*</g:if>--}%
-                        </td>
+                        <td>${hit.source.titleCount}</td>
                         <td>
                             <g:if test="${hit.source.lastUpdatedDisplay}">
                                 <g:formatDate format="${message(code: 'default.date.format')}"

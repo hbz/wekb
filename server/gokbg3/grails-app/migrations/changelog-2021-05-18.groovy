@@ -1,3 +1,10 @@
+import de.wekb.helper.RCConstants
+import org.gokb.cred.AdditionalPropertyDefinition
+import org.gokb.cred.KBComponentAdditionalProperty
+import org.gokb.cred.RefdataCategory
+import org.gokb.cred.RefdataValue
+import wekb.Contact
+
 databaseChangeLog = {
 
     changeSet(author: "djebeniani (generated)", id: "1621352515660-1") {
@@ -62,5 +69,75 @@ databaseChangeLog = {
 
     changeSet(author: "djebeniani (generated)", id: "1621352515660-10") {
         dropColumn(columnName: "title_namespace_id", tableName: "org")
+    }
+
+    changeSet(author: "djebeniani (hand-coded)", id: "1621352515660-11") {
+        grailsChange {
+            change {
+                Integer count = 0
+                Integer countSuccess = 0
+
+                AdditionalPropertyDefinition technicalSupport = AdditionalPropertyDefinition.findByPropertyName('Technical Support')
+
+                RefdataValue contentType = RefdataCategory.lookup(RCConstants.CONTACT_CONTENT_TYPE, 'E-Mail')
+                RefdataValue type = RefdataCategory.lookup(RCConstants.CONTACT_TYPE, 'Technical Support')
+
+                List<Long> deletedIDs = []
+
+
+                KBComponentAdditionalProperty.list().each { KBComponentAdditionalProperty additionalProperty ->
+                    if(additionalProperty.propertyDefn == technicalSupport){
+                        count++
+
+                        Contact.withTransaction {
+                            Contact contact = new Contact(content: additionalProperty.apValue,
+                                    contentType: contentType,
+                                    type: type)
+                            if(contact.save()){
+                                countSuccess++
+                                deletedIDs << additionalProperty.id
+                            }
+                        }
+                    }
+                }
+
+                deletedIDs.each { Long id ->
+                    KBComponentAdditionalProperty.withTransaction {
+                        KBComponentAdditionalProperty.findById(id).delete()
+                    }
+                }
+
+                confirm("copy KBComponentAdditionalProperty with technicalSupport to concat countSuccess: ${countSuccess}, count: ${count}")
+                changeSet.setComments("copy KBComponentAdditionalProperty with technicalSupport to concat countSuccess: ${countSuccess}, count: ${count}")
+            }
+            rollback {}
+        }
+    }
+
+    changeSet(author: "djebeniani (hand-coded)", id: "1621352515660-12") {
+        grailsChange {
+            change {
+                sql.execute("delete from additional_property_definition where apd_prop_name = 'Technical Support';")
+            }
+            rollback {}
+        }
+    }
+
+    changeSet(author: "djebeniani (hand-coded)", id: "1621352515660-13") {
+        grailsChange {
+            change {
+                sql.execute("delete from kbcomponent_additional_property where kbcap_apd_fk = (select apd_id from additional_property_definition where apd_prop_name = 'imprint');")
+            }
+            rollback {}
+        }
+    }
+
+    changeSet(author: "djebeniani (hand-coded)", id: "1621352515660-14") {
+        grailsChange {
+            change {
+                sql.execute("delete from additional_property_definition where apd_prop_name = 'imprint';")
+            }
+            rollback {}
+        }
     }
 }

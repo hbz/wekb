@@ -16,12 +16,18 @@ class UserOrganisationMembership {
   RefdataValue status
   RefdataValue role
 
+  Date dateCreated
+  Date lastUpdated
+
 
   static constraints = {
     party nullable:false, blank:false
     memberOf nullable:false, blank:false
     status nullable:true, blank:false
     role nullable:true, blank:false
+
+    dateCreated(nullable:true, blank:true)
+    lastUpdated(nullable:true, blank:true)
   }
 
   static mapping = {
@@ -29,6 +35,8 @@ class UserOrganisationMembership {
     memberOf column: 'uom_userorg_fk'
     status column: 'uom_status_fk'
     role column: 'uom_role_fk'
+    dateCreated column:'uom_date_created'
+    lastUpdated column:'uom_last_updated'
   }
 
   public String toString() {

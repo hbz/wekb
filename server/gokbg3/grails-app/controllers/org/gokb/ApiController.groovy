@@ -197,7 +197,6 @@ class ApiController {
       result << [
         'id':  it.id,
         'name': it.name,
-        'editStatus': it.editStatus?.value ?: null,
         'status': it.status?.value ?: null,
         'uuid': it.uuid
       ]
