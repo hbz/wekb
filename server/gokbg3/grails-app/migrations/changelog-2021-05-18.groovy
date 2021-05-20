@@ -79,8 +79,13 @@ databaseChangeLog = {
 
                 AdditionalPropertyDefinition technicalSupport = AdditionalPropertyDefinition.findByPropertyName('Technical Support')
 
-                RefdataValue contentType = RefdataCategory.lookupOrCreate(RCConstants.CONTACT_CONTENT_TYPE, 'E-Mail')
-                RefdataValue type = RefdataCategory.lookupOrCreate(RCConstants.CONTACT_TYPE, 'Technical Support')
+
+                RefdataCategory refdataCategory = new RefdataCategory(desc: 'Contact.Content.Type', label: 'Contact.Content.Type').save(flush: true)
+                RefdataCategory refdataCategory2 = new RefdataCategory(desc: 'Contact.Type', label: 'Contact.Type').save(flush: true)
+
+                RefdataValue contentType = new RefdataValue(owner: refdataCategory, value: 'E-Mail').save(flush: true)
+                RefdataValue type = new RefdataValue(owner: refdataCategory2, value: 'Technical Support').save(flush: true)
+
 
                 List<Long> deletedIDs = []
 
