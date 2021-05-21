@@ -65,7 +65,7 @@
       <ul>
         <g:each in="${d.contacts?.sort { it.content }}" var="contact">
           <li>
-            ${contact.content}: ${contact.contentType.getI10n('value')} (Language: ${contact.language.getI10n('value')})
+            ${contact.content}: ${contact.contentType?.getI10n('value')} (Language: ${contact.language?.getI10n('value')})
             <g:if test="${editable}">
               <g:link controller='ajaxSupport'
                       action='delete'

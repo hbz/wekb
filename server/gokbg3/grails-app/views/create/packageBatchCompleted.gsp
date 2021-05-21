@@ -61,13 +61,13 @@
                     </td>
 
                     <td>
-                        <g:if test="${pkg.source}">
+                        <g:if test="${pkg.source.frequency}">
                             ${pkg.source.frequency.getI10n('value')}
                         </g:if>
                     </td>
 
                     <td>
-                        <g:if test="${pkg.source}">
+                        <g:if test="${pkg.source.targetNamespace}">
                             ${pkg.source.targetNamespace.value}
                         </g:if>
                     </td>

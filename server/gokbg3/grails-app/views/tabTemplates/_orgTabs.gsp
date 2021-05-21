@@ -24,7 +24,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#titles" data-toggle="tab" role="tab">Published Titles
+                    <a class="nav-link" href="#titles" data-toggle="tab" role="tab">Titles
                         <span class="badge badge-warning">${d.getCombosByPropertyNameAndStatus('publishedTitles', 'Active').size()}</span>
                     </a>
                 </li>
@@ -281,7 +281,7 @@
                     <dd>
                         <g:link class="display-inline" controller="search" action="index"
                                 params="[qbe: 'g:platforms', refOid: d.getLogEntityId(), inline: true, qp_provider_id: d.id, hide: ['qp_provider', 'qp_provider_id']]"
-                                id="">Titles published</g:link>
+                                id="">Platforms published</g:link>
                     </dd>
                 </dl>
             </div>
