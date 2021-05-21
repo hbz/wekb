@@ -13,17 +13,19 @@
             </h3>
         </div>
 
-        <div class="col-sm">
-            <g:form controller="public" class="form-group row justify-content-end" action="${actionName}" method="get"
-                    params="${params}">
-                <label class="col-sm-6 col-form-label text-right" for="newMax">Results on Page</label>
+        <g:if test="${(reccount && max && reccount.toInteger() > max.toInteger())}">
+                <div class="col-sm">
+                    <g:form controller="public" class="form-group row justify-content-end" action="${actionName}" method="get"
+                            params="${params}">
+                        <label class="col-sm-6 col-form-label text-right" for="newMax">Results on Page</label>
 
-                <div class="col-sm-6">
-                    <g:select class="form-control" name="newMax" from="[10, 25, 50, 100, 200, 500]"
-                              value="${params.max}" onChange="this.form.submit()"/>
+                        <div class="col-sm-6">
+                            <g:select class="form-control" name="newMax" from="[10, 25, 50, 100, 200, 500]"
+                                      value="${params.max}" onChange="this.form.submit()"/>
+                        </div>
+                    </g:form>
                 </div>
-            </g:form>
-        </div>
+        </g:if>
     </div>
 
     <div class="row">
@@ -81,6 +83,7 @@
                             <g:each in="${r.cols}" var="c">
                                 <td>
                                     <%
+                                        showView = null
                                         if (c.link != null && c.link != "") {
                                             if (c.link.contains("Package")) {
                                                 showView = "packageContent"
@@ -93,9 +96,6 @@
                                             }
                                             else if (c.link.contains("TitleInstancePackagePlatform")) {
                                                 showView = "tippContent"
-                                            }
-                                            else {
-                                                showView = null
                                             }
                                         }
                                     %>
@@ -173,6 +173,7 @@
                                 <g:each in="${r.cols}" var="c">
                                     <td style="vertical-align:middle;">
                                         <%
+                                            showView = null
                                             if (c.link != null && c.link != "") {
                                                 if (c.link.contains("Package")) {
                                                     showView = "packageContent"
@@ -185,9 +186,6 @@
                                                 }
                                                 else if (c.link.contains("TitleInstancePackagePlatform")) {
                                                     showView = "tippContent"
-                                                }
-                                                else {
-                                                    showView = null
                                                 }
                                             }
                                         %>

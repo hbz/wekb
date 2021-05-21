@@ -1,4 +1,4 @@
-<g:if test="${recset != null}">
+<g:if test="${recset != null && (reccount && max && reccount.toInteger() > max.toInteger())}">
     <g:set var="s_action" value="${s_action ?: actionName}"/>
     <g:set var="s_controller" value="${s_controller ?: controllerName}"/>
     <g:set var="jumpToPage" value="${jumpToPage ?: 'jumpToPage'}"/>

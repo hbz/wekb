@@ -46,22 +46,32 @@
         <div id="my-tab-content" class="tab-content">
 
             <div class="tab-pane fade active" id="titledetails" role="tabpanel">
-                <g:link class="display-inline" controller="search" action="index"
-                        params="[qbe: 'g:tipps', qp_plat_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_plat', 'qp_plat_id']]"
-                        id="">Titles on this Platform</g:link>
+
+                <g:if test="${controllerName == 'public'}">
+                    <g:link class="display-inline" controller="public" action="search"
+                            params="[qbe: 'g:tipps', qp_plat_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_plat', 'qp_plat_id']]"
+                            id="">Titles on this Platform</g:link>
+                </g:if>
+                <g:else>
+                    <g:link class="display-inline" controller="search" action="index"
+                            params="[qbe: 'g:tipps', qp_plat_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_plat', 'qp_plat_id']]"
+                            id="">Titles on this Platform</g:link>
+                </g:else>
+
             </div>
 
             <div class="tab-pane fade" id="packages" role="tabpanel">
-                <dl>
-                    <dt>
-                        <gokb:annotatedLabel owner="${d}" property="packages">Packages</gokb:annotatedLabel>
-                    </dt>
-                    <dd>
-                        <g:link class="display-inline" controller="search" action="index"
-                                params="[qbe: 'g:packages', qp_platform_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_platform', 'qp_platform_id']]"
-                                id="">Packages on this Platform</g:link>
-                    </dd>
-                </dl>
+
+                <g:if test="${controllerName == 'public'}">
+                    <g:link class="display-inline" controller="public" action="search"
+                            params="[qbe: 'g:packages', qp_platform_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_platform', 'qp_platform_id']]"
+                            id="">Packages on this Platform</g:link>
+                </g:if>
+                <g:else>
+                    <g:link class="display-inline" controller="search" action="index"
+                            params="[qbe: 'g:packages', qp_platform_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_platform', 'qp_platform_id']]"
+                            id="">Packages on this Platform</g:link>
+                </g:else>
             </div>
 
             <g:render template="/tabTemplates/showVariantnames"

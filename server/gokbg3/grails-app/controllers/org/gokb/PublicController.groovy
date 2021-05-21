@@ -309,6 +309,14 @@ class PublicController {
 
     if(params.qbe in allowedSearch) {
 
+      if (params.newMax) {
+        session.setAttribute("newMax", params.newMax)
+        params.remove(params.newMax)
+        params.offset = "0"
+      }
+      params.offset = params.offset ? params.offset.toString : "0"
+      params.max = session.getAttribute("newMax") ? session.getAttribute("newMax").toString() : "10"
+
       searchResult = searchService.search(null, searchResult, params, null)
 
       log.debug("Search completed after ${System.currentTimeMillis() - start_time}");
