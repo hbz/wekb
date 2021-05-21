@@ -20,12 +20,12 @@
                 %{--<li class="nav-item"><a class="nav-link" href="#relationships" data-toggle="tab" role="tab">Relations</a></li>--}%
                 <li class="nav-item">
                     <a class="nav-link" href="#packages" data-toggle="tab" role="tab">Packages
-                        <span class="badge badge-warning">${d.getCombosByPropertyNameAndStatus('providedPackages', 'Active').size()}</span>
+                        <span class="badge badge-warning">${d.providedPackages.size()}</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#titles" data-toggle="tab" role="tab">Published Titles
-                        <span class="badge badge-warning">${d.getCombosByPropertyNameAndStatus('publishedTitles', 'Active').size()}</span>
+                    <a class="nav-link" href="#titles" data-toggle="tab" role="tab">Titles
+                        <span class="badge badge-warning">${d.getCurrentTippCount()}</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -274,28 +274,45 @@
              </div>--}%
 
             <div class="tab-pane" id="platforms">
-                <dl>
-                    <dt>
-                        <gokb:annotatedLabel owner="${d}" property="platforms">Platforms</gokb:annotatedLabel>
-                    </dt>
-                    <dd>
-                        <g:link class="display-inline" controller="search" action="index"
-                                params="[qbe: 'g:platforms', refOid: d.getLogEntityId(), inline: true, qp_provider_id: d.id, hide: ['qp_provider', 'qp_provider_id']]"
-                                id="">Titles published</g:link>
-                    </dd>
-                </dl>
+                        <g:if test="${controllerName == 'public'}">
+                            <g:link class="display-inline" controller="public" action="search"
+                                    params="[qbe: 'g:platforms', refOid: d.getLogEntityId(), inline: true, qp_provider_id: d.id, hide: ['qp_provider', 'qp_provider_id']]"
+                                    id="">Packages on this Platform</g:link>
+                        </g:if>
+                        <g:else>
+                            <g:link class="display-inline" controller="search" action="index"
+                                    params="[qbe: 'g:platforms', refOid: d.getLogEntityId(), inline: true, qp_provider_id: d.id, hide: ['qp_provider', 'qp_provider_id']]"
+                                    id="">Titles published</g:link>
+                        </g:else>
             </div>
 
             <div class="tab-pane" id="titles">
-                <g:link class="display-inline" controller="search" action="index"
-                        params="[qbe: 'g:tipps', refOid: d.getLogEntityId(), inline: true, qp_provider_id: d.id, hide: ['qp_provider', 'qp_provider_id']]"
-                        id="">Titles published</g:link>
+                <g:if test="${controllerName == 'public'}">
+                    <g:link class="display-inline" controller="public" action="search"
+                            params="[qbe: 'g:tipps', refOid: d.getLogEntityId(), inline: true, qp_provider_id: d.id, hide: ['qp_provider', 'qp_provider_id']]"
+                            id="">Packages on this Platform</g:link>
+                </g:if>
+                <g:else>
+                    <g:link class="display-inline" controller="search" action="index"
+                            params="[qbe: 'g:tipps', refOid: d.getLogEntityId(), inline: true, qp_provider_id: d.id, hide: ['qp_provider', 'qp_provider_id']]"
+                            id="">Titles published</g:link>
+                </g:else>
+
             </div>
 
             <div class="tab-pane" id="packages">
-                <g:link class="display-inline" controller="search" action="index"
-                        params="[qbe: 'g:packages', refOid: d.getLogEntityId(), inline: true, qp_provider_id: d.id, hide: ['qp_provider', 'qp_provider_id']]"
-                        id="">Packages on this Platform</g:link>
+
+                <g:if test="${controllerName == 'public'}">
+                    <g:link class="display-inline" controller="public" action="search"
+                            params="[qbe: 'g:packages', refOid: d.getLogEntityId(), inline: true, qp_provider_id: d.id, hide: ['qp_provider', 'qp_provider_id']]"
+                            id="">Packages on this Platform</g:link>
+                </g:if>
+                <g:else>
+                    <g:link class="display-inline" controller="search" action="index"
+                            params="[qbe: 'g:packages', refOid: d.getLogEntityId(), inline: true, qp_provider_id: d.id, hide: ['qp_provider', 'qp_provider_id']]"
+                            id="">Packages on this Platform</g:link>
+                </g:else>
+
             </div>
 
         </div>

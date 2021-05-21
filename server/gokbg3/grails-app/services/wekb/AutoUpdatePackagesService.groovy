@@ -39,7 +39,7 @@ class AutoUpdatePackagesService {
             running = false
         } else {
             log.debug("update skipped - already running")
-            result = [result: JobResult.STATUS_FAIL, message: 'Auto Update Packages already running']
+            result = [result: JobResult.STATUS_FAIL, message: 'Another Auto Update Packages is already running']
         }
 
         def result_object = JobResult.findByUuid(uuid)
