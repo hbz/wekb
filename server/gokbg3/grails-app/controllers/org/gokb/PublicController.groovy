@@ -7,6 +7,7 @@ import org.gokb.cred.*
 import org.hibernate.ScrollMode
 import org.hibernate.ScrollableResults
 import wekb.ExportService
+import wekb.SearchService
 
 
 class PublicController {
@@ -18,6 +19,7 @@ class PublicController {
   def classExaminationService
   ExportService exportService
   MailService mailService
+  SearchService searchService
 
   public static String TIPPS_QRY = 'from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=? and c.toComponent=tipp and c.type = ? and tipp.status = ?';
 
@@ -294,5 +296,29 @@ class PublicController {
     catch ( Exception e ) {
       log.error("Problem with export",e);
     }
+  }
+
+  def search() {
+    def start_time = System.currentTimeMillis();
+
+    log.debug("Entering SearchController:index ${params}")
+
+    def searchResult = [:]
+
+    List allowedSearch = ["g:tipps", "g:platforms", "g:packages", "g:packages", "g:orgs"]
+
+    if(params.qbe in allowedSearch) {
+
+      searchResult = searchService.search(null, searchResult, params, null)
+
+      log.debug("Search completed after ${System.currentTimeMillis() - start_time}");
+
+    }else {
+      searchResult.result = [:]
+      searchResult.result.message = "This search is not allowed!"
+    }
+      searchResult.result
+
+
   }
 }

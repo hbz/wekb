@@ -853,7 +853,8 @@ class GlobalSearchTemplatesService {
                                         qparam     : 'qp_source',
                                         placeholder: 'Source',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'source'],
-                                        hide       : false
+                                        hide       : false,
+                                        notShowInPublic       : true
                                 ],
 
                                 [

@@ -2,11 +2,11 @@
 <html>
 <head>
 <meta name="layout" content="sb-admin" />
-<title>Search <g:if test="${qbetemplate?.title}"></g:if>${qbetemplate?.title}</title>
+<title>Search <g:if test="${qbetemplate}">${qbetemplate.title}</g:if></title>
 </head>
 <body>
 	<g:if test="${qbetemplate}">
-		<h1 class="page-header">${qbetemplate?.title ?:''} <g:if test="${refObject}">for ${refObject.niceName}: <g:link controller="resource" action="show" id="${refObject.id}">${refObject.name}</g:link></g:if></h1>
+		<h1 class="page-header">${qbetemplate.title ?:''} <g:if test="${refObject}">for ${refObject.niceName}: <g:link controller="resource" action="show" id="${refObject.id}">${refObject.name}</g:link></g:if></h1>
 	</g:if>
 	<g:else>
 		<h1 class="page-header">Search</h1>
