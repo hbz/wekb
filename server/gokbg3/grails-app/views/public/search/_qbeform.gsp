@@ -86,7 +86,7 @@
                                           optionKey="${{ it.id }}"
                                           optionValue="${{ it.text }}"
                                           value="${params[fld.qparam]}"
-                                          noSelection="${[null: 'Please Choose']}"/>
+                                          noSelection="${["": 'Please Choose']}"/>
                             </g:if>
                             <g:else>
                                 <div class="${fld.contextTree.wildcard != null ? 'input-group' : ''}">

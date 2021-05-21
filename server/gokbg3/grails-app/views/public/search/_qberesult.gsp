@@ -8,12 +8,12 @@
 <div class="container">
     <div class="row">
         <div class="col-sm">
-            <h3>Showing records ${offset.toInteger() + 1} to ${lasthit.toInteger() as int} of
+            <h3>Result ${offset.toInteger() + 1} to ${lasthit.toInteger() as int} of
             ${reccount.toInteger() as int}
             </h3>
         </div>
 
-        <g:if test="${(reccount && max && reccount.toInteger() > max.toInteger())}">
+        %{--<g:if test="${(reccount && max && reccount.toInteger() > max.toInteger())}">
                 <div class="col-sm">
                     <g:form controller="public" class="form-group row justify-content-end" action="${actionName}" method="get"
                             params="${params}">
@@ -25,7 +25,7 @@
                         </div>
                     </g:form>
                 </div>
-        </g:if>
+        </g:if>--}%
     </div>
 
     <div class="row">
@@ -85,7 +85,10 @@
                                     <%
                                         showView = null
                                         if (c.link != null && c.link != "") {
-                                            if (c.link.contains("Package")) {
+                                            if (c.link.contains("TitleInstancePackagePlatform")) {
+                                                showView = "tippContent"
+                                            }
+                                            else if (c.link.contains("Package")) {
                                                 showView = "packageContent"
                                             }
                                             else if (c.link.contains("Platform")) {
@@ -94,9 +97,7 @@
                                             else if (c.link.contains("Org")) {
                                                 showView = "orgContent"
                                             }
-                                            else if (c.link.contains("TitleInstancePackagePlatform")) {
-                                                showView = "tippContent"
-                                            }
+
                                         }
                                     %>
                                     <g:if test="${showView != null}">
@@ -175,7 +176,10 @@
                                         <%
                                             showView = null
                                             if (c.link != null && c.link != "") {
-                                                if (c.link.contains("Package")) {
+                                                if (c.link.contains("TitleInstancePackagePlatform")) {
+                                                    showView = "tippContent"
+                                                }
+                                                else if (c.link.contains("Package")) {
                                                     showView = "packageContent"
                                                 }
                                                 else if (c.link.contains("Platform")) {
@@ -183,9 +187,6 @@
                                                 }
                                                 else if (c.link.contains("Org")) {
                                                     showView = "orgContent"
-                                                }
-                                                else if (c.link.contains("TitleInstancePackagePlatform")) {
-                                                    showView = "tippContent"
                                                 }
                                             }
                                         %>

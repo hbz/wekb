@@ -1,5 +1,5 @@
 <%@ page import="org.gokb.cred.TitleInstancePackagePlatform" %>
-<div class="tab-pane ${(d instanceof TitleInstancePackagePlatform && d.publicationType?.value != 'Serial') ? 'active' : ''}" id="identifiers" role="tabpanel">
+<div class="tab-pane ${(actionName != "packageContent" || (d instanceof TitleInstancePackagePlatform && d.publicationType?.value != 'Serial')) ? '' : 'show active'}" id="identifiers" role="tabpanel">
     <dl>
         <dt>
             <gokb:annotatedLabel owner="${d}" property="ids">Identifiers</gokb:annotatedLabel>

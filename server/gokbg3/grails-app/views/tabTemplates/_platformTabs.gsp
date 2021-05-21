@@ -4,7 +4,10 @@
 
         <g:if test="${controllerName == 'public'}">
             <ul id="tabs" class="nav nav-tabs" role="tablist">
-                <li class="nav-item"><a class="nav-link active" href="#titledetails" data-toggle="tab"
+
+                <li class="nav-item show active"><a class="nav-link" href="#statistic" data-toggle="tab">Statistic</a></li>
+
+                <li class="nav-item"><a class="nav-link" href="#titledetails" data-toggle="tab"
                                                role="tab">Hosted Titles <span
                             class="badge badge-warning">${d.currentTippCount}</span></a></li>
                 <li class="nav-item"><a class="nav-link" href="#packages" data-toggle="tab" role="tab">Packages <span
@@ -12,21 +15,20 @@
                 <li class="nav-item"><a class="nav-link" href="#altnames" data-toggle="tab" role="tab">Alternate Names <span
                         class="badge badge-warning">${d.variantNames.size()}</span></a></li>
 
-                <li class="nav-item"><a class="nav-link" href="#statistic" data-toggle="tab">Statistic</a></li>
+
 
             </ul>
 
         </g:if>
         <g:else>
             <ul id="tabs" class="nav nav-tabs">
-                <li class="active"><a href="#titledetails" data-toggle="tab">Hosted Titles <span
+                <li class="active"><a href="#statistic" data-toggle="tab">Statistic</a></li>
+                <li><a href="#titledetails" data-toggle="tab">Hosted Titles <span
                         class="badge badge-warning">${d.currentTippCount}</span></a></li>
                 <li><a href="#packages" data-toggle="tab">Packages <span
                         class="badge badge-warning">${d.hostedPackages.size()}</span></a></li>
                 <li><a href="#altnames" data-toggle="tab">Alternate Names <span
                         class="badge badge-warning">${d.variantNames.size()}</span></a></li>
-
-                <li><a href="#statistic" data-toggle="tab">Statistic</a></li>
 
                 <g:if test="${grailsApplication.config.gokb.decisionSupport?.active}">
 
@@ -45,7 +47,7 @@
 
         <div id="my-tab-content" class="tab-content">
 
-            <div class="tab-pane fade active" id="titledetails" role="tabpanel">
+            <div class="tab-pane fade" id="titledetails" role="tabpanel">
 
                 <g:if test="${controllerName == 'public'}">
                     <g:link class="display-inline" controller="public" action="search"
@@ -78,7 +80,7 @@
                       model="${[d: d, showActions: true]}"/>
 
 
-            <div class="tab-pane fade" id="statistic" role="tabpanel">
+            <div class="tab-pane fade show active" id="statistic" role="tabpanel">
                 <dl>
                     <dt>
                         <gokb:annotatedLabel owner="${d}"

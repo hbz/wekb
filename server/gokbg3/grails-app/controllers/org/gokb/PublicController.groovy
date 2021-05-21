@@ -314,7 +314,7 @@ class PublicController {
         params.remove(params.newMax)
         params.offset = "0"
       }
-      params.offset = params.offset ? params.offset.toString : "0"
+      params.offset = params.offset ? params.offset.toString() : "0"
       params.max = session.getAttribute("newMax") ? session.getAttribute("newMax").toString() : "10"
 
       searchResult = searchService.search(null, searchResult, params, null)
