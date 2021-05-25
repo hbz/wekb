@@ -42,7 +42,7 @@ class Contact{
     static constraints = {
         content     (nullable:true)
         contentType (nullable:true)
-        org         (nullable:true)
+        org         (nullable:false)
         language    (nullable:true)
     }
     
