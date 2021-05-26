@@ -1087,7 +1087,7 @@ class TitleInstancePackagePlatform extends KBComponent {
           }
         }
 
-        if (tipp_dto.ddc) {
+        if (tipp_dto.ddc instanceof String) {
 
             RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.DDC, tipp_dto.ddc)
 
@@ -1096,8 +1096,8 @@ class TitleInstancePackagePlatform extends KBComponent {
             }
         }
 
-        if (tipp_dto.ddcs) {
-            tipp_dto.ddcs.each{ String ddc ->
+        if (tipp_dto.ddc instanceof List) {
+            tipp_dto.ddc.each{ String ddc ->
               RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.DDC, ddc)
               if(refdataValue && !(refdataValue in tipp.ddcs)){
                 tipp.addToDdcs(refdataValue)

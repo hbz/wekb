@@ -54,6 +54,7 @@ Contact.Content.Type;Url;Url;Url
 Contact.Content.Type;Mobil;Mobil;Mobil
 Contact.Content.Type;Phone 2;Phone 2;Phone 2
 Contact.Type;Technical Support;Technical Support;Technical Support
+Contact.Type;Service Support;Service Support;Service Support
 Country;AD;Andorra;Andorra
 Country;AE;Vereinigte Arabische Emirate;United Arab Emirates
 Country;AF;Afghanistan;Afghanistan
@@ -460,6 +461,7 @@ Platform.Software;Atupon;Atupon;Atupon
 Platform.Statistics.Format;COUNTER;COUNTER;COUNTER
 Platform.Statistics.Format; Document; Document;  Document
 Platform.Statistics.Format;Diagram;Diagram;Diagram
+Platform.Statistics.Update;Daily;Daily;Daily
 Platform.Statistics.Update;Weekly;Weekly;Weekly
 Platform.Statistics.Update;Monthly;Monthly;Monthly
 Platform.Statistics.Update;Quarterly;Quarterly;Quarterly
