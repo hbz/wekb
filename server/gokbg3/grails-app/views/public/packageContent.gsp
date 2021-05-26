@@ -168,7 +168,7 @@
 
             </ul>
             <div id="my-tab-content" class="tab-content">
-                <div class="tab-pane fade show active" id="titledetails" role="tabpanel">
+                <div class="tab-pane active" id="titledetails" role="tabpanel">
                     <div class="row">
                         <div class="col-sm">
                             <h2>Titles (${titleCount})</h2>

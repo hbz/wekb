@@ -5,7 +5,7 @@
         <g:if test="${controllerName == 'public'}">
             <ul id="tabs" class="nav nav-tabs" role="tablist">
 
-                <li class="nav-item show active"><a class="nav-link" href="#statistic" data-toggle="tab">Statistic</a></li>
+                <li class="nav-item"><a class="nav-link active" href="#statistic" data-toggle="tab">Statistic</a></li>
 
                 <li class="nav-item"><a class="nav-link" href="#titledetails" data-toggle="tab"
                                                role="tab">Hosted Titles <span
@@ -80,7 +80,7 @@
                       model="${[d: d, showActions: true]}"/>
 
 
-            <div class="tab-pane show active" id="statistic" role="tabpanel">
+            <div class="tab-pane active" id="statistic" role="tabpanel">
                 <dl>
                     <dt>
                         <gokb:annotatedLabel owner="${d}"
@@ -90,6 +90,40 @@
                         <gokb:xEditableRefData owner="${d}" field="statisticsFormat"
                                                config="${RCConstants.PLATFORM_STATISTICS_FORMAT}"/>
                     </dd>
+                    
+                    <dt>
+                        <gokb:annotatedLabel owner="${d}"
+                                             property="statisticsUpdate">Statistics Update</gokb:annotatedLabel>
+                    </dt>
+                    <dd>
+                        <gokb:xEditableRefData owner="${d}" field="statisticsUpdate"
+                                               config="${RCConstants.PLATFORM_STATISTICS_UPDATE}"/>
+                    </dd>
+                    
+                    <dt>
+                        <gokb:annotatedLabel owner="${d}"
+                                             property="statisticsAdminPortalUrl">Statistics Admin Portal Url</gokb:annotatedLabel>
+                    </dt>
+                    <dd>
+                        <gokb:xEditable owner="${d}" field="statisticsAdminPortalUrl"/>
+                    </dd>
+                    
+                    <dt>
+                        <gokb:annotatedLabel owner="${d}"
+                                             property="counterCertified">Counter Certified</gokb:annotatedLabel>
+                    </dt>
+                    <dd>
+                        <gokb:xEditableRefData owner="${d}" field="counterCertified" config="${RCConstants.YN}"/>
+                    </dd>
+
+                    <dt>
+                        <gokb:annotatedLabel owner="${d}"
+                                             property="counterRegistryUrl">Counter Registry Url</gokb:annotatedLabel>
+                    </dt>
+                    <dd>
+                        <gokb:xEditable owner="${d}" field="counterRegistryUrl"/>
+                    </dd>
+
 
                     <dt>
                         <gokb:annotatedLabel owner="${d}"
@@ -149,38 +183,6 @@
                         <gokb:xEditable owner="${d}" field="counterR5SushiServerUrl"/>
                     </dd>
 
-                    <dt>
-                        <gokb:annotatedLabel owner="${d}"
-                                             property="counterCertified">Counter Certified</gokb:annotatedLabel>
-                    </dt>
-                    <dd>
-                        <gokb:xEditable owner="${d}" field="counterCertified"/>
-                    </dd>
-
-                    <dt>
-                        <gokb:annotatedLabel owner="${d}"
-                                             property="counterRegistryUrl">Counter Registry Url</gokb:annotatedLabel>
-                    </dt>
-                    <dd>
-                        <gokb:xEditable owner="${d}" field="counterRegistryUrl"/>
-                    </dd>
-
-                    <dt>
-                        <gokb:annotatedLabel owner="${d}"
-                                             property="statisticsAdminPortalUrl">Statistics Admin Portal Url</gokb:annotatedLabel>
-                    </dt>
-                    <dd>
-                        <gokb:xEditable owner="${d}" field="statisticsAdminPortalUrl"/>
-                    </dd>
-
-                    <dt>
-                        <gokb:annotatedLabel owner="${d}"
-                                             property="statisticsUpdate">Statistics Update</gokb:annotatedLabel>
-                    </dt>
-                    <dd>
-                        <gokb:xEditableRefData owner="${d}" field="statisticsUpdate"
-                                               config="${RCConstants.PLATFORM_STATISTICS_UPDATE}"/>
-                    </dd>
                 </dl>
             </div>
 

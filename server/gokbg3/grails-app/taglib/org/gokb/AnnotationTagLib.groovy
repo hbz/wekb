@@ -60,7 +60,7 @@ class AnnotationTagLib {
     // Get the annotation object.
     def owner = attr.remove('owner')
     def property = attr.remove('property')
-    Annotation annotation
+    /*Annotation annotation
     if ( owner && property) {
 
       // Get the GSP that called this tag.
@@ -80,7 +80,9 @@ class AnnotationTagLib {
     // Add the necessary class if we need it.
     if ( show_annotation ) {
       attr['class'] = attr['class'] ? "${attr['class']} annotated" : "annotated"
-    }
+    }*/
+
+    boolean show_annotation = false
 
     // Now just output the desired element.
     out << "<${element}"
