@@ -90,6 +90,40 @@
                         <gokb:xEditableRefData owner="${d}" field="statisticsFormat"
                                                config="${RCConstants.PLATFORM_STATISTICS_FORMAT}"/>
                     </dd>
+                    
+                    <dt>
+                        <gokb:annotatedLabel owner="${d}"
+                                             property="statisticsUpdate">Statistics Update</gokb:annotatedLabel>
+                    </dt>
+                    <dd>
+                        <gokb:xEditableRefData owner="${d}" field="statisticsUpdate"
+                                               config="${RCConstants.PLATFORM_STATISTICS_UPDATE}"/>
+                    </dd>
+                    
+                    <dt>
+                        <gokb:annotatedLabel owner="${d}"
+                                             property="statisticsAdminPortalUrl">Statistics Admin Portal Url</gokb:annotatedLabel>
+                    </dt>
+                    <dd>
+                        <gokb:xEditable owner="${d}" field="statisticsAdminPortalUrl"/>
+                    </dd>
+                    
+                    <dt>
+                        <gokb:annotatedLabel owner="${d}"
+                                             property="counterCertified">Counter Certified</gokb:annotatedLabel>
+                    </dt>
+                    <dd>
+                        <gokb:xEditableRefData owner="${d}" field="counterCertified" config="${RCConstants.YN}"/>
+                    </dd>
+
+                    <dt>
+                        <gokb:annotatedLabel owner="${d}"
+                                             property="counterRegistryUrl">Counter Registry Url</gokb:annotatedLabel>
+                    </dt>
+                    <dd>
+                        <gokb:xEditable owner="${d}" field="counterRegistryUrl"/>
+                    </dd>
+
 
                     <dt>
                         <gokb:annotatedLabel owner="${d}"
@@ -149,38 +183,6 @@
                         <gokb:xEditable owner="${d}" field="counterR5SushiServerUrl"/>
                     </dd>
 
-                    <dt>
-                        <gokb:annotatedLabel owner="${d}"
-                                             property="counterCertified">Counter Certified</gokb:annotatedLabel>
-                    </dt>
-                    <dd>
-                        <gokb:xEditable owner="${d}" field="counterCertified"/>
-                    </dd>
-
-                    <dt>
-                        <gokb:annotatedLabel owner="${d}"
-                                             property="counterRegistryUrl">Counter Registry Url</gokb:annotatedLabel>
-                    </dt>
-                    <dd>
-                        <gokb:xEditable owner="${d}" field="counterRegistryUrl"/>
-                    </dd>
-
-                    <dt>
-                        <gokb:annotatedLabel owner="${d}"
-                                             property="statisticsAdminPortalUrl">Statistics Admin Portal Url</gokb:annotatedLabel>
-                    </dt>
-                    <dd>
-                        <gokb:xEditable owner="${d}" field="statisticsAdminPortalUrl"/>
-                    </dd>
-
-                    <dt>
-                        <gokb:annotatedLabel owner="${d}"
-                                             property="statisticsUpdate">Statistics Update</gokb:annotatedLabel>
-                    </dt>
-                    <dd>
-                        <gokb:xEditableRefData owner="${d}" field="statisticsUpdate"
-                                               config="${RCConstants.PLATFORM_STATISTICS_UPDATE}"/>
-                    </dd>
                 </dl>
             </div>
 
