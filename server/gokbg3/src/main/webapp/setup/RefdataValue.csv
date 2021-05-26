@@ -460,6 +460,7 @@ Platform.Software;Atupon;Atupon;Atupon
 Platform.Statistics.Format;COUNTER;COUNTER;COUNTER
 Platform.Statistics.Format; Document; Document;  Document
 Platform.Statistics.Format;Diagram;Diagram;Diagram
+Platform.Statistics.Update;Daily;Daily;Daily
 Platform.Statistics.Update;Weekly;Weekly;Weekly
 Platform.Statistics.Update;Monthly;Monthly;Monthly
 Platform.Statistics.Update;Quarterly;Quarterly;Quarterly
