@@ -102,7 +102,7 @@
 
         <div id="my-tab-content" class="tab-content">
 
-            <g:render template="/tabTemplates/showIdentifiers" model="${[d: d]}"/>
+            <g:render template="/tabTemplates/showIdentifiers" model="${[d: d, activeTab: 'true']}"/>
 
             <g:render template="/tabTemplates/showVariantnames" model="${[d: d, showActions: true]}"/>
 

@@ -5,7 +5,7 @@
         <g:if test="${controllerName == 'public'}">
             <ul id="tabs" class="nav nav-tabs" role="tablist">
 
-                <li class="nav-item show active"><a class="nav-link" href="#statistic" data-toggle="tab">Statistic</a></li>
+                <li class="nav-item"><a class="nav-link active" href="#statistic" data-toggle="tab">Statistic</a></li>
 
                 <li class="nav-item"><a class="nav-link" href="#titledetails" data-toggle="tab"
                                                role="tab">Hosted Titles <span
@@ -80,7 +80,7 @@
                       model="${[d: d, showActions: true]}"/>
 
 
-            <div class="tab-pane show active" id="statistic" role="tabpanel">
+            <div class="tab-pane active" id="statistic" role="tabpanel">
                 <dl>
                     <dt>
                         <gokb:annotatedLabel owner="${d}"

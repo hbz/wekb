@@ -238,7 +238,7 @@
 
       <g:render template="/tabTemplates/showDDCs" model="${[showActions:true]}" />
 
-      <g:render template="/tabTemplates/showIdentifiers" model="${[]}" />
+      <g:render template="/tabTemplates/showIdentifiers" model="${[d: d]}" />
 
       <div class="tab-pane" id="relationships">
         <g:if test="${d.id != null}">
