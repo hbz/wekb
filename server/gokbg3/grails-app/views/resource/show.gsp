@@ -3,7 +3,7 @@
 <html>
 <head>
     <meta name="layout" content="sb-admin"/>
-    <title><g:message code="gokb.appname" default="we:kb"/>: ${displayobj.getNiceName() ?: 'Component'}
+    <title><g:message code="gokb.appname" default="we:kb"/>: ${displayobj?.getNiceName() ?: 'Component'}
     <g:if test="${displayobj}">
         &lt;${editable ? 'Editable' : (response.status == 403 ? 'Not Accessible' : 'Read Only')}&gt;
         &lt;${displayobj.isCreatable() ? 'Creatable' : 'Not Creatable'}&gt;
@@ -20,7 +20,7 @@
     <div class="container-fluid">
         <div class="navbar-header">
             <span class="navbar-brand">
-                <g:if test="${displayobj.id != null}">
+                <g:if test="${displayobj && displayobj.id != null}">
                     ${displayobj.getNiceName() ?: 'Component'} : ${displayobj.id}
                     <g:if test="${response.status != 403}">
                         <g:if test="${displayobj.respondsTo('getDisplayName') && displayobj.getDisplayName()}">- <strong>${displayobj.getDisplayName()}</strong></g:if>
