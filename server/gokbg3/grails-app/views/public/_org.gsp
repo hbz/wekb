@@ -28,6 +28,21 @@
     <dd class="col-9 text-left">
         ${d.homepage}
     </dd>
+
+    <dt class="col-3 text-right">
+        <gokb:annotatedLabel owner="${d}" property="metadataDownloaderURL">Metadata Downloader URL</gokb:annotatedLabel>
+    </dt>
+    <dd class="col-9 text-left">
+        <gokb:xEditable  owner="${d}" field="metadataDownloaderURL" />
+    </dd>
+
+    <dt class="col-3 text-right">
+        <gokb:annotatedLabel owner="${d}" property="kbartDownloaderURL">KBART Downloader URL</gokb:annotatedLabel>
+    </dt>
+    <dd class="col-9 text-left">
+        <gokb:xEditable  owner="${d}" field="kbartDownloaderURL" />
+    </dd>
+
     <dt class="col-3 text-right">
         <gokb:annotatedLabel owner="${d}" property="roles">Roles</gokb:annotatedLabel>
     </dt>

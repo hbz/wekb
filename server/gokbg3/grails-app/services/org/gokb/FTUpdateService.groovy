@@ -200,6 +200,9 @@ class FTUpdateService {
                                  language: contact.language?.value])
         }
 
+        result.kbartDownloaderURL = kbc.kbartDownloaderURL
+        result.metadataDownloaderURL = kbc.metadataDownloaderURL
+
         result
       }
 
