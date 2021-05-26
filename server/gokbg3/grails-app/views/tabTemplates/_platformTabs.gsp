@@ -80,7 +80,7 @@
                       model="${[d: d, showActions: true]}"/>
 
 
-            <div class="tab-pane fade show active" id="statistic" role="tabpanel">
+            <div class="tab-pane show active" id="statistic" role="tabpanel">
                 <dl>
                     <dt>
                         <gokb:annotatedLabel owner="${d}"
