@@ -76,7 +76,7 @@ class PublicController {
         result.pkgName = result.pkg.name
         log.debug("Tipp qry name: ${result.pkgName}")
 
-        result.refdata_properties = classExaminationService.getRefdataPropertyNames(result.pkg.class.name)
+        //result.refdata_properties = classExaminationService.getRefdataPropertyNames(result.pkg.class.name)
 
         Map newParams = [:]
         params.sort = params.sort ? "${params.sort}" : 'tipp.name'

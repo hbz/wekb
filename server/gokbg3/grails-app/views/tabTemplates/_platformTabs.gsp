@@ -80,7 +80,7 @@
                       model="${[d: d, showActions: true]}"/>
 
 
-            <div class="tab-pane fade show active" id="statistic" role="tabpanel">
+            <div class="tab-pane show active" id="statistic" role="tabpanel">
                 <dl>
                     <dt>
                         <gokb:annotatedLabel owner="${d}"
@@ -147,6 +147,14 @@
                     </dt>
                     <dd>
                         <gokb:xEditable owner="${d}" field="counterR5SushiServerUrl"/>
+                    </dd>
+
+                    <dt>
+                        <gokb:annotatedLabel owner="${d}"
+                                             property="counterCertified">Counter Certified</gokb:annotatedLabel>
+                    </dt>
+                    <dd>
+                        <gokb:xEditable owner="${d}" field="counterCertified"/>
                     </dd>
 
                     <dt>

@@ -31,6 +31,21 @@
   <dd>
     <gokb:xEditable  owner="${d}" field="homepage" />
   </dd>
+
+  <dt>
+    <gokb:annotatedLabel owner="${d}" property="metadataDownloaderURL">Metadata Downloader URL</gokb:annotatedLabel>
+  </dt>
+  <dd>
+    <gokb:xEditable  owner="${d}" field="metadataDownloaderURL" />
+  </dd>
+
+  <dt>
+    <gokb:annotatedLabel owner="${d}" property="kbartDownloaderURL">KBART Downloader URL</gokb:annotatedLabel>
+  </dt>
+  <dd>
+    <gokb:xEditable  owner="${d}" field="kbartDownloaderURL" />
+  </dd>
+
   <dt class="dt-label">
     <gokb:annotatedLabel owner="${d}" property="roles">Roles</gokb:annotatedLabel>
   </dt>

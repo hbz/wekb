@@ -87,7 +87,7 @@
                     <th>#</th>
                     <g:sortableColumn property="sortname" title="Package Name"/>
                     <g:sortableColumn property="cpname" title="Provider"/>
-                    <g:sortableColumn property="curatoryGroups" title="Curatory Groups"/>
+                    <th>Curatory Groups</th>
                     <g:sortableColumn property="contentType" title="Content Type"/>
                     <g:sortableColumn property="titleCount" title="Title Count"/>
                     <g:sortableColumn property="lastUpdatedDisplay" title="Last Updated"/>

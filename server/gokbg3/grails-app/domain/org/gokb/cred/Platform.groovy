@@ -56,6 +56,9 @@ class Platform extends KBComponent {
   @RefdataAnnotation(cat = RCConstants.YN)
   RefdataValue proxySupported
 
+  @RefdataAnnotation(cat = RCConstants.YN)
+  RefdataValue counterCertified
+
   static hasMany = [roles: RefdataValue]
 
   static hasByCombo = [
@@ -94,6 +97,7 @@ class Platform extends KBComponent {
     counterR4SushiServerUrl column: 'plat_counter_r4_sushi_server_url'
     counterR5SushiServerUrl column: 'plat_counter_r5_sushi_server_url'
     counterRegistryUrl column: 'plat_counter_registry_url'
+    counterCertified column: 'plat_counter_certified'
     statisticsAdminPortalUrl column: 'plat_statistics_admin_portal_url'
     statisticsUpdate column: 'plat_statistics_update_fk_rv'
     proxySupported column: 'plat_proxy_supported_fk_rv'
@@ -129,6 +133,7 @@ class Platform extends KBComponent {
     counterR4SushiServerUrl(nullable: true, blank: false)
     counterR5SushiServerUrl(nullable: true, blank: false)
     counterRegistryUrl(nullable: true, blank: false)
+    counterCertified(nullable: true, blank: false)
     statisticsAdminPortalUrl(nullable: true, blank: false)
     statisticsUpdate(nullable: true, blank: false)
     proxySupported(nullable: true, blank: false)

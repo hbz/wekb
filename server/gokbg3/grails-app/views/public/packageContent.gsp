@@ -75,9 +75,48 @@
                     </dd>
 
 
-                    <g:render template="/apptemplates/secondTemplates/refdataprops"
-                              model="${[d: pkg, rd: refdata_properties, dtype: pkg.class.simpleName, notShowProps: [RCConstants.PACKAGE_EDITING_STATUS, RCConstants.PACKAGE_CONSISTENT]]}"/>
+                    <dt class="col-3 text-right">
+                        <gokb:annotatedLabel owner="${d}" property="type">Breakable</gokb:annotatedLabel>
+                    </dt>
+                    <dd class="col-9 text-left">
+                        <gokb:xEditableRefData owner="${d}" field="breakable" config="${RCConstants.PACKAGE_BREAKABLE}"/>
+                    </dd>
 
+                    <dt class="col-3 text-right">
+                        <gokb:annotatedLabel owner="${d}" property="type">Content Type</gokb:annotatedLabel>
+                    </dt>
+                    <dd class="col-9 text-left">
+                        <gokb:xEditableRefData owner="${d}" field="contentType" config="${RCConstants.PACKAGE_CONTENT_TYPE}"/>
+                    </dd>
+
+                    <dt class="col-3 text-right">
+                        <gokb:annotatedLabel owner="${d}" property="type">File</gokb:annotatedLabel>
+                    </dt>
+                    <dd class="col-9 text-left">
+                        <gokb:xEditableRefData owner="${d}" field="file" config="${RCConstants.PACKAGE_FILE}"/>
+                    </dd>
+
+                    <dt class="col-3 text-right">
+                        <gokb:annotatedLabel owner="${d}" property="type">Open Access</gokb:annotatedLabel>
+                    </dt>
+                    <dd class="col-9 text-left">
+                        <gokb:xEditableRefData owner="${d}" field="openAccess" config="${RCConstants.PACKAGE_OPEN_ACCESS}"/>
+                    </dd>
+
+                    <dt class="col-3 text-right">
+                        <gokb:annotatedLabel owner="${d}" property="type">Payment Type</gokb:annotatedLabel>
+                    </dt>
+                    <dd class="col-9 text-left">
+                        <gokb:xEditableRefData owner="${d}" field="paymentType" config="${RCConstants.PACKAGE_PAYMENT_TYPE}"/>
+                    </dd>
+
+                    <dt class="col-3 text-right">
+                        <gokb:annotatedLabel owner="${d}" property="type">Scope</gokb:annotatedLabel>
+                    </dt>
+                    <dd class="col-9 text-left">
+                        <gokb:xEditableRefData owner="${d}" field="scope" config="${RCConstants.PACKAGE_SCOPE}"/>
+                    </dd>
+                    
                     <dt class="col-3 text-right">
                         <gokb:annotatedLabel owner="${pkg}" property="nationalRanges">National Range</gokb:annotatedLabel>
                     </dt>

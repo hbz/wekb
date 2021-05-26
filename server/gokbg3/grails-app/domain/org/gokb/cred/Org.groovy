@@ -15,6 +15,9 @@ class Org extends KBComponent {
   String homepage
   IdentifierNamespace packageNamespace
 
+  String metadataDownloaderURL
+  String kbartDownloaderURL
+
   def availableActions() {
     [
       [code: 'org::deprecateReplace', label: 'Replace Publisher With...'],
@@ -79,11 +82,15 @@ class Org extends KBComponent {
     includes KBComponent.mapping
     mission column: 'org_mission_fk_rv'
     homepage column: 'org_homepage'
+    metadataDownloaderURL column: 'org_metadata_downloader_url', type: 'text'
+    kbartDownloaderURL column: 'org_kbart_downloader_url', type: 'text'
   }
 
   static constraints = {
     mission(nullable: true, blank: true)
     homepage(nullable: true, blank: true, url: true)
+    metadataDownloaderURL(nullable: true, blank: true, url: true)
+    kbartDownloaderURL(nullable: true, blank: true, url: true)
     name(validator: { val, obj ->
       if (obj.hasChanged('name')) {
         if (val && val.trim()) {
@@ -215,6 +222,8 @@ class Org extends KBComponent {
 
         addCoreGOKbXmlFields(builder, attr)
         builder.'homepage'(homepage)
+        builder.'metadataDownloaderURL'(metadataDownloaderURL)
+        builder.'kbartDownloaderURL'(kbartDownloaderURL)
         if (packageNamespace)
           builder.'packageNamespace'('namespaceName': packageNamespace.name, 'value': packageNamespace.value, 'id': packageNamespace.id)
         if (roles) {
@@ -346,8 +355,11 @@ class Org extends KBComponent {
     def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current');
     def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
 
-    int result = Combo.executeQuery("select count(c.id) from Combo as c where c.fromComponent in :packages and c.type = :combo_type and c.toComponent.status = :status"
-            , [packages: getProvidedPackages(), combo_type: combo_tipps, status: refdata_current])[0]
+    int result = 0
+    if(getProvidedPackages()) {
+      result = Combo.executeQuery("select count(c.id) from Combo as c where c.fromComponent in :packages and c.type = :combo_type and c.toComponent.status = :status"
+              , [packages: getProvidedPackages(), combo_type: combo_tipps, status: refdata_current])[0]
+    }
 
     result
   }

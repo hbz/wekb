@@ -50,6 +50,7 @@ class ESSearchService{
           "identifiers",
           "ddcs",
           "ddc",
+          "curatoryGroupType",
           "languages",
           "language",
           "status",
@@ -462,8 +463,19 @@ class ESSearchService{
     else if(qpars.languages) {
       subQueryParams['languages.value'] = qpars.languages
     }
+    if(qpars.curatoryGroupType) {
+      subQueryParams['curatoryGroups.type'] = qpars.curatoryGroupType
+    }
     subQueryParams.each { String k, String v ->
-      query.must(QueryBuilders.termQuery(k, v))
+      if(k == 'curatoryGroups.type' && v.toLowerCase() == 'other') {
+        QueryBuilder curatoryGroupsSubQuery = QueryBuilders.boolQuery()
+        curatoryGroupsSubQuery.should(QueryBuilders.termQuery(k, v))
+        curatoryGroupsSubQuery.should(QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery(k)))
+        query.must(curatoryGroupsSubQuery)
+      }
+      else {
+        query.must(QueryBuilders.termQuery(k, v))
+      }
     }
   }
 
@@ -1163,8 +1175,15 @@ class ESSearchService{
 
     QueryBuilder idQuery = QueryBuilders.boolQuery()
 
-    idQuery.must(QueryBuilders.termQuery('identifiers.namespace',params['identifiers.namespace']))
-    idQuery.must(QueryBuilders.wildcardQuery('identifiers.value', params['identifiers.value']))
+    if(params.containsKey('identifiers.namespace')) {
+      idQuery.must(QueryBuilders.termQuery('identifiers.namespace', params['identifiers.namespace']))
+      idQuery.must(QueryBuilders.wildcardQuery('identifiers.value', params['identifiers.value']))
+    }
+    else {
+      params.each { k, v ->
+        idQuery.must(QueryBuilders.termQuery(k, v))
+      }
+    }
 
     return idQuery
   }
