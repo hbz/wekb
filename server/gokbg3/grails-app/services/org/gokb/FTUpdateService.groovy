@@ -215,7 +215,8 @@ class FTUpdateService {
         result.updater = 'platform'
         result.cpname = kbc.provider?.name
         result.provider = kbc.provider ? kbc.provider.getLogEntityId() : ""
-        result.providerUuid = kbc.provider ? kbc.provider?.uuid : ""
+        result.providerName = kbc.provider ? kbc.provider.name : ""
+        result.providerUuid = kbc.provider ? kbc.provider.uuid : ""
         result.lastUpdatedDisplay = dateFormatService.formatIsoTimestamp(kbc.lastUpdated)
 
         if(kbc.respondsTo('getCuratoryGroups')) {
@@ -241,6 +242,16 @@ class FTUpdateService {
                                   namespaceName: idc.toComponent.namespace.name])
         }
         result.componentType = kbc.class.simpleName
+
+        result.titleNamespace = kbc.titleNamespace?.value
+
+        result.lastAuditDate = kbc.lastAuditDate ? dateFormatService.formatIsoTimestamp(kbc.lastAuditDate) : null
+
+        result.ipAuthentication = kbc.ipAuthentication?.value
+
+        result.shibbolethAuthentication = kbc.shibbolethAuthentication?.value
+
+        result.passwordAuthentication = kbc.passwordAuthentication?.value
 
         result.statisticsFormat = kbc.statisticsFormat?.value
         result.counterR3Supported = kbc.counterR3Supported?.value

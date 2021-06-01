@@ -76,45 +76,45 @@
 
 
                     <dt class="col-3 text-right">
-                        <gokb:annotatedLabel owner="${d}" property="type">Breakable</gokb:annotatedLabel>
+                        <gokb:annotatedLabel owner="${pkg}" property="type">Breakable</gokb:annotatedLabel>
                     </dt>
                     <dd class="col-9 text-left">
-                        <gokb:xEditableRefData owner="${d}" field="breakable" config="${RCConstants.PACKAGE_BREAKABLE}"/>
+                        <gokb:xEditableRefData owner="${pkg}" field="breakable" config="${RCConstants.PACKAGE_BREAKABLE}"/>
                     </dd>
 
                     <dt class="col-3 text-right">
-                        <gokb:annotatedLabel owner="${d}" property="type">Content Type</gokb:annotatedLabel>
+                        <gokb:annotatedLabel owner="${pkg}" property="type">Content Type</gokb:annotatedLabel>
                     </dt>
                     <dd class="col-9 text-left">
-                        <gokb:xEditableRefData owner="${d}" field="contentType" config="${RCConstants.PACKAGE_CONTENT_TYPE}"/>
+                        <gokb:xEditableRefData owner="${pkg}" field="contentType" config="${RCConstants.PACKAGE_CONTENT_TYPE}"/>
                     </dd>
 
                     <dt class="col-3 text-right">
-                        <gokb:annotatedLabel owner="${d}" property="type">File</gokb:annotatedLabel>
+                        <gokb:annotatedLabel owner="${pkg}" property="type">File</gokb:annotatedLabel>
                     </dt>
                     <dd class="col-9 text-left">
-                        <gokb:xEditableRefData owner="${d}" field="file" config="${RCConstants.PACKAGE_FILE}"/>
+                        <gokb:xEditableRefData owner="${pkg}" field="file" config="${RCConstants.PACKAGE_FILE}"/>
                     </dd>
 
                     <dt class="col-3 text-right">
-                        <gokb:annotatedLabel owner="${d}" property="type">Open Access</gokb:annotatedLabel>
+                        <gokb:annotatedLabel owner="${pkg}" property="type">Open Access</gokb:annotatedLabel>
                     </dt>
                     <dd class="col-9 text-left">
-                        <gokb:xEditableRefData owner="${d}" field="openAccess" config="${RCConstants.PACKAGE_OPEN_ACCESS}"/>
+                        <gokb:xEditableRefData owner="${pkg}" field="openAccess" config="${RCConstants.PACKAGE_OPEN_ACCESS}"/>
                     </dd>
 
                     <dt class="col-3 text-right">
-                        <gokb:annotatedLabel owner="${d}" property="type">Payment Type</gokb:annotatedLabel>
+                        <gokb:annotatedLabel owner="${pkg}" property="type">Payment Type</gokb:annotatedLabel>
                     </dt>
                     <dd class="col-9 text-left">
-                        <gokb:xEditableRefData owner="${d}" field="paymentType" config="${RCConstants.PACKAGE_PAYMENT_TYPE}"/>
+                        <gokb:xEditableRefData owner="${pkg}" field="paymentType" config="${RCConstants.PACKAGE_PAYMENT_TYPE}"/>
                     </dd>
 
                     <dt class="col-3 text-right">
-                        <gokb:annotatedLabel owner="${d}" property="type">Scope</gokb:annotatedLabel>
+                        <gokb:annotatedLabel owner="${pkg}" property="type">Scope</gokb:annotatedLabel>
                     </dt>
                     <dd class="col-9 text-left">
-                        <gokb:xEditableRefData owner="${d}" field="scope" config="${RCConstants.PACKAGE_SCOPE}"/>
+                        <gokb:xEditableRefData owner="${pkg}" field="scope" config="${RCConstants.PACKAGE_SCOPE}"/>
                     </dd>
                     
                     <dt class="col-3 text-right">

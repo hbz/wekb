@@ -345,7 +345,7 @@ class BootStrap {
                 dcinfo.save(flush: true);
             }
 
-            if (dcinfo.dcName.startsWith('org.gokb.cred') || dcinfo.dcName == 'org.gokb.Annotation') {
+            if (dcinfo.dcName.startsWith('org.gokb.cred') || dcinfo.dcName == 'org.gokb.Annotation' || dcinfo.dcName.startsWith('wekb')) {
                 AclObjectIdentity oid
 
                 if (!AclObjectIdentity.findByObjectId(dcinfo.id)) {

@@ -345,7 +345,7 @@ class ExportService {
 
     def exportPackageBatchImportTemplate(def outputStream) {
 
-        List titles = ["package_name", "provider_uuid", "nominal_platform_uuid", "description", "url", "breakable", "content_type",
+        List titles = ["package_uuid", "package_name", "provider_uuid", "nominal_platform_uuid", "description", "url", "breakable", "content_type",
                               "file", "open_access", "payment_type", "scope", "national_range", "regional_range", "anbieter_produkt_id", "ddc", "source_url", "frequency", "title_id_namespace", "automated_updates"]
 
 
@@ -387,7 +387,7 @@ class ExportService {
                     break
                 case 'frequency': datas = RefdataCategory.lookup(RCConstants.SOURCE_FREQUENCY).sort{it.value}.collect { it -> it.value }
                     break
-                case 'title_id_namespace': datas = IdentifierNamespace.findAllByFamily('ttl_prv').sort{it.value}.collect{ it -> it.value}
+                case 'title_id_namespace': //Because more than 255 values // datas = IdentifierNamespace.findAllByFamily('ttl_prv').sort{it.value}.collect{ it -> it.value}
                     break
                 case 'automated_updates': datas = RefdataCategory.lookup(RCConstants.YN).sort{it.value}.collect { it -> it.value }
                     break
@@ -404,7 +404,6 @@ class ExportService {
             workbook.write(outputStream)
             outputStream.flush()
             outputStream.close()
-            workbook.dispose()
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -413,7 +412,7 @@ class ExportService {
 
     private setInExcelDropDownList(XSSFSheet sheet, String[] datas, Integer column){
 
-        println(datas)
+        //println(datas)
         XSSFDataValidationHelper dvHelper = new XSSFDataValidationHelper(sheet)
         XSSFDataValidationConstraint dvConstraint = (XSSFDataValidationConstraint) dvHelper.createExplicitListConstraint(datas)
         CellRangeAddressList addressList = null

@@ -595,7 +595,7 @@ class AdminController {
       Map<String, Object> result = [:]
       if(params.name) {
         String indexName = params.name
-        log.debug("deleteIndex ${indexName} ...")
+        log.info("deleteIndex ${indexName} ...")
         Client esclient = ESWrapperService.getClient()
         IndicesAdminClient adminClient = esclient.admin().indices()
 
@@ -603,22 +603,22 @@ class AdminController {
           DeleteIndexRequestBuilder deleteIndexRequestBuilder = adminClient.prepareDelete(indexName)
           DeleteIndexResponse deleteIndexResponse = deleteIndexRequestBuilder.execute().actionGet()
           if (deleteIndexResponse.isAcknowledged()) {
-            log.debug("Index ${indexName} successfully deleted!")
+            log.info("Index ${indexName} successfully deleted!")
           }
           else {
-            log.debug("Index deletetion failed: ${deleteIndexResponse}")
+            log.info("Index deletetion failed: ${deleteIndexResponse}")
           }
         }
-        log.debug("ES index ${indexName} did not exist, creating..")
+        log.info("ES index ${indexName} did not exist, creating..")
         CreateIndexRequestBuilder createIndexRequestBuilder = adminClient.prepareCreate(indexName)
-        log.debug("Adding index settings..")
+        log.info("Adding index settings..")
         createIndexRequestBuilder.setSettings(ESWrapperService.getSettings().get("settings"))
-        log.debug("Adding index mappings..")
+        log.info("Adding index mappings..")
         createIndexRequestBuilder.addMapping("component", ESWrapperService.getMapping())
 
         CreateIndexResponse createIndexResponse = createIndexRequestBuilder.execute().actionGet()
         if (createIndexResponse.isAcknowledged()) {
-          log.debug("Index ${indexName} successfully created!")
+          log.info("Index ${indexName} successfully created!")
           if(typePerIndex.get(indexName) == DeletedKBComponent.class.simpleName){
             DeletedKBComponent.list().each { DeletedKBComponent deletedKBComponent ->
               Map idx_record = [:]
@@ -642,13 +642,13 @@ class AdminController {
           else {
             FTControl.withTransaction {
               def res = FTControl.executeUpdate("delete FTControl c where c.domainClassName = :deleteFT", [deleteFT: "org.gokb.cred.${typePerIndex.get(indexName)}"])
-              log.debug("Result: ${res}")
+              log.info("Result: ${res}")
             }
             FTUpdateService.updateFTIndexes()
           }
         }
         else {
-          log.debug("Index creation failed: ${createIndexResponse}")
+          log.info("Index creation failed: ${createIndexResponse}")
         }
       }
     }.startOrQueue()
