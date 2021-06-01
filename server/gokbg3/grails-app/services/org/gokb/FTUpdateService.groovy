@@ -242,6 +242,12 @@ class FTUpdateService {
         }
         result.componentType = kbc.class.simpleName
 
+        result.ipAuthentication = kbc.ipAuthentication?.value
+
+        result.shibbolethAuthentication = kbc.shibbolethAuthentication?.value
+
+        result.passwordAuthentication = kbc.passwordAuthentication?.value
+
         result.statisticsFormat = kbc.statisticsFormat?.value
         result.counterR3Supported = kbc.counterR3Supported?.value
         result.counterR4Supported = kbc.counterR4Supported?.value
