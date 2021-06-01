@@ -121,7 +121,7 @@
                                              property="lastAuditDate">Last Audit Date</gokb:annotatedLabel>
                     </dt>
                     <dd>
-                        <gokb:xEditable owner="${d}" field="lastAuditDate"/>
+                        <gokb:xEditable owner="${d}" field="lastAuditDate" type="date"/>
                     </dd>
 
                     <dt>
