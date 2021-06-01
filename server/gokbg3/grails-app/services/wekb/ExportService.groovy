@@ -345,7 +345,7 @@ class ExportService {
 
     def exportPackageBatchImportTemplate(def outputStream) {
 
-        List titles = ["package_name", "provider_uuid", "nominal_platform_uuid", "description", "url", "breakable", "content_type",
+        List titles = ["package_uuid", "package_name", "provider_uuid", "nominal_platform_uuid", "description", "url", "breakable", "content_type",
                               "file", "open_access", "payment_type", "scope", "national_range", "regional_range", "anbieter_produkt_id", "ddc", "source_url", "frequency", "title_id_namespace", "automated_updates"]
 
 
@@ -404,7 +404,6 @@ class ExportService {
             workbook.write(outputStream)
             outputStream.flush()
             outputStream.close()
-            workbook.dispose()
 
         } catch (Exception e) {
             e.printStackTrace();
