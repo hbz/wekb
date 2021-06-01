@@ -118,6 +118,14 @@
 
                     <dt>
                         <gokb:annotatedLabel owner="${d}"
+                                             property="lastAuditDate">Last Audit Date</gokb:annotatedLabel>
+                    </dt>
+                    <dd>
+                        <gokb:xEditable owner="${d}" field="lastAuditDate"/>
+                    </dd>
+
+                    <dt>
+                        <gokb:annotatedLabel owner="${d}"
                                              property="counterRegistryUrl">Counter Registry Url</gokb:annotatedLabel>
                     </dt>
                     <dd>

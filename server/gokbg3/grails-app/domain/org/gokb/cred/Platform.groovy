@@ -59,6 +59,8 @@ class Platform extends KBComponent {
   @RefdataAnnotation(cat = RCConstants.YN)
   RefdataValue counterCertified
 
+  Date lastAuditDate
+
   static hasMany = [roles: RefdataValue]
 
   static hasByCombo = [
@@ -102,6 +104,7 @@ class Platform extends KBComponent {
     statisticsUpdate column: 'plat_statistics_update_fk_rv'
     proxySupported column: 'plat_proxy_supported_fk_rv'
     titleNamespace column: 'plat_title_namespace_fk'
+    lastAuditDate column: 'plat_last_audit_date'
 
   }
 
@@ -138,6 +141,7 @@ class Platform extends KBComponent {
     statisticsUpdate(nullable: true, blank: false)
     proxySupported(nullable: true, blank: false)
     titleNamespace(nullable: true)
+    lastAuditDate (nullable: true)
 
   }
 
