@@ -387,7 +387,7 @@ class ExportService {
                     break
                 case 'frequency': datas = RefdataCategory.lookup(RCConstants.SOURCE_FREQUENCY).sort{it.value}.collect { it -> it.value }
                     break
-                case 'title_id_namespace': datas = IdentifierNamespace.findAllByFamily('ttl_prv').sort{it.value}.collect{ it -> it.value}
+                case 'title_id_namespace': //Because more than 255 values // datas = IdentifierNamespace.findAllByFamily('ttl_prv').sort{it.value}.collect{ it -> it.value}
                     break
                 case 'automated_updates': datas = RefdataCategory.lookup(RCConstants.YN).sort{it.value}.collect { it -> it.value }
                     break
@@ -413,7 +413,7 @@ class ExportService {
 
     private setInExcelDropDownList(XSSFSheet sheet, String[] datas, Integer column){
 
-        println(datas)
+        //println(datas)
         XSSFDataValidationHelper dvHelper = new XSSFDataValidationHelper(sheet)
         XSSFDataValidationConstraint dvConstraint = (XSSFDataValidationConstraint) dvHelper.createExplicitListConstraint(datas)
         CellRangeAddressList addressList = null
