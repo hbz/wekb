@@ -185,7 +185,7 @@ class AdminService {
 
     private def checkAndAdd(KBDomainInfo domain, String role, BasePermission permission){
 
-        if (domain.dcName.startsWith('org.gokb.cred') || domain.dcName == 'org.gokb.Annotation') {
+        if (domain.dcName.startsWith('org.gokb.cred') || domain.dcName == 'org.gokb.Annotation' || domain.dcName.startsWith('wekb')) {
             def sid = AclSid.findBySid(role)
             AclObjectIdentity aclObjectIdentity = AclObjectIdentity.findByObjectId(domain.id)
 
