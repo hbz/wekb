@@ -435,14 +435,38 @@ class CreateController {
 
                 if (colMap.provider_uuid != null) {
                   Org provider = Org.findByUuid(cols[colMap.provider_uuid].trim())
-                  if (provider)
-                    pkg.provider = provider
+                  if (provider){
+                    if(!(pkg.provider && pkg.provider == provider)){
+                      def combo_type = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Provider')
+                      def current_combo = Combo.findByFromComponentAndType(pkg, combo_type)
+
+                      if (current_combo) {
+                        current_combo.delete(flush: true)
+                      }
+
+                      def new_combo = new Combo(fromComponent: pkg, toComponent: provider, type: combo_type).save(flush: true)
+
+                    }
+                  }
+
                 }
 
                 if (colMap.nominal_platform_uuid != null) {
                   Platform platform = Platform.findByUuid(cols[colMap.nominal_platform_uuid].trim())
-                  if (platform)
-                    pkg.nominalPlatform = platform
+                  if (platform){
+                    if(!(pkg.nominalPlatform && pkg.nominalPlatform == platform)){
+                      def combo_type = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.NominalPlatform')
+                      def current_combo = Combo.findByFromComponentAndType(pkg, combo_type)
+
+                      if (current_combo) {
+                        current_combo.delete(flush: true)
+                      }
+
+                      def new_combo = new Combo(fromComponent: pkg, toComponent: platform, type: combo_type).save(flush: true)
+
+                    }
+                  }
+
                 }
 
                 if (colMap.description != null) {
@@ -551,11 +575,9 @@ class CreateController {
                   if (value) {
                     Identifier canonical_identifier = componentLookupService.lookupOrCreateCanonicalIdentifier("Anbieter_Produkt_ID", value)
                     if (canonical_identifier) {
-                      if (pkg.save(flush: true)) {
                         if(!Combo.findByFromComponentAndToComponentAndStatusAndType(pkg, canonical_identifier, combo_type_status, combo_type_id)) {
                             def new_id = new Combo(fromComponent: pkg, toComponent: canonical_identifier, status: combo_type_status, type: combo_type_id).save(flush: true)
                           }
-                      }
                     }
                   }
                 }
@@ -580,16 +602,16 @@ class CreateController {
                   }
                 }
 
-                Package.withTransaction {
-                  if (pkg.save()) {
+                  if (pkg.save(flush: true)) {
 
                     user.curatoryGroups.each { CuratoryGroup cg ->
                       if (!(cg in pkg.curatoryGroups)) {
-                        pkg.curatoryGroups.add(cg)
+                        def combo_type = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.CuratoryGroups')
+
+                        def new_combo = new Combo(fromComponent: pkg, toComponent: cg, type: combo_type).save(flush: true)
+
                       }
                     }
-
-                    packageList << pkg
 
                     if (colMap.source_url != null) {
                       String source_url = cols[colMap.source_url].trim()
@@ -636,10 +658,12 @@ class CreateController {
                           }
                         }
 
-                        if (source.save()) {
+                        if (source.save(flush: true)) {
                           user.curatoryGroups.each { CuratoryGroup cg ->
                             if (!(cg in source.curatoryGroups)) {
-                              source.curatoryGroups.add(cg)
+                              def combo_type = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Source.CuratoryGroups')
+
+                              def new_combo = new Combo(fromComponent: source, toComponent: cg, type: combo_type).save(flush: true)
                             }
                           }
 
@@ -647,17 +671,20 @@ class CreateController {
                             String charset = (('a'..'z') + ('0'..'9')).join()
                             String tokenValue = RandomStringUtils.random(255, charset.toCharArray())
                             if (!UpdateToken.findByPkg(pkg)) {
-                              UpdateToken newToken = new UpdateToken(pkg: pkg, updateUser: user, value: tokenValue).save()
+                              UpdateToken newToken = new UpdateToken(pkg: pkg, updateUser: user, value: tokenValue).save(flush: true)
                             }
                           }
                           if (source != pkg.source) {
                             pkg.source = source
+                            pkg.save(flush: true)
                           }
                         }
                       }
                     }
                   }
-                }
+
+                packageList << pkg
+
               }
 
             }catch ( Exception e ) {
