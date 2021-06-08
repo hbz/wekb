@@ -17,6 +17,7 @@
         </g:if>
         <g:if test="${pkg}">
             <h1>Package: <span style="font-weight:bolder;">${pkgName}</span></h1>
+            <br>
             <div class="col-md-9">
                 <dl class="row">
                     <dt class="col-3 text-right">
