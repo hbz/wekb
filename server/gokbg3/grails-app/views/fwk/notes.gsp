@@ -16,9 +16,12 @@
       <input type="hidden" name="ownerClass" value="${ownerClass}"/>
       <input type="hidden" name="ownerId" value="${ownerId}"/>
       <input type="hidden" name="creator" value="org.gokb.cred.User:${user.id}"/>
-      <div class="input-group">
+      <div class="field">
         <textarea class="form-control text-complete" style="resize:none;" rows="5" name="note"></textarea>
-        <span class="btn btn-default btn-primary btn-sm input-group-addon" onClick="document.forms['newNoteForm'].submit()">Add</span>
+      </div>
+      <br>
+      <div class="field">
+        <span class="btn btn-primary btn-sm" onClick="document.forms['newNoteForm'].submit()">Add</span>
       </div>
     </g:form>
     <br/>
@@ -27,7 +30,6 @@
       <thead>
         <tr>
           <th>Date</th>
-          <th>Agent</th>
           <th>Note</th>
         </tr>
       </thead>
@@ -35,7 +37,6 @@
         <g:each in="${noteLines}" var="n">
           <tr>
             <td style="white-space:nowrap;">${n.dateCreated}</td>
-            <td style="white-space:nowrap;">${n.creator.username}</td>
             <td width="100%">${n.note}</td>
           </tr>
         </g:each>

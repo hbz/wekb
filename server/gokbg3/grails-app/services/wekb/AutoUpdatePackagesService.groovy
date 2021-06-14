@@ -79,7 +79,7 @@ class AutoUpdatePackagesService {
         def tokenValue = p.updateToken?.value ?: null
         def respData
 
-        if (user && !tokenValue && !user.isAdmin()) {
+        if (user && !tokenValue) {
             String charset = (('a'..'z') + ('0'..'9')).join()
             tokenValue = RandomStringUtils.random(255, charset.toCharArray())
 

@@ -1,3 +1,4 @@
+<%@ page import="org.gokb.cred.Org" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -107,7 +108,7 @@
                         <td>
                             <g:if test="${hit.source.providerUuid}">
                                 <g:link controller="public" action="orgContent"
-                                        id="${hit.source.providerUuid}">${hit.source.cpname}</g:link>
+                                        id="${hit.source.providerUuid}">${Org.findByUuid(hit.source.providerUuid).name}</g:link>
                             </g:if>
 
                         </td>
