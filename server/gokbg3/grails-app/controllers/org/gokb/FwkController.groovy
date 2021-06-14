@@ -309,10 +309,10 @@ class FwkController {
       result.ownerClass = oid_components[0]
       result.ownerId = oid_components[1]
 
-      result.name = obj.name ?: obj.id
+      result.name = (obj.getNiceName() ?: 'Component') +': '+ (obj.name ?: obj.id)
 
-      result.max = params.max ?: 20;
-      result.offset = params.offset ?: 0;
+      result.max = params.max ?: (result.user.defaultPageSize ?: 25)
+      result.offset = params.offset ?: 0
 
       result.noteLines = Note.executeQuery("select n from Note as n where ownerClass=? and ownerId=? order by id desc", qry_params, [max:result.max, offset:result.offset]);
       result.noteLinesTotal = AuditLogEvent.executeQuery("select count(n.id) from Note as n where ownerClass=? and ownerId=?",qry_params)[0];
