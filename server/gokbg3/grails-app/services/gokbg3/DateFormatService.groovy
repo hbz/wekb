@@ -21,7 +21,11 @@ class DateFormatService {
   }
 
   Date parseDate(String date) {
-    DATE_FORMAT.parse(date)
+    if(date != "") {
+      DATE_FORMAT.parse(date)
+    }else{
+      null
+    }
   }
 
   String formatTimestamp(Date date) {
