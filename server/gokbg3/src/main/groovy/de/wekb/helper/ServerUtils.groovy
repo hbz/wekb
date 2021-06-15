@@ -32,4 +32,24 @@ class ServerUtils {
 
         return SERVER_LOCAL
     }
+
+    static String getCurrentServerSystemId() {
+
+        if (! Environment.isDevelopmentMode()) {
+
+            switch (Holders.grailsApplication.config.systemId) {
+                case 'we:kb-Dev':
+                    return 'we:kb-Dev'
+                    break
+                case 'we:kb-Qa':
+                    return 'we:kb-Qa'
+                    break
+                case 'we:kb-Prod':
+                    return 'we:kb-Prod'
+                    break
+            }
+        }
+
+        return "we:kb-Local"
+    }
 }

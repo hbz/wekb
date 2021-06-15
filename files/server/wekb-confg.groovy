@@ -18,6 +18,7 @@ gokb.languagesUrl = 'localhost/languages'
 gokb.masterListGenerationEnabled = false
 gokb.packageUpdate.enabled = false
 gokb.enable_statsrewrite = false
+gokb.sendJobInfosJob = false
 gokb.tsvExportTempDirectory = '/tmp'
 gokb.ygorUrl = 'localhost/ygor'
 
