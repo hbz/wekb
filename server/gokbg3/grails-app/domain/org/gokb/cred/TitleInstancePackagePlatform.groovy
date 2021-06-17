@@ -679,7 +679,7 @@ class TitleInstancePackagePlatform extends KBComponent {
       }
 
       if (!coverage.coverageDepth) {
-        if (!errors.coverageDepth) {
+        if (tipp_dto.type != "other" && !errors.coverageDepth) {
           errors.coverageDepth = []
         }
        /* coverage.coverageDepth = "fulltext"
