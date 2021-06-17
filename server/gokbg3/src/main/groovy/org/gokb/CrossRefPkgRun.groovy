@@ -291,6 +291,15 @@ class CrossRefPkgRun {
           src.lastRun = new Date()
           src.lastUpdateUrl = rjson.updateURL
           src.merge(flush: true)
+
+          String note = "Package Update: (KbartLines: ${rjson.stats.kbartLines}, recordsTotalCreated: ${rjson.stats.recordsTotalCreated}, recordsValid: ${rjson.stats.recordsValid}, recordsInvalid: ${rjson.stats.recordsInvalid}, " +
+                  "Processed Titles in this run: ${rjson.tipps.size()}, Titles in we:kb: ${existing_tipp_ids.size()}, Removded Titles: ${removedNum}, New Titles in we:kb: ${addNewNum})"
+
+          new Note(ownerClass: src.getClass().name,
+                  ownerId: src.id,
+                  creator: user,
+                  note: note).save(flush: true)
+
         }
       }
       log.debug("final flush");

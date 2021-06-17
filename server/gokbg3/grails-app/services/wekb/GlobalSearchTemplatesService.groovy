@@ -27,6 +27,7 @@ class GlobalSearchTemplatesService {
         globalSearchTemplates.put('licenses', licenses())
         globalSearchTemplates.put('macros', macros())
         globalSearchTemplates.put('namespaces', namespaces())
+        globalSearchTemplates.put('notes', notes())
         globalSearchTemplates.put('offices', offices())
         globalSearchTemplates.put('orgs', orgs())
         globalSearchTemplates.put('packages', packages())
@@ -669,6 +670,48 @@ class GlobalSearchTemplatesService {
                                 [heading: 'RDF Datatype', property: 'datatype?.value'],
                                 [heading: 'Category', property: 'family'],
                                 [heading: 'Target Type', property: 'targetType.value']
+                        ]
+                ]
+        ]
+        result
+    }
+
+    Map notes() {
+        Map result = [
+                baseclass: 'org.gokb.cred.Note',
+                title    : 'Notes',
+                group    : 'Tertiary',
+                defaultSort : 'dateCreated',
+                defaultOrder: 'asc',
+                qbeConfig: [
+                        qbeForm   : [
+                                [
+                                        prompt     : 'Note',
+                                        qparam     : 'qp_note',
+                                        placeholder: 'Note',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'note', 'wildcard': 'B']
+                                ],
+                                [
+                                        prompt     : 'Owner Class',
+                                        qparam     : 'qp_ownerClass',
+                                        placeholder: 'Owner Class',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'ownerClass'],
+                                        hide       : true
+                                ],
+                                [
+                                        prompt     : 'Owner ID',
+                                        qparam     : 'qp_ownerClassID',
+                                        placeholder: 'Owner Class ID',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'ownerId', 'type': 'java.lang.Long'],
+                                        hide       : true
+                                ],
+                        ],
+                        qbeGlobals: [
+                        ],
+                        qbeResults: [
+                                [heading: 'Note', property: 'note'],
+                                [heading: 'Date Created', property: 'dateCreated'],
+                                [heading: 'Last Updated', property: 'lastUpdated'],
                         ]
                 ]
         ]

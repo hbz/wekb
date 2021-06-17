@@ -94,11 +94,11 @@
     </g:if>
 </dl>
 
-
 <g:if test="${d.id}">
-    <div id="content">
+    <div id="my-tab-content" class="tab-content">
         <ul id="tabs" class="nav nav-tabs">
             <li class="active"><a href="#packages" data-toggle="tab">Packages</a></li>
+            <li><a href="#notes" data-toggle="tab">Notes</a></li>
         </ul>
 
         <div class="tab-pane active" id="packages">
@@ -113,6 +113,24 @@
                 </dd>
             </dl>
         </div>
+
+
+
+        <div class="tab-pane" id="notes">
+            <dl>
+                <dt>
+                    <gokb:annotatedLabel owner="${d}" property="notes">Notes</gokb:annotatedLabel>
+                </dt>
+                <dd>
+                    <g:link class="display-inline" controller="search" action="index"
+                            params="[qbe: 'g:notes', qp_ownerClassID: d.id, inline: true, qp_ownerClass: d.getClass().name]"
+                            id="">Notes on this Source</g:link>
+                </dd>
+            </dl>
+        </div>
     </div>
 </g:if>
+
+
+<g:render template="/apptemplates/secondTemplates/componentStatus"/>
 
