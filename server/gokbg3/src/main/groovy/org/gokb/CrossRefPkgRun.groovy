@@ -298,7 +298,7 @@ class CrossRefPkgRun {
           new Note(ownerClass: src.getClass().name,
                   ownerId: src.id,
                   creator: user,
-                  note: note)
+                  note: note).save(flush: true)
 
         }
       }
