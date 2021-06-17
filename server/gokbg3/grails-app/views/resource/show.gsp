@@ -119,9 +119,19 @@
                             <select id="selectedAction" name="selectedBulkAction" class="form-control">
                                 <option value="">-- Select an action to perform --</option>
                                 <g:each var="action" in="${displayobj.userAvailableActions()}">
-                                    <option value="${action.code}">
-                                        ${action.label}
-                                    </option>
+                                    <g:if test="${action.code in ["packageUrlUpdate", "packageUrlUpdateAllTitles"]}">
+                                        <g:if test="${displayobj.source}">
+                                            <option value="${action.code}">
+                                                ${action.label}
+                                            </option>
+                                        </g:if>
+                                    </g:if>
+                                    <g:else>
+                                        <option value="${action.code}">
+                                            ${action.label}
+                                        </option>
+                                    </g:else>
+
                                 </g:each>
                             </select>
                             <span class="input-group-btn">

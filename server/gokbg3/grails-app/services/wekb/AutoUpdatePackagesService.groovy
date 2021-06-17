@@ -30,16 +30,27 @@ class AutoUpdatePackagesService {
 
         Date startTime = new Date()
         def uuid = UUID.randomUUID().toString()
-        if (running == false) {
-            running = true
-            log.debug("UpdateFromSource started")
-            if (startSourceUpdate(p, user, ignoreLastChanged)) {
-                result = [result: JobResult.STATUS_SUCCESS, message: 'Auto Update Packages success']
+        if(p.source) {
+            if (running == false || user) {
+
+                if (!user) {
+                    running = true
+                }
+
+                log.debug("UpdateFromSource started")
+                if (startSourceUpdate(p, user, ignoreLastChanged)) {
+                    result = [result: JobResult.STATUS_SUCCESS, message: (user ? "Manuell" : "Auto") + " Update Package success"]
+                }
+                if (!user) {
+                    running = false
+                }
+            } else {
+                log.debug("update skipped - already running")
+                result = [result: JobResult.STATUS_FAIL, message: (user ? "Manuell" : "Auto") + " Update Package is already running"]
             }
-            running = false
-        } else {
-            log.debug("update skipped - already running")
-            result = [result: JobResult.STATUS_FAIL, message: 'Another Auto Update Packages is already running']
+        }else{
+            log.debug("update skipped - packge have no source")
+            result = [result: JobResult.STATUS_FAIL, message: " Package have no source"]
         }
 
         def result_object = JobResult.findByUuid(uuid)
