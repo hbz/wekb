@@ -350,7 +350,7 @@ abstract class GOKbSyncBase extends Script {
     
     if (data) {
       
-      directAddFields (data, ['name', 'status', 'editStatus', 'shortcode'], addTo)
+      directAddFields (data, ['name', 'status', 'shortcode'], addTo)
     
       if (data.identifiers && data.identifiers.size() > 0) {
         

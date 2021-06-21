@@ -473,7 +473,6 @@ class IntegrationController {
    *      [
    *         name:'',
    *         shortcode:'',
-   *         editStatus:'',
    *         url:'',
    *         defaultAccessURL:'',
    *         explanationAtSource:'',
@@ -756,11 +755,6 @@ class IntegrationController {
         if (p) {
           log.debug("created or looked up platform ${p}!")
 
-          componentUpdateService.setAllRefdata([
-              'software', 'service'
-          ], platformJson, p)
-          ClassUtils.setRefdataIfPresent(platformJson.authentication, p, 'authentication', RCConstants.PLATFORM_AUTH_METHOD)
-
           if (platformJson.provider) {
             def prov = null
 
@@ -878,7 +872,6 @@ class IntegrationController {
  *    'imprint':'the_publisher',
  *    'publishedFrom':'yyyy-MM-dd' 'HH:mm:ss.SSS',
  *    'publishedTo':'yyyy-MM-dd' 'HH:mm:ss.SSS',
- *    'editStatus':'edit_status_value',
  *    'status':'status_value',
  *    'historyEvents':[
  *    ],
@@ -941,22 +934,27 @@ class IntegrationController {
         job.message("Finished processing ${job_result?.results?.size()} titles.".toString())
 
         JobResult.withNewSession {
-          def result_object = JobResult.findByUuid(job.uuid)
+          JobResult result_object = JobResult.findByUuid(job.uuid)
+
+          def job_map = [
+                  uuid: (job.uuid),
+                  description: (job.description),
+                  resultObject: (job_result ? (job_result as JSON).toString() : null),
+                  type: (job.type),
+                  statusText: (job_result ? (job_result.result) : job.status),
+                  ownerId: (job.ownerId),
+                  groupId: (job.groupId),
+                  startTime: (job.startTime),
+                  endTime: (job.endTime),
+                  linkedItemId: (job.linkedItem?.id)
+          ]
 
           if (!result_object) {
-            def job_map = [
-                uuid        : (job.uuid),
-                description : (job.description),
-                resultObject: (job_result as JSON).toString(),
-                type        : (job.type),
-                statusText  : (job_result?.result),
-                ownerId     : (job.ownerId),
-                groupId     : (job.groupId),
-                startTime   : (job.startTime),
-                endTime     : (job.endTime)
-            ]
+            result_object = new JobResult(job_map).save()
+          }else {
 
-            result_object = new JobResult(job_map).save(flush: true, failOnError: true)
+            result_object.save(job_map).save()
+
           }
         }
 

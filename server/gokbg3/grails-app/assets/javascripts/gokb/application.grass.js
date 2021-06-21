@@ -1,26 +1,6 @@
 /**
  * GOKb application javascript file.
  */
-//=require jquery-2.2.0.min
-//=require jquery.mask
-//=require raphael.min
-//=require morris.min
-//=require bootstrap
-//=require bootbox.min
-//=require bootstrap-editable
-//=require select2
-//=require metisMenu.min
-//=require show-more
-//=require sb-admin-2
-//=require inline-content
-//=require summernote.min
-//=require action-forms
-//=require annotations
-//=require select-all-multistate
-//=require moment.min
-//=require decisionSupport
-//=require jquery.textcomplete.min
-//=require text-complete
 
 // Global namespace for GOKb functions.
 // Ian:: We are now deploying the G3 application at / instead of /gokb. URLs changed accordingly

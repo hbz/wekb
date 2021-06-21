@@ -10,11 +10,9 @@ class Note {
   Date lastUpdated 
 
   static hasMany = [
-    mentions:NoteMention
   ]
 
   static mappedBy = [
-    mentions:'owner'
   ]
 
   static mapping = {

@@ -10,6 +10,9 @@ class IdentifierNamespace {
   String pattern
   String family
 
+  Date dateCreated
+  Date lastUpdated
+
   static mapping = {
     name column:'idns_name'
     value column:'idns_value'
@@ -17,6 +20,8 @@ class IdentifierNamespace {
     targetType column:'idns_targettype'
     family column:'idns_family'
     pattern column:'idns_pattern'
+    dateCreated column:'idns_date_created'
+    lastUpdated column:'idns_last_updated'
   }
 
   static constraints = {
@@ -27,6 +32,8 @@ class IdentifierNamespace {
     family (nullable:true, blank:false)
     pattern (nullable:true, blank:false)
     targetType (nullable:true, blank:false)
+    dateCreated(nullable:true, blank:true)
+    lastUpdated(nullable:true, blank:true)
   }
 
   public static final String restPath = "/namespaces"

@@ -17,16 +17,6 @@
 		</dd>
 
 		<dt>
-			<gokb:annotatedLabel owner="${d}" property="source">Source</gokb:annotatedLabel>
-		</dt>
-		<dd>
-			<gokb:manyToOneReferenceTypedown owner="${d}" field="source"
-				baseClass="org.gokb.cred.Source">
-				${d.source?.name}
-			</gokb:manyToOneReferenceTypedown>
-		</dd>
-
-		<dt>
 			<gokb:annotatedLabel owner="${d}" property="accessUrl">Access URL</gokb:annotatedLabel>
 		</dt>
 		<dd>

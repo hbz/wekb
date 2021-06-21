@@ -44,14 +44,6 @@
   </dd>
 
   <dt>
-    <gokb:annotatedLabel owner="${d}" property="editStatus">Edit Status</gokb:annotatedLabel>
-  </dt>
-  <dd>
-    <gokb:xEditableRefData owner="${d}" field="editStatus"
-                        config="${RCConstants.KBCOMPONENT_EDIT_STATUS}"/>
-  </dd>
-
-  <dt>
     <gokb:annotatedLabel owner="${d}" property="language">Language</gokb:annotatedLabel>
   </dt>
   <dd>
@@ -120,10 +112,10 @@
         class="badge badge-warning">
       ${d?.tipps?.findAll { it.status?.value == 'Current' }?.size() ?: '0'} (${d.tipps?.size() ?: '0'})
     </span></a></li>
-    <li><a href="#addprops" data-toggle="tab">Custom Fields <span
+   %{-- <li><a href="#addprops" data-toggle="tab">Additional Properties <span
         class="badge badge-warning">
       ${d.additionalProperties?.size() ?: '0'}
-    </span></a></li>
+    </span></a></li>--}%
     <li><a href="#review" data-toggle="tab">Review Tasks <span
         class="badge badge-warning">${d.reviewRequests?.size() ?: '0'}</span></a></li>
   </ul>
@@ -162,7 +154,7 @@
       </g:if>
     </div>
 
-    <g:render template="/tabTemplates/showVariantnames" model="${[d: displayobj, showActions: true]}"/>
+    <g:render template="/tabTemplates/showVariantnames" model="${[showActions: true]}"/>
 
     <div class="tab-pane" id="history">
       <g:if test="${d.id != null}">
@@ -320,28 +312,20 @@
 
     </div>
 
-    <div class="tab-pane" id="identifiers">
-      <g:render template="/apptemplates/secondTemplates/combosByType"
-                model="${[d: d, property: 'ids', fragment: 'identifiers', cols: [
-                    [expr: 'toComponent.namespace.value', colhead: 'Namespace'],
-                    [expr: 'toComponent.value', colhead: 'ID', action: 'link']]]}"/>
+    <g:render template="/tabTemplates/showIdentifiers" model="${[d: d]}" />
 
-      <g:render template="/apptemplates/secondTemplates/addIdentifier" model="${[d: d, hash: '#identifiers']}"/>
 
-    </div>
-
-    <div class="tab-pane" id="addprops">
+   %{-- <div class="tab-pane" id="addprops">
       <g:render template="/apptemplates/secondTemplates/addprops"
                 model="${[d: d]}"/>
-    </div>
+    </div>--}%
 
     <div class="tab-pane" id="review">
       <g:render template="/apptemplates/secondTemplates/revreqtab"
                 model="${[d: d]}"/>
     </div>
   </div>
-  <g:render template="/apptemplates/secondTemplates/componentStatus"
-            model="${[d: displayobj]}"/>
+  <g:render template="/apptemplates/secondTemplates/componentStatus"/>
 </div>
 
 

@@ -1,7 +1,9 @@
 package de.wekb.helper
 
+import de.wekb.annotations.RefdataAnnotation
 import groovy.transform.CompileStatic
 import org.gokb.cred.RefdataCategory
+import org.gokb.cred.RefdataValue
 
 //Constants of RefdataCategory
 @CompileStatic
@@ -15,7 +17,11 @@ class RCConstants {
     public static final String COMBO_STATUS = "Combo.Status"
     public static final String COMBO_TYPE = "Combo.Type"
 
+    public static final String CONTACT_CONTENT_TYPE   = 'Contact.Content.Type'
+    public static final String CONTACT_TYPE           = 'Contact.Type'
+
     public static final String COUNTRY = "Country"
+
 
     public static final String CURATORY_GROUP_TYPE = "CuratoryGroup.Type"
 
@@ -33,7 +39,6 @@ class RCConstants {
 
     public static final String JOB_TYPE = "Job.Type"
 
-    public static final String KBCOMPONENT_EDIT_STATUS = "KBComponent.EditStatus"
     public static final String KBCOMPONENT_LANGUAGE = "KBComponent.Language"
     public static final String KBCOMPONENT_STATUS   = "KBComponent.Status"
 
@@ -55,20 +60,21 @@ class RCConstants {
     public static final String PACKAGE_CONSISTENT = "Package.Consistent"
     public static final String PACKAGE_CONTENT_TYPE = "Package.ContentType"
     public static final String PACKAGE_GLOBAL = "Package.Global"
+    public static final String PACKAGE_EDITING_STATUS = "Package.Editing.Status"
     public static final String PACKAGE_FILE = "Package.File"
     public static final String PACKAGE_LINK_TYPE = "Package.LinkType"
-    public static final String PACKAGE_LIST_STATUS = "Package.ListStatus"
     public static final String PACKAGE_REGIONAL_RANGE = "Package.RegionalRange"
     public static final String PACKAGE_PAYMENT_TYPE = "Package.PaymentType"
     public static final String PACKAGE_OPEN_ACCESS = "Package.OpenAccess"
     public static final String PACKAGE_SCOPE = "Package.Scope"
 
-    public static final String PLATFORM_AUTHENTICATION = "Platform.Authentication"
-    public static final String PLATFORM_AUTH_METHOD= "Platform.AuthMethod"
+    public static final String PLATFORM_IP_AUTH= "Platform.IPAuthentication"
     public static final String PLATFORM_ROLE = "Platform.Role"
     public static final String PLATFORM_ROLES = "Platform.Roles"
     public static final String PLATFORM_SERVICE = "Platform.Service"
     public static final String PLATFORM_SOFTWARE = "Platform.Software"
+    public static final String PLATFORM_STATISTICS_FORMAT = "Platform.Statistics.Format"
+    public static final String PLATFORM_STATISTICS_UPDATE = "Platform.Statistics.Update"
 
     public static final String PRICE_TYPE = "Price.type"
 

@@ -357,4 +357,9 @@ class User extends Party {
     ]
   ]
 
+  int getDefaultPageSizeAsInteger() {
+    long value = defaultPageSize ?: 10
+    return value.intValue()
+  }
+
 }

@@ -20,6 +20,10 @@ class JobResult {
   Date endTime
   Long linkedItemId
 
+  Date dateCreated
+  Date lastUpdated
+
+
   static mapping = {
     uuid column: 'jr_uuid'
     description column: 'jr_description', type: 'text'
@@ -31,6 +35,14 @@ class JobResult {
     startTime column: 'jr_start_time'
     endTime column: 'jr_end_time'
     linkedItemId column: 'jr_linked_item_fk'
+
+    dateCreated column: 'jr_date_created'
+    lastUpdated column: 'jr_last_updated'
+  }
+
+  static constraints = {
+    dateCreated(nullable:true, blank:true)
+    lastUpdated(nullable:true, blank:true)
   }
 
   def afterInsert() {

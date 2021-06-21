@@ -7,6 +7,7 @@ import org.gokb.cred.*
 import org.hibernate.ScrollMode
 import org.hibernate.ScrollableResults
 import wekb.ExportService
+import wekb.SearchService
 
 
 class PublicController {
@@ -18,6 +19,7 @@ class PublicController {
   def classExaminationService
   ExportService exportService
   MailService mailService
+  SearchService searchService
 
   public static String TIPPS_QRY = 'from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=? and c.toComponent=tipp and c.type = ? and tipp.status = ?';
 
@@ -74,10 +76,10 @@ class PublicController {
         result.pkgName = result.pkg.name
         log.debug("Tipp qry name: ${result.pkgName}")
 
-        result.refdata_properties = classExaminationService.getRefdataPropertyNames(result.pkg.class.name)
+        //result.refdata_properties = classExaminationService.getRefdataPropertyNames(result.pkg.class.name)
 
         Map newParams = [:]
-        params.sort = params.sort ? "${params.sort}" : 'lower(tipp.name)'
+        params.sort = params.sort ? "${params.sort}" : 'tipp.name'
         params.order = params.order ? "${params.order}" : 'asc'
 
         if (params.newMax) {
@@ -113,6 +115,26 @@ class PublicController {
       }
 
       if (!result.tipp) {
+        flash.error = "Tipp not found"
+      }
+    }
+    result
+  }
+
+  def orgContent() {
+    log.debug("orgContent::${params}")
+    def result = [:]
+    if ( params.id ) {
+      def org_id_components = params.id.split(':');
+
+      if ( org_id_components?.size() == 2 ) {
+        result.org = Org.get(Long.parseLong(org_id_components[1]));
+      }
+      else {
+        result.org = Org.findByUuid(params.id)
+      }
+
+      if (!result.org) {
         flash.error = "Tipp not found"
       }
     }
@@ -274,5 +296,37 @@ class PublicController {
     catch ( Exception e ) {
       log.error("Problem with export",e);
     }
+  }
+
+  def search() {
+    def start_time = System.currentTimeMillis();
+
+    log.debug("Entering SearchController:index ${params}")
+
+    def searchResult = [:]
+
+    List allowedSearch = ["g:tipps", "g:platforms", "g:packages", "g:packages", "g:orgs"]
+
+    if(params.qbe in allowedSearch) {
+
+      if (params.newMax) {
+        session.setAttribute("newMax", params.newMax)
+        params.remove(params.newMax)
+        params.offset = "0"
+      }
+      params.offset = params.offset ? params.offset.toString() : "0"
+      params.max = session.getAttribute("newMax") ? session.getAttribute("newMax").toString() : "10"
+
+      searchResult = searchService.search(null, searchResult, params, null)
+
+      log.debug("Search completed after ${System.currentTimeMillis() - start_time}");
+
+    }else {
+      searchResult.result = [:]
+      searchResult.result.message = "This search is not allowed!"
+    }
+      searchResult.result
+
+
   }
 }

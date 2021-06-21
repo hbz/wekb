@@ -1,3 +1,4 @@
+<%@ page import="org.gokb.cred.Org" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -87,7 +88,7 @@
                     <th>#</th>
                     <g:sortableColumn property="sortname" title="Package Name"/>
                     <g:sortableColumn property="cpname" title="Provider"/>
-                    <g:sortableColumn property="curatoryGroups" title="Curatory Groups"/>
+                    <th>Curatory Groups</th>
                     <g:sortableColumn property="contentType" title="Content Type"/>
                     <g:sortableColumn property="titleCount" title="Title Count"/>
                     <g:sortableColumn property="lastUpdatedDisplay" title="Last Updated"/>
@@ -104,7 +105,13 @@
                                     id="${hit.id}">${hit.source.name}</g:link>
 
                         </td>
-                        <td>${hit.source.cpname}</td>
+                        <td>
+                            <g:if test="${hit.source.providerUuid}">
+                                <g:link controller="public" action="orgContent"
+                                        id="${hit.source.providerUuid}">${Org.findByUuid(hit.source.providerUuid).name}</g:link>
+                            </g:if>
+
+                        </td>
                         <td>
                             <g:if test="${hit.source.curatoryGroups?.size() > 0}">
                                 <g:each in="${hit.source.curatoryGroups}" var="cg" status="c">
@@ -120,9 +127,7 @@
                             </g:else>
                         </td>
                         <td>${hit.source.contentType}</td>
-                        <td>${hit.source.titleCount}
-                        %{--                        <g:if test="${hit.source.listStatus != 'Checked'}">*</g:if>--}%
-                        </td>
+                        <td>${hit.source.titleCount}</td>
                         <td>
                             <g:if test="${hit.source.lastUpdatedDisplay}">
                                 <g:formatDate format="${message(code: 'default.date.format')}"

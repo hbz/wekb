@@ -211,9 +211,9 @@ class CleanupService {
 
     log.debug("Process rejected candidates");
 
-    def status_rejected = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_EDIT_STATUS, 'Rejected')
+    def status_rejected = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Rejected')
 
-    def delete_candidates = KBComponent.executeQuery('select kbc.id from KBComponent as kbc where kbc.editStatus=:rejectedStatus',[rejectedStatus: status_rejected])
+    def delete_candidates = KBComponent.executeQuery('select kbc.id from KBComponent as kbc where kbc.status=:rejectedStatus',[rejectedStatus: status_rejected])
 
     def result = expungeByIds(delete_candidates, j)
 
@@ -660,24 +660,6 @@ class CleanupService {
     job.endTime = new Date()
   }
 
-  def rejectNoIdTitles(Job job) {
-    log.debug("GOKb mark titles without IDs & TIPPs for deletion")
-    def ctr = 0
-    def tick=TitleInstance.withNewSession {
-      def rejected_status = RefdataCategory.lookup(RCConstants.KBCOMPONENT_EDIT_STATUS, KBComponent.EDIT_STATUS_REJECTED)
-      def tipps_combo = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'TitleInstance.Tipps')
-      def ids_combo = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'KBComponent.Ids')
-
-      def res = TitleInstance.executeUpdate("update TitleInstance as title set title.editStatus = :ds where title.editStatus <> :ds and title.id not in " +
-              "(select fromComponent.id from Combo where type = :tc)" +
-              " and title.id not in " +
-              "(select fromComponent.id from Combo where type = :ic)",[ds: rejected_status, tc: tipps_combo, ic:ids_combo])
-
-      job.message("${res} titles set to editStatus 'Rejected'")
-    }
-    job.endTime = new Date()
-  }
-
   def expungeAll(List components, Job j = null) {
     log.debug("Component bulk expunge");
     def result = [num_requested: components.size(), num_expunged: 0]
@@ -749,10 +731,10 @@ class CleanupService {
     idx_record.name = deletedKBComponent.name
     idx_record.componentType = deletedKBComponent.componentType
     idx_record.status = deletedKBComponent.status
-    idx_record.dateCreated = dateFormatService.formatIsoTimestamp(deletedKBComponent.dateCreated)
-    idx_record.lastUpdated = dateFormatService.formatIsoTimestamp(deletedKBComponent.lastUpdated)
-    idx_record.oldDateCreated = dateFormatService.formatIsoTimestamp(deletedKBComponent.oldDateCreated)
-    idx_record.oldLastUpdated = dateFormatService.formatIsoTimestamp(deletedKBComponent.oldLastUpdated)
+    idx_record.dateCreated = deletedKBComponent.dateCreated ? dateFormatService.formatIsoTimestamp(deletedKBComponent.dateCreated) : null
+    idx_record.lastUpdated = deletedKBComponent.lastUpdated ? dateFormatService.formatIsoTimestamp(deletedKBComponent.lastUpdated) : null
+    idx_record.oldDateCreated = deletedKBComponent.oldDateCreated ? dateFormatService.formatIsoTimestamp(deletedKBComponent.oldDateCreated) : null
+    idx_record.oldLastUpdated = deletedKBComponent.oldLastUpdated ? dateFormatService.formatIsoTimestamp(deletedKBComponent.oldLastUpdated) : null
     idx_record.oldId = deletedKBComponent.oldId
 
     IndexResponse indexResponse = esclient.prepareIndex("gokbdeletedcomponents", 'component', recid).setSource(idx_record).get()

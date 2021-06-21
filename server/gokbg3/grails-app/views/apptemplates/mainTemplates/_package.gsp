@@ -72,9 +72,6 @@
     <dt> <gokb:annotatedLabel owner="${d}" property="lastUpdateComment">Last Update Comment</gokb:annotatedLabel> </dt>
     <dd> <gokb:xEditable  owner="${d}" field="lastUpdateComment" /> </dd>
 
-    <dt> <gokb:annotatedLabel owner="${d}" property="editStatus">Edit Status</gokb:annotatedLabel> </dt>
-    <dd> <gokb:xEditableRefData owner="${d}" field="editStatus" config="${RCConstants.KBCOMPONENT_EDIT_STATUS}" /> </dd>
-
     <dt> <gokb:annotatedLabel owner="${d}" property="description">Description</gokb:annotatedLabel> </dt>
     <dd> <gokb:xEditable  owner="${d}" field="description" /> </dd>
 
@@ -88,8 +85,47 @@
       <gokb:xEditable  owner="${d}" field="globalNote" />
     </dd>
 
-    <g:render template="/apptemplates/secondTemplates/refdataprops"
-              model="${[d:(d), rd:(rd), dtype:(dtype), notShowProps: [RCConstants.PACKAGE_LIST_STATUS]]}" />
+    <dt>
+      <gokb:annotatedLabel owner="${d}" property="type">Breakable</gokb:annotatedLabel>
+    </dt>
+    <dd>
+      <gokb:xEditableRefData owner="${d}" field="breakable" config="${RCConstants.PACKAGE_BREAKABLE}"/>
+    </dd>
+
+    <dt>
+      <gokb:annotatedLabel owner="${d}" property="type">Content Type</gokb:annotatedLabel>
+    </dt>
+    <dd>
+      <gokb:xEditableRefData owner="${d}" field="contentType" config="${RCConstants.PACKAGE_CONTENT_TYPE}"/>
+    </dd>
+
+    <dt>
+      <gokb:annotatedLabel owner="${d}" property="type">File</gokb:annotatedLabel>
+    </dt>
+    <dd>
+      <gokb:xEditableRefData owner="${d}" field="file" config="${RCConstants.PACKAGE_FILE}"/>
+    </dd>
+
+    <dt>
+      <gokb:annotatedLabel owner="${d}" property="type">Open Access</gokb:annotatedLabel>
+    </dt>
+    <dd>
+      <gokb:xEditableRefData owner="${d}" field="openAccess" config="${RCConstants.PACKAGE_OPEN_ACCESS}"/>
+    </dd>
+
+    <dt>
+      <gokb:annotatedLabel owner="${d}" property="type">Payment Type</gokb:annotatedLabel>
+    </dt>
+    <dd>
+      <gokb:xEditableRefData owner="${d}" field="paymentType" config="${RCConstants.PACKAGE_PAYMENT_TYPE}"/>
+    </dd>
+
+    <dt>
+      <gokb:annotatedLabel owner="${d}" property="type">Scope</gokb:annotatedLabel>
+    </dt>
+    <dd>
+      <gokb:xEditableRefData owner="${d}" field="scope" config="${RCConstants.PACKAGE_SCOPE}"/>
+    </dd>
 
     <g:if test="${controllerName != 'create'}">
         <dt>
@@ -118,10 +154,10 @@
     <ul id="tabs" class="nav nav-tabs">
       <g:if test="${d.id}">
         <li role="presentation" class="active"><a href="#titledetails" data-toggle="tab">Titles <span class="badge badge-warning"> ${d.currentTippCount} </span></a></li>
-        <li role="presentation"><a href="#identifiers" data-toggle="tab">Identifiers <span class="badge badge-warning"> ${d?.getCombosByPropertyNameAndStatus('ids','Active')?.size() ?: '0'} </span></a></li>
+        <li role="presentation"><a href="#identifiers" data-toggle="tab">Identifiers <span class="badge badge-warning"> ${d?.getCombosByPropertyNameAndStatus('ids','Active').size()} </span></a></li>
 
         <li role="presentation"><a href="#altnames" data-toggle="tab">Alternate Names
-          <span class="badge badge-warning"> ${d.variantNames?.size() ?: '0'}</span>
+          <span class="badge badge-warning"> ${d.variantNames.size()}</span>
         </a></li>
 
         <li>
@@ -158,7 +194,7 @@
             <dt><gokb:annotatedLabel owner="${d}" property="tipps">Titles</gokb:annotatedLabel></dt>
             <dd>
               <g:link class="display-inline" controller="search" action="index"
-                params="[qbe:'g:tipps', qp_pkg_id:d.id, inline:true, refOid: d.getLogEntityId(), hide:['qp_pkg_id', 'qp_cp', 'qp_pkg', 'qp_pub_id']]"
+                params="[qbe:'g:tipps', qp_pkg_id:d.id, inline:true, refOid: d.getLogEntityId(), hide:['qp_pkg_id', 'qp_pkg']]"
                 id="">Titles in this package</g:link>
               %{--<g:if test="${ editable && params.controller != 'create' }">
                 <div class="panel-body">
@@ -198,26 +234,11 @@
         </g:if>
       </div>
 
-      <g:render template="/tabTemplates/showVariantnames" model="${[d:displayobj, showActions:true]}" />
+      <g:render template="/tabTemplates/showVariantnames" model="${[showActions:true]}" />
 
-      <g:render template="/tabTemplates/showDDCs" model="${[d:displayobj, showActions:true]}" />
+      <g:render template="/tabTemplates/showDDCs" model="${[showActions:true]}" />
 
-      <div class="tab-pane" id="identifiers">
-        <dl>
-          <dt>
-            <gokb:annotatedLabel owner="${d}" property="ids">Identifiers</gokb:annotatedLabel>
-          </dt>
-          <dd>
-            <g:render template="/apptemplates/secondTemplates/combosByType"
-              model="${[d:d, property:'ids', fragment:'identifiers', cols:[
-                        [expr:'toComponent.namespace.value', colhead:'Namespace'],
-                        [expr:'toComponent.value', colhead:'ID', action:'link']]]}" />
-            <g:if test="${editable}">
-              <g:render template="/apptemplates/secondTemplates/addIdentifier" model="${[d:d, hash:'#identifiers']}"/>
-            </g:if>
-          </dd>
-        </dl>
-      </div>
+      <g:render template="/tabTemplates/showIdentifiers" model="${[d: d]}" />
 
       <div class="tab-pane" id="relationships">
         <g:if test="${d.id != null}">
@@ -249,7 +270,7 @@
               <gokb:manyToOneReferenceTypedown owner="${d}" field="parent" baseClass="org.gokb.cred.Package">${d.parent?.name}</gokb:manyToOneReferenceTypedown>
             </dd>
 
-            <g:if test="${d.children?.size() > 0}">
+            <g:if test="${d.children.size() > 0}">
               <dt>
                 <gokb:annotatedLabel owner="${d}" property="children">Subsidiaries</gokb:annotatedLabel>
               </dt>
@@ -306,10 +327,9 @@
       </div>
 
     </div>
-    <g:if test="${d.id}">
-      <g:render template="/apptemplates/secondTemplates/componentStatus"
-        model="${[d:d]}" />
-    </g:if>
+
+      <g:render template="/apptemplates/secondTemplates/componentStatus"/>
+
   </div>
 
     <g:javascript>

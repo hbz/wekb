@@ -22,22 +22,15 @@
         </g:else>
     </dd>
 
-    <dt class="col-3 text-right"><gokb:annotatedLabel owner="${d}" property="source">Source</gokb:annotatedLabel></dt>
-    <dd class="col-9 text-left"><gokb:manyToOneReferenceTypedown owner="${d}" field="source"
-                                         baseClass="org.gokb.cred.Source">${d.source?.name}</gokb:manyToOneReferenceTypedown></dd>
-
-    <dt class="col-3 text-right"><gokb:annotatedLabel owner="${d}" property="source">Provider</gokb:annotatedLabel></dt>
-    <dd class="col-9 text-left"><gokb:manyToOneReferenceTypedown owner="${d}" field="provider"
-                                         baseClass="org.gokb.cred.Org">${d.provider?.name}</gokb:manyToOneReferenceTypedown></dd>
-
     <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="editStatus">Edit Status</gokb:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="provider">Provider</gokb:annotatedLabel>
     </dt>
     <dd class="col-9 text-left">
-        <gokb:xEditableRefData owner="${d}" field="editStatus"
-                               config="${RCConstants.KBCOMPONENT_EDIT_STATUS}"/>
+        <g:if test="${d.provider}">
+            <g:link controller="public" action="orgContent"
+                    id="${d.provider.uuid}">${d.provider.name}</g:link>
+        </g:if>
     </dd>
-
     <dt class="col-3 text-right">
         <gokb:annotatedLabel owner="${d}" property="primaryURL">Primary URL</gokb:annotatedLabel>
     </dt>
@@ -54,29 +47,15 @@
     </dd>
 
     <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="software">Software</gokb:annotatedLabel>
+        <gokb:annotatedLabel owner="${d}" property="titleNamespace">Title Namespace</gokb:annotatedLabel>
     </dt>
     <dd class="col-9 text-left">
-        <gokb:xEditableRefData owner="${d}" field="software"
-                               config="${RCConstants.PLATFORM_SOFTWARE}"/>
+        <gokb:manyToOneReferenceTypedown owner="${d}" field="titleNamespace" baseClass="org.gokb.cred.IdentifierNamespace">${(d.titleNamespace?.name)?:d.titleNamespace?.value}</gokb:manyToOneReferenceTypedown>
     </dd>
-
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="service">Service</gokb:annotatedLabel>
-    </dt>
-    <dd class="col-9 text-left">
-        <gokb:xEditableRefData owner="${d}" field="service"
-                               config="${RCConstants.PLATFORM_SERVICE}"/>
-    </dd>
-
-    <dt class="col-3 text-right"><gokb:annotatedLabel owner="${d}"
-                             property="authentication">Authentication</gokb:annotatedLabel></dt>
-    <dd class="col-9 text-left"><gokb:xEditableRefData owner="${d}" field="authentication"
-                               config="${RCConstants.PLATFORM_AUTH_METHOD}"/></dd>
 
     <dt class="col-3 text-right"><gokb:annotatedLabel owner="${d}"
                              property="ipAuthentication">IP Auth Supported</gokb:annotatedLabel></dt>
-    <dd class="col-9 text-left"><gokb:xEditableRefData owner="${d}" field="ipAuthentication" config="${RCConstants.YN}"/></dd>
+    <dd class="col-9 text-left"><gokb:xEditableRefData owner="${d}" field="ipAuthentication" config="${RCConstants.PLATFORM_IP_AUTH}"/></dd>
 
     <dt class="col-3 text-right"><gokb:annotatedLabel owner="${d}"
                              property="shibbolethAuthentication">Shibboleth Supported</gokb:annotatedLabel></dt>
@@ -86,6 +65,10 @@
     <dt class="col-3 text-right"><gokb:annotatedLabel owner="${d}"
                              property="passwordAuthentication">User/Pass Supported</gokb:annotatedLabel></dt>
     <dd class="col-9 text-left"><gokb:xEditableRefData owner="${d}" field="passwordAuthentication" config="${RCConstants.YN}"/></dd>
+
+    <dt class="col-3 text-right"><gokb:annotatedLabel owner="${d}"
+                             property="proxySupported">Proxy Supported</gokb:annotatedLabel></dt>
+    <dd class="col-9 text-left"><gokb:xEditableRefData owner="${d}" field="proxySupported" config="${RCConstants.YN}"/></dd>
 
 
 </dl>

@@ -1,5 +1,6 @@
 package org.gokb.cred
 
+import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
 
 import javax.persistence.Transient
@@ -10,12 +11,55 @@ import org.gokb.GOKbTextUtils
 class Platform extends KBComponent {
 
   String primaryUrl
+
+  IdentifierNamespace titleNamespace
+
   RefdataValue authentication
-  RefdataValue software
-  RefdataValue service
+
+  @RefdataAnnotation(cat = RCConstants.PLATFORM_IP_AUTH)
   RefdataValue ipAuthentication
+
+  @RefdataAnnotation(cat = RCConstants.YN)
   RefdataValue shibbolethAuthentication
+
+  @RefdataAnnotation(cat = RCConstants.YN)
   RefdataValue passwordAuthentication
+
+  @RefdataAnnotation(cat = RCConstants.PLATFORM_STATISTICS_FORMAT)
+  RefdataValue statisticsFormat
+
+  @RefdataAnnotation(cat = RCConstants.YN)
+  RefdataValue counterR3Supported
+
+  @RefdataAnnotation(cat = RCConstants.YN)
+  RefdataValue counterR4Supported
+
+  @RefdataAnnotation(cat = RCConstants.YN)
+  RefdataValue counterR5Supported
+
+  @RefdataAnnotation(cat = RCConstants.YN)
+  RefdataValue counterR4SushiApiSupported
+
+  @RefdataAnnotation(cat = RCConstants.YN)
+  RefdataValue counterR5SushiApiSupported
+
+  String counterR4SushiServerUrl
+
+  String counterR5SushiServerUrl
+  String counterRegistryUrl
+
+  String statisticsAdminPortalUrl
+
+  @RefdataAnnotation(cat = RCConstants.PLATFORM_STATISTICS_UPDATE)
+  RefdataValue statisticsUpdate
+
+  @RefdataAnnotation(cat = RCConstants.YN)
+  RefdataValue proxySupported
+
+  @RefdataAnnotation(cat = RCConstants.YN)
+  RefdataValue counterCertified
+
+  Date lastAuditDate
 
   static hasMany = [roles: RefdataValue]
 
@@ -43,18 +87,30 @@ class Platform extends KBComponent {
     includes KBComponent.mapping
     primaryUrl column: 'plat_primary_url', index: 'platform_primary_url_idx'
     authentication column: 'plat_authentication_fk_rv'
-    software column: 'plat_sw_fk_rv'
-    service column: 'plat_svc_fk_rv'
     ipAuthentication column: 'plat_auth_by_ip_fk_rv'
     shibbolethAuthentication column: 'plat_auth_by_shib_fk_rv'
     passwordAuthentication column: 'plat_auth_by_pass_fk_rv'
+    statisticsFormat column: 'plat_statistics_format_fk_rv'
+    counterR3Supported column: 'plat_counter_r3_supported_fk_rv'
+    counterR4Supported column: 'plat_counter_r4_supported_fk_rv'
+    counterR5Supported column: 'plat_counter_r5_supported_fk_rv'
+    counterR4SushiApiSupported column: 'plat_counter_r4_sushi_api_supported_fk_rv'
+    counterR5SushiApiSupported column: 'plat_counter_r5_sushi_api_supported_fk_rv'
+    counterR4SushiServerUrl column: 'plat_counter_r4_sushi_server_url'
+    counterR5SushiServerUrl column: 'plat_counter_r5_sushi_server_url'
+    counterRegistryUrl column: 'plat_counter_registry_url'
+    counterCertified column: 'plat_counter_certified'
+    statisticsAdminPortalUrl column: 'plat_statistics_admin_portal_url'
+    statisticsUpdate column: 'plat_statistics_update_fk_rv'
+    proxySupported column: 'plat_proxy_supported_fk_rv'
+    titleNamespace column: 'plat_title_namespace_fk'
+    lastAuditDate column: 'plat_last_audit_date'
+
   }
 
   static constraints = {
     primaryUrl(url: true, nullable: true, blank: false)
     authentication(nullable: true, blank: false)
-    software(nullable: true, blank: false)
-    service(nullable: true, blank: false)
     ipAuthentication(nullable: true, blank: false)
     shibbolethAuthentication(nullable: true, blank: false)
     passwordAuthentication(nullable: true, blank: false)
@@ -71,14 +127,28 @@ class Platform extends KBComponent {
         }
       }
     })
+    statisticsFormat(nullable: true, blank: false)
+    counterR3Supported(nullable: true, blank: false)
+    counterR4Supported(nullable: true, blank: false)
+    counterR5Supported(nullable: true, blank: false)
+    counterR4SushiApiSupported(nullable: true, blank: false)
+    counterR5SushiApiSupported(nullable: true, blank: false)
+    counterR4SushiServerUrl(nullable: true, blank: false)
+    counterR5SushiServerUrl(nullable: true, blank: false)
+    counterRegistryUrl(nullable: true, blank: false)
+    counterCertified(nullable: true, blank: false)
+    statisticsAdminPortalUrl(nullable: true, blank: false)
+    statisticsUpdate(nullable: true, blank: false)
+    proxySupported(nullable: true, blank: false)
+    titleNamespace(nullable: true)
+    lastAuditDate (nullable: true)
+
   }
 
   public static final String restPath = "/platforms"
 
   static jsonMapping = [
     'ignore'       : [
-      'service',
-      'software'
     ],
     'es'           : [
       'providerUuid': "provider.uuid",
@@ -129,8 +199,6 @@ class Platform extends KBComponent {
 
         builder.'primaryUrl'(primaryUrl)
         builder.'authentication'(authentication?.value)
-        builder.'software'(software?.value)
-        builder.'service'(service?.value)
 
         if (ipAuthentication) builder.'ipAuthentication'(ipAuthentication.value)
         if (shibbolethAuthentication) builder.'shibbolethAuthentication'(shibbolethAuthentication.value)
@@ -383,5 +451,16 @@ class Platform extends KBComponent {
     }
 
     result;
+  }
+
+  @Transient
+  public getCurrentTippCount() {
+    def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current');
+    def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Platform.HostedTipps')
+
+    int result = Combo.executeQuery("select count(c.id) from Combo as c where c.fromComponent = ? and c.type = ? and c.toComponent.status = ?"
+            , [this, combo_tipps, refdata_current])[0]
+
+    result
   }
 }

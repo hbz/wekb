@@ -9,6 +9,7 @@ import org.gokb.cred.KBComponent
 import org.gokb.cred.KBComponentAdditionalProperty
 import org.gokb.cred.TIPPCoverageStatement
 import org.gokb.cred.RefdataValue
+import wekb.Contact
 import wekb.DeletedKBComponent
 
 @Transactional
@@ -54,7 +55,7 @@ class FTUpdateService {
 
         result.description = kbc.description
         result.descriptionURL = kbc.descriptionURL
-        result.sortname = kbc.name
+        result.sortname = kbc.normname
         result.altname = []
 
         result.lastUpdatedDisplay = dateFormatService.formatIsoTimestamp(kbc.lastUpdated)
@@ -73,7 +74,6 @@ class FTUpdateService {
         result.scope = kbc.scope ? kbc.scope.value : ""
         result.breakable = kbc.breakable ? kbc.breakable.value : ""
         result.paymentType = kbc.paymentType ? kbc.paymentType.value : ""
-        result.listStatus = kbc.listStatus?.value
         result.openAccess = kbc.openAccess?.value
         result.file = kbc.file?.value
         result.contentType = kbc.contentType?.value
@@ -101,6 +101,7 @@ class FTUpdateService {
         }
 
         result.status = kbc.status?.value
+        result.editingStatus = kbc.editingStatus?.value
         result.identifiers = []
         kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
           result.identifiers.add([namespace    : idc.toComponent.namespace.value,
@@ -146,7 +147,7 @@ class FTUpdateService {
         result._id = "${kbc.class.name}:${kbc.id}"
         result.uuid = kbc.uuid
         result.name = kbc.name
-        result.sortname = kbc.name
+        result.sortname = kbc.normname
         result.altname = []
         result.updater = 'org'
         kbc.variantNames.each { vn ->
@@ -191,6 +192,17 @@ class FTUpdateService {
                                            name      : kbComponentAdditionalProperty.propertyDefn.propertyName])
         }
 
+        result.contacts = []
+        kbc.contacts.each { Contact contact ->
+          result.contacts.add([  content: contact.content,
+                                 contentType: contact.contentType?.value,
+                                 type: contact.type,
+                                 language: contact.language?.value])
+        }
+
+        result.kbartDownloaderURL = kbc.kbartDownloaderURL
+        result.metadataDownloaderURL = kbc.metadataDownloaderURL
+
         result
       }
 
@@ -199,11 +211,12 @@ class FTUpdateService {
         result._id = "${kbc.class.name}:${kbc.id}"
         result.uuid = kbc.uuid
         result.name = kbc.name
-        result.sortname = kbc.name
+        result.sortname = kbc.normname
         result.updater = 'platform'
         result.cpname = kbc.provider?.name
         result.provider = kbc.provider ? kbc.provider.getLogEntityId() : ""
-        result.providerUuid = kbc.provider ? kbc.provider?.uuid : ""
+        result.providerName = kbc.provider ? kbc.provider.name : ""
+        result.providerUuid = kbc.provider ? kbc.provider.uuid : ""
         result.lastUpdatedDisplay = dateFormatService.formatIsoTimestamp(kbc.lastUpdated)
 
         if(kbc.respondsTo('getCuratoryGroups')) {
@@ -229,6 +242,31 @@ class FTUpdateService {
                                   namespaceName: idc.toComponent.namespace.name])
         }
         result.componentType = kbc.class.simpleName
+
+        result.titleNamespace = kbc.titleNamespace?.value
+
+        result.lastAuditDate = kbc.lastAuditDate ? dateFormatService.formatIsoTimestamp(kbc.lastAuditDate) : null
+
+        result.ipAuthentication = kbc.ipAuthentication?.value
+
+        result.shibbolethAuthentication = kbc.shibbolethAuthentication?.value
+
+        result.passwordAuthentication = kbc.passwordAuthentication?.value
+
+        result.statisticsFormat = kbc.statisticsFormat?.value
+        result.counterR3Supported = kbc.counterR3Supported?.value
+        result.counterR4Supported = kbc.counterR4Supported?.value
+        result.counterR5Supported = kbc.counterR5Supported?.value
+        result.counterR4SushiApiSupported = kbc.counterR4SushiApiSupported?.value
+        result.counterR5SushiApiSupported = kbc.counterR5SushiApiSupported?.value
+        result.counterR4SushiServerUrl = kbc.counterR4SushiServerUrl
+        result.counterR5SushiServerUrl = kbc.counterR5SushiServerUrl
+        result.counterRegistryUrl = kbc.counterRegistryUrl
+        result.counterCertified = kbc.counterCertified
+        result.statisticsAdminPortalUrl = kbc.statisticsAdminPortalUrl
+        result.statisticsUpdate = kbc.statisticsUpdate?.value
+        result.proxySupported = kbc.proxySupported?.value
+        
         result
       }
 
@@ -239,7 +277,7 @@ class FTUpdateService {
         result._id = "${kbc.class.name}:${kbc.id}"
         result.uuid = kbc.uuid
         result.name = kbc.name
-        result.sortname = kbc.name
+        result.sortname = kbc.normname
         result.updater = 'journal'
         // result.publisher = kbc.currentPublisher?.name
         result.publisher = current_pub ? current_pub.getLogEntityId() : ""
@@ -269,7 +307,7 @@ class FTUpdateService {
         result._id = "${kbc.class.name}:${kbc.id}"
         result.uuid = kbc.uuid
         result.name = kbc.name
-        result.sortname = kbc.name
+        result.sortname = kbc.normname
         // result.publisher = kbc.currentPublisher?.name
         result.publisher = current_pub ? current_pub.getLogEntityId() : ""
         result.publisherName = current_pub?.name
@@ -300,7 +338,7 @@ class FTUpdateService {
         result._id = "${kbc.class.name}:${kbc.id}"
         result.uuid = kbc.uuid
         result.name = kbc.name
-        result.sortname = kbc.name
+        result.sortname = kbc.normname
         // result.publisher = kbc.currentPublisher?.name
         result.publisher = current_pub ? current_pub.getLogEntityId() : ""
         result.publisherName = current_pub?.name
@@ -330,7 +368,7 @@ class FTUpdateService {
         result._id = "${kbc.class.name}:${kbc.id}"
         result.uuid = kbc.uuid
         result.name = kbc.name
-        result.sortname = kbc.name
+        result.sortname = kbc.normname
 //         result.publisher = kbc.currentPublisher?.name
         result.publisher = current_pub ? current_pub.getLogEntityId() : ""
         result.publisherName = current_pub?.name

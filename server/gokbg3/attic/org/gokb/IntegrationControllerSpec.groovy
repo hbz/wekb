@@ -205,7 +205,6 @@ class IntegrationControllerSpec extends Specification {
           "packageHeader" : [
             "breakable" : "No",
             "consistent" : "Yes",
-            "editStatus" : "In Progress",
             "scope" : "Consortium",
             "identifiers" : [
               [
@@ -213,7 +212,6 @@ class IntegrationControllerSpec extends Specification {
                 "value" : "ZDB-1-ACS"
               ]
             ],
-            "listStatus" : "In Progress",
             "name" : "American Chemical Society: ACS Legacy Archives",
             "nominalPlatform" : [
               "name" : "ACS Publications",

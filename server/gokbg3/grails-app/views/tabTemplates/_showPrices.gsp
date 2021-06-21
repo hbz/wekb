@@ -31,7 +31,7 @@
                                 <g:if test="${editable}">
                                     <g:link controller="ajaxSupport" class="confirm-click"
                                             data-confirm-message="Are you sure you wish to delete this Price?"
-                                            action="deletePrice" id="${somePrice.id}">Delete</g:link>
+                                            action="deletePrice" params="[id: somePrice.id, fragment: 'prices']">Delete</g:link>
                                 </g:if>
                             </td>
                         </tr>
@@ -45,7 +45,7 @@
 
                         <bootStrap:modal id="pricesModal" title="Add Price">
 
-                            <g:form controller="ajaxSupport" action="addToCollection"
+                            <g:form controller="ajaxSupport" action="addToCollection" params="[fragment: 'prices']"
                                     class="form-inline">
                                 <input type="hidden" name="__context"
                                        value="${d.class.name}:${d.id}"/>

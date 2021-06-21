@@ -19,6 +19,9 @@ class RefdataValue  extends AbstractI10n implements Auditable {
   RefdataValue useInstead
   RefdataCategory owner
 
+  Date dateCreated
+  Date lastUpdated
+
   // indicates this object is created via current bootstrap
   boolean isHardData = false
 
@@ -34,6 +37,10 @@ class RefdataValue  extends AbstractI10n implements Auditable {
     value_de column: 'rdv_value_de'
     value_en column: 'rdv_value_en'
     isHardData column: 'rdv_is_hard_data'
+
+    dateCreated column: 'rdv_date_created'
+    lastUpdated column: 'rdv_last_updated'
+
   }
 
   static constraints = {
@@ -41,6 +48,9 @@ class RefdataValue  extends AbstractI10n implements Auditable {
     description(nullable:true, blank:true, maxSize:64)
     useInstead(nullable:true, blank:false)
     sortKey(nullable:true, blank:false)
+
+    dateCreated(nullable:true, blank:true)
+    lastUpdated(nullable:true, blank:true)
   }
 
   String getLogEntityId() {
@@ -76,12 +86,12 @@ class RefdataValue  extends AbstractI10n implements Auditable {
     // ql = RefdataValue.findAllByValueIlikeOrDescriptionIlike("%${params.q}%","%${params.q}%",params)
     // ql = RefdataValue.findWhere("%${params.q}%","%${params.q}%",params)
 
-    def query = "from RefdataValue as rv where rv.useInstead is null and lower(rv.value) like ?"
-    def query_params = ["%${params.q.toLowerCase()}%"]
+    def query = "from RefdataValue as rv where rv.useInstead is null and (lower(rv.value) like :value OR lower(rv.value_de) like :value OR lower(rv.value_en) like :value)"
+    Map query_params = [value: "%${params.q.toLowerCase()}%"]
 
     if ( ( params.filter1 != null ) && ( params.filter1.length() > 0 ) ) {
-      query += " and rv.owner.desc = ? order by rv.sortKey, rv.description"
-      query_params.add(params.filter1);
+      query += " and rv.owner.desc = :desc order by rv.value, rv.description"
+      query_params.desc = params.filter1
     }
 
     ql = RefdataValue.findAll(query, query_params, params)

@@ -2,8 +2,6 @@
 <html>
 <head>
 <meta name="layout" content="sb-admin" />
-<asset:stylesheet src="gokb/application.css" />
-<asset:javascript src="gokb/application.js" />
 <title><g:message code="gokb.appname" default="we:kb"/>: Title Transfer</title>
 </head>
 <body>

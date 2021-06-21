@@ -18,6 +18,9 @@ class RefdataCategory extends AbstractI10n {
   String label
   Set values
 
+  Date dateCreated
+  Date lastUpdated
+
   // indicates this object is created via current bootstrap
   boolean isHardData = false
 
@@ -31,6 +34,9 @@ class RefdataCategory extends AbstractI10n {
     desc_de column: 'rdc_desc_de'
     isHardData column: 'rdc_is_hard_data'
 
+    dateCreated column: 'rdc_date_created'
+    lastUpdated column: 'rdc_last_updated'
+
   }
 
   static hasMany = [
@@ -43,6 +49,8 @@ class RefdataCategory extends AbstractI10n {
 
   static constraints = {
     label(nullable: true, blank: true)
+    dateCreated(nullable:true, blank:true)
+    lastUpdated(nullable:true, blank:true)
   }
 
   String getLogEntityId() {
@@ -147,7 +155,8 @@ class RefdataCategory extends AbstractI10n {
         // log.debug("Create new refdata category ${category_name}");
         cat = new RefdataCategory(desc: category_name, label: category_name)
         if (cat.save(failOnError: true, flush: true)) {
-        } else {
+        }
+        else {
           log.error("Problem creating new category ${category_name}");
           cat.errors.each {
             log.error("Problem: ${it}");
@@ -155,12 +164,14 @@ class RefdataCategory extends AbstractI10n {
         }
 
         // log.debug("Create new refdataCategory(${category_name}) = ${cat.id}");
-      } else if (cats.size() == 1) {
+      }
+      else if (cats.size() == 1) {
         cat = cats[0]
         // log.debug("Found existing category for ${category_name} : ${cat}");
         result = RefdataValue.findByOwnerAndValueIlike(cat, value)
-      } else {
-        throw new RuntimeException("Multiple matching refdata category names");
+      }
+      else {
+        throw new RuntimeException("Multiple matching refdata category names")
       }
 
       if (!result) {

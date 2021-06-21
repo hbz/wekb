@@ -27,6 +27,7 @@ class GlobalSearchTemplatesService {
         globalSearchTemplates.put('licenses', licenses())
         globalSearchTemplates.put('macros', macros())
         globalSearchTemplates.put('namespaces', namespaces())
+        globalSearchTemplates.put('notes', notes())
         globalSearchTemplates.put('offices', offices())
         globalSearchTemplates.put('orgs', orgs())
         globalSearchTemplates.put('packages', packages())
@@ -181,16 +182,7 @@ class GlobalSearchTemplatesService {
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'status'],
                                         // II: Default not yet implemented
                                         default    : [type: 'query', query: 'select r from RefdataValue where r.value=:v and r.owner.description=:o', params: ['Current', RCConstants.KBCOMPONENT_STATUS]]
-                                ],
-                                [
-                                        type       : 'lookup',
-                                        baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : 'KBComponent.EditStatus',
-                                        prompt     : 'Edit Status',
-                                        qparam     : 'qp_editstatus',
-                                        placeholder: 'Component Edit Status',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'editStatus']
-                                ],
+                                ]
                         ],
                         qbeGlobals: [
                                 ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
@@ -200,7 +192,6 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Type', property: 'niceName'],
                                 [heading: 'Name/Title', property: 'name', sort: 'name', link: true],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
-                                [heading: 'Edit Status', property: 'editStatus?.value', sort: 'editStatus'],
                         ]
                 ]
         ]
@@ -246,8 +237,7 @@ class GlobalSearchTemplatesService {
                         qbeResults: [
                                 [heading: 'Name/Title', property: 'name', sort: 'name', link: true],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
-                                [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
-                                [heading: 'Edit Status', property: 'editStatus?.value', sort: 'editStatus']
+                                [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated']
                         ]
                 ]
         ]
@@ -686,6 +676,48 @@ class GlobalSearchTemplatesService {
         result
     }
 
+    Map notes() {
+        Map result = [
+                baseclass: 'org.gokb.cred.Note',
+                title    : 'Notes',
+                group    : 'Tertiary',
+                defaultSort : 'dateCreated',
+                defaultOrder: 'asc',
+                qbeConfig: [
+                        qbeForm   : [
+                                [
+                                        prompt     : 'Note',
+                                        qparam     : 'qp_note',
+                                        placeholder: 'Note',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'note', 'wildcard': 'B']
+                                ],
+                                [
+                                        prompt     : 'Owner Class',
+                                        qparam     : 'qp_ownerClass',
+                                        placeholder: 'Owner Class',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'ownerClass'],
+                                        hide       : true
+                                ],
+                                [
+                                        prompt     : 'Owner ID',
+                                        qparam     : 'qp_ownerClassID',
+                                        placeholder: 'Owner Class ID',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'ownerId', 'type': 'java.lang.Long'],
+                                        hide       : true
+                                ],
+                        ],
+                        qbeGlobals: [
+                        ],
+                        qbeResults: [
+                                [heading: 'Note', property: 'note'],
+                                [heading: 'Date Created', property: 'dateCreated'],
+                                [heading: 'Last Updated', property: 'lastUpdated'],
+                        ]
+                ]
+        ]
+        result
+    }
+
     Map offices() {
         Map result = [
                 baseclass: 'org.gokb.cred.Office',
@@ -800,19 +832,10 @@ class GlobalSearchTemplatesService {
                                 [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : RCConstants.PACKAGE_LIST_STATUS,
-                                        prompt     : 'List Status',
-                                        qparam     : 'qp_liststatus',
-                                        placeholder: 'List Status',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'listStatus'],
-                                ],
-                                [
-                                        type       : 'lookup',
-                                        baseClass  : 'org.gokb.cred.RefdataValue',
                                         filter1    : RCConstants.PACKAGE_SCOPE,
-                                        prompt     : 'Availability',
+                                        prompt     : 'Scope',
                                         qparam     : 'qp_scope',
-                                        placeholder: 'Availability',
+                                        placeholder: 'Scope',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'scope'],
                                 ],
                                 [
@@ -832,6 +855,13 @@ class GlobalSearchTemplatesService {
                                         placeholder: 'Provider',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'provider'],
                                         hide       : false
+                                ],
+                                [
+                                        prompt     : 'Provider ID',
+                                        qparam     : 'qp_provider_id',
+                                        placeholder: 'Provider ID',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'provider.id', 'type': 'java.lang.Long'],
+                                        hide       : true
                                 ],
                                 [
                                         type       : 'lookup',
@@ -866,7 +896,8 @@ class GlobalSearchTemplatesService {
                                         qparam     : 'qp_source',
                                         placeholder: 'Source',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'source'],
-                                        hide       : false
+                                        hide       : false,
+                                        notShowInPublic       : true
                                 ],
 
                                 [
@@ -886,8 +917,7 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Name', property: 'name', sort: 'name', link: true],
                                 [heading: 'Nominal Platform', property: 'nominalPlatform?.name', link: true],
                                 [heading: 'Content Type', property: 'contentType?.value', sort: 'contentType'],
-                                [heading: 'Availability', property: 'scope', sort: 'scope'],
-                                [heading: 'List Status', property: 'listStatus?.value', sort: 'listStatus'],
+                                [heading: 'Scope', property: 'scope', sort: 'scope'],
                                 [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
                                 [heading: 'Titles', property: 'currentTippCount'],
@@ -936,6 +966,22 @@ class GlobalSearchTemplatesService {
                                         placeholder: 'Curatory Group',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'curatoryGroups'],
                                         hide       : false
+                                ],
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.Org',
+                                        prompt     : 'Provider',
+                                        qparam     : 'qp_provider',
+                                        placeholder: 'Provider',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'provider'],
+                                        hide       : false
+                                ],
+                                [
+                                        prompt     : 'Provider ID',
+                                        qparam     : 'qp_provider_id',
+                                        placeholder: 'Provider ID',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'provider.id', 'type': 'java.lang.Long'],
+                                        hide       : true
                                 ],
                         ],
                         qbeGlobals: [
@@ -1158,13 +1204,6 @@ class GlobalSearchTemplatesService {
                                         hide       : false
                                 ],
                                 [
-                                        prompt     : 'Title Publisher ID',
-                                        qparam     : 'qp_pub_id',
-                                        placeholder: 'Title Publisher ID',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'publisher.id', 'type': 'java.lang.Long'],
-                                        hide       : true
-                                ],
-                                [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.RefdataValue',
                                         filter1    : RCConstants.TITLEINSTANCE_MEDIUM,
@@ -1253,10 +1292,18 @@ class GlobalSearchTemplatesService {
                                 [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.Org',
-                                        prompt     : 'Content Provider',
-                                        qparam     : 'qp_cp',
-                                        placeholder: 'Content Provider',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'pkg.provider']
+                                        prompt     : 'Provider',
+                                        qparam     : 'qp_provider',
+                                        placeholder: 'Provider',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'pkg.provider'],
+                                        hide       : false
+                                ],
+                                [
+                                        prompt     : 'Provider ID',
+                                        qparam     : 'qp_provider_id',
+                                        placeholder: 'Provider ID',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'pkg.provider.id', 'type': 'java.lang.Long'],
+                                        hide       : true
                                 ],
                                 [
                                         prompt     : 'Package ID',

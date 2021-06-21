@@ -52,14 +52,6 @@
   </dd>
 
   <dt>
-    <gokb:annotatedLabel owner="${d}" property="editStatus">Edit Status</gokb:annotatedLabel>
-  </dt>
-  <dd>
-    <gokb:xEditableRefData owner="${d}" field="editStatus"
-      config="${RCConstants.KBCOMPONENT_EDIT_STATUS}" />
-  </dd>
-
-  <dt>
     <gokb:annotatedLabel owner="${d}" property="language">Language</gokb:annotatedLabel>
   </dt>
   <dd>
@@ -142,10 +134,10 @@
           class="badge badge-warning">
             ${d?.tipls?.findAll{ it.status?.value == 'Current'}?.size() ?: '0'}
         </span></a></li>
-      <li><a href="#addprops" data-toggle="tab">Custom Fields <span
+      %{--<li><a href="#addprops" data-toggle="tab">Additional Properties <span
         class="badge badge-warning">
           ${d.additionalProperties?.size() ?: '0'}
-      </span></a></li>
+      </span></a></li>--}%
       <li><a href="#review" data-toggle="tab">Review Tasks (Open/Total)
         <span class="badge badge-warning">
           ${d.reviewRequests?.findAll { it.status == org.gokb.cred.RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STATUS,'Open') }?.size() ?: '0'}/${d.reviewRequests.size()}
@@ -161,7 +153,7 @@
       <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Publishers </span></li>
       <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Package Availability </span></li>
       <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Platforms </span></li>
-      <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Custom Fields </span></li>
+      <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Additional Properties </span></li>
       <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Review Tasks </span></li>
       <g:if test="${grailsApplication.config.gokb.decisionSupport?.active}" >
         <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Decision Support </span></li>
@@ -233,7 +225,7 @@
     </div>
 
     <g:render template="/tabTemplates/showVariantnames"
-      model="${[d:displayobj, showActions:true]}" />
+      model="${[showActions:true]}" />
 
     <div class="tab-pane" id="availability">
       <g:if test="${d.id}">
@@ -276,31 +268,15 @@
     </div>
 
     <div class="tab-pane" id="publishers">
-      <g:render template="/tabTemplates/showPublishers"
-      model="${[d:displayobj]}" />
+      <g:render template="/tabTemplates/showPublishers"/>
     </div>
 
-    <div class="tab-pane" id="identifiers">
-      <dl>
-        <dt>
-          <gokb:annotatedLabel owner="${d}" property="ids">Identifiers</gokb:annotatedLabel>
-        </dt>
-        <dd>
-          <g:render template="/apptemplates/secondTemplates/combosByType"
-            model="${[d:d, property:'ids', fragment:'identifiers', cols:[
-                      [expr:'toComponent.namespace.value', colhead:'Namespace'],
-                      [expr:'toComponent.value', colhead:'ID', action:'link']]]}" />
-          <g:if test="${d.isEditable()}">
-            <g:render template="/apptemplates/secondTemplates/addIdentifier" model="${[d:d, hash:'#identifiers', targetType:'book']}"/>
-          </g:if>
-        </dd>
-      </dl>
-    </div>
+    <g:render template="/tabTemplates/showIdentifiers" model="${[d: d]}" />
 
-    <div class="tab-pane" id="addprops">
+    %{--<div class="tab-pane" id="addprops">
       <g:render template="/apptemplates/secondTemplates/addprops"
         model="${[d:d]}" />
-    </div>
+    </div>--}%
 
     <div class="tab-pane" id="review">
       <g:render template="/apptemplates/secondTemplates/revreqtab"
@@ -312,10 +288,9 @@
     </div>
 
   </div>
-  <g:if test="${d.id}">
-    <g:render template="/apptemplates/secondTemplates/componentStatus"
-      model="${[d:displayobj]}" />
-  </g:if>
+
+    <g:render template="/apptemplates/secondTemplates/componentStatus"/>
+
 </div>
 
 

@@ -20,7 +20,7 @@ class GroupController {
 
             log.debug("Entering GroupController:index ${params}");
 
-            result.max = params.max ? Integer.parseInt(params.max) : (user.defaultPageSize ?: 20);
+            result.max = params.max ? Integer.parseInt(params.max) : user.defaultPageSizeAsInteger
             result.rr_offset = params.rr_offset ? Integer.parseInt(params.rr_offset) : 0;
 
             if (params.rr_jumpToPage) {

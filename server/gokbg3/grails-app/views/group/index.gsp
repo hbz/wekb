@@ -43,7 +43,6 @@
             </g:link>
           </th>
           <th>Scope</th>
-          <th>ListStatus</th>
           <th>Number of Titles</th>
         </tr>
       </thead>
@@ -58,7 +57,6 @@
             <td>${pkg.status?.value}</td>
             <td>${pkg.lastUpdated}</td>
             <td style="white-space:nowrap;">${pkg.scope?.value}</td>
-            <td style="white-space:nowrap;">${pkg.listStatus?.value}</td>
             <td style="white-space:nowrap;">${pkg.currentTippCount}</td>
           </tr>
         </g:each>

@@ -15,7 +15,7 @@
 
 <div class="panel panel-default">
     <div class="panel-heading clearfix">
-        <h3 class="panel-title">${packages.size()} of ${rowsCount} packages were created</h3>
+        <h3 class="panel-title">${packages.size()} of ${rowsCount} packages were created/changed</h3>
     </div>
 
 
@@ -61,13 +61,13 @@
                     </td>
 
                     <td>
-                        <g:if test="${pkg.source}">
+                        <g:if test="${pkg.source.frequency}">
                             ${pkg.source.frequency.getI10n('value')}
                         </g:if>
                     </td>
 
                     <td>
-                        <g:if test="${pkg.source}">
+                        <g:if test="${pkg.source.targetNamespace}">
                             ${pkg.source.targetNamespace.value}
                         </g:if>
                     </td>
@@ -87,7 +87,7 @@
 
 <div class="panel panel-default">
     <div class="panel-heading clearfix">
-        <h3 class="panel-title">Package not created due to errors</h3>
+        <h3 class="panel-title">Package not created/changed due to errors</h3>
     </div>
 
 

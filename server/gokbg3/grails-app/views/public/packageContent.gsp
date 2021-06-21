@@ -17,13 +17,17 @@
         </g:if>
         <g:if test="${pkg}">
             <h1>Package: <span style="font-weight:bolder;">${pkgName}</span></h1>
+            <br>
             <div class="col-md-9">
                 <dl class="row">
                     <dt class="col-3 text-right">
                         <gokb:annotatedLabel owner="${pkg}" property="provider">Provider</gokb:annotatedLabel>
                     </dt>
                     <dd class="col-9 text-left">
-                        <gokb:manyToOneReferenceTypedown owner="${pkg}" field="provider" baseClass="org.gokb.cred.Org" >${pkg.provider?.name}</gokb:manyToOneReferenceTypedown>
+                        <g:if test="${pkg.provider}">
+                            <g:link controller="public" action="orgContent"
+                                    id="${pkg.provider.uuid}">${pkg.provider.name}</g:link>
+                        </g:if>
                     </dd>
 
                     <dt class="col-3 text-right">
@@ -37,9 +41,10 @@
                         <gokb:annotatedLabel owner="${pkg}" property="nominalPlatform">Nominal Platform</gokb:annotatedLabel>
                     </dt>
                     <dd class="col-9 text-left">
-                        <gokb:manyToOneReferenceTypedown owner="${pkg}" field="nominalPlatform" baseClass="org.gokb.cred.Platform" >
-                            ${pkg.nominalPlatform?.name ?: ''}
-                        </gokb:manyToOneReferenceTypedown>
+                        <g:if test="${pkg.nominalPlatform}">
+                            <g:link controller="public" action="platformContent"
+                                    id="${pkg.nominalPlatform.uuid}">${pkg.nominalPlatform.name}</g:link>
+                        </g:if>
                     </dd>
                     <g:if test="${pkg}">
                         <dt class="col-3 text-right">
@@ -52,9 +57,6 @@
 
                     <dt class="col-3 text-right"> <gokb:annotatedLabel owner="${pkg}" property="lastUpdateComment">Last Update Comment</gokb:annotatedLabel> </dt>
                     <dd class="col-9 text-left"> <gokb:xEditable  owner="${pkg}" field="lastUpdateComment" /> </dd>
-
-                    <dt class="col-3 text-right"> <gokb:annotatedLabel owner="${pkg}" property="editStatus">Edit Status</gokb:annotatedLabel> </dt>
-                    <dd class="col-9 text-left"> <gokb:xEditableRefData owner="${pkg}" field="editStatus" config="${RCConstants.KBCOMPONENT_EDIT_STATUS}" /> </dd>
 
                     <dt class="col-3 text-right"> <gokb:annotatedLabel owner="${pkg}" property="description">Description</gokb:annotatedLabel> </dt>
                     <dd class="col-9 text-left"> <gokb:xEditable  owner="${pkg}" field="description" /> </dd>
@@ -74,9 +76,48 @@
                     </dd>
 
 
-                    <g:render template="/apptemplates/secondTemplates/refdataprops"
-                              model="${[d: pkg, rd: refdata_properties, dtype: pkg.class.simpleName, notShowProps: [RCConstants.PACKAGE_LIST_STATUS]]}"/>
+                    <dt class="col-3 text-right">
+                        <gokb:annotatedLabel owner="${pkg}" property="type">Breakable</gokb:annotatedLabel>
+                    </dt>
+                    <dd class="col-9 text-left">
+                        <gokb:xEditableRefData owner="${pkg}" field="breakable" config="${RCConstants.PACKAGE_BREAKABLE}"/>
+                    </dd>
 
+                    <dt class="col-3 text-right">
+                        <gokb:annotatedLabel owner="${pkg}" property="type">Content Type</gokb:annotatedLabel>
+                    </dt>
+                    <dd class="col-9 text-left">
+                        <gokb:xEditableRefData owner="${pkg}" field="contentType" config="${RCConstants.PACKAGE_CONTENT_TYPE}"/>
+                    </dd>
+
+                    <dt class="col-3 text-right">
+                        <gokb:annotatedLabel owner="${pkg}" property="type">File</gokb:annotatedLabel>
+                    </dt>
+                    <dd class="col-9 text-left">
+                        <gokb:xEditableRefData owner="${pkg}" field="file" config="${RCConstants.PACKAGE_FILE}"/>
+                    </dd>
+
+                    <dt class="col-3 text-right">
+                        <gokb:annotatedLabel owner="${pkg}" property="type">Open Access</gokb:annotatedLabel>
+                    </dt>
+                    <dd class="col-9 text-left">
+                        <gokb:xEditableRefData owner="${pkg}" field="openAccess" config="${RCConstants.PACKAGE_OPEN_ACCESS}"/>
+                    </dd>
+
+                    <dt class="col-3 text-right">
+                        <gokb:annotatedLabel owner="${pkg}" property="type">Payment Type</gokb:annotatedLabel>
+                    </dt>
+                    <dd class="col-9 text-left">
+                        <gokb:xEditableRefData owner="${pkg}" field="paymentType" config="${RCConstants.PACKAGE_PAYMENT_TYPE}"/>
+                    </dd>
+
+                    <dt class="col-3 text-right">
+                        <gokb:annotatedLabel owner="${pkg}" property="type">Scope</gokb:annotatedLabel>
+                    </dt>
+                    <dd class="col-9 text-left">
+                        <gokb:xEditableRefData owner="${pkg}" field="scope" config="${RCConstants.PACKAGE_SCOPE}"/>
+                    </dd>
+                    
                     <dt class="col-3 text-right">
                         <gokb:annotatedLabel owner="${pkg}" property="nationalRanges">National Range</gokb:annotatedLabel>
                     </dt>
@@ -110,25 +151,25 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#identifiers" data-toggle="tab" role="tab">Identifiers
-                        <span  class="badge badge-pill badge-info">${pkg?.getCombosByPropertyNameAndStatus('ids', 'Active')?.size() ?: '0'}</span>
+                        <span  class="badge badge-pill badge-info">${pkg?.getCombosByPropertyNameAndStatus('ids', 'Active').size()}</span>
                     </a>
                 </li>
 
                 <li class="nav-item">
                     <a class="nav-link" href="#altnames" data-toggle="tab" role="tab">Alternate Names
-                        <span class="badge badge-pill badge-info">${pkg.variantNames?.size() ?: '0'}</span>
+                        <span class="badge badge-pill badge-info">${pkg.variantNames.size()}</span>
                     </a>
                 </li>
 
                 <li class="nav-item">
                     <a class="nav-link" href="#ddcs" data-toggle="tab" role="tab">DDCs
-                        <span class="badge badge-pill badge-info">${pkg.ddcs?.size() ?: '0'}</span>
+                        <span class="badge badge-pill badge-info">${pkg.ddcs.size()}</span>
                     </a>
                 </li>
 
             </ul>
             <div id="my-tab-content" class="tab-content">
-                <div class="tab-pane fade show active" id="titledetails" role="tabpanel">
+                <div class="tab-pane active" id="titledetails" role="tabpanel">
                     <div class="row">
                         <div class="col-sm">
                             <h2>Titles (${titleCount})</h2>
@@ -158,7 +199,7 @@
                                     <g:each in="${tipps}" var="t" status="i">
                                         <tr>
                                             <td>
-                                            ${ (params.offset ?: 0)  + i + 1 }
+                                            ${ (params.offset ? params.offset.toInteger(): 0)  + i + 1 }
                                             </td>
                                             <td>
                                                 <g:link controller="public" action="tippContent" id="${t.uuid}">
@@ -190,7 +231,7 @@
 
                     <g:if test="${titleCount ?: 0 > 0}">
                         <div class="pagination mb-4 d-flex justify-content-center">
-                            <g:paginate controller="public" action="index" params="${params}" next="&raquo;" prev="&laquo;"
+                            <g:paginate controller="public" action="packageContent" params="${params}" next="&raquo;" prev="&laquo;"
                                         max="${max}" total="${titleCount}"/>
                         </div>
                     </g:if>
@@ -201,20 +242,7 @@
 
                 <g:render template="/tabTemplates/showDDCs" model="${[d:pkg]}" />
 
-                <div class="tab-pane fade" id="identifiers" role="tabpanel">
-                    <dl>
-                        <dt>
-                            <gokb:annotatedLabel owner="${pkg}"
-                                                 property="ids">Identifiers</gokb:annotatedLabel>
-                        </dt>
-                        <dd>
-                            <g:render template="/apptemplates/secondTemplates/combosByType"
-                                      model="${[d: pkg, property: 'ids', fragment: 'identifiers', cols: [
-                                              [expr: 'toComponent.namespace.value', colhead: 'Namespace'],
-                                              [expr: 'toComponent.value', colhead: 'ID', action: 'link']]]}"/>
-                        </dd>
-                    </dl>
-                </div>
+                <g:render template="/tabTemplates/showIdentifiers" model="${[d:pkg]}" />
             </div>
             <g:render template="componentStatus" model="${[d: pkg]}"/>
         </div>

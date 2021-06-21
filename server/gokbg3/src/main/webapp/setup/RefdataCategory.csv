@@ -4,6 +4,8 @@ Activity.Type;Activity Type;Activity Type
 AllocatedReviewGroup.Status;Allocated Review Group Status;Allocated Review Group Status
 Combo.Status;Combo Status;Combo Status
 Combo.Type;Combo Type;Combo Type
+Contact.Content.Type; Contact Content Type; Contact Content Type
+Contact.Type; Contact Type; Contact Type
 Country;Country;Country
 CuratoryGroup.Type;CuratoryGroup Type;CuratoryGroup Type
 Currency;Currency;Currency
@@ -13,7 +15,6 @@ DeletedKBComponent.Status;DeletedKBComponent Status;DeletedKBComponent Status
 IdentifierNamespace.TargetType;Identifier Namespace Target Type;Identifier Namespace Target Type
 ingest.filetype;ingest filetype;ingest filetype
 Job.Type;Job Type;Job Type
-KBComponent.EditStatus;KBComponent EditStatus;KBComponent EditStatus
 KBComponent.Language;KBComponent Language;KBComponent Language
 KBComponent.Status;KBComponent Status;KBComponent Status
 KBComponentVariantName.Locale;KBComponent VariantName Locale;KBComponent VariantName Locale
@@ -28,20 +29,21 @@ Org.Role;Org Role;Org Role
 Package.Breakable;Package Breakable;Package Breakable
 Package.Consistent;Package Consistent;Package Consistent
 Package.ContentType;Package Content Type;Package Content Type
+Package.Editing.Status;Package Editing Status;Package Editing Status
 Package.File;Package File;Package File
 Package.Global;Package Global;Package Global
 Package.LinkType;Package Link Type;Package Link Type
-Package.ListStatus;Package List Status;Package List Status
 Package.OpenAccess;Package Open Access;Package Open Access
 Package.RegionalRange; Package RegionalRange; Package RegionalRange
 Package.PaymentType;Package Payment Type;Package Payment Type
 Package.Scope;Package Scope;Package Scope
-Platform.Authentication;Platform Authentication;Platform Authentication
-Platform.AuthMethod;Platform AuthMethod;Platform AuthMethod
+Platform.IPAuthentication;Platform IP Authentication;Platform IP Authentication
 Platform.Role;Platform Role;Platform Role
 Platform.Roles;Platform Roles;Platform Roles
 Platform.Service;Platform Service;Platform Service
 Platform.Software;Platform Software;Platform Software
+Platform.Statistics.Format;Platform Statistics Format;Platform Statistics Format
+Platform.Statistics.Update;Platform Statistics Update;Platform Statistics Update
 Price.type;Price type;Price type
 RDFDataType;RDF Data Type;RDF Data Type
 ReviewRequest.Status;Review Request Status;Review Request Status

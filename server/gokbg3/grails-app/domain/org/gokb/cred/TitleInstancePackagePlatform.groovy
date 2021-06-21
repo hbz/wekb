@@ -315,7 +315,7 @@ class TitleInstancePackagePlatform extends KBComponent {
   static TitleInstancePackagePlatform tippCreate(tipp_fields = [:]) {
 
     def tipp_status = tipp_fields.status ? RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, tipp_fields.status) : null
-    def tipp_editstatus = tipp_fields.editStatus ? RefdataCategory.lookup(RCConstants.KBCOMPONENT_EDIT_STATUS, tipp_fields.editStatus) : null
+
     RefdataValue tipp_medium = null
     if (tipp_fields.medium) {
       tipp_medium = determineMediumRef(tipp_fields)
@@ -328,7 +328,6 @@ class TitleInstancePackagePlatform extends KBComponent {
     TitleInstancePackagePlatform result = new TitleInstancePackagePlatform(
             uuid: tipp_fields.uuid,
             status: tipp_status,
-            editStatus: tipp_editstatus,
             name: tipp_fields.name,
             medium: tipp_medium,
             publicationType: tipp_publicationType,
@@ -680,13 +679,13 @@ class TitleInstancePackagePlatform extends KBComponent {
       }
 
       if (!coverage.coverageDepth) {
-        if (!errors.coverageDepth) {
+        if (tipp_dto.type != "other" && !errors.coverageDepth) {
           errors.coverageDepth = []
         }
        /* coverage.coverageDepth = "fulltext"
         errors.coverageDepth << [message: "Missing value for coverage depth: set to fulltext", baddata: coverage.coverageDepth]*/
       } else {
-        if (coverage.coverageDepth instanceof String && !['fulltext', 'selected articles', 'abstracts'].contains(coverage.coverageDepth?.toLowerCase())) {
+        if (coverage.coverageDepth instanceof String && !['fulltext', 'full text', 'selected articles', 'abstracts'].contains(coverage.coverageDepth?.toLowerCase())) {
           if (!errors.coverageDepth) {
             errors.coverageDepth = []
           }
@@ -904,7 +903,6 @@ class TitleInstancePackagePlatform extends KBComponent {
           'uuid'        : (tipp_dto.uuid ?: null),
           'status'      : (tipp_dto.status ?: null),
           'name'        : (tipp_dto.name ?: null),
-          'editStatus'  : (tipp_dto.editStatus ?: null),
           'type'        : (tipp_dto.type ?: null),
           'medium'    : (tipp_dto.medium ?: null),
 
@@ -1089,7 +1087,7 @@ class TitleInstancePackagePlatform extends KBComponent {
           }
         }
 
-        if (tipp_dto.ddc) {
+        if (tipp_dto.ddc instanceof String) {
 
             RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.DDC, tipp_dto.ddc)
 
@@ -1098,8 +1096,8 @@ class TitleInstancePackagePlatform extends KBComponent {
             }
         }
 
-        if (tipp_dto.ddcs) {
-            tipp_dto.ddcs.each{ String ddc ->
+        if (tipp_dto.ddc instanceof List) {
+            tipp_dto.ddc.each{ String ddc ->
               RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.DDC, ddc)
               if(refdataValue && !(refdataValue in tipp.ddcs)){
                 tipp.addToDdcs(refdataValue)
@@ -1207,7 +1205,6 @@ class TitleInstancePackagePlatform extends KBComponent {
             addCoreGOKbXmlFields(builder, attr)
 
             'scope'(scope?.value)
-            'listStatus'(listStatus?.value)
             'openAccess'(openAccess?.value)
             'file'(file?.value)
             'breakable'(breakable?.value)

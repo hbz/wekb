@@ -197,7 +197,6 @@ class ApiController {
       result << [
         'id':  it.id,
         'name': it.name,
-        'editStatus': it.editStatus?.value ?: null,
         'status': it.status?.value ?: null,
         'uuid': it.uuid
       ]
@@ -277,7 +276,7 @@ class ApiController {
 
     log.debug("Entering SearchController:index");
 
-    result.max = params.max ? Integer.parseInt(params.max) : ( user.defaultPageSize ?: 10 );
+    result.max = params.max ? Integer.parseInt(params.max) : user.defaultPageSizeAsInteger
     result.offset = params.offset ? Integer.parseInt(params.offset) : 0;
 
     if ( request.JSON ) {
@@ -876,7 +875,7 @@ class ApiController {
 
 
   /**
-   * See the service method {@link com.k_int.ESSearchService#getApiTunnel(def params)} for usage instructions.
+   * See the service method {@link com.k_int.ESSearchService#getApiTunnel(java.lang.Object)} for usage instructions.
    */
   def elasticsearchTunnel() {
     def result = [:]

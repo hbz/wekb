@@ -50,7 +50,6 @@ class CrossRefPkgRun {
   def rr_nonCurrent
   def rr_TIPPs_retired
   def rr_TIPPs_invalid
-  def status_ip
   RefdataValue rr_type
   CuratoryGroup curatoryGroup
 
@@ -79,7 +78,6 @@ class CrossRefPkgRun {
       rr_nonCurrent = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Platform Noncurrent')
       rr_TIPPs_retired = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'TIPPs Retired')
       rr_TIPPs_invalid = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Invalid TIPPs')
-      status_ip = RefdataCategory.lookup(RCConstants.PACKAGE_LIST_STATUS, 'In Progress')
       rr_type = RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'Import Request')
 
 
@@ -229,11 +227,6 @@ class CrossRefPkgRun {
         }
 
         if (rjson.tipps?.size() > 0 && rjson.tipps.size() > invalidTipps.size()) {
-          if (pkg.status == status_current && pkg?.listStatus != status_ip) {
-            //Macht kein Sinn vorerst
-            //pkg.listStatus = status_ip
-            //pkg.merge(flush: true)
-          }
         }
         else {
           log.debug("imported Package $pkg.name contains no valid TIPPs")
@@ -298,6 +291,15 @@ class CrossRefPkgRun {
           src.lastRun = new Date()
           src.lastUpdateUrl = rjson.updateURL
           src.merge(flush: true)
+
+          String note = "Package Update: (KbartLines: ${rjson.stats.kbartLines}, recordsTotalCreated: ${rjson.stats.recordsTotalCreated}, recordsValid: ${rjson.stats.recordsValid}, recordsInvalid: ${rjson.stats.recordsInvalid}, " +
+                  "Processed Titles in this run: ${rjson.tipps.size()}, Titles in we:kb: ${existing_tipp_ids.size()}, Removded Titles: ${removedNum}, New Titles in we:kb: ${addNewNum})"
+
+          new Note(ownerClass: src.getClass().name,
+                  ownerId: src.id,
+                  creator: user,
+                  note: note).save(flush: true)
+
         }
       }
       log.debug("final flush");
@@ -327,21 +329,27 @@ class CrossRefPkgRun {
     }
 
     JobResult.withNewSession {
-      def result_object = JobResult.findByUuid(job?.uuid)
+      JobResult result_object = JobResult.findByUuid(job.uuid)
+
+      def job_map = [
+              uuid: (job.uuid),
+              description: (job.description),
+              resultObject: (jsonResult ? (jsonResult as JSON).toString() : null),
+              type: (job.type),
+              statusText: (jsonResult ? (jsonResult.result) : job.status),
+              ownerId: (job.ownerId),
+              groupId: (job.groupId),
+              startTime: (job.startTime),
+              endTime: (job.endTime),
+              linkedItemId: (job.linkedItem?.id)
+      ]
+
       if (!result_object) {
-        def job_map = [
-          uuid        : (job?.uuid),
-          description : (job?.description),
-          resultObject: (jsonResult as JSON).toString(),
-          type        : (job?.type),
-          statusText  : (jsonResult.result),
-          ownerId     : (job?.ownerId),
-          groupId     : (job?.groupId),
-          startTime   : (job?.startTime),
-          endTime     : (job?.endTime),
-          linkedItemId: (job?.linkedItem?.id)
-        ]
-        new JobResult(job_map).save(flush: true, failOnError: true)
+        result_object = new JobResult(job_map).save(flush: true, failOnError: true)
+      }else {
+
+        result_object.save(job_map).save(flush: true, failOnError: true)
+
       }
     }
 

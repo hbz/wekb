@@ -25,21 +25,52 @@ class AutoUpdatePackagesService {
     ConcurrencyManagerService concurrencyManagerService
     Map result = [result: JobResult.STATUS_SUCCESS]
 
+    public static Date runningStartDate
+
     Map updateFromSource(Package p, User user = null, ignoreLastChanged = false) {
         log.debug("updateFromSource")
 
+        Date currentDate = new Date()
+        Date currentDatePlus12Hours
+
+        if(runningStartDate) {
+            Calendar c = Calendar.getInstance()
+            c.setTime(runningStartDate)
+            c.add(Calendar.HOUR, +12)
+            currentDatePlus12Hours = c.getTime()
+        }
+
+        //Wenn Running blockiert ist und dies länger als ein Tag
+        if(running && runningStartDate && currentDatePlus12Hours.after(currentDate)){
+            running = false
+            runningStartDate = null
+        }
+
         Date startTime = new Date()
         def uuid = UUID.randomUUID().toString()
-        if (running == false) {
-            running = true
-            log.debug("UpdateFromSource started")
-            if (startSourceUpdate(p, user, ignoreLastChanged)) {
-                result = [result: JobResult.STATUS_SUCCESS, message: 'Auto Update Packages success']
+        if(p.source) {
+            if (running == false || user) {
+
+                if (!user) {
+                    runningStartDate = new Date()
+                    running = true
+                }
+
+                log.debug("UpdateFromSource started")
+                if (startSourceUpdate(p, user, ignoreLastChanged)) {
+                    result = [result: JobResult.STATUS_SUCCESS, message: (user ? "Manuell" : "Auto") + " Update Package success"]
+                }
+                if (!user) {
+                    runningStartDate = null
+                    running = false
+                }
+            } else {
+                log.debug("update skipped - already running")
+                result = [result: JobResult.STATUS_FAIL, message: (user ? "Manuell" : "Auto") + " Update Package is already running"]
             }
-            running = false
-        } else {
-            log.debug("update skipped - already running")
-            result = [result: JobResult.STATUS_FAIL, message: 'Auto Update Packages already running']
+        }else{
+            log.debug("update skipped - packge have no source")
+            result = [result: JobResult.STATUS_FAIL, message: " Package have no source"]
         }
 
         def result_object = JobResult.findByUuid(uuid)
@@ -79,7 +110,7 @@ class AutoUpdatePackagesService {
         def tokenValue = p.updateToken?.value ?: null
         def respData
 
-        if (user && !tokenValue && !user.isAdmin()) {
+        if (user && !tokenValue) {
             String charset = (('a'..'z') + ('0'..'9')).join()
             tokenValue = RandomStringUtils.random(255, charset.toCharArray())
 

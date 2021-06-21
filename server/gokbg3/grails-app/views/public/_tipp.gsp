@@ -35,7 +35,10 @@
             </g:link>
         </g:if>
         <g:else>
-            ${(d.hostPlatform?.name) ?: 'Empty'}
+            <g:if test="${d.hostPlatform}">
+                <g:link controller="public" action="platformContent"
+                        id="${d.hostPlatform.uuid}">${d.hostPlatform.name}</g:link>
+            </g:if>
         </g:else>
     </dd>
 

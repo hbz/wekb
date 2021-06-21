@@ -140,7 +140,6 @@
               <li><g:link controller="admin" action="cleanupOrphanedTipps" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Expunge Orphaned TIPPs</g:link></li>
               <li><g:link controller="admin" action="cleanupOrphanedIdentifiers" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Expunge Orphaned Identifiers</g:link></li>
               %{--<li><g:link controller="admin" action="rejectWrongTitles" onclick="return confirm('This will set ALL titles without any active TIPPs to status -Deleted-!\\n\\nAre you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Cleanup Titles without TIPPs</g:link></li>
-              <li><g:link controller="admin" action="rejectNoIdTitles" onclick="return confirm('This will set ALL titles without any connected Identifiers to editStatus -Rejected-!\\n\\nAre you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Cleanup Titles without IDs</g:link></li>
               --}%
               <li><g:link controller="admin" action="ensureUuids" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Ensure UUIDs</g:link></li>
               <li><g:link controller="admin" action="ensureTipls" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Ensure TIPLs</g:link></li>
@@ -165,7 +164,7 @@
 
             </ul>
           </li>
-          <li><g:link controller="admin" action="frontend"><i class="fa fa-angle-double-right fa-fw"></i> Frontend</g:link></li>
+          <li  class="${controllerName == "frontend" && actionName == 'index' ? 'active' : ''}" ><g:link controller="frontend" action="index"><i class="fa fa-angle-double-right fa-fw"></i> Frontend</g:link></li>
           <li class="${controllerName == "home" && actionName == 'about' ? 'active' : ''}" ><g:link controller="home" action="about"><i class="fa fa-info fa-fw"></i> Operating environment</g:link></li>
         </sec:ifAnyGranted>
 

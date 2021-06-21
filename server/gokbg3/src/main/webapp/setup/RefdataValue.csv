@@ -47,6 +47,14 @@ Combo.Type;TitleInstance.Tipps;TitleInstance.Tipps;TitleInstance.Tipps
 Combo.Type;TitleInstance.TranslatedFrom;TitleInstance.TranslatedFrom;TitleInstance.TranslatedFrom
 Combo.Type;TitleInstancePackagePlatform.DerivedFrom;TitleInstancePackagePlatform.DerivedFrom;TitleInstancePackagePlatform.DerivedFrom
 Combo.Type;TitleInstancePackagePlatform.MasterTipp;TitleInstancePackagePlatform.MasterTipp;TitleInstancePackagePlatform.MasterTipp
+Contact.Content.Type;E-Mail;E-Mail;E-Mail
+Contact.Content.Type;Fax;Fax;Fax
+Contact.Content.Type;Phone;Phone;Phone
+Contact.Content.Type;Url;Url;Url
+Contact.Content.Type;Mobil;Mobil;Mobil
+Contact.Content.Type;Phone 2;Phone 2;Phone 2
+Contact.Type;Technical Support;Technical Support;Technical Support
+Contact.Type;Service Support;Service Support;Service Support
 Country;AD;Andorra;Andorra
 Country;AE;Vereinigte Arabische Emirate;United Arab Emirates
 Country;AF;Afghanistan;Afghanistan
@@ -344,9 +352,6 @@ Job.Type;TitleCrossRef;TitleCrossRef;TitleCrossRef
 Job.Type;Undefined;Undefined;Undefined
 Job.Type;Unknown;Unknown;Unknown
 Job.Type;UpdateFreeTextIndexes;UpdateFreeTextIndexes;UpdateFreeTextIndexes
-KBComponent.EditStatus;Approved;Approved;Approved
-KBComponent.EditStatus;In Progress;In Progress;In Progress
-KBComponent.EditStatus;Rejected;Rejected;Rejected
 KBComponent.Status;Current;Current;Current
 KBComponent.Status;Deleted;Deleted;Deleted
 KBComponent.Status;Expected;Expected;Expected
@@ -403,6 +408,8 @@ Package.ContentType;Database;Database;Database
 Package.ContentType;Journal;Journal;Journal
 Package.ContentType;Mixed;Mixed;Mixed
 Package.ContentType;Other;Other;Other
+Package.Editing.Status;Concluded;Concluded;Concluded
+Package.Editing.Status;Ongoing;Ongoing;Ongoing
 Package.File;Back File;Back File;Back File
 Package.File;Front File;Front File;Front File
 Package.File;Master File;Master File;Master File
@@ -412,7 +419,6 @@ Package.Global;Other;Other;Other
 Package.Global;Regional;Regional;Regional
 Package.LinkType;Parent;Parent;Parent
 Package.LinkType;Previous;Previous;Previous
-Package.ListStatus;Checked;Checked;Checked
 Package.OpenAccess;Blue OA;Blue OA;Blue OA
 Package.OpenAccess;Empty;Empty;Empty
 Package.OpenAccess;Gold OA;Gold OA;Gold OA
@@ -444,16 +450,23 @@ Package.Scope;Consortium;Consortium;Consortium
 Package.Scope;Global;Global;Global
 Package.Scope;Individual;Individual;Individual
 Package.Scope;National;National;National
-Platform.Authentication;Unknown;Unknown;Unknown
-Platform.AuthMethod;IP;IP;IP
-Platform.AuthMethod;Shibboleth;Shibboleth;Shibboleth
-Platform.AuthMethod;Unknown;Unknown;Unknown
-Platform.AuthMethod;User Password;User Password;User Password
+Platform.IPAuthentication;IPv4;IPv4;IPv4
+Platform.IPAuthentication;IPv6;IPv6;IPv6
+Platform.IPAuthentication;IPv4/IPv6;IPv4/IPv6;IPv4/IPv6
 Platform.Role;Admin;Admin;Admin
 Platform.Role;Host;Host;Host
 Platform.Roles;Host;Host;Host
 Platform.Service;Highwire;Highwire;Highwire
 Platform.Software;Atupon;Atupon;Atupon
+Platform.Statistics.Format;COUNTER;COUNTER;COUNTER
+Platform.Statistics.Format; Document; Document;  Document
+Platform.Statistics.Format;Diagram;Diagram;Diagram
+Platform.Statistics.Update;Daily;Daily;Daily
+Platform.Statistics.Update;Weekly;Weekly;Weekly
+Platform.Statistics.Update;Monthly;Monthly;Monthly
+Platform.Statistics.Update;Quarterly;Quarterly;Quarterly
+Platform.Statistics.Update;Half-Yearly;Half-Yearly;Half-Yearly
+Platform.Statistics.Update;Yearly;Yearly;Yearly
 Price.type;list;list;list
 Price.type;on-off;on-off;on-off
 Price.type;open access apc;open access apc;open access apc

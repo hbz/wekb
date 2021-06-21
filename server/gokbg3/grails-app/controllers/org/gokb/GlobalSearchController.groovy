@@ -1,9 +1,11 @@
 package org.gokb
 
 import grails.converters.*
+import grails.plugin.springsecurity.SpringSecurityService
 import org.elasticsearch.action.search.*
 import org.elasticsearch.search.aggregations.AggregationBuilders
 import org.elasticsearch.index.query.*
+import org.gokb.cred.User
 import org.springframework.security.access.annotation.Secured
 
 @Secured(['IS_AUTHENTICATED_FULLY'])
@@ -14,6 +16,7 @@ class GlobalSearchController {
 
 
   def ESWrapperService
+  SpringSecurityService springSecurityService
 
   def index() { 
     def result = [:]
@@ -32,7 +35,8 @@ class GlobalSearchController {
         params.q = params.q.replace(']',")")
         params.q = params.q.replace(':',"")
 
-        result.max = params.max ? Integer.parseInt(params.max) : 10;
+        User user = springSecurityService.getCurrentUser()
+        result.max = params.max ? Integer.parseInt(params.max) : user.defaultPageSizeAsInteger
         result.offset = params.offset ? Integer.parseInt(params.offset) : 0;
 
         def query_str = buildQuery(params);

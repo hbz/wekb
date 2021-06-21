@@ -503,8 +503,7 @@ class AdminController {
       result["${group.name}"] = [
               users     : group.users.collect { it.username },
               owner     : group.owner?.username,
-              status    : group.status?.value,
-              editStatus: group.editStatus?.value
+              status    : group.status?.value
       ]
     }
 
@@ -556,7 +555,7 @@ class AdminController {
   @Secured(['ROLE_SUPERUSER'])
   def manageFTControl() {
     Map<String, Object> result = [:]
-    log.debug("manageFTControle ..")
+    log.debug("manageFTControl ...")
     result.ftControls = FTControl.list()
     result.ftUpdateService = [:]
     result.editable = true
@@ -589,47 +588,41 @@ class AdminController {
     result
   }
 
+
   @Secured(['ROLE_SUPERUSER'])
   def deleteIndex() {
-    Map<String, Object> result = [:]
-    log.debug("deleteIndex ..")
+    Job j = concurrencyManagerService.createJob {
+      Map<String, Object> result = [:]
+      if(params.name) {
+        String indexName = params.name
+        log.info("deleteIndex ${indexName} ...")
+        Client esclient = ESWrapperService.getClient()
+        IndicesAdminClient adminClient = esclient.admin().indices()
 
-    if(params.name) {
-      Client esclient = ESWrapperService.getClient()
-
-      String indexName = params.name
-
-      IndicesAdminClient adminClient = esclient.admin().indices()
-
-      if (adminClient.prepareExists(indexName).execute().actionGet().isExists()) {
-        DeleteIndexRequestBuilder deleteIndexRequestBuilder = adminClient.prepareDelete(indexName)
-
-        DeleteIndexResponse deleteIndexResponse = deleteIndexRequestBuilder.execute().actionGet()
-        if (deleteIndexResponse.isAcknowledged()) {
-          log.debug("Index ${indexName} successfully deleted!")
-        } else {
-          log.debug("Index deletetion failed: ${deleteIndexResponse}")
+        if (adminClient.prepareExists(indexName).execute().actionGet().isExists()) {
+          DeleteIndexRequestBuilder deleteIndexRequestBuilder = adminClient.prepareDelete(indexName)
+          DeleteIndexResponse deleteIndexResponse = deleteIndexRequestBuilder.execute().actionGet()
+          if (deleteIndexResponse.isAcknowledged()) {
+            log.info("Index ${indexName} successfully deleted!")
+          }
+          else {
+            log.info("Index deletetion failed: ${deleteIndexResponse}")
+          }
         }
-      }
-        log.debug("ES index ${indexName} did not exist, creating..")
-
+        log.info("ES index ${indexName} did not exist, creating..")
         CreateIndexRequestBuilder createIndexRequestBuilder = adminClient.prepareCreate(indexName)
-
-        log.debug("Adding index settings..")
+        log.info("Adding index settings..")
         createIndexRequestBuilder.setSettings(ESWrapperService.getSettings().get("settings"))
-        log.debug("Adding index mappings..")
+        log.info("Adding index mappings..")
         createIndexRequestBuilder.addMapping("component", ESWrapperService.getMapping())
 
         CreateIndexResponse createIndexResponse = createIndexRequestBuilder.execute().actionGet()
-
         if (createIndexResponse.isAcknowledged()) {
-          log.debug("Index ${indexName} successfully created!")
-
+          log.info("Index ${indexName} successfully created!")
           if(typePerIndex.get(indexName) == DeletedKBComponent.class.simpleName){
             DeletedKBComponent.list().each { DeletedKBComponent deletedKBComponent ->
               Map idx_record = [:]
               String recid = "${deletedKBComponent.class.name}:${deletedKBComponent.id}"
-
               idx_record.uuid = deletedKBComponent.uuid
               idx_record.name = deletedKBComponent.name
               idx_record.componentType = deletedKBComponent.componentType
@@ -641,27 +634,31 @@ class AdminController {
               idx_record.oldId = deletedKBComponent.oldId
 
               IndexResponse indexResponse = esclient.prepareIndex("gokbdeletedcomponents", 'component', recid).setSource(idx_record).get()
-
               if (indexResponse.getResult() != DocWriteResponse.Result.CREATED) {
                 log.error("Error on record DeletedKBComponent in Index 'gokbdeletedcomponents'")
               }
             }
-
-          }else {
+          }
+          else {
             FTControl.withTransaction {
               def res = FTControl.executeUpdate("delete FTControl c where c.domainClassName = :deleteFT", [deleteFT: "org.gokb.cred.${typePerIndex.get(indexName)}"])
-              log.debug("Result: ${res}")
+              log.info("Result: ${res}")
             }
-
             FTUpdateService.updateFTIndexes()
           }
-
-        } else {
-          log.debug("Index creation failed: ${createIndexResponse}")
         }
-    }
+        else {
+          log.info("Index creation failed: ${createIndexResponse}")
+        }
+      }
+    }.startOrQueue()
+    j.description = "Delete index ${params.name}"
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'ResetFreeTextIndexes')
+    j.startTime = new Date()
+
     redirect(action: 'manageFTControl')
   }
+
 
   def packagesChanges() {
     log.debug("packageChanges::${params}")
@@ -674,7 +671,7 @@ class AdminController {
     RefdataValue status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
 
     params.offset = params.offset ?: 0
-    params.max = params.max ? Integer.parseInt(params.max) : (user.defaultPageSize ?: 10)
+    params.max = params.max ? Integer.parseInt(params.max) : user.defaultPageSizeAsInteger
 
     result.packagesCount = Package.executeQuery('select count(pkg) ' + query, [status: status_deleted])[0]
     result.packages = Package.executeQuery('select pkg ' + query + " order by pkg.lastUpdated desc", [status: status_deleted], params)

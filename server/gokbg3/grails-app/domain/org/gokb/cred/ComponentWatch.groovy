@@ -12,6 +12,9 @@ class ComponentWatch {
   KBComponent component
   User user
 
+  Date dateCreated
+  Date lastUpdated
+
   static hasMany = [
   ]
 
@@ -21,12 +24,16 @@ class ComponentWatch {
   static constraints = {
     component blank: false, nullable:false
     user blank: false, nullable:false
+    dateCreated(nullable:true, blank:true)
+    lastUpdated(nullable:true, blank:true)
   }
 
   static mapping = {
     id column:'cw_id'
     component column: 'cw_component'
     user column: 'cw_user'
+    dateCreated column: 'cw_date_created'
+    lastUpdated column: 'cw_last_updated'
   }
 
  

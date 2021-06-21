@@ -41,7 +41,7 @@ class SearchService {
             result.refObject = KBComponent.get(Long.valueOf(params.refOid.split(':')[1]))
         }
 
-        result.max = params.max ? Integer.parseInt(params.max) : ( user.defaultPageSize ?: 10 );
+        result.max = params.max ? Integer.parseInt(params.max) : user ? user.defaultPageSizeAsInteger : 10
         result.offset = params.offset ? Integer.parseInt(params.offset) : 0;
 
         if( params.inline && !params.max) {

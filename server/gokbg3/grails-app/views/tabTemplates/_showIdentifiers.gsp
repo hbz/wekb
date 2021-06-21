@@ -1,4 +1,5 @@
-<div class="tab-pane ${d.publicationType?.value != 'Serial' ? 'active' : ''}" id="identifiers" role="tabpanel">
+<%@ page import="org.gokb.cred.TitleInstancePackagePlatform" %>
+<div class="tab-pane ${activeTab ? 'active' : ''}" id="identifiers" role="tabpanel">
     <dl>
         <dt>
             <gokb:annotatedLabel owner="${d}" property="ids">Identifiers</gokb:annotatedLabel>

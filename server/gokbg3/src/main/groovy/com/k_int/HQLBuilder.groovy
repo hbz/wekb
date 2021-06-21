@@ -146,9 +146,9 @@ public class HQLBuilder {
     }
 
 
-    log.debug("Attempt count qry ${count_hql}");
-    log.debug("Attempt qry ${fetch_hql}");
-    log.debug("Bindvars ${hql_builder_context.bindvars}");
+    log.info("Attempt count qry ${count_hql}");
+    log.info("Attempt qry ${fetch_hql}");
+    log.info("Bindvars ${hql_builder_context.bindvars}");
     def count_start_time = System.currentTimeMillis();
     result.reccount = baseclass.executeQuery(count_hql, hql_builder_context.bindvars,[readOnly:true])[0]
 

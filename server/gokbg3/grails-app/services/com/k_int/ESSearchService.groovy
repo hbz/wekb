@@ -38,8 +38,7 @@ class ESSearchService{
   def requestMapping = [
       generic: [
           "id",
-          "uuid",
-          "listStatus"
+          "uuid"
       ],
       simpleMap: [
           "curatoryGroup": "curatoryGroups.name",
@@ -49,6 +48,11 @@ class ESSearchService{
           "identifier",
           "ids",
           "identifiers",
+          "ddcs",
+          "ddc",
+          "curatoryGroupType",
+          "languages",
+          "language",
           "status",
           "componentType",
           "platform",
@@ -349,31 +353,37 @@ class ESSearchService{
   }
 
 
-  private void addIdentifierQuery(query, errors, qpars) {
-    def id_params = [:]
-    def val = null
+  private void addIdentifierQuery(query, errors, qpars, boolean orLinked) {
+    List valList = []
 
     if (qpars.identifier) {
-      val = qpars.identifier
+      valList.addAll(qpars.list("identifier"))
     }
     else if (qpars.ids) {
-      val = qpars.ids
+      valList.addAll(qpars.list("ids"))
     }
     else if (qpars.identifiers) {
-      val = qpars.identifiers
+      valList.addAll(qpars.list("identifiers"))
     }
 
-    if ( val?.trim() ) {
-      if (val.contains(',')) {
-        id_params['identifiers.namespace'] = val.split(',')[0]
-        id_params['identifiers.value'] = val.split(',')[1]
-      }else{
-        id_params['identifiers.value'] = val
+    valList.each { String val ->
+      if ( val.trim() ) {
+        Map id_params = [:]
+        if (val.contains(',')) {
+          id_params['identifiers.namespace'] = val.split(',')[0]
+          id_params['identifiers.value'] = val.split(',')[1]
+        }else{
+          id_params['identifiers.value'] = val
+        }
+
+        log.debug("Query ids for ${id_params}")
+        if(orLinked)
+          query.should(QueryBuilders.nestedQuery("identifiers", addIdQueries(id_params), ScoreMode.Max))
+        else
+          query.must(QueryBuilders.nestedQuery("identifiers", addIdQueries(id_params), ScoreMode.Max))
       }
-
-      log.debug("Query ids for ${id_params}")
-      query.must(QueryBuilders.nestedQuery("identifiers", addIdQueries(id_params), ScoreMode.Max))
     }
+
   }
 
   private void processNameFields(query, errors, qpars) {
@@ -436,6 +446,39 @@ class ESSearchService{
     }
   }
 
+  private void processNestedFields(query, errors, qpars) {
+    //QueryBuilder subQuery = QueryBuilders.boolQuery()
+    String field
+    Map<String, String> subQueryParams = [:]
+    //TODO this may be extended upon free-text (then, I need wildcardQuery as second field)
+    if(qpars.ddc) {
+      subQueryParams['ddcs.value'] = qpars.ddc
+    }
+    else if(qpars.ddcs) {
+      subQueryParams['ddcs.value'] = qpars.ddcs
+    }
+    if(qpars.language) {
+      subQueryParams['languages.value'] = qpars.language
+    }
+    else if(qpars.languages) {
+      subQueryParams['languages.value'] = qpars.languages
+    }
+    if(qpars.curatoryGroupType) {
+      subQueryParams['curatoryGroups.type'] = qpars.curatoryGroupType
+    }
+    subQueryParams.each { String k, String v ->
+      if(k == 'curatoryGroups.type' && v.toLowerCase() == 'other') {
+        QueryBuilder curatoryGroupsSubQuery = QueryBuilders.boolQuery()
+        curatoryGroupsSubQuery.should(QueryBuilders.termQuery(k, v))
+        curatoryGroupsSubQuery.should(QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery(k)))
+        query.must(curatoryGroupsSubQuery)
+      }
+      else {
+        query.must(QueryBuilders.termQuery(k, v))
+      }
+    }
+  }
+
   private void processLinkedField(query, field, val) {
     QueryBuilder linkedFieldQuery = QueryBuilders.boolQuery()
     def finalVal = val
@@ -486,7 +529,7 @@ class ESSearchService{
       return result
     }
     // now search
-    int scrollSize = 5000
+    int scrollSize = params.max ? params.int("max") : 5000
     result.result = "OK"
     result.scrollSize = scrollSize
     def esClient = ESWrapperService.getClient()
@@ -509,16 +552,16 @@ class ESSearchService{
       searchSourceBuilder.size(scrollSize)
       SearchRequest searchRequest = new SearchRequest(usedComponentTypes.values() as String[])
       //searchRequest.scroll("1m")
-      // ... set scroll interval to 1 minute
+      // ... set scroll interval to 15 minutes, reason: ERMS-3460
       //SearchRequest searchRequest = new SearchRequest(grailsApplication.config.gokb.es.index)
-      searchRequest.scroll("5m")
+      searchRequest.scroll("15m")
       searchRequest.source(searchSourceBuilder)
       response = esClient.search(searchRequest)
       result.lastPage = 0
     }
     else{
       SearchScrollRequest scrollRequest = new SearchScrollRequest(params.scrollId)
-      scrollRequest.scroll("5m")
+      scrollRequest.scroll("15m")
       response = esClient.searchScroll(scrollRequest)
       try{
         if (params.lastPage && Integer.valueOf(params.lastPage) > -1){
@@ -633,9 +676,18 @@ class ESSearchService{
       filterByComponentType(exactQuery, component_type, params)
       addStatusQuery(exactQuery, errors, params.status)
       addDateQueries(exactQuery, errors, params)
-      processNameFields(exactQuery, errors, params)
+      processNestedFields(exactQuery, errors, params)
       processGenericFields(exactQuery, errors, params)
-      addIdentifierQuery(exactQuery, errors, params)
+      if(params.name && ["ids","identifier","identifiers"].any { String identifierKey -> params.keySet().contains(identifierKey) }) {
+        QueryBuilder nameIdentifierQuery = QueryBuilders.boolQuery()
+        nameIdentifierQuery.should(QueryBuilders.matchQuery('name', params.name))
+        addIdentifierQuery(nameIdentifierQuery, errors, params, true)
+        exactQuery.must(nameIdentifierQuery).boost(2)
+      }
+      else {
+        processNameFields(exactQuery, errors, params)
+        addIdentifierQuery(exactQuery, errors, params, false)
+      }
       specifyQueryWithParams(params, exactQuery, errors, unknown_fields)
 
       if(unknown_fields.size() > 0){
@@ -754,7 +806,7 @@ class ESSearchService{
         }
       }
     } catch (Exception se) {
-      log.error("${se}")
+      se.printStackTrace()
       result = [:]
       result.result = "ERROR"
       result.errors = ['unknown': "There has been an unknown error processing the search request!"]
@@ -890,7 +942,7 @@ class ESSearchService{
         else if (field == "identifiers" && !toSkip) {
           domainMapping['_embedded']['ids'] = mapIdentifiers(val)
         }
-        else if (!toSkip && (field == "status" || field == "editStatus")) {
+        else if (!toSkip && (field == "status")) {
           domainMapping[field] = [id: RefdataCategory.lookup("KBComponent.${field}", val).id, name: val]
         }
         else if (esMapping[field] == false) {
@@ -1123,8 +1175,14 @@ class ESSearchService{
 
     QueryBuilder idQuery = QueryBuilders.boolQuery()
 
-    params.each { k,v ->
-      idQuery.must(QueryBuilders.termQuery(k, v))
+    if(params.containsKey('identifiers.namespace')) {
+      idQuery.must(QueryBuilders.termQuery('identifiers.namespace', params['identifiers.namespace']))
+      idQuery.must(QueryBuilders.wildcardQuery('identifiers.value', params['identifiers.value']))
+    }
+    else {
+      params.each { k, v ->
+        idQuery.must(QueryBuilders.termQuery(k, v))
+      }
     }
 
     return idQuery
