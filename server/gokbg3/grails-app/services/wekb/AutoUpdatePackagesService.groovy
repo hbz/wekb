@@ -30,15 +30,18 @@ class AutoUpdatePackagesService {
     Map updateFromSource(Package p, User user = null, ignoreLastChanged = false) {
         log.debug("updateFromSource")
 
-        Date currentDate = new Date();
+        Date currentDate = new Date()
+        Date currentDatePlus12Hours
 
-        Calendar c = Calendar.getInstance();
-        c.setTime(runningStartDate);
-        c.add(Calendar.HOUR, +12);
-        Date currentDatePlus12Hours = c.getTime();
+        if(runningStartDate) {
+            Calendar c = Calendar.getInstance()
+            c.setTime(runningStartDate)
+            c.add(Calendar.HOUR, +12)
+            currentDatePlus12Hours = c.getTime()
+        }
 
         //Wenn Running blockiert ist und dies länger als ein Tag
-        if(running && currentDatePlus12Hours.after(currentDate)){
+        if(running && runningStartDate && currentDatePlus12Hours.after(currentDate)){
             running = false
             runningStartDate = null
         }
