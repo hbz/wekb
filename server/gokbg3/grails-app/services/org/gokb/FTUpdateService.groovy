@@ -55,7 +55,7 @@ class FTUpdateService {
 
         result.description = kbc.description
         result.descriptionURL = kbc.descriptionURL
-        result.sortname = kbc.name
+        result.sortname = kbc.normname
         result.altname = []
 
         result.lastUpdatedDisplay = dateFormatService.formatIsoTimestamp(kbc.lastUpdated)
@@ -147,7 +147,7 @@ class FTUpdateService {
         result._id = "${kbc.class.name}:${kbc.id}"
         result.uuid = kbc.uuid
         result.name = kbc.name
-        result.sortname = kbc.name
+        result.sortname = kbc.normname
         result.altname = []
         result.updater = 'org'
         kbc.variantNames.each { vn ->
@@ -211,7 +211,7 @@ class FTUpdateService {
         result._id = "${kbc.class.name}:${kbc.id}"
         result.uuid = kbc.uuid
         result.name = kbc.name
-        result.sortname = kbc.name
+        result.sortname = kbc.normname
         result.updater = 'platform'
         result.cpname = kbc.provider?.name
         result.provider = kbc.provider ? kbc.provider.getLogEntityId() : ""
@@ -277,7 +277,7 @@ class FTUpdateService {
         result._id = "${kbc.class.name}:${kbc.id}"
         result.uuid = kbc.uuid
         result.name = kbc.name
-        result.sortname = kbc.name
+        result.sortname = kbc.normname
         result.updater = 'journal'
         // result.publisher = kbc.currentPublisher?.name
         result.publisher = current_pub ? current_pub.getLogEntityId() : ""
@@ -307,7 +307,7 @@ class FTUpdateService {
         result._id = "${kbc.class.name}:${kbc.id}"
         result.uuid = kbc.uuid
         result.name = kbc.name
-        result.sortname = kbc.name
+        result.sortname = kbc.normname
         // result.publisher = kbc.currentPublisher?.name
         result.publisher = current_pub ? current_pub.getLogEntityId() : ""
         result.publisherName = current_pub?.name
@@ -338,7 +338,7 @@ class FTUpdateService {
         result._id = "${kbc.class.name}:${kbc.id}"
         result.uuid = kbc.uuid
         result.name = kbc.name
-        result.sortname = kbc.name
+        result.sortname = kbc.normname
         // result.publisher = kbc.currentPublisher?.name
         result.publisher = current_pub ? current_pub.getLogEntityId() : ""
         result.publisherName = current_pub?.name
@@ -368,7 +368,7 @@ class FTUpdateService {
         result._id = "${kbc.class.name}:${kbc.id}"
         result.uuid = kbc.uuid
         result.name = kbc.name
-        result.sortname = kbc.name
+        result.sortname = kbc.normname
 //         result.publisher = kbc.currentPublisher?.name
         result.publisher = current_pub ? current_pub.getLogEntityId() : ""
         result.publisherName = current_pub?.name
