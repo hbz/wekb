@@ -25,8 +25,23 @@ class AutoUpdatePackagesService {
     ConcurrencyManagerService concurrencyManagerService
     Map result = [result: JobResult.STATUS_SUCCESS]
 
+    public static Date runningStartDate
+
     Map updateFromSource(Package p, User user = null, ignoreLastChanged = false) {
         log.debug("updateFromSource")
+
+        Date currentDate = new Date();
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(runningStartDate);
+        c.add(Calendar.HOUR, +12);
+        Date currentDatePlus12Hours = c.getTime();
+
+        //Wenn Running blockiert ist und dies länger als ein Tag
+        if(running && currentDatePlus12Hours.after(currentDate)){
+            running = false
+            runningStartDate = null
+        }
 
         Date startTime = new Date()
         def uuid = UUID.randomUUID().toString()
@@ -34,6 +49,7 @@ class AutoUpdatePackagesService {
             if (running == false || user) {
 
                 if (!user) {
+                    runningStartDate = new Date()
                     running = true
                 }
 
@@ -42,6 +58,7 @@ class AutoUpdatePackagesService {
                     result = [result: JobResult.STATUS_SUCCESS, message: (user ? "Manuell" : "Auto") + " Update Package success"]
                 }
                 if (!user) {
+                    runningStartDate = null
                     running = false
                 }
             } else {
