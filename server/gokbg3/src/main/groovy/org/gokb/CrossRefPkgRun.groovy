@@ -343,7 +343,8 @@ class CrossRefPkgRun {
               groupId: (job.groupId),
               startTime: (job.startTime),
               endTime: (job.endTime),
-              linkedItemId: (job.linkedItem?.id)
+              linkedItemId: (job.linkedItem?.id),
+              groupId: curatoryGroup
       ]
 
       if (!result_object) {
