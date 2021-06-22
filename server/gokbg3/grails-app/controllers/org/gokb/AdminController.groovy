@@ -591,10 +591,9 @@ class AdminController {
 
   @Secured(['ROLE_SUPERUSER'])
   def deleteIndex() {
+    String indexName = params.name
     Job j = concurrencyManagerService.createJob {
-      Map<String, Object> result = [:]
-      if(params.name) {
-        String indexName = params.name
+      if(indexName) {
         log.info("deleteIndex ${indexName} ...")
         Client esclient = ESWrapperService.getClient()
         IndicesAdminClient adminClient = esclient.admin().indices()
