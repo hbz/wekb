@@ -4,7 +4,6 @@ import de.wekb.helper.RCConstants
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
 import groovyx.net.http.URIBuilder
-
 import org.apache.lucene.search.join.ScoreMode
 import org.elasticsearch.action.ActionFuture
 import org.elasticsearch.action.search.*
@@ -72,6 +71,11 @@ class ESSearchService{
           tippTitle: "tippTitle",
           linkedTitle: "tippTitle",
           title: "tippTitle"
+      ],
+      refdata: [
+          "shibbolethAuthentication",
+          "counterCertified",
+          "ipAuthentication"
       ],
       dates: [
           "changedSince",
@@ -697,7 +701,7 @@ class ESSearchService{
       if( !errors && exactQuery.hasClauses() ) {
         Client esclient = ESWrapperService.getClient()
         SearchRequestBuilder es_request =  esclient.prepareSearch()
-
+        //println exactQuery
         es_request.setIndices(grailsApplication.config.searchApi.indices as String[])
         es_request.setTypes(grailsApplication.config.searchApi.types)
         es_request.setQuery(exactQuery)
@@ -838,6 +842,18 @@ class ESSearchService{
       }
       else if (requestMapping.linked?.containsKey(k)){
         processLinkedField(exactQuery, requestMapping.linked[k], v)
+      }
+      else if (requestMapping.refdata && k in requestMapping.refdata){
+        QueryBuilder subQuery = QueryBuilders.boolQuery()
+        List<String> values = params.list(k)
+        values.each { String value ->
+          if(value == "null") {
+            subQuery.should(QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery(k)))
+          }
+          else subQuery.should(QueryBuilders.matchQuery(k, value))
+        }
+        subQuery
+        exactQuery.must(subQuery)
       }
       else if (k.contains('platform') || k.contains('Platform')){
         if (!platformParam){
