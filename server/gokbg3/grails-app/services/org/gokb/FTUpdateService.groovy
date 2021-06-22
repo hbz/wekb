@@ -710,10 +710,7 @@ class FTUpdateService {
   private String generateSortName(String input_title) {
     if (!input_title) return null
     String s1 = Normalizer.normalize(input_title, Normalizer.Form.NFKD).trim().toLowerCase()
-    s1 = s1.replaceFirst('^copy of ','')
-    s1 = s1.replaceFirst('^the ','')
-    s1 = s1.replaceFirst('^a ','')
-    s1 = s1.replaceFirst('^der ','')
+   
 
     return s1.trim()
 
