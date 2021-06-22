@@ -12,6 +12,8 @@ import org.gokb.cred.RefdataValue
 import wekb.Contact
 import wekb.DeletedKBComponent
 
+import java.text.Normalizer
+
 @Transactional
 class FTUpdateService {
 
@@ -29,11 +31,11 @@ class FTUpdateService {
    * see https://async.grails.org/latest/guide/index.html
    */
   def synchronized updateFTIndexes() {
-    log.debug("updateFTIndexes")
+    log.info("updateFTIndexes")
     if (running == false) {
       running = true
       doFTUpdate()
-      log.debug("FTUpdate done.")
+      log.info("FTUpdate done.")
       return new Date()
     }
     else {
@@ -43,7 +45,7 @@ class FTUpdateService {
   }
 
   def doFTUpdate() {
-    log.debug("Execute IndexUpdateJob starting at ${new Date()}")
+    log.info("Execute IndexUpdateJob starting at ${new Date()}")
     def esclient = ESWrapperService.getClient()
     try {
       updateES(esclient, org.gokb.cred.Package.class) { org.gokb.cred.Package kbc ->
@@ -55,7 +57,7 @@ class FTUpdateService {
 
         result.description = kbc.description
         result.descriptionURL = kbc.descriptionURL
-        result.sortname = kbc.normname
+        result.sortname = generateSortName(kbc.name)
         result.altname = []
 
         result.lastUpdatedDisplay = dateFormatService.formatIsoTimestamp(kbc.lastUpdated)
@@ -147,7 +149,7 @@ class FTUpdateService {
         result._id = "${kbc.class.name}:${kbc.id}"
         result.uuid = kbc.uuid
         result.name = kbc.name
-        result.sortname = kbc.normname
+        result.sortname = generateSortName(kbc.name)
         result.altname = []
         result.updater = 'org'
         kbc.variantNames.each { vn ->
@@ -211,7 +213,7 @@ class FTUpdateService {
         result._id = "${kbc.class.name}:${kbc.id}"
         result.uuid = kbc.uuid
         result.name = kbc.name
-        result.sortname = kbc.normname
+        result.sortname = generateSortName(kbc.name)
         result.updater = 'platform'
         result.cpname = kbc.provider?.name
         result.provider = kbc.provider ? kbc.provider.getLogEntityId() : ""
@@ -277,7 +279,7 @@ class FTUpdateService {
         result._id = "${kbc.class.name}:${kbc.id}"
         result.uuid = kbc.uuid
         result.name = kbc.name
-        result.sortname = kbc.normname
+        result.sortname = generateSortName(kbc.name)
         result.updater = 'journal'
         // result.publisher = kbc.currentPublisher?.name
         result.publisher = current_pub ? current_pub.getLogEntityId() : ""
@@ -307,7 +309,7 @@ class FTUpdateService {
         result._id = "${kbc.class.name}:${kbc.id}"
         result.uuid = kbc.uuid
         result.name = kbc.name
-        result.sortname = kbc.normname
+        result.sortname = generateSortName(kbc.name)
         // result.publisher = kbc.currentPublisher?.name
         result.publisher = current_pub ? current_pub.getLogEntityId() : ""
         result.publisherName = current_pub?.name
@@ -338,7 +340,7 @@ class FTUpdateService {
         result._id = "${kbc.class.name}:${kbc.id}"
         result.uuid = kbc.uuid
         result.name = kbc.name
-        result.sortname = kbc.normname
+        result.sortname = generateSortName(kbc.name)
         // result.publisher = kbc.currentPublisher?.name
         result.publisher = current_pub ? current_pub.getLogEntityId() : ""
         result.publisherName = current_pub?.name
@@ -368,7 +370,7 @@ class FTUpdateService {
         result._id = "${kbc.class.name}:${kbc.id}"
         result.uuid = kbc.uuid
         result.name = kbc.name
-        result.sortname = kbc.normname
+        result.sortname = generateSortName(kbc.name)
 //         result.publisher = kbc.currentPublisher?.name
         result.publisher = current_pub ? current_pub.getLogEntityId() : ""
         result.publisherName = current_pub?.name
@@ -703,5 +705,14 @@ class FTUpdateService {
   @javax.annotation.PreDestroy
   def destroy() {
     log.debug("Destroy")
+  }
+
+  private String generateSortName(String input_title) {
+    if (!input_title) return null
+    String s1 = Normalizer.normalize(input_title, Normalizer.Form.NFKD).trim().toLowerCase()
+   
+
+    return s1.trim()
+
   }
 }

@@ -7,6 +7,8 @@ import grails.converters.JSON
 import groovyx.net.http.RESTClient
 import org.apache.commons.lang.RandomStringUtils
 import org.apache.commons.lang.StringUtils
+import org.apache.xmlbeans.impl.store.Cur
+import org.gokb.cred.CuratoryGroup
 import org.gokb.cred.JobResult
 import org.gokb.cred.Package
 import org.gokb.cred.RefdataCategory
@@ -73,6 +75,18 @@ class AutoUpdatePackagesService {
             result = [result: JobResult.STATUS_FAIL, message: " Package have no source"]
         }
 
+        CuratoryGroup curatoryGroup
+        if (p.curatoryGroups && p.curatoryGroups?.size() > 0) {
+            List curatory_group_ids = user.curatoryGroups?.id?.intersect(p.curatoryGroups?.id)
+            if (curatory_group_ids?.size() == 1) {
+                curatoryGroup = curatory_group_ids[0]
+            }
+            else if (curatory_group_ids?.size() > 1) {
+                log.debug("Got more than one cg candidate!")
+                curatoryGroup = curatory_group_ids[0]
+            }
+        }
+
         def result_object = JobResult.findByUuid(uuid)
         if (!result_object) {
             def job_map = [
@@ -83,7 +97,8 @@ class AutoUpdatePackagesService {
                     statusText  : result.result,
                     startTime   : startTime,
                     endTime     : new Date(),
-                    linkedItemId: p.id
+                    linkedItemId: p.id,
+                    groupId: curatoryGroup
             ]
             new JobResult(job_map).save(flush: true)
         }
@@ -147,7 +162,7 @@ class AutoUpdatePackagesService {
                             if (respData?.message) {
                                 log.error("ygor message: ${respData.message}")
                             }
-                            result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "ygor message: ${respData.message}"]]]
+                            result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "YGOR ERROR: ${respData.message}"]]]
                             processing = false
                             error = true
                         }
@@ -161,7 +176,7 @@ class AutoUpdatePackagesService {
                                     log.debug("status of Ygor ${statusData.status} gokbJob #${statusData.gokbJobId}")
                                     if (statusData.status == 'FINISHED_UNDEFINED') {
                                         processing = false
-                                        result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "No valid URLs found."]]]
+                                        result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "YGOR ERROR: No valid URLs found."]]]
                                         log.debug("No valid URLs found.")
                                     }
 
@@ -178,7 +193,7 @@ class AutoUpdatePackagesService {
                                     log.error("GET ygor/enrichment/getStatus?jobId=${respData.jobId} => failure")
                                     log.error("ygor response message: $statusData.message")
 
-                                    result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "ygor response message: $statusData.message"]]]
+                                    result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "YGOR ERROR: response message: $statusData.message"]]]
                                     processing = false
                                     error = true
                                 }
@@ -189,17 +204,17 @@ class AutoUpdatePackagesService {
                         log.error("GET ygor${path} => failure")
                         log.error("ygor response: ${resp.responseBase}")
 
-                        result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "ygor response: ${resp.responseBase}"]]]
+                        result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "YGOR ERROR: response: ${resp.responseBase}"]]]
                         error = true
                     }
                 }
             } catch (Exception e) {
                 log.error("SourceUpdate Exception:", e);
-                result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "SourceUpdate Exception"]]]
+                result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "wekb ERROR: SourceUpdate Exception"]]]
                 error = true
             }
         } else {
-            result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "No user provided and no existing updateToken found!"]]]
+            result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "wekb ERROR: No user provided and no existing updateToken found!"]]]
             log.debug("No user provided and no existing updateToken found!")
             error = true
         }
