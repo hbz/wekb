@@ -31,11 +31,11 @@ class FTUpdateService {
    * see https://async.grails.org/latest/guide/index.html
    */
   def synchronized updateFTIndexes() {
-    log.debug("updateFTIndexes")
+    log.info("updateFTIndexes")
     if (running == false) {
       running = true
       doFTUpdate()
-      log.debug("FTUpdate done.")
+      log.info("FTUpdate done.")
       return new Date()
     }
     else {
@@ -45,7 +45,7 @@ class FTUpdateService {
   }
 
   def doFTUpdate() {
-    log.debug("Execute IndexUpdateJob starting at ${new Date()}")
+    log.info("Execute IndexUpdateJob starting at ${new Date()}")
     def esclient = ESWrapperService.getClient()
     try {
       updateES(esclient, org.gokb.cred.Package.class) { org.gokb.cred.Package kbc ->
