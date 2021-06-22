@@ -9,6 +9,7 @@
     </style>
 </head>
 <body>
+<g:set var="grailsApplication" bean="grailsApplication"/>
 
 <h1>Jobs with Error/Fail</h1>
 
@@ -17,8 +18,9 @@
         <thead>
         <tr>
             <th></th>
-            <th>Description</th>
-            <th>Component</th>
+            <th>Process</th>
+            <th>Package</th>
+            <th>Provider</th>
             <th>Type</th>
             <th>Status</th>
             <th>Start Time</th>
@@ -26,38 +28,49 @@
             <th>Curatory Group</th>
         </tr>
         </thead>
-        <g:each in="${jobResultList}" var="jobs" status="i">
+        <g:each in="${jobResultList}" var="job" status="i">
             <tr>
                 <td>
                     ${i + 1}
                 </td>
                 <td>
-                    <g:link controller="resource" action="show" id="${jobs.id}">
-                        ${jobs.description}
-                    </g:link>
+                    ${job.description}
+                    <br>
+                    <br>
+                    <g:set var="linkToJob" value="${grailsApplication.config.serverUrl + "/resource/show/${job.class.name}:${job.id}"}"/>
+                    ${linkToJob}
                 </td>
                 <td>
-                    ${jobs.linkedItem}
+                    ${job.linkedItem}
                 </td>
                 <td>
-                    ${jobs.type?.value}
+                    <g:set var="pkg" value="${org.gokb.cred.Package.get(job.linkedItemId)}"/>
+                    <g:if test="${pkg}">
+                        ${pkg.provider?.name}
+                    </g:if>
                 </td>
                 <td>
-                    ${jobs.statusText}
+                    ${job.type?.value}
                 </td>
                 <td>
-                    ${jobs.startTime}
+                    ${job.statusText}
                 </td>
                 <td>
-                    ${jobs.endTime}
+                    ${job.startTime}
                 </td>
                 <td>
-                    ${jobs.curatoryGroup}
+                    ${job.endTime}
+                </td>
+                <td>
+                    ${job.curatoryGroup}
                 </td>
             </tr>
         </g:each>
     </table>
 </g:if>
+<g:else>
+    No Jobs with Error/Fail found. All is right.
+</g:else>
 <br>
 <br>
 
