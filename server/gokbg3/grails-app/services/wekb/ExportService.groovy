@@ -20,6 +20,7 @@ import org.gokb.cred.TIPPCoverageStatement
 import org.gokb.cred.TitleInstancePackagePlatform
 
 import java.nio.file.Files
+import java.text.SimpleDateFormat
 
 
 @Transactional
@@ -31,7 +32,9 @@ class ExportService {
 
         def export_date = dateFormatService.formatDate(new Date())
 
-        def sanitize = { it ? "${it}".trim() : "" }
+        SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd')
+
+        def sanitize = { it ? (it instanceof Date ? sdf.format(it) : "${it}".trim()) : "" }
 
         outputStream.withWriter { writer ->
 
@@ -228,8 +231,9 @@ class ExportService {
 
     /*public void exportPackageTippsAsKBART(def outputStream, Package pkg) {
 
+        SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd')
 
-        def sanitize = { it ? "${it}".trim() : "" }
+        def sanitize = { it ? (it instanceof Date ? sdf.format(it) : "${it}".trim()) : "" }
 
         outputStream.withWriter { writer ->
 
@@ -506,7 +510,9 @@ class ExportService {
         List<String> titleHeaders = getTitleHeadersTSV()
         Map<String,List> export = [titleRow:titleHeaders,rows:[]]
 
-        def sanitize = { it ? "${it}".trim() : "" }
+        SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd')
+
+        def sanitize = { it ? (it instanceof Date ? sdf.format(it) : "${it}".trim()) : "" }
 
         def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
         def combo_pkg_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')

@@ -282,7 +282,7 @@ class PublicController {
 
     String export_date = dateFormatService.formatDate(new Date());
 
-    String filename = "wekb_package_${pkg.name.toLowerCase()}_${export_date}.tsv"
+    String filename = "wekb_package_${pkg.name.toLowerCase()}_${export_date}.txt"
 
     try {
       response.setContentType('text/tab-separated-values');
