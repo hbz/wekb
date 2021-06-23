@@ -76,14 +76,18 @@ class AutoUpdatePackagesService {
         }
 
         CuratoryGroup curatoryGroup
-        if (p.curatoryGroups && p.curatoryGroups?.size() > 0) {
-            List curatory_group_ids = user.curatoryGroups?.id?.intersect(p.curatoryGroups?.id)
-            if (curatory_group_ids?.size() == 1) {
-                curatoryGroup = curatory_group_ids[0]
-            }
-            else if (curatory_group_ids?.size() > 1) {
-                log.debug("Got more than one cg candidate!")
-                curatoryGroup = curatory_group_ids[0]
+        if (p.curatoryGroups && p.curatoryGroups.size() > 0) {
+
+            if(user) {
+                List curatory_group_ids = user.curatoryGroups.id?.intersect(p.curatoryGroups?.id)
+                if (curatory_group_ids.size() == 1) {
+                    curatoryGroup = curatory_group_ids[0]
+                } else if (curatory_group_ids.size() > 1) {
+                    log.debug("Got more than one cg candidate!")
+                    curatoryGroup = curatory_group_ids[0]
+                }
+            }else {
+                curatoryGroup = p.curatoryGroups[0]
             }
         }
 
