@@ -75,19 +75,19 @@ class AutoUpdatePackagesService {
             result = [result: JobResult.STATUS_FAIL, message: " Package have no source"]
         }
 
-        CuratoryGroup curatoryGroup
+        Long curatoryGroupId
         if (p.curatoryGroups && p.curatoryGroups.size() > 0) {
 
             if(user) {
                 List curatory_group_ids = user.curatoryGroups.id?.intersect(p.curatoryGroups?.id)
                 if (curatory_group_ids.size() == 1) {
-                    curatoryGroup = curatory_group_ids[0]
+                    curatoryGroupId = curatory_group_ids[0]
                 } else if (curatory_group_ids.size() > 1) {
                     log.debug("Got more than one cg candidate!")
-                    curatoryGroup = curatory_group_ids[0]
+                    curatoryGroupId = curatory_group_ids[0]
                 }
             }else {
-                curatoryGroup = p.curatoryGroups[0]
+                curatoryGroupId = p.curatoryGroups.id[0]
             }
         }
 
@@ -102,7 +102,7 @@ class AutoUpdatePackagesService {
                     startTime   : startTime,
                     endTime     : new Date(),
                     linkedItemId: p.id,
-                    groupId: curatoryGroup
+                    groupId: curatoryGroupId
             ]
             new JobResult(job_map).save(flush: true)
         }
