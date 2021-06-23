@@ -105,13 +105,14 @@ class ExportService {
 
             tipps.each { TitleInstancePackagePlatform tipp ->
 
-                if(tipp.coverageStatements.size() > 0) {
+                if(tipp.publicationType?.value == 'Serial') {
                     tipp.coverageStatements.each { TIPPCoverageStatement tippCoverageStatement ->
                         writer.write(sanitize(tipp.name) + '\t' +
                                 sanitize(tipp.firstAuthor) + '\t' +
                                 sanitize(tipp.firstEditor) + '\t' +
                                 sanitize(tipp.publisherName) + '\t' + //publisher_name
                                 sanitize(tipp.publicationType?.value) + '\t' +
+                                sanitize(tipp.medium?.value) + '\t' +
                                 sanitize(tipp.url) + '\t' +
                                 sanitize(tipp.getIdentifierValue('ISSN')) + '\t' +
                                 sanitize(tipp.getIdentifierValue('eISSN')) + '\t' +
@@ -136,6 +137,7 @@ class ExportService {
                                 sanitize(tipp.volumeNumber) + '\t' +
                                 sanitize(tipp.editionStatement) + '\t' +
                                 sanitize(tipp.series) + '\t' +
+                                sanitize(tipp.parentPublicationTitleId) + '\t' +
                                 sanitize(tippCoverageStatement.startDate) + '\t' + //date_first_issue_online
                                 sanitize(tippCoverageStatement.startVolume) + '\t' + //num_first_vol_online
                                 sanitize(tippCoverageStatement.startIssue) + '\t' + //num_first_issue_online
@@ -166,6 +168,7 @@ class ExportService {
                             sanitize(tipp.firstEditor) + '\t' +
                             sanitize(tipp.publisherName) + '\t' + //publisher_name
                             sanitize(tipp.publicationType?.value) + '\t' +
+                            sanitize(tipp.medium?.value) + '\t' +
                             sanitize(tipp.url) + '\t' +
                             sanitize(tipp.getIdentifierValue('ISSN')) + '\t' +
                             sanitize(tipp.getIdentifierValue('eISSN')) + '\t' +
@@ -190,6 +193,7 @@ class ExportService {
                             sanitize(tipp.volumeNumber) + '\t' +
                             sanitize(tipp.editionStatement) + '\t' +
                             sanitize(tipp.series) + '\t' +
+                            sanitize(tipp.parentPublicationTitleId) + '\t' +
                             '\t' + //date_first_issue_online
                             '\t' + //num_first_vol_online
                             '\t' + //num_first_issue_online
@@ -516,7 +520,7 @@ class ExportService {
 
         tipps.each { TitleInstancePackagePlatform tipp ->
 
-            if(tipp.coverageStatements.size() > 0) {
+            if(tipp.publicationType?.value == 'Serial') {
                 tipp.coverageStatements.each { TIPPCoverageStatement tippCoverageStatement ->
 
                     List row = []
@@ -525,6 +529,7 @@ class ExportService {
                     row.add(sanitize(tipp.firstEditor))
                     row.add(sanitize(tipp.publisherName)) //publisher_name
                     row.add(sanitize(tipp.publicationType?.value))
+                    row.add(sanitize(tipp.medium?.value))
                     row.add(sanitize(tipp.url))
                     row.add(sanitize(tipp.getIdentifierValue('ISSN')))
                     row.add(sanitize(tipp.getIdentifierValue('eISSN')))
@@ -549,6 +554,7 @@ class ExportService {
                     row.add(sanitize(tipp.volumeNumber))
                     row.add(sanitize(tipp.editionStatement))
                     row.add(sanitize(tipp.series))
+                    row.add(sanitize(tipp.parentPublicationTitleId))
                     row.add(sanitize(tippCoverageStatement.startDate)) //date_first_issue_online
                     row.add(sanitize(tippCoverageStatement.startVolume)) //num_first_vol_online
                     row.add(sanitize(tippCoverageStatement.startIssue)) //num_first_issue_online
@@ -581,6 +587,7 @@ class ExportService {
                 row.add(sanitize(tipp.firstEditor))
                 row.add(sanitize(tipp.publisherName)) //publisher_name
                 row.add(sanitize(tipp.publicationType?.value))
+                row.add(sanitize(tipp.medium?.value))
                 row.add(sanitize(tipp.url))
                 row.add(sanitize(tipp.getIdentifierValue('ISSN')))
                 row.add(sanitize(tipp.getIdentifierValue('eISSN')))
@@ -604,7 +611,7 @@ class ExportService {
                 row.add(sanitize(tipp.dateFirstOnline))
                 row.add(sanitize(tipp.volumeNumber))
                 row.add(sanitize(tipp.editionStatement))
-                row.add(sanitize(tipp.series))
+                row.add(sanitize(tipp.parentPublicationTitleId))
                 row.add("") //date_first_issue_online
                 row.add("") //num_first_vol_online
                 row.add("") //num_first_issue_online
