@@ -20,6 +20,7 @@ import org.gokb.cred.TIPPCoverageStatement
 import org.gokb.cred.TitleInstancePackagePlatform
 
 import java.nio.file.Files
+import java.text.SimpleDateFormat
 
 
 @Transactional
@@ -31,7 +32,9 @@ class ExportService {
 
         def export_date = dateFormatService.formatDate(new Date())
 
-        def sanitize = { it ? "${it}".trim() : "" }
+        SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd')
+
+        def sanitize = { it ? (it instanceof Date ? sdf.format(it) : "${it}".trim()) : "" }
 
         outputStream.withWriter { writer ->
 
@@ -105,19 +108,77 @@ class ExportService {
 
             tipps.each { TitleInstancePackagePlatform tipp ->
 
-                tipp.coverageStatements.each { TIPPCoverageStatement tippCoverageStatement ->
+                if(tipp.publicationType?.value == 'Serial') {
+                    tipp.coverageStatements.each { TIPPCoverageStatement tippCoverageStatement ->
+                        writer.write(sanitize(tipp.name) + '\t' +
+                                sanitize(tipp.firstAuthor) + '\t' +
+                                sanitize(tipp.firstEditor) + '\t' +
+                                sanitize(tipp.publisherName) + '\t' + //publisher_name
+                                sanitize(tipp.publicationType?.value) + '\t' +
+                                sanitize(tipp.medium?.value) + '\t' +
+                                sanitize(tipp.url) + '\t' +
+                                sanitize(tipp.getPrintIdentifier()) + '\t' +
+                                sanitize(tipp.getOnlineIdentifier) + '\t' +
+                                sanitize(tipp.getTitleID()) + '\t' +
+                                sanitize(tipp.getIdentifierValue('DOI')) + '\t' +
+                                sanitize(tipp.subjectArea) + '\t' +
+                                sanitize(tipp.languages?.value.join(';')) + '\t' +
+                                sanitize(tipp.accessType?.value) + '\t' +
+                                sanitize(tipp.coverageDepth?.value) + '\t' +
+                                sanitize(tipp.pkg.name) + '\t' +
+                                '\t' + //package_id
+                                sanitize(tipp.accessStartDate) + '\t' +
+                                sanitize(tipp.accessEndDate) + '\t' +
+                                sanitize(tipp.lastChangedExternal) + '\t' +
+                                sanitize(tipp.status?.value) + '\t' +
+                                sanitize(tipp.getListPriceInEUR()) + '\t' + //listprice_eur
+                                sanitize(tipp.getListPriceInUSD()) + '\t' + //listprice_usd
+                                sanitize(tipp.getListPriceInGBP()) + '\t' + //listprice_gbp
+                                sanitize(tipp.note) + '\t' +
+                                sanitize(tipp.dateFirstInPrint) + '\t' +
+                                sanitize(tipp.dateFirstOnline) + '\t' +
+                                sanitize(tipp.volumeNumber) + '\t' +
+                                sanitize(tipp.editionStatement) + '\t' +
+                                sanitize(tipp.series) + '\t' +
+                                sanitize(tipp.parentPublicationTitleId) + '\t' +
+                                sanitize(tippCoverageStatement.startDate) + '\t' + //date_first_issue_online
+                                sanitize(tippCoverageStatement.startVolume) + '\t' + //num_first_vol_online
+                                sanitize(tippCoverageStatement.startIssue) + '\t' + //num_first_issue_online
+                                sanitize(tippCoverageStatement.endDate) + '\t' + //date_last_issue_online
+                                sanitize(tippCoverageStatement.endVolume) + '\t' + //num_last_vol_online
+                                sanitize(tippCoverageStatement.endIssue) + '\t' + //num_last_issue_online
+                                sanitize(tipp.getIdentifierValue('zdb')) + '\t' +
+                                sanitize(tipp.getIdentifierValue('ezb')) + '\t' +
+                                '\t' + //package_ezb_anchor
+                                '\t' + //oa_gold
+                                '\t' + //oa_hybrid
+                                sanitize(tipp.getOAAPCPriceInEUR()) + '\t' + //oa_apc_eur
+                                sanitize(tipp.getOAAPCPriceInUSD()) + '\t' + //oa_apc_usd
+                                sanitize(tipp.getOAAPCPriceInGBP()) + '\t' + //oa_apc_gbp
+                                '\t' + //package_isil
+                                sanitize(tipp.uuid) + '\t' +
+                                sanitize(tipp.pkg.uuid) + '\t' +
+                                '\t' + //package_isci
+                                '\t' + //ill_indicator
+                                sanitize(tipp.precedingPublicationTitleId) + '\t' +
+                                sanitize(tipp.supersedingPublicationTitleId) + '\t' + //superseding_publication_title_id
+                                sanitize(tippCoverageStatement.coverageDepth?.value) + '\t' + //embargo_info
+                                '\n')
+                    }
+                }else{
                     writer.write(sanitize(tipp.name) + '\t' +
                             sanitize(tipp.firstAuthor) + '\t' +
                             sanitize(tipp.firstEditor) + '\t' +
                             sanitize(tipp.publisherName) + '\t' + //publisher_name
                             sanitize(tipp.publicationType?.value) + '\t' +
+                            sanitize(tipp.medium?.value) + '\t' +
                             sanitize(tipp.url) + '\t' +
-                            sanitize(tipp.getIdentifierValue('ISSN')) + '\t' +
-                            sanitize(tipp.getIdentifierValue('eISSN')) + '\t' +
+                            sanitize(tipp.getPrintIdentifier()) + '\t' +
+                            sanitize(tipp.getOnlineIdentifier) + '\t' +
                             sanitize(tipp.getTitleID()) + '\t' +
                             sanitize(tipp.getIdentifierValue('DOI')) + '\t' +
                             sanitize(tipp.subjectArea) + '\t' +
-                            sanitize(tipp.languages?.value.join(',')) + '\t' +
+                            sanitize(tipp.languages?.value.join(';')) + '\t' +
                             sanitize(tipp.accessType?.value) + '\t' +
                             sanitize(tipp.coverageDepth?.value) + '\t' +
                             sanitize(tipp.pkg.name) + '\t' +
@@ -126,29 +187,30 @@ class ExportService {
                             sanitize(tipp.accessEndDate) + '\t' +
                             sanitize(tipp.lastChangedExternal) + '\t' +
                             sanitize(tipp.status?.value) + '\t' +
-                            sanitize(tipp.getListPriceInEUR()) +'\t' + //listprice_eur
-                            sanitize(tipp.getListPriceInUSD()) +'\t' + //listprice_usd
-                            sanitize(tipp.getListPriceInGBP()) +'\t' + //listprice_gbp
-                            sanitize(tipp.note) +'\t' +
+                            sanitize(tipp.getListPriceInEUR()) + '\t' + //listprice_eur
+                            sanitize(tipp.getListPriceInUSD()) + '\t' + //listprice_usd
+                            sanitize(tipp.getListPriceInGBP()) + '\t' + //listprice_gbp
+                            sanitize(tipp.note) + '\t' +
                             sanitize(tipp.dateFirstInPrint) + '\t' +
                             sanitize(tipp.dateFirstOnline) + '\t' +
                             sanitize(tipp.volumeNumber) + '\t' +
                             sanitize(tipp.editionStatement) + '\t' +
                             sanitize(tipp.series) + '\t' +
-                            sanitize(tippCoverageStatement.startDate) + '\t' + //date_first_issue_online
-                            sanitize(tippCoverageStatement.startVolume) + '\t' + //num_first_vol_online
-                            sanitize(tippCoverageStatement.startIssue) + '\t' + //num_first_issue_online
-                            sanitize(tippCoverageStatement.endDate) + '\t' + //date_last_issue_online
-                            sanitize(tippCoverageStatement.endVolume) + '\t' + //num_last_vol_online
-                            sanitize(tippCoverageStatement.endIssue) + '\t' + //num_last_issue_online
-                            sanitize(tipp.getIdentifierValue('zdb')) + '\t' +
-                            sanitize(tipp.getIdentifierValue('ezb')) + '\t' +
+                            sanitize(tipp.parentPublicationTitleId) + '\t' +
+                            '\t' + //date_first_issue_online
+                            '\t' + //num_first_vol_online
+                            '\t' + //num_first_issue_online
+                            '\t' + //date_last_issue_online
+                            '\t' + //num_last_vol_online
+                            '\t' + //num_last_issue_online
+                            '\t' +
+                            '\t' +
                             '\t' + //package_ezb_anchor
                             '\t' + //oa_gold
                             '\t' + //oa_hybrid
-                            sanitize(tipp.getOAAPCPriceInEUR()) +'\t' + //oa_apc_eur
-                            sanitize(tipp.getOAAPCPriceInUSD()) +'\t' + //oa_apc_usd
-                            sanitize(tipp.getOAAPCPriceInGBP()) +'\t' + //oa_apc_gbp
+                            sanitize(tipp.getOAAPCPriceInEUR()) + '\t' + //oa_apc_eur
+                            sanitize(tipp.getOAAPCPriceInUSD()) + '\t' + //oa_apc_usd
+                            sanitize(tipp.getOAAPCPriceInGBP()) + '\t' + //oa_apc_gbp
                             '\t' + //package_isil
                             sanitize(tipp.uuid) + '\t' +
                             sanitize(tipp.pkg.uuid) + '\t' +
@@ -156,7 +218,7 @@ class ExportService {
                             '\t' + //ill_indicator
                             sanitize(tipp.precedingPublicationTitleId) + '\t' +
                             sanitize(tipp.supersedingPublicationTitleId) + '\t' + //superseding_publication_title_id
-                            sanitize(tippCoverageStatement.coverageDepth?.value) + '\t' + //embargo_info
+                            '\t' + //embargo_info
                             '\n')
                 }
             }
@@ -167,10 +229,11 @@ class ExportService {
         outputStream.close()
     }
 
-    public void exportPackageTippsAsKBART(def outputStream, Package pkg) {
+    /*public void exportPackageTippsAsKBART(def outputStream, Package pkg) {
 
+        SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd')
 
-        def sanitize = { it ? "${it}".trim() : "" }
+        def sanitize = { it ? (it instanceof Date ? sdf.format(it) : "${it}".trim()) : "" }
 
         outputStream.withWriter { writer ->
 
@@ -216,8 +279,8 @@ class ExportService {
 
                 tipp.coverageStatements.each { TIPPCoverageStatement tippCoverageStatement ->
                     writer.write(sanitize(tipp.name) + '\t' +
-                            sanitize(tipp.getIdentifierValue('ISSN')) + '\t' +
-                            sanitize(tipp.getIdentifierValue('eISSN')) + '\t' +
+                            sanitize(tipp.getPrintIdentifier()) + '\t' +
+                            sanitize(tipp.getOnlineIdentifier) + '\t' +
                             sanitize(tippCoverageStatement.startDate) + '\t' + //date_first_issue_online
                             sanitize(tippCoverageStatement.startVolume) + '\t' + //num_first_vol_online
                             sanitize(tippCoverageStatement.startIssue) + '\t' + //num_first_issue_online
@@ -248,7 +311,7 @@ class ExportService {
             writer.close();
         }
         outputStream.close()
-    }
+    }*/
 
 
     public void exportOriginalKBART(def outputStream, Package pkg) {
@@ -427,5 +490,222 @@ class ExportService {
 
         sheet.addValidationData(validation)
 
+    }
+
+    String generateSeparatorTableString(Collection titleRow, Collection columnData,String separator) {
+        List output = []
+        output.add(titleRow.join(separator))
+        columnData.each { row ->
+            if(row.size() > 0)
+                output.add(row.join(separator))
+            else output.add(" ")
+        }
+        output.join("\n")
+    }
+
+
+    def exportPackageTippsAsTSVNew(def outputStream, Package pkg) {
+
+        def export_date = dateFormatService.formatDate(new Date())
+        List<String> titleHeaders = getTitleHeadersTSV()
+        Map<String,List> export = [titleRow:titleHeaders,rows:[]]
+
+        SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd')
+
+        def sanitize = { it ? (it instanceof Date ? sdf.format(it) : "${it}".trim()) : "" }
+
+        def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
+        def combo_pkg_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
+
+        Map queryParams = [:]
+        queryParams.p = pkg.id
+        queryParams.sd = status_deleted
+        queryParams.ct = combo_pkg_tipps
+
+        List<TitleInstancePackagePlatform> tipps = TitleInstancePackagePlatform.executeQuery("select tipp from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=:p and c.toComponent=tipp and tipp.status != :sd and c.type = :ct order by tipp.name", queryParams, [readOnly: true])
+
+        tipps.each { TitleInstancePackagePlatform tipp ->
+
+            if(tipp.publicationType?.value == 'Serial') {
+                tipp.coverageStatements.each { TIPPCoverageStatement tippCoverageStatement ->
+
+                    List row = []
+                    row.add(sanitize(tipp.name))
+                    row.add(sanitize(tipp.firstAuthor))
+                    row.add(sanitize(tipp.firstEditor))
+                    row.add(sanitize(tipp.publisherName)) //publisher_name
+                    row.add(sanitize(tipp.publicationType?.value))
+                    row.add(sanitize(tipp.medium?.value))
+                    row.add(sanitize(tipp.url))
+                    row.add(sanitize(tipp.getPrintIdentifier()))
+                    row.add(sanitize(tipp.getOnlineIdentifier))
+                    row.add(sanitize(tipp.getTitleID()))
+                    row.add(sanitize(tipp.getIdentifierValue('DOI')))
+                    row.add(sanitize(tipp.subjectArea))
+                    row.add(sanitize(tipp.languages?.value.join(';')))
+                    row.add(sanitize(tipp.accessType?.value))
+                    row.add(sanitize(tipp.coverageDepth?.value))
+                    row.add(sanitize(tipp.pkg.name))
+                    row.add("") //package_id
+                    row.add(sanitize(tipp.accessStartDate))
+                    row.add(sanitize(tipp.accessEndDate))
+                    row.add(sanitize(tipp.lastChangedExternal))
+                    row.add(sanitize(tipp.status?.value))
+                    row.add(sanitize(tipp.getListPriceInEUR())) //listprice_eur
+                    row.add(sanitize(tipp.getListPriceInUSD())) //listprice_usd
+                    row.add(sanitize(tipp.getListPriceInGBP())) //listprice_gbp
+                    row.add(sanitize(tipp.note))
+                    row.add(sanitize(tipp.dateFirstInPrint))
+                    row.add(sanitize(tipp.dateFirstOnline))
+                    row.add(sanitize(tipp.volumeNumber))
+                    row.add(sanitize(tipp.editionStatement))
+                    row.add(sanitize(tipp.series))
+                    row.add(sanitize(tipp.parentPublicationTitleId))
+                    row.add(sanitize(tippCoverageStatement.startDate)) //date_first_issue_online
+                    row.add(sanitize(tippCoverageStatement.startVolume)) //num_first_vol_online
+                    row.add(sanitize(tippCoverageStatement.startIssue)) //num_first_issue_online
+                    row.add(sanitize(tippCoverageStatement.endDate)) //date_last_issue_online
+                    row.add(sanitize(tippCoverageStatement.endVolume)) //num_last_vol_online
+                    row.add(sanitize(tippCoverageStatement.endIssue)) //num_last_issue_online
+                    row.add(sanitize(tipp.getIdentifierValue('zdb')))
+                    row.add(sanitize(tipp.getIdentifierValue('ezb')))
+                    row.add("") //package_ezb_anchor
+                    row.add("") //oa_gold
+                    row.add("") //oa_hybrid
+                    row.add(sanitize(tipp.getOAAPCPriceInEUR())) //oa_apc_eur
+                    row.add(sanitize(tipp.getOAAPCPriceInUSD())) //oa_apc_usd
+                    row.add(sanitize(tipp.getOAAPCPriceInGBP())) //oa_apc_gbp
+                    row.add("") //package_isil
+                    row.add(sanitize(tipp.uuid))
+                    row.add(sanitize(tipp.pkg.uuid))
+                    row.add("") //package_isci
+                    row.add("") //ill_indicator
+                    row.add(sanitize(tipp.precedingPublicationTitleId))
+                    row.add(sanitize(tipp.supersedingPublicationTitleId)) //superseding_publication_title_id
+                    row.add(sanitize(tippCoverageStatement.coverageDepth?.value)) //embargo_info
+
+                    export.rows.add(row)
+                }
+            }else{
+                List row = []
+                row.add(sanitize(tipp.name))
+                row.add(sanitize(tipp.firstAuthor))
+                row.add(sanitize(tipp.firstEditor))
+                row.add(sanitize(tipp.publisherName)) //publisher_name
+                row.add(sanitize(tipp.publicationType?.value))
+                row.add(sanitize(tipp.medium?.value))
+                row.add(sanitize(tipp.url))
+                row.add(sanitize(tipp.getPrintIdentifier()))
+                row.add(sanitize(tipp.getOnlineIdentifier))
+                row.add(sanitize(tipp.getTitleID()))
+                row.add(sanitize(tipp.getIdentifierValue('DOI')))
+                row.add(sanitize(tipp.subjectArea))
+                row.add(sanitize(tipp.languages?.value.join(';')))
+                row.add(sanitize(tipp.accessType?.value))
+                row.add(sanitize(tipp.coverageDepth?.value))
+                row.add(sanitize(tipp.pkg.name))
+                row.add("") //package_id
+                row.add(sanitize(tipp.accessStartDate))
+                row.add(sanitize(tipp.accessEndDate))
+                row.add(sanitize(tipp.lastChangedExternal))
+                row.add(sanitize(tipp.status?.value))
+                row.add(sanitize(tipp.getListPriceInEUR())) //listprice_eur
+                row.add(sanitize(tipp.getListPriceInUSD())) //listprice_usd
+                row.add(sanitize(tipp.getListPriceInGBP())) //listprice_gbp
+                row.add(sanitize(tipp.note))
+                row.add(sanitize(tipp.dateFirstInPrint))
+                row.add(sanitize(tipp.dateFirstOnline))
+                row.add(sanitize(tipp.volumeNumber))
+                row.add(sanitize(tipp.editionStatement))
+                row.add(sanitize(tipp.parentPublicationTitleId))
+                row.add("") //date_first_issue_online
+                row.add("") //num_first_vol_online
+                row.add("") //num_first_issue_online
+                row.add("") //date_last_issue_online
+                row.add("") //num_last_vol_online
+                row.add("") //num_last_issue_online
+                row.add(sanitize(tipp.getIdentifierValue('zdb')))
+                row.add(sanitize(tipp.getIdentifierValue('ezb')))
+                row.add("") //package_ezb_anchor
+                row.add("") //oa_gold
+                row.add("") //oa_hybrid
+                row.add(sanitize(tipp.getOAAPCPriceInEUR())) //oa_apc_eur
+                row.add(sanitize(tipp.getOAAPCPriceInUSD())) //oa_apc_usd
+                row.add(sanitize(tipp.getOAAPCPriceInGBP())) //oa_apc_gbp
+                row.add("") //package_isil
+                row.add(sanitize(tipp.uuid))
+                row.add(sanitize(tipp.pkg.uuid))
+                row.add("") //package_isci
+                row.add("") //ill_indicator
+                row.add(sanitize(tipp.precedingPublicationTitleId))
+                row.add(sanitize(tipp.supersedingPublicationTitleId)) //superseding_publication_title_id
+                row.add("") //embargo_info
+
+                export.rows.add(row)
+            }
+        }
+
+        outputStream.withWriter { writer ->
+            writer.write("we:kb Export : ${pkg.provider?.name} : ${pkg.name} : ${export_date}\n");
+            writer.write(generateSeparatorTableString(export.titleRow, export.rows, '|'))
+        }
+        outputStream.flush()
+        outputStream.close()
+    }
+
+    List<String> getTitleHeadersTSV() {
+        ['publication_title',
+         'first_author',
+         'first_editor',
+         'publisher_name',
+         'publication_type',
+         'medium',
+         'title_url',
+         'print_identifier',
+         'online_identifier',
+         'title_id',
+         'doi_identifier',
+         'subject_area',
+         'language',
+         'access_type',
+         'coverage_depth',
+         'package_name',
+         'package_id',
+         'access_start_date',
+         'access_end_date',
+         'last_changed',
+         'status',
+         'listprice_eur',
+         'listprice_usd',
+         'listprice_gbp',
+         'notes',
+         'date_monograph_published_print',
+         'date_monograph_published_online',
+         'monograph_volume',
+         'monograph_edition',
+         'monograph_parent_collection_title',
+         'parent_publication_title_id',
+         'date_first_issue_online',
+         'num_first_vol_online',
+         'num_first_issue_online',
+         'date_last_issue_online',
+         'num_last_vol_online',
+         'num_last_issue_online',
+         'zdb_id',
+         'ezb_id',
+         'package_ezb_anchor',
+         'oa_gold',
+         'oa_hybrid',
+         'oa_apc_eur',
+         'oa_apc_usd',
+         'oa_apc_gbp',
+         'package_isil',
+         'title_gokb_uuid',
+         'package_gokb_uuid',
+         'package_isci',
+         'ill_indicator',
+         'preceding_publication_title_id',
+         'superseding_publication_title_id',
+         'embargo_info']
     }
 }

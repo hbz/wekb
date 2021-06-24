@@ -1601,7 +1601,7 @@ class WorkflowController{
       filename = "wekb_package_${packages_to_export[0].provider?.name}_${packages_to_export[0].name}_${export_date}.tsv"
     }
     else{
-      filename = "wekb_package_multiple_packages_${export_date}.tsv"
+      filename = "wekb_package_multiple_packages_${export_date}.txt"
     }
 
     try{

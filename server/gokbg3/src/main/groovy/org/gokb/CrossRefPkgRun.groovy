@@ -340,7 +340,7 @@ class CrossRefPkgRun {
               type: (job.type),
               statusText: (jsonResult ? (jsonResult.result) : job.status),
               ownerId: (job.ownerId),
-              groupId: (job.groupId),
+              groupId: (job.groupId ?: curatoryGroup?.id),
               startTime: (job.startTime),
               endTime: (job.endTime),
               linkedItemId: (job.linkedItem?.id)
