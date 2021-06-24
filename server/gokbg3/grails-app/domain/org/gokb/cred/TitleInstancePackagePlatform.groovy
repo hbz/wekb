@@ -1491,6 +1491,16 @@ class TitleInstancePackagePlatform extends KBComponent {
   }
 
   @Transient
+  public String getPrintIdentifier(){
+    ids?.findAll{ it.namespace.value.toLowerCase() in ["issn", "pisbn"]}?.value.join(';')
+  }
+
+  @Transient
+  public String getOnlineIdentifier(){
+    ids?.findAll{ it.namespace.value.toLowerCase() in ["eissn", "isbn"]}?.value.join(';')
+  }
+
+  @Transient
   public String getListPriceInEUR(){
     RefdataValue listType = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'list')
 
