@@ -41,6 +41,7 @@ class ESSearchService{
       ],
       simpleMap: [
           "curatoryGroup": "curatoryGroups.name",
+          "curatoryGroupExact": "curatoryGroups.name.keyword",
           "role": "roles"
       ],
       complex: [
@@ -497,7 +498,8 @@ class ESSearchService{
 
     linkedFieldQuery.should(QueryBuilders.termQuery(field, finalVal))
     linkedFieldQuery.should(QueryBuilders.termQuery("${field}Uuid".toString(), val))
-    linkedFieldQuery.should(QueryBuilders.termQuery("${field}Name".toString(), val))
+    //linkedFieldQuery.should(QueryBuilders.termQuery("${field}Name".toString(), val))
+    linkedFieldQuery.should(QueryBuilders.wildcardQuery("${field}Name".toString(), "*${val}*")) //check if it does not cause side effects! May be subject of further precision!
     linkedFieldQuery.minimumNumberShouldMatch(1)
 
     query.must(linkedFieldQuery)
