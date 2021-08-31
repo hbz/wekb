@@ -411,8 +411,10 @@ class ApiController {
 
   def sushiSources() {
     Map<String, Object> result = [:]
-    RefdataValue yes = RefdataCategory.lookup(RCConstants.YN, 'Yes'), no = RefdataCategory.lookup(RCConstants.YN, 'No')
-    Set<Platform> counter4Platforms = Platform.findAllByCounterR4SushiApiSupportedAndCounterR5SushiApiSupportedNotEqual(yes, yes).toSet(), counter5Platforms = Platform.findAllByCounterR5SushiApiSupported(yes).toSet()
+    RefdataValue yes = RefdataCategory.lookup(RCConstants.YN, 'Yes')
+    //Set<Platform> counter4Platforms = Platform.findAllByCounterR4SushiApiSupportedAndCounterR5SushiApiSupportedNotEqual(yes, yes).toSet(), counter5Platforms = Platform.findAllByCounterR5SushiApiSupported(yes).toSet()
+    Set counter4Platforms = Platform.executeQuery("select plat.uuid, plat.counterR4SushiServerUrl from Platform plat where plat.counterR4SushiApiSupported = :r4support and plat.counterR5SushiApiSupported != :r5support", [r4support: yes, r5support: yes]).toSet()
+    Set counter5Platforms = Platform.executeQuery("select plat.uuid, plat.counterR5SushiServerUrl from Platform plat where plat.counterR5SushiApiSupported = :r5support", [r5support: yes]).toSet()
     result.counter4ApiSources = counter4Platforms.size() > 0 ? counter4Platforms : []
     result.counter5ApiSources = counter5Platforms.size() > 0 ? counter5Platforms : []
     render result as JSON
