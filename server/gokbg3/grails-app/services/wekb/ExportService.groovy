@@ -118,7 +118,7 @@ class ExportService {
                                 sanitize(tipp.medium?.value) + '\t' +
                                 sanitize(tipp.url) + '\t' +
                                 sanitize(tipp.getPrintIdentifier()) + '\t' +
-                                sanitize(tipp.getOnlineIdentifier) + '\t' +
+                                sanitize(tipp.getOnlineIdentifier()) + '\t' +
                                 sanitize(tipp.getTitleID()) + '\t' +
                                 sanitize(tipp.getIdentifierValue('DOI')) + '\t' +
                                 sanitize(tipp.subjectArea) + '\t' +
@@ -174,7 +174,7 @@ class ExportService {
                             sanitize(tipp.medium?.value) + '\t' +
                             sanitize(tipp.url) + '\t' +
                             sanitize(tipp.getPrintIdentifier()) + '\t' +
-                            sanitize(tipp.getOnlineIdentifier) + '\t' +
+                            sanitize(tipp.getOnlineIdentifier()) + '\t' +
                             sanitize(tipp.getTitleID()) + '\t' +
                             sanitize(tipp.getIdentifierValue('DOI')) + '\t' +
                             sanitize(tipp.subjectArea) + '\t' +
@@ -280,7 +280,7 @@ class ExportService {
                 tipp.coverageStatements.each { TIPPCoverageStatement tippCoverageStatement ->
                     writer.write(sanitize(tipp.name) + '\t' +
                             sanitize(tipp.getPrintIdentifier()) + '\t' +
-                            sanitize(tipp.getOnlineIdentifier) + '\t' +
+                            sanitize(tipp.getOnlineIdentifier()) + '\t' +
                             sanitize(tippCoverageStatement.startDate) + '\t' + //date_first_issue_online
                             sanitize(tippCoverageStatement.startVolume) + '\t' + //num_first_vol_online
                             sanitize(tippCoverageStatement.startIssue) + '\t' + //num_first_issue_online
@@ -538,7 +538,7 @@ class ExportService {
                     row.add(sanitize(tipp.medium?.value))
                     row.add(sanitize(tipp.url))
                     row.add(sanitize(tipp.getPrintIdentifier()))
-                    row.add(sanitize(tipp.getOnlineIdentifier))
+                    row.add(sanitize(tipp.getOnlineIdentifier()))
                     row.add(sanitize(tipp.getTitleID()))
                     row.add(sanitize(tipp.getIdentifierValue('DOI')))
                     row.add(sanitize(tipp.subjectArea))
@@ -596,7 +596,7 @@ class ExportService {
                 row.add(sanitize(tipp.medium?.value))
                 row.add(sanitize(tipp.url))
                 row.add(sanitize(tipp.getPrintIdentifier()))
-                row.add(sanitize(tipp.getOnlineIdentifier))
+                row.add(sanitize(tipp.getOnlineIdentifier()))
                 row.add(sanitize(tipp.getTitleID()))
                 row.add(sanitize(tipp.getIdentifierValue('DOI')))
                 row.add(sanitize(tipp.subjectArea))
