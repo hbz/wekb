@@ -8,7 +8,7 @@ databaseChangeLog = {
         grailsChange {
             change {
 
-                TitleInstancePackagePlatform.executeQuery('update TitleInstancePackagePlatform set medium = :newMedium where medium = :oldMedium',
+                TitleInstancePackagePlatform.executeQuery('update title_instance_package_platform set tipp_medium_rv_fk = :newMedium where tipp_medium_rv_fk = :oldMedium',
                         [newMedium:  RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "A & I Database"), oldMedium:  RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "A & I Database")])
 
             }
@@ -20,7 +20,7 @@ databaseChangeLog = {
         grailsChange {
             change {
 
-                TitleInstancePackagePlatform.executeQuery('update TitleInstancePackagePlatform set medium = :newMedium where medium = :oldMedium',
+                TitleInstancePackagePlatform.executeQuery('update title_instance_package_platform set tipp_medium_rv_fk = :newMedium where tipp_medium_rv_fk = :oldMedium',
                         [newMedium:  RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Audio"), oldMedium:  RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Audio")])
 
             }
@@ -32,7 +32,7 @@ databaseChangeLog = {
         grailsChange {
             change {
 
-                TitleInstancePackagePlatform.executeQuery('update TitleInstancePackagePlatform set medium = :newMedium where medium = :oldMedium',
+                TitleInstancePackagePlatform.executeQuery('update title_instance_package_platform set tipp_medium_rv_fk = :newMedium where tipp_medium_rv_fk = :oldMedium',
                         [newMedium:  RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Database"), oldMedium:  RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Database")])
 
             }
@@ -45,7 +45,7 @@ databaseChangeLog = {
         grailsChange {
             change {
 
-                TitleInstancePackagePlatform.executeQuery('update TitleInstancePackagePlatform set medium = :newMedium where medium = :oldMedium',
+                TitleInstancePackagePlatform.executeQuery('update title_instance_package_platform set tipp_medium_rv_fk = :newMedium where tipp_medium_rv_fk = :oldMedium',
                         [newMedium:  RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Film"), oldMedium:  RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Film")])
 
             }
@@ -58,7 +58,7 @@ databaseChangeLog = {
         grailsChange {
             change {
 
-                TitleInstancePackagePlatform.executeQuery('update TitleInstancePackagePlatform set medium = :newMedium where medium = :oldMedium',
+                TitleInstancePackagePlatform.executeQuery('update title_instance_package_platform set tipp_medium_rv_fk = :newMedium where tipp_medium_rv_fk = :oldMedium',
                         [newMedium:  RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Image"), oldMedium:  RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Image")])
 
             }
@@ -70,7 +70,7 @@ databaseChangeLog = {
         grailsChange {
             change {
 
-                TitleInstancePackagePlatform.executeQuery('update TitleInstancePackagePlatform set medium = :newMedium where medium = :oldMedium',
+                TitleInstancePackagePlatform.executeQuery('update title_instance_package_platform set tipp_medium_rv_fk = :newMedium where tipp_medium_rv_fk = :oldMedium',
                         [newMedium:  RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Journal"), oldMedium:  RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Journal")])
 
             }
@@ -83,7 +83,7 @@ databaseChangeLog = {
         grailsChange {
             change {
 
-                TitleInstancePackagePlatform.executeQuery('update TitleInstancePackagePlatform set medium = :newMedium where medium = :oldMedium',
+                TitleInstancePackagePlatform.executeQuery('update title_instance_package_platform set tipp_medium_rv_fk = :newMedium where tipp_medium_rv_fk = :oldMedium',
                         [newMedium:  RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Book"), oldMedium:  RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Book")])
 
             }
@@ -95,7 +95,7 @@ databaseChangeLog = {
         grailsChange {
             change {
 
-                TitleInstancePackagePlatform.executeQuery('update TitleInstancePackagePlatform set medium = :newMedium where medium = :oldMedium',
+                TitleInstancePackagePlatform.executeQuery('update title_instance_package_platform set tipp_medium_rv_fk = :newMedium where tipp_medium_rv_fk = :oldMedium',
                         [newMedium:  RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Published Score"), oldMedium:  RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Published Score")])
 
             }
@@ -107,7 +107,7 @@ databaseChangeLog = {
         grailsChange {
             change {
 
-                TitleInstancePackagePlatform.executeQuery('update TitleInstancePackagePlatform set medium = :newMedium where medium = :oldMedium',
+                TitleInstancePackagePlatform.executeQuery('update title_instance_package_platform set tipp_medium_rv_fk = :newMedium where tipp_medium_rv_fk = :oldMedium',
                         [newMedium:  RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Article"), oldMedium:  RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Article")])
 
             }
@@ -119,7 +119,7 @@ databaseChangeLog = {
         grailsChange {
             change {
 
-                TitleInstancePackagePlatform.executeQuery('update TitleInstancePackagePlatform set medium = :newMedium where medium = :oldMedium',
+                TitleInstancePackagePlatform.executeQuery('update title_instance_package_platform set tipp_medium_rv_fk = :newMedium where tipp_medium_rv_fk = :oldMedium',
                         [newMedium:  RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Software"), oldMedium:  RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Software")])
 
             }
@@ -131,7 +131,7 @@ databaseChangeLog = {
         grailsChange {
             change {
 
-                TitleInstancePackagePlatform.executeQuery('update TitleInstancePackagePlatform set medium = :newMedium where medium = :oldMedium',
+                TitleInstancePackagePlatform.executeQuery('update title_instance_package_platform set tipp_medium_rv_fk = :newMedium where tipp_medium_rv_fk = :oldMedium',
                         [newMedium:  RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Statistics"), oldMedium:  RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Statistics")])
 
             }
@@ -143,7 +143,7 @@ databaseChangeLog = {
         grailsChange {
             change {
 
-                TitleInstancePackagePlatform.executeQuery('update TitleInstancePackagePlatform set medium = :newMedium where medium = :oldMedium',
+                TitleInstancePackagePlatform.executeQuery('update title_instance_package_platform set tipp_medium_rv_fk = :newMedium where tipp_medium_rv_fk = :oldMedium',
                         [newMedium:  RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Market Data"), oldMedium:  RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Market Data")])
 
             }
@@ -155,7 +155,7 @@ databaseChangeLog = {
         grailsChange {
             change {
 
-                TitleInstancePackagePlatform.executeQuery('update TitleInstancePackagePlatform set medium = :newMedium where medium = :oldMedium',
+                TitleInstancePackagePlatform.executeQuery('update title_instance_package_platform set tipp_medium_rv_fk = :newMedium where tipp_medium_rv_fk = :oldMedium',
                         [newMedium:  RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Biography"), oldMedium:  RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Biography")])
 
             }
@@ -167,7 +167,7 @@ databaseChangeLog = {
         grailsChange {
             change {
 
-                TitleInstancePackagePlatform.executeQuery('update TitleInstancePackagePlatform set medium = :newMedium where medium = :oldMedium',
+                TitleInstancePackagePlatform.executeQuery('update title_instance_package_platform set tipp_medium_rv_fk = :newMedium where tipp_medium_rv_fk = :oldMedium',
                         [newMedium:  RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Legal Text"), oldMedium:  RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Legal Text")])
 
             }
@@ -179,7 +179,7 @@ databaseChangeLog = {
         grailsChange {
             change {
 
-                TitleInstancePackagePlatform.executeQuery('update TitleInstancePackagePlatform set medium = :newMedium where medium = :oldMedium',
+                TitleInstancePackagePlatform.executeQuery('update title_instance_package_platform set tipp_medium_rv_fk = :newMedium where tipp_medium_rv_fk = :oldMedium',
                         [newMedium:  RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Cartography"), oldMedium:  RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Cartography")])
 
             }
@@ -191,7 +191,7 @@ databaseChangeLog = {
         grailsChange {
             change {
 
-                TitleInstancePackagePlatform.executeQuery('update TitleInstancePackagePlatform set medium = :newMedium where medium = :oldMedium',
+                TitleInstancePackagePlatform.executeQuery('update title_instance_package_platform set tipp_medium_rv_fk = :newMedium where tipp_medium_rv_fk = :oldMedium',
                         [newMedium:  RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Miscellaneous"), oldMedium:  RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Miscellaneous")])
 
             }
@@ -203,7 +203,7 @@ databaseChangeLog = {
         grailsChange {
             change {
 
-                TitleInstancePackagePlatform.executeQuery('update TitleInstancePackagePlatform set medium = :newMedium where medium = :oldMedium',
+                TitleInstancePackagePlatform.executeQuery('update title_instance_package_platform set tipp_medium_rv_fk = :newMedium where tipp_medium_rv_fk = :oldMedium',
                         [newMedium:  RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Other"), oldMedium:  RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Other")])
 
             }
@@ -215,7 +215,7 @@ databaseChangeLog = {
         grailsChange {
             change {
 
-                TitleInstancePackagePlatform.executeQuery('update TitleInstancePackagePlatform set medium = :newMedium where medium = :oldMedium',
+                TitleInstancePackagePlatform.executeQuery('update title_instance_package_platform set tipp_medium_rv_fk = :newMedium where tipp_medium_rv_fk = :oldMedium',
                         [newMedium:  RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Standards"), oldMedium:  RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Standards")])
 
             }
@@ -227,7 +227,7 @@ databaseChangeLog = {
         grailsChange {
             change {
 
-                TitleInstancePackagePlatform.executeQuery('update TitleInstancePackagePlatform set medium = :newMedium where medium = :oldMedium',
+                TitleInstancePackagePlatform.executeQuery('update title_instance_package_platform set tipp_medium_rv_fk = :newMedium where tipp_medium_rv_fk = :oldMedium',
                         [newMedium:  RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Dataset"), oldMedium:  RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Dataset")])
 
             }
