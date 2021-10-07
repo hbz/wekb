@@ -152,7 +152,7 @@ public class HQLBuilder {
     def count_start_time = System.currentTimeMillis();
     result.reccount = baseclass.executeQuery(count_hql, hql_builder_context.bindvars,[readOnly:true])[0]
 
-    log.debug("Count completed (${result.reccount}) after ${System.currentTimeMillis() - count_start_time}");
+    log.info("Count completed (${result.reccount}) after ${System.currentTimeMillis() - count_start_time} ms");
 
     def query_params = [:]
     if ( result.max )
@@ -166,7 +166,7 @@ public class HQLBuilder {
     // log.debug("Get data rows..");
     result.recset = baseclass.executeQuery(fetch_hql, hql_builder_context.bindvars,query_params);
     // log.debug("Returning..");
-    log.debug("Fetch completed after ${System.currentTimeMillis() - query_start_time}");
+    log.info("Fetch completed after ${System.currentTimeMillis() - query_start_time} ms");
   }
 
   static def processProperty(hql_builder_context,crit,baseclass) {
