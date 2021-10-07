@@ -541,6 +541,8 @@ class ESSearchService{
     def esClient = ESWrapperService.getClient()
     def errors = [:]                              // TODO: use errors
 
+    def unknown_fields = []
+
     ActionFuture<SearchResponse> response
     if (!params.scrollId){
       QueryBuilder scrollQuery = QueryBuilders.boolQuery()
@@ -552,6 +554,7 @@ class ESSearchService{
       // addDateQueries(scrollQuery, errors, params)
       // TODO: add this after upgrade to Elasticsearch 7
       // TODO: alternative query builders for scroll searches with q
+      specifyQueryWithParams(params, scrollQuery, errors, unknown_fields)
 
       SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
       searchSourceBuilder.query(scrollQuery)
