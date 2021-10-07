@@ -682,7 +682,7 @@ class GlobalSearchTemplatesService {
                 title    : 'Notes',
                 group    : 'Tertiary',
                 defaultSort : 'dateCreated',
-                defaultOrder: 'asc',
+                defaultOrder: 'desc',
                 qbeConfig: [
                         qbeForm   : [
                                 [
