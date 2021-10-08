@@ -196,4 +196,22 @@ class Source extends KBComponent {
       "Yearly"      : 365,
   ]
 
+  @Transient
+  def availableActions() {
+    [
+            [code: 'method::deleteSoft', label: 'Delete', perm: 'delete'],
+    ]
+  }
+
+  public void deleteSoft(context) {
+    // Call the delete method on the superClass.
+    super.deleteSoft(context)
+
+    Package.findAllBySource(this).each {
+      it.source = null
+      it.save(flush: true, failOnError: true)
+    }
+
+  }
+
 }
