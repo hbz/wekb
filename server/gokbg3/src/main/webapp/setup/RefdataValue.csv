@@ -341,6 +341,7 @@ Job.Type;IdentifierCleanup;IdentifierCleanup;IdentifierCleanup
 Job.Type;MarkInconsDateRanges;MarkInconsDateRanges;MarkInconsDateRanges
 Job.Type;MasterListUpdate;MasterListUpdate;MasterListUpdate
 Job.Type;PackageCrossRef;PackageCrossRef;PackageCrossRef
+Job.Type;PackageCrossRef Auto;PackageCrossRef Auto;PackageCrossRef Auto
 Job.Type;PlatformCleanup;PlatformCleanup;PlatformCleanup
 Job.Type;RecalculateStatistics;RecalculateStatistics;RecalculateStatistics
 Job.Type;RegenerateLicenseSummaries;RegenerateLicenseSummaries;RegenerateLicenseSummaries
