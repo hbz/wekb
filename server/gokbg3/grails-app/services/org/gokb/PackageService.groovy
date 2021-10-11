@@ -397,9 +397,9 @@ class PackageService {
     }
 
     def msg_list = []
-    def rdv_journal = RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Journal")
-    def rdv_book = RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Book")
-    def rdv_db = RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Database")
+    def rdv_journal = RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Journal")
+    def rdv_book = RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Book")
+    def rdv_db = RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Database")
     def ctr = 0
 
     for (pkg in pkg_list) {
