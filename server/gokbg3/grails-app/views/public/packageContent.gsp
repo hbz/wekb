@@ -145,8 +145,18 @@
         <div id="row">
             <ul id="tabs" class="nav nav-tabs" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" href="#titledetails" data-toggle="tab" role="tab">Titles
-                        <span class="badge badge-pill badge-info">${titleCount}</span>
+                    <a class="nav-link ${params.tab == 'currentTipps' ? 'active' : ''}" href="#currentTipps" data-toggle="tab" role="tab">Current Titles
+                        <span class="badge badge-pill badge-info">${currentTitleCount}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link ${params.tab == 'retiredTipps' ? 'active' : ''}" href="#retiredTipps" data-toggle="tab" role="tab">Retired Titles
+                        <span class="badge badge-pill badge-info">${retiredTitleCount}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link ${params.tab == 'expectedTipps' ? 'active' : ''}" href="#expectedTipps" data-toggle="tab" role="tab">Expected Titles
+                        <span class="badge badge-pill badge-info">${expectedTitleCount}</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -169,72 +179,21 @@
 
             </ul>
             <div id="my-tab-content" class="tab-content">
-                <div class="tab-pane active" id="titledetails" role="tabpanel">
-                    <div class="row">
-                        <div class="col-sm">
-                            <h2>Titles (${titleCount})</h2>
-                        </div>
-                        <div class="col-sm">
-                            <g:form controller="public" class="form-group row justify-content-end"   action="${actionName}" method="get" params="${params}">
-                                <label class="col-sm-6 col-form-label text-right" for="newMax">Results on Page</label>
-                                <div class="col-sm-6">
-                                        <g:select class="form-control"  name="newMax" from="[10, 25, 50, 100]" value="${params.max}" onChange="this.form.submit()"/>
-                                </div>
-                            </g:form>
-                        </div>
-                    </div>
-                    <table class="table table-striped wekb-table-responsive-stack">
-                            <thead>
-                                <tr>
-                                        <th>#</th>
-                                        <g:sortableColumn property="tipp.name" title="Title"/>
-                                        <th>Identifiers</th>
-                                        <th>Platform</th>
-                                        <g:sortableColumn property="tipp.publicationType" title="Publication Type"/>
-                                        <g:sortableColumn property="tipp.medium" title="Medium"/>
-                                        <th>Coverage</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <g:each in="${tipps}" var="t" status="i">
-                                        <tr>
-                                            <td>
-                                            ${ (params.offset ? params.offset.toInteger(): 0)  + i + 1 }
-                                            </td>
-                                            <td>
-                                                <g:link controller="public" action="tippContent" id="${t.uuid}">
-                                                    ${t.name}
-                                                </g:link>
-                                            </td>
-                                            <td>
-                                                <ul>
-                                                    <g:each in="${t.ids.sort{it.namespace.value}}" var="id">
-                                                        <li><strong>${id.namespace.value}</strong> : ${id.value}</li>
-                                                    </g:each>
-                                                </ul>
-                                            </td>
-                                            <td>
-                                                <g:link controller="public" action="platformContent"
-                                                        id="${t.hostPlatform?.uuid}">
-                                                    ${t.hostPlatform?.name}
-                                                </g:link>
-                                            </td>
-                                            <td>${t.publicationType?.value}</td>
-                                            <td>${t.medium?.value}</td>
-                                            <td>
-                                                ${t.coverageDepth?.value}<br/>${t.coverageNote}
-                                            </td>
-                                        </tr>
-                                    </g:each>
-                                    </tbody>
-                                </table>
+                <div class="tab-pane ${params.tab == 'currentTipps' ? 'active' : ''}" id="currentTipps" role="tabpanel">
 
-                    <g:if test="${titleCount ?: 0 > 0}">
-                        <div class="pagination mb-4 d-flex justify-content-center">
-                            <g:paginate controller="public" action="packageContent" params="${params}" next="&raquo;" prev="&laquo;"
-                                        max="${max}" total="${titleCount}"/>
-                        </div>
-                    </g:if>
+                    <g:render template="tippsTab" model="[tippsCount: currentTitleCount, tipps: currentTipps, tab: 'currentTipps']"/>
+
+                </div>
+
+                <div class="tab-pane ${params.tab == 'retiredTipps' ? 'active' : ''}" id="retiredTipps" role="tabpanel">
+
+                    <g:render template="tippsTab" model="[tippsCount: retiredTitleCount, tipps: retiredTipps, tab: 'retiredTipps']"/>
+
+                </div>
+
+                <div class="tab-pane ${params.tab == 'expectedTipps' ? 'active' : ''}" id="expectedTipps" role="tabpanel">
+
+                    <g:render template="tippsTab" model="[tippsCount: expectedTitleCount, tipps: expectedTipps, tab: 'expectedTipps']"/>
 
                 </div>
 

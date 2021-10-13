@@ -1,6 +1,7 @@
 package org.gokb
 
 import de.wekb.helper.RCConstants
+import de.wekb.helper.RDStore
 import grails.core.GrailsApplication
 import grails.plugins.mail.MailService
 import org.gokb.cred.*
@@ -70,7 +71,9 @@ class PublicController {
       
       if (result.pkg) {
         def tipp_combo_rdv = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE,'Package.Tipps')
-        def status_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS,'Current')
+        def status_current = RDStore.KBC_STATUS_CURRENT
+        def status_retired = RDStore.KBC_STATUS_RETIRED
+        def status_expected = RDStore.KBC_STATUS_EXPECTED
         
         result.pkgId = result.pkg.id
         result.pkgName = result.pkg.name
@@ -90,9 +93,17 @@ class PublicController {
         params.offset = params.offset ?: 0
         params.max = session.getAttribute("newMax") ?: 10
 
-        result.titleCount = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_current])[0]
-        result.tipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY + " order by ${params.sort} ${params.order}",[result.pkgId, tipp_combo_rdv, status_current], params)
-        log.debug("Tipp qry done ${result.tipps?.size()}")
+        params.tab = params.tab ?: 'currentTipps'
+
+        result.currentTitleCount = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_current])[0]
+        result.currentTipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY + " order by ${params.sort} ${params.order}",[result.pkgId, tipp_combo_rdv, status_current], params)
+        //log.debug("Tipp qry done ${result.tipps?.size()}")
+
+        result.retiredTitleCount = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_retired])[0]
+        result.retiredTipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY + " order by ${params.sort} ${params.order}",[result.pkgId, tipp_combo_rdv, status_retired], params)
+
+        result.expectedTitleCount = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_expected])[0]
+        result.expectedTipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY + " order by ${params.sort} ${params.order}",[result.pkgId, tipp_combo_rdv, status_expected], params)
 
       }else {
         flash.error = "Package not found"
