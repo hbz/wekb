@@ -125,8 +125,8 @@ class InplaceTagLib {
       def data_link = null
       switch (attrs.type) {
         case 'date':
-          data_link = createLink(controller: 'ajaxSupport', action: 'editableSetValue', params: [type: 'date', dateFormat: (dformat.replace('mm', 'MM'))])
-          out << " data-type='date' data-inputclass='form-control form-date' data-format='${dformat}' data-datepicker='{minYear: 1500, smartDays: true, clearBtn: true}' data-viewformat='yyyy-mm-dd'"
+          data_link = createLink(controller: 'ajaxSupport', action: 'editableSetValue', params: [type: 'date'])
+          out << " data-type='date' data-inputclass='form-control form-date' data-datepicker='{minYear: 1500, smartDays: true, clearBtn: true}' data-viewformat='yyyy-mm-dd'"
           def dv = attrs."data-value"
 
           if (!dv) {
@@ -142,7 +142,6 @@ class InplaceTagLib {
 
           out << " data-value='${dv}'"
 
-          // out << " data-type=\"text\" data-format='${dformat}'"
           break;
         case 'string':
         default:
