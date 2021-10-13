@@ -538,6 +538,9 @@ abstract class KBComponent implements Auditable{
     def result = []
     def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED)
     def ql = null
+
+    params.sort = 'name'
+
     ql = Class.forName(params.baseClass).findAllByNameIlikeAndStatusNotEqual("${params.q}%", status_deleted, params)
     //    ql = KBComponent.findAllByNameIlike("${params.q}%",params)
     if (ql){

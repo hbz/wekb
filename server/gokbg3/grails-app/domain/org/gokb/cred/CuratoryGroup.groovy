@@ -73,6 +73,9 @@ class CuratoryGroup extends KBComponent {
     def result = [];
     def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED)
     def ql = null;
+
+    params.sort = 'name'
+
     ql = CuratoryGroup.findAllByNameIlikeAndStatusNotEqual("${params.q}%", status_deleted ,params)
 
     ql.each { t ->

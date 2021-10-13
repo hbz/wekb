@@ -237,6 +237,8 @@ class Platform extends KBComponent {
       status_filter = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, params.filter1)
     }
 
+    params.sort = 'name'
+
     def ql = null;
     ql = Platform.findAllByNameIlikeAndStatusNotEqual("${params.q}%", status_deleted, params)
 
