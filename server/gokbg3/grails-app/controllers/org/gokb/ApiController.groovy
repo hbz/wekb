@@ -899,6 +899,14 @@ class ApiController {
       log.error("Could not process Elasticsearch API request. Exception was: ${e.message}")
       response.setStatus(400)
     }
+
+    if(result == null) {
+      result = [:]
+      result.result = "ERROR"
+      result.message = 'Params is null or Params.q is null'
+      response.setStatus(400)
+    }
+
     render result as JSON
   }
 }
