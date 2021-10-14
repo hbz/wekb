@@ -522,7 +522,7 @@ class TitleInstancePackagePlatform extends KBComponent {
     }
 
     if (tipp_dto.medium) {
-      RefdataValue[] media = RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM)
+      RefdataValue[] media = RefdataCategory.lookup(RCConstants.TIPP_MEDIUM)
       if (!media*.value.contains(tipp_dto.medium))
         errors.put('medium', [message: "unknown", baddata: tipp_dto.remove('medium')])
     }
@@ -964,7 +964,7 @@ class TitleInstancePackagePlatform extends KBComponent {
         com.k_int.ClassUtils.setDateIfPresent(tipp_dto.dateFirstOnline, tipp, 'dateFirstOnline')
         com.k_int.ClassUtils.setDateIfPresent(tipp_dto.lastChanged, tipp, 'lastChangedExternal')
 
-        com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.medium, tipp, 'medium', RCConstants.TITLEINSTANCE_MEDIUM)
+        com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.medium, tipp, 'medium', RCConstants.TIPP_MEDIUM)
         com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.publicationType, tipp, 'publicationType', RCConstants.TIPP_PUBLICATION_TYPE)
         com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.oaType, tipp, 'openAccess', RCConstants.TIPP_OPEN_ACCESS)
 
@@ -1298,58 +1298,58 @@ class TitleInstancePackagePlatform extends KBComponent {
       switch (titleObj.medium.toLowerCase()) {
         case "a & i database":
         case "abstract- & indexdatenbank":
-          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "A & I Database")
+          return RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "A & I Database")
         case "audio":
-          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Audio")
+          return RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Audio")
         case "database":
         case "fulltext database":
         case "Volltextdatenbank":
-          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Database")
+          return RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Database")
         case "dataset":
         case "datenbestand":
-          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Dataset")
+          return RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Dataset")
         case "film":
-          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Film")
+          return RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Film")
         case "image":
         case "bild":
-          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Image")
+          return RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Image")
         case "journal":
         case "zeitschrift":
-          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Journal")
+          return RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Journal")
         case "book":
         case "buch":
-          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Book")
+          return RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Book")
         case "published score":
         case "musiknoten":
-          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Published Score")
+          return RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Published Score")
         case "article":
         case "artikel":
-          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Article")
+          return RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Article")
         case "software":
-          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Software")
+          return RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Software")
         case "statistics":
         case "statistiken":
-          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Statistics")
+          return RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Statistics")
         case "market data":
         case "marktdaten":
-          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Market Data")
+          return RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Market Data")
         case "standards":
         case "normen":
-          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Standards")
+          return RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Standards")
         case "biography":
         case "biografie":
-          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Biography")
+          return RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Biography")
         case "legal text":
         case "gesetzestext/urteil":
-          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Legal Text")
+          return RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Legal Text")
         case "cartography":
         case "kartenwerk":
-          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Cartography")
+          return RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Cartography")
         case "miscellaneous":
         case "sonstiges":
-          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Miscellaneous")
+          return RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Miscellaneous")
         case "other":
-          return RefdataCategory.lookup(RCConstants.TITLEINSTANCE_MEDIUM, "Other")
+          return RefdataCategory.lookup(RCConstants.TIPP_MEDIUM, "Other")
         default:
           return null
       }

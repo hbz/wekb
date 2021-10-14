@@ -82,6 +82,8 @@ class Source extends KBComponent {
       status_filter = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, params.filter1)
     }
 
+    params.sort = 'name'
+
     def ql = null;
     ql = Source.findAllByNameIlikeAndStatusNotEqual("${params.q}%", status_deleted, params)
 
@@ -195,5 +197,23 @@ class Source extends KBComponent {
       "Quarterly"   : 91,
       "Yearly"      : 365,
   ]
+
+  @Transient
+  def availableActions() {
+    [
+            [code: 'method::deleteSoft', label: 'Delete', perm: 'delete'],
+    ]
+  }
+
+  public void deleteSoft(context) {
+    // Call the delete method on the superClass.
+    super.deleteSoft(context)
+
+    Package.findAllBySource(this).each {
+      it.source = null
+      it.save(flush: true, failOnError: true)
+    }
+
+  }
 
 }

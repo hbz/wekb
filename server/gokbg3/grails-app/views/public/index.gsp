@@ -74,7 +74,7 @@
             <g:form controller="public" class="form-group row justify-content-end"   action="${actionName}" method="get" params="${params}">
                 <label class="col-sm-6 col-form-label text-right" for="newMax">Results on Page</label>
                 <div class="col-sm-6">
-                    <g:select class="form-control"  name="newMax" from="[10, 25, 50, 100, 200, 500]" value="${params.max}" onChange="this.form.submit()"/>
+                    <g:select class="form-control"  name="newMax" from="[10, 25, 50, 100]" value="${params.max}" onChange="this.form.submit()"/>
                 </div>
             </g:form>
         </div>

@@ -682,7 +682,7 @@ class GlobalSearchTemplatesService {
                 title    : 'Notes',
                 group    : 'Tertiary',
                 defaultSort : 'dateCreated',
-                defaultOrder: 'asc',
+                defaultOrder: 'desc',
                 qbeConfig: [
                         qbeForm   : [
                                 [
@@ -1347,6 +1347,13 @@ class GlobalSearchTemplatesService {
                                         default    : [type: 'query', query: 'select r from RefdataValue where r.value=:v and r.owner.description=:o', params: ['Current', RCConstants.KBCOMPONENT_STATUS]]
                                 ],
                                 [
+                                        prompt     : 'Status ID',
+                                        qparam     : 'qp_status_id',
+                                        placeholder: 'Status ID',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'status.id', 'type': 'java.lang.Long'],
+                                        hide       : true
+                                ],
+                                [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.CuratoryGroup',
                                         prompt     : 'Curatory Group',
@@ -1356,10 +1363,10 @@ class GlobalSearchTemplatesService {
                                         hide       : false
                                 ],
                         ],
-                        qbeGlobals: [
+                       /* qbeGlobals: [
                                 ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
                                  'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
-                        ],
+                        ],*/
                         qbeResults: [
                                 [heading: 'Title Persistent Id', property: 'persistentId', link: true],
                                 [heading: 'Title', property: 'name', link: true],

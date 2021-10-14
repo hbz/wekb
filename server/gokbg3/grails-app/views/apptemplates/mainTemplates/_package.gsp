@@ -1,4 +1,4 @@
-<%@ page import="org.gokb.cred.RefdataCategory; de.wekb.helper.RCConstants" %>
+<%@ page import="org.gokb.cred.RefdataCategory; de.wekb.helper.RCConstants; de.wekb.helper.RDStore;" %>
 
   <dl class="dl-horizontal">
   <dt>
@@ -153,8 +153,10 @@
   <div id="content">
     <ul id="tabs" class="nav nav-tabs">
       <g:if test="${d.id}">
-        <li role="presentation" class="active"><a href="#titledetails" data-toggle="tab">Titles <span class="badge badge-warning"> ${d.currentTippCount} </span></a></li>
-        <li role="presentation"><a href="#identifiers" data-toggle="tab">Identifiers <span class="badge badge-warning"> ${d?.getCombosByPropertyNameAndStatus('ids','Active').size()} </span></a></li>
+        <li role="presentation" class="active"><a href="#currentTitles" data-toggle="tab">Current Titles <span class="badge badge-warning"> ${d.currentTippCount} </span></a></li>
+        <li role="presentation"><a href="#retiredTitles" data-toggle="tab">Retired Titles <span class="badge badge-warning"> ${d.retiredTippCount} </span></a></li>
+        <li role="presentation"><a href="#expectedTitles" data-toggle="tab">Expected Titles <span class="badge badge-warning"> ${d.expectedTippCount} </span></a></li>
+        <li role="presentation"><a href="#identifiers" data-toggle="tab">Identifiers <span class="badge badge-warning"> ${d.getCombosByPropertyNameAndStatus('ids','Active').size()} </span></a></li>
 
         <li role="presentation"><a href="#altnames" data-toggle="tab">Alternate Names
           <span class="badge badge-warning"> ${d.variantNames.size()}</span>
@@ -188,47 +190,40 @@
 
     <div id="my-tab-content" class="tab-content">
 
-      <div class="tab-pane active" id="titledetails">
+      <div class="tab-pane active" id="currentTitles">
         <g:if test="${params.controller != 'create'}">
           <dl>
-            <dt><gokb:annotatedLabel owner="${d}" property="tipps">Titles</gokb:annotatedLabel></dt>
+            <dt><gokb:annotatedLabel owner="${d}" property="tipps">Current Titles</gokb:annotatedLabel></dt>
             <dd>
               <g:link class="display-inline" controller="search" action="index"
-                params="[qbe:'g:tipps', qp_pkg_id:d.id, inline:true, refOid: d.getLogEntityId(), hide:['qp_pkg_id', 'qp_pkg']]"
-                id="">Titles in this package</g:link>
-              %{--<g:if test="${ editable && params.controller != 'create' }">
-                <div class="panel-body">
-                  <h4>
-                    <gokb:annotatedLabel owner="${d}" property="addTipp">Add new TIPP</gokb:annotatedLabel>
-                  </h4>
-                  <g:form controller="ajaxSupport" action="addToCollection"
-                    class="form-inline">
-                    <input type="hidden" name="__context" value="${d.class?.name}:${d.id}" />
-                    <input type="hidden" name="__newObjectClass" value="org.gokb.cred.TitleInstancePackagePlatform" />
-                    <input type="hidden" name="__addToColl" value="tipps" />
-                    <input type="hidden" name="__showNew" value="true" />
-                    <dl class="dl-horizontal">
-                      <dt class="dt-label">Title</dt>
-                      <dd>
-                        <gokb:simpleReferenceTypedown class="form-control select-m" name="title" baseClass="org.gokb.cred.TitleInstance" />
-                      </dd>
-                      <dt class="dt-label">Platform</dt>
-                      <dd>
-                        <gokb:simpleReferenceTypedown class="form-control select-m" name="hostPlatform" baseClass="org.gokb.cred.Platform" filter1="Current" />
-                      </dd>
-                      <dt class="dt-label">URL</dt>
-                      <dd>
-                        <input type="text" class="form-control select-m" name="url" required />
-                      </dd>
-                      <dt></dt>
-                      <dd>
-                        <button type="submit"
-                          class="btn btn-default btn-primary">Add</button>
-                      </dd>
-                    </dl>
-                  </g:form>
-                </div>
-              </g:if>--}%
+                      params="[qbe: 'g:tipps', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status_id: RDStore.KBC_STATUS_CURRENT.id]"
+                      id="">Titles in this package</g:link>
+            </dd>
+          </dl>
+        </g:if>
+      </div>
+
+      <div class="tab-pane" id="retiredTitles">
+        <g:if test="${params.controller != 'create'}">
+          <dl>
+            <dt><gokb:annotatedLabel owner="${d}" property="tipps">Retired Titles</gokb:annotatedLabel></dt>
+            <dd>
+              <g:link class="display-inline" controller="search" action="index"
+                      params="[qbe: 'g:tipps', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status_id: RDStore.KBC_STATUS_RETIRED.id]"
+                      id="">Titles in this package</g:link>
+            </dd>
+          </dl>
+        </g:if>
+      </div>
+
+      <div class="tab-pane" id="expectedTitles">
+        <g:if test="${params.controller != 'create'}">
+          <dl>
+            <dt><gokb:annotatedLabel owner="${d}" property="tipps">Expected Titles</gokb:annotatedLabel></dt>
+            <dd>
+              <g:link class="display-inline" controller="search" action="index"
+                      params="[qbe: 'g:tipps', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status_id: RDStore.KBC_STATUS_EXPECTED.id]"
+                      id="">Titles in this package</g:link>
             </dd>
           </dl>
         </g:if>

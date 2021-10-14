@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<%@ page import="org.gokb.cred.TitleInstancePackagePlatform" %>
+<%@ page import="org.gokb.cred.TitleInstancePackagePlatform; de.wekb.helper.RDStore;" %>
 <html>
 <head>
     <meta name="layout" content="sb-admin"/>
@@ -16,7 +16,7 @@
 
 <body>
 <br/>
-<nav class="navbar navbar-inverse">
+<nav class="navbar navbar-inverse ${displayobj.status == RDStore.KBC_STATUS_DELETED ? 'alert alert-danger' : ''}">
     <div class="container-fluid">
         <div class="navbar-header">
             <span class="navbar-brand">
@@ -25,6 +25,7 @@
                     <g:if test="${response.status != 403}">
                         <g:if test="${displayobj.respondsTo('getDisplayName') && displayobj.getDisplayName()}">- <strong>${displayobj.getDisplayName()}</strong></g:if>
                         <g:if test="${!editable}"><small><i>&lt;Read only&gt;</i></small></g:if>
+                        <g:if test="${displayobj.status == RDStore.KBC_STATUS_DELETED}"><i>&lt;This ${displayobj.getNiceName() ?: 'Component'} is deleted!></i></g:if>
                     </g:if>
                     <g:else>
                         <small><i>&lt;Not Accessible&gt;</i></small>

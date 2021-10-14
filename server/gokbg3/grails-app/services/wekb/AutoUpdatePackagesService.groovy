@@ -166,9 +166,14 @@ class AutoUpdatePackagesService {
                             if (respData?.message) {
                                 log.error("ygor message: ${respData.message}")
                             }
+
                             result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "YGOR ERROR: ${respData.message}"]]]
                             processing = false
                             error = true
+                        }
+
+                        if (respData?.ygorFeedback) {
+                            log.error("ygorFeedback: ${respData.ygorFeedback}")
                         }
                         def statusService = new RESTClient(ygorBaseUrl + "/enrichment/getStatus?jobId=${respData.jobId}")
 

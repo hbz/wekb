@@ -306,11 +306,11 @@ class CreateController {
   def processPackageBatch() {
     log.debug("CreateControler::processPackageBatch... ${params}");
         User user = springSecurityService.currentUser
-        MultipartFile csvFile = request.getFile("csvFile")
-        if(csvFile && csvFile.size > 0) {
-          String encoding = UniversalDetector.detectCharset(csvFile.getInputStream())
+        MultipartFile tsvFile = request.getFile("tsvFile")
+        if(tsvFile && tsvFile.size > 0) {
+          String encoding = UniversalDetector.detectCharset(tsvFile.getInputStream())
           if(encoding in ["UTF-8", "US-ASCII"]) {
-            Map packagesData = packageBatchImport(csvFile, user)
+            Map packagesData = packageBatchImport(tsvFile, user)
 
             render view: 'packageBatchCompleted', model: packagesData
           }
@@ -328,17 +328,17 @@ class CreateController {
         }
   }
 
-  private Map packageBatchImport(MultipartFile csvFile, User user) {
+  private Map packageBatchImport(MultipartFile tsvFile, User user) {
     Map colMap = [:]
     Set<String> globalErrors = []
     List<Package> packageList = []
     RefdataValue combo_type_id = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'KBComponent.Ids')
     RefdataValue combo_type_status = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE)
 
-    InputStream fileContent = csvFile.getInputStream()
+    InputStream fileContent = tsvFile.getInputStream()
     List<String> rows = fileContent.text.split('\n')
 
-    rows[0].split(';').eachWithIndex { String s, int c ->
+    rows[0].split('\t').eachWithIndex { String s, int c ->
       String headerCol = s.trim()
       if(headerCol.startsWith("\uFEFF"))
         headerCol = headerCol.substring(1)
@@ -396,7 +396,7 @@ class CreateController {
     RefdataValue status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
 
     rows.each { row ->
-        List<String> cols = row.split(';')
+        List<String> cols = row.split('\t')
 
       Package pkg
       boolean editAllowed = true

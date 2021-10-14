@@ -154,4 +154,9 @@ class RefdataValue  extends AbstractI10n implements Auditable {
       rdv
     }
   }
+
+  static RefdataValue getByValueAndCategory(String value, String category) {
+    RefdataValue.findByValueIlikeAndOwner(value, RefdataCategory.findByDescIlike(category))
+  }
+
 }

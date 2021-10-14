@@ -27,7 +27,7 @@ class SendJobInfosJob {
 
   private sendPackageUpdateInfosJob(){
 
-    List<JobResult> jobResultList = JobResult.executeQuery("select jr from JobResult as jr where jr.statusText in (:status) and jr.dateCreated > (CURRENT_DATE-1) and jr.type in (:types) order by jr.dateCreated desc", [status: ["ERROR", "FAIL"], types: [RefdataCategory.lookup(RCConstants.JOB_TYPE, 'ManuellUpdatePackageJob'), RefdataCategory.lookup(RCConstants.JOB_TYPE, 'AutoUpdatePackagesJob'), RefdataCategory.lookup(RCConstants.JOB_TYPE, 'PackageCrossRef')]])
+    List<JobResult> jobResultList = JobResult.executeQuery("select jr from JobResult as jr where jr.statusText in (:status) and jr.dateCreated > (CURRENT_DATE-1) and jr.type in (:types) order by jr.dateCreated desc", [status: ["ERROR", "FAIL"], types: [RefdataCategory.lookup(RCConstants.JOB_TYPE, 'ManuellUpdatePackageJob'), RefdataCategory.lookup(RCConstants.JOB_TYPE, 'AutoUpdatePackagesJob'), RefdataCategory.lookup(RCConstants.JOB_TYPE, 'PackageCrossRef Auto')]])
 
       String currentServer = ServerUtils.getCurrentServer()
       String subjectSystemPraefix = (currentServer == ServerUtils.SERVER_PROD)? "" : (ServerUtils.getCurrentServerSystemId() + " - ")

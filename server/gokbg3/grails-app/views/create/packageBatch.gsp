@@ -21,7 +21,7 @@
     <div class="panel-body">
         The option "Package batch processing" allows you to create several packages at once via the provided package template below.
         <br><br>
-        In order to create your packages, download the template below and type in the name of the packages. Give all the relevant information for each individual package and save the template file as a csv file (semicolon separated and UTF-8 coded).
+        In order to create your packages, download the template below and type in the name of the packages. Give all the relevant information for each individual package and save the template file as a csv file (tab separated and UTF-8 coded).
         <br>
         For the upload of the package template, click on „Durchsuchen“ to choose the file you created and Upload it to the we:kb.
         <br><br>
@@ -37,7 +37,7 @@
     <div class="panel-body">
         <g:uploadForm action="processPackageBatch" method="post">
             <dl>
-                <input type="file" class="btn btn-default" name="csvFile"/>
+                <input type="file" class="btn btn-default" name="tsvFile"  accept=".tsv, .txt"/>
                 <br>
                 <button class="btn btn-default btn-sm" type="submit">Upload</button>
             </dl>

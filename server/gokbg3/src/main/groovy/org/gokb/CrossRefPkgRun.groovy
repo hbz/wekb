@@ -302,6 +302,8 @@ class CrossRefPkgRun {
                   creator: user,
                   note: note).save(flush: true)
 
+          job.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'PackageCrossRef Auto')
+
         }
       }
       log.debug("final flush");

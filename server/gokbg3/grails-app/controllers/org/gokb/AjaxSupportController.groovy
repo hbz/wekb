@@ -1,6 +1,6 @@
 package org.gokb
 
-
+import de.wekb.helper.DateUtils
 import de.wekb.helper.RCConstants
 import grails.converters.JSON
 import com.k_int.ClassUtils
@@ -13,6 +13,8 @@ import grails.core.GrailsClass
 import org.grails.datastore.mapping.model.*
 import org.grails.datastore.mapping.model.types.*
 import wekb.AccessService
+
+import java.text.SimpleDateFormat
 
 class AjaxSupportController {
 
@@ -805,7 +807,26 @@ class AjaxSupportController {
 
       if (editable || target_object == user) {
         if (params.type == 'date') {
-          target_object."${params.name}" = params.date('value',params.dateFormat ?: 'yyyy-MM-dd')
+          SimpleDateFormat sdf = DateUtils.getSDF_NoTime()
+          def backup = target_object."${params.name}"
+
+          try {
+            if (params.value && params.value.size() > 0) {
+              // parse new date
+              def parsed_date = sdf.parse(params.value)
+              target_object."${params.name}" = parsed_date
+            } else {
+              // delete existing date
+              target_object."${params.name}" = null
+            }
+            target_object.save(failOnError: true)
+          }
+          catch (Exception e) {
+            target_object."${params.name}" = backup
+            log.error(e.toString())
+          }
+
+          //target_object."${params.name}" = params.date('value',params.dateFormat ?: 'yyyy-MM-dd')
         }
         else if (params.type == 'boolean') {
           target_object."${params.name}" = params.boolean('value')

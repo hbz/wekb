@@ -3,6 +3,7 @@ package org.gokb.cred
 
 import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
+import de.wekb.helper.RDStore
 import org.gokb.GOKbTextUtils
 
 import javax.persistence.Transient
@@ -200,6 +201,8 @@ class Package extends KBComponent {
       status_filter = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, params.filter1)
     }
 
+    params.sort = 'name'
+
     def ql = null;
     ql = Package.findAllByNameIlikeAndStatusNotEqual("${params.q}%", status_deleted, params)
 
@@ -277,11 +280,33 @@ class Package extends KBComponent {
 
   @Transient
   public getCurrentTippCount() {
-    def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current');
+    def refdata_status = RDStore.KBC_STATUS_CURRENT
     def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
 
     int result = Combo.executeQuery("select count(c.id) from Combo as c where c.fromComponent = ? and c.type = ? and c.toComponent.status = ?"
-      , [this, combo_tipps, refdata_current])[0]
+      , [this, combo_tipps, refdata_status])[0]
+
+    result
+  }
+
+  @Transient
+  public getRetiredTippCount() {
+    def refdata_status = RDStore.KBC_STATUS_RETIRED
+    def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
+
+    int result = Combo.executeQuery("select count(c.id) from Combo as c where c.fromComponent = ? and c.type = ? and c.toComponent.status = ?"
+            , [this, combo_tipps, refdata_status])[0]
+
+    result
+  }
+
+  @Transient
+  public getExpectedTippCount() {
+    def refdata_status = RDStore.KBC_STATUS_EXPECTED
+    def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
+
+    int result = Combo.executeQuery("select count(c.id) from Combo as c where c.fromComponent = ? and c.type = ? and c.toComponent.status = ?"
+            , [this, combo_tipps, refdata_status])[0]
 
     result
   }
