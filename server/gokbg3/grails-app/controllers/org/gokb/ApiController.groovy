@@ -27,7 +27,6 @@ class ApiController {
   TsvSuperlifterService tsvSuperlifterService
   SecureRandom rand = new SecureRandom()
   UploadAnalysisService uploadAnalysisService
-  def ESWrapperService
   def ESSearchService
 
   static def reversemap = ['subject':'subjectKw','componentType':'componentType','identifier':'identifiers.value']

@@ -6,23 +6,18 @@ import de.wekb.helper.RCConstants
 import gokbg3.DateFormatService
 import grails.converters.JSON
 import grails.plugin.springsecurity.SpringSecurityService
-import org.elasticsearch.action.DocWriteResponse
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder
-import org.elasticsearch.action.admin.indices.create.CreateIndexResponse
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequestBuilder
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse
-import org.elasticsearch.action.index.IndexResponse
-import org.elasticsearch.action.search.SearchResponse
-import org.elasticsearch.client.Client
-import org.elasticsearch.client.IndicesAdminClient
-import org.elasticsearch.search.SearchHits
+import org.elasticsearch.client.RequestOptions
+import org.elasticsearch.client.RestHighLevelClient
+import org.elasticsearch.client.core.CountRequest
+import org.elasticsearch.client.core.CountResponse
+import org.elasticsearch.client.indices.GetIndexRequest
+
 import org.gokb.cred.*
 import org.hibernate.criterion.CriteriaSpecification
 
 import org.springframework.security.access.annotation.Secured
 import wekb.AdminService
 import wekb.AutoUpdatePackagesService
-import wekb.DeletedKBComponent
 
 import java.util.concurrent.CancellationException
 
@@ -562,7 +557,7 @@ class AdminController {
 
     RefdataValue status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
 
-    Client esclient = ESWrapperService.getClient()
+    /*Client esclient = ESWrapperService.getClient()
 
     result.indices = []
     def esIndices = grailsApplication.config.gokb.es.indices?.values()
@@ -583,6 +578,31 @@ class AdminController {
       indexInfo.countDB = FTControl.executeQuery(query)[0]
       indexInfo.countDeletedInDB = FTControl.executeQuery(query+ " where status = :status", [status: status_deleted]) ? FTControl.executeQuery(query+ " where status = :status", [status: status_deleted])[0] : 0
       result.indices << indexInfo
+    }*/
+
+    RestHighLevelClient esclient = ESWrapperService.getClient()
+
+    result.indices = []
+    def esIndices = ESWrapperService.es_indices
+    esIndices.each{ def indice ->
+      Map indexInfo = [:]
+      indexInfo.name = indice.value
+      indexInfo.type = indice.key
+
+      GetIndexRequest request = new GetIndexRequest(indice.value)
+
+      if (esclient.indices().exists(request, RequestOptions.DEFAULT)) {
+        CountRequest countRequest = new CountRequest(indice.value)
+        CountResponse countResponse = esclient.count(countRequest, RequestOptions.DEFAULT)
+        indexInfo.countIndex = countResponse ? countResponse.getCount().toInteger() : 0
+      }else {
+        indexInfo.countIndex = ""
+      }
+
+      String query = "select count(id) from ${typePerIndex.get(indice)}"
+      indexInfo.countDB = FTControl.executeQuery(query)[0]
+      indexInfo.countDeletedInDB = FTControl.executeQuery(query+ " where status = :status", [status: status_deleted]) ? FTControl.executeQuery(query+ " where status = :status", [status: status_deleted])[0] : 0
+      result.indices << indexInfo
     }
 
     result
@@ -594,7 +614,9 @@ class AdminController {
     String indexName = params.name
     List deletedKBComponentList = []
     if (indexName) {
-      if (typePerIndex.get(indexName) == DeletedKBComponent.class.simpleName) {
+      ESWrapperService.deleteIndex(indexName)
+      ESWrapperService.createIndex(indexName)
+     /* if (typePerIndex.get(indexName) == DeletedKBComponent.class.simpleName) {
 
         DeletedKBComponent.getAll().each { DeletedKBComponent deletedKBComponent ->
           Map idx_record = [:]
@@ -663,7 +685,7 @@ class AdminController {
       }.startOrQueue()
       j.description = "Delete index ${params.name}"
       j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'ResetFreeTextIndexes')
-      j.startTime = new Date()
+      j.startTime = new Date()*/
     }
 
     redirect(action: 'manageFTControl')
