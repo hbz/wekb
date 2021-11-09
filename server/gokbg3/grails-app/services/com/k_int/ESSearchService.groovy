@@ -8,7 +8,9 @@ import org.apache.lucene.search.join.ScoreMode
 import org.elasticsearch.action.ActionFuture
 import org.elasticsearch.action.search.*
 import org.elasticsearch.client.*
-import org.elasticsearch.index.query.*
+import org.elasticsearch.index.query.BoolQueryBuilder
+import org.elasticsearch.index.query.QueryBuilder
+import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.SearchHit
 import org.elasticsearch.search.aggregations.AggregationBuilders
 import org.elasticsearch.search.builder.SearchSourceBuilder
@@ -114,7 +116,7 @@ class ESSearchService{
 
     def result = [:]
 
-    Client esclient = ESWrapperService.getClient()
+    RestHighLevelClient esclient = ESWrapperService.getClient()
 
     try {
       if ( (params.q && params.q.length() > 0)) {
@@ -136,17 +138,17 @@ class ESSearchService{
         def es_indices = grailsApplication.config.globalSearch.indices
         log.debug("start to build srb with indices: ${es_indices.join(", ")} query: ${query_str}");
 
-        def search_results = null
-
+        SearchResponse searchResponse
         try {
-          SearchRequestBuilder srb = esclient.prepareSearch(es_indices as String[])
+          SearchRequest searchRequest = new SearchRequest(es_indices.values() as String[])
+          SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
           log.debug("srb built: ${srb} sort=${params.sort}")
           if (params.sort) {
             SortOrder order = SortOrder.ASC
             if (params.order) {
               order = SortOrder.valueOf(params.order?.toUpperCase())
             }
-            srb = srb.addSort("${params.sort}".toString(), order)
+            searchSourceBuilder.sort(new FieldSortBuilder("${params.sort}").order(order))
           }
           log.debug("srb start to add query and aggregration query string is ${query_str}")
 
@@ -156,41 +158,55 @@ class ESSearchService{
           Integer countProvider = Org.executeQuery("select count(o.id) from Org as o join o.roles rdv where rdv in (:roles) and o.status != :forbiddenStatus", [forbiddenStatus : RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED), roles: providerRoles], [readOnly: true])[0]
 
 
-          srb.setQuery(QueryBuilders.queryStringQuery(query_str))//QueryBuilders.wrapperQuery(query_str)
-              .addAggregation(AggregationBuilders.terms('curatoryGroup').size(countCuratoryGroups).field('curatoryGroups.curatoryGroup'))
-              .addAggregation(AggregationBuilders.terms('provider').size(countProvider).field('provider'))
-              .setFrom(params.offset)
-              .setSize(params.max)
+          searchSourceBuilder.query(QueryBuilders.queryStringQuery(query_str))
+          searchSourceBuilder.aggregation(AggregationBuilders.terms('curatoryGroup').size(countCuratoryGroups).field('curatoryGroups.curatoryGroup'))
+          searchSourceBuilder.aggregation(AggregationBuilders.terms('provider').size(countProvider).field('provider'))
 
-          // log.debug("finished srb and aggregrations: " + srb)
-          search_results = srb.get()
-          // log.debug("search results: " + search_results)
+          searchSourceBuilder.from(params.offset)
+          searchSourceBuilder.size(params.max)
+
+          searchRequest.source(searchSourceBuilder)
+
+          searchResponse = esclient.search(searchRequest, RequestOptions.DEFAULT)
+
         }
         catch (Exception ex) {
           log.error("Error processing ${es_indices.join(", ")} ${query_str}",ex);
         }
 
         //TODO: change this part to represent what we really need if this is not it, see the final part of this method where hits are done
-        if (search_results) {
-          def search_hits = search_results.getHits()
-          result.hits = search_hits.getHits()
+        if (searchResponse) {
+          result.hits = searchResponse.getHits()
           result.firstrec = params.offset + 1
-          result.resultsTotal = search_hits.totalHits
+          result.resultsTotal = searchResponse.getHits().getTotalHits().value ?: 0
           result.lastrec = Math.min ( params.offset + params.max, result.resultsTotal)
 
-          if (search_results.getAggregations()) {
+          if (searchResponse.getAggregations()) {
             result.facets = [:]
-            search_results.getAggregations().each { entry ->
+            searchResponse.getAggregations().each { entry ->
               log.debug("Aggregation entry ${entry} ${entry.getName()}");
               def facet_values = []
-              entry.buckets.each { bucket ->
-                bucket.each { bi ->
-                  String display = "Unknown"
-                  if(bi.getKey().startsWith('org.gokb.cred') && KBComponent.get(bi.getKey().split(':')[1].toLong()))
-                  {
-                    display =  KBComponent.get(bi.getKey().split(':')[1].toLong()).name
+              if(entry.type == 'nested'){
+                entry.getAggregations().each { subEntry ->
+                  subEntry.buckets.each { bucket ->
+                    bucket.each { bi ->
+                      String display = "Unknown"
+                      if (bi.getKey().startsWith('org.gokb.cred') && KBComponent.get(bi.getKey().split(':')[1].toLong())) {
+                        display = KBComponent.get(bi.getKey().split(':')[1].toLong()).name
+                      }
+                      facet_values.add([term: bi.getKey(), display: display, count: bi.getDocCount()])
+                    }
                   }
-                  facet_values.add([term:bi.getKey(), display:display , count:bi.getDocCount()])
+                }
+              }else {
+                entry.buckets.each { bucket ->
+                  bucket.each { bi ->
+                    String display = "Unknown"
+                    if (bi.getKey().startsWith('org.gokb.cred') && KBComponent.get(bi.getKey().split(':')[1].toLong())) {
+                      display = KBComponent.get(bi.getKey().split(':')[1].toLong()).name
+                    }
+                    facet_values.add([term: bi.getKey(), display: display, count: bi.getDocCount()])
+                  }
                 }
               }
               result.facets[entry.getName()] = facet_values

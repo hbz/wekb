@@ -4,12 +4,21 @@ import com.k_int.ConcurrencyManagerService.Job
 import com.k_int.ESSearchService
 import de.wekb.helper.RCConstants
 import gokbg3.DateFormatService
+import grails.converters.JSON
 import grails.gorm.DetachedCriteria
 import grails.gorm.transactions.Transactional
+import org.elasticsearch.ElasticsearchException
 import org.elasticsearch.action.DocWriteResponse
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 import org.elasticsearch.action.delete.DeleteRequest
+import org.elasticsearch.action.delete.DeleteResponse
+import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.index.IndexResponse
+import org.elasticsearch.action.support.replication.ReplicationResponse
+import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.Requests
+import org.elasticsearch.client.core.AcknowledgedResponse
+import org.elasticsearch.common.xcontent.XContentType
 import org.gokb.cred.*
 import wekb.DeletedKBComponent
 
@@ -129,11 +138,15 @@ class CleanupService {
           if(recordDeletedKBComponent(component)) {
             def expunge_result = component.expunge();
             log.debug("${expunge_result}");
-            DeleteRequest req = Requests.deleteRequest(ESSearchService.indicesPerType.get(component.class.simpleName))
-                    .type('component')
-                    .id(c_id)
-            def es_response = esclient.delete(req)
-            log.debug("${es_response}")
+            DeleteRequest request = new DeleteRequest(
+                    ESSearchService.indicesPerType.get(component.class.simpleName),
+                    c_id)
+            DeleteResponse deleteResponse = esclient.delete(
+                    request, RequestOptions.DEFAULT);
+            if (deleteResponse.getResult() == DocWriteResponse.Result.NOT_FOUND) {
+              log.debug("ES doc not found ${c_id}")
+            }
+            log.debug("ES deleteResponse: ${deleteResponse}")
             result.report.add(expunge_result)
           }
         }
@@ -693,10 +706,17 @@ class CleanupService {
       batch.each {
         KBComponent kbc = KBComponent.get(it)
         def oid = "${kbc.class.name}:${it}"
-        DeleteRequest req = new DeleteRequest(ESSearchService.indicesPerType.get(kbc.class.simpleName))
-              .type('component')
-              .id(oid)
-        def es_response = esclient.delete(req)
+
+        DeleteRequest request = new DeleteRequest(
+                ESSearchService.indicesPerType.get(kbc.class.simpleName),
+                oid)
+        DeleteResponse deleteResponse = esclient.delete(
+                request, RequestOptions.DEFAULT);
+        if (deleteResponse.getResult() == DocWriteResponse.Result.NOT_FOUND) {
+          log.debug("ES doc not found ${oid}")
+        }
+        log.debug("ES deleteResponse: ${deleteResponse}")
+
       }
       result.num_expunged += KBComponent.executeUpdate("delete KBComponent as c where c.id IN (:component)",[component:batch])
       j?.setProgress(result.num_expunged, result.num_requested)
@@ -737,7 +757,12 @@ class CleanupService {
     idx_record.oldLastUpdated = deletedKBComponent.oldLastUpdated ? dateFormatService.formatIsoTimestamp(deletedKBComponent.oldLastUpdated) : null
     idx_record.oldId = deletedKBComponent.oldId
 
-    IndexResponse indexResponse = esclient.prepareIndex("gokbdeletedcomponents", 'component', recid).setSource(idx_record).get()
+    IndexRequest request = new IndexRequest("gokbdeletedcomponents")
+    request.id(recid)
+    String jsonString = idx_record as JSON
+    request.source(jsonString, XContentType.JSON)
+
+    IndexResponse indexResponse = esclient.index(request, RequestOptions.DEFAULT);
 
     if (indexResponse.getResult() != DocWriteResponse.Result.CREATED) {
       DeletedKBComponent.withTransaction {
