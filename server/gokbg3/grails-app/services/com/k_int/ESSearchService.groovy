@@ -100,10 +100,10 @@ class ESSearchService{
   ]
 
   static Map indicesPerType = [
-      "TitleInstancePackagePlatform" : "gokbtipps",
-      "Org" : "gokborgs",
-      "Package" : "gokbpackages",
-      "Platform" : "gokbplatforms"
+      "TitleInstancePackagePlatform" : "wekbtipps",
+      "Org" : "wekborgs",
+      "Package" : "wekbpackages",
+      "Platform" : "wekbplatforms"
   ]
 
 

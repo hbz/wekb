@@ -39,11 +39,11 @@ class AdminController {
   SpringSecurityService springSecurityService
 
   static Map typePerIndex = [
-          "gokbtipps": "TitleInstancePackagePlatform",
-          "gokborgs": "Org" ,
-          "gokbpackages": "Package",
-          "gokbplatforms": "Platform",
-          "gokbdeletedcomponents": "DeletedKBComponent"
+          "wekbtipps": "TitleInstancePackagePlatform",
+          "wekborgs": "Org" ,
+          "wekbpackages": "Package",
+          "wekbplatforms": "Platform",
+          "wekbdeletedcomponents": "DeletedKBComponent"
   ]
 
   @Deprecated
