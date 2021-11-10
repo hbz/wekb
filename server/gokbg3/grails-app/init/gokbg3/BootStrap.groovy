@@ -18,9 +18,6 @@ import org.gokb.cred.*
 
 import com.k_int.apis.A_Api;
 import com.k_int.ConcurrencyManagerService.Job
-import org.elasticsearch.client.IndicesAdminClient
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder
-import org.elasticsearch.action.admin.indices.create.CreateIndexResponse
 
 class BootStrap {
 

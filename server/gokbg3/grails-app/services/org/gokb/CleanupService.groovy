@@ -7,17 +7,12 @@ import gokbg3.DateFormatService
 import grails.converters.JSON
 import grails.gorm.DetachedCriteria
 import grails.gorm.transactions.Transactional
-import org.elasticsearch.ElasticsearchException
 import org.elasticsearch.action.DocWriteResponse
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 import org.elasticsearch.action.delete.DeleteRequest
 import org.elasticsearch.action.delete.DeleteResponse
 import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.index.IndexResponse
-import org.elasticsearch.action.support.replication.ReplicationResponse
 import org.elasticsearch.client.RequestOptions
-import org.elasticsearch.client.Requests
-import org.elasticsearch.client.core.AcknowledgedResponse
 import org.elasticsearch.common.xcontent.XContentType
 import org.gokb.cred.*
 import wekb.DeletedKBComponent
@@ -757,7 +752,7 @@ class CleanupService {
     idx_record.oldLastUpdated = deletedKBComponent.oldLastUpdated ? dateFormatService.formatIsoTimestamp(deletedKBComponent.oldLastUpdated) : null
     idx_record.oldId = deletedKBComponent.oldId
 
-    IndexRequest request = new IndexRequest("gokbdeletedcomponents")
+    IndexRequest request = new IndexRequest("wekbdeletedcomponents")
     request.id(recid)
     String jsonString = idx_record as JSON
     request.source(jsonString, XContentType.JSON)

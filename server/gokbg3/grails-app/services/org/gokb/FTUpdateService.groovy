@@ -1,13 +1,11 @@
 package org.gokb
 
 import com.k_int.ESSearchService
-import de.wekb.annotations.RefdataAnnotation
-import de.wekb.helper.RCConstants
+
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
 import org.elasticsearch.action.bulk.BulkItemResponse
 import org.elasticsearch.action.bulk.BulkRequest
-import org.elasticsearch.action.bulk.BulkRequestBuilder
 import org.elasticsearch.action.bulk.BulkResponse
 import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.client.RequestOptions
@@ -17,7 +15,6 @@ import org.gokb.cred.KBComponentAdditionalProperty
 import org.gokb.cred.TIPPCoverageStatement
 import org.gokb.cred.RefdataValue
 import wekb.Contact
-import wekb.DeletedKBComponent
 
 import java.text.Normalizer
 

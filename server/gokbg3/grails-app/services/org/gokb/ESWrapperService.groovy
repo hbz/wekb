@@ -6,13 +6,14 @@ import org.apache.http.HttpHost
 import org.apache.http.conn.ConnectTimeoutException
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
-import org.elasticsearch.action.admin.indices.create.CreateIndexResponse
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
-import org.elasticsearch.action.admin.indices.get.GetIndexRequest
-import org.elasticsearch.action.support.master.AcknowledgedResponse
-import org.elasticsearch.client.RestClient
+import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
+import org.elasticsearch.client.RestClient
+import org.elasticsearch.client.core.AcknowledgedResponse
+import org.elasticsearch.client.indices.CreateIndexRequest
+import org.elasticsearch.client.indices.CreateIndexResponse
+import org.elasticsearch.client.indices.GetIndexRequest
 import org.elasticsearch.cluster.health.ClusterHealthStatus
 import org.elasticsearch.cluster.health.ClusterIndexHealth
 import org.elasticsearch.common.xcontent.XContentType
@@ -38,7 +39,7 @@ class ESWrapperService {
 
   @javax.annotation.PostConstruct
   def init() {
-    log.debug("ESWrapperService::init");
+    log.debug("ESWrapperService::init")
 
     es_indices = grailsApplication.config.gokb.es.indices
     es_cluster_name = grailsApplication.config.gokb.es.cluster ?: ESWrapperService.ES_CLUSTER
@@ -48,14 +49,14 @@ class ESWrapperService {
     log.debug("es_indices = ${es_indices}")
     log.debug("es_host = ${es_host}")
 
-    log.debug("ES Init completed");
+    log.debug("ES Init completed")
   }
 
   RestHighLevelClient getClient() {
     esclient = new RestHighLevelClient(
             RestClient.builder(
                     new HttpHost(es_host, 9200, "http"),
-                    new HttpHost(es_host, 9201, "http")));
+                    new HttpHost(es_host, 9201, "http")))
 
     esclient
   }
@@ -115,12 +116,12 @@ class ESWrapperService {
       }
       return response
     } catch (ConnectTimeoutException e) {
-      log.error("Problem with ElasticSearch: Connect Timeout")
+      log.error("Problem with ElasticSearch: Connect Timeout "+e)
       esclient.close()
       return false
     }
     catch (ConnectException e) {
-      log.error("Problem with ElasticSearch: Connection Fail")
+      log.error("Problem with ElasticSearch: Connection Fail "+ e)
       return false
     }
 
@@ -130,26 +131,26 @@ class ESWrapperService {
 
     RestHighLevelClient esclient = this.getClient()
 
-    ClusterHealthRequest request = new ClusterHealthRequest();
-    ClusterHealthResponse response = esclient.cluster().health(request, RequestOptions.DEFAULT);
+    ClusterHealthRequest request = new ClusterHealthRequest()
+    ClusterHealthResponse response = esclient.cluster().health(request, RequestOptions.DEFAULT)
 
-    String clusterName = response.getClusterName();
-    //ClusterHealthStatus status = response.getStatus();
+    String clusterName = response.getClusterName()
+    //ClusterHealthStatus status = response.getStatus()
 
-    boolean timedOut = response.isTimedOut();
-    RestStatus restStatus = response.status();
+    boolean timedOut = response.isTimedOut()
+    RestStatus restStatus = response.status()
 
-    Map<String, ClusterIndexHealth> indices = response.getIndices();
+    Map<String, ClusterIndexHealth> indices = response.getIndices()
 
-    ClusterIndexHealth index = indices.get("index");
-    ClusterHealthStatus indexStatus = index.getStatus();
-    int numberOfShards = index.getNumberOfShards();
-    int numberOfReplicas = index.getNumberOfReplicas();
-    int activeShards = index.getActiveShards();
-    int activePrimaryShards = index.getActivePrimaryShards();
-    int initializingShards = index.getInitializingShards();
-    int relocatingShards = index.getRelocatingShards();
-    int unassignedShards = index.getUnassignedShards();
+    ClusterIndexHealth index = indices.get("index")
+    ClusterHealthStatus indexStatus = index.getStatus()
+    int numberOfShards = index.getNumberOfShards()
+    int numberOfReplicas = index.getNumberOfReplicas()
+    int activeShards = index.getActiveShards()
+    int activePrimaryShards = index.getActivePrimaryShards()
+    int initializingShards = index.getInitializingShards()
+    int relocatingShards = index.getRelocatingShards()
+    int unassignedShards = index.getUnassignedShards()
 
     println("ESInfo: clusterName: ${clusterName}")
     println("ESInfo: index: ${index}, numberOfShards: ${numberOfShards}, numberOfReplicas: ${numberOfReplicas}, indexStatus: ${indexStatus}")
