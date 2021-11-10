@@ -605,6 +605,13 @@ class AdminController {
       result.indices << indexInfo
     }
 
+    try {
+      esclient.close()
+    }
+    catch (Exception e) {
+      log.error("Problem by Close ES Client", e)
+    }
+
     result
   }
 

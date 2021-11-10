@@ -572,6 +572,15 @@ class FTUpdateService {
       log.error("Problem", e)
     }
 
+    finally {
+      try {
+        esclient.close()
+      }
+      catch (Exception e) {
+        log.error("Problem by Close ES Client", e)
+      }
+    }
+
     running = false
   }
 

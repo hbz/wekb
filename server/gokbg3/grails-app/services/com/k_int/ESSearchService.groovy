@@ -224,10 +224,10 @@ class ESSearchService{
     }
     finally {
       try {
-        log.debug("in finally")
+        esclient.close()
       }
       catch ( Exception e ) {
-        log.error("problem",e)
+        log.error("Problem by Close ES Client",e)
       }
     }
     result
@@ -563,48 +563,58 @@ class ESSearchService{
     def unknown_fields = []
 
     SearchResponse searchResponse
-    if (!params.scrollId){
-      QueryBuilder scrollQuery = QueryBuilders.boolQuery()
-      if (params.component_type){
-        QueryBuilder typeFilter = QueryBuilders.matchQuery("componentType", params.component_type)
-        scrollQuery.must(typeFilter)
-      }
-      addStatusQuery(scrollQuery, errors, params.status)
-      // addDateQueries(scrollQuery, errors, params)
-      // TODO: add this after upgrade to Elasticsearch 7
-      // TODO: alternative query builders for scroll searches with q
-      specifyQueryWithParams(params, scrollQuery, errors, unknown_fields)
 
-      SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
-      searchSourceBuilder.query(scrollQuery)
-      searchSourceBuilder.size(scrollSize)
-      SearchRequest searchRequest = new SearchRequest(usedComponentTypes.values() as String[])
-      //searchRequest.scroll("1m")
-      // ... set scroll interval to 15 minutes, reason: ERMS-3460
-      //SearchRequest searchRequest = new SearchRequest(grailsApplication.config.gokb.es.index)
-      searchRequest.scroll("15m")
-      searchRequest.source(searchSourceBuilder)
-      searchResponse = esclient.search(searchRequest, RequestOptions.DEFAULT)
-      result.lastPage = 0
-    }
-    else{
-      SearchScrollRequest scrollRequest = new SearchScrollRequest(params.scrollId)
-      scrollRequest.scroll("15m")
-      searchResponse = esclient.search(scrollRequest, RequestOptions.DEFAULT)
-      try{
-        if (params.lastPage && Integer.valueOf(params.lastPage) > -1){
-          result.lastPage = Integer.valueOf(params.lastPage)+1
+    try {
+      if (!params.scrollId) {
+        QueryBuilder scrollQuery = QueryBuilders.boolQuery()
+        if (params.component_type) {
+          QueryBuilder typeFilter = QueryBuilders.matchQuery("componentType", params.component_type)
+          scrollQuery.must(typeFilter)
+        }
+        addStatusQuery(scrollQuery, errors, params.status)
+        // addDateQueries(scrollQuery, errors, params)
+        // TODO: add this after upgrade to Elasticsearch 7
+        // TODO: alternative query builders for scroll searches with q
+        specifyQueryWithParams(params, scrollQuery, errors, unknown_fields)
+
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
+        searchSourceBuilder.query(scrollQuery)
+        searchSourceBuilder.size(scrollSize)
+        SearchRequest searchRequest = new SearchRequest(usedComponentTypes.values() as String[])
+        //searchRequest.scroll("1m")
+        // ... set scroll interval to 15 minutes, reason: ERMS-3460
+        //SearchRequest searchRequest = new SearchRequest(grailsApplication.config.gokb.es.index)
+        searchRequest.scroll("15m")
+        searchRequest.source(searchSourceBuilder)
+        searchResponse = esclient.search(searchRequest, RequestOptions.DEFAULT)
+        result.lastPage = 0
+      } else {
+        SearchScrollRequest scrollRequest = new SearchScrollRequest(params.scrollId)
+        scrollRequest.scroll("15m")
+        searchResponse = esclient.search(scrollRequest, RequestOptions.DEFAULT)
+        try {
+          if (params.lastPage && Integer.valueOf(params.lastPage) > -1) {
+            result.lastPage = Integer.valueOf(params.lastPage) + 1
+          }
+        }
+        catch (Exception e) {
+          log.debug("Could not process page information on scroll request.")
         }
       }
-      catch (Exception e){
-        log.debug("Could not process page information on scroll request.")
+      result.scrollId = searchResponse.getScrollId()
+      SearchHit[] searchHits = searchResponse.getHits()
+      result.hasMoreRecords = searchHits.length == scrollSize
+      result.records = filterLastUpdatedDisplay(searchHits, params, errors, result)
+      // TODO: remove this after upgrade to Elasticsearch 7
+    }
+    finally {
+      try {
+        esclient.close()
+      }
+      catch ( Exception e ) {
+        log.error("Problem by Close ES Client",e)
       }
     }
-    result.scrollId = searchResponse.getScrollId()
-    SearchHit[] searchHits = searchResponse.getHits()
-    result.hasMoreRecords = searchHits.length == scrollSize
-    result.records = filterLastUpdatedDisplay(searchHits, params, errors, result)
-    // TODO: remove this after upgrade to Elasticsearch 7
 
     result.size = result.records.size()
     result
@@ -726,69 +736,76 @@ class ESSearchService{
       if( !errors && exactQuery.hasClauses() ) {
         RestHighLevelClient esclient = ESWrapperService.getClient()
 
-        SearchRequest searchRequest = new SearchRequest(grailsApplication.config.searchApi.indices as String[])
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
+        try {
 
-        searchSourceBuilder.query(QueryBuilders.matchAllQuery())
-        searchRequest.source(searchSourceBuilder)
+          SearchRequest searchRequest = new SearchRequest(grailsApplication.config.searchApi.indices as String[])
+          SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
 
-       /* SearchRequestBuilder es_request =  esclient.prepareSearch()
+          searchSourceBuilder.query(QueryBuilders.matchAllQuery())
+          searchRequest.source(searchSourceBuilder)
+
+          /* SearchRequestBuilder es_request =  esclient.prepareSearch()
         //println exactQuery
         es_request.setIndices(grailsApplication.config.searchApi.indices as String[])
         es_request.setTypes(grailsApplication.config.searchApi.types)
         es_request.setQuery(exactQuery)*/
 
-        checkInt(result, errors, params.max, 'max')
-        checkInt(result, errors, params.from, 'offset')
-        checkInt(result, errors, params.offset, 'offset')
+          checkInt(result, errors, params.max, 'max')
+          checkInt(result, errors, params.from, 'offset')
+          checkInt(result, errors, params.offset, 'offset')
 
-        if (params.max) {
-          searchSourceBuilder.size(result.max)
-        }
-        else {
-          result.max = 10
-        }
-
-        if (params.offset || params.from) {
-          searchSourceBuilder.from(result.offset)
-        }
-        else {
-          result.offset = 0
-        }
-
-        if (params.sort && params.sort instanceof String) {
-          def sortBy = params.sort
-
-          if (sortBy == "name") {
-            sortBy = "sortname"
+          if (params.max) {
+            searchSourceBuilder.size(result.max)
+          } else {
+            result.max = 10
           }
 
-          if (ESWrapperService.mapping.component.properties[sortBy]?.type == 'text') {
-            errors['sort'] = "Unable to sort by text field ${sortBy}!"
+          if (params.offset || params.from) {
+            searchSourceBuilder.from(result.offset)
+          } else {
+            result.offset = 0
           }
-          else {
-            FieldSortBuilder sortQry = new FieldSortBuilder(sortBy)
-            SortOrder order = SortOrder.ASC
 
-            if (params.order) {
-              if (params.order.toUpperCase() in ['ASC','DESC']) {
-                order = SortOrder.valueOf(params.order?.toUpperCase())
-              }
-              else {
-                errors['order'] = "Unknown sort order value '${params.order}'!"
-              }
+          if (params.sort && params.sort instanceof String) {
+            def sortBy = params.sort
+
+            if (sortBy == "name") {
+              sortBy = "sortname"
             }
 
-            sortQry.order(order)
+            if (ESWrapperService.mapping.component.properties[sortBy]?.type == 'text') {
+              errors['sort'] = "Unable to sort by text field ${sortBy}!"
+            } else {
+              FieldSortBuilder sortQry = new FieldSortBuilder(sortBy)
+              SortOrder order = SortOrder.ASC
 
-            searchSourceBuilder.sort(sortQry)
+              if (params.order) {
+                if (params.order.toUpperCase() in ['ASC', 'DESC']) {
+                  order = SortOrder.valueOf(params.order?.toUpperCase())
+                } else {
+                  errors['order'] = "Unknown sort order value '${params.order}'!"
+                }
+              }
+
+              sortQry.order(order)
+
+              searchSourceBuilder.sort(sortQry)
+            }
+          }
+
+          if (!errors) {
+            searchRequest.source(searchSourceBuilder)
+            searchResponse = esclient.search(searchRequest, RequestOptions.DEFAULT)
           }
         }
-
-        if (!errors) {
-          searchRequest.source(searchSourceBuilder)
-          searchResponse = esclient.search(searchRequest, RequestOptions.DEFAULT)
-        }
+          finally {
+            try {
+              esclient.close()
+            }
+            catch ( Exception e ) {
+              log.error("Problem by Close ES Client",e)
+            }
+          }
       }
       else if ( !exactQuery.hasClauses() ){
         errors['params'] = "No valid parameters found"
