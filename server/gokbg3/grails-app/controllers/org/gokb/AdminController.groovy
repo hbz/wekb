@@ -599,7 +599,7 @@ class AdminController {
         indexInfo.countIndex = ""
       }
 
-      String query = "select count(id) from ${typePerIndex.get(indice)}"
+      String query = "select count(id) from ${typePerIndex.get(indice.value)}"
       indexInfo.countDB = FTControl.executeQuery(query)[0]
       indexInfo.countDeletedInDB = FTControl.executeQuery(query+ " where status = :status", [status: status_deleted]) ? FTControl.executeQuery(query+ " where status = :status", [status: status_deleted])[0] : 0
       result.indices << indexInfo
