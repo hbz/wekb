@@ -7,17 +7,12 @@ import gokbg3.DateFormatService
 import grails.converters.JSON
 import grails.gorm.DetachedCriteria
 import grails.gorm.transactions.Transactional
-import org.elasticsearch.ElasticsearchException
 import org.elasticsearch.action.DocWriteResponse
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 import org.elasticsearch.action.delete.DeleteRequest
 import org.elasticsearch.action.delete.DeleteResponse
 import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.index.IndexResponse
-import org.elasticsearch.action.support.replication.ReplicationResponse
 import org.elasticsearch.client.RequestOptions
-import org.elasticsearch.client.Requests
-import org.elasticsearch.client.core.AcknowledgedResponse
 import org.elasticsearch.common.xcontent.XContentType
 import org.gokb.cred.*
 import wekb.DeletedKBComponent
@@ -155,6 +150,14 @@ class CleanupService {
       catch ( Throwable t ) {
         log.error("problem",t);
         j?.message("Problem expunging component with id ${component_id}".toString())
+      }
+      finally {
+        try {
+          esclient.close()
+        }
+        catch ( Exception e ) {
+          log.error("Problem by Close ES Client",e)
+        }
       }
     }
     j?.message("Finished deleting ${idx} components.")
@@ -679,47 +682,56 @@ class CleanupService {
     log.debug("Expunging ${result.num_requested} components")
     def esclient = ESWrapperService.getClient()
     def remaining = components
+    try {
+      while (remaining.size() > 0) {
+        def batch = remaining.take(50)
+        remaining = remaining.drop(50)
 
-    while (remaining.size() > 0) {
-      def batch = remaining.take(50)
-      remaining = remaining.drop(50)
+        Combo.executeUpdate("delete from Combo as c where c.fromComponent.id IN (:component) or c.toComponent.id IN (:component)", [component: batch])
+        ComponentWatch.executeUpdate("delete from ComponentWatch as cw where cw.component.id IN (:component)", [component: batch])
+        KBComponentAdditionalProperty.executeUpdate("delete from KBComponentAdditionalProperty as c where c.fromComponent.id IN (:component)", [component: batch]);
+        KBComponentVariantName.executeUpdate("delete from KBComponentVariantName as c where c.owner.id IN (:component)", [component: batch]);
 
-      Combo.executeUpdate("delete from Combo as c where c.fromComponent.id IN (:component) or c.toComponent.id IN (:component)",[component:batch])
-      ComponentWatch.executeUpdate("delete from ComponentWatch as cw where cw.component.id IN (:component)",[component:batch])
-      KBComponentAdditionalProperty.executeUpdate("delete from KBComponentAdditionalProperty as c where c.fromComponent.id IN (:component)",[component:batch]);
-      KBComponentVariantName.executeUpdate("delete from KBComponentVariantName as c where c.owner.id IN (:component)",[component:batch]);
+        ReviewRequestAllocationLog.executeUpdate("delete from ReviewRequestAllocationLog as c where c.rr in ( select r from ReviewRequest as r where r.componentToReview.id IN (:component))", [component: batch]);
+        def events_to_delete = ComponentHistoryEventParticipant.executeQuery("select c.event from ComponentHistoryEventParticipant as c where c.participant.id IN (:component)", [component: batch])
 
-      ReviewRequestAllocationLog.executeUpdate("delete from ReviewRequestAllocationLog as c where c.rr in ( select r from ReviewRequest as r where r.componentToReview.id IN (:component))",[component:batch]);
-      def events_to_delete = ComponentHistoryEventParticipant.executeQuery("select c.event from ComponentHistoryEventParticipant as c where c.participant.id IN (:component)",[component:batch])
-
-      events_to_delete.each {
-        ComponentHistoryEventParticipant.executeUpdate("delete from ComponentHistoryEventParticipant as c where c.event = ?",[it])
-        ComponentHistoryEvent.executeUpdate("delete from ComponentHistoryEvent as c where c.id = ?", [it.id])
-      }
-
-      ReviewRequest.executeUpdate("delete from ReviewRequest as c where c.componentToReview.id IN (:component)",[component:batch]);
-      ComponentPerson.executeUpdate("delete from ComponentPerson as c where c.component.id IN (:component)",[component:batch]);
-      ComponentIngestionSource.executeUpdate("delete from ComponentIngestionSource as c where c.component.id IN (:component)",[component:batch]);
-      KBComponent.executeUpdate("update KBComponent set duplicateOf = NULL where duplicateOf.id IN (:component)",[component:batch])
-      ComponentPrice.executeUpdate("delete from ComponentPrice as cp where cp.owner.id IN (:component)", [component: batch])
-
-      batch.each {
-        KBComponent kbc = KBComponent.get(it)
-        def oid = "${kbc.class.name}:${it}"
-
-        DeleteRequest request = new DeleteRequest(
-                ESSearchService.indicesPerType.get(kbc.class.simpleName),
-                oid)
-        DeleteResponse deleteResponse = esclient.delete(
-                request, RequestOptions.DEFAULT);
-        if (deleteResponse.getResult() == DocWriteResponse.Result.NOT_FOUND) {
-          log.debug("ES doc not found ${oid}")
+        events_to_delete.each {
+          ComponentHistoryEventParticipant.executeUpdate("delete from ComponentHistoryEventParticipant as c where c.event = ?", [it])
+          ComponentHistoryEvent.executeUpdate("delete from ComponentHistoryEvent as c where c.id = ?", [it.id])
         }
-        log.debug("ES deleteResponse: ${deleteResponse}")
 
+        ReviewRequest.executeUpdate("delete from ReviewRequest as c where c.componentToReview.id IN (:component)", [component: batch]);
+        ComponentPerson.executeUpdate("delete from ComponentPerson as c where c.component.id IN (:component)", [component: batch]);
+        ComponentIngestionSource.executeUpdate("delete from ComponentIngestionSource as c where c.component.id IN (:component)", [component: batch]);
+        KBComponent.executeUpdate("update KBComponent set duplicateOf = NULL where duplicateOf.id IN (:component)", [component: batch])
+        ComponentPrice.executeUpdate("delete from ComponentPrice as cp where cp.owner.id IN (:component)", [component: batch])
+
+        batch.each {
+          KBComponent kbc = KBComponent.get(it)
+          def oid = "${kbc.class.name}:${it}"
+
+          DeleteRequest request = new DeleteRequest(
+                  ESSearchService.indicesPerType.get(kbc.class.simpleName),
+                  oid)
+          DeleteResponse deleteResponse = esclient.delete(
+                  request, RequestOptions.DEFAULT);
+          if (deleteResponse.getResult() == DocWriteResponse.Result.NOT_FOUND) {
+            log.debug("ES doc not found ${oid}")
+          }
+          log.debug("ES deleteResponse: ${deleteResponse}")
+
+        }
+        result.num_expunged += KBComponent.executeUpdate("delete KBComponent as c where c.id IN (:component)", [component: batch])
+        j?.setProgress(result.num_expunged, result.num_requested)
       }
-      result.num_expunged += KBComponent.executeUpdate("delete KBComponent as c where c.id IN (:component)",[component:batch])
-      j?.setProgress(result.num_expunged, result.num_requested)
+    }
+    finally {
+      try {
+        esclient.close()
+      }
+      catch (Exception e) {
+        log.error("Problem by Close ES Client", e)
+      }
     }
     result
   }
@@ -757,12 +769,19 @@ class CleanupService {
     idx_record.oldLastUpdated = deletedKBComponent.oldLastUpdated ? dateFormatService.formatIsoTimestamp(deletedKBComponent.oldLastUpdated) : null
     idx_record.oldId = deletedKBComponent.oldId
 
-    IndexRequest request = new IndexRequest("gokbdeletedcomponents")
+    IndexRequest request = new IndexRequest("wekbdeletedcomponents")
     request.id(recid)
     String jsonString = idx_record as JSON
     request.source(jsonString, XContentType.JSON)
 
-    IndexResponse indexResponse = esclient.index(request, RequestOptions.DEFAULT);
+    IndexResponse indexResponse = esclient.index(request, RequestOptions.DEFAULT)
+
+    try {
+        esclient.close()
+      }
+      catch (Exception e) {
+        log.error("Problem by Close ES Client", e)
+      }
 
     if (indexResponse.getResult() != DocWriteResponse.Result.CREATED) {
       DeletedKBComponent.withTransaction {

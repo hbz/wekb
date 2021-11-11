@@ -605,6 +605,13 @@ class AdminController {
       result.indices << indexInfo
     }
 
+    try {
+      esclient.close()
+    }
+    catch (Exception e) {
+      log.error("Problem by Close ES Client", e)
+    }
+
     result
   }
 
@@ -665,9 +672,9 @@ class AdminController {
             deletedKBComponentList.each {
               String recid = it.recid
               it.remove('recid')
-              IndexResponse indexResponse = esclient.prepareIndex("gokbdeletedcomponents", 'component', recid).setSource(it).get()
+              IndexResponse indexResponse = esclient.prepareIndex("wekbdeletedcomponents", 'component', recid).setSource(it).get()
               if (indexResponse.getResult() != DocWriteResponse.Result.CREATED) {
-                log.error("Error on record DeletedKBComponent in Index 'gokbdeletedcomponents'")
+                log.error("Error on record DeletedKBComponent in Index 'wekbdeletedcomponents'")
               }
 
             }

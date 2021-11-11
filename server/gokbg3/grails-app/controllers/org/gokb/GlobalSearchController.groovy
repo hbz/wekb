@@ -126,9 +126,9 @@ class GlobalSearchController {
             def response_record = [:]
             response_record.id = r.id
             response_record.score = r.score
-            response_record.name = r.source.name
-            response_record.identifiers = r.source.identifiers
-            response_record.altNames = r.source.altname
+            response_record.name = r.getSourceAsMap().name
+            response_record.identifiers = r.getSourceAsMap().identifiers
+            response_record.altNames = r.getSourceAsMap().altname
             
             apiresponse.records.add(response_record);
           }
@@ -136,6 +136,12 @@ class GlobalSearchController {
       }
     }
     finally {
+      try {
+        esclient.close()
+      }
+      catch (Exception e) {
+        log.error("Problem by Close ES Client", e)
+      }
     }
 
     withFormat {
