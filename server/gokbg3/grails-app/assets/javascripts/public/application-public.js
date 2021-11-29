@@ -6,4 +6,19 @@
 
 //=require gokb/inline-content
 
-console.log('+ application-public.js')
+console.log('+ application-public.js');
+
+$(document).ready(function() {
+
+  /** Bootstrap 4.6.  - Loading Tabs from URL with hash **/
+      // Javascript to enable link to tab
+  let hash = window.location.hash;
+
+  if (hash) {
+    $('.nav-item a[href="' + hash + '"]').tab('show');
+  }
+  // Change hash for page-reload
+  $('.nav-item a').on('shown.bs.tab', function(e) {
+    window.location.hash = e.target.hash;
+  })
+});
