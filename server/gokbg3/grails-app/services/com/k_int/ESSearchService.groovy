@@ -795,6 +795,8 @@ class ESSearchService{
             r.source.each { field, val ->
               response_record."${field}" = val
             }
+
+            response_record = response_record.sort {it.key}
           }
 
           result.records.add(response_record);
@@ -1102,6 +1104,7 @@ class ESSearchService{
     es_result.remove("offset")
     es_result.remove("max")
     es_result.remove("count")
+    println(es_result)
 
     es_result
   }

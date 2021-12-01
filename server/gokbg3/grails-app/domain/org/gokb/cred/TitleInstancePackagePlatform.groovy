@@ -147,7 +147,9 @@ class TitleInstancePackagePlatform extends KBComponent {
       'supersedingPublicationTitleId':"supersedingPublicationTitleId",
       'lastChangedExternal'   : "lastChangedExternal",
       'medium'                : "medium",
-      'languages'              : "languages"
+      'languages'              : "languages",
+      'accessType'              : "accessType",
+      'openAccess'              : "openAccess"
     ],
     'defaultLinks' : [
       'pkg',
