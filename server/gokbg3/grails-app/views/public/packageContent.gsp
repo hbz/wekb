@@ -159,6 +159,13 @@
                         <span class="badge badge-pill badge-info">${expectedTitleCount}</span>
                     </a>
                 </li>
+
+                <li class="nav-item">
+                    <a class="nav-link ${params.tab == 'deletedTipps' ? 'active' : ''}" href="#deletedTipps" data-toggle="tab" role="tab">Deleted Titles
+                        <span class="badge badge-pill badge-info">${deletedTitleCount}</span>
+                    </a>
+                </li>
+
                 <li class="nav-item">
                     <a class="nav-link" href="#identifiers" data-toggle="tab" role="tab">Identifiers
                         <span  class="badge badge-pill badge-info">${pkg?.getCombosByPropertyNameAndStatus('ids', 'Active').size()}</span>
@@ -194,6 +201,12 @@
                 <div class="tab-pane ${params.tab == 'expectedTipps' ? 'active' : ''}" id="expectedTipps" role="tabpanel">
 
                     <g:render template="tippsTab" model="[tippsCount: expectedTitleCount, tipps: expectedTipps, tab: 'expectedTipps']"/>
+
+                </div>
+
+                <div class="tab-pane ${params.tab == 'deletedTipps' ? 'active' : ''}" id="deletedTipps" role="tabpanel">
+
+                    <g:render template="tippsTab" model="[tippsCount: deletedTitleCount, tipps: deletedTipps, tab: 'deletedTipps']"/>
 
                 </div>
 

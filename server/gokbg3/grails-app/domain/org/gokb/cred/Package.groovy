@@ -312,6 +312,17 @@ class Package extends KBComponent {
   }
 
   @Transient
+  public getDeletedTippCount() {
+    def refdata_status = RDStore.KBC_STATUS_DELETED
+    def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
+
+    int result = Combo.executeQuery("select count(c.id) from Combo as c where c.fromComponent = ? and c.type = ? and c.toComponent.status = ?"
+            , [this, combo_tipps, refdata_status])[0]
+
+    result
+  }
+
+  @Transient
   public getReviews(def onlyOpen = true, def onlyCurrent = false) {
     def all_rrs = null
     def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current');

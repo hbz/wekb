@@ -74,6 +74,7 @@ class PublicController {
         def status_current = RDStore.KBC_STATUS_CURRENT
         def status_retired = RDStore.KBC_STATUS_RETIRED
         def status_expected = RDStore.KBC_STATUS_EXPECTED
+        def status_deleted = RDStore.KBC_STATUS_DELETED
         
         result.pkgId = result.pkg.id
         result.pkgName = result.pkg.name
@@ -104,6 +105,9 @@ class PublicController {
 
         result.expectedTitleCount = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_expected])[0]
         result.expectedTipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY + " order by ${params.sort} ${params.order}",[result.pkgId, tipp_combo_rdv, status_expected], params)
+
+        result.deletedTitleCount = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_deleted])[0]
+        result.deletedTipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY + " order by ${params.sort} ${params.order}",[result.pkgId, tipp_combo_rdv, status_deleted], params)
 
       }else {
         flash.error = "Package not found"

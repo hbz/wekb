@@ -156,6 +156,7 @@
         <li role="presentation" class="active"><a href="#currentTitles" data-toggle="tab">Current Titles <span class="badge badge-warning"> ${d.currentTippCount} </span></a></li>
         <li role="presentation"><a href="#retiredTitles" data-toggle="tab">Retired Titles <span class="badge badge-warning"> ${d.retiredTippCount} </span></a></li>
         <li role="presentation"><a href="#expectedTitles" data-toggle="tab">Expected Titles <span class="badge badge-warning"> ${d.expectedTippCount} </span></a></li>
+        <li role="presentation"><a href="#deletedTitles" data-toggle="tab">Deleted Titles <span class="badge badge-warning"> ${d.getDeletedTippCount} </span></a></li>
         <li role="presentation"><a href="#identifiers" data-toggle="tab">Identifiers <span class="badge badge-warning"> ${d.getCombosByPropertyNameAndStatus('ids','Active').size()} </span></a></li>
 
         <li role="presentation"><a href="#altnames" data-toggle="tab">Alternate Names
@@ -223,6 +224,19 @@
             <dd>
               <g:link class="display-inline" controller="search" action="index"
                       params="[qbe: 'g:tipps', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status_id: RDStore.KBC_STATUS_EXPECTED.id]"
+                      id="">Titles in this package</g:link>
+            </dd>
+          </dl>
+        </g:if>
+      </div>
+
+      <div class="tab-pane" id="deletedTitles">
+        <g:if test="${params.controller != 'create'}">
+          <dl>
+            <dt><gokb:annotatedLabel owner="${d}" property="tipps">Deleted Titles</gokb:annotatedLabel></dt>
+            <dd>
+              <g:link class="display-inline" controller="search" action="index"
+                      params="[qbe: 'g:tipps', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status_id: RDStore.KBC_STATUS_DELETED.id]"
                       id="">Titles in this package</g:link>
             </dd>
           </dl>
