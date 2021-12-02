@@ -156,7 +156,7 @@
         <li role="presentation" class="active"><a href="#currentTitles" data-toggle="tab">Current Titles <span class="badge badge-warning"> ${d.currentTippCount} </span></a></li>
         <li role="presentation"><a href="#retiredTitles" data-toggle="tab">Retired Titles <span class="badge badge-warning"> ${d.retiredTippCount} </span></a></li>
         <li role="presentation"><a href="#expectedTitles" data-toggle="tab">Expected Titles <span class="badge badge-warning"> ${d.expectedTippCount} </span></a></li>
-        <li role="presentation"><a href="#deletedTitles" data-toggle="tab">Deleted Titles <span class="badge badge-warning"> ${d.getDeletedTippCount} </span></a></li>
+        <li role="presentation"><a href="#deletedTitles" data-toggle="tab">Deleted Titles <span class="badge badge-warning"> ${d.deletedTippCount} </span></a></li>
         <li role="presentation"><a href="#identifiers" data-toggle="tab">Identifiers <span class="badge badge-warning"> ${d.getCombosByPropertyNameAndStatus('ids','Active').size()} </span></a></li>
 
         <li role="presentation"><a href="#altnames" data-toggle="tab">Alternate Names

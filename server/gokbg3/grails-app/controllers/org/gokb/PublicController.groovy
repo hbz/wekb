@@ -21,6 +21,7 @@ class PublicController {
   ExportService exportService
   MailService mailService
   SearchService searchService
+  def globalSearchTemplatesService
 
   public static String TIPPS_QRY = 'from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=? and c.toComponent=tipp and c.type = ? and tipp.status = ?';
 

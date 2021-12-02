@@ -1,4 +1,4 @@
-<%@ page import="de.wekb.helper.RCConstants; org.gokb.cred.RefdataCategory;" %>
+<%@ page import="de.wekb.helper.RCConstants; org.gokb.cred.RefdataCategory; de.wekb.helper.RDStore;" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -188,11 +188,29 @@
             <div id="my-tab-content" class="tab-content">
                 <div class="tab-pane ${params.tab == 'currentTipps' ? 'active' : ''}" id="currentTipps" role="tabpanel">
 
+                    <div class="float-right">
+                    <g:link controller="public" action="search" class="btn btn-primary"
+                            params="[qbe: 'g:tipps', qp_pkg_id: pkg.id, refOid: pkg.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg', 'qp_status_id', 'qp_status'], qp_status_id: RDStore.KBC_STATUS_CURRENT.id]"
+                            id="">Search View</g:link>
+                    </div>
+
+                    <br>
+                    <br>
+
                     <g:render template="tippsTab" model="[tippsCount: currentTitleCount, tipps: currentTipps, tab: 'currentTipps']"/>
 
                 </div>
 
                 <div class="tab-pane ${params.tab == 'retiredTipps' ? 'active' : ''}" id="retiredTipps" role="tabpanel">
+
+                    <div class="float-right">
+                        <g:link controller="public" action="search" class="btn btn-primary"
+                                params="[qbe: 'g:tipps', qp_pkg_id: pkg.id, refOid: pkg.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg', 'qp_status_id', 'qp_status'], qp_status_id: RDStore.KBC_STATUS_RETIRED.id]"
+                                id="">Search View</g:link>
+                    </div>
+
+                    <br>
+                    <br>
 
                     <g:render template="tippsTab" model="[tippsCount: retiredTitleCount, tipps: retiredTipps, tab: 'retiredTipps']"/>
 
@@ -200,11 +218,29 @@
 
                 <div class="tab-pane ${params.tab == 'expectedTipps' ? 'active' : ''}" id="expectedTipps" role="tabpanel">
 
+                    <div class="float-right">
+                        <g:link controller="public" action="search" class="btn btn-primary"
+                                params="[qbe: 'g:tipps', qp_pkg_id: pkg.id, refOid: pkg.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg', 'qp_status_id', 'qp_status'], qp_status_id: RDStore.KBC_STATUS_EXPECTED.id]"
+                                id="">Search View</g:link>
+                    </div>
+
+                    <br>
+                    <br>
+
                     <g:render template="tippsTab" model="[tippsCount: expectedTitleCount, tipps: expectedTipps, tab: 'expectedTipps']"/>
 
                 </div>
 
                 <div class="tab-pane ${params.tab == 'deletedTipps' ? 'active' : ''}" id="deletedTipps" role="tabpanel">
+
+                    <div class="float-right">
+                        <g:link controller="public" action="search" class="btn btn-primary"
+                                params="[qbe: 'g:tipps', qp_pkg_id: pkg.id, refOid: pkg.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg', 'qp_status_id', 'qp_status'], qp_status_id: RDStore.KBC_STATUS_DELETED.id]"
+                                id="">Search View</g:link>
+                    </div>
+
+                    <br>
+                    <br>
 
                     <g:render template="tippsTab" model="[tippsCount: deletedTitleCount, tipps: deletedTipps, tab: 'deletedTipps']"/>
 

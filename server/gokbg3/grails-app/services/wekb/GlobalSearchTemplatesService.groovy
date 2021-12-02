@@ -1256,6 +1256,8 @@ class GlobalSearchTemplatesService {
                 baseclass: 'org.gokb.cred.TitleInstancePackagePlatform',
                 title    : 'Titles',
                 group    : 'Secondary',
+                defaultSort : 'name',
+                defaultOrder: 'asc',
                 qbeConfig: [
                         qbeForm   : [
                                 [
@@ -1270,6 +1272,13 @@ class GlobalSearchTemplatesService {
                                         placeholder: 'Title ID',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'title.id', 'type': 'java.lang.Long'],
                                         hide       : true
+                                ],
+                                [
+                                        prompt     : 'Identifier',
+                                        qparam     : 'qp_identifier',
+                                        placeholder: 'Identifier Value',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'ids.value'],
+                                        hide       : false
                                 ],
                                 [
                                         type       : 'lookup',
