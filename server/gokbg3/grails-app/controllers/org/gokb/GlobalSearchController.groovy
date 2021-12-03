@@ -3,8 +3,12 @@ package org.gokb
 import grails.converters.*
 import grails.plugin.springsecurity.SpringSecurityService
 import org.elasticsearch.action.search.*
+import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.search.aggregations.AggregationBuilders
 import org.elasticsearch.index.query.*
+import org.elasticsearch.search.builder.SearchSourceBuilder
+import org.elasticsearch.search.sort.FieldSortBuilder
+import org.elasticsearch.search.sort.SortOrder
 import org.gokb.cred.User
 import org.springframework.security.access.annotation.Secured
 
@@ -49,59 +53,67 @@ class GlobalSearchController {
 
         log.debug("Using indices ${grailsApplication.config.globalSearch.indices.join(", ")}")
 
-        SearchRequestBuilder es_request = esclient.prepareSearch()
-            .setIndices(grailsApplication.config.globalSearch.indices as String[])
-            .setTypes(grailsApplication.config.globalSearch.types ?: "component")
-            .setSize(result.max)
-            .setFrom(result.offset)
-            .setQuery(esQuery)
-            .addAggregation(
-              AggregationBuilders.terms('ComponentType').field(typing_field)
-            )
+        SearchResponse searchResponse
+        SearchRequest searchRequest = new SearchRequest(grailsApplication.config.globalSearch.indices.values() as String[])
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
 
-//         def search_action = esclient.search {
-//                        indices grailsApplication.config.globalSearch.indices
-//                        types grailsApplication.config.globalSearch.types
-//                        source {
-//                          from = result.offset
-//                          size = result.max
-//                          query {
-//                            query_string (query: query_str)
-//                          }
-//                          aggregations {
-//                            'Component Type' {
-//                              terms {
-//                                field = typing_field
-//                              }
-//                            }
-//                          }
-//                        }
-//                      }
-
-        def search = es_request.execute().actionGet()
-
-        result.hits = search.hits
-
-        if(search.hits.maxScore == Float.NaN) { //we cannot parse NaN to json so set to zero...
-          search.hits.maxScore = 0;
+        if (params.sort) {
+          SortOrder order = SortOrder.ASC
+          if (params.order) {
+            order = SortOrder.valueOf(params.order?.toUpperCase())
+          }
+            searchSourceBuilder.sort(new FieldSortBuilder("${params.sort}").order(order))
         }
 
-        result.resultsTotal = search.hits.totalHits
+        searchSourceBuilder.query(QueryBuilders.queryStringQuery(query_str))
+        searchSourceBuilder.aggregation(AggregationBuilders.terms('ComponentType').size(25).field(typing_field))
+
+        searchSourceBuilder.from(result.offset)
+        searchSourceBuilder.size(result.max)
+        searchRequest.source(searchSourceBuilder)
+
+
+        searchResponse = esclient.search(searchRequest, RequestOptions.DEFAULT)
+
+        result.hits = searchResponse.getHits()
+
+        if(searchResponse.getHits().maxScore == Float.NaN) { //we cannot parse NaN to json so set to zero...
+          searchResponse.hits.maxScore = 0;
+        }
+
+        result.resultsTotal = searchResponse.getHits().getTotalHits().value ?: 0
         // We pre-process the facet response to work around some translation issues in ES
 
-        if ( search.getAggregations() != null ) {
+        if (searchResponse.getAggregations()) {
           result.facets = [:]
-          search.getAggregations().each { entry ->
+          searchResponse.getAggregations().each { entry ->
             def facet_values = []
-            entry.buckets.each { bucket ->
-                log.debug("Bucket: ${bucket}");
+            //log.debug("Entry: ${entry.type}")
+
+            if(entry.type == 'nested'){
+              entry.getAggregations().each { subEntry ->
+                //log.debug("metaData: ${subEntry.name}")
+                subEntry.buckets.each { bucket ->
+                  //log.debug("Bucket: ${bucket}")
+                  bucket.each { bi ->
+                    def displayTerm = (bi.getKey() != 'TitleInstancePackagePlatform' ? bi.getKey() : 'Titles')
+                    log.debug("Bucket item: ${bi} ${bi.getKey()} ${bi.getDocCount()}");
+                    facet_values.add([term:bi.getKey(),display:displayTerm,count:bi.getDocCount()])
+                  }
+                }
+              }
+            }else {
+              entry.buckets.each { bucket ->
+                //log.debug("Bucket: ${bucket}")
                 bucket.each { bi ->
                   def displayTerm = (bi.getKey() != 'TitleInstancePackagePlatform' ? bi.getKey() : 'Titles')
                   log.debug("Bucket item: ${bi} ${bi.getKey()} ${bi.getDocCount()}");
                   facet_values.add([term:bi.getKey(),display:displayTerm,count:bi.getDocCount()])
-                  }
+                }
+              }
             }
             result.facets[entry.getName()] = facet_values
+
           }
         }
         if ( ( response.format == 'json' ) || ( response.format == 'xml' ) ) {
@@ -114,9 +126,9 @@ class GlobalSearchController {
             def response_record = [:]
             response_record.id = r.id
             response_record.score = r.score
-            response_record.name = r.source.name
-            response_record.identifiers = r.source.identifiers
-            response_record.altNames = r.source.altname
+            response_record.name = r.getSourceAsMap().name
+            response_record.identifiers = r.getSourceAsMap().identifiers
+            response_record.altNames = r.getSourceAsMap().altname
             
             apiresponse.records.add(response_record);
           }
@@ -124,6 +136,12 @@ class GlobalSearchController {
       }
     }
     finally {
+      try {
+        esclient.close()
+      }
+      catch (Exception e) {
+        log.error("Problem by Close ES Client", e)
+      }
     }
 
     withFormat {
