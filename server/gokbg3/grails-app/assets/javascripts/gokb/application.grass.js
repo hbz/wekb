@@ -148,17 +148,6 @@ window.gokb = {
       $(this).removeData('bs.modal')
     })
 
-    /** Bootstrap 3 - Loading Tabs from URL with hash **/
-        // Javascript to enable link to tab
-    let hash = window.location.hash;
-
-    if (hash) {
-      $('.nav-tabs li a[href="' + hash + '"]').tab('show');
-    }
-    // Change hash for page-reload
-    $('.nav-tabs li a').on('shown.bs.tab', function (e) {
-      window.location.hash = e.target.hash;
-    })
     
     /** Editable **/
     $.fn.editable.defaults.mode = 'inline';
