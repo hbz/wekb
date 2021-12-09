@@ -2,6 +2,7 @@ package wekb
 
 import de.hbznrw.ygor.tools.UrlToolkit
 import de.wekb.helper.RCConstants
+import de.wekb.helper.RDStore
 import gokbg3.DateFormatService
 import grails.gorm.transactions.Transactional
 import org.apache.commons.io.FileUtils
@@ -13,11 +14,15 @@ import org.apache.poi.xssf.usermodel.XSSFDataValidationConstraint
 import org.apache.poi.xssf.usermodel.XSSFDataValidationHelper
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import org.gokb.cred.ComponentPrice
+import org.gokb.cred.Identifier
 import org.gokb.cred.IdentifierNamespace
 import org.gokb.cred.Package
 import org.gokb.cred.RefdataCategory
+import org.gokb.cred.RefdataValue
 import org.gokb.cred.TIPPCoverageStatement
 import org.gokb.cred.TitleInstancePackagePlatform
+import org.hibernate.Session
 
 import java.nio.file.Files
 import java.text.SimpleDateFormat
@@ -34,192 +39,378 @@ class ExportService {
 
         SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd')
 
-        def sanitize = { it ? (it instanceof Date ? sdf.format(it) : "${it}".trim()) : "" }
+        List<String> printIdentifier = ["issn", "pisbn"]
+        List<String> onlineIdentifier = ["eissn", "isbn"]
 
-        outputStream.withWriter { writer ->
+        String doiIdentifier = "DOI"
 
-            writer.write("we:kb Export : ${pkg.provider?.name} : ${pkg.name} : ${export_date}\n");
+        String titleIdNameSpace = pkg.source ? pkg.source.targetNamespace.value : 'FAKE'
 
-            writer.write('publication_title\t'+
-                    'first_author\t'+
-                    'first_editor\t'+
-                    'publisher_name\t'+
-                    'publication_type\t'+
-                    'medium\t'+
-                    'title_url\t'+
-                    'print_identifier\t'+
-                    'online_identifier\t'+
-                    'title_id\t'+
-                    'doi_identifier\t'+
-                    'subject_area\t'+
-                    'language\t'+
-                    'access_type\t'+
-                    'coverage_depth\t'+
-                    'package_name\t'+
-                    'package_id\t'+
-                    'access_start_date\t'+
-                    'access_end_date\t'+
-                    'last_changed\t'+
-                    'status\t'+
-                    'listprice_eur\t'+
-                    'listprice_usd\t'+
-                    'listprice_gbp\t'+
-                    'notes\t'+
-                    'date_monograph_published_print\t'+
-                    'date_monograph_published_online\t'+
-                    'monograph_volume\t'+
-                    'monograph_edition\t'+
-                    'monograph_parent_collection_title\t'+
-                    'parent_publication_title_id\t'+
-                    'date_first_issue_online\t'+
-                    'num_first_vol_online\t'+
-                    'num_first_issue_online\t'+
-                    'date_last_issue_online\t'+
-                    'num_last_vol_online\t'+
-                    'num_last_issue_online\t'+
-                    'zdb_id\t'+
-                    'ezb_id\t'+
-                    'package_ezb_anchor\t'+
-                    'oa_gold\t'+
-                    'oa_hybrid\t'+
-                    'oa_apc_eur\t'+
-                    'oa_apc_usd\t'+
-                    'oa_apc_gbp\t'+
-                    'package_isil\t'+
-                    'title_gokb_uuid\t'+
-                    'package_gokb_uuid\t'+
-                    'package_isci\t'+
-                    'ill_indicator\t'+
-                    'preceding_publication_title_id\t'+
-                    'superseding_publication_title_id\t'+
-                    'embargo_info\t'+
-                    '\n'
-            )
+        RefdataValue priceTypeList = RDStore.PRICE_TYPE_LIST
+        RefdataValue priceTypeOAAPC = RDStore.PRICE_TYPE_OA_APC
 
-            def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
-            def combo_pkg_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
+  String hqlQuery = "select tipp.id," +
+          " tipp.name, " +
+          " tipp.firstAuthor, " +
+          " tipp.firstEditor, " +
+          " tipp.publisherName, " +
+          " (select value from RefdataValue where tipp.id = tipp.publicationType), " +
+          " (select value from RefdataValue where tipp.id = tipp.medium), " +
+          " tipp.url, " +
+          " 'printIdentifier', " +
+          " 'onlineIdentifier', " +
+          " 'titleIdNameSpace'," +
+          " 'doiIdentifier',"+
+          " tipp.subjectArea, " +
+          " 'tipp.languages', " +
+          " (select value from RefdataValue where id = tipp.accessType), " +
+          " (select value from RefdataValue where id = tipp.coverageDepth), " +
+          " 'pkg.name', " +
+          " 'package_id', " +
+          " tipp.accessStartDate, " +
+          " tipp.accessEndDate, " +
+          "  tipp.lastChangedExternal, " +
+          " (select value from RefdataValue where id = tipp.status), " +
+          " 'listprice_eur', " +
+          " 'listprice_usd', " +
+          " 'listprice_gbp', " +
+          " tipp.note, " +
+          " tipp.dateFirstInPrint, " +
+          " tipp.dateFirstOnline, " +
+          " tipp.volumeNumber, " +
+          " tipp.editionStatement, " +
+          " tipp.series, " +
+          " tipp.parentPublicationTitleId, " +
+          " 'date_first_issue_online', " +
+          " 'num_first_vol_online', " +
+          " 'num_first_issue_online', " +
+          " 'date_last_issue_online', " +
+          " 'num_last_vol_online', " +
+          " 'num_last_issue_online', " +
+          " 'zdb_id', "+
+          " 'ezb_id', "+
+          " 'package_ezb_anchor', " +
+          " 'oa_gold', " +
+          " 'oa_hybrid', " +
+          " 'oa_apc_eur', " +
+          " 'oa_apc_usd', " +
+          " 'oa_apc_gbp', " +
+          " 'package_isil', " +
+          " tipp.uuid, " +
+          " 'pkg.uuid', " +
+          " 'package_isci', " +
+          " 'ill_indicator', " +
+          " tipp.precedingPublicationTitleId, " +
+          " tipp.supersedingPublicationTitleId " +
+          "from TitleInstancePackagePlatform as tipp  where tipp.id in (:tippIDs) order by tipp.name"
 
-            Map queryParams = [:]
-            queryParams.p = pkg.id
-            queryParams.sd = status_deleted
-            queryParams.ct = combo_pkg_tipps
+  def sanitize = { it ? (it instanceof Date ? sdf.format(it) : "${it}".trim()) : "" }
 
-            List<TitleInstancePackagePlatform> tipps = TitleInstancePackagePlatform.executeQuery("select tipp from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=:p and c.toComponent=tipp and tipp.status != :sd and c.type = :ct order by tipp.name", queryParams, [readOnly: true])
+  outputStream.withWriter { writer ->
 
-            tipps.each { TitleInstancePackagePlatform tipp ->
+      writer.write("we:kb Export : ${pkg.provider?.name} : ${pkg.name} : ${export_date}\n");
 
-                if(tipp.publicationType?.value == 'Serial') {
-                    tipp.coverageStatements.each { TIPPCoverageStatement tippCoverageStatement ->
-                        writer.write(sanitize(tipp.name) + '\t' +
-                                sanitize(tipp.firstAuthor) + '\t' +
-                                sanitize(tipp.firstEditor) + '\t' +
-                                sanitize(tipp.publisherName) + '\t' + //publisher_name
-                                sanitize(tipp.publicationType?.value) + '\t' +
-                                sanitize(tipp.medium?.value) + '\t' +
-                                sanitize(tipp.url) + '\t' +
-                                sanitize(tipp.getPrintIdentifier()) + '\t' +
-                                sanitize(tipp.getOnlineIdentifier()) + '\t' +
-                                sanitize(tipp.getTitleID()) + '\t' +
-                                sanitize(tipp.getIdentifierValue('DOI')) + '\t' +
-                                sanitize(tipp.subjectArea) + '\t' +
-                                sanitize(tipp.languages?.value.join(';')) + '\t' +
-                                sanitize(tipp.accessType?.value) + '\t' +
-                                sanitize(tipp.coverageDepth?.value) + '\t' +
-                                sanitize(tipp.pkg.name) + '\t' +
-                                '\t' + //package_id
-                                sanitize(tipp.accessStartDate) + '\t' +
-                                sanitize(tipp.accessEndDate) + '\t' +
-                                sanitize(tipp.lastChangedExternal) + '\t' +
-                                sanitize(tipp.status?.value) + '\t' +
-                                sanitize(tipp.getListPriceInEUR()) + '\t' + //listprice_eur
-                                sanitize(tipp.getListPriceInUSD()) + '\t' + //listprice_usd
-                                sanitize(tipp.getListPriceInGBP()) + '\t' + //listprice_gbp
-                                sanitize(tipp.note) + '\t' +
-                                sanitize(tipp.dateFirstInPrint) + '\t' +
-                                sanitize(tipp.dateFirstOnline) + '\t' +
-                                sanitize(tipp.volumeNumber) + '\t' +
-                                sanitize(tipp.editionStatement) + '\t' +
-                                sanitize(tipp.series) + '\t' +
-                                sanitize(tipp.parentPublicationTitleId) + '\t' +
-                                sanitize(tippCoverageStatement.startDate) + '\t' + //date_first_issue_online
-                                sanitize(tippCoverageStatement.startVolume) + '\t' + //num_first_vol_online
-                                sanitize(tippCoverageStatement.startIssue) + '\t' + //num_first_issue_online
-                                sanitize(tippCoverageStatement.endDate) + '\t' + //date_last_issue_online
-                                sanitize(tippCoverageStatement.endVolume) + '\t' + //num_last_vol_online
-                                sanitize(tippCoverageStatement.endIssue) + '\t' + //num_last_issue_online
-                                sanitize(tipp.getIdentifierValue('zdb')) + '\t' +
-                                sanitize(tipp.getIdentifierValue('ezb')) + '\t' +
-                                '\t' + //package_ezb_anchor
-                                '\t' + //oa_gold
-                                '\t' + //oa_hybrid
-                                sanitize(tipp.getOAAPCPriceInEUR()) + '\t' + //oa_apc_eur
-                                sanitize(tipp.getOAAPCPriceInUSD()) + '\t' + //oa_apc_usd
-                                sanitize(tipp.getOAAPCPriceInGBP()) + '\t' + //oa_apc_gbp
-                                '\t' + //package_isil
-                                sanitize(tipp.uuid) + '\t' +
-                                sanitize(tipp.pkg.uuid) + '\t' +
-                                '\t' + //package_isci
-                                '\t' + //ill_indicator
-                                sanitize(tipp.precedingPublicationTitleId) + '\t' +
-                                sanitize(tipp.supersedingPublicationTitleId) + '\t' + //superseding_publication_title_id
-                                sanitize(tippCoverageStatement.coverageDepth?.value) + '\t' + //embargo_info
-                                '\n')
+      writer.write('publication_title\t'+
+              'first_author\t'+
+              'first_editor\t'+
+              'publisher_name\t'+
+              'publication_type\t'+
+              'medium\t'+
+              'title_url\t'+
+              'print_identifier\t'+
+              'online_identifier\t'+
+              'title_id\t'+
+              'doi_identifier\t'+
+              'subject_area\t'+
+              'language\t'+
+              'access_type\t'+
+              'coverage_depth\t'+
+              'package_name\t'+
+              'package_id\t'+
+              'access_start_date\t'+
+              'access_end_date\t'+
+              'last_changed\t'+
+              'status\t'+
+              'listprice_eur\t'+
+              'listprice_usd\t'+
+              'listprice_gbp\t'+
+              'notes\t'+
+              'date_monograph_published_print\t'+
+              'date_monograph_published_online\t'+
+              'monograph_volume\t'+
+              'monograph_edition\t'+
+              'monograph_parent_collection_title\t'+
+              'parent_publication_title_id\t'+
+              'date_first_issue_online\t'+
+              'num_first_vol_online\t'+
+              'num_first_issue_online\t'+
+              'date_last_issue_online\t'+
+              'num_last_vol_online\t'+
+              'num_last_issue_online\t'+
+              'zdb_id\t'+
+              'ezb_id\t'+
+              'package_ezb_anchor\t'+
+              'oa_gold\t'+
+              'oa_hybrid\t'+
+              'oa_apc_eur\t'+
+              'oa_apc_usd\t'+
+              'oa_apc_gbp\t'+
+              'package_isil\t'+
+              'title_gokb_uuid\t'+
+              'package_gokb_uuid\t'+
+              'package_isci\t'+
+              'ill_indicator\t'+
+              'preceding_publication_title_id\t'+
+              'superseding_publication_title_id\t'+
+              'embargo_info\t'+
+              '\n'
+      )
+
+      def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
+      def combo_pkg_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
+
+      Map queryParams = [:]
+      queryParams.p = pkg.id
+      queryParams.sd = status_deleted
+      queryParams.ct = combo_pkg_tipps
+
+      List<Long> tippIDs = TitleInstancePackagePlatform.executeQuery("select tipp.id from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=:p and c.toComponent=tipp and tipp.status != :sd and c.type = :ct order by tipp.name", queryParams, [readOnly: true])
+
+      int max = 10
+      TitleInstancePackagePlatform.withSession { Session sess ->
+          for (int offset = 0; offset < tippIDs.size(); offset += max) {
+              List tippAttributes = TitleInstancePackagePlatform.executeQuery(hqlQuery, [tippIDs: tippIDs.drop(offset).take(max)], [readOnly: true])
+              tippAttributes.each { def attribute ->
+                  Long tippID
+                  attribute.eachWithIndex { def attributeValue, int index ->
+                      if(index == 0){
+                          tippID = attribute[index]
+                      }
+                      else {
+                          switch (attribute[index]) {
+                              case 'listprice_eur':
+                                  List existPrice = ComponentPrice.executeQuery('select price from ComponentPrice where price is not null and owner.id = :owner and priceType = :priceType and currency = :currency ', [owner: tippID, priceType: priceTypeList, currency: RDStore.CURRENCY_EUR], [readOnly: true])
+
+                                  println(existPrice.size())
+                                  if (existPrice.size() > 0) {
+                                      writer.write(sanitize(existPrice[0]) + '\t')
+                                  } else {
+                                      writer.write("" + '\t')
+                                  }
+                                  break;
+                              case 'listprice_usd':
+                                  List existPrice = ComponentPrice.executeQuery('select price from ComponentPrice where price is not null and owner.id = :owner and priceType = :priceType and currency = :currency ', [owner: tippID, priceType: priceTypeList, currency: RDStore.CURRENCY_USD], [readOnly: true])
+                                  println(existPrice.size())
+                                  if (existPrice.size() > 0) {
+                                      writer.write(sanitize(existPrice[0]) + '\t')
+                                  } else {
+                                      writer.write("" + '\t')
+                                  }
+                                  break;
+                              case 'listprice_gbp':
+                                  List existPrice = ComponentPrice.executeQuery('select price from ComponentPrice where price is not null and owner.id = :owner and priceType = :priceType and currency = :currency ', [owner: tippID, priceType: priceTypeList, currency: RDStore.CURRENCY_GBP], [readOnly: true])
+                                  println(existPrice.size())
+                                  if (existPrice.size() > 0) {
+                                      writer.write(sanitize(existPrice[0]) + '\t')
+                                  } else {
+                                      writer.write("" + '\t')
+                                  }
+                                  break;
+                              case 'oa_apc_eur':
+                                  List existPrice = ComponentPrice.executeQuery('select price from ComponentPrice where price is not null and owner.id = :owner and priceType = :priceType and currency = :currency ', [owner: tippID, priceType: priceTypeOAAPC, currency: RDStore.CURRENCY_EUR], [readOnly: true])
+                                  println(existPrice.size())
+                                  if (existPrice.size() > 0) {
+                                      writer.write(sanitize(existPrice[0]) + '\t')
+                                  } else {
+                                      writer.write("" + '\t')
+                                  }
+                                  break;
+                              case 'oa_apc_usd':
+                                  List existPrice = ComponentPrice.executeQuery('select price from ComponentPrice where price is not null and owner.id = :owner and priceType = :priceType and currency = :currency ', [owner: tippID, priceType: priceTypeOAAPC, currency: RDStore.CURRENCY_USD], [readOnly: true])
+                                  println(existPrice.size())
+                                  if (existPrice.size() > 0) {
+                                      writer.write(sanitize(existPrice[0]) + '\t')
+                                  } else {
+                                      writer.write("" + '\t')
+                                  }
+                                  break;
+                              case 'oa_apc_gbp':
+                                  List existPrice = ComponentPrice.executeQuery('select price from ComponentPrice where price is not null and owner.id = :owner and priceType = :priceType and currency = :currency ', [owner: tippID, priceType: priceTypeOAAPC, currency: RDStore.CURRENCY_GBP], [readOnly: true])
+                                  println(existPrice.size())
+                                  if (existPrice.size() > 0) {
+                                      writer.write(sanitize(existPrice[0]) + '\t')
+                                  } else {
+                                      writer.write("" + '\t')
+                                  }
+                                  break;
+                              case 'printIdentifier':
+                                  List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where i.namespace.value in :namespaceValue and c.fromComponent.id = :tippID and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: printIdentifier, tippID: tippID, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
+
+                                  if (identifiers.size() > 0) {
+                                      writer.write(sanitize(identifiers.join(';')) + '\t')
+                                  } else {
+                                      writer.write("" + '\t')
+                                  }
+                                  break;
+                              case 'onlineIdentifier':
+                                  List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where i.namespace.value in :namespaceValue and c.fromComponent.id = :tippID and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: onlineIdentifier, tippID: tippID, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
+
+                                  if (identifiers.size() > 0) {
+                                      writer.write(sanitize(identifiers.join(';')) + '\t')
+                                  } else {
+                                      writer.write("" + '\t')
+                                  }
+                                  break;
+                              case 'titleIdNameSpace':
+                                  List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where i.namespace.value = :namespaceValue and c.fromComponent.id = :tippID and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: titleIdNameSpace, tippID: tippID, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
+
+                                  if (identifiers.size() > 0) {
+                                      writer.write(sanitize(identifiers.join(';')) + '\t')
+                                  } else {
+                                      writer.write("" + '\t')
+                                  }
+                                  break;
+                              case 'doiIdentifier':
+                                  List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where i.namespace.value = :namespaceValue and c.fromComponent.id = :tippID and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: doiIdentifier, tippID: tippID, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
+
+                                  if (identifiers.size() > 0) {
+                                      writer.write(sanitize(identifiers.join(';')) + '\t')
+                                  } else {
+                                      writer.write("" + '\t')
+                                  }
+                                  break;
+                              default:
+                                  writer.write(sanitize(attribute[index]) + '\t')
+                          }
+                      }
+                      if (attribute.size() - 1 == index) {
+                          writer.write('\n')
+                      }
+
+                      /* String titleID = ""
+
+                  if (pkg.source && pkg.source.targetNamespace) {
+                      titleID = tipp.getIdentifierValue(pkg.source.targetNamespace.value)
+                  }
+
+                  if (tipp.publicationType?.value == 'Serial') {
+                      tipp.coverageStatements.each { TIPPCoverageStatement tippCoverageStatement ->
+                          writer.write(sanitize(tipp.name) + '\t' +
+                                  sanitize(tipp.firstAuthor) + '\t' +
+                                  sanitize(tipp.firstEditor) + '\t' +
+                                  sanitize(tipp.publisherName) + '\t' + //publisher_name
+                                  sanitize(tipp.publicationType?.value) + '\t' +
+                                  sanitize(tipp.medium?.value) + '\t' +
+                                  sanitize(tipp.url) + '\t' +
+                                  sanitize(tipp.getPrintIdentifier()) + '\t' +
+                                  sanitize(tipp.getOnlineIdentifier()) + '\t' +
+                                  sanitize(titleID) + '\t' +
+                                  sanitize(tipp.getIdentifierValue('DOI')) + '\t' +
+                                  sanitize(tipp.subjectArea) + '\t' +
+                                  sanitize(tipp.languages?.value.join(';')) + '\t' +
+                                  sanitize(tipp.accessType?.value) + '\t' +
+                                  sanitize(tipp.coverageDepth?.value) + '\t' +
+                                  sanitize(pkg.name) + '\t' +
+                                  '\t' + //package_id
+                                  sanitize(tipp.accessStartDate) + '\t' +
+                                  sanitize(tipp.accessEndDate) + '\t' +
+                                  sanitize(tipp.lastChangedExternal) + '\t' +
+                                  sanitize(tipp.status?.value) + '\t' +
+                                  sanitize(tipp.getListPriceInEUR()) + '\t' + //listprice_eur
+                                  sanitize(tipp.getListPriceInUSD()) + '\t' + //listprice_usd
+                                  sanitize(tipp.getListPriceInGBP()) + '\t' + //listprice_gbp
+                                  sanitize(tipp.note) + '\t' +
+                                  sanitize(tipp.dateFirstInPrint) + '\t' +
+                                  sanitize(tipp.dateFirstOnline) + '\t' +
+                                  sanitize(tipp.volumeNumber) + '\t' +
+                                  sanitize(tipp.editionStatement) + '\t' +
+                                  sanitize(tipp.series) + '\t' +
+                                  sanitize(tipp.parentPublicationTitleId) + '\t' +
+                                  sanitize(tippCoverageStatement.startDate) + '\t' + //date_first_issue_online
+                                  sanitize(tippCoverageStatement.startVolume) + '\t' + //num_first_vol_online
+                                  sanitize(tippCoverageStatement.startIssue) + '\t' + //num_first_issue_online
+                                  sanitize(tippCoverageStatement.endDate) + '\t' + //date_last_issue_online
+                                  sanitize(tippCoverageStatement.endVolume) + '\t' + //num_last_vol_online
+                                  sanitize(tippCoverageStatement.endIssue) + '\t' + //num_last_issue_online
+                                  sanitize(tipp.getIdentifierValue('zdb')) + '\t' +
+                                  sanitize(tipp.getIdentifierValue('ezb')) + '\t' +
+                                  '\t' + //package_ezb_anchor
+                                  '\t' + //oa_gold
+                                  '\t' + //oa_hybrid
+                                  sanitize(tipp.getOAAPCPriceInEUR()) + '\t' + //oa_apc_eur
+                                  sanitize(tipp.getOAAPCPriceInUSD()) + '\t' + //oa_apc_usd
+                                  sanitize(tipp.getOAAPCPriceInGBP()) + '\t' + //oa_apc_gbp
+                                  '\t' + //package_isil
+                                  sanitize(tipp.uuid) + '\t' +
+                                  sanitize(pkg.uuid) + '\t' +
+                                  '\t' + //package_isci
+                                  '\t' + //ill_indicator
+                                  sanitize(tipp.precedingPublicationTitleId) + '\t' +
+                                  sanitize(tipp.supersedingPublicationTitleId) + '\t' + //superseding_publication_title_id
+                                  sanitize(tippCoverageStatement.coverageDepth?.value) + '\t' + //embargo_info
+                                  '\n')
+                      }
+                  } else {
+                      writer.write(sanitize(tipp.name) + '\t' +
+                              sanitize(tipp.firstAuthor) + '\t' +
+                              sanitize(tipp.firstEditor) + '\t' +
+                              sanitize(tipp.publisherName) + '\t' + //publisher_name
+                              sanitize(tipp.publicationType?.value) + '\t' +
+                              sanitize(tipp.medium?.value) + '\t' +
+                              sanitize(tipp.url) + '\t' +
+                              sanitize(tipp.getPrintIdentifier()) + '\t' +
+                              sanitize(tipp.getOnlineIdentifier()) + '\t' +
+                              sanitize(titleID) + '\t' +
+                              sanitize(tipp.getIdentifierValue('DOI')) + '\t' +
+                              sanitize(tipp.subjectArea) + '\t' +
+                              sanitize(tipp.languages?.value.join(';')) + '\t' +
+                              sanitize(tipp.accessType?.value) + '\t' +
+                              sanitize(tipp.coverageDepth?.value) + '\t' +
+                              sanitize(pkg.name) + '\t' +
+                              '\t' + //package_id
+                              sanitize(tipp.accessStartDate) + '\t' +
+                              sanitize(tipp.accessEndDate) + '\t' +
+                              sanitize(tipp.lastChangedExternal) + '\t' +
+                              sanitize(tipp.status?.value) + '\t' +
+                              sanitize(tipp.getListPriceInEUR()) + '\t' + //listprice_eur
+                              sanitize(tipp.getListPriceInUSD()) + '\t' + //listprice_usd
+                              sanitize(tipp.getListPriceInGBP()) + '\t' + //listprice_gbp
+                              sanitize(tipp.note) + '\t' +
+                              sanitize(tipp.dateFirstInPrint) + '\t' +
+                              sanitize(tipp.dateFirstOnline) + '\t' +
+                              sanitize(tipp.volumeNumber) + '\t' +
+                              sanitize(tipp.editionStatement) + '\t' +
+                              sanitize(tipp.series) + '\t' +
+                              sanitize(tipp.parentPublicationTitleId) + '\t' +
+                              '\t' + //date_first_issue_online
+                              '\t' + //num_first_vol_online
+                              '\t' + //num_first_issue_online
+                              '\t' + //date_last_issue_online
+                              '\t' + //num_last_vol_online
+                              '\t' + //num_last_issue_online
+                              '\t' +
+                              '\t' +
+                              '\t' + //package_ezb_anchor
+                              '\t' + //oa_gold
+                              '\t' + //oa_hybrid
+                              sanitize(tipp.getOAAPCPriceInEUR()) + '\t' + //oa_apc_eur
+                              sanitize(tipp.getOAAPCPriceInUSD()) + '\t' + //oa_apc_usd
+                              sanitize(tipp.getOAAPCPriceInGBP()) + '\t' + //oa_apc_gbp
+                              '\t' + //package_isil
+                              sanitize(tipp.uuid) + '\t' +
+                              sanitize(pkg.uuid) + '\t' +
+                              '\t' + //package_isci
+                              '\t' + //ill_indicator
+                              sanitize(tipp.precedingPublicationTitleId) + '\t' +
+                              sanitize(tipp.supersedingPublicationTitleId) + '\t' + //superseding_publication_title_id
+                              '\t' + //embargo_info
+                              '\n')
+                  }*/
+
+                        }
                     }
-                }else{
-                    writer.write(sanitize(tipp.name) + '\t' +
-                            sanitize(tipp.firstAuthor) + '\t' +
-                            sanitize(tipp.firstEditor) + '\t' +
-                            sanitize(tipp.publisherName) + '\t' + //publisher_name
-                            sanitize(tipp.publicationType?.value) + '\t' +
-                            sanitize(tipp.medium?.value) + '\t' +
-                            sanitize(tipp.url) + '\t' +
-                            sanitize(tipp.getPrintIdentifier()) + '\t' +
-                            sanitize(tipp.getOnlineIdentifier()) + '\t' +
-                            sanitize(tipp.getTitleID()) + '\t' +
-                            sanitize(tipp.getIdentifierValue('DOI')) + '\t' +
-                            sanitize(tipp.subjectArea) + '\t' +
-                            sanitize(tipp.languages?.value.join(';')) + '\t' +
-                            sanitize(tipp.accessType?.value) + '\t' +
-                            sanitize(tipp.coverageDepth?.value) + '\t' +
-                            sanitize(tipp.pkg.name) + '\t' +
-                            '\t' + //package_id
-                            sanitize(tipp.accessStartDate) + '\t' +
-                            sanitize(tipp.accessEndDate) + '\t' +
-                            sanitize(tipp.lastChangedExternal) + '\t' +
-                            sanitize(tipp.status?.value) + '\t' +
-                            sanitize(tipp.getListPriceInEUR()) + '\t' + //listprice_eur
-                            sanitize(tipp.getListPriceInUSD()) + '\t' + //listprice_usd
-                            sanitize(tipp.getListPriceInGBP()) + '\t' + //listprice_gbp
-                            sanitize(tipp.note) + '\t' +
-                            sanitize(tipp.dateFirstInPrint) + '\t' +
-                            sanitize(tipp.dateFirstOnline) + '\t' +
-                            sanitize(tipp.volumeNumber) + '\t' +
-                            sanitize(tipp.editionStatement) + '\t' +
-                            sanitize(tipp.series) + '\t' +
-                            sanitize(tipp.parentPublicationTitleId) + '\t' +
-                            '\t' + //date_first_issue_online
-                            '\t' + //num_first_vol_online
-                            '\t' + //num_first_issue_online
-                            '\t' + //date_last_issue_online
-                            '\t' + //num_last_vol_online
-                            '\t' + //num_last_issue_online
-                            '\t' +
-                            '\t' +
-                            '\t' + //package_ezb_anchor
-                            '\t' + //oa_gold
-                            '\t' + //oa_hybrid
-                            sanitize(tipp.getOAAPCPriceInEUR()) + '\t' + //oa_apc_eur
-                            sanitize(tipp.getOAAPCPriceInUSD()) + '\t' + //oa_apc_usd
-                            sanitize(tipp.getOAAPCPriceInGBP()) + '\t' + //oa_apc_gbp
-                            '\t' + //package_isil
-                            sanitize(tipp.uuid) + '\t' +
-                            sanitize(tipp.pkg.uuid) + '\t' +
-                            '\t' + //package_isci
-                            '\t' + //ill_indicator
-                            sanitize(tipp.precedingPublicationTitleId) + '\t' +
-                            sanitize(tipp.supersedingPublicationTitleId) + '\t' + //superseding_publication_title_id
-                            '\t' + //embargo_info
-                            '\n')
+                    log.debug("flushing after ${offset} ...")
+                    sess.flush()
                 }
             }
 
