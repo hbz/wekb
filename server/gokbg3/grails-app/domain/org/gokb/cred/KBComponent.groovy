@@ -3,6 +3,7 @@ package org.gokb.cred
 import de.wekb.helper.RCConstants
 import grails.util.GrailsNameUtils
 import groovy.util.logging.*
+import wekb.KBComponentLanguage
 
 import javax.persistence.Transient
 
@@ -359,7 +360,7 @@ abstract class KBComponent implements Auditable{
       reviewRequests      : ReviewRequest,
       people              : ComponentPerson,
       prices              : ComponentPrice,
-      languages            : RefdataValue
+      languages            : KBComponentLanguage
   ]
 
 
@@ -393,11 +394,6 @@ abstract class KBComponent implements Auditable{
     variantNames cascade: "all,delete-orphan", lazy: false
     //dateCreatedYearMonth formula: "DATE_FORMAT(kbc_date_created, '%Y-%m')"
     //lastUpdatedYearMonth formula: "DATE_FORMAT(kbc_last_updated, '%Y-%m')"
-    languages             joinTable: [
-        name:   'kbc_language',
-        key:    'kbc_fk',
-        column: 'kbc_language_rv_fk', type:   'BIGINT'
-    ], lazy: false
   }
 
 
@@ -417,7 +413,6 @@ abstract class KBComponent implements Auditable{
     bucketHash(nullable: true, blank: false)
     componentDiscriminator(nullable: true, blank: false)
     componentHash(nullable: true, blank: false)
-    languages(nullable:true)
   }
 
 

@@ -306,7 +306,7 @@ class PublicController {
 
       def out = response.outputStream
 
-      exportService.exportPackageTippsAsTSV(out, pkg)
+      exportService.exportPackageTippsAsTSVNew(out, pkg)
 
     }
     catch ( Exception e ) {
