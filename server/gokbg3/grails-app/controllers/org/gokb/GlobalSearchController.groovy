@@ -77,9 +77,9 @@ class GlobalSearchController {
 
         result.hits = searchResponse.getHits()
 
-        if(searchResponse.getHits().maxScore == Float.NaN) { //we cannot parse NaN to json so set to zero...
+        /*if(searchResponse.getHits().maxScore == Float.NaN) { //we cannot parse NaN to json so set to zero...
           searchResponse.hits.maxScore = 0;
-        }
+        }*/
 
         result.resultsTotal = searchResponse.getHits().getTotalHits().value ?: 0
         // We pre-process the facet response to work around some translation issues in ES
