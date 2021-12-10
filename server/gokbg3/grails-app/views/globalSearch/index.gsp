@@ -127,17 +127,17 @@
                <g:each in="${hits}" var="hit">
                  <tr>
                    <td>
-                     <g:if test="${hit.source.uuid}">
-                       <g:link controller="resource" action="show" id="${hit.source.uuid}">
-                         ${hit.source.name ?: "- Not Set -"}
+                     <g:if test="${hit.getSourceAsMap().uuid}">
+                       <g:link controller="resource" action="show" id="${hit.getSourceAsMap().uuid}">
+                         ${hit.getSourceAsMap().name ?: "- Not Set -"}
                        </g:link>
                      </g:if>
                      <g:else>
-                       ${hit.source.name ?: "- Not Set -"}
+                       ${hit.getSourceAsMap().name ?: "- Not Set -"}
                      </g:else>
                    </td>
-                   <td> ${hit.source.componentType == 'TitleInstancePackagePlatform' ? hit.source.titleType : hit.source.componentType  } </td>
-                   <td> ${hit.source.status?.value ?: 'Unknown'}</td>
+                   <td> ${hit.getSourceAsMap().componentType == 'TitleInstancePackagePlatform' ? hit.getSourceAsMap().titleType : hit.getSourceAsMap().componentType  } </td>
+                   <td> ${hit.getSourceAsMap().status?.value ?: 'Unknown'}</td>
                  </tr>
                </g:each>
              </tbody>
