@@ -31,10 +31,6 @@ class PackagesController {
   def concurrencyManagerService
   def TSVIngestionService
   def packageService
-  def ESWrapperService
-  def ESSearchService
-  def sessionFactory
-  def messageService
 
   public static String TIPPS_QRY = 'select tipp from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=? and c.toComponent=tipp  and c.type.value = ? order by tipp.id';
 

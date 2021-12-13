@@ -23,7 +23,6 @@ class TitleListController {
   def springSecurityService
   def concurrencyManagerService
   def TSVIngestionService
-  def ESWrapperService
   def sessionFactory
 
   def update() {

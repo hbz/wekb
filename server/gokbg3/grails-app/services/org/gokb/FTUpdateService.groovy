@@ -1,16 +1,20 @@
 package org.gokb
 
 import com.k_int.ESSearchService
-import de.wekb.annotations.RefdataAnnotation
-import de.wekb.helper.RCConstants
+
+import grails.converters.JSON
 import grails.gorm.transactions.Transactional
-import org.elasticsearch.action.bulk.BulkRequestBuilder
+import org.elasticsearch.action.bulk.BulkItemResponse
+import org.elasticsearch.action.bulk.BulkRequest
+import org.elasticsearch.action.bulk.BulkResponse
+import org.elasticsearch.action.index.IndexRequest
+import org.elasticsearch.client.RequestOptions
+import org.elasticsearch.common.xcontent.XContentType
 import org.gokb.cred.KBComponent
 import org.gokb.cred.KBComponentAdditionalProperty
 import org.gokb.cred.TIPPCoverageStatement
 import org.gokb.cred.RefdataValue
 import wekb.Contact
-import wekb.DeletedKBComponent
 
 import java.text.Normalizer
 
@@ -86,7 +90,7 @@ class FTUpdateService {
             name            : kbc.source.name,
             automaticUpdates: kbc.source.automaticUpdates,
             url             : kbc.source.url,
-            frequency       : kbc.source.frequency,
+            frequency       : kbc.source.frequency?.value,
           ]
           if (kbc.source.lastRun){
             result.source.lastRun = dateFormatService.formatIsoTimestamp(kbc.source.lastRun)
@@ -569,6 +573,15 @@ class FTUpdateService {
       log.error("Problem", e)
     }
 
+    finally {
+      try {
+        esclient.close()
+      }
+      catch (Exception e) {
+        log.error("Problem by Close ES Client", e)
+      }
+    }
+
     running = false
   }
 
@@ -609,7 +622,7 @@ class FTUpdateService {
           [readonly: true])
       log.debug("Query completed.. processing rows...")
 
-      BulkRequestBuilder bulkRequest = esclient.prepareBulk()
+      BulkRequest bulkRequest = new BulkRequest()
       // while (results.next()) {
       for (r_id in q) {
         if (Thread.currentThread().isInterrupted()) {
@@ -624,7 +637,15 @@ class FTUpdateService {
         if (idx_record != null) {
           def recid = idx_record['_id'].toString()
           idx_record.remove('_id')
-          bulkRequest.add(esclient.prepareIndex(es_index, 'component', recid).setSource(idx_record))
+
+          IndexRequest request = new IndexRequest(es_index);
+          request.id(recid);
+          String jsonString = idx_record as JSON
+          //String jsonString = JsonOutput.toJson(idx_record)
+          //println(jsonString)
+          request.source(jsonString, XContentType.JSON)
+
+          bulkRequest.add(request)
         }
         if (r.lastUpdated?.getTime() > highest_timestamp) {
           highest_timestamp = r.lastUpdated?.getTime()
@@ -635,8 +656,16 @@ class FTUpdateService {
         if (count > 250) {
           count = 0
           log.debug("interim:: processed ${total} out of ${countq} records (${domain.name}) - updating highest timestamp to ${highest_timestamp} interim flush")
-          def bulkResponse = bulkRequest.get()
-          bulkRequest = esclient.prepareBulk()
+          BulkResponse bulkResponse = esclient.bulk(bulkRequest, RequestOptions.DEFAULT)
+
+          if (bulkResponse.hasFailures()) {
+            for (BulkItemResponse bulkItemResponse : bulkResponse) {
+              if (bulkItemResponse.isFailed()) {
+                BulkItemResponse.Failure failure = bulkItemResponse.getFailure()
+                log.debug("updateES ${domain.name}: ES Bulk operation has failure -> ${failure}")
+              }
+            }
+          }
           log.debug("BulkResponse: ${bulkResponse}")
           FTControl.withNewTransaction {
             Long id = latest_ft_record.id
@@ -657,8 +686,17 @@ class FTUpdateService {
         }
       }
       if (count > 0) {
-        def bulkFinalResponse = bulkRequest.get()
-        log.debug("Final BulkResponse: ${bulkFinalResponse}")
+        BulkResponse bulkResponse = esclient.bulk(bulkRequest, RequestOptions.DEFAULT)
+
+        if (bulkResponse.hasFailures()) {
+          for (BulkItemResponse bulkItemResponse : bulkResponse) {
+            if (bulkItemResponse.isFailed()) {
+              BulkItemResponse.Failure failure = bulkItemResponse.getFailure()
+              log.debug("updateES ${domain.name}: ES Bulk operation has failure -> ${failure}")
+            }
+          }
+        }
+        log.debug("Final BulkResponse: ${bulkResponse}")
       }
       // update timestamp
       FTControl.withNewTransaction {
