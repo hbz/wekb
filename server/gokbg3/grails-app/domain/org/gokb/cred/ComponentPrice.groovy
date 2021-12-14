@@ -19,9 +19,9 @@ class ComponentPrice {
   Date lastUpdated
 
   static mapping = {
-    owner column: 'cp_owner_component_fk'
-    priceType column: 'cp_type_fk'
-    currency column: 'cp_currency_fk'
+    owner column: 'cp_owner_component_fk', index: 'cp_owner_component_idx'
+    priceType column: 'cp_type_fk', index: 'cp_type_idx'
+    currency column: 'cp_currency_fk', index: 'cp_currency_idx'
     startDate column: 'cp_start_date'
     endDate column: 'cp_end_date'
     price column: 'cp_price'

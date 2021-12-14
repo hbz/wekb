@@ -14,6 +14,9 @@ class OaiController {
   //     return it?.toString("yyyy-MM-dd'T'HH:mm:ss'Z'")
   // }
 
+
+/*not important anymore
+
   def index() {
     def result = [:]
 
@@ -786,5 +789,5 @@ class OaiController {
     writer << xml.bind(resp)
 
     render(text: writer.toString(), contentType: "text/xml", encoding: "UTF-8")
-  }
+  }*/
 }
