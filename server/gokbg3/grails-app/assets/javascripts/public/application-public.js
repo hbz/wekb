@@ -12,7 +12,7 @@ $(document).ready(function() {
 
   /** Bootstrap 4.6.  - Loading Tabs from URL with hash **/
       // Javascript to enable link to tab
-  let hash = location.hash;
+  var hash = location.hash;
 
   if (hash) {
     $('.nav-item a[href="' + hash + '"]').tab('show');
