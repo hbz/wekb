@@ -773,7 +773,7 @@ class ESSearchService{
               sortBy = "sortname"
             }
 
-            if (ESWrapperService.mapping.component.properties[sortBy]?.type == 'text') {
+            if (ESWrapperService.mapping.properties[sortBy]?.type == 'text') {
               errors['sort'] = "Unable to sort by text field ${sortBy}!"
             } else {
               FieldSortBuilder sortQry = new FieldSortBuilder(sortBy)
@@ -815,9 +815,9 @@ class ESSearchService{
         SearchHits hits = searchResponse.getHits()
 
 
-        if(hits.maxScore == Float.NaN) { //we cannot parse NaN to json so set to zero...
+        /*if(hits.maxScore == Float.NaN) { //we cannot parse NaN to json so set to zero...
           hits.maxScore = 0
-        }
+        }*/
 
         result.count = hits.getTotalHits()
         result.records = []
@@ -1147,7 +1147,7 @@ class ESSearchService{
     es_result.remove("offset")
     es_result.remove("max")
     es_result.remove("count")
-    println(es_result)
+    //println(es_result)
 
     es_result
   }
