@@ -16,7 +16,7 @@ import org.elasticsearch.client.indices.CreateIndexResponse
 import org.elasticsearch.client.indices.GetIndexRequest
 import org.elasticsearch.cluster.health.ClusterHealthStatus
 import org.elasticsearch.cluster.health.ClusterIndexHealth
-import org.elasticsearch.common.xcontent.XContentType
+import org.elasticsearch.xcontent.XContentType
 import org.elasticsearch.rest.RestStatus
 import org.grails.web.json.parser.JSONParser
 
