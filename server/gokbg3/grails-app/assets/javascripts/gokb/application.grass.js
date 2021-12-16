@@ -150,7 +150,7 @@ window.gokb = {
 
     /** Bootstrap 3 - Loading Tabs from URL with hash **/
         // Javascript to enable link to tab
-    let hash = location.hash;
+    var hash = location.hash;
 
     if (hash) {
       $('.nav-tabs li a[href="' + hash + '"]').tab('show');
