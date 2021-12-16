@@ -886,7 +886,7 @@ class ApiController {
   /**
    * See the service method {@link com.k_int.ESSearchService#getApiTunnel(java.lang.Object)} for usage instructions.
    */
-  def elasticsearchTunnel() {
+  /*def elasticsearchTunnel() {
     def result = [:]
     try {
       result = ESSearchService.getApiTunnel(params)
@@ -907,5 +907,5 @@ class ApiController {
     }
 
     render result as JSON
-  }
+  }*/
 }

@@ -5,3 +5,6 @@
 //=require libs/select2
 
 //=require gokb/inline-content
+
+console.log('+ application-public.js');
+
