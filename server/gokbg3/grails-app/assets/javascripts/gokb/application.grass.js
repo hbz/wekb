@@ -150,7 +150,7 @@ window.gokb = {
 
     /** Bootstrap 3 - Loading Tabs from URL with hash **/
         // Javascript to enable link to tab
-/*    var hash = location.hash;
+    var hash = location.hash;
 
     if (hash) {
       $('.nav-tabs li a[href="' + hash + '"]').tab('show');
@@ -158,7 +158,7 @@ window.gokb = {
     // Change hash for page-reload
     $('.nav-tabs li a').on('shown.bs.tab', function (e) {
       location.hash = e.target.hash;
-    })*/
+    })
     
     /** Editable **/
     $.fn.editable.defaults.mode = 'inline';
