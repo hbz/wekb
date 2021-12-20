@@ -741,7 +741,7 @@ class ESSearchService{
           SearchRequest searchRequest = new SearchRequest(grailsApplication.config.searchApi.indices as String[])
           SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
 
-          searchSourceBuilder.query(QueryBuilders.matchAllQuery())
+          searchSourceBuilder.query(exactQuery)
           searchRequest.source(searchSourceBuilder)
 
           /* SearchRequestBuilder es_request =  esclient.prepareSearch()
@@ -819,7 +819,8 @@ class ESSearchService{
           hits.maxScore = 0
         }*/
 
-        result.count = hits.getTotalHits()
+
+        result.count = hits.getTotalHits().value ?: 0
         result.records = []
 
         hits.each { r ->

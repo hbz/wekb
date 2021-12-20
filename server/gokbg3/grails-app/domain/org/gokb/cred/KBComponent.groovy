@@ -1311,7 +1311,7 @@ abstract class KBComponent implements Auditable{
     if (languages){
       builder.'languages'{
         languages.each{ lan ->
-          builder.'language'(lan.value)
+          builder.'language'(lan.language.value)
         }
       }
     }
