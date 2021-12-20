@@ -54,7 +54,7 @@ class GlobalSearchController {
         log.debug("Using indices ${grailsApplication.config.globalSearch.indices.join(", ")}")
 
         SearchResponse searchResponse
-        SearchRequest searchRequest = new SearchRequest(grailsApplication.config.globalSearch.indices.values() as String[])
+        SearchRequest searchRequest = new SearchRequest()
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
 
         if (params.sort) {

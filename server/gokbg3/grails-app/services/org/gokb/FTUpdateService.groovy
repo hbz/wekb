@@ -9,12 +9,13 @@ import org.elasticsearch.action.bulk.BulkRequest
 import org.elasticsearch.action.bulk.BulkResponse
 import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.client.RequestOptions
-import org.elasticsearch.xcontent.XContentType
+import org.elasticsearch.common.xcontent.XContentType
 import org.gokb.cred.KBComponent
 import org.gokb.cred.KBComponentAdditionalProperty
 import org.gokb.cred.TIPPCoverageStatement
 import org.gokb.cred.RefdataValue
 import wekb.Contact
+import wekb.KBComponentLanguage
 
 import java.text.Normalizer
 
@@ -138,10 +139,10 @@ class FTUpdateService {
         }
 
         result.languages = []
-        kbc.languages.each { RefdataValue lan ->
-          result.languages.add([value     : lan.value,
-                                value_de  : lan.value_de,
-                                value_en  : lan.value_en])
+        kbc.languages.each { KBComponentLanguage kbl ->
+          result.languages.add([value     : kbl.language.value,
+                                value_de  : kbl.language.value_de,
+                                value_en  : kbl.language.value_en])
         }
 
 
@@ -560,10 +561,10 @@ class FTUpdateService {
         }
 
         result.languages = []
-        kbc.languages.each { RefdataValue lan ->
-          result.languages.add([value     : lan.value,
-                                value_de  : lan.value_de,
-                                value_en  : lan.value_en])
+        kbc.languages.each { KBComponentLanguage kbl ->
+          result.languages.add([value     : kbl.language.value,
+                                value_de  : kbl.language.value_de,
+                                value_en  : kbl.language.value_en])
         }
 
         result

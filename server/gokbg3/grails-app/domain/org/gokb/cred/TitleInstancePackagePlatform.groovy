@@ -6,6 +6,7 @@ import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
 import org.gokb.ComponentLookupService
 import org.grails.web.json.JSONObject
+import wekb.KBComponentLanguage
 
 import javax.persistence.Transient
 import com.k_int.ClassUtils
@@ -1110,8 +1111,11 @@ class TitleInstancePackagePlatform extends KBComponent {
         if (tipp_dto.language) {
           tipp_dto.language.each{ String lan ->
             RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.KBCOMPONENT_LANGUAGE, lan)
-            if(refdataValue && !(refdataValue in tipp.languages)){
-              tipp.addToLanguages(refdataValue)
+            if(refdataValue){
+              if(!KBComponentLanguage.findByKbcomponentAndLanguage(tipp, refdataValue)){
+                KBComponentLanguage kbComponentLanguage = new KBComponentLanguage(kbcomponent: tipp, language: refdataValue)
+                kbComponentLanguage.save()
+              }
             }
           }
         }
@@ -1188,8 +1192,8 @@ class TitleInstancePackagePlatform extends KBComponent {
         builder.'lastChangedExternal'(lastChangedExternal?.trim())
         builder.'medium'(medium?.value.trim())
         builder.'languages' {
-          languages.each { lan ->
-            builder.'language'(lan?.value.trim())
+          languages.each {KBComponentLanguage lan ->
+            builder.'language'(lan.language.value.trim())
           }
         }
         builder.'title'([id: ti.id, uuid: ti.uuid]) {
