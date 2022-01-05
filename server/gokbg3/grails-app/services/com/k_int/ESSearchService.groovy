@@ -572,9 +572,9 @@ class ESSearchService{
           scrollQuery.must(typeFilter)
         }
         addStatusQuery(scrollQuery, errors, params.status)
-        // addDateQueries(scrollQuery, errors, params)
-        // TODO: add this after upgrade to Elasticsearch 7
-        // TODO: alternative query builders for scroll searches with q
+        //TODO: add this after upgrade to Elasticsearch 7 -> DONE
+        addDateQueries(scrollQuery, errors, params)
+        //TODO: alternative query builders for scroll searches with q
         specifyQueryWithParams(params, scrollQuery, errors, unknown_fields)
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
@@ -591,7 +591,7 @@ class ESSearchService{
       } else {
         SearchScrollRequest scrollRequest = new SearchScrollRequest(params.scrollId)
         scrollRequest.scroll("15m")
-        searchResponse = esclient.search(scrollRequest, RequestOptions.DEFAULT)
+        searchResponse = esclient.scroll(scrollRequest, RequestOptions.DEFAULT)
         try {
           if (params.lastPage && Integer.valueOf(params.lastPage) > -1) {
             result.lastPage = Integer.valueOf(params.lastPage) + 1
@@ -602,10 +602,18 @@ class ESSearchService{
         }
       }
       result.scrollId = searchResponse.getScrollId()
-      SearchHit[] searchHits = searchResponse.getHits()
+
+      SearchHit[] searchHits = searchResponse.getHits().getHits()
       result.hasMoreRecords = searchHits.length == scrollSize
-      result.records = filterLastUpdatedDisplay(searchHits, params, errors, result)
+
       // TODO: remove this after upgrade to Elasticsearch 7
+      //result.records = filterLastUpdatedDisplay(searchHits, params, errors, result)
+
+      result.records = []
+      searchHits.each { r ->
+        result.records.add(r.getSourceAsMap().sort {it.key})
+      }
+
     }
     finally {
       try {
