@@ -9,11 +9,11 @@
     </tr>
   </thead>
   <tbody>
-    <g:each in="${d?.prices}" var="p">
+    <g:each in="${d?.prices.findAll{it.endDate == null}}" var="p">
       <tr>
         <td>${p.priceType?.value}</td>
-        <td>${p.startDate}</td>
-        <td>${p.endDate}</td>
+        %{--<td>${p.startDate}</td>
+        <td>${p.endDate}</td>--}%
         <td>${p.currency?.value}</td>
         <td>${p.price}</td>
       </tr>
