@@ -1427,15 +1427,19 @@ abstract class KBComponent implements Auditable{
       if (currency) {
         rdv_currency = RefdataCategory.lookupOrCreate(RCConstants.CURRENCY, currency.trim()).save(flush: true, failOnError: true)
       }
-      ComponentPrice existPrice = ComponentPrice.findWhere(owner: this, priceType: rdv_type, currency: rdv_currency, price: f)
-      if (existPrice){
+      List<ComponentPrice> existPrices = ComponentPrice.findAllByOwnerAndPriceTypeAndCurrency(this, rdv_type, rdv_currency, [sort: 'lastUpdated', order: 'ASC'])
+      if (existPrices.size() > 0){
+        ComponentPrice existPrice = existPrices[0]
         if (start != null) {
           existPrice.startDate = start
         }
         if (start != null) {
           existPrice.endDate = end
         }
-        existPrice.save()
+        if(existPrice.price != f) {
+          existPrice.price = f
+          existPrice.save()
+        }
         save()
       }
       else {
@@ -1447,10 +1451,11 @@ abstract class KBComponent implements Auditable{
                 startDate: start ?: today,
                 endDate: end)
         cp.save()
+        /*ERMS-3813: Preishistory nicht mehr nötig in wekb
         // set the end date for the current price(s)
         ComponentPrice.executeUpdate('update ComponentPrice set endDate=:start where owner=:tipp and' +
             '(endDate is null or endDate>:start) and priceType=:type and currency=:currency' ,
-            [start: cp.startDate, tipp: this, type: cp.priceType, currency:cp.currency])
+            [start: cp.startDate, tipp: this, type: cp.priceType, currency:cp.currency])*/
         // enter the new price
         prices << cp
         save()
