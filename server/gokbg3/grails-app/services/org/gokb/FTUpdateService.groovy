@@ -269,7 +269,7 @@ class FTUpdateService {
         result.counterR4SushiServerUrl = kbc.counterR4SushiServerUrl
         result.counterR5SushiServerUrl = kbc.counterR5SushiServerUrl
         result.counterRegistryUrl = kbc.counterRegistryUrl
-        result.counterCertified = kbc.counterCertified
+        result.counterCertified = kbc.counterCertified?.value
         result.statisticsAdminPortalUrl = kbc.statisticsAdminPortalUrl
         result.statisticsUpdate = kbc.statisticsUpdate?.value
         result.proxySupported = kbc.proxySupported?.value
