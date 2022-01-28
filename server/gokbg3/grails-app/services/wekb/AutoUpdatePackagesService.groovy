@@ -175,6 +175,11 @@ class AutoUpdatePackagesService {
                         if (respData?.ygorFeedback) {
                             log.error("ygorFeedback: ${respData.ygorFeedback}")
                         }
+
+                        if (respData?.status == 'error') {
+                            log.error("ygorFeedback: ${respData.ygorFeedback}")
+                        }
+
                         def statusService = new RESTClient(ygorBaseUrl + "/enrichment/getStatus?jobId=${respData.jobId}")
 
                         while (processing == true) {
@@ -183,16 +188,21 @@ class AutoUpdatePackagesService {
                                 response.success = { statusResp, statusData ->
                                     log.debug("GET ygor/enrichment/getStatus?jobId=${respData.jobId} => success")
                                     log.debug("status of Ygor ${statusData.status} gokbJob #${statusData.gokbJobId}")
+                                    log.debug("${statusData} #${statusResp}")
                                     if (statusData.status == 'FINISHED_UNDEFINED') {
                                         processing = false
-                                        result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "YGOR ERROR: No valid URLs found."]]]
-                                        log.debug("No valid URLs found.")
+                                        result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "YGOR ERROR: ${statusData.message}"]]]
+                                        log.debug("${statusData.message}")
+                                    } else if (statusData.status == 'ERROR') {
+                                        processing = false
+                                        result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "YGOR ERROR: ${statusData.message}"]]]
+                                        log.debug("${statusData.message}")
                                     }
-
-                                    if (statusData.gokbJobId) {
+                                    else if (statusData.gokbJobId && statusData.status == 'SUCCESS') {
+                                        println("Moe: ${statusData.ygorFeedback}")
                                         processing = false
                                         task {
-                                            checkPackageJob(statusData.gokbJobId, p)
+                                            checkPackageJob(respData.jobId, p)
                                         }
                                     } else {
                                         sleep(10000) // 10 sec
@@ -209,11 +219,12 @@ class AutoUpdatePackagesService {
                             }
                         }
                     }
-                    response.failure = { resp ->
+                    response.failure = { resp, data ->
                         log.error("GET ygor${path} => failure")
                         log.error("ygor response: ${resp.responseBase}")
+                        respData = data
 
-                        result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "YGOR ERROR: response: ${resp.responseBase}"]]]
+                        result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "YGOR ERROR: response message: ${respData.message}"]]]
                         error = true
                     }
                 }
