@@ -1,14 +1,17 @@
 package wekb
 
 import grails.gorm.transactions.Transactional
+import grails.plugin.springsecurity.SpringSecurityService
 import grails.plugin.springsecurity.acl.AclEntry
 import grails.plugin.springsecurity.acl.AclObjectIdentity
 import grails.plugin.springsecurity.acl.AclSid
 import org.gokb.cred.KBDomainInfo
+import org.hibernate.SessionFactory
 import org.springframework.security.acls.domain.BasePermission
 import org.springframework.security.acls.model.MutableAcl
 import org.springframework.security.acls.model.ObjectIdentity
 import org.springframework.security.acls.model.Sid
+import org.springframework.security.core.session.SessionRegistry
 
 import java.security.Permission
 
@@ -17,6 +20,9 @@ class AdminService {
 
     def aclUtilService
     def grailsApplication
+    def sessionRegistry
+    SpringSecurityService springSecurityService
+
 
     def setupDefaultAcl() {
 
@@ -193,5 +199,28 @@ class AdminService {
                 aclUtilService.addPermission(domain, role, permission)
             }
         }
+    }
+
+    int getNumberOfActiveUsers() {
+        getActiveUsers( (1000 * 60 * 10) ).size() // 10 minutes
+    }
+
+    List getActiveUsers(long ms) {
+        List result = []
+
+        sessionRegistry.getAllPrincipals().each { user ->
+            List lastAccessTimes = []
+
+            sessionRegistry.getAllSessions(user, false).each { userSession ->
+                if (user.username == springSecurityService.getCurrentUser()?.username) {
+                    userSession.refreshLastRequest()
+                }
+                lastAccessTimes << userSession.getLastRequest().getTime()
+            }
+            if (lastAccessTimes.max() > System.currentTimeMillis() - ms) {
+                result.add(user)
+            }
+        }
+        result
     }
 }

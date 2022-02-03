@@ -822,7 +822,7 @@ class IntegrationController {
     changed
   }
 
-  @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
+  /*@Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
   def crossReferenceLicense() {
     def result = ['result': 'OK']
     def user = springSecurityService.currentUser
@@ -852,7 +852,7 @@ class IntegrationController {
     }
 
     render result as JSON
-  }
+  }*/
 
 /**
  *  Cross reference an incoming title with the database. See an example of calling this controller method

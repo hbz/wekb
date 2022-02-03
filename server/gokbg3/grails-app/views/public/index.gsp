@@ -102,19 +102,19 @@
                         </td>
                         <td>
                             <g:link controller="public" action="packageContent"
-                                    id="${hit.id}">${hit.source.name}</g:link>
+                                    id="${hit.id}">${hit.getSourceAsMap().name}</g:link>
 
                         </td>
                         <td>
-                            <g:if test="${hit.source.providerUuid}">
+                            <g:if test="${hit.getSourceAsMap().providerUuid}">
                                 <g:link controller="public" action="orgContent"
-                                        id="${hit.source.providerUuid}">${Org.findByUuid(hit.source.providerUuid).name}</g:link>
+                                        id="${hit.getSourceAsMap().providerUuid}">${Org.findByUuid(hit.getSourceAsMap().providerUuid).name}</g:link>
                             </g:if>
 
                         </td>
                         <td>
-                            <g:if test="${hit.source.curatoryGroups?.size() > 0}">
-                                <g:each in="${hit.source.curatoryGroups}" var="cg" status="c">
+                            <g:if test="${hit.getSourceAsMap().curatoryGroups?.size() > 0}">
+                                <g:each in="${hit.getSourceAsMap().curatoryGroups}" var="cg" status="c">
                                     <g:if test="${c > 0}"><br></g:if>
                                     ${cg.name}
                                     <g:if test="${cg.type}">
@@ -126,12 +126,12 @@
                                 <div>No Curators</div>
                             </g:else>
                         </td>
-                        <td>${hit.source.contentType}</td>
-                        <td>${hit.source.titleCount}</td>
+                        <td>${hit.getSourceAsMap().contentType}</td>
+                        <td>${hit.getSourceAsMap().titleCount}</td>
                         <td>
-                            <g:if test="${hit.source.lastUpdatedDisplay}">
+                            <g:if test="${hit.getSourceAsMap().lastUpdatedDisplay}">
                                 <g:formatDate format="${message(code: 'default.date.format')}"
-                                              date="${dateFormatService.parseDate(hit.source.lastUpdatedDisplay)}"/>
+                                              date="${dateFormatService.parseDate(hit.getSourceAsMap().lastUpdatedDisplay)}"/>
                             </g:if>
                         </td>
                     </tr>

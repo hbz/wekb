@@ -60,6 +60,15 @@
       <!-- /.navbar-header -->
 
       <sec:ifLoggedIn>
+        <ul class="nav navbar-nav navbar-left">
+         <li style="color: white">
+            <g:if test="${grailsApplication.metadata['info.app.version']}">
+              Version: ${grailsApplication.metadata['info.app.version']} – ${grailsApplication.metadata['build.time']}
+            </g:if>
+            <br>
+            ${adminService.getNumberOfActiveUsers()} User online
+         </li>
+        </ul>
         <ul class="nav navbar-nav navbar-right">
           <g:if test="${grailsApplication.config.gokb.ygorUrl}">
             <li><a  style="font-weight:bold;" href ="${grailsApplication.config.gokb.ygorUrl}">Ygor</a></li>

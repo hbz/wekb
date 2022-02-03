@@ -83,8 +83,11 @@ dependencies {
     compile group: 'org.apache.commons', name: 'commons-compress', version: '1.16.1'
     compile group: 'net.sf.opencsv', name: 'opencsv', version: '2.3'
     compile group: 'org.codehaus.groovy.modules.http-builder', name: 'http-builder', version: '0.7.1'
-    compile 'org.elasticsearch:elasticsearch:5.6.10'
-    compile 'org.elasticsearch.client:transport:5.6.10'
+    // https://mvnrepository.com/artifact/org.elasticsearch.client/elasticsearch-rest-high-level-client
+    compile 'org.elasticsearch:elasticsearch:7.15.1'
+    compile 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.15.1'
+    // https://mvnrepository.com/artifact/org.locationtech.spatial4j/spatial4j
+    implementation 'org.locationtech.spatial4j:spatial4j:0.8'
     compile 'org.apache.tika:tika-core:1.17'
     compile 'org.grails.plugins:grails-executor:0.4'
     compile 'org.grails.plugins:audit-logging:3.0.0'
@@ -99,7 +102,7 @@ dependencies {
     profile "org.grails.profiles:web"
     runtime "org.glassfish.web:el-impl:2.1.2-b03"
     // https://mvnrepository.com/artifact/org.postgresql/postgresql
-    compile group: 'org.postgresql', name: 'postgresql', version: '42.2.10'
+    compile group: 'org.postgresql', name: 'postgresql', version: '42.3.0'
     runtime "com.h2database:h2"
     runtime "org.apache.tomcat:tomcat-jdbc"
     runtime "com.bertramlabs.plugins:asset-pipeline-grails:2.14.10"

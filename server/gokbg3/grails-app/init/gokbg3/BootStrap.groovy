@@ -18,9 +18,6 @@ import org.gokb.cred.*
 
 import com.k_int.apis.A_Api;
 import com.k_int.ConcurrencyManagerService.Job
-import org.elasticsearch.client.IndicesAdminClient
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder
-import org.elasticsearch.action.admin.indices.create.CreateIndexResponse
 
 class BootStrap {
 
@@ -1181,38 +1178,10 @@ class BootStrap {
     def ensureEsIndices() {
         def esIndices = grailsApplication.config.gokb.es.indices?.values()
         for (String indexName in esIndices) {
-            ensureEsIndex(indexName)
+            ESWrapperService.createIndex(indexName)
         }
     }
 
-
-    def ensureEsIndex(String indexName) {
-        log.info("ensureESIndex for ${indexName}");
-        def esclient = ESWrapperService.getClient()
-        IndicesAdminClient adminClient = esclient.admin().indices()
-
-        if (!adminClient.prepareExists(indexName).execute().actionGet().isExists()) {
-            log.debug("ES index ${indexName} did not exist, creating..")
-
-            CreateIndexRequestBuilder createIndexRequestBuilder = adminClient.prepareCreate(indexName)
-
-            log.debug("Adding index settings..")
-            createIndexRequestBuilder.setSettings(ESWrapperService.getSettings().get("settings"))
-            log.debug("Adding index mappings..")
-            createIndexRequestBuilder.addMapping("component", ESWrapperService.getMapping())
-
-            CreateIndexResponse indexResponse = createIndexRequestBuilder.execute().actionGet()
-
-            if (indexResponse.isAcknowledged()) {
-                log.debug("Index ${indexName} successfully created!")
-            } else {
-                log.debug("Index creation failed: ${indexResponse}")
-            }
-        } else {
-            log.debug("ES index ${indexName} already exists..")
-            // Validate settings & mappings
-        }
-    }
 
     List getParsedCsvData(String filePath, String objType) {
 

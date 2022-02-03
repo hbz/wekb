@@ -6,7 +6,6 @@
   var components = {
     'org'   : [
       {id: 1, 'class': 'org.gokb.cred.Org', title: 'apple'},
-      {id: 2, 'class': 'org.gokb.cred.Org', title: 'google'},
       {id: 3, 'class': 'org.gokb.cred.Org', title: 'facebook'},
       {id: 4, 'class': 'org.gokb.cred.Org', title: 'github'}],
     'title' : [

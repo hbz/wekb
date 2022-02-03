@@ -12,28 +12,29 @@
                         <th>Price Type</th>
                         <th>Value</th>
                         <th>Currency</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
+                       %{-- <th>Start Date</th>
+                        <th>End Date</th>--}%
                         <g:if test="${editable}">
                             <th>Actions</th>
                         </g:if>
                     </tr>
                     </thead>
                     <tbody>
-                    <g:each in="${d.prices}" var="somePrice">
+                    <g:each in="${d.prices.findAll{it.endDate == null}}" var="somePrice">
                         <tr>
                             <td><gokb:xEditableRefData owner="${somePrice}" field="priceType" config="${RCConstants.PRICE_TYPE}"/></td>
                             <td><gokb:xEditable owner="${somePrice}" field="price"/></td>
                             <td><gokb:xEditableRefData owner="${somePrice}" field="currency" config="${RCConstants.CURRENCY}"/></td>
-                            <td><gokb:xEditable owner="${somePrice}" field="startDate" type="date"/></td>
-                            <td><gokb:xEditable owner="${somePrice}" field="endDate" type="date"/></td>
+                        %{--    <td><gokb:xEditable owner="${somePrice}" field="startDate" type="date"/></td>
+                            <td><gokb:xEditable owner="${somePrice}" field="endDate" type="date"/></td>--}%
+                        <g:if test="${editable}">
                             <td>
-                                <g:if test="${editable}">
                                     <g:link controller="ajaxSupport" class="confirm-click"
                                             data-confirm-message="Are you sure you wish to delete this Price?"
                                             action="deletePrice" params="[id: somePrice.id, fragment: 'prices']">Delete</g:link>
-                                </g:if>
+
                             </td>
+                        </g:if>
                         </tr>
                     </g:each>
                     </tbody>
