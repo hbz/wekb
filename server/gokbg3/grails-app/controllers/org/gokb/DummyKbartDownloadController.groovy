@@ -1,6 +1,6 @@
 package org.gokb
 
-import com.google.common.base.Utf8
+
 import grails.plugin.springsecurity.annotation.Secured
 import grails.util.Environment
 import org.apache.commons.codec.binary.Hex
