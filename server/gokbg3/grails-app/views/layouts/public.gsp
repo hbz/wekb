@@ -46,7 +46,7 @@
             <div class="collapse navbar-collapse flex-grow-1 text-right" id="public-navigation">
                <ul class="navbar-nav ml-auto flex-nowrap">
                   <g:if test="${grailsApplication.config.gokb.ygorUrl}">
-                    <li class="nav-item"><a class="nav-link" href ="${grailsApplication.config.gokb.ygorUrl}">Ygor</a></li>
+                    <li class="nav-item"><a class="nav-link" href ="${grailsApplication.config.gokb.ygorUrl}" target="_blank">Ygor</a></li>
                   </g:if>
 
                   <li class="nav-item"><g:link class="nav-link" controller="home" action="index">Login</g:link></li>
