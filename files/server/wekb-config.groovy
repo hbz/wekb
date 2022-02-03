@@ -31,7 +31,7 @@ dataSource.url = 'jdbc:postgresql://localhost:5432/gokb'
 
 serverUrl= 'http://localhost:8080/gokb'
 baseUrl= 'http://localhost:8080/gokb'
-server.contextPath = '/gokb'
+server.contextPath = '/wekb'
 
 systemId = 'we:kb-Dev'
 
