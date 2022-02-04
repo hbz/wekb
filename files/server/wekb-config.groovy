@@ -10,7 +10,7 @@ gokb.anonymizeUsers = false
 gokb.costInfo = false
 gokb.decisionSupport.active = false
 gokb.decisionSupport.otherVoters = false
-gokb.defaultCuratoryGroup = Local
+gokb.defaultCuratoryGroup = 'Local'
 gokb.es.cluster = 'gokbes'
 gokb.es.host = 'localhost'
 gokb.ftupdate_enabled = false
@@ -38,4 +38,5 @@ systemId = 'we:kb-Dev'
 logSql = true
 formatSql = true
 
-
+ygorUploadLocation = '/tmp'
+ygorStatisticStorageLocation = '/tmp'

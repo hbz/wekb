@@ -1,18 +1,23 @@
 package wekb
 
 import grails.converters.JSON
+import grails.core.GrailsApplication
 import grails.plugin.springsecurity.SpringSecurityService
+import grails.util.Holders
 import org.gokb.GenericOIDService
 import org.gokb.cred.KBComponent
 import org.gokb.cred.Package
 import org.gokb.cred.User
 import org.springframework.security.access.annotation.Secured
 
+import java.nio.file.Files
+
 class PackageController {
 
     SpringSecurityService springSecurityService
     GenericOIDService genericOIDService
     AccessService accessService
+    GrailsApplication grailsApplication
 
     def index() { }
 
@@ -70,5 +75,18 @@ class PackageController {
         }
 
         result
+    }
+
+    @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+    def showYgorStatistic() {
+        if(params.id && grailsApplication.config.gokb.ygorUrl) {
+
+            redirect(url: "${grailsApplication.config.gokb.ygorUrl}/enrichment/uploadRawFileFromWEKB?ygorStatisticResultHash=${params.id}")
+
+        }else {
+
+            flash.error = "We are sorry. Unfortunately an error happened. The statistic cannot be displayed"
+            redirect(url: request.getHeader("referer"))
+        }
     }
 }

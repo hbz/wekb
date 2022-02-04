@@ -821,4 +821,17 @@ select tipp.id,
 
     result
   }
+
+  @Transient
+  public getAutoUpdateJobResult() {
+    def result = []
+
+    if (this.id) {
+      result = JobResult.executeQuery('select jobR from JobResult as jobR where jobR.linkedItemId = :packageID and jobR.type in (:types) order by jobR.startTime desc',
+              [packageID: this.id,
+              types: [RefdataCategory.lookup(RCConstants.JOB_TYPE, 'PackageCrossRef Auto')]])
+    }
+    return result
+  }
+
 }
