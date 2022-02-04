@@ -703,6 +703,10 @@ class IntegrationController {
       fullsync = true
     }
 
+    if (params.resultHash) {
+      rjson.ygorStatisticResultHash = params.resultHash
+    }
+
     if (!async) {
       result = crossReferenceService.xRefPkg(rjson,
           addOnly as boolean, fullsync as boolean, token != null,

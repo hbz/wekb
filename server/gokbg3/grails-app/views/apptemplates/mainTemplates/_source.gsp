@@ -50,7 +50,7 @@
             </gokb:manyToOneReferenceTypedown>
         </dd>
         <dt>
-            <gokb:annotatedLabel owner="${d}" property="zdbMatch">Automated Updates</gokb:annotatedLabel>
+            <gokb:annotatedLabel owner="${d}" property="automaticUpdates">Automated Updates</gokb:annotatedLabel>
         </dt>
         <dd>
             <gokb:xEditableBoolean owner="${d}" field="automaticUpdates"/>

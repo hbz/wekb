@@ -175,6 +175,9 @@
         </g:if>
         <li role="presentation"><a href="#activity" data-toggle="tab">Activity</a></li>
         <li role="presentation"><a href="#review" data-toggle="tab">Review Requests</a></li>
+        <g:if test="${d.source && d.source.automaticUpdates}">
+          <li role="presentation"><a href="#autoUp" data-toggle="tab">Automatic Updates History</a></li>
+        </g:if>
       </g:if>
       <g:else>
         <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Titles </span></li>
@@ -333,6 +336,92 @@
           </div>
           <div id="rr-loaded"></div>
         </div>
+      </div>
+
+      <div class="tab-pane" id="autoUp">
+
+        <h3>History of Auto Updates</h3>
+
+        <table class="table table-bordered table-striped">
+          <thead>
+          <tr>
+            <th>#</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Status</th>
+            <th>Info</th>
+          </tr>
+          </thead>
+          <tbody>
+          <g:each in="${d.getAutoUpdateJobResult()}" var="jobResult" status="i">
+            <g:set var="json" value="${jobResult.resultJson}" />
+            <tr>
+              <td>${i+1}</td>
+              <td>${jobResult.startTime}</td>
+              <td>${jobResult.endTime}</td>
+              <td>${jobResult.statusText}</td>
+
+              <td><g:if test="${json}">
+
+                <b>${json.message}</b>
+                <br>
+                <br>
+                <g:if test="${json.packageUpdateNote}">
+                  ${json.packageUpdateNote}
+                  <br>
+                  <br>
+                </g:if>
+
+                <g:if test="${json.messages}">
+                  Messages:
+                  <ul>
+                    <g:each in="${json.messages}" var="m">
+                      <g:if test="${m instanceof String}">
+                        <li>${m}</li>
+                      </g:if>
+                      <g:else>
+                        <li>${m.message}</li>
+                      </g:else>
+                    </g:each>
+                  </ul>
+                </g:if>
+                <g:if test="${!json.messages}">
+                  No Messages
+                </g:if>
+
+                <g:if test="${json.errors?.global}">
+                  <div>Global Errors</div>
+                  <ul>
+                    <g:each in="${json.errors?.global}" var="ge">
+                      <li>${ge}</li>
+                    </g:each>
+                  </ul>
+                </g:if>
+                <g:if test="${json.errors?.tipps}">
+                  <div>Titles Errors</div>
+                  <ul>
+                    <g:each in="${json.errors?.tipps}" var="te">
+                      <li>${te}</li>
+                    </g:each>
+                  </ul>
+                </g:if>
+                <g:if test="${!json.errors}">
+                  No Errors
+                </g:if>
+
+
+                <g:if test="${json.ygorStatisticResultHash}">
+                  <br>
+                  <br>
+                  <g:link controller="package" action="showYgorStatistic" id="${json.ygorStatisticResultHash}" class="btn btn-default" target="_blank">Show Ygor Statistic</g:link>
+                </g:if>
+
+              </g:if>
+              </td>
+            </tr>
+          </g:each>
+          </tbody>
+        </table>
       </div>
 
     </div>
