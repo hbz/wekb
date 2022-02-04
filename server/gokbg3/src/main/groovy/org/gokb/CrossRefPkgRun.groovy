@@ -289,6 +289,8 @@ class CrossRefPkgRun {
         }
 
         if (autoUpdate && pkg.source) {
+          job.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'PackageCrossRef Auto')
+
           Source src = Source.get(pkg.source.id)
           src.lastRun = new Date()
           src.lastUpdateUrl = rjson.updateURL
@@ -316,11 +318,6 @@ class CrossRefPkgRun {
               jsonResult.ygorStatisticResultHash = rjson.ygorStatisticResultHash
 
           }
-
-
-
-          job.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'PackageCrossRef Auto')
-
         }
       }
       log.debug("final flush");
