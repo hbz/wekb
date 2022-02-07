@@ -85,7 +85,7 @@ class PackageController {
 
         }else {
 
-            flash.error = "We are sorry. Unfortunately an error happened. The statistic cannot be displayed"
+            flash.error = "We are sorry. Unfortunately an error happened. The statistics cannot be displayed"
             redirect(url: request.getHeader("referer"))
         }
     }
