@@ -3,6 +3,7 @@ package org.gokb
 import de.wekb.helper.RCConstants
 import grails.gorm.transactions.Transactional
 import grails.util.Holders
+import groovy.util.logging.Slf4j
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.RESTClient
 import org.gokb.cred.KBComponent
@@ -11,6 +12,8 @@ import org.gokb.cred.RefdataValue
 
 import static groovyx.net.http.Method.GET
 
+
+@Slf4j
 @Transactional
 class LanguagesService{
 
