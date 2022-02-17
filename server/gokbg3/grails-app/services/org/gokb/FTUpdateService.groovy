@@ -203,7 +203,7 @@ class FTUpdateService {
         kbc.contacts.each { Contact contact ->
           result.contacts.add([  content: contact.content,
                                  contentType: contact.contentType?.value,
-                                 type: contact.type,
+                                 type: contact.type?.value,
                                  language: contact.language?.value])
         }
 
