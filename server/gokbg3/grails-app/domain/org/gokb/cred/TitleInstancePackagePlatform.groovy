@@ -5,6 +5,7 @@ import de.wekb.annotations.KbartAnnotation
 import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
 import org.gokb.ComponentLookupService
+import org.grails.web.json.JSONArray
 import org.grails.web.json.JSONObject
 import wekb.KBComponentLanguage
 
@@ -859,15 +860,15 @@ class TitleInstancePackagePlatform extends KBComponent {
           case 1:
             log.debug("found")
 
-            if (trimmed_url && trimmed_url.size() > 0) {
+            /*if (trimmed_url && trimmed_url.size() > 0) {
               if (!tipps[0].url || tipps[0].url == trimmed_url) {
                 tipp = tipps[0]
               } else {
                 log.debug("matched tipp has a different url..")
               }
-            } else {
+            } else {*/
               tipp = tipps[0]
-            }
+            /*}*/
             break;
           case 0:
             log.debug("not found");
@@ -884,6 +885,8 @@ class TitleInstancePackagePlatform extends KBComponent {
 
             if (cur_tipps.size() > 0) {
               tipp = cur_tipps[0]
+
+              //tipp = TitleInstancePackagePlatform.getCorrectTipp(cur_tipps, trimmed_url, tipp_dto.identifiers, pkg)
 
               log.warn("found ${cur_tipps.size()} current TIPPs!")
             } else if (ret_tipps.size() > 0) {
@@ -1572,6 +1575,67 @@ class TitleInstancePackagePlatform extends KBComponent {
       result = existPrice.price.toString()
     }
     return result
+
+  }
+
+  @Transient
+  static TitleInstancePackagePlatform getCorrectTipp(ArrayList<TitleInstancePackagePlatform> tipps = null, String url = null, JSONArray identifiers = null, Package aPackage = null){
+
+    //println("findCorrectTipp")
+    //println(tipps)
+    //println(url)
+    //println(identifiers)
+    //println(aPackage)
+
+    List tippsCorrect
+
+    //URL check
+    tippsCorrect = tipps.findAll {it.url == url}
+
+    if(tippsCorrect.size() == 1){
+      log.debug("getCorrectTipp URL matching by "+tippsCorrect.size() + ": "+ tippsCorrect.id)
+      return tippsCorrect[0]
+    }
+
+
+    //provider internal identifier check
+    if(aPackage.source && aPackage.source.targetNamespace){
+
+      String value = identifiers.find {it.type == aPackage.source.targetNamespace.value}?.value
+
+      def norm_id = Identifier.normalizeIdentifier(value)
+      List<Identifier> identifierList = Identifier.findAllByNamespaceAndNormname(aPackage.source.targetNamespace, norm_id)
+
+      if(identifierList.size() == 1){
+
+        log.debug("getCorrectTipp identifierList: "+ identifierList.id)
+        List<TitleInstancePackagePlatform> tippCombos = Combo.executeQuery("select c.fromComponent from Combo as c where c.toComponent = identifier and c.fromComponent in (:tipps)", [identifier: identifierList[0], tipps: tipps])
+
+        if(tippCombos.size() == 1) {
+          log.debug("getCorrectTipp provider internal identifier matching by "+tippCombos.size() + ": "+ tippCombos.id)
+          return tippCombos[0]
+        }
+
+      }
+    }
+
+    /*String value = identifiers.find {it.type == ""}?.value
+
+    IdentifierNamespace namespace = IdentifierNamespace.findByValue()
+
+    def norm_id = Identifier.normalizeIdentifier(value)
+    List<Identifier> identifierList = Identifier.findAllByNamespaceAndNormname(namespace, norm_id)
+
+    if(identifierList.size() == 1){
+      List<TitleInstancePackagePlatform> tippCombos = Combo.executeQuery("select c.fromComponent from Combo as c where c.toComponent = identifier and c.fromComponent in (:tipps)", [identifier: identifierList[0], tipps: tipps])
+
+      if(tippCombos.size() == 1) {
+        return tippCombos[0]
+      }
+
+    }*/
+
+    return null
 
   }
 
