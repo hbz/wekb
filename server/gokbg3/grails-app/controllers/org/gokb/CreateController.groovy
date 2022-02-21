@@ -648,7 +648,7 @@ class CreateController {
                               source.automaticUpdates = (refdataValue.value == "Yes") ? true : false
                             }
 
-                            if (refdataValue.value == "Yes") {
+                            if (refdataValue && refdataValue.value == "Yes") {
                               String charset = (('a'..'z') + ('0'..'9')).join()
                               String tokenValue = RandomStringUtils.random(255, charset.toCharArray())
                               if (!UpdateToken.findByPkg(pkg)) {
@@ -698,6 +698,9 @@ class CreateController {
               }
 
             }catch ( Exception e ) {
+
+
+
               e.printStackTrace()
               globalErrors << "Error on package with the name '${name}'. Please try agian!"
             }
