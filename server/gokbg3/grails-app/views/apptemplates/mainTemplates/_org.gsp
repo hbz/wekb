@@ -77,18 +77,42 @@
   <dd>
     <g:if test="${d.id != null}">
 
-      <ul>
-        <g:each in="${d.contacts?.sort { it.content }}" var="contact">
-          <li>
-            ${contact.content}: ${contact.contentType?.getI10n('value')} (Language: ${contact.language?.getI10n('value')})
-            <g:if test="${editable}">
-              <g:link controller='ajaxSupport'
-                      action='delete'
-                      params="${["__context": "${contact.class.name}:${contact.id}"]}">Unlink</g:link>
-            </g:if>
-          </li>
+      <table class="table">
+        <thead>
+        <tr>
+          <th>#</th>
+          <th>Value</th>
+          <th>Content Type</th>
+          <th>Concat Typ</th>
+          <th>Language</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <g:each in="${d.contacts?.sort { it.content }}" var="contact" status="i">
+          <tr>
+            <td>${i+1}</td>
+            <td><gokb:xEditable owner="${contact}" field="content"/></td>
+            <td><gokb:xEditableRefData owner="${contact}" field="contentType"
+                                       config="${RCConstants.CONTACT_CONTENT_TYPE}"/>
+            <td><gokb:xEditableRefData owner="${contact}" field="type"
+                                       config="${RCConstants.CONTACT_TYPE}"/>
+            </td>
+            <td>
+            <gokb:xEditableRefData owner="${contact}" field="language"
+                                              config="${RCConstants.KBCOMPONENT_LANGUAGE}"/>
+          </td>
+            <td>
+              <g:if test="${editable}">
+                <g:link controller='ajaxSupport'
+                        action='delete'
+                        params="${["__context": "${contact.class.name}:${contact.id}"]}">Unlink</g:link>
+              </g:if>
+            </td>
+          </tr>
         </g:each>
-      </ul>
+        </tbody>
+      </table>
 
       <g:if test="${editable}">
         <a data-toggle="modal" data-cache="false"
