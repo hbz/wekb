@@ -199,7 +199,7 @@ class TitleInstancePackagePlatform extends KBComponent {
   ]
 
   def getPersistentId() {
-    "${uuid ?: 'gokb:TIPP:' + title?.id + ':' + pkg?.id + ':' + hostPlatform?.id}"
+    "${uuid ?: 'wekb:TIPP:' + title?.id + ':' + pkg?.id + ':' + hostPlatform?.id}"
   }
 
   static isTypeCreatable(boolean defaultValue = false) {

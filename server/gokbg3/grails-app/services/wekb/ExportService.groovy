@@ -18,6 +18,7 @@ import org.gokb.cred.ComponentPrice
 import org.gokb.cred.Identifier
 import org.gokb.cred.IdentifierNamespace
 import org.gokb.cred.Package
+import org.gokb.cred.Platform
 import org.gokb.cred.RefdataCategory
 import org.gokb.cred.RefdataValue
 import org.gokb.cred.TIPPCoverageStatement
@@ -33,7 +34,7 @@ class ExportService {
 
     DateFormatService dateFormatService
 
-    def exportPackageTippsAsTSV(def outputStream, Package pkg) {
+    /*def exportPackageTippsAsTSV(def outputStream, Package pkg) {
 
         def export_date = dateFormatService.formatDate(new Date())
 
@@ -232,7 +233,7 @@ class ExportService {
             writer.close();
         }
         outputStream.close()
-    }
+    }*/
 
     /*public void exportPackageTippsAsKBART(def outputStream, Package pkg) {
 
@@ -668,7 +669,7 @@ class ExportService {
                                     }
                                     break;
                                 case 'printIdentifier':
-                                    List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where i.namespace.value in :namespaceValue and c.fromComponent.id = :tippID and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: printIdentifier, tippID: tippID, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
+                                    List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where LOWER(i.namespace.value) in :namespaceValue and c.fromComponent.id = :tippID and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: printIdentifier, tippID: tippID, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
 
                                     if (identifiers.size() > 0) {
                                         row.add(sanitize(identifiers.join(';')))
@@ -677,7 +678,7 @@ class ExportService {
                                     }
                                     break;
                                 case 'onlineIdentifier':
-                                    List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where i.namespace.value in :namespaceValue and c.fromComponent.id = :tippID and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: onlineIdentifier, tippID: tippID, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
+                                    List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where LOWER(i.namespace.value) in :namespaceValue and c.fromComponent.id = :tippID and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: onlineIdentifier, tippID: tippID, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
 
                                     if (identifiers.size() > 0) {
                                         row.add(sanitize(identifiers.join(';')))
@@ -686,7 +687,13 @@ class ExportService {
                                     }
                                     break;
                                 case 'titleIdNameSpace':
-                                    List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where i.namespace.value = :namespaceValue and c.fromComponent.id = :tippID and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: titleIdNameSpace, tippID: tippID, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
+
+                                    if(titleIdNameSpace == 'FAKE') {
+                                        Platform platform = Platform.executeQuery('select p from Platform as p,  Combo as c where c.toComponent.id = :tippID and c.type = :comboType and c.fromComponent = p and c.status = :comboStatus', [tippID: tippID, comboType: RDStore.COMBO_TYPE_PLT_HOSTEDTIPPS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])[0]
+                                        titleIdNameSpace = platform.titleNamespace ? platform.titleNamespace.value : 'FAKE'
+                                    }
+
+                                    List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where LOWER(i.namespace.value) = :namespaceValue and c.fromComponent.id = :tippID and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: titleIdNameSpace.toLowerCase(), tippID: tippID, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
 
                                     if (identifiers.size() > 0) {
                                         row.add(sanitize(identifiers.join(';')))
@@ -695,7 +702,7 @@ class ExportService {
                                     }
                                     break;
                                 case 'doiIdentifier':
-                                    List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where i.namespace.value = :namespaceValue and c.fromComponent.id = :tippID and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: doiIdentifier, tippID: tippID, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
+                                    List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where LOWER(i.namespace.value) = :namespaceValue and c.fromComponent.id = :tippID and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: doiIdentifier.toLowerCase(), tippID: tippID, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
 
                                     if (identifiers.size() > 0) {
                                         row.add(sanitize(identifiers.join(';')))
@@ -704,7 +711,7 @@ class ExportService {
                                     }
                                     break;
                                 case 'zdb_id':
-                                    List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where i.namespace.value = :namespaceValue and c.fromComponent.id = :tippID and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: zdbIdentifier, tippID: tippID, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
+                                    List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where LOWER(i.namespace.value) = :namespaceValue and c.fromComponent.id = :tippID and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: zdbIdentifier.toLowerCase(), tippID: tippID, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
 
                                     if (identifiers.size() > 0) {
                                         row.add(sanitize(identifiers.join(';')))
@@ -713,7 +720,7 @@ class ExportService {
                                     }
                                     break;
                                 case 'ezb_id':
-                                    List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where i.namespace.value = :namespaceValue and c.fromComponent.id = :tippID and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: ezbIdentifier, tippID: tippID, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
+                                    List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where LOWER(i.namespace.value) = :namespaceValue and c.fromComponent.id = :tippID and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: ezbIdentifier.toLowerCase(), tippID: tippID, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
 
                                     if (identifiers.size() > 0) {
                                         row.add(sanitize(identifiers.join(';')))
@@ -722,7 +729,7 @@ class ExportService {
                                     }
                                     break;
                                 case 'package_ezb_anchor':
-                                    List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where i.namespace.value = :namespaceValue and c.fromComponent.id = :package and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: packageEzbAnchor, package: pkg.id, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
+                                    List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where LOWER(i.namespace.value) = :namespaceValue and c.fromComponent.id = :package and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: packageEzbAnchor.toLowerCase(), package: pkg.id, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
 
                                     if (identifiers.size() > 0) {
                                         row.add(sanitize(identifiers.join(';')))
@@ -731,7 +738,7 @@ class ExportService {
                                     }
                                     break;
                                 case 'package_isci':
-                                    List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where i.namespace.value = :namespaceValue and c.fromComponent.id = :package and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: packageIsci, package: pkg.id, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
+                                    List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where LOWER(i.namespace.value) = :namespaceValue and c.fromComponent.id = :package and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: packageIsci.toLowerCase(), package: pkg.id, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
 
                                     if (identifiers.size() > 0) {
                                         row.add(sanitize(identifiers.join(';')))
