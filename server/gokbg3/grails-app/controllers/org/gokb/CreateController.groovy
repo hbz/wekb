@@ -699,9 +699,10 @@ class CreateController {
 
             }catch ( Exception e ) {
 
-
-
-              e.printStackTrace()
+              if(pkg){
+                pkg.delete(flush: true)
+              }
+              log.error(e.printStackTrace())
               globalErrors << "Error on package with the name '${name}'. Please try agian!"
             }
           }
