@@ -1,11 +1,6 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
 <div class="tab-pane fade" id="altnames" role="tabpanel">
   <g:if test="${d.id != null}">
-    <dl>
-      <dt>
-        <gokb:annotatedLabel owner="${d}" property="alternateNames">Alternate Names</gokb:annotatedLabel>
-      </dt>
-      <dd>
         <table class="table table-striped table-bordered">
           <thead>
             <tr>
@@ -72,8 +67,6 @@
               </g:form>
             </bootStrap:modal>
         </g:if>
-      </dd>
-    </dl>
   </g:if>
   <g:else>
     Alternate names can be added after the creation process is finished.
