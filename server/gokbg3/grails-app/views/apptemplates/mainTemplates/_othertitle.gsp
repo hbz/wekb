@@ -16,15 +16,6 @@
   </dd>
 
   <dt>
-    <gokb:annotatedLabel owner="${d}" property="status">Work</gokb:annotatedLabel>
-  </dt>
-  <dd style="width:50%">
-    <g:if test="${d.work}">
-      <g:link controller="resource" action="show" id="${d.work.class.name}:${d.work.id}"> ${d.work.name} </g:link>
-    </g:if>
-  </dd>
-
-  <dt>
     <gokb:annotatedLabel owner="${d}" property="status">Status</gokb:annotatedLabel>
   </dt>
   <dd>
@@ -86,8 +77,6 @@
         <li><a href="#ds" data-toggle="tab">Decision Support</a></li>
       </g:if>
 
-      <li><a href="#people" data-toggle="tab">People <span class="badge badge-warning"> ${d.people?.size() ?: '0'} </span></a></li>
-
     </g:if>
     <g:else>
       <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Alternate Names </span></li>
@@ -99,7 +88,6 @@
       <g:if test="${grailsApplication.config.gokb.decisionSupport?.active}">
         <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Decision Support </span></li>
       </g:if>
-      <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">People </span></li>
     </g:else>
   </ul>
   <div id="my-tab-content" class="tab-content">
@@ -231,20 +219,6 @@
       <g:render template="/apptemplates/secondTemplates/dstab" model="${[d:d]}" />
     </div>
 
-    <div class="tab-pane" id="people">
-
-     <dl>
-	    <dt>
-		  <gokb:annotatedLabel owner="${d}" property="people">Add People</gokb:annotatedLabel>
-		</dt>
-		<dd>
-		  <!-- this bit could be better  -->
-		  <g:render template="/apptemplates/secondTemplates/componentPerson"
-				    model="${[d:d, property:'people', cols:[[expr:'person.name',colhead:'Name', action:'link-person'],
-						                                    [expr:'role.value', colhead: 'Role']], targetClass:'org.gokb.cred.Person',direction:'in']}" />
-		</dd>
-	  </dl>
-    </div>
 
   </div>
   <g:render template="/apptemplates/secondTemplates/componentStatus"/>

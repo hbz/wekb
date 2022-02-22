@@ -16,15 +16,6 @@
   </dd>
 
   <dt>
-    <gokb:annotatedLabel owner="${d}" property="status">Work</gokb:annotatedLabel>
-  </dt>
-  <dd style="width:50%">
-    <g:if test="${d.work}">
-      <g:link controller="resource" action="show" id="${d.work.class.name}:${d.work.id}"> ${d.work.name} </g:link>
-    </g:if>
-  </dd>
-
-  <dt>
     <gokb:annotatedLabel owner="${d}" property="source">Source</gokb:annotatedLabel>
   </dt>
   <dd>
@@ -65,16 +56,6 @@
     ${d.currentPublisher}&nbsp;
   </dd>
 
-  <dt>
-    <gokb:annotatedLabel owner="${d}" property="imprint">Imprint</gokb:annotatedLabel>
-  </dt>
-  <dd>
-    <gokb:manyToOneReferenceTypedown owner="${d}" field="imprint"
-      baseClass="org.gokb.cred.Imprint">
-      ${d.imprint?.name}
-    </gokb:manyToOneReferenceTypedown>
-    &nbsp;
-  </dd>
 
   <dt>
     <gokb:annotatedLabel owner="${d}" property="firstAuthor">First Author</gokb:annotatedLabel>

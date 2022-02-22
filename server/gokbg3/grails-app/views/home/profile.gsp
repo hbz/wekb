@@ -19,9 +19,6 @@
       </div>
 
       <div class="panel-body" >
-        <div class="pull-right well">
-          <g:link controller="home" action="sendAlerts"><button class="btn btn-success">Send Alerts Update</button></g:link>
-        </div>
         <g:render template="/apptemplates/mainTemplates/user" model="${[d: user]}"></g:render>
       </div>
 

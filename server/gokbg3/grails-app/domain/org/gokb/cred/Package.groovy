@@ -11,7 +11,6 @@ import groovy.util.logging.*
 import groovy.time.TimeCategory
 
 
-import org.gokb.refine.*
 
 @Slf4j
 class Package extends KBComponent {
@@ -48,7 +47,6 @@ class Package extends KBComponent {
   @RefdataAnnotation(cat = RCConstants.PACKAGE_EDITING_STATUS)
   RefdataValue editingStatus
 
-  RefineProject lastProject
   String globalNote
 
   String descriptionURL
@@ -93,7 +91,6 @@ class Package extends KBComponent {
 
   static mapping = {
     includes KBComponent.mapping
-    lastProject column: 'pkg_refine_project_fk'
     scope column: 'pkg_scope_rv_fk'
     breakable column: 'pkg_breakable_rv_fk'
     consistent column: 'pkg_consistent_rv_fk'
@@ -124,7 +121,6 @@ class Package extends KBComponent {
   }
 
   static constraints = {
-    lastProject(nullable: true, blank: false)
     scope(nullable: true, blank: false)
     breakable(nullable: true, blank: false)
     consistent(nullable: true, blank: false)
@@ -133,7 +129,6 @@ class Package extends KBComponent {
     openAccess (nullable: true, blank: true)
     file (nullable: true, blank: true)
     editingStatus (nullable: true, blank: true)
-    lastProject(nullable: true, blank: false)
     descriptionURL(nullable: true, blank: true)
     name(validator: { val, obj ->
       if (obj.hasChanged('name')) {
@@ -161,7 +156,6 @@ class Package extends KBComponent {
 
   static jsonMapping = [
     'ignore'       : [
-      'lastProject',
       'updateToken'
     ],
     'es'           : [
@@ -490,17 +484,7 @@ select tipp.id,
       [code: 'verifyTitleList', label: 'Verify Title List'],
       [code: 'packageUrlUpdate', label: 'Trigger Update (Changed Titles)'],
       [code: 'packageUrlUpdateAllTitles', label: 'Trigger Update (all Titles)']
-      // [code:'method::registerWebhook', label:'Register Web Hook']
     ]
-  }
-
-  @Transient
-  def getWebHooks() {
-    def result = []
-
-    result.hooks = WebHook.findAllByOid("org.gokb.cred.Package:${this.id}");
-
-    result
   }
 
   @Transient
