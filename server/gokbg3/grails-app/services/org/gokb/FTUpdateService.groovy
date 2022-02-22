@@ -569,6 +569,23 @@ class FTUpdateService {
 
         result
       }
+
+      updateES(esclient, wekb.DeletedKBComponent.class) { wekb.DeletedKBComponent deletedKBComponent ->
+
+        def result = [:]
+        result.recid = "${deletedKBComponent.class.name}:${deletedKBComponent.id}"
+        result.uuid = deletedKBComponent.uuid
+        result.name = deletedKBComponent.name
+        result.componentType = deletedKBComponent.componentType
+        result.status = deletedKBComponent.status.value
+        result.dateCreated = dateFormatService.formatIsoTimestamp(deletedKBComponent.dateCreated)
+        result.lastUpdated = dateFormatService.formatIsoTimestamp(deletedKBComponent.lastUpdated)
+        result.oldDateCreated = dateFormatService.formatIsoTimestamp(deletedKBComponent.oldDateCreated)
+        result.oldLastUpdated = dateFormatService.formatIsoTimestamp(deletedKBComponent.oldLastUpdated)
+        result.oldId = deletedKBComponent.oldId
+
+        result
+      }
     }
     catch (Exception e) {
       log.error("Problem", e)
