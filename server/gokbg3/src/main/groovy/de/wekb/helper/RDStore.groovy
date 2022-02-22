@@ -17,6 +17,8 @@ class RDStore {
 
 
     public static final COMBO_TYPE_KB_IDS = getRefdataValue('KBComponent.Ids', RCConstants.COMBO_TYPE)
+    public static final COMBO_TYPE_PLT_HOSTEDTIPPS = getRefdataValue('Platform.HostedTipps', RCConstants.COMBO_TYPE)
+
     public static final COMBO_STATUS_ACTIVE = getRefdataValue(Combo.STATUS_ACTIVE, RCConstants.COMBO_STATUS)
 
     public static final CURRENCY_EUR = RefdataCategory.lookup(RCConstants.CURRENCY, 'EUR')
@@ -25,6 +27,8 @@ class RDStore {
 
     public static final PRICE_TYPE_LIST = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'list')
     public static final PRICE_TYPE_OA_APC = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'open access apc')
+
+
 
 
 

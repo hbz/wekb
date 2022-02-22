@@ -10,7 +10,7 @@ gokb.anonymizeUsers = false
 gokb.costInfo = false
 gokb.decisionSupport.active = false
 gokb.decisionSupport.otherVoters = false
-gokb.defaultCuratoryGroup = Local
+gokb.defaultCuratoryGroup = 'Local'
 gokb.es.cluster = 'gokbes'
 gokb.es.host = 'localhost'
 gokb.ftupdate_enabled = false
@@ -31,11 +31,12 @@ dataSource.url = 'jdbc:postgresql://localhost:5432/gokb'
 
 serverUrl= 'http://localhost:8080/gokb'
 baseUrl= 'http://localhost:8080/gokb'
-server.contextPath = '/gokb'
+server.contextPath = '/wekb'
 
 systemId = 'we:kb-Dev'
 
 logSql = true
 formatSql = true
 
-
+ygorUploadLocation = '/tmp'
+ygorStatisticStorageLocation = '/tmp'

@@ -57,8 +57,7 @@
             params="${[nspart:'ncsu-internal',idpart:'ncsu:2',format:'json']}">[json]</g:link>
           <g:link controller="coreference" action="index"
             params="${[nspart:'ncsu-internal',idpart:'ncsu:2',format:'xml']}">[xml]</g:link>
-          will lookup specific occurences within the ncsu-internal namespace. <br/>
-                                        More detail can be found in <a href="https://github.com/k-int/gokb-phase1/wiki/Co-referencing-Detail">the github wiki page for coreferencing</a>`
+          will lookup specific occurences within the ncsu-internal namespace.
         </li>
       </ul>
     </div>

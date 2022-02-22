@@ -1610,7 +1610,7 @@ class WorkflowController{
       response.contentType = "text/tab-separated-values" // "text/tsv"
 
       packages_to_export.each{ pkg ->
-        exportService.exportPackageTippsAsTSV(response.outputStream, pkg)
+        exportService.exportPackageTippsAsTSVNew(response.outputStream, pkg)
       }
     }
     catch (Exception e){

@@ -644,8 +644,18 @@ class CreateController {
                           String value = cols[colMap.automated_updates].trim()
                           if (value) {
                             RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.YN, value)
-                            if (refdataValue)
+                            if (refdataValue) {
                               source.automaticUpdates = (refdataValue.value == "Yes") ? true : false
+                            }
+
+                            if (refdataValue && refdataValue.value == "Yes") {
+                              String charset = (('a'..'z') + ('0'..'9')).join()
+                              String tokenValue = RandomStringUtils.random(255, charset.toCharArray())
+                              if (!UpdateToken.findByPkg(pkg)) {
+                                UpdateToken newToken = new UpdateToken(pkg: pkg, updateUser: user, value: tokenValue).save(flush: true)
+                              }
+                            }
+
                           }
                         }
 
@@ -688,7 +698,11 @@ class CreateController {
               }
 
             }catch ( Exception e ) {
-              e.printStackTrace()
+
+              if(pkg){
+                pkg.delete(flush: true)
+              }
+              log.error(e.printStackTrace())
               globalErrors << "Error on package with the name '${name}'. Please try agian!"
             }
           }

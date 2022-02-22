@@ -20,7 +20,10 @@
             </g:link>
         </g:if>
         <g:else>
-            ${(d.pkg?.name) ?: 'Empty'}
+            <g:if test="${d.pkg}">
+                <g:link controller="public" action="packageContent"
+                        id="${d.pkg.uuid}">${d.pkg.name}</g:link>
+            </g:if>
         </g:else>
     </dd>
 

@@ -16,6 +16,9 @@ import org.gokb.cred.Source
 import org.gokb.cred.UpdateToken
 import org.gokb.cred.User
 
+import java.time.LocalTime
+import java.time.temporal.ChronoUnit
+
 import static grails.async.Promises.task
 import static groovyx.net.http.Method.GET
 
@@ -161,10 +164,15 @@ class AutoUpdatePackagesService {
                         // wait for ygor to finish the enrichment
                         boolean processing = true
                         respData = data
+
                         if (!respData || !respData.jobId) {
                             log.error("no ygor job Id received, skipping update of ${p.id}!")
                             if (respData?.message) {
                                 log.error("ygor message: ${respData.message}")
+                            }
+
+                            if (respData?.ygorFeedback) {
+                                log.error("ygorFeedback: ${respData.ygorFeedback}")
                             }
 
                             result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "YGOR ERROR: ${respData.message}"]]]
@@ -172,23 +180,16 @@ class AutoUpdatePackagesService {
                             error = true
                         }
 
-                        if (respData?.ygorFeedback) {
-                            log.error("ygorFeedback: ${respData.ygorFeedback}")
-                        }
-
-                        if (respData?.status == 'error') {
-                            log.error("ygorFeedback: ${respData.ygorFeedback}")
-                        }
-
                         def statusService = new RESTClient(ygorBaseUrl + "/enrichment/getStatus?jobId=${respData.jobId}")
 
+                        LocalTime ygorStartTime = LocalTime.now()
+                        String ygorStatus = ""
                         while (processing == true) {
                             log.debug("GET ygor/enrichment/getStatus?jobId=${respData.jobId}")
                             statusService.request(GET) { req ->
                                 response.success = { statusResp, statusData ->
                                     log.debug("GET ygor/enrichment/getStatus?jobId=${respData.jobId} => success")
                                     log.debug("status of Ygor ${statusData.status} gokbJob #${statusData.gokbJobId}")
-                                    log.debug("${statusData} #${statusResp}")
                                     if (statusData.status == 'FINISHED_UNDEFINED') {
                                         processing = false
                                         result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "YGOR ERROR: ${statusData.message}"]]]
@@ -199,12 +200,26 @@ class AutoUpdatePackagesService {
                                         log.debug("${statusData.message}")
                                     }
                                     else if (statusData.gokbJobId && statusData.status == 'SUCCESS') {
-                                        println("Moe: ${statusData.ygorFeedback}")
                                         processing = false
-                                        task {
+                                        /*task {
                                             checkPackageJob(respData.jobId, p)
-                                        }
+                                        }*/
                                     } else {
+
+                                        if (ygorStartTime < LocalTime.now().minus(45, ChronoUnit.MINUTES)){
+                                            processing = false
+                                            log.error("ygor status is still the same after 45 minutes: $statusData.status")
+                                            result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "YGOR ERROR: Ygor couldn't process the kbart after 45 minutes"]]]
+                                            error = true
+                                        }
+
+                                        if(ygorStatus != statusData.status)
+                                        {
+                                            ygorStatus = statusData.status
+                                            ygorStartTime = LocalTime.now()
+                                        }
+
+
                                         sleep(10000) // 10 sec
                                     }
                                 }
@@ -212,7 +227,7 @@ class AutoUpdatePackagesService {
                                     log.error("GET ygor/enrichment/getStatus?jobId=${respData.jobId} => failure")
                                     log.error("ygor response message: $statusData.message")
 
-                                    result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "YGOR ERROR: response message: $statusData.message"]]]
+                                    result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "YGOR ERROR: Response message: $statusData.message"]]]
                                     processing = false
                                     error = true
                                 }
@@ -224,7 +239,11 @@ class AutoUpdatePackagesService {
                         log.error("ygor response: ${resp.responseBase}")
                         respData = data
 
-                        result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "YGOR ERROR: response message: ${respData.message}"]]]
+                        if (respData.ygorFeedback) {
+                            log.error("ygorFeedback: ${respData.ygorFeedback}")
+                        }
+
+                        result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "YGOR ERROR: Response message: ${respData.message}"]]]
                         error = true
                     }
                 }
@@ -257,8 +276,10 @@ class AutoUpdatePackagesService {
         }
     }
 
+    @Deprecated
     private void checkPackageJob(String gokbJobId, Package aPackage) {
         log.debug("task start...")
+
         ConcurrencyManagerService.Job job = concurrencyManagerService.getJob(gokbJobId)
         while (!job.isDone() && job.get() == null) {
             this.wait(5000) // 5 sec
@@ -285,7 +306,6 @@ class AutoUpdatePackagesService {
                 if (updateUrls.size() > 0) {
                     while (urlsIterator.hasPrevious()) {
                         URL url = urlsIterator.previous()
-                        println(url)
                     }
                 }
                 aPackage.source.lastRun = new Date()

@@ -34,7 +34,10 @@
                         <gokb:annotatedLabel owner="${pkg}" property="source">Source</gokb:annotatedLabel>
                     </dt>
                     <dd class="col-9 text-left">
-                        <gokb:manyToOneReferenceTypedown owner="${pkg}" field="source" baseClass="org.gokb.cred.Source" >${pkg.source?.name}</gokb:manyToOneReferenceTypedown>
+                        <g:if test="${pkg.source}">
+                            <g:link controller="public" action="sourceContent"
+                                    id="${pkg.source.uuid}">${pkg.source.name}</g:link>
+                        </g:if>
                     </dd>
 
                     <dt class="col-3 text-right">

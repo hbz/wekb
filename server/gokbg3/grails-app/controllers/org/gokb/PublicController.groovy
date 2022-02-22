@@ -131,7 +131,7 @@ class PublicController {
       }
 
       if (!result.tipp) {
-        flash.error = "Tipp not found"
+        flash.error = "Title not found"
       }
     }
     result
@@ -151,7 +151,27 @@ class PublicController {
       }
 
       if (!result.org) {
-        flash.error = "Tipp not found"
+        flash.error = "Organization not found"
+      }
+    }
+    result
+  }
+
+  def sourceContent() {
+    log.debug("sourceContent::${params}")
+    def result = [:]
+    if ( params.id ) {
+      def source_id_components = params.id.split(':');
+
+      if ( source_id_components?.size() == 2 ) {
+        result.source = Source.get(Long.parseLong(source_id_components[1]));
+      }
+      else {
+        result.source = Source.findByUuid(params.id)
+      }
+
+      if (!result.source) {
+        flash.error = "Source not found"
       }
     }
     result
