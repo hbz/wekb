@@ -33,7 +33,6 @@ class Org extends KBComponent {
     providedPackages : Package,
     children         : Org,
     'previous'       : Org,
-    ownedImprints    : Imprint,
     curatoryGroups   : CuratoryGroup,
     publishedTitles  : TitleInstance,
     issuedTitles     : TitleInstance,
@@ -41,8 +40,6 @@ class Org extends KBComponent {
     brokeredPackages : Package,
     licensedPackages : Package,
     vendedPackages   : Package,
-    offeredLicenses  : License,
-    heldLicenses     : License,
     offices          : Office,
     //  ids      : Identifier
   ]
@@ -50,7 +47,6 @@ class Org extends KBComponent {
   static hasByCombo = [
     parent   : Org,
     successor: Org,
-    imprint  : Imprint
   ]
 
   static mappedByCombo = [
@@ -63,8 +59,6 @@ class Org extends KBComponent {
     brokeredPackages : 'broker',
     licensedPackages : 'licensor',
     vendedPackages   : 'vendor',
-    offeredLicenses  : 'licensor',
-    heldLicenses     : 'licensee',
     offices          : 'org',
   ]
 

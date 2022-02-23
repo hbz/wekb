@@ -1309,7 +1309,6 @@ class PackageService {
               'Title\t' +
               'TIPP Status\t' +
               '[TI] Publisher\t' +
-              '[TI] Imprint\t' +
               '[TI] Published From\t' +
               '[TI] Published to\t' +
               '[TI] Medium\t' +
@@ -1371,7 +1370,6 @@ class PackageService {
                           sanitize(tipp.name ?: tipp.title.name) + '\t' +
                           sanitize(tipp.status.value) + '\t' +
                           sanitize(tipp.title.getCurrentPublisher()?.name) + '\t' +
-                          sanitize(tipp.title.imprint?.name) + '\t' +
                           sanitize(tipp.title.publishedFrom) + '\t' +
                           sanitize(tipp.title.publishedTo) + '\t' +
                           sanitize(tipp.title.medium?.value) + '\t' +
@@ -1412,7 +1410,6 @@ class PackageService {
                         sanitize(tipp.name ?: tipp.title.name) + '\t' +
                         sanitize(tipp.status.value) + '\t' +
                         sanitize(tipp.title.getCurrentPublisher()?.name) + '\t' +
-                        sanitize(tipp.title.imprint?.name) + '\t' +
                         sanitize(tipp.title.publishedFrom) + '\t' +
                         sanitize(tipp.title.publishedTo) + '\t' +
                         sanitize(tipp.title.medium?.value) + '\t' +

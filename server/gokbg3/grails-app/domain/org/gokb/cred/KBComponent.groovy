@@ -335,8 +335,7 @@ abstract class KBComponent implements Auditable{
 
   // ids moved to combos.
   static manyByCombo = [
-      ids            : Identifier,
-      fileAttachments: DataFile,
+      ids            : Identifier
   ]
 
 
@@ -346,7 +345,6 @@ abstract class KBComponent implements Auditable{
       additionalProperties: 'fromComponent',
       variantNames        : 'owner',
       reviewRequests      : 'componentToReview',
-      people              : 'component',
       prices              : 'owner'
   ]
 
@@ -358,7 +356,6 @@ abstract class KBComponent implements Auditable{
       additionalProperties: KBComponentAdditionalProperty,
       variantNames        : KBComponentVariantName,
       reviewRequests      : ReviewRequest,
-      people              : ComponentPerson,
       prices              : ComponentPrice,
       languages            : KBComponentLanguage
   ]
@@ -863,8 +860,7 @@ abstract class KBComponent implements Auditable{
         'additionalProperties',
 //      'skippedTitles',
         'variantNames',
-        'ids',
-        'fileAttachments'
+        'ids'
     ]
 
     // Get the domain class.
@@ -920,8 +916,7 @@ abstract class KBComponent implements Auditable{
         'additionalProperties',
 //      'skippedTitles',
 //      'variantNames',
-        'ids',
-        'fileAttachments'
+        'ids'
     ]
     // Get the domain class.
     def domainClass = grailsApplication.getDomainClass(this."class".name)
@@ -1257,8 +1252,6 @@ abstract class KBComponent implements Auditable{
         }
     }
     ReviewRequest.executeUpdate("delete from ReviewRequest as c where c.componentToReview=:component", [component: this])
-    ComponentPerson.executeUpdate("delete from ComponentPerson as c where c.component=:component", [component: this])
-    ComponentIngestionSource.executeUpdate("delete from ComponentIngestionSource as c where c.component=:component", [component: this])
     KBComponent.executeUpdate("update KBComponent set duplicateOf = NULL where duplicateOf=:component", [component: this])
     KBComponent.executeUpdate("delete from ComponentPrice where owner=:component", [component: this])
     this.delete(failOnError: true)
@@ -1288,8 +1281,6 @@ abstract class KBComponent implements Auditable{
         ComponentHistoryEvent.executeUpdate("delete from ComponentHistoryEvent as c where c.id = ?", [it.id])
       }
       ReviewRequest.executeUpdate("delete from ReviewRequest as c where c.componentToReview.id IN (:component)", [component: batch])
-      ComponentPerson.executeUpdate("delete from ComponentPerson as c where c.component.id IN (:component)", [component: batch])
-      ComponentIngestionSource.executeUpdate("delete from ComponentIngestionSource as c where c.component.id IN (:component)", [component: batch])
       KBComponent.executeUpdate("update KBComponent set duplicateOf = NULL where duplicateOf.id IN (:component)", [component: batch])
       ComponentPrice.executeUpdate("delete from ComponentPrice as cp where cp.owner.id IN (:component)", [component: batch])
       result.num_expunged += KBComponent.executeUpdate("delete KBComponent as c where c.id IN (:component)", [component: batch])
@@ -1340,23 +1331,6 @@ abstract class KBComponent implements Auditable{
           String pName = prop.propertyDefn?.propertyName
           if (pName && prop.apValue){
             builder.'additionalProperty'('name': pName, 'value': prop.apValue)
-          }
-        }
-      }
-    }
-    if (fileAttachments){
-      builder.'fileAttachments'{
-        fileAttachments.each{ fa ->
-          builder.'fileAttachment'{
-            builder.'guid'(fa.guid)
-            builder.'md5'(fa.md5)
-            builder.'uploadName'(fa.uploadName)
-            builder.'uploadMimeType'(fa.uploadMimeType)
-            builder.'filesize'(fa.filesize)
-            builder.'doctype'(fa.doctype)
-            builder.'content'{
-              builder.'mkp'.yieldUnescaped "<![CDATA[${fa.fileData.encodeBase64().toString()}]]>"
-            }
           }
         }
       }

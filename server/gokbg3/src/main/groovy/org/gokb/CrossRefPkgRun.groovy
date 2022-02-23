@@ -457,16 +457,6 @@ class CrossRefPkgRun {
       )
 
       if (ti?.id && !ti.hasErrors()) {
-        if (titleObj.imprint) {
-          if (ti.imprint?.name == titleObj.imprint) {
-            // Imprint already set
-          }
-          else {
-            def imprint = Imprint.findByName(titleObj.imprint) ?: new Imprint(name: titleObj.imprint).save(failOnError: true)
-            ti.imprint = imprint
-            title_changed = true
-          }
-        }
 
         // Add the core data.
         componentUpdateService.ensureCoreData(ti, titleObj, fullsync, user)
@@ -484,19 +474,6 @@ class CrossRefPkgRun {
 
         title_changed |= ClassUtils.setDateIfPresent(pubFrom, ti, 'publishedFrom')
         title_changed |= ClassUtils.setDateIfPresent(pubTo, ti, 'publishedTo')
-
-        if (titleObj.historyEvents?.size() > 0) {
-          def he_result = titleHistoryService.processHistoryEvents(ti, titleObj, title_class_name, user, fullsync, locale)
-          if (he_result.errors) {
-            if (!currentTippError.title) {
-              currentTippError.title = [:]
-            }
-            currentTippError[title].put('historyEvents': [
-              message: messageService.resolveCode('crossRef.package.tipps.error.title.history', null, locale),
-              baddata: tippJson.title,
-              errors : he_result.errors])
-          }
-        }
 
         if (title_class_name == 'org.gokb.cred.BookInstance') {
           log.debug("Adding Monograph fields for ${ti.class.name}: ${ti}")
@@ -709,23 +686,6 @@ class CrossRefPkgRun {
         log.debug("Upserted TIPP ${upserted_tipp} with URL ${upserted_tipp?.url}")
         upserted_tipp.merge(flush: true)
         componentUpdateService.ensureCoreData(upserted_tipp, tippJson, fullsync, user)
-
-
-        /*if (titleObj.historyEvents?.size() > 0) {
-          def he_result = titleHistoryService.processHistoryEvents(ti, titleObj, title_class_name, user, fullsync, locale)
-          if (he_result.errors) {
-            if (!currentTippError.title) {
-              currentTippError.title = [:]
-            }
-            currentTippError[title].put('historyEvents': [
-                    message: messageService.resolveCode('crossRef.package.tipps.error.title.history', null, locale),
-                    baddata: tippJson.title,
-                    errors : he_result.errors])
-          }
-        }
-
-        titleLookupService.addPublisherHistory(ti, titleObj.publisher_history)*/
-
 
       }
       catch (grails.validation.ValidationException ve) {

@@ -22,7 +22,6 @@ class TitleListController {
   def genericOIDService
   def springSecurityService
   def concurrencyManagerService
-  def TSVIngestionService
   def sessionFactory
 
   def update() {

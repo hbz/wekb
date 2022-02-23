@@ -62,17 +62,6 @@
   </dd>
 
   <dt>
-    <gokb:annotatedLabel owner="${d}" property="imprint">Imprint</gokb:annotatedLabel>
-  </dt>
-  <dd>
-    <gokb:manyToOneReferenceTypedown owner="${d}" field="imprint"
-                                  baseClass="org.gokb.cred.Imprint">
-      ${d.imprint?.name}
-    </gokb:manyToOneReferenceTypedown>
-    &nbsp;
-  </dd>
-
-  <dt>
     <gokb:annotatedLabel owner="${d}" property="publishedFrom">Published From</gokb:annotatedLabel>
   </dt>
   <dd>

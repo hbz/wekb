@@ -12,8 +12,6 @@ class DSAppliedCriterion {
   static hasMany = [
     notes: DSNote
   ]
-    // master comment needs to be shown why it's at the top badge
-    //group them via color , initials (on hover show person) and institutions - see CSS link
 
   static mappedBy = [
     notes: 'criterion'
