@@ -37,7 +37,6 @@ class GlobalSearchTemplatesService {
         globalSearchTemplates.put('users', users())
         globalSearchTemplates.put('userJobs', userJobs())
         globalSearchTemplates.put('userWatchedComponents', userWatchedComponents())
-        globalSearchTemplates.put('works', works())
 
     }
 
