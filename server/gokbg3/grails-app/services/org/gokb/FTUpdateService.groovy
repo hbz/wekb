@@ -657,28 +657,30 @@ class FTUpdateService {
           break
         }
         Object r = domain.get(r_id)
-        log.debug("${r.id} ${domain.name} -- (rects)${r.lastUpdated} > (from)${from}")
-        def idx_record = recgen_closure(r)
-        def es_index = indicesPerType.get(idx_record['componentType'])
-        if (idx_record != null) {
-          def recid = idx_record['_id'].toString()
-          idx_record.remove('_id')
+        if(ESSearchService.indicesPerType.get(r.class.simpleName)) {
+          log.debug("${r.id} ${domain.name} -- (rects)${r.lastUpdated} > (from)${from}")
+          def idx_record = recgen_closure(r)
+          def es_index = indicesPerType.get(idx_record['componentType'])
+          if (idx_record != null) {
+            def recid = idx_record['_id'].toString()
+            idx_record.remove('_id')
 
-          IndexRequest request = new IndexRequest(es_index);
-          request.id(recid);
-          String jsonString = idx_record as JSON
-          //String jsonString = JsonOutput.toJson(idx_record)
-          //println(jsonString)
-          request.source(jsonString, XContentType.JSON)
+            IndexRequest request = new IndexRequest(es_index);
+            request.id(recid);
+            String jsonString = idx_record as JSON
+            //String jsonString = JsonOutput.toJson(idx_record)
+            //println(jsonString)
+            request.source(jsonString, XContentType.JSON)
 
-          bulkRequest.add(request)
+            bulkRequest.add(request)
+          }
+          if (r.lastUpdated?.getTime() > highest_timestamp) {
+            highest_timestamp = r.lastUpdated?.getTime()
+          }
+          highest_id = r.id
+          count++
+          total++
         }
-        if (r.lastUpdated?.getTime() > highest_timestamp) {
-          highest_timestamp = r.lastUpdated?.getTime()
-        }
-        highest_id = r.id
-        count++
-        total++
         if (count > 250) {
           count = 0
           log.debug("interim:: processed ${total} out of ${countq} records (${domain.name}) - updating highest timestamp to ${highest_timestamp} interim flush")
