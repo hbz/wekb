@@ -708,15 +708,17 @@ class CleanupService {
           KBComponent kbc = KBComponent.get(it)
           def oid = "${kbc.class.name}:${it}"
 
-          DeleteRequest request = new DeleteRequest(
-                  ESSearchService.indicesPerType.get(kbc.class.simpleName),
-                  oid)
-          DeleteResponse deleteResponse = esclient.delete(
-                  request, RequestOptions.DEFAULT);
-          if (deleteResponse.getResult() == DocWriteResponse.Result.NOT_FOUND) {
-            log.debug("ES doc not found ${oid}")
+          if(ESSearchService.indicesPerType.get(kbc.class.simpleName)) {
+            DeleteRequest request = new DeleteRequest(
+                    ESSearchService.indicesPerType.get(kbc.class.simpleName),
+                    oid)
+            DeleteResponse deleteResponse = esclient.delete(
+                    request, RequestOptions.DEFAULT);
+            if (deleteResponse.getResult() == DocWriteResponse.Result.NOT_FOUND) {
+              log.debug("ES doc not found ${oid}")
+            }
+            log.debug("ES deleteResponse: ${deleteResponse}")
           }
-          log.debug("ES deleteResponse: ${deleteResponse}")
 
         }
         result.num_expunged += KBComponent.executeUpdate("delete KBComponent as c where c.id IN (:component)", [component: batch])

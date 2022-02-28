@@ -38,7 +38,7 @@ class IntegrationController {
   def index() {
   }
 
-  @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
+  /*@Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
   def assertJsonldPlatform() {
     def result = [result: 'OK']
     def name = request.JSON.'skos:prefLabel'
@@ -123,9 +123,9 @@ class IntegrationController {
     }
 
     render result as JSON
-  }
+  }*/
 
-  @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
+/*  @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
   def assertJsonldOrg() {
     // log.debug("assertOrg, request.json = ${request.JSON}");
     def result = [:]
@@ -276,7 +276,7 @@ class IntegrationController {
       org.ensureVariantName(al);
     }
 
-  }
+  }*/
 
   /**
    *  assertOrg()
@@ -293,7 +293,7 @@ class IntegrationController {
    *      ]
    *
    */
-  @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
+/*  @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
   def assertOrg() {
     log.debug("assertOrg, request.json = ${request.JSON}");
     def result = [result: 'OK']
@@ -464,7 +464,7 @@ class IntegrationController {
       response.setStatus(500)
     }
     render result as JSON
-  }
+  }*/
 
   /**
    *
@@ -483,7 +483,7 @@ class IntegrationController {
    *         defaultDataFormat:''
    *      ]
    */
-  @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
+  /*@Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
   def assertSource() {
     createOrUpdateSource(request.JSON)
   }
@@ -529,10 +529,10 @@ class IntegrationController {
       e.printStackTrace()
     }
     result
-  }
+  }*/
 
 
-  @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
+ /* @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
   @Transactional(readOnly = true)
   private resolveOrgUsingPrivateIdentifiers(idlist) {
     def located_or_new_org = null;
@@ -589,7 +589,7 @@ class IntegrationController {
     // See if we can locate the item using any of the custom identifiers
 
     located_or_new_org
-  }
+  }*/
 
 //  @Secured(['ROLE_API', 'IS_AUTHENTICATED_FULLY'])
 //  private resolveOrgUsingPrivateIdentifiers(idlist) {
@@ -629,7 +629,7 @@ class IntegrationController {
 //    located_or_new_org
 //  }
 
-  @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
+/*  @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
   def registerVariantName() {
     log.debug("registerVariantName ${params} ${request.JSON}")
 
@@ -650,7 +650,7 @@ class IntegrationController {
     // Delete the variant org
 
     render addVariantNameToComponent(org_to_update, request.JSON.name)
-  }
+  }*/
 
   private static addVariantNameToComponent(KBComponent component, variant_name) {
     component.ensureVariantName(variant_name)
@@ -734,7 +734,7 @@ class IntegrationController {
     render result as JSON
   }
 
-  @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
+ /* @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
   @Transactional
   def crossReferencePlatform() {
     def result = ['result': 'OK']
@@ -816,7 +816,7 @@ class IntegrationController {
       result.result = "ERROR"
     }
     render result as JSON
-  }
+  }*/
 
   private static boolean setAllRefdata(propNames, data, target, boolean createNew = false) {
     boolean changed = false
@@ -855,7 +855,7 @@ class IntegrationController {
  *       'amount':12.89
  *}*    ]
  *}*/
-  @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
+ /* @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
   def crossReferenceTitle() {
     User user = springSecurityService.currentUser
     def rjson = request.JSON
@@ -1083,9 +1083,9 @@ class IntegrationController {
       }
     }
     result
-  }
+  }*/
 
-  public static determineTitleClass(titleObj) {
+  /*public static determineTitleClass(titleObj) {
     if (titleObj.type) {
       switch (titleObj.type) {
         case "serial":
@@ -1116,9 +1116,9 @@ class IntegrationController {
     else {
       return null
     }
-  }
+  }*/
 
-  private static addPublisherHistory(TitleInstance ti, publishers) {
+  /*private static addPublisherHistory(TitleInstance ti, publishers) {
     if (publishers && ti) {
       log.debug("Handling publisher history ..")
 
@@ -1240,9 +1240,9 @@ class IntegrationController {
         }
       }
     }
-  }
+  }*/
 
-  private static addMonographFields(BookInstance bi, titleObj) {
+  /*private static addMonographFields(BookInstance bi, titleObj) {
 
     def book_changed = false
 
@@ -1266,7 +1266,7 @@ class IntegrationController {
     }
 
     book_changed
-  }
+  }*/
 
   def getJobInfo() {
     def result = ['result': 'OK', 'params': params]
@@ -1371,7 +1371,7 @@ class IntegrationController {
   }
 
 
-  @Secured(['ROLE_API', 'IS_AUTHENTICATED_FULLY'])
+  /*@Secured(['ROLE_API', 'IS_AUTHENTICATED_FULLY'])
   def loadTitleList() {
     def title_file = request.getFile("titleFile")?.inputStream
     char tab = '\t'
@@ -1437,7 +1437,7 @@ class IntegrationController {
     }
     log.debug("Done");
     redirect(action: 'index');
-  }
+  }*/
 
   private def cleanUpGorm() {
     log.debug("Clean up GORM");

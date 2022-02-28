@@ -209,6 +209,7 @@ class FTUpdateService {
 
         result.kbartDownloaderURL = kbc.kbartDownloaderURL
         result.metadataDownloaderURL = kbc.metadataDownloaderURL
+        result.homepage = kbc.homepage
 
         result
       }
