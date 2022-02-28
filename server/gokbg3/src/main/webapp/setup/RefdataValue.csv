@@ -437,6 +437,29 @@ Package.Scope;Consortium;Consortium;Consortium
 Package.Scope;Global;Global;Global
 Package.Scope;Individual;Individual;Individual
 Package.Scope;National;National;National
+PackageArchivingAgency.ArchivingAgency;Archaeology Data Service;Archaeology Data Service;Archaeology Data Service
+PackageArchivingAgency.ArchivingAgency;British Library;British Library;British Library
+PackageArchivingAgency.ArchivingAgency;Cariniana Network;Cariniana Network;Cariniana Network
+PackageArchivingAgency.ArchivingAgency;CLOCKSS Archive;CLOCKSS Archive;CLOCKSS Archive
+PackageArchivingAgency.ArchivingAgency;Global LOCKSS Network;Global LOCKSS Network;Global LOCKSS Network
+PackageArchivingAgency.ArchivingAgency;HathiTrust;HathiTrust;HathiTrust
+PackageArchivingAgency.ArchivingAgency;Internet Archive;Internet Archive;Internet Archive
+PackageArchivingAgency.ArchivingAgency;Library of Congress;Library of Congress;Library of Congress
+PackageArchivingAgency.ArchivingAgency;Merritt Preservation Repository at the California Digital Library;Merritt Preservation Repository at the California Digital Library;Merritt Preservation Repository at the California Digital Library
+PackageArchivingAgency.ArchivingAgency;National Library of France;National Library of France;National Library of France
+PackageArchivingAgency.ArchivingAgency;National Digital Preservation Program, China;National Digital Preservation Program, China;National Digital Preservation Program, China;National Digital Preservation Program, China
+PackageArchivingAgency.ArchivingAgency;National Library of the Netherlands;National Library of the Netherlands;National Library of the Netherlands
+PackageArchivingAgency.ArchivingAgency;PKP PN;PKP PN;PKP PN
+PackageArchivingAgency.ArchivingAgency;Portico;Portico;Portico
+PackageArchivingAgency.ArchivingAgency;Scholars Portal;Scholars Portal;Scholars Portal
+PackageArchivingAgency.ArchivingAgency;Swiss National Library;Swiss National Library;Swiss National Library
+PackageArchivingAgency.OpenAccess;Yes;Yes;Yes
+PackageArchivingAgency.OpenAccess;No;No;No
+PackageArchivingAgency.OpenAccess;Partly;Partly;Partly
+PackageArchivingAgency.PostCancellationAccess;Yes;Yes;Yes
+PackageArchivingAgency.PostCancellationAccess;No;No;No
+PackageArchivingAgency.PostCancellationAccess;Partly;Partly;Partly
+Platform.IPAuthentication;IPv4;IPv4;IPv4
 Platform.IPAuthentication;IPv4;IPv4;IPv4
 Platform.IPAuthentication;IPv6;IPv6;IPv6
 Platform.IPAuthentication;IPv4/IPv6;IPv4/IPv6;IPv4/IPv6
