@@ -28,6 +28,14 @@ class FTUpdateService {
 
   public static boolean running = false
 
+  static Map indicesPerType = [
+          "TitleInstancePackagePlatform" : "wekbtipps",
+          "Org" : "wekborgs",
+          "Package" : "wekbpackages",
+          "Platform" : "wekbplatforms",
+          "DeletedKBComponent": "wekbdeletedcomponents"
+  ]
+
 
   /**
    * Update ES.
@@ -652,7 +660,7 @@ class FTUpdateService {
         Object r = domain.get(r_id)
         log.debug("${r.id} ${domain.name} -- (rects)${r.lastUpdated} > (from)${from}")
         def idx_record = recgen_closure(r)
-        def es_index = ESSearchService.indicesPerType.get(idx_record['componentType'])
+        def es_index = indicesPerType.get(idx_record['componentType'])
         if (idx_record != null) {
           def recid = idx_record['_id'].toString()
           idx_record.remove('_id')
