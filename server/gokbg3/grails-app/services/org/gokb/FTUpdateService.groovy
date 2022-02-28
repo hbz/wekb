@@ -455,7 +455,6 @@ class FTUpdateService {
           if (kbc.title?.dateFirstOnline) result.titleDateFirstOnline = dateFormatService.formatIsoTimestamp(kbc.title.dateFirstOnline)
           result.titleFirstEditor = kbc.title?.firstEditor ?: ""
           result.titleFirstAuthor = kbc.title?.firstAuthor ?: ""
-          result.titleImprint = kbc.title?.imprint?.name ?: ""
         }*/
 
         if (kbc.pkg) {

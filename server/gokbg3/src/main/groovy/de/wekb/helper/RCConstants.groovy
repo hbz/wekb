@@ -50,9 +50,6 @@ class RCConstants {
     public static final String MEMBERSHIP_ROLE = "MembershipRole"
     public static final String MEMBERSHIP_STATUS = "MembershipStatus"
 
-    public static final String LICENSE_CATEGORY = "License.Category"
-    public static final String LICENSE_TYPE = "License.Type"
-
     public static final String ORG_MISSION = "Org.Mission"
     public static final String ORG_ROLE = "Org.Role"
 

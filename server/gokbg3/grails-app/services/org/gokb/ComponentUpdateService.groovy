@@ -133,38 +133,6 @@ class ComponentUpdateService {
       component.source = createOrUpdateSource(data.source)?.get('component')
     }
 
-    // Add each file upload too!
-    data.fileAttachments.each { fa ->
-
-      if (fa?.md5) {
-
-        DataFile file = DataFile.findByMd5(fa.md5) ?: new DataFile(guid: fa.guid, md5: fa.md5)
-
-        // Single properties.
-        file.with {
-          (name, uploadName, uploadMimeType, filesize, doctype) = [
-            fa.uploadName, fa.uploadName, fa.uploadMimeType, fa.filesize, fa.doctype
-          ]
-
-          // The contents of the file.
-          if (fa.content) {
-            fileData = fa.content.decodeBase64()
-          }
-
-          // Update.
-          save()
-        }
-
-        // Grab the attachments.
-        def attachments = component.getFileAttachments()
-        if (!attachments.contains(file)) {
-
-          // Add to the attached files.
-          attachments.add(file)
-        }
-      }
-    }
-
     // If this is a component that supports curatoryGroups we should check for them.
     if (KBComponent.has(component, 'curatoryGroups')) {
       log.debug("Handling Curatory Groups ..")

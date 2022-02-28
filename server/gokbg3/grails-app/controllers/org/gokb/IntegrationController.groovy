@@ -826,38 +826,6 @@ class IntegrationController {
     changed
   }
 
-  /*@Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
-  def crossReferenceLicense() {
-    def result = ['result': 'OK']
-    def user = springSecurityService.currentUser
-
-    // Add the license.
-    def data = request.JSON
-    if (data && data.name) {
-      // Use the name to either match or create a Licence.
-      License l = License.findOrCreateByName(License.generateNormname(data.name)) ?: new License(name: data.name)
-
-      // Update the properties on the license.
-      l.with {
-        url = data.url
-        file = data.file
-        summaryStatement = data.summaryStatement
-      }
-
-      componentUpdateService.setAllRefdata([
-          'type'
-      ], data, l)
-
-
-      // Add the core data.
-      componentUpdateService.ensureCoreData(l, data, false, user)
-
-//      l.save(flush:true, failOnError:true)
-    }
-
-    render result as JSON
-  }*/
-
 /**
  *  Cross reference an incoming title with the database. See an example of calling this controller method
  *  in GOKB_PROJECT slash scripts slash sync_gokb_titles.groovy
@@ -1028,17 +996,6 @@ class IntegrationController {
           if (title && !title.hasErrors()) {
             def title_changed = false;
 
-            if (titleObj.imprint) {
-              if (title.imprint?.name == titleObj.imprint) {
-                // Imprint already set
-              }
-              else {
-                def imprint = Imprint.findByName(titleObj.imprint) ?: new Imprint(name: titleObj.imprint).save(flush: true, failOnError: true);
-                title.imprint = imprint;
-                title_changed = true
-              }
-            }
-
             // Add the core data.
             componentUpdateService.ensureCoreData(title, titleObj, fullsync, user)
 
@@ -1054,20 +1011,12 @@ class IntegrationController {
             title_changed |= ClassUtils.setDateIfPresent(pubFrom, title, 'publishedFrom')
             title_changed |= ClassUtils.setDateIfPresent(pubTo, title, 'publishedTo')
 
-            if (titleObj.historyEvents?.size() > 0) {
-              def he_result = titleHistoryService.processHistoryEvents(title, titleObj, title_class_name, user, fullsync, locale)
-
-              if (he_result.errors) {
-                result.errors = he_result.errors
-              }
-            }
 
             if (title_class_name == 'org.gokb.cred.BookInstance') {
 
               log.debug("Adding Monograph fields for ${title.class.name}: ${title}")
               def mg_change = addMonographFields(title, titleObj)
 
-              // TODO: Here we will have to add authors and editors, like addPerson() in TSVIngestionService
               if (mg_change) {
                 title_changed = true
               }
@@ -1420,6 +1369,7 @@ class IntegrationController {
     }
     render result as JSON
   }
+
 
   /*@Secured(['ROLE_API', 'IS_AUTHENTICATED_FULLY'])
   def loadTitleList() {

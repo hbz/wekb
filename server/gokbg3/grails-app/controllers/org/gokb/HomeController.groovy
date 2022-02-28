@@ -12,7 +12,6 @@ import org.hibernate.transform.AliasToEntityMapResultTransformer
 class HomeController {
 
   def springSecurityService
-  def userAlertingService
   def passwordEncoder
   SessionFactory sessionFactory
 
@@ -135,14 +134,6 @@ class HomeController {
     redirect(action:'profile')
   }
 
-
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  def sendAlerts() {
-    flash.message ="Alerts email sent, please check your email shortly";
-    User user = springSecurityService.currentUser
-    userAlertingService.sendAlertingEmail(user);
-    redirect(action:'profile')
-  }
 
   private def calculate() {
     log.debug("Calculating stats...");

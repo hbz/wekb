@@ -9,16 +9,10 @@ Combo.Status;Active;Active;Active
 Combo.Status;Deleted;Deleted;Deleted
 Combo.Status;Expired;Expired;Expired
 Combo.Status;Superseded;Superseded;Superseded
-Combo.Type;IngestionProfile.Source;IngestionProfile.Source;IngestionProfile.Source
-Combo.Type;KBComponent.FileAttachments;KBComponent.FileAttachments;KBComponent.FileAttachments
 Combo.Type;KBComponent.Ids;KBComponent.Ids;KBComponent.Ids
-Combo.Type;License.Licensee;License.Licensee;License.Licensee
 Combo.Type;Office.CuratoryGroups;Office.CuratoryGroups;Office.CuratoryGroups
 Combo.Type;Office.Org;Office.Org;Office.Org
 Combo.Type;Org.CuratoryGroups;Org.CuratoryGroups;Org.CuratoryGroups
-Combo.Type;Org.Imprint;Org.Imprint;Org.Imprint
-Combo.Type;Org.Imprint;Org.Imprint;Org.Imprint
-Combo.Type;Org.OwnedImprints;Org.OwnedImprints;Org.OwnedImprints
 Combo.Type;Org.Parent;Org.Parent;Org.Parent
 Combo.Type;Org.Previous;Org.Previous;Org.Previous
 Combo.Type;Package.Broker;Package.Broker;Package.Broker
@@ -36,7 +30,6 @@ Combo.Type;Platform.HostedTitles;Platform.HostedTitles;Platform.HostedTitles
 Combo.Type;Platform.Provider;Platform.Provider;Platform.Provider
 Combo.Type;Source.CuratoryGroups;Source.CuratoryGroups;Source.CuratoryGroups
 Combo.Type;TitleInstance.AbsorbedBy;TitleInstance.AbsorbedBy;TitleInstance.AbsorbedBy
-Combo.Type;TitleInstance.Imprint;TitleInstance.Imprint;TitleInstance.Imprint
 Combo.Type;TitleInstance.Issuer;TitleInstance.Issuer;TitleInstance.Issuer
 Combo.Type;TitleInstance.MergedWith;TitleInstance.MergedWith;TitleInstance.MergedWith
 Combo.Type;TitleInstance.Publisher;TitleInstance.Publisher;TitleInstance.Publisher
@@ -330,7 +323,6 @@ Job.Type;BootstrapIdentifierCleanup;BootstrapIdentifierCleanup;BootstrapIdentifi
 Job.Type;CleanupDeletedComponents;CleanupDeletedComponents;CleanupDeletedComponents
 Job.Type;CleanupRejectedComponents;CleanupRejectedComponents;CleanupRejectedComponents
 Job.Type;DeleteTIWithoutHistory;DeleteTIWithoutHistory;DeleteTIWithoutHistory
-Job.Type;DepositDatafile;DepositDatafile;DepositDatafile
 Job.Type;EnrichmentService;EnrichmentService;EnrichmentService
 Job.Type;EnsureTIPLs;EnsureTIPLs;EnsureTIPLs
 Job.Type;EnsureUUIDs;EnsureUUIDs;EnsureUUIDs
@@ -344,7 +336,6 @@ Job.Type;PackageCrossRef;PackageCrossRef;PackageCrossRef
 Job.Type;PackageCrossRef Auto;PackageCrossRef Auto;PackageCrossRef Auto
 Job.Type;PlatformCleanup;PlatformCleanup;PlatformCleanup
 Job.Type;RecalculateStatistics;RecalculateStatistics;RecalculateStatistics
-Job.Type;RegenerateLicenseSummaries;RegenerateLicenseSummaries;RegenerateLicenseSummaries
 Job.Type;RejectTIWithoutIdentifier;RejectTIWithoutIdentifier;RejectTIWithoutIdentifier
 Job.Type;ResetFreeTextIndexes;ResetFreeTextIndexes;ResetFreeTextIndexes
 Job.Type;TidyOrgsData;TidyOrgsData;TidyOrgsData
@@ -376,10 +367,6 @@ KBComponentVariantName.VariantType;Authorized;Authorized;Authorized
 KBComponentVariantName.VariantType;Minor Change;Minor Change;Minor Change
 KBComponentVariantName.VariantType;Misspelling;Misspelling;Misspelling
 KBComponentVariantName.VariantType;Nickname;Nickname;Nickname
-License.Category;Content;Content;Content
-License.Category;Software;Software;Software
-License.Type;Other;Other;Other
-License.Type;Template;Template;Template
 MembershipRole;Administrator;Administrator;Administrator
 MembershipRole;Member;Member;Member
 MembershipStatus;Approved;Approved;Approved
@@ -391,7 +378,6 @@ Org.Mission;Community Agency;Community Agency;Community Agency
 Org.Mission;Consortium;Consortium;Consortium
 Org.Role;Broker;Broker;Broker
 Org.Role;Content Provider;Content Provider;Content Provider
-Org.Role;Imprint;Imprint;Imprint
 Org.Role;Issuing Body;Issuing Body;Issuing Body
 Org.Role;Licensee;Licensee;Licensee
 Org.Role;Licensor;Licensor;Licensor

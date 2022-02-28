@@ -55,6 +55,10 @@ if (Environment.isDevelopmentMode() || Environment.current == Environment.TEST) 
   logger('wekb', DEBUG)
   logger('com.k_int.HQLBuilder', INFO)
 
+  logger('org.gokb.cred.TitleInstancePackagePlatform', DEBUG)
+
+  logger('org.gokb.cred.KBComponent', DEBUG)
+
   //For Database Migration
   logger ('liquibase', INFO)
 }

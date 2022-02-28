@@ -393,11 +393,6 @@ abstract class GOKbSyncBase extends Script {
         }) ?: []
       }
       
-      // File attachments.
-      if (data.fileAttachments && data.fileAttachments.size() > 0) {
-        addTo['fileAttachments'] = data.fileAttachments.fileAttachment?.collect ( handleFile )
-      }
-      
       // Source.
       if (data.source && data.source.size() > 0) {
         addTo['source'] = handleSource ( data.source )

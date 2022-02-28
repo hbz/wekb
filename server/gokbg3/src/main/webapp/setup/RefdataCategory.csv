@@ -20,8 +20,6 @@ KBComponent.Status;KBComponent Status;KBComponent Status
 KBComponentVariantName.Locale;KBComponent VariantName Locale;KBComponent VariantName Locale
 KBComponentVariantName.Status;KBComponent VariantName Status;KBComponent VariantName Status
 KBComponentVariantName.VariantType;KBComponent VariantName VariantType;KBComponent VariantName VariantType
-License.Category;License Category;License Category
-License.Type;License Type;License Type
 MembershipRole;Membership Role;Membership Role
 MembershipStatus;Membership Status;Membership Status
 Org.Mission;Org Mission;Org Mission

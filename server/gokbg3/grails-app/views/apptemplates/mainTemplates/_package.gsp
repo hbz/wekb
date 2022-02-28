@@ -57,18 +57,6 @@
       </dd>
     </g:if>
 
-    <g:if test="${d.lastProject}">
-      <dt>
-        <gokb:annotatedLabel owner="${d}" property="lastProject">Last Project</gokb:annotatedLabel>
-      </dt>
-      <dd>
-        <g:link controller="resource" action="show"
-          id="${d.lastProject?.getClassName()+':'+d.lastProject?.id}">
-          ${d.lastProject?.name}
-        </g:link>
-      </dd>
-    </g:if>
-
     <dt> <gokb:annotatedLabel owner="${d}" property="lastUpdateComment">Last Update Comment</gokb:annotatedLabel> </dt>
     <dd> <gokb:xEditable  owner="${d}" field="lastUpdateComment" /> </dd>
 
