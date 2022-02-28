@@ -83,7 +83,7 @@
           <th>#</th>
           <th>Value</th>
           <th>Content Type</th>
-          <th>Concat Typ</th>
+          <th>Contact Typ</th>
           <th>Language</th>
           <th></th>
         </tr>
