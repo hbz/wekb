@@ -24,7 +24,6 @@ import java.util.concurrent.CancellationException
 @Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
 class AdminController {
 
-  def uploadAnalysisService
   def FTUpdateService
   def packageService
   def componentStatisticService
@@ -114,43 +113,6 @@ class AdminController {
 
     j.description = "Tidy Orgs Data"
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'TidyOrgsData')
-
-    redirect(controller: 'admin', action: 'jobs');
-  }
-
-  def reSummariseLicenses() {
-
-    Job j = concurrencyManagerService.createJob {
-      DataFile.executeQuery("select d from DataFile as d where d.doctype=?", ['http://www.editeur.org/onix-pl:PublicationsLicenseExpression']).each { df ->
-        log.debug(df);
-        df.incomingCombos.each { ic ->
-          log.debug(ic);
-          if (ic.fromComponent instanceof License) {
-            def source_file
-            try {
-              log.debug("Regenerate license for ${ic.fromComponent.id}");
-              if (df.fileData) {
-                source_file = copyUploadedFile(df.fileData, df.guid)
-                ic.fromComponent.summaryStatement = uploadAnalysisService.generateSummary(source_file);
-                ic.fromComponent.save(flush: true);
-                log.debug("Completed regeneration... size is ${ic.fromComponent.summaryStatement?.length()}");
-              } else {
-                log.error("No file data attached to DataFile ${df.guid}")
-              }
-            }
-            catch (Exception e) {
-              log.error("Problem", e);
-            } finally {
-              source_file?.delete()
-            }
-          }
-        }
-      }
-    }.startOrQueue()
-
-    j.description = "Regenerate License Summaries"
-    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'RegenerateLicenseSummaries')
-    j.startTime = new Date()
 
     redirect(controller: 'admin', action: 'jobs');
   }

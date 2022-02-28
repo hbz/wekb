@@ -14,7 +14,6 @@ class GlobalSearchTemplatesService {
         globalSearchTemplates.put('allocatedReviewGroups', allocatedReviewGroups())
         globalSearchTemplates.put('components', components())
         globalSearchTemplates.put('curatoryGroups', curatoryGroups())
-        globalSearchTemplates.put('dataFiles', dataFiles())
         globalSearchTemplates.put('dsCategorys',dsCategorys())
         globalSearchTemplates.put('dsCriterions', dsCriterions())
         globalSearchTemplates.put('domains', domains())
@@ -22,20 +21,15 @@ class GlobalSearchTemplatesService {
         globalSearchTemplates.put('databases', databases())
         globalSearchTemplates.put('journals', journals())
         globalSearchTemplates.put('folderContents', folderContents())
-        globalSearchTemplates.put('imprints', imprints())
         globalSearchTemplates.put('jobResults', jobResults())
-        globalSearchTemplates.put('licenses', licenses())
-        globalSearchTemplates.put('macros', macros())
         globalSearchTemplates.put('namespaces', namespaces())
         globalSearchTemplates.put('notes', notes())
         globalSearchTemplates.put('offices', offices())
         globalSearchTemplates.put('orgs', orgs())
         globalSearchTemplates.put('packages', packages())
         globalSearchTemplates.put('platforms', platforms())
-        globalSearchTemplates.put('projects', projects())
         globalSearchTemplates.put('refdataCategories', refdataCategories())
         globalSearchTemplates.put('reviewRequests', reviewRequests())
-        globalSearchTemplates.put('rules', rules())
         globalSearchTemplates.put('sources', sources())
         globalSearchTemplates.put('tipps', tipps())
         globalSearchTemplates.put('titles', titles())
@@ -43,7 +37,6 @@ class GlobalSearchTemplatesService {
         globalSearchTemplates.put('users', users())
         globalSearchTemplates.put('userJobs', userJobs())
         globalSearchTemplates.put('userWatchedComponents', userWatchedComponents())
-        globalSearchTemplates.put('works', works())
 
     }
 
@@ -244,33 +237,6 @@ class GlobalSearchTemplatesService {
         result
     }
 
-    Map dataFiles() {
-        Map result = [
-                baseclass: 'org.gokb.cred.DataFile',
-                title    : 'Data Files',
-                group    : 'Secondary',
-                qbeConfig: [
-                        qbeForm   : [
-                                [
-                                        prompt     : 'File Name',
-                                        qparam     : 'qp_name',
-                                        placeholder: 'Name',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'name']
-                                ],
-                        ],
-                        qbeGlobals: [
-                        ],
-                        qbeResults: [
-                                [heading: 'Name', property: 'name', sort: 'name', link: true],
-                                [heading: 'Created On', property: 'dateCreated', sort: 'dateCreated'],
-                                [heading: 'Mime Type', property: 'uploadMimeType', sort: 'uploadMimeType'],
-                                [heading: 'Status', property: 'status?.value', sort: 'status'],
-                        ]
-                ]
-        ]
-        result
-    }
-
     Map dsCategorys() {
         Map result = [
                 baseclass: 'org.gokb.cred.DSCategory',
@@ -378,15 +344,6 @@ class GlobalSearchTemplatesService {
                                         placeholder: 'Identifier Value',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'ids.value'],
                                         hide       : false
-                                ],
-                                [
-                                        type       : 'lookup',
-                                        baseClass  : 'org.gokb.cred.Person',
-                                        prompt     : 'Person',
-                                        qparam     : 'qp_person',
-                                        placeholder: 'Person',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'people.person'],
-                                        hide       : true
                                 ],
                         ],
                         qbeGlobals: [
@@ -529,33 +486,6 @@ class GlobalSearchTemplatesService {
         result
     }
 
-    Map imprints() {
-        Map result = [
-                baseclass   : 'org.gokb.cred.Imprint',
-                title       : 'Imprints',
-                defaultSort : 'name',
-                defaultOrder: 'asc',
-                qbeConfig   : [
-                        qbeForm   : [
-                                [
-                                        prompt     : 'Name',
-                                        qparam     : 'qp_name',
-                                        placeholder: 'Name',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'name', 'wildcard': 'B']
-                                ],
-                        ],
-                        qbeGlobals: [
-                        ],
-                        qbeResults: [
-                                [heading: 'Name', property: 'name', sort: 'name', link: true],
-                                [heading: 'Status', property: 'status?.value', sort: 'status'],
-                        ]
-                ]
-        ]
-
-        result
-    }
-
     Map jobResults() {
         Map result = [
                 baseclass   : 'org.gokb.cred.JobResult',
@@ -586,63 +516,6 @@ class GlobalSearchTemplatesService {
                         ]
                 ]
         ]
-        result
-    }
-
-    Map licenses() {
-        Map result = [
-                baseclass: 'org.gokb.cred.License',
-                title    : 'Licenses',
-                group    : 'Secondary',
-                message  : 'Please contact nisohq@niso.org for more information on license downloads',
-                qbeConfig: [
-                        qbeForm   : [
-                                [
-                                        prompt     : 'Name or Title',
-                                        qparam     : 'qp_name',
-                                        placeholder: 'Name of License',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'name']
-                                ],
-                        ],
-                        qbeGlobals: [
-                                ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
-                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
-                        ],
-                        qbeResults: [
-                                [heading: 'Name/Title', property: 'name', sort: 'name', link: true],
-                                [heading: 'Status', property: 'status?.value', sort: 'status'],
-                        ]
-                ]
-        ]
-
-        result
-    }
-
-    Map macros() {
-        Map result = [
-                baseclass: 'org.gokb.cred.Macro',
-                title    : 'Macros',
-                group    : 'Secondary',
-                qbeConfig: [
-                        qbeForm   : [
-                                [
-                                        prompt     : 'Name or Title',
-                                        qparam     : 'qp_name',
-                                        placeholder: 'Name or title of Macro',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'name']
-                                ],
-                        ],
-                        qbeGlobals: [
-                                ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
-                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
-                        ],
-                        qbeResults: [
-                                [heading: 'Name/Title', property: 'name', sort: 'name', link: true],
-                                [heading: 'Status', property: 'status?.value', sort: 'status'],
-                        ]
-                ]
-        ]
-
         result
     }
 
@@ -924,7 +797,6 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Source', property: 'source?.name', link: true],
                         ],
                         actions   : [
-                                [name: 'Register Web Hook for all Packages', code: 'general::registerWebhook', iconClass: 'glyphicon glyphicon-link']
                         ]
                 ]
         ]
@@ -996,31 +868,6 @@ class GlobalSearchTemplatesService {
                         ]
                 ]
         ]
-        result
-    }
-
-    Map projects() {
-        Map result = [
-                baseclass: 'org.gokb.refine.RefineProject',
-                title    : 'Projects',
-                group    : 'Secondary',
-                qbeConfig: [
-                        qbeForm   : [
-                                [
-                                        prompt     : 'Name',
-                                        qparam     : 'qp_name',
-                                        placeholder: 'Project Name',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'name', 'wildcard': 'B']
-                                ],
-                        ],
-                        qbeResults: [
-                                [heading: 'Name', property: 'name', sort: 'name', link: true],
-                                [heading: 'Provider', sort: 'provider.name', property: 'provider?.name'],
-                                [heading: 'Status', sort: 'status', property: 'status?.value'],
-                        ]
-                ]
-        ]
-
         result
     }
 
@@ -1099,29 +946,6 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Status', property: 'status?.value'],
                                 [heading: 'Type', property: 'type?.value'],
                                 [heading: 'Timestamp', property: 'dateCreated', sort: 'dateCreated'],
-                        ]
-                ]
-        ]
-        result
-    }
-
-    Map rules() {
-        Map result = [
-                baseclass: 'org.gokb.refine.Rule',
-                title    : 'Rules',
-                group    : 'Secondary',
-                qbeConfig: [
-                        qbeForm   : [
-                                [
-                                        prompt     : 'Description',
-                                        qparam     : 'qp_description',
-                                        placeholder: 'Rule Description',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'description']
-                                ],
-                        ],
-                        qbeResults: [
-                                [heading: 'Fingerprint', property: 'fingerprint'],
-                                [heading: 'Description', property: 'description', link: true],
                         ]
                 ]
         ]
@@ -1509,36 +1333,6 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Type', property: 'component.niceName'],
                                 [heading: 'Last Update on', property: 'component.lastUpdated'],
                                 [heading: 'Last Update Comment', property: 'component.lastUpdateComment']
-                        ]
-                ]
-        ]
-        result
-    }
-
-    Map works() {
-        Map result = [
-                baseclass   : 'org.gokb.cred.Work',
-                title       : 'Works',
-                group       : 'Primary',
-                defaultSort : 'name',
-                defaultOrder: 'asc',
-                qbeConfig   : [
-                        qbeForm   : [
-                                [
-                                        prompt     : 'Title',
-                                        qparam     : 'qp_name',
-                                        placeholder: 'Name or title of item',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'name', 'wildcard': 'R']
-                                ],
-                        ],
-                        qbeGlobals: [
-                                ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
-                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
-                        ],
-                        qbeResults: [
-                                [heading: 'Title', property: 'name', link: true, sort: 'name'],
-                                [heading: 'Bucket Hash', property: 'bucketHash'],
-                                [heading: 'Status', property: 'status?.value', sort: 'status'],
                         ]
                 ]
         ]

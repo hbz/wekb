@@ -18,7 +18,6 @@ class TitleInstance extends KBComponent {
   RefdataValue continuingSeries
   RefdataValue reasonRetired
   RefdataValue OAStatus
-  Work work
   Date publishedFrom
   Date publishedTo
   String coverImage
@@ -52,7 +51,6 @@ class TitleInstance extends KBComponent {
       'pureOA',
       'continuingSeries',
       'reasonRetired',
-      'work',
       'coverImage',
       'issuer',
       'translatedFrom',
@@ -130,7 +128,6 @@ class TitleInstance extends KBComponent {
     mergedWith    : TitleInstance,
     renamedTo     : TitleInstance,
     splitFrom     : TitleInstance,
-    imprint       : Imprint
   ]
 
   static manyByCombo = [
@@ -153,7 +150,6 @@ class TitleInstance extends KBComponent {
       }
     })
     coverImage(nullable: true, blank: true)
-    work(nullable: true, blank: false)
     name(validator: { val, obj ->
       if (!val && obj.hasChanged('name')) {
         return ['notNull']
@@ -326,7 +322,7 @@ class TitleInstance extends KBComponent {
       def theIssuer = getIssuer()
       // def thePublisher = getPublisher()
       def publisher_combos = getCombosByPropertyName('publisher')
-      def people_combos = this.people ?: []
+
 
       // def identifiers = Combo.executeQuery('select c.toComponent from Combo as c where c.fromComponent=:t and c.type.value :idtype and c.status.value != :d',
       //                                      [t:this,idtype:'KBComponent.ids',d:'Deleted'])
@@ -350,7 +346,6 @@ class TitleInstance extends KBComponent {
             builder.'firstAuthor'(this.firstAuthor)
           }
 
-          builder.'imprint'(imprint?.name)
           builder.'medium'(medium?.value)
           builder.'type'(this.class.simpleName)
           builder.'OAStatus'(OAStatus?.value)
@@ -812,41 +807,6 @@ class TitleInstance extends KBComponent {
       log.debug("Result of upsertDTO: ${result}");
     }
     result;
-  }
-
-  // This is called by the titleLookupService::remapTitleInstance method but NOTE:: this is done
-  // primarily so that the cpu-work and object creation of the work instance is done outside the
-  // context of the primary hibernate session.
-  def remapWork() {
-    log.debug('remapWork');
-    // BKM:TITLE + then FIRSTAUTHOR if duplicates found
-
-    if ((normname) &&
-      (normname.length() > 0) &&
-      (!normname.startsWith('unknown title'))) {
-      // book bucket (Work) hashes are based on the normalised name.
-      def h = GOKbTextUtils.generateComponentHash([normname]);
-
-      log.debug("Searching for bucket matches for ${h}");
-      def bucketMatches = Work.executeQuery('select w from Work as w where w.bucketHash = :h', [h: h]);
-
-      switch (bucketMatches.size()) {
-        case 0:
-          log.debug("No matches - create work");
-          def w = new Work(name: name, bucketHash: h).save(flush: true, failOnError: true)
-          this.work = w
-          this.save(flush: true, failOnError: true)
-          break;
-        case 1:
-          log.debug("Good enough unique match on bucketHash");
-          this.work = bucketMatches[0]
-          this.save(flush: true, failOnError: true)
-          break;
-        default:
-          log.debug("Mached multiple works - use discriminator properties");
-          break;
-      }
-    }
   }
 
   @Override

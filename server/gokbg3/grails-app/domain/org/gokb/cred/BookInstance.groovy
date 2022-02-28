@@ -93,7 +93,6 @@ class BookInstance extends TitleInstance {
       (hasChanged('editionStatement')) ||
       (hasChanged('componentDiscriminator'))) {
       log.debug("Detected an update to properties for ${id} that might change the work mapping. Looking up");
-      // submitRemapWorkTask()
     }
     touchAllDependants()
   }
@@ -109,7 +108,6 @@ class BookInstance extends TitleInstance {
 
 
   def afterInsert() {
-    // submitRemapWorkTask()
   }
 
 
@@ -125,26 +123,6 @@ class BookInstance extends TitleInstance {
     result
   }
 
-
-  def submitRemapWorkTask() {
-    log.debug("BookInstance::submitRemapWorkTask");
-    def tls = grailsApplication.mainContext.getBean("titleLookupService")
-    def map_work_task = task {
-      // Wait for the onSave to complete, and the system to release the session, thus freeing the data to
-      // other transactions
-      synchronized (this) {
-        Thread.sleep(3000);
-      }
-      tls.remapTitleInstance('org.gokb.cred.BookInstance:' + this.id)
-    }
-
-    // We cannot wait for the task to complete as the transaction has to complete in order
-    // for the Instance to become visible to other transactions. Therefore there has to be
-    // a delay between completing the Instance update, and attempting to resolve the work.
-    onComplete([map_work_task]) { mapResult ->
-      // Might want to add a message to the system log here
-    }
-  }
 
 
   static def validateDTO(JSONObject titleDTO, locale) {

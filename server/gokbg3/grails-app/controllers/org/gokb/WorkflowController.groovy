@@ -29,7 +29,6 @@ class WorkflowController{
       'title::transfer'        : [actionType: 'workflow', view: 'titleTransfer'],
       'title::change'          : [actionType: 'workflow', view: 'titleChange'],
       'platform::replacewith'  : [actionType: 'workflow', view: 'platformReplacement'],
-      'method::registerWebhook': [actionType: 'workflow', view: 'registerWebhook'],
       'method::RRTransfer'     : [actionType: 'workflow', view: 'revReqTransfer'],
       'method::RRClose'        : [actionType: 'simple'],
       'packageUrlUpdate'       : [actionType: 'process', method: 'triggerSourceUpdate'],
@@ -1173,18 +1172,6 @@ class WorkflowController{
     redirect(url: params.ref)
   }
 
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  def download(){
-    log.debug("Download ${params}")
-    DataFile df = DataFile.findByGuid(params.id)
-    if (df != null){
-      //HTML is causing problems, browser thinks it should render something, other way around this?
-      response.setContentType("application/octet-stream")
-      response.addHeader("Content-Disposition", "attachment; filename=\"${df.uploadName}\"")
-      response.outputStream << df.fileData
-    }
-  }
-
   /**
    *  authorizeVariant : Used to replace the name of a component by one of its variant names.
    * @param id : The id of the variant name
@@ -1360,55 +1347,6 @@ class WorkflowController{
         render result as JSON
       }
     }
-  }
-
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  def processCreateWebHook(){
-
-    log.debug("processCreateWebHook ${params}")
-    def result = [:]
-
-    result.ref = params.from
-
-    try{
-
-      def webook_endpoint = null
-      if ((params.existingHook != null) && (params.existingHook.length() > 0)){
-        log.debug("From existing hook")
-        webook_endpoint = genericOIDService.resolveOID2(params.existingHook)
-      }
-      else{
-        webook_endpoint = new WebHookEndpoint(name: params.newHookName,
-            url: params.newHookUrl,
-            authmethod: Long.parseLong(params.newHookAuth),
-            principal: params.newHookPrin,
-            credentials: params.newHookCred,
-            owner: request.user)
-        if (webook_endpoint.save(flush: true)){
-        }
-        else{
-          log.error("Problem saving new webhook endpoint : ${webook_endpoint.errors}")
-        }
-      }
-
-
-      params.each{ p ->
-        if ((p.key.startsWith('tt:')) && (p.value) && (p.value instanceof String)){
-          def tt = p.key.substring(3)
-          def wh = new WebHook(oid: tt, endpoint: webook_endpoint)
-          if (wh.save(flush: true)){
-          }
-          else{
-            log.error(wh.errors)
-          }
-        }
-      }
-    }
-    catch (Exception e){
-      log.error("Problem", e)
-    }
-
-    redirect(url: result.ref)
   }
 
   @Transactional

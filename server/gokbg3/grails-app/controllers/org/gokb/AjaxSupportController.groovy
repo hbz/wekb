@@ -773,14 +773,6 @@ class AjaxSupportController {
       result.values = []
       result.error = "Unable to locate domain class ${params.baseClass}, or this user is not permitted to view it."
     }
-    //result.values = [[id:'Person:45',text:'Fred'],
-    //                 [id:'Person:23',text:'Jim'],
-    //                 [id:'Person:22',text:'Jimmy'],
-    //                 [id:'Person:3',text:'JimBob']]
-
-    //     if ( params.addEmpty=='Y' || params.addEmpty=='y' ) {
-    //       result.values.add(0, [id:'', text:'']);
-    //     }
 
     render result as JSON
   }

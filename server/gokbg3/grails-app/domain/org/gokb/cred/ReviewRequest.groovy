@@ -4,7 +4,6 @@ import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
 
 import javax.persistence.Transient
-import org.gokb.refine.RefineProject
 import grails.converters.JSON
 import grails.plugins.orm.auditable.Auditable
 
@@ -23,7 +22,6 @@ class ReviewRequest implements Auditable {
   RefdataValue status
   RefdataValue stdDesc
   Boolean needsNotify
-  RefineProject refineProject
   String additionalInfo
 
 
@@ -51,7 +49,6 @@ class ReviewRequest implements Auditable {
     dateCreated(nullable:true, blank:true)
     lastUpdated(nullable:true, blank:true)
     needsNotify(nullable:true, blank:true)
-    refineProject(nullable:true, blank:true)
     additionalInfo(nullable:true, blank:true)
   }
 
@@ -67,7 +64,6 @@ class ReviewRequest implements Auditable {
         status : RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STATUS, 'Open'),
         descriptionOfCause : (cause),
         reviewRequest : (actionRequired),
-        refineProject : (refineProject),
         stdDesc : (stdDesc),
         additionalInfo : (additionalInfo),
         componentToReview : (forComponent)
@@ -82,7 +78,6 @@ class ReviewRequest implements Auditable {
 
   static jsonMapping = [
     'ignore'       : [
-      'refineProject',
       'additionalInfo',
       'needsNotify'
     ],
