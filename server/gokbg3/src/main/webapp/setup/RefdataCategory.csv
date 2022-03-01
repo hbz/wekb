@@ -35,6 +35,9 @@ Package.OpenAccess;Package Open Access;Package Open Access
 Package.RegionalRange; Package RegionalRange; Package RegionalRange
 Package.PaymentType;Package Payment Type;Package Payment Type
 Package.Scope;Package Scope;Package Scope
+PackageArchivingAgency.ArchivingAgency;Archiving Agency;Archiving Agency
+PackageArchivingAgency.OpenAccess;Open Access;Open Access
+PackageArchivingAgency.PostCancellationAccess;Post-Cancellation Access;Post-Cancellation Access
 Platform.IPAuthentication;Platform IP Authentication;Platform IP Authentication
 Platform.Role;Platform Role;Platform Role
 Platform.Roles;Platform Roles;Platform Roles

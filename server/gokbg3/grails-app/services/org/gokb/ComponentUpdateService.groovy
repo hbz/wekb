@@ -2,6 +2,7 @@ package org.gokb
 
 
 import de.wekb.helper.RCConstants
+import de.wekb.helper.RDStore
 import org.gokb.cred.*
 import groovy.transform.Synchronized
 import com.k_int.ClassUtils
@@ -44,9 +45,9 @@ class ComponentUpdateService {
     // Identifiers
     log.debug("Identifier processing ${data.identifiers}")
     Set<String> ids = component.ids.collect { "${it.namespace?.value}|${it.value}".toString() }
-    RefdataValue combo_active = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE)
-    RefdataValue combo_deleted = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_DELETED)
-    RefdataValue combo_type_id = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'KBComponent.Ids')
+    RefdataValue combo_active = RDStore.COMBO_STATUS_ACTIVE
+    RefdataValue combo_deleted = RDStore.COMBO_STATUS_DELETED
+    RefdataValue combo_type_id = RDStore.COMBO_TYPE_KB_IDS
 
     data.identifiers.each { ci ->
       def namespace_val = ci.type ?: ci.namespace
@@ -54,50 +55,98 @@ class ComponentUpdateService {
 
       if (namespace_val && ci.value && namespace_val.toLowerCase() != "originediturl") {
 
-        if (!ids.contains(testKey)) {
-          def canonical_identifier = null
+        if(component instanceof TitleInstancePackagePlatform){
 
-          if (!KBComponent.has(component, 'publisher')) {
-            canonical_identifier = componentLookupService.lookupOrCreateCanonicalIdentifier(namespace_val, ci.value)
+          Identifier identifier
+          List<Identifier> identifiersWithSameNamespace = Identifier.executeQuery('select i from Identifier as i, Combo as c where LOWER(i.namespace.value) = :namespaceValue and c.fromComponent.id = :tipp and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: namespace_val, tipp: component.id, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
+
+          List deleteComboIds = []
+
+          identifiersWithSameNamespace.each { Identifier tippIdentifier ->
+            List<Combo> identifierLinkedToComponents = Combo.executeQuery("from Combo as c where c.toComponent = :identifier ", [identifier: tippIdentifier])
+            log.debug("identifierLinkedToComponents:"+identifierLinkedToComponents)
+              if(identifierLinkedToComponents.size() == 1){
+                if (identifierLinkedToComponents[0].fromComponent == component) {
+                  tippIdentifier.value = ci.value
+                  tippIdentifier.save(flush: true, failOnError: true)
+
+                  identifierLinkedToComponents[0].status = combo_active
+                  identifierLinkedToComponents[0].save(flush: true, failOnError: true)
+                  hasChanged = true
+                }
+              }
+              if(identifierLinkedToComponents.size() > 1) {
+                identifierLinkedToComponents.each { Combo combo ->
+                  if (combo.fromComponent == component) {
+                    deleteComboIds << combo.id
+                    def norm_id = Identifier.normalizeIdentifier(ci.value)
+                    IdentifierNamespace ns = IdentifierNamespace.findByValueIlike(namespace_val)
+                    identifier = new Identifier(namespace: ns, value: ci.value, normname: norm_id).save(flush:true, failOnError:true)
+                    def new_id = new Combo(fromComponent: component, toComponent: identifier, status: combo_active, type: combo_type_id).save(flush: true, failOnError: true)
+                    hasChanged = true
+                  }
+                }
+              }
+            }
+
+          deleteComboIds.each {
+            Combo combo = Combo.get(it)
+            log.debug("deleted Combo:"+combo)
+            combo.delete()
           }
-          else {
-            def norm_id = Identifier.normalizeIdentifier(ci.value)
-            def ns = IdentifierNamespace.findByValueIlike(namespace_val)
-            canonical_identifier = Identifier.findByNamespaceAndNormnameIlike(ns, norm_id)
-          }
 
-          log.debug("Checking identifiers of component ${component.id}")
-          if (canonical_identifier) {
-            def duplicate = Combo.executeQuery("from Combo as c where c.toComponent = ? and c.fromComponent = ?", [canonical_identifier, component])
-
-            if (duplicate.size() == 0) {
-              log.debug("adding identifier(${namespace_val},${ci.value})(${canonical_identifier.id})")
-              def new_id = new Combo(fromComponent: component, toComponent: canonical_identifier, status: combo_active, type: combo_type_id).save(flush: true, failOnError: true)
+            //If no Identifier for the tipp, create new identifier
+            if(identifiersWithSameNamespace.size() == 0){
+              def norm_id = Identifier.normalizeIdentifier(ci.value)
+              IdentifierNamespace ns = IdentifierNamespace.findByValueIlike(namespace_val)
+              identifier = new Identifier(namespace: ns, value: ci.value, normname: norm_id).save(flush:true, failOnError:true)
+              def new_id = new Combo(fromComponent: component, toComponent: identifier, status: combo_active, type: combo_type_id).save(flush: true, failOnError: true)
               hasChanged = true
             }
-            else if (duplicate.size() == 1 && duplicate[0].status == combo_deleted) {
 
-              log.debug("Found a deleted identifier combo for ${canonical_identifier.value} -> ${component}")
-              reviewRequestService.raise(
-                component,
-                "Review ID status.",
-                "Identifier ${canonical_identifier} was previously connected to '${component}', but has since been manually removed.",
-                RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'Import Request'),
-                null,
-                null,
-                RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Removed Identifier'),
-                null
-              )
-            }
-            else {
-              log.debug("Identifier combo is already present, probably via titleLookupService.")
+        }else {
+
+          if (!ids.contains(testKey)) {
+            def canonical_identifier = null
+
+            if (!KBComponent.has(component, 'publisher')) {
+              canonical_identifier = componentLookupService.lookupOrCreateCanonicalIdentifier(namespace_val, ci.value)
+            } else {
+              def norm_id = Identifier.normalizeIdentifier(ci.value)
+              def ns = IdentifierNamespace.findByValueIlike(namespace_val)
+              canonical_identifier = Identifier.findByNamespaceAndNormnameIlike(ns, norm_id)
             }
 
-            // Add the value for comparison.
-            ids << testKey
-          }
-          else {
-            log.debug("Could not find or create Identifier!")
+            log.debug("Checking identifiers of component ${component.id}")
+            if (canonical_identifier) {
+              def duplicate = Combo.executeQuery("from Combo as c where c.toComponent = ? and c.fromComponent = ?", [canonical_identifier, component])
+
+              if (duplicate.size() == 0) {
+                log.debug("adding identifier(${namespace_val},${ci.value})(${canonical_identifier.id})")
+                def new_id = new Combo(fromComponent: component, toComponent: canonical_identifier, status: combo_active, type: combo_type_id).save(flush: true, failOnError: true)
+                hasChanged = true
+              } else if (duplicate.size() == 1 && duplicate[0].status == combo_deleted) {
+
+                log.debug("Found a deleted identifier combo for ${canonical_identifier.value} -> ${component}")
+                reviewRequestService.raise(
+                        component,
+                        "Review ID status.",
+                        "Identifier ${canonical_identifier} was previously connected to '${component}', but has since been manually removed.",
+                        RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'Import Request'),
+                        null,
+                        null,
+                        RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Removed Identifier'),
+                        null
+                )
+              } else {
+                log.debug("Identifier combo is already present, probably via titleLookupService.")
+              }
+
+              // Add the value for comparison.
+              ids << testKey
+            } else {
+              log.debug("Could not find or create Identifier!")
+            }
           }
         }
       }

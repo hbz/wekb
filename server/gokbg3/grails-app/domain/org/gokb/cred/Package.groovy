@@ -4,6 +4,7 @@ package org.gokb.cred
 import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
 import de.wekb.helper.RDStore
+import wekb.PackageArchivingAgency
 import org.gokb.GOKbTextUtils
 
 import javax.persistence.Transient
@@ -87,6 +88,7 @@ class Package extends KBComponent {
           nationalRanges : RefdataValue,
           regionalRanges : RefdataValue,
           ddcs : RefdataValue,
+          paas : PackageArchivingAgency,
   ]
 
   static mapping = {
@@ -148,6 +150,7 @@ class Package extends KBComponent {
     nationalRanges(nullable:true)
     regionalRanges(nullable:true)
     ddcs(nullable:true)
+    paas(nullable:true)
   }
 
   public String getRestPath() {
