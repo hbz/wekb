@@ -16,6 +16,7 @@ import org.gokb.cred.TIPPCoverageStatement
 import org.gokb.cred.RefdataValue
 import wekb.Contact
 import wekb.KBComponentLanguage
+import wekb.PackageArchivingAgency
 
 import java.text.Normalizer
 
@@ -151,6 +152,13 @@ class FTUpdateService {
           result.languages.add([value     : kbl.language.value,
                                 value_de  : kbl.language.value_de,
                                 value_en  : kbl.language.value_en])
+        }
+
+        result.packageArchivingAgencies = []
+        kbc.paas.each { PackageArchivingAgency paa ->
+          result.packageArchivingAgencies.add([archivingAgency: paa.archivingAgency?.value,
+                                               openAccess  : paa.openAccess?.value,
+                                               postCancellationAccess  : paa.postCancellationAccess?.value])
         }
 
 
