@@ -65,6 +65,10 @@ class RCConstants {
     public static final String PACKAGE_OPEN_ACCESS = "Package.OpenAccess"
     public static final String PACKAGE_SCOPE = "Package.Scope"
 
+    public static final String PAA_ARCHIVING_AGENCY = "PackageArchivingAgency.ArchivingAgency"
+    public static final String PAA_OPEN_ACCESS = "PackageArchivingAgency.OpenAccess"
+    public static final String PAA_POST_CANCELLATION_ACCESS = "PackageArchivingAgency.PostCancellationAccess"
+
     public static final String PLATFORM_IP_AUTH= "Platform.IPAuthentication"
     public static final String PLATFORM_ROLE = "Platform.Role"
     public static final String PLATFORM_ROLES = "Platform.Roles"

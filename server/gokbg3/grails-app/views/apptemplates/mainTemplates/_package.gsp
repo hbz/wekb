@@ -133,6 +133,50 @@
             <g:render template="/apptemplates/secondTemplates/regionalRange" />
           </g:if>
         </dd>
+        <dt class="dt-label">
+          <gokb:annotatedLabel owner="${d}" property="paas">Archiving Agency</gokb:annotatedLabel>
+        </dt>
+        <dd>
+              <table class="table">
+                <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Archiving Agency</th>
+                  <th>Open Access</th>
+                  <th>Post-Cancellation Access</th>
+                  <th></th>
+                </tr>
+                </thead>
+                <tbody>
+            <g:each in="${d.paas?.sort { it.archivingAgency?.value }}" var="paa" status="i">
+              <tr>
+                <td>${i+1}</td>
+                <td><gokb:xEditableRefData owner="${paa}" field="archivingAgency"
+                                           config="${RCConstants.PAA_ARCHIVING_AGENCY}"/>
+                <td><gokb:xEditableRefData owner="${paa}" field="openAccess"
+                                           config="${RCConstants.PAA_OPEN_ACCESS}"/>
+                </td>
+                <td>
+                  <gokb:xEditableRefData owner="${paa}" field="postCancellationAccess"
+                                         config="${RCConstants.PAA_POST_CANCELLATION_ACCESS}"/>
+                </td>
+                <td>
+                  <g:if test="${editable}">
+                    <g:link controller='ajaxSupport'
+                            action='delete'
+                            params="${["__context": "${paa.class.name}:${paa.id}"]}">Unlink</g:link>
+                  </g:if>
+                </td>
+              </tr>
+            </g:each>
+            </tbody>
+          </table>
+
+          <g:if test="${editable}">
+            <a data-toggle="modal" data-cache="false"
+               data-target="#paaModal">Add Archiving Agency</a>
+          </g:if>
+        </dd>
     </g:if>
 
 
@@ -417,6 +461,37 @@
       <g:render template="/apptemplates/secondTemplates/componentStatus"/>
 
   </div>
+
+<g:if test="${editable}">
+  <bootStrap:modal id="paaModal" title="Add Archiving Agency">
+
+    <g:form controller="ajaxSupport" action="addToCollection"
+            class="form-inline">
+      <input type="hidden" name="__context" value="${d.class.name}:${d.id}"/>
+      <input type="hidden" name="__newObjectClass" value="wekb.PackageArchivingAgency"/>
+      <input type="hidden" name="__recip" value="pkg"/>
+      <dt class="dt-label">Archiving Agency</dt>
+      <dd>
+        <gokb:simpleReferenceTypedown class="form-control" name="archivingAgency"
+                                      baseClass="org.gokb.cred.RefdataValue"
+                                      filter1="${RCConstants.PAA_ARCHIVING_AGENCY}"/>
+      </dd>
+      <dt class="dt-label">Open Access</dt>
+      <dd>
+        <gokb:simpleReferenceTypedown class="form-control" name="openAccess"
+                                      baseClass="org.gokb.cred.RefdataValue"
+                                      filter1="${RCConstants.PAA_OPEN_ACCESS}"/>
+      </dd>
+
+      <dt class="dt-label">Post-Cancellation Access</dt>
+      <dd>
+        <gokb:simpleReferenceTypedown class="form-control" name="postCancellationAccess"
+                                      baseClass="org.gokb.cred.RefdataValue"
+                                      filter1="${RCConstants.PAA_POST_CANCELLATION_ACCESS}"/>
+      </dd>
+    </g:form>
+  </bootStrap:modal>
+</g:if>
 
     <g:javascript>
       $(document).ready(function(){

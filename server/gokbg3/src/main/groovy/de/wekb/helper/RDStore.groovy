@@ -20,6 +20,7 @@ class RDStore {
     public static final COMBO_TYPE_PLT_HOSTEDTIPPS = getRefdataValue('Platform.HostedTipps', RCConstants.COMBO_TYPE)
 
     public static final COMBO_STATUS_ACTIVE = getRefdataValue(Combo.STATUS_ACTIVE, RCConstants.COMBO_STATUS)
+    public static final COMBO_STATUS_DELETED = getRefdataValue(Combo.STATUS_DELETED, RCConstants.COMBO_STATUS)
 
     public static final CURRENCY_EUR = RefdataCategory.lookup(RCConstants.CURRENCY, 'EUR')
     public static final CURRENCY_USD = RefdataCategory.lookup(RCConstants.CURRENCY, 'USD')

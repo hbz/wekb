@@ -139,6 +139,38 @@
                         </g:if>
                     </dd>
 
+                    <dt class="col-3 text-right">
+                        <gokb:annotatedLabel owner="${pkg}" property="paas">Archiving Agency</gokb:annotatedLabel>
+                    </dt>
+                    <dd class="col-9 text-left">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Archiving Agency</th>
+                                <th>Open Access</th>
+                                <th>Post-Cancellation Access</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <g:each in="${pkg.paas?.sort { it.archivingAgency?.value }}" var="paa" status="i">
+                                <tr>
+                                    <td>${i+1}</td>
+                                    <td><gokb:xEditableRefData owner="${paa}" field="archivingAgency"
+                                                               config="${RCConstants.PAA_ARCHIVING_AGENCY}"/>
+                                    <td><gokb:xEditableRefData owner="${paa}" field="openAccess"
+                                                               config="${RCConstants.PAA_OPEN_ACCESS}"/>
+                                    </td>
+                                    <td>
+                                        <gokb:xEditableRefData owner="${paa}" field="postCancellationAccess"
+                                                               config="${RCConstants.PAA_POST_CANCELLATION_ACCESS}"/>
+                                    </td>
+                                </tr>
+                            </g:each>
+                            </tbody>
+                        </table>
+                    </dd>
+
                 </dl>
             </div>
             <g:render template="rightBox" model="${[d: pkg]}"/>
