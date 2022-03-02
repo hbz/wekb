@@ -149,7 +149,7 @@
                                 <th>#</th>
                                 <th>Archiving Agency</th>
                                 <th>Open Access</th>
-                                <th>Post-Cancellation Access</th>
+                                <th>Post-Cancellation Access (PCA)</th>
                             </tr>
                             </thead>
                             <tbody>

@@ -143,7 +143,7 @@
                   <th>#</th>
                   <th>Archiving Agency</th>
                   <th>Open Access</th>
-                  <th>Post-Cancellation Access</th>
+                  <th>Post-Cancellation Access (PCA)</th>
                   <th></th>
                 </tr>
                 </thead>
@@ -483,7 +483,7 @@
                                       filter1="${RCConstants.PAA_OPEN_ACCESS}"/>
       </dd>
 
-      <dt class="dt-label">Post-Cancellation Access</dt>
+      <dt class="dt-label">Post-Cancellation Access (PCA)</dt>
       <dd>
         <gokb:simpleReferenceTypedown class="form-control" name="postCancellationAccess"
                                       baseClass="org.gokb.cred.RefdataValue"
