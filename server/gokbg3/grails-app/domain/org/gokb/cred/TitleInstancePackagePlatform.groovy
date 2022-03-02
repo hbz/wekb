@@ -1616,7 +1616,7 @@ class TitleInstancePackagePlatform extends KBComponent {
       if(identifierList.size() == 1){
 
         log.debug("tippMatchingByTitleID: "+ identifierList.id)
-        List<TitleInstancePackagePlatform> tippCombos = Combo.executeQuery("select c.fromComponent from Combo as c where c.toComponent = identifier and c.fromComponent in (:tipps)", [identifier: identifierList[0], tipps: aPackage.tipps])
+        List<TitleInstancePackagePlatform> tippCombos = Combo.executeQuery("select c.fromComponent from Combo as c where c.toComponent = :identifier and c.fromComponent in (:tipps)", [identifier: identifierList[0], tipps: aPackage.tipps])
 
         if(tippCombos.size() == 1) {
           log.debug("tippMatchingByTitleID provider internal identifier matching by "+tippCombos.size() + ": "+ tippCombos.id)
@@ -1634,7 +1634,7 @@ class TitleInstancePackagePlatform extends KBComponent {
       if(identifierList.size() == 1){
 
         log.debug("tippMatchingByTitleID identifierList: "+ identifierList.id)
-        List<TitleInstancePackagePlatform> tippCombos = Combo.executeQuery("select c.fromComponent from Combo as c where c.toComponent = identifier and c.fromComponent in (:tipps)", [identifier: identifierList[0], tipps: aPackage.tipps])
+        List<TitleInstancePackagePlatform> tippCombos = Combo.executeQuery("select c.fromComponent from Combo as c where c.toComponent = :identifier and c.fromComponent in (:tipps)", [identifier: identifierList[0], tipps: aPackage.tipps])
 
         if(tippCombos.size() == 1) {
           log.debug("tippMatchingByTitleID provider internal identifier matching by "+tippCombos.size() + ": "+ tippCombos.id)
