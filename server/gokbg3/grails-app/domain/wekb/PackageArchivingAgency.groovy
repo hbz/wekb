@@ -34,9 +34,9 @@ class PackageArchivingAgency {
     }
 
     static constraints = {
-        archivingAgency     (nullable:true)
+        archivingAgency     (nullable:false)
         openAccess (nullable:true)
-        postCancellationAccess (nullable:false)
+        postCancellationAccess (nullable:true)
         pkg  (nullable:false)
     }
 }
