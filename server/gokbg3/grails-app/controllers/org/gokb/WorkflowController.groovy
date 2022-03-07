@@ -1761,6 +1761,10 @@ class WorkflowController{
           if (pkgObj?.isEditable() && (is_curator || !curated_pkg  || user.authorities.contains(Role.findByAuthority('ROLE_SUPERUSER')))) {
             Map result = autoUpdatePackagesService.updateFromSource(pkgObj, user, allTitles)
 
+            if(result.ygorData){
+              autoUpdatePackagesService.importJsonFromUpdateSource(result.ygorData)
+            }
+
             if (result.result == JobResult.STATUS_SUCCESS){
               flash.success = result.message
             }
