@@ -277,7 +277,7 @@ class TitleInstancePackagePlatform extends KBComponent {
      [code: 'setStatus::Deleted', label: 'Delete', perm: 'delete'],
      [code: 'setStatus::Expected', label: 'Mark Expected'],
      [code: 'setStatus::Current', label: 'Set Current'],
-     [code: 'tipp::move', label: 'Move TIPP']
+     /*[code: 'tipp::move', label: 'Move TIPP']*/
     ]
   }
 
