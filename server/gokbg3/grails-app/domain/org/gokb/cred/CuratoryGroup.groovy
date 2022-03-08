@@ -3,6 +3,8 @@ package org.gokb.cred
 import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
 
+import javax.persistence.Transient
+
 class CuratoryGroup extends KBComponent {
 
   static belongsTo = User
@@ -95,5 +97,18 @@ class CuratoryGroup extends KBComponent {
     this.generateUuid()
     this.ensureDefaults()
   }
+
+  @Transient
+  def availableActions() {
+    [
+            [code: 'method::deleteSoft', label: 'Delete', perm: 'delete'],
+    ]
+  }
+
+  public void deleteSoft(context) {
+    // Call the delete method on the superClass.
+    super.deleteSoft(context)
+  }
+
 }
 

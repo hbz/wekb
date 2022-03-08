@@ -482,9 +482,7 @@ select tipp.id,
     [
       [code: 'method::deleteSoft', label: 'Delete (with associated TIPPs)', perm: 'delete'],
       [code: 'method::retire', label: 'Retire Package (with associated TIPPs)'],
-      /*[code: 'exportPackage', label: 'TSV Export'],
-      [code: 'kbartExport', label: 'KBART Export'],
-      [code: 'verifyTitleList', label: 'Verify Title List'],*/
+      /*[code: 'verifyTitleList', label: 'Verify Title List'],*/
       [code: 'packageUrlUpdate', label: 'Trigger Update (Changed Titles)'],
       [code: 'packageUrlUpdateAllTitles', label: 'Trigger Update (all Titles)']
     ]
