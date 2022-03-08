@@ -8,13 +8,6 @@
     </dd>
 
     <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="name">Source Name</gokb:annotatedLabel>
-    </dt>
-    <dd class="col-9 text-left">
-        <gokb:xEditable owner="${d}" field="name"/>
-    </dd>
-
-    <dt class="col-3 text-right">
         <gokb:annotatedLabel owner="${d}" property="url">URL</gokb:annotatedLabel>
     </dt>
     <dd class="col-9 text-left">
