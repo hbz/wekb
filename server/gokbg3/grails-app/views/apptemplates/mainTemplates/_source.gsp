@@ -91,6 +91,13 @@
             </g:if>
         </dd>
 
+        <dt>
+            <gokb:annotatedLabel owner="${d}" property="nextRun">Next Run</gokb:annotatedLabel>
+        </dt>
+        <dd>
+            <g:formatDate date="${d.nextUpdateDate()}" format="${message(code: 'default.date.format.noZ')}"/>
+        </dd>
+
     </g:if>
 </dl>
 

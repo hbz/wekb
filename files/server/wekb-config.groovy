@@ -40,3 +40,4 @@ formatSql = true
 
 ygorUploadLocation = '/tmp'
 ygorStatisticStorageLocation = '/tmp'
+ygorUploadJsonLocation = '/tmp'

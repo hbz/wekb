@@ -37,8 +37,6 @@ class WorkflowController{
       'title::merge'           : [actionType: 'workflow', view: 'titleMerge'],
       'tipp::retire'           : [actionType: 'workflow', view: 'tippRetire'],
       'tipp::move'             : [actionType: 'workflow', view: 'tippMove'],
-      'exportPackage'          : [actionType: 'process', method: 'packageTSVExport'],
-      'kbartExport'            : [actionType: 'process', method: 'packageKBartExport'],
       'method::retire'         : [actionType: 'simple'],
       'method::setActive'      : [actionType: 'simple'],
       'method::setExpected'    : [actionType: 'simple'],
@@ -48,7 +46,8 @@ class WorkflowController{
       'setStatus::Deleted'     : [actionType: 'simple'],
       'org::deprecateReplace'  : [actionType: 'workflow', view: 'deprecateOrg'],
       'org::deprecateDelete'   : [actionType: 'workflow', view: 'deprecateDeleteOrg'],
-      'verifyTitleList'        : [actionType: 'process', method: 'verifyTitleList']
+      'verifyTitleList'        : [actionType: 'process', method: 'verifyTitleList'],
+      'deleteIdentifierNamespace'        : [actionType: 'process', method: 'deleteIdentifierNamespace']
   ]
 
 
@@ -1465,36 +1464,6 @@ class WorkflowController{
     redirect(url: result.ref)
   }
 
-
-  // @Transactional(readOnly = true)
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  private def packageKBartExport(packages_to_export){
-    def filename = null
-    if (packages_to_export.size() == 0){
-      return
-    }
-
-    def export_date = dateFormatService.formatDate(new Date())
-    if (packages_to_export.size() == 1){
-      filename = "kbart_${packages_to_export[0].provider?.name}_${packages_to_export[0].name}_${export_date}"
-    }
-    else{
-      filename = "kbart_multiple_packages_${export_date}.tsv"
-      response.setContentType('text/tab-separated-values')
-    }
-
-    try{
-      response.setHeader("Content-disposition", "attachment; filename=\"${filename}\"")
-      packages_to_export.each{ pkg ->
-        exportService.exportOriginalKBART(response.outputStream, pkg)
-      }
-    }
-    catch (Exception e){
-      log.error("Problem with export", e)
-    }
-  }
-
-
   private writeExportLine(Writer writer, Closure<String> sanitize, TitleInstancePackagePlatform tipp, def tippCoverageStatement){
     writer.write(
         sanitize(tipp.name) + '\t' +
@@ -1524,36 +1493,6 @@ class WorkflowController{
             sanitize(tipp.accessType?.value) + '\t' +  // access_type
             sanitize(tipp.title.getIdentifierValue('ZDB')) +
             '\n')
-  }
-
-
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  private def packageTSVExport(packages_to_export){
-    def filename = null
-    if (packages_to_export.size() == 0){
-      return
-    }
-
-    def export_date = dateFormatService.formatDate(new Date())
-    if (packages_to_export.size() == 1){
-      filename = "wekb_package_${packages_to_export[0].provider?.name}_${packages_to_export[0].name}_${export_date}.tsv"
-    }
-    else{
-      filename = "wekb_package_multiple_packages_${export_date}.txt"
-    }
-
-    try{
-      response.setContentType('text/tab-separated-values')
-      response.setHeader("Content-disposition", "attachment; filename=\"${filename}\"")
-      response.contentType = "text/tab-separated-values" // "text/tsv"
-
-      packages_to_export.each{ pkg ->
-        exportService.exportPackageTippsAsTSVNew(response.outputStream, pkg)
-      }
-    }
-    catch (Exception e){
-      log.error("Problem with export", e)
-    }
   }
 
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
@@ -1671,44 +1610,6 @@ class WorkflowController{
     result
   }
 
-  /**
-   *  deleteCombo : Used to delete a combo object.
-   * @param id : The id of the combo object
-   */
-
-  // Deprecated – use action in AjaxSupport instead
-  @Deprecated
-  @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  def deleteCombo(){
-    Combo c = Combo.get(params.id)
-    if (c.fromComponent.isEditable()){
-      log.debug("Delete combo..")
-      c.delete(flush: true)
-    }
-    else{
-      log.debug("Not deleting combo.. no edit permissions on fromComponent!")
-    }
-
-    withFormat{
-      html{
-        def redirect_to = request.getHeader('referer')
-
-        if (params.redirect){
-          redirect_to = params.redirect
-        }
-        else if ((params.fragment) && (params.fragment.length() > 0)){
-          redirect_to = "${redirect_to}#${params.fragment}"
-        }
-
-        redirect(url: redirect_to)
-      }
-      json{
-        render result as JSON
-      }
-    }
-  }
-
   @Transactional
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   private def verifyTitleList(packages_to_verify){
@@ -1735,8 +1636,6 @@ class WorkflowController{
     triggerSourceUpdate(packages_to_update, true)
   }
 
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-
   private def triggerSourceUpdate(packages_to_update, boolean allTitles=false) {
     log.info("triggerSourceUpdate for Packages ${packages_to_update}..")
     def user = springSecurityService.currentUser
@@ -1761,6 +1660,10 @@ class WorkflowController{
           if (pkgObj?.isEditable() && (is_curator || !curated_pkg  || user.authorities.contains(Role.findByAuthority('ROLE_SUPERUSER')))) {
             Map result = autoUpdatePackagesService.updateFromSource(pkgObj, user, allTitles)
 
+            if(result.ygorData){
+              autoUpdatePackagesService.importJsonFromUpdateSource(result.ygorData)
+            }
+
             if (result.result == JobResult.STATUS_SUCCESS){
               flash.success = result.message
             }
@@ -1784,6 +1687,22 @@ class WorkflowController{
       }
     }
     log.debug('triggerSourceUpdate() done - redirecting')
+    redirect(url: request.getHeader('referer'))
+  }
+
+  @Secured(['ROLE_SUPERUSER', 'IS_AUTHENTICATED_FULLY'])
+  def deleteIdentifierNamespace(identifierNamespaces) {
+    log.info("deleteIdentifierNamespace ${identifierNamespaces}..")
+    identifierNamespaces.each { idn ->
+      IdentifierNamespace identifierNamespace = IdentifierNamespace.get(idn.id)
+      if(!Org.findByPackageNamespace(identifierNamespace) && !Platform.findByTitleNamespace(identifierNamespace) && !Source.findByTargetNamespace(identifierNamespace) && !Identifier.findByNamespace(identifierNamespace)){
+        identifierNamespace.delete(flush: true)
+      }else {
+        flash.error = "Identifier Namespace is linked with identifier or org or source or platform! Please unlink first!"
+      }
+
+
+    }
     redirect(url: request.getHeader('referer'))
   }
 }

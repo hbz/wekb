@@ -1,7 +1,13 @@
 package org.gokb.cred
 import com.k_int.ClassUtils
+import de.wekb.helper.RCConstants
+
+import javax.persistence.Transient
 
 class IdentifierNamespace {
+
+  @Transient
+  def springSecurityService
 
   String name
   String value
@@ -74,5 +80,34 @@ class IdentifierNamespace {
 
   public String toString() {
     "${name ?: value}".toString()
+  }
+
+  @Transient
+  def availableActions() {
+    [
+            [code: 'deleteIdentifierNamespace', label: 'Delete Namespace', perm: 'su']
+    ]
+  }
+
+  @Transient
+  userAvailableActions(){
+    def user = springSecurityService.currentUser
+    def allActions = []
+    def result = []
+    if (this.respondsTo('availableActions')){
+      allActions = this.availableActions()
+      allActions.each{ ao ->
+        if (ao.perm == "delete" && !this.isDeletable()){
+        }
+        else if (ao.perm == "admin" && !this.isAdministerable()){
+        }
+        else if (ao.perm == "su" && !user.hasRole('ROLE_SUPERUSER')){
+        }
+        else{
+          result.add(ao)
+        }
+      }
+    }
+    result
   }
 }
