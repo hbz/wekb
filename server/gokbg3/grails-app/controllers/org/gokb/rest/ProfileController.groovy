@@ -11,7 +11,7 @@ import org.gokb.cred.Role
 import org.gokb.cred.User
 import grails.plugin.springsecurity.annotation.Secured
 
-@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+@Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
 class ProfileController {
 
   static namespace = 'rest'
@@ -71,7 +71,7 @@ class ProfileController {
     render result as JSON
   }
 
-  @Secured(value = ['ROLE_USER', 'IS_AUTHENTICATED_FULLY'], httpMethod = 'PATCH')
+  //@Secured(value = ['ROLE_USER', 'IS_AUTHENTICATED_FULLY'], httpMethod = 'PATCH')
   @Transactional
   def patch() {
     Map result = [:]
@@ -95,7 +95,7 @@ class ProfileController {
     render result as JSON
   }
 
-  @Secured(value = ['ROLE_USER', 'IS_AUTHENTICATED_FULLY'], httpMethod = 'DELETE')
+  //@Secured(value = ['ROLE_USER', 'IS_AUTHENTICATED_FULLY'], httpMethod = 'DELETE')
   @Transactional
   def delete() {
     User user = User.get(springSecurityService.principal.id)
@@ -103,7 +103,7 @@ class ProfileController {
     response.status = 204
   }
 
-  @Secured("hasAnyRole('ROLE_USER') and isAuthenticated()")
+  //@Secured("hasAnyRole('ROLE_USER') and isAuthenticated()")
   def getJobs() {
     def result = [:]
     def max = params.limit ? params.int('limit') : 10
@@ -147,7 +147,7 @@ class ProfileController {
     render result as JSON
   }
 
-  @Secured("hasAnyRole('ROLE_USER') and isAuthenticated()")
+  //@Secured("hasAnyRole('ROLE_USER') and isAuthenticated()")
   def cleanupJobs() {
     def result = [:]
     def max = params.limit ? params.int('limit') : 10

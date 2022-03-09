@@ -12,6 +12,7 @@ import org.gokb.cred.User
 import grails.plugin.springsecurity.annotation.Secured
 import java.util.concurrent.CancellationException
 
+@Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
 class JobsController {
 
   static namespace = 'rest'

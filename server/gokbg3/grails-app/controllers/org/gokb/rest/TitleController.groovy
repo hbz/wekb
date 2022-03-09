@@ -16,6 +16,7 @@ import org.gokb.cred.*
 import org.grails.datastore.mapping.model.*
 import org.grails.datastore.mapping.model.types.*
 
+@Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
 @Transactional(readOnly = true)
 class TitleController {
 
@@ -31,14 +32,14 @@ class TitleController {
   def componentLookupService
   def dateFormatService
 
-  @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
+  //@Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
   def getTypes() {
     def result = ["serial","monograph","database"]
 
     return result as JSON
   }
 
-  @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
+  //@Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
   def index() {
     log.debug("Index with params: ${params}")
     def result = [:]
@@ -98,7 +99,7 @@ class TitleController {
     return type
   }
 
-  @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
+  //@Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
   def show() {
     def result = [:]
     def obj = null
@@ -149,7 +150,7 @@ class TitleController {
   }
 
   @Transactional
-  @Secured(value=["hasRole('ROLE_USER')", 'IS_AUTHENTICATED_FULLY'], httpMethod='POST')
+  //@Secured(value=["hasRole('ROLE_USER')", 'IS_AUTHENTICATED_FULLY'], httpMethod='POST')
   def save() {
     def result = ['result':'OK', 'params': params]
     def reqBody = request.JSON
@@ -277,7 +278,7 @@ class TitleController {
     render result as JSON
   }
 
-  @Secured(value=["hasRole('ROLE_USER')", 'IS_AUTHENTICATED_FULLY'], httpMethod='GET')
+  //@Secured(value=["hasRole('ROLE_USER')", 'IS_AUTHENTICATED_FULLY'], httpMethod='GET')
   def getHistory() {
     def result = [:]
     def user = User.get(springSecurityService.principal.id)
@@ -306,7 +307,7 @@ class TitleController {
   }
 
   @Transactional
-  @Secured(value=["hasRole('ROLE_EDITOR')", 'IS_AUTHENTICATED_FULLY'], httpMethod='POST')
+  //@Secured(value=["hasRole('ROLE_EDITOR')", 'IS_AUTHENTICATED_FULLY'], httpMethod='POST')
   def addHistory() {
     def result = [:]
     def errors = [:]
@@ -357,7 +358,7 @@ class TitleController {
   }
 
   @Transactional
-  @Secured(value=["hasRole('ROLE_EDITOR')", 'IS_AUTHENTICATED_FULLY'])
+  //@Secured(value=["hasRole('ROLE_EDITOR')", 'IS_AUTHENTICATED_FULLY'])
   def updateHistory() {
     log.debug("Updating history ..")
     def result = [:]
@@ -655,7 +656,7 @@ class TitleController {
     result
   }
 
-  @Secured(value=["hasRole('ROLE_EDITOR')", 'IS_AUTHENTICATED_FULLY'])
+  //@Secured(value=["hasRole('ROLE_EDITOR')", 'IS_AUTHENTICATED_FULLY'])
   @Transactional
   def update() {
     def result = ['result':'OK', 'params': params]
@@ -741,7 +742,7 @@ class TitleController {
     errors
   }
 
-  @Secured(value=["hasRole('ROLE_EDITOR')", 'IS_AUTHENTICATED_FULLY'], httpMethod='DELETE')
+  //@Secured(value=["hasRole('ROLE_EDITOR')", 'IS_AUTHENTICATED_FULLY'], httpMethod='DELETE')
   @Transactional
   def delete() {
     def result = ['result':'OK', 'params': params]
@@ -792,7 +793,7 @@ class TitleController {
     return curator
   }
 
-  @Secured(value=["hasRole('ROLE_EDITOR')", 'IS_AUTHENTICATED_FULLY'])
+  //@Secured(value=["hasRole('ROLE_EDITOR')", 'IS_AUTHENTICATED_FULLY'])
   @Transactional
   def retire() {
     def result = ['result':'OK', 'params': params]
@@ -824,7 +825,7 @@ class TitleController {
     result
   }
 
-  @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
+  //@Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
   def tipps() {
     def result = [:]
     User user = null

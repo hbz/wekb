@@ -93,7 +93,7 @@ class IdentifierController {
   }
 
   @Transactional
-  @Secured(value = ["hasRole('ROLE_USER')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
+  @Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
   def save() {
     def result = [:]
     def reqBody = request.JSON

@@ -12,7 +12,7 @@ import org.gokb.cred.User
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.dao.SaltSource
 
-@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+@Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
 @Transactional(readOnly = true)
 class UsersController {
 
