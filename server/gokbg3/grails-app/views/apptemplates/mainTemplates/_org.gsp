@@ -153,7 +153,7 @@
                                       filter1="${RCConstants.CONTACT_CONTENT_TYPE}" />
       </dd>
 
-      <dt class="dt-label">Type</dt>
+      <dt class="dt-label">Contact Type</dt>
       <dd>
         <gokb:simpleReferenceTypedown class="form-control" name="type"
                                       baseClass="org.gokb.cred.RefdataValue"
