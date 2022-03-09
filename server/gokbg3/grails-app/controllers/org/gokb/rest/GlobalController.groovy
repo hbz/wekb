@@ -27,7 +27,7 @@ class GlobalController {
   def restMappingService
   def componentLookupService
 
-  @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
+  @Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
   def index() {
     def result = [:]
     def base = grailsApplication.config.serverUrl + "/rest"

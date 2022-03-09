@@ -98,7 +98,7 @@ class TippController {
   }
 
   @Transactional
-  @Secured(value = ["hasRole('ROLE_CONTRIBUTOR')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
+  @Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
   def save() {
     def result = ['result': 'OK', 'params': params]
     def reqBody = request.JSON
@@ -161,7 +161,7 @@ class TippController {
     render result as JSON
   }
 
-  @Secured(value = ["hasRole('ROLE_CONTRIBUTOR')", 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
   @Transactional
   def update() {
     def result = ['result': 'OK', 'params': params]
@@ -339,7 +339,7 @@ class TippController {
     tipp
   }
 
-  @Secured(value = ["hasRole('ROLE_CONTRIBUTOR')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'DELETE')
+  @Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
   @Transactional
   def delete() {
     def result = ['result': 'OK', 'params': params]
@@ -371,7 +371,7 @@ class TippController {
     render result as JSON
   }
 
-  @Secured(value = ["hasRole('ROLE_CONTRIBUTOR')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'GET')
+  @Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
   @Transactional
   def retire() {
     def result = ['result': 'OK', 'params': params]
