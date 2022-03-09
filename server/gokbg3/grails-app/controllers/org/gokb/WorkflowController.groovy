@@ -8,6 +8,7 @@ import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
+import wekb.AccessService
 import wekb.AutoUpdatePackagesService
 import wekb.ExportService
 import wekb.GlobalSearchTemplatesService
@@ -23,6 +24,7 @@ class WorkflowController{
   GlobalSearchTemplatesService globalSearchTemplatesService
   ExportService exportService
   AutoUpdatePackagesService autoUpdatePackagesService
+  AccessService accessService
 
   def actionConfig = [
       'method::deleteSoft'     : [actionType: 'simple'],
@@ -1171,183 +1173,6 @@ class WorkflowController{
     redirect(url: params.ref)
   }
 
-  /**
-   *  authorizeVariant : Used to replace the name of a component by one of its variant names.
-   * @param id : The id of the variant name
-   */
-
-  // Deprecated – use action in AjaxSupport instead
-  @Deprecated
-  @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  def authorizeVariant(){
-    log.debug("${params}")
-    def result = ['result': 'OK', 'params': params]
-    def variant = KBComponentVariantName.get(params.id)
-
-    if (variant != null && variant.owner.isEditable()){
-      // Does the current owner.name exist in a variant? If not, we should create one so we don't loose the info
-      def current_name_as_variant = variant.owner.variantNames.find{ it.variantName == variant.owner.name }
-      if (current_name_as_variant == null){
-        log.debug("No variant name found for current name: ${variant.owner.name} ")
-        def variant_name = variant.owner.getId()
-        if (variant.owner.name){
-          variant_name = variant.owner.name
-        }
-        else if (variant.owner?.respondsTo('getDisplayName') && variant.owner.getDisplayName()){
-          variant_name = variant.owner.getDisplayName()?.trim()
-        }
-        else if (variant.owner?.respondsTo('getName')){
-          variant_name = variant.owner?.getName()?.trim()
-        }
-        def new_variant = new KBComponentVariantName(owner: variant.owner, variantName: variant_name).save(flush: true)
-      }
-      else{
-        log.debug("Found existing variant name: ${current_name_as_variant}")
-      }
-      variant.variantType = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_VARIANTNAME_VARIANT_TYPE, 'Authorized')
-      variant.owner.name = variant.variantName
-
-      if (variant.owner.validate()){
-        variant.owner.save(flush: true)
-      }
-      else{
-        result.result = 'ERROR'
-        result.code = 400
-        result.message = "This name already belongs to another component of the same type!"
-        flash.error = "This name already belongs to another component of the same type!"
-      }
-    }
-    else if (!variant){
-      result.result = 'ERROR'
-      result.code = 404
-      result.message = "Could not find variant!"
-    }
-    else{
-      result.result = 'ERROR'
-      result.code = 403
-      result.message = "Owner object is not editable!"
-      flash.error = "Owner object is not editable!"
-    }
-
-    withFormat{
-      html{
-        def redirect_to = request.getHeader('referer')
-
-        if (params.redirect){
-          redirect_to = params.redirect
-        }
-        else if ((params.fragment) && (params.fragment.length() > 0)){
-          redirect_to = "${redirect_to}#${params.fragment}"
-        }
-      }
-      json{
-        render result as JSON
-      }
-    }
-  }
-
-  /**
-   *  deleteVariant : Used to delete a variant name of a component.
-   * @param id : The id of the variant name
-   */
-
-  // Deprecated – use action in AjaxSupport instead
-  @Deprecated
-  @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  def deleteVariant(){
-    log.debug("${params}")
-    def result = ['result': 'OK', 'params': params]
-    def variant = KBComponentVariantName.get(params.id)
-
-    if (variant != null && variantOwner.isEditable()){
-      def variantOwner = variant.owner
-      def variantName = variant.variantName
-
-      variant.delete()
-      variantOwner.lastUpdateComment = "Deleted Alternate Name ${variantName}."
-      variantOwner.save(flush: true)
-
-      result.owner_oid = "${variantOwner.class.name}:${variantOwner.id}"
-      result.deleted_variant = "${variantName}"
-    }
-    else if (!variant){
-      result.result = 'ERROR'
-      result.code = 404
-      result.message = "Could not find variant!"
-    }
-    else{
-      result.result = 'ERROR'
-      result.code = 403
-      result.message = "Owner object is not editable!"
-    }
-
-    withFormat{
-      html{
-        def redirect_to = request.getHeader('referer')
-
-        if (params.redirect){
-          redirect_to = params.redirect
-        }
-        else if ((params.fragment) && (params.fragment.length() > 0)){
-          redirect_to = "${redirect_to}#${params.fragment}"
-        }
-      }
-      json{
-        render result as JSON
-      }
-    }
-  }
-
-  /**
-   *  deleteCoverageStatement : Used to delete a TIPPCoverageStatement.
-   * @param id : The id of the coverage statement object
-   */
-
-  // Deprecated – use action in AjaxSupport instead
-  @Deprecated
-  @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  def deleteCoverageStatement(){
-    log.debug("${params}")
-    def result = ['result': 'OK', 'params': params]
-    def tcs = TIPPCoverageStatement.get(params.id)
-    def tipp = tcs.owner
-
-    if (tcs != null && tipp.isEditable()){
-      tcs.delete()
-      tipp.lastUpdateComment = "Deleted Coverage Statement."
-      tipp.save(flush: true)
-    }
-    else if (!tcs){
-      result.result = 'ERROR'
-      result.code = 404
-      result.message = "Could not find coverage statement!"
-    }
-    else{
-      result.result = 'ERROR'
-      result.code = 403
-      result.message = "This TIPP is not editable!"
-    }
-
-    withFormat{
-      html{
-        def redirect_to = request.getHeader('referer')
-
-        if (params.redirect){
-          redirect_to = params.redirect
-        }
-        else if ((params.fragment) && (params.fragment.length() > 0)){
-          redirect_to = "${redirect_to}#${params.fragment}"
-        }
-      }
-      json{
-        render result as JSON
-      }
-    }
-  }
-
   @Transactional
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   def processRRTransfer(){
@@ -1549,7 +1374,7 @@ class WorkflowController{
 
         def old_org = Org.get(org_id)
 
-        if (old_org && neworg && old_org.isEditable()){
+        if (old_org && neworg && accessService.checkEditableObject(old_org, params)){
           log.debug("Got org to deprecate and neworg...  Process now")
           // Updating all combo.toComponent
           // Updating all combo.fromComponent

@@ -24,7 +24,7 @@ class AccessService {
 
                 if(user.curatoryGroups?.id.intersect(curatedObj.curatoryGroups?.id).size() > 0)
                 {
-                    editable = SecurityApi.isTypeEditable(o.getClass(), true) ?: (grailsParameterMap.curationOverride == 'true' && grailsParameterMap.isAdmin())
+                    editable = SecurityApi.isTypeEditable(o.getClass(), true) ?: (grailsParameterMap.curationOverride == 'true' && user.isAdmin())
                 }else {
                     editable = SpringSecurityUtils.ifAnyGranted('ROLE_SUPERUSER') ?: false
                 }
