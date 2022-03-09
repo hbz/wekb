@@ -320,7 +320,7 @@ class Org extends KBComponent {
                 builder.'name'(pkg.name)
                 builder.'identifiers' {
                   pkg.ids?.each { tid ->
-                    builder.'identifier'(['namespace': tid.namespace?.value, 'namespaceName': tid.namespace?.name, 'value': tid.value, 'datatype': tid.namespace.datatype?.value])
+                    builder.'identifier'(['namespace': tid.namespace?.value, 'namespaceName': tid.namespace?.name, 'value': tid.value])
                   }
                 }
                 builder.'curatoryGroups' {
