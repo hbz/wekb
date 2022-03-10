@@ -522,7 +522,7 @@ class GlobalSearchTemplatesService {
     Map namespaces() {
         Map result = [
                 baseclass: 'org.gokb.cred.IdentifierNamespace',
-                title    : 'Namespaces',
+                title    : 'Identifier Namespaces',
                 group    : 'Tertiary',
                 defaultSort : 'name',
                 defaultOrder: 'asc',
@@ -538,11 +538,11 @@ class GlobalSearchTemplatesService {
                         qbeGlobals: [
                         ],
                         qbeResults: [
-                                [heading: 'Value', property: 'value', link: true],
-                                [heading: 'Name', property: 'name'],
-                                [heading: 'RDF Datatype', property: 'datatype?.value'],
-                                [heading: 'Category', property: 'family'],
-                                [heading: 'Target Type', property: 'targetType.value']
+                                [heading: 'Name', property: 'name', sort: 'name'],
+                                [heading: 'Value', property: 'value', link: true, sort: 'value'],
+                                [heading: 'Category', property: 'family', sort: 'family'],
+                                [heading: 'Target Type', property: 'targetType.value'],
+                                [heading: 'Count', property: 'identifiersCount']
                         ]
                 ]
         ]

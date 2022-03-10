@@ -1,5 +1,6 @@
 package org.gokb.cred
 import com.k_int.ClassUtils
+import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
 
 import javax.persistence.Transient
@@ -11,8 +12,10 @@ class IdentifierNamespace {
 
   String name
   String value
-  RefdataValue  datatype
+
+  @RefdataAnnotation(cat = RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE)
   RefdataValue targetType
+
   String pattern
   String family
 
@@ -22,7 +25,6 @@ class IdentifierNamespace {
   static mapping = {
     name column:'idns_name'
     value column:'idns_value'
-    datatype column:'idns_datatype'
     targetType column:'idns_targettype'
     family column:'idns_family'
     pattern column:'idns_pattern'
@@ -34,7 +36,6 @@ class IdentifierNamespace {
     // II: Want this, but need to tidy live first :: value (nullable:true, blank:false, unique:true)
     name (nullable:true)
     value (nullable:true, blank:false, unique:true)
-    datatype (nullable:true, blank:false)
     family (nullable:true, blank:false)
     pattern (nullable:true, blank:false)
     targetType (nullable:true, blank:false)
@@ -62,10 +63,12 @@ class IdentifierNamespace {
   static def refdataFind(params) {
     def result = [];
     def ql = null;
-    // ql = TitleInstance.findAllByNameIlike("${params.q}%",params)
-    // Return all titles where the title matches (Left anchor) OR there is an identifier for the title matching what is input
-    ql = IdentifierNamespace.executeQuery("select t.id, t.value from IdentifierNamespace as t where lower(t.value) like ?", ["${params.q?.toLowerCase()}%"],[max:20]);
-
+    if(params.filter1){
+      RefdataValue refdataValue = RefdataValue.findByValueAndOwner(params.filter1, RefdataCategory.findByDesc(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE))
+      ql = IdentifierNamespace.executeQuery("select t.id, t.value from IdentifierNamespace as t where lower(t.value) like :value and (t.targetType is null or t.targetType = :targetType) order by t.value", [value: "${params.q?.toLowerCase()}%", targetType: refdataValue], [max: params.max])
+    }else {
+      ql = IdentifierNamespace.executeQuery("select t.id, t.value from IdentifierNamespace as t where lower(t.value) like :value and t.targetType is null order by t.value", [value: "${params.q?.toLowerCase()}%"], [max: params.max]);
+    }
     if ( ql ) {
       ql.each { t ->
         result.add([id:"org.gokb.cred.IdentifierNamespace:${t[0]}",text:"${t[1]} "])
@@ -80,6 +83,11 @@ class IdentifierNamespace {
 
   public String toString() {
     "${name ?: value}".toString()
+  }
+
+  @Transient
+  def getIdentifiersCount() {
+    return Identifier.executeQuery("select count(value) from Identifier where namespace = :namespace", [namespace: this])[0]
   }
 
   @Transient

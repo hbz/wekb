@@ -13,7 +13,7 @@
 
         <dt class="dt-label">Identifier Namespace</dt>
         <dd>
-          <gokb:simpleReferenceTypedown class="form-control" name="identifierNamespace" baseClass="org.gokb.cred.IdentifierNamespace" />
+          <gokb:simpleReferenceTypedown class="form-control" name="identifierNamespace" baseClass="org.gokb.cred.IdentifierNamespace" filter1="${d.class.simpleName}"/>
         </dd>
 
         <dt class="dt-label">Identifier Value</dt>

@@ -137,6 +137,26 @@ class PublicController {
     result
   }
 
+  def identifierContent() {
+    log.debug("identifierContent::${params}")
+    def result = [:]
+    if ( params.id ) {
+      def identifier_id_components = params.id.split(':');
+
+      if ( identifier_id_components?.size() == 2 ) {
+        result.identifier = Identifier.get(Long.parseLong(identifier_id_components[1]));
+      }
+      else {
+        result.identifier = Identifier.findByUuid(params.id)
+      }
+
+      if (!result.identifier) {
+        flash.error = "Identifier not found"
+      }
+    }
+    result
+  }
+
   def orgContent() {
     log.debug("orgContent::${params}")
     def result = [:]

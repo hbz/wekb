@@ -1,14 +1,9 @@
 package org.gokb
 
 import grails.converters.*
-import org.springframework.security.acls.model.NotFoundException
 import org.springframework.security.access.annotation.Secured;
-import com.k_int.apis.SecurityApi
-import org.springframework.security.acls.model.Permission
 
-import grails.util.GrailsClassUtils
 import org.gokb.cred.*
-import wekb.GlobalSearchTemplatesService
 import wekb.SearchService
 
 @Secured(['IS_AUTHENTICATED_FULLY'])
@@ -16,10 +11,6 @@ class SearchController {
 
   def genericOIDService
   def springSecurityService
-  def classExaminationService
-  def gokbAclService
-  def displayTemplateService
-  GlobalSearchTemplatesService globalSearchTemplatesService
   SearchService searchService
 
 
