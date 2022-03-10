@@ -819,4 +819,34 @@ select tipp.id,
     return result
   }
 
+  void createCoreIdentifiersIfNotExist(){
+     boolean isChanged = false
+      ['Anbieter_Produkt_ID'].each{ coreNs ->
+        if ( ! ids.find {it.namespace.value == coreNs}){
+          addOnlySpecialIdentifiers(coreNs, 'Unknown')
+          isChanged = true
+        }
+      }
+      if (isChanged) refresh()
+  }
+
+  void addOnlySpecialIdentifiers(String ns, String value) {
+    boolean found = false
+    this.ids.each {
+      if ( it.namespace?.value == ns && it.value == value ) {
+        found = true
+      }
+    }
+
+    if ( !found && value != '') {
+      value = value?.trim()
+      ns = ns.trim()
+      def norm_id = Identifier.normalizeIdentifier(value)
+      IdentifierNamespace namespace = IdentifierNamespace.findByValueIlike(ns)
+      Identifier identifier = new Identifier(namespace: namespace, value: value, normname: norm_id).save(flush:true, failOnError:true)
+      def new_id = new Combo(fromComponent: this, toComponent: identifier, status: RDStore.COMBO_STATUS_ACTIVE, type: RDStore.COMBO_TYPE_KB_IDS).save(flush: true, failOnError: true)
+
+    }
+  }
+
 }

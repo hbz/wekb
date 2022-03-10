@@ -313,6 +313,7 @@ IdentifierNamespace.TargetType;Org;Org;Org
 IdentifierNamespace.TargetType;Other;Other;Other
 IdentifierNamespace.TargetType;Package;Package;Package
 IdentifierNamespace.TargetType;Title;Title;Title
+IdentifierNamespace.TargetType;TitleInstancePackagePlatform;TitleInstancePackagePlatform;TitleInstancePackagePlatform
 ingest.filetype;cufts;cufts;cufts
 ingest.filetype;ingram;ingram;ingram
 ingest.filetype;kbart2;kbart2;kbart3

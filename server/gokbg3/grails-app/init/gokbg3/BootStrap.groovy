@@ -198,17 +198,37 @@ class BootStrap {
 
         log.info("Ensure default Identifier namespaces")
         def namespaces = [
-                [value: 'isbn', name: 'ISBN', family: 'isxn', pattern: "^(?=[0-9]{13}\$|(?=(?:[0-9]+-){4})[0-9-]{17}\$)97[89]-?[0-9]{1,5}-?[0-9]+-?[0-9]+-?[0-9]\$"],
-                [value: 'pisbn', name: 'Print-ISBN', family: 'isxn', pattern: "^(?=[0-9]{13}\$|(?=(?:[0-9]+-){4})[0-9-]{17}\$)97[89]-?[0-9]{1,5}-?[0-9]+-?[0-9]+-?[0-9]\$"],
-                [value: 'issn', name: 'p-ISSN', family: 'isxn', pattern: "^\\d{4}\\-\\d{3}[\\dX]\$"],
-                [value: 'eissn', name: 'e-ISSN', family: 'isxn', pattern: "^\\d{4}\\-\\d{3}[\\dX]\$"],
-                [value: 'issnl', name: 'ISSN-L', family: 'isxn', pattern: "^\\d{4}\\-\\d{3}[\\dX]\$"],
-                [value: 'doi', name: 'DOI'],
-                [value: 'zdb', name: 'ZDB-ID', pattern: "^\\d+-[\\dxX]\$"],
-                [value: 'isil', name: 'ISIL', pattern: "^(?=[0-9A-Z-]{4,16}\$)[A-Z]{1,4}-[A-Z0-9]{1,11}(-[A-Z0-9]+)?\$"],
-                [value: 'package_ezb_anchor', name: 'EZB Anchor'],
-                [value: 'ezb', name: 'EZB-ID'],
-                [value: 'package_isci', name: 'Package ISCI'],
+                [value: 'cup', name: 'cup', targetType: 'TitleInstancePackagePlatform'],
+                [value: 'dnb', name: 'dnb', targetType: 'TitleInstancePackagePlatform'],
+                [value: 'doi', name: 'DOI', targetType: 'TitleInstancePackagePlatform'],
+                [value: 'eissn', name: 'e-ISSN', family: 'isxn', pattern: "^\\d{4}\\-\\d{3}[\\dX]\$", targetType: 'TitleInstancePackagePlatform'],
+                [value: 'ezb', name: 'EZB-ID', targetType: 'TitleInstancePackagePlatform'],
+                [value: 'gnd-id', name: 'gnd-id', targetType: 'TitleInstancePackagePlatform'],
+                [value: 'isbn', name: 'ISBN', family: 'isxn', pattern: "^(?=[0-9]{13}\$|(?=(?:[0-9]+-){4})[0-9-]{17}\$)97[89]-?[0-9]{1,5}-?[0-9]+-?[0-9]+-?[0-9]\$", targetType: 'TitleInstancePackagePlatform'],
+                [value: 'issn', name: 'p-ISSN', family: 'isxn', pattern: "^\\d{4}\\-\\d{3}[\\dX]\$", targetType: 'TitleInstancePackagePlatform'],
+                [value: 'issnl', name: 'ISSN-L', family: 'isxn', pattern: "^\\d{4}\\-\\d{3}[\\dX]\$", targetType: 'TitleInstancePackagePlatform'],
+                [value: 'isil', name: 'ISIL', pattern: "^(?=[0-9A-Z-]{4,16}\$)[A-Z]{1,4}-[A-Z0-9]{1,11}(-[A-Z0-9]+)?\$",  targetType: 'TitleInstancePackagePlatform'],
+                [value: 'pisbn', name: 'Print-ISBN', family: 'isxn', pattern: "^(?=[0-9]{13}\$|(?=(?:[0-9]+-){4})[0-9-]{17}\$)97[89]-?[0-9]{1,5}-?[0-9]+-?[0-9]+-?[0-9]\$", targetType: 'TitleInstancePackagePlatform'],
+                [value: 'oclc', name: 'oclc', targetType: 'TitleInstancePackagePlatform'],
+                [value: 'preselect', name: 'preselect', targetType: 'TitleInstancePackagePlatform'],
+                [value: 'zdb', name: 'ZDB-ID', pattern: "^\\d+-[\\dxX]\$", targetType: 'TitleInstancePackagePlatform'],
+
+
+                [value: 'Anbieter_Produkt_ID', name: 'Anbieter_Produkt_ID', targetType: 'Package'],
+                [value: 'dnb', name: 'dnb', targetType: 'Package'],
+                [value: 'doi', name: 'DOI', targetType: 'Package'],
+                [value: 'ezb', name: 'EZB-ID', targetType: 'Package'],
+                [value: 'gvk_ppn', name: 'gvk_ppn', targetType: 'Package'],
+                [value: 'isil', name: 'ISIL', pattern: "^(?=[0-9A-Z-]{4,16}\$)[A-Z]{1,4}-[A-Z0-9]{1,11}(-[A-Z0-9]+)?\$",  targetType: 'Package'],
+                [value: 'package_isci', name: 'Package ISCI',  targetType: 'Package'],
+                [value: 'package_ezb_anchor', name: 'EZB Anchor',  targetType: 'Package'],
+                [value: 'zdb', name: 'ZDB-ID', pattern: "^\\d+-[\\dxX]\$", targetType: 'Package'],
+                [value: 'zdb_ppn', name: 'EZB Anchor',  targetType: 'Package'],
+
+
+                [value: 'gnd-id', name: 'gnd-id', targetType: 'Org'],
+                [value: 'isil', name: 'ISIL', pattern: "^(?=[0-9A-Z-]{4,16}\$)[A-Z]{1,4}-[A-Z0-9]{1,11}(-[A-Z0-9]+)?\$",  targetType: 'Org'],
+                [value: 'zdb_ppn', name: 'EZB Anchor',  targetType: 'Org'],
         ]
 
         namespaces.each { ns ->
@@ -222,6 +242,11 @@ class BootStrap {
 
                 if (ns.name && !ns_obj.name) {
                     ns_obj.name = ns.name
+                    ns_obj.save(flush: true)
+                }
+
+                if (ns.targetType) {
+                    ns_obj.targetType = RefdataValue.findByValueAndOwner(ns.targetType, RefdataCategory.findByDesc(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE))
                     ns_obj.save(flush: true)
                 }
             } else {
