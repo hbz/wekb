@@ -37,7 +37,7 @@
             <td>
                 <ul>
                     <g:each in="${t.ids.sort{it.namespace.value}}" var="id">
-                        <li><strong>${id.namespace.value}</strong> : ${id.value}</li>
+                        <li><strong>${id.namespace.value}</strong>:<g:link controller="public" action="identifierContent" id="${id.uuid}">  ${id.value}</g:link></li>
                     </g:each>
                 </ul>
             </td>
