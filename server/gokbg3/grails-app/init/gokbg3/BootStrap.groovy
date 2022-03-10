@@ -232,7 +232,7 @@ class BootStrap {
         ]
 
         namespaces.each { ns ->
-            def ns_obj = IdentifierNamespace.findByValue(ns.value)
+            def ns_obj = IdentifierNamespace.findByValueAndTargetType(ns.value, ns.targetType)
 
             if (ns_obj) {
                 if (ns.pattern && !ns_obj.pattern) {
