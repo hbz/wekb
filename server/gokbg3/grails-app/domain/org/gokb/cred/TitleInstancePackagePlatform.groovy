@@ -857,9 +857,28 @@ class TitleInstancePackagePlatform extends KBComponent {
       }
 
       if (!tipp) {
+        if(tipps.size() == 0){
+          if (trimmed_url && trimmed_url.size() > 0) {
+            log.debug("not found Tipp with title. research in pkg ${pkg} with url")
+            tipps = TitleInstancePackagePlatform.executeQuery('select tipp from TitleInstancePackagePlatform as tipp, Combo as pkg_combo, Combo as platform_combo  ' +
+                    'where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg ' +
+                    'and platform_combo.toComponent=tipp and platform_combo.fromComponent = :platform ' +
+                    'and tipp.url = :url',
+                    [pkg: pkg, platform: plt, url: trimmed_url])
+          }
+
+          if(tipps.size() == 0) {
+            log.debug("not found Tipp with title. research in pkg ${pkg} with tile_id")
+            tipps = TitleInstancePackagePlatform.executeQuery('select tipp from TitleInstancePackagePlatform as tipp, Combo as pkg_combo, Combo as platform_combo  ' +
+                    'where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg ' +
+                    'and platform_combo.toComponent=tipp and platform_combo.fromComponent = :platform ',
+                    [pkg: pkg, platform: plt])
+          }
+
+        }
         switch (tipps.size()) {
           case 0:
-              log.debug("not found Tipp: [pkg: ${pkg}, platform: ${plt}, tiName: ${ti.name}, tiDtoName: ${tipp_dto.name}]")
+            log.debug("not found Tipp: [pkg: ${pkg}, platform: ${plt}, tiName: ${ti.name}, tiDtoName: ${tipp_dto.name}]")
             break
           case 1:
             if (trimmed_url && trimmed_url.size() > 0) {
@@ -870,10 +889,10 @@ class TitleInstancePackagePlatform extends KBComponent {
 
                 //if url changed find tipp over title id
                 TitleInstancePackagePlatform tippMatchedByTitleID = tippMatchingByTitleID(tipp_dto.identifiers, pkg, plt)
-                if(tippMatchedByTitleID && tippMatchedByTitleID.id == tipps[0].id){
+                if (tippMatchedByTitleID && tippMatchedByTitleID.id == tipps[0].id) {
                   log.debug("found tipp")
                   tipp = tipps[0]
-                }else{
+                } else {
                   log.debug("not found Tipp because url changed: [pkg: ${pkg}, platform: ${plt}, tiName: ${ti.name}, tiDtoName: ${tipp_dto.name}, url: ${trimmed_url}]")
                 }
               }
@@ -894,26 +913,25 @@ class TitleInstancePackagePlatform extends KBComponent {
             if (cur_tipps.size() > 0) {
               if (cur_tipps.size() == 1) {
                 tipp = cur_tipps[0]
-              }else {
+              } else {
                 TitleInstancePackagePlatform tippMatchedByTitleID = tippMatchingByTitleID(tipp_dto.identifiers, pkg, plt)
-                if(tippMatchedByTitleID){
+                if (tippMatchedByTitleID) {
                   log.debug("found tipp")
                   tipp = cur_tipps.find { it.id == tippMatchedByTitleID.id }
-                }else{
+                } else {
                   log.debug("not found Tipp after cur_tipps and tippMatchingByTitleID: [pkg: ${pkg}, platform: ${plt}, tiName: ${ti.name}, tiDtoName: ${tipp_dto.name}, url: ${trimmed_url}, ids: ${tipp_dto.identifiers}]")
                 }
               }
-
               log.warn("found ${cur_tipps.size()} current TIPPs!")
             } else if (ret_tipps.size() > 0) {
               if (ret_tipps.size() == 1) {
                 tipp = ret_tipps[0]
-              }else {
+              } else {
                 TitleInstancePackagePlatform tippMatchedByTitleID = tippMatchingByTitleID(tipp_dto.identifiers, pkg, plt)
-                if(tippMatchedByTitleID){
+                if (tippMatchedByTitleID) {
                   log.debug("found tipp")
                   tipp = ret_tipps.find { it.id == tippMatchedByTitleID.id }
-                }else{
+                } else {
                   log.debug("not found Tipp after ret_tipps and tippMatchingByTitleID: [pkg: ${pkg}, platform: ${plt}, tiName: ${ti.name}, tiDtoName: ${tipp_dto.name}, url: ${trimmed_url}, ids: ${tipp_dto.identifiers}]")
                 }
               }
@@ -922,6 +940,7 @@ class TitleInstancePackagePlatform extends KBComponent {
             }
             break
         }
+
       }
 
       if (!tipp) {
@@ -1638,6 +1657,39 @@ class TitleInstancePackagePlatform extends KBComponent {
 
         if(tippCombos.size() == 1) {
           log.debug("tippMatchingByTitleID provider internal identifier matching by "+tippCombos.size() + ": "+ tippCombos.id)
+          return tippCombos[0]
+        }
+
+      }
+    }
+
+  }
+
+  @Transient
+  static TitleInstancePackagePlatform tippMatchingByPrintAndOnlineIdentifiers(JSONArray identifiers, Package aPackage, Platform platform) {
+    if(identifiers){
+
+      List<String> printIdentifier = ["issn", "pisbn"]
+      List<String> onlineIdentifier = ["eissn", "isbn"]
+
+      List<String> values = identifiers.findAll {it.type in (printIdentifier+onlineIdentifier)}?.value
+
+      List<String> norm_ids = []
+      values.each {String value ->
+        norm_ids << Identifier.normalizeIdentifier(value)
+      }
+
+      List<IdentifierNamespace> identifierNamespaces = IdentifierNamespace.findAllByValueInList(printIdentifier+onlineIdentifier)
+
+      List<Identifier> identifierList = Identifier.findAllByValueInListAndNamespaceInList(norm_ids, identifierNamespaces)
+
+      if(identifierList.size() > 0){
+
+        log.debug("tippMatchingByPrintAndOnlineIdentifiers: "+ identifierList.id)
+        List<TitleInstancePackagePlatform> tippCombos = Combo.executeQuery("select c.fromComponent from Combo as c where c.toComponent = :identifier and c.fromComponent in (:tipps)", [identifier: identifierList[0], tipps: aPackage.tipps])
+
+        if(tippCombos.size() == 1) {
+          log.debug("tippMatchingByPrintAndOnlineIdentifiers by "+tippCombos.size() + ": "+ tippCombos.id)
           return tippCombos[0]
         }
 
