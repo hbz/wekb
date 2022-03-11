@@ -370,7 +370,6 @@ class BootStrap {
         if (!p) {
             def content_provider_role = RefdataCategory.lookupOrCreate('Org Role', 'Content Provider');
             p = new Org(name: name)
-            p.tags.add(content_provider_role);
             p.save(flush: true);
         }
 
