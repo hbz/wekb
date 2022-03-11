@@ -3,12 +3,12 @@
 <html>
 <head>
     <meta name="layout" content="sb-admin"/>
-    <title><g:message code="gokb.appname" default="we:kb"/>: Package batch processing</title>
+    <title><g:message code="gokb.appname" default="we:kb"/>: Upload Packages</title>
 </head>
 
 <body>
 <h1 class="page-header">
-    Package batch processing
+    Upload Packages
 </h1>
 
 <g:render template="/apptemplates/secondTemplates/messages"/>
@@ -19,7 +19,7 @@
     </div>
 
     <div class="panel-body">
-        The option "Package batch processing" allows you to create several packages at once via the provided package template below.
+        The option "Upload Packages" allows you to create several packages at once via the provided package template below.
         <br><br>
         In order to create your packages, download the template below and type in the name of the packages. Give all the relevant information for each individual package and save the template file as a csv file (tab separated and UTF-8 coded).
         <br>

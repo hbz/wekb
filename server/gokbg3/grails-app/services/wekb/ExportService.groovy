@@ -790,6 +790,61 @@ class ExportService {
         outputStream.close()
     }
 
+
+    def exportPackages(def outputStream, def packages) {
+
+        def export_date = dateFormatService.formatDate(new Date())
+        List<String> titleHeaders = ["package_uuid", "package_name", "provider_name", "provider_uuid", "nominal_platform_name",
+                                     "nominal_platform_uuid", "description", "url", "breakable", "content_type",
+                                     "file", "open_access", "payment_type", "scope", "national_range", "regional_range", "anbieter_produkt_id", "ddc",
+                                     "source_url", "frequency", "title_id_namespace", "automated_updates",
+                                     "archiving_agency", "open_access_of_archiving_agency", "post_cancellation_access_of_archiving_agency"]
+        Map<String,List> export = [titleRow:titleHeaders,rows:[]]
+
+        SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd HH:mm:ss')
+
+        def sanitize = { it ? (it instanceof Date ? sdf.format(it) : "${it}".trim()) : "" }
+
+        packages.each { Package pkg ->
+
+            List row = []
+            row.add(sanitize(pkg.uuid))
+            row.add(sanitize(pkg.name))
+            row.add(sanitize(pkg.provider?.name))
+            row.add(sanitize(pkg.provider?.uuid))
+            row.add(sanitize(pkg.nominalPlatform?.name))
+            row.add(sanitize(pkg.nominalPlatform?.uuid))
+            row.add(sanitize(pkg.description))
+            row.add(sanitize(pkg.descriptionURL))
+            row.add(sanitize(pkg.breakable?.value))
+            row.add(sanitize(pkg.contentType?.value))
+            row.add(sanitize(pkg.file?.value))
+            row.add(sanitize(pkg.openAccess?.value))
+            row.add(sanitize(pkg.paymentType?.value))
+            row.add(sanitize(pkg.scope?.value))
+            row.add(sanitize(pkg.nationalRanges?.value.join(',')))
+            row.add(sanitize(pkg.regionalRanges?.value.join(',')))
+            row.add(sanitize(pkg.getIdentifierValue('Anbieter_Produkt_Id')))
+            row.add(sanitize(pkg.ddcs?.value.join(',')))
+            row.add(sanitize(pkg.source?.url))
+            row.add(sanitize(pkg.source?.frequency?.value))
+            row.add(sanitize(pkg.source?.targetNamespace?.value))
+            row.add(sanitize(pkg.source?.automaticUpdates ? 'Yes': 'No'))
+            row.add(sanitize(pkg.paas?.archivingAgency?.value))
+            row.add(sanitize(pkg.paas?.openAccess?.value))
+            row.add(sanitize(pkg.paas?.postCancellationAccess?.value))
+            export.rows.add(row)
+        }
+
+        outputStream.withWriter { writer ->
+            writer.write("we:kb Export : Packages (${packages.size()}) : ${export_date}\n");
+            writer.write(generateSeparatorTableString(export.titleRow, export.rows, '\t'))
+        }
+        outputStream.flush()
+        outputStream.close()
+    }
+
+
     List<String> getTitleHeadersTSV() {
         ['publication_title',
          'first_author',

@@ -3,14 +3,14 @@
 <html>
 <head>
     <meta name="layout" content="sb-admin"/>
-    <title><g:message code="gokb.appname" default="we:kb"/>: Package batch processing</title>
+    <title><g:message code="gokb.appname" default="we:kb"/>: Upload Packages</title>
 </head>
 
 <body>
 <h1 class="page-header">
-    Package batch processing completed
+    Upload Packages completed
 
-    <g:link controller="create" action="packageBatch" class="btn btn-default pull-right btn-sm">Back to Package batch processing</g:link>
+    <g:link controller="create" action="packageBatch" class="btn btn-default pull-right btn-sm">Back to Upload Packages</g:link>
 </h1>
 
 <div class="panel panel-default">
