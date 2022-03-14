@@ -33,14 +33,15 @@ class IdentifierNamespace {
   }
 
   static constraints = {
-    // II: Want this, but need to tidy live first :: value (nullable:true, blank:false, unique:true)
     name (nullable:true)
-    value (nullable:true, blank:false, unique:true)
+    value (nullable:true, blank:false)
     family (nullable:true, blank:false)
     pattern (nullable:true, blank:false)
     targetType (nullable:true, blank:false)
     dateCreated(nullable:true, blank:true)
     lastUpdated(nullable:true, blank:true)
+
+    value(unique: ['value', 'targetType'])
   }
 
   public static final String restPath = "/namespaces"

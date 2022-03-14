@@ -61,7 +61,6 @@ class AdminController {
       result.nonMasterOrgs = Org.executeQuery('''
       select org
       from org.gokb.cred.Org as org
-          join org.tags as tag
       where tag.owner.desc = 'Org.Authorized'
         and tag.value = 'N'
       ''');

@@ -31,21 +31,6 @@
 	</g:if>
 
 	<g:if test="${d.id != null}">
-		<g:if test="${ d.hasProperty('tags') && d.tags?.size() > 0 }">
-			<dt>
-				<gokb:annotatedLabel owner="${d}" property="tags">Tags</gokb:annotatedLabel>
-			</dt>
-			<dd>
-				&nbsp;
-				<ul>
-					<g:each in="${d.tags}" var="t">
-						<li>
-							${t.value}
-						</li>
-					</g:each>
-				</ul>
-			</dd>
-		</g:if>
 		<g:render template="/apptemplates/secondTemplates/refdataprops"
 			model="${[d:(d), rd:(rd), dtype:(dtype)]}" />
 	</g:if>

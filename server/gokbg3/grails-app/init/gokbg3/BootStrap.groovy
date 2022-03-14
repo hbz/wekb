@@ -232,7 +232,8 @@ class BootStrap {
         ]
 
         namespaces.each { ns ->
-            def ns_obj = IdentifierNamespace.findByValueAndTargetType(ns.value, ns.targetType)
+            RefdataValue targetType = RefdataValue.findByValueAndOwner(ns.targetType, RefdataCategory.findByDesc(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE))
+            def ns_obj = IdentifierNamespace.findByValueAndTargetType(ns.value, targetType)
 
             if (ns_obj) {
                 if (ns.pattern && !ns_obj.pattern) {
@@ -246,10 +247,11 @@ class BootStrap {
                 }
 
                 if (ns.targetType) {
-                    ns_obj.targetType = RefdataValue.findByValueAndOwner(ns.targetType, RefdataCategory.findByDesc(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE))
+                    ns_obj.targetType = targetType
                     ns_obj.save(flush: true)
                 }
             } else {
+                ns.targetType = targetType
                 ns_obj = new IdentifierNamespace(ns).save(flush: true, failOnError: true)
             }
 
@@ -368,7 +370,6 @@ class BootStrap {
         if (!p) {
             def content_provider_role = RefdataCategory.lookupOrCreate('Org Role', 'Content Provider');
             p = new Org(name: name)
-            p.tags.add(content_provider_role);
             p.save(flush: true);
         }
 

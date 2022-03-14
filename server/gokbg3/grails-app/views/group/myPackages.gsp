@@ -10,7 +10,11 @@
 
 <div id="mainarea" class="panel panel-default">
 
-  <h3>My Packages</h3>
+  <h3 class="page-header">My Packages
+
+    <g:link controller="group" action="exportMyPackages" id="${params.id}" class="btn btn-default pull-right btn-sm">Export my packages</g:link>
+  </h3>
+    <br>
 
     <g:if test="${!params.inline}">
         <div class="panel-heading">
@@ -42,6 +46,13 @@
             <g:render template="/search/qbeempty"/>
         </div>
     </g:elseif>
+
+    <br>
+
+    <g:link controller="create" action="packageBatch" class="btn btn-default pull-right btn-sm">Upload Packages</g:link>
+    <br>
+    <br>
+    <br>
 
 </div>
 

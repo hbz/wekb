@@ -1,9 +1,11 @@
 package org.gokb
 
 import de.wekb.helper.RCConstants
+import gokbg3.DateFormatService
 import org.springframework.security.access.annotation.Secured;
 
 import org.gokb.cred.*
+import wekb.ExportService
 import wekb.SearchService
 
 @Secured(['IS_AUTHENTICATED_FULLY'])
@@ -11,6 +13,8 @@ class GroupController {
 
     def springSecurityService
     SearchService searchService
+    DateFormatService dateFormatService
+    ExportService exportService
 
     @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
     def index() {
@@ -196,4 +200,45 @@ class GroupController {
 
         result
     }
+
+    @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+    def exportMyPackages() {
+        def searchResult = [:]
+        if (params.id) {
+            searchResult = getResultGenerics()
+
+            params.qp_curgroup = searchResult.group.class.name+':'+searchResult.group.id
+            params.qbe = 'g:packages'
+            params.hide = ['qp_curgroup']
+            params.max = '10000'
+
+            searchResult = searchService.search(searchResult.user, searchResult, params, response.format)
+
+            searchResult.result
+
+            println(searchResult.result)
+
+            String export_date = dateFormatService.formatDate(new Date());
+
+            String filename = "wekb_my_packages_${export_date}.tsv"
+
+            try {
+                response.setContentType('text/tab-separated-values');
+                response.setHeader("Content-disposition", "attachment; filename=\"${filename}\"")
+
+                def out = response.outputStream
+
+                exportService.exportPackages(out, searchResult.result.recset)
+
+            }
+            catch ( Exception e ) {
+                log.error("Problem with export",e);
+            }
+
+        }else {
+            response.sendError(404)
+            return
+        }
+    }
+
 }

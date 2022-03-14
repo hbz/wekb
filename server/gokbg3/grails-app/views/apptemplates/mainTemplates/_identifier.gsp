@@ -48,14 +48,28 @@
                     <g:if test="${combo.status == RDStore.COMBO_STATUS_ACTIVE}">
                         <tr>
                             <td>
-                                <g:link controller="resource" action="show" id="${component.uuid}">
-                                    ${component}
-                                </g:link>
+                                <g:if test="${controllerName == 'public'}">
+                                    <g:link controller="public" action="tippContent" id="${component.uuid}">
+                                        ${component.name}
+                                    </g:link>
+                                </g:if>
+                                <g:else>
+                                        <g:link controller="resource" action="show" id="${component.uuid}">
+                                            ${component.name}
+                                        </g:link>
+                                </g:else>
                             </td>
                             <td>
+                        <g:if test="${controllerName == 'public'}">
+                            <g:link controller="public" action="packageContent" id="${component.pkg.uuid}">
+                                ${component.pkg.name}
+                            </g:link>
+                        </g:if>
+                        <g:else>
                                 <g:link controller="resource" action="show" id="${component.pkg.uuid}">
                                     ${component.pkg.name}
                                 </g:link>
+                        </g:else>
                             </td>
                             <g:if test="${editable}">
                                 <td>
@@ -92,9 +106,16 @@
                         <g:if test="${combo.status == RDStore.COMBO_STATUS_ACTIVE}">
                             <tr>
                                 <td>
-                                    <g:link controller="resource" action="show" id="${component.uuid}">
-                                        ${component.name}
-                                    </g:link>
+                                    <g:if test="${controllerName == 'public'}">
+                                        <g:link controller="public" action="packageContent" id="${component.uuid}">
+                                            ${component.name}
+                                        </g:link>
+                                    </g:if>
+                                    <g:else>
+                                            <g:link controller="resource" action="show" id="${component.uuid}">
+                                                ${component.name}
+                                            </g:link>
+                                    </g:else>
                                 </td>
                                 <g:if test="${editable}">
                                     <td>
@@ -131,9 +152,16 @@
                         <g:if test="${combo.status == RDStore.COMBO_STATUS_ACTIVE}">
                             <tr>
                                 <td>
-                                    <g:link controller="resource" action="show" id="${component.uuid}">
-                                        ${component.name}
-                                    </g:link>
+                                    <g:if test="${controllerName == 'public'}">
+                                        <g:link controller="public" action="orgContent" id="${component.uuid}">
+                                            ${component.name}
+                                        </g:link>
+                                    </g:if>
+                                    <g:else>
+                                            <g:link controller="resource" action="show" id="${component.uuid}">
+                                                ${component.name}
+                                            </g:link>
+                                    </g:else>
                                 </td>
                                 <g:if test="${editable}">
                                     <td>

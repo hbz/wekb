@@ -307,7 +307,7 @@ class PublicController {
 
     String export_date = dateFormatService.formatDate(new Date());
 
-    String filename = "kbart_${pkg.name}_${export_date}"
+    String filename = "kbart_${pkg.name}_${export_date}.txt"
 
     try {
 
@@ -338,7 +338,7 @@ class PublicController {
 
     String export_date = dateFormatService.formatDate(new Date());
 
-    String filename = "wekb_package_${pkg.name.toLowerCase()}_${export_date}.txt"
+    String filename = "wekb_package_${pkg.name.toLowerCase()}_${export_date}.tsv"
 
     try {
       response.setContentType('text/tab-separated-values');
