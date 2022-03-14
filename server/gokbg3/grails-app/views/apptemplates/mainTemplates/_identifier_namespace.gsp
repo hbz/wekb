@@ -6,9 +6,6 @@
   <dt> <gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel> </dt>
   <dd> <gokb:xEditable  owner="${d}" field="name" /> </dd>
 
-  <dt> <gokb:annotatedLabel owner="${d}" property="datatype">RDF Datatype</gokb:annotatedLabel> </dt>
-  <dd> <gokb:xEditableRefData owner="${d}" field="datatype" config="${RCConstants.RDFDATA_TYPE}" /> </dd>
-
   <dt> <gokb:annotatedLabel owner="${d}" property="family">Category</gokb:annotatedLabel> </dt>
   <dd> <gokb:xEditable  owner="${d}" field="family" /> </dd>
 

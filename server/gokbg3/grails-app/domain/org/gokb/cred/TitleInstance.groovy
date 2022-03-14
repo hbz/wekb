@@ -158,12 +158,12 @@ class TitleInstance extends KBComponent {
   }
 
   def availableActions() {
-    [[code: 'method::deleteSoft', label: 'Delete', perm: 'delete'],
+    [/*[code: 'method::deleteSoft', label: 'Delete', perm: 'delete'],
      [code: 'setStatus::Current', label: 'Set Current', perm: 'admin'],
      [code: 'setStatus::Expected', label: 'Mark Expected'],
      [code: 'title::transfer', label: 'Title Transfer'],
      [code: 'title::change', label: 'Title Change'],
-     [code: 'title::merge', label: 'Title Merge']
+     [code: 'title::merge', label: 'Title Merge']*/
 //       [code:'title::reconcile', label:'Title Reconcile']
     ]
   }
@@ -410,7 +410,7 @@ class TitleInstance extends KBComponent {
                         internalId(hti.id)
                         "identifiers" {
                           hti.ids?.each { tid ->
-                            builder.'identifier'('namespace': tid.namespace?.value, 'namespaceName': tid.namespace?.name, 'value': tid.value, 'datatype': tid.namespace.datatype?.value)
+                            builder.'identifier'('namespace': tid.namespace?.value, 'namespaceName': tid.namespace?.name, 'value': tid.value)
                           }
                           if (grailsApplication.config.serverUrl) {
                             builder.'identifier'('namespace': 'originEditUrl', 'value': "${grailsApplication.config.serverUrl}/resource/show/${hti.class.name}:${hti.id}")
@@ -428,7 +428,7 @@ class TitleInstance extends KBComponent {
                         internalId(hti.id)
                         "identifiers" {
                           hti.ids?.each { tid ->
-                            builder.'identifier'('namespace': tid.namespace?.value, 'namespaceName': tid.namespace?.name, 'value': tid.value, 'datatype': tid.namespace.datatype?.value)
+                            builder.'identifier'('namespace': tid.namespace?.value, 'namespaceName': tid.namespace?.name, 'value': tid.value)
                           }
                           if (grailsApplication.config.serverUrl) {
                             builder.'identifier'('namespace': 'originEditUrl', 'value': "${grailsApplication.config.serverUrl}/resource/show/${hti.class.name}:${hti.id}")

@@ -492,6 +492,7 @@ class AdminController {
   def autoUpdatePackages() {
       log.debug("Beginning scheduled auto update packages job.")
       // find all updateable packages
+      List ygorDataList = []
       def updPacks = Package.executeQuery(
               "from Package p " +
                       "where p.source is not null and " +
@@ -501,9 +502,20 @@ class AdminController {
         if (p.source.needsUpdate()) {
             def result = autoUpdatePackagesService.updateFromSource(p)
             log.debug("Result of update: ${result}")
+            if(result.ygorData){
+              ygorDataList << result.ygorData
+            }
             sleep(10000)
         }
       }
+      if(ygorDataList.size() > 0){
+        log.debug("updPacks: ${updPacks.size()}, ygorDataList: ${ygorDataList.size()}")
+        ygorDataList.each { Map ygorData ->
+          autoUpdatePackagesService.importJsonFromUpdateSource(ygorData)
+        }
+
+      }
+
       log.info("auto update packages job completed.")
 
     redirect(controller: 'admin', action: 'jobs');

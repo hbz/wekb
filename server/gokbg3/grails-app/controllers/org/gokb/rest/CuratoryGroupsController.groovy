@@ -104,7 +104,7 @@ class CuratoryGroupsController {
     render result as JSON
   }
 
-  @Secured("hasAnyRole('ROLE_CONTRIBUTOR', 'ROLE_EDITOR', 'ROLE_ADMIN') and isAuthenticated()")
+  @Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
   def getReviews() {
     def result = [:]
     def max = params.limit ? params.long('limit') : 10
@@ -210,7 +210,7 @@ class CuratoryGroupsController {
     render result as JSON
   }
 
-  @Secured("hasAnyRole('ROLE_CONTRIBUTOR', 'ROLE_EDITOR', 'ROLE_ADMIN') and isAuthenticated()")
+  @Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
   def getJobs() {
     def result = [:]
     def max = params.limit ? params.long('limit') : 10

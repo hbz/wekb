@@ -1,5 +1,7 @@
 <%@ page import="grails.converters.JSON"%>
 
+<wekb:serviceInjection/>
+
 <g:set var="counter" value="${offset}" />
 <g:set var="s_action" value="${s_action?:'index'}"/>
 <g:set var="s_controller" value="${s_controller?:'search'}"/>
@@ -75,9 +77,7 @@
   <div class="batch-all-info" style="display:none;"></div>
 
   <g:render template="/search/pagination" model="${params}" />
-
   <g:form controller="workflow" action="action" method="post" params="${params}" class='action-form' >
-
     <table class="table table-striped table-condensed table-bordered">
       <thead>
         <tr>
@@ -113,9 +113,9 @@
                 </g:else></th>
             </g:if>
           </g:each>
-          <g:if test="${request.user?.showQuickView?.value=='Yes'}">
+        %{--  <g:if test="${request.user?.showQuickView?.value=='Yes'}">
             <th></th>
-          </g:if>
+          </g:if>--}%
         </tr>
       </thead>
       <tbody>
@@ -124,32 +124,36 @@
             <g:set var="row_obj" value="${r.obj}" />
             <tr class="${++counter==det ? 'success':''}">
               <!-- Row ${counter} -->
-              <td style="vertical-align:middle;"><g:if
-                  test="${row_obj?.isEditable() && row_obj.respondsTo('availableActions')}">
-                  <g:set var="al"
-                    value="${new JSON(row_obj?.userAvailableActions()).toString().encodeAsHTML()}" />
-                  <input type="checkbox" name="bulk:${r.oid}"
-                    data-actns="${al}" class="obj-action-ck-box" />
-                </g:if> <g:else>
+              <td style="vertical-align:middle;">
+                <g:set var="objEditable" value="${accessService.checkEditableObject(row_obj, params)}"/>
+                <g:if test="${objEditable && row_obj.respondsTo('availableActions')}">
+                  <g:set var="al" value="${new JSON(row_obj?.userAvailableActions()).toString().encodeAsHTML()}"/>
+                  <input type="checkbox" name="bulk:${r.oid}" data-actns="${al}" class="obj-action-ck-box"/>
+                </g:if>
+                <g:else>
                   <input type="checkbox"
-                    title="${ !row_obj?.isEditable() ? 'Component is read only' : 'No actions available' }"
-                    disabled="disabled" readonly="readonly" />
-                </g:else></td>
+                         title="${!objEditable ? 'Component is read only' : 'No actions available'}"
+                         disabled="disabled" readonly="readonly"/>
+                </g:else>
+              </td>
               <td>${counter}</td>
               <g:each in="${r.cols}" var="c">
-                <td style="vertical-align:middle;"><g:if test="${ c.link != null }">
+                <td style="vertical-align:middle;">
+                  <g:if test="${c.link != null}">
                     <g:link controller="resource"
-                      action="show"
-                      id="${c.link}">
+                            action="show"
+                            id="${c.link}">
                       ${c.value}
                     </g:link>
                   </g:if>
                   <g:elseif test="${c.value instanceof Boolean}">
                     <g:if test="${c.value}">
-                      <i class="fa fa-check-circle text-success fa-lg" title="${message(code:'default.boolean.true')}"></i>
+                      <i class="fa fa-check-circle text-success fa-lg"
+                         title="${message(code: 'default.boolean.true')}"></i>
                     </g:if>
                     <g:else>
-                      <i class="fa fa-times-circle text-danger fa-lg" title="${message(code:'default.boolean.false')}"></i>
+                      <i class="fa fa-times-circle text-danger fa-lg"
+                         title="${message(code: 'default.boolean.false')}"></i>
                     </g:else>
                   </g:elseif>
                   <g:else>

@@ -76,7 +76,7 @@ class SourcesController {
   }
 
 
-  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
   @Transactional
   def save() {
     Source source = null
@@ -129,7 +129,7 @@ class SourcesController {
     render result as JSON
   }
 
-  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
   @Transactional
   def update() {
     Source source = Source.get(genericOIDService.oidToId(params.id))

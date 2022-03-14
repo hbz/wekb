@@ -8,13 +8,6 @@
     </dd>
 
     <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="name">Source Name</gokb:annotatedLabel>
-    </dt>
-    <dd class="col-9 text-left">
-        <gokb:xEditable owner="${d}" field="name"/>
-    </dd>
-
-    <dt class="col-3 text-right">
         <gokb:annotatedLabel owner="${d}" property="url">URL</gokb:annotatedLabel>
     </dt>
     <dd class="col-9 text-left">
@@ -94,6 +87,13 @@
         <g:if test="${d.lastUpdateUrl}">
             &nbsp;<a href="${d.lastUpdateUrl}" target="new">Follow Link</a>
         </g:if>
+    </dd>
+
+    <dt class="col-3 text-right">
+        <gokb:annotatedLabel owner="${d}" property="nextRun">Next Run</gokb:annotatedLabel>
+    </dt>
+    <dd class="col-9 text-left">
+        <g:formatDate date="${d.nextUpdateDate()}" format="${message(code: 'default.date.format.noZ')}"/>
     </dd>
 </dl>
 
