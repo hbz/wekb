@@ -298,7 +298,6 @@ abstract class KBComponent implements Auditable{
   Set languages
   String lastUpdateComment
 
-  // Set tags = []
   List additionalProperties = []
   Set outgoingCombos = []
   Set incomingCombos = []
@@ -350,7 +349,6 @@ abstract class KBComponent implements Auditable{
 
 
   static hasMany = [
-      // tags:RefdataValue,
       outgoingCombos      : Combo,
       incomingCombos      : Combo,
       additionalProperties: KBComponentAdditionalProperty,
@@ -374,7 +372,6 @@ abstract class KBComponent implements Auditable{
     source column: 'kbc_source_fk'
     status column: 'kbc_status_rv_fk', index: 'kbc_status_idx'
     shortcode column: 'kbc_shortcode', index: 'kbc_shortcode_idx'
-    // tags joinTable: [name: 'kb_component_tags_value', key: 'kbctgs_kbc_id', column: 'kbctgs_rdv_id']
     dateCreated column: 'kbc_date_created', index: 'kbc_date_created_idx'
     lastUpdated column: 'kbc_last_updated', index: 'kbc_last_updated_idx'
     duplicateOf column: 'kbc_duplicate_of'
@@ -855,7 +852,6 @@ abstract class KBComponent implements Auditable{
         'outgoingCombos',
         'incomingCombos',
 //      'reviewRequests',
-        'tags',
         'systemOnly',
         'additionalProperties',
 //      'skippedTitles',
@@ -911,7 +907,6 @@ abstract class KBComponent implements Auditable{
         'outgoingCombos',
         'incomingCombos',
         'reviewRequests',
-        'tags',
         'systemOnly',
         'additionalProperties',
 //      'skippedTitles',

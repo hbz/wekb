@@ -9,7 +9,7 @@
           Create New ${displayobj?.getNiceName() ?: 'Component'}
 
     <g:if test="${displayobj instanceof org.gokb.cred.Package}">
-      <g:link controller="create" action="packageBatch" class="btn btn-default pull-right btn-sm">Package batch processing</g:link>
+      <g:link controller="create" action="packageBatch" class="btn btn-default pull-right btn-sm">Upload Packages</g:link>
     </g:if>
   </h1>
   <div id="mainarea" class="panel panel-default">

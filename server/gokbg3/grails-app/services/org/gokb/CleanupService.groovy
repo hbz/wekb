@@ -445,6 +445,7 @@ class CleanupService {
     }
   }
 
+  /*@Deprecated
   def housekeeping(Job j = null) {
     log.debug("Housekeeping")
     Identifier.withNewSession {
@@ -483,7 +484,7 @@ class CleanupService {
     }
 
     j?.endTime = new Date()
-  }
+  }*/
 
   private final def duplicateIdentifierCleanup = {
     log.debug("Beginning duplicate identifier tidyup.")
