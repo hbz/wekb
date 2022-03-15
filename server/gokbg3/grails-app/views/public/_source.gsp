@@ -13,7 +13,7 @@
     <dd class="col-9 text-left">
         <gokb:xEditable owner="${d}" field="url"/>
         <g:if test="${d.url}">
-            &nbsp;<a href="${d.url}" target="new">Follow Link</a>
+            &nbsp;<a href="${d.url.startsWith('http') ? d.url : 'http://' + d.url}" target="new"><i class="fas fa-external-link-alt"></i></a>
         </g:if>
     </dd>
 
@@ -85,7 +85,7 @@
     <dd class="col-9 text-left">
         <gokb:xEditable owner="${d}" field="lastUpdateUrl" overwriteEditable="${false}"/>
         <g:if test="${d.lastUpdateUrl}">
-            &nbsp;<a href="${d.lastUpdateUrl}" target="new">Follow Link</a>
+            &nbsp;<a href="${d.lastUpdateUrl.startsWith('http') ? d.lastUpdateUrl : 'http://' + d.lastUpdateUrl}" target="new"><i class="fas fa-external-link-alt"></i></a>
         </g:if>
     </dd>
 

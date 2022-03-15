@@ -67,7 +67,7 @@
                     <dt class="col-3 text-right"> <gokb:annotatedLabel owner="${pkg}" property="descriptionURL">URL</gokb:annotatedLabel> </dt>
                     <dd class="col-9 text-left"> <gokb:xEditable  owner="${pkg}" field="descriptionURL" />
                         <g:if test="${pkg.descriptionURL}">
-                        &nbsp;<a aria-label="${pkg.descriptionURL}" href="${pkg.descriptionURL}" target="new"><i class="fas fa-external-link-alt"></i></a>
+                        &nbsp;<a aria-label="${pkg.descriptionURL}" href="${pkg.descriptionURL.startsWith('http') ? pkg.descriptionURL : 'http://' + pkg.descriptionURL}" target="new"><i class="fas fa-external-link-alt"></i></a>
                         </g:if>
                     </dd>
 
