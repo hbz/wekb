@@ -68,7 +68,7 @@
     <dd>
         <gokb:xEditable owner="${d}" field="url"/>
         <g:if test="${d.url}">
-            &nbsp;<a href="${d.url}" target="new"><i class="fas fa-external-link-alt"></i></a>
+            &nbsp;<a href="${d.url.startsWith('http') ? d.url : 'http://' + d.url}" target="new"><i class="fas fa-external-link-alt"></i></a>
         </g:if>
 
     </dd>
