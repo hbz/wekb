@@ -25,7 +25,6 @@ class RestMappingService {
     'bucketHash',
     'shortcode',
     'normname',
-    'people',
     'lastSeen',
     'updateBenchmark',
     'systemComponent',

@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-sm-4 footer-brand ">
                 <img height="30" alt="Logo wekb"  src="${resource(dir: 'images', file: 'logo.svg')}"/>
-                <p>©2021 Hochschulbibliothekszentrum des Landes Nordrhein-Westfalen (hbz) ‧ Jülicher Straße 6 ‧ 50674 Köln ‧ +49 221 400 75-0</p>
+                <p>©${new Date().format('yyyy')} Hochschulbibliothekszentrum des Landes Nordrhein-Westfalen (hbz) ‧ Jülicher Straße 6 ‧ 50674 Köln ‧ +49 221 400 75-0</p>
                 <a rel="license" href="http://creativecommons.org/publicdomain/zero/1.0/">
                     <img alt="CC0 1.0 Universal - Public Domain Dedication" src="${resource(dir: 'images', file: 'CC-Zero-badge.svg.png')}"/>
                 </a>

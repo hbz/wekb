@@ -572,9 +572,9 @@ class ESSearchService{
           scrollQuery.must(typeFilter)
         }
         addStatusQuery(scrollQuery, errors, params.status)
-        // addDateQueries(scrollQuery, errors, params)
-        // TODO: add this after upgrade to Elasticsearch 7
-        // TODO: alternative query builders for scroll searches with q
+        //TODO: add this after upgrade to Elasticsearch 7 -> DONE
+        addDateQueries(scrollQuery, errors, params)
+        //TODO: alternative query builders for scroll searches with q
         specifyQueryWithParams(params, scrollQuery, errors, unknown_fields)
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
@@ -591,7 +591,7 @@ class ESSearchService{
       } else {
         SearchScrollRequest scrollRequest = new SearchScrollRequest(params.scrollId)
         scrollRequest.scroll("15m")
-        searchResponse = esclient.search(scrollRequest, RequestOptions.DEFAULT)
+        searchResponse = esclient.scroll(scrollRequest, RequestOptions.DEFAULT)
         try {
           if (params.lastPage && Integer.valueOf(params.lastPage) > -1) {
             result.lastPage = Integer.valueOf(params.lastPage) + 1
@@ -602,10 +602,18 @@ class ESSearchService{
         }
       }
       result.scrollId = searchResponse.getScrollId()
-      SearchHit[] searchHits = searchResponse.getHits()
+
+      SearchHit[] searchHits = searchResponse.getHits().getHits()
       result.hasMoreRecords = searchHits.length == scrollSize
-      result.records = filterLastUpdatedDisplay(searchHits, params, errors, result)
+
       // TODO: remove this after upgrade to Elasticsearch 7
+      //result.records = filterLastUpdatedDisplay(searchHits, params, errors, result)
+
+      result.records = []
+      searchHits.each { r ->
+        result.records.add(r.getSourceAsMap().sort {it.key})
+      }
+
     }
     finally {
       try {
@@ -741,7 +749,7 @@ class ESSearchService{
           SearchRequest searchRequest = new SearchRequest(grailsApplication.config.searchApi.indices as String[])
           SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
 
-          searchSourceBuilder.query(QueryBuilders.matchAllQuery())
+          searchSourceBuilder.query(exactQuery)
           searchRequest.source(searchSourceBuilder)
 
           /* SearchRequestBuilder es_request =  esclient.prepareSearch()
@@ -773,7 +781,7 @@ class ESSearchService{
               sortBy = "sortname"
             }
 
-            if (ESWrapperService.mapping.component.properties[sortBy]?.type == 'text') {
+            if (ESWrapperService.mapping.properties[sortBy]?.type == 'text') {
               errors['sort'] = "Unable to sort by text field ${sortBy}!"
             } else {
               FieldSortBuilder sortQry = new FieldSortBuilder(sortBy)
@@ -815,11 +823,12 @@ class ESSearchService{
         SearchHits hits = searchResponse.getHits()
 
 
-        if(hits.maxScore == Float.NaN) { //we cannot parse NaN to json so set to zero...
+        /*if(hits.maxScore == Float.NaN) { //we cannot parse NaN to json so set to zero...
           hits.maxScore = 0
-        }
+        }*/
 
-        result.count = hits.getTotalHits()
+
+        result.count = hits.getTotalHits().value ?: 0
         result.records = []
 
         hits.each { r ->
@@ -838,6 +847,8 @@ class ESSearchService{
             r.getSourceAsMap().each { field, val ->
               response_record."${field}" = val
             }
+
+            response_record = response_record.sort {it.key}
           }
 
           result.records.add(response_record)
@@ -1145,6 +1156,7 @@ class ESSearchService{
     es_result.remove("offset")
     es_result.remove("max")
     es_result.remove("count")
+    //println(es_result)
 
     es_result
   }

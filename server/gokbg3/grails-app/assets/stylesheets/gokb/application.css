@@ -389,3 +389,9 @@ body .modal-dialog {
   width:100px;
   display:inline;
 }
+
+
+.nav-tabs .badge {
+  padding-top: 2px;
+  padding-bottom: 2px;
+}

@@ -8,6 +8,7 @@ import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
+import wekb.AccessService
 import wekb.AutoUpdatePackagesService
 import wekb.ExportService
 import wekb.GlobalSearchTemplatesService
@@ -23,13 +24,13 @@ class WorkflowController{
   GlobalSearchTemplatesService globalSearchTemplatesService
   ExportService exportService
   AutoUpdatePackagesService autoUpdatePackagesService
+  AccessService accessService
 
   def actionConfig = [
       'method::deleteSoft'     : [actionType: 'simple'],
       'title::transfer'        : [actionType: 'workflow', view: 'titleTransfer'],
       'title::change'          : [actionType: 'workflow', view: 'titleChange'],
       'platform::replacewith'  : [actionType: 'workflow', view: 'platformReplacement'],
-      'method::registerWebhook': [actionType: 'workflow', view: 'registerWebhook'],
       'method::RRTransfer'     : [actionType: 'workflow', view: 'revReqTransfer'],
       'method::RRClose'        : [actionType: 'simple'],
       'packageUrlUpdate'       : [actionType: 'process', method: 'triggerSourceUpdate'],
@@ -38,8 +39,6 @@ class WorkflowController{
       'title::merge'           : [actionType: 'workflow', view: 'titleMerge'],
       'tipp::retire'           : [actionType: 'workflow', view: 'tippRetire'],
       'tipp::move'             : [actionType: 'workflow', view: 'tippMove'],
-      'exportPackage'          : [actionType: 'process', method: 'packageTSVExport'],
-      'kbartExport'            : [actionType: 'process', method: 'packageKBartExport'],
       'method::retire'         : [actionType: 'simple'],
       'method::setActive'      : [actionType: 'simple'],
       'method::setExpected'    : [actionType: 'simple'],
@@ -49,7 +48,8 @@ class WorkflowController{
       'setStatus::Deleted'     : [actionType: 'simple'],
       'org::deprecateReplace'  : [actionType: 'workflow', view: 'deprecateOrg'],
       'org::deprecateDelete'   : [actionType: 'workflow', view: 'deprecateDeleteOrg'],
-      'verifyTitleList'        : [actionType: 'process', method: 'verifyTitleList']
+      'verifyTitleList'        : [actionType: 'process', method: 'verifyTitleList'],
+      'deleteIdentifierNamespace'        : [actionType: 'process', method: 'deleteIdentifierNamespace']
   ]
 
 
@@ -1173,244 +1173,6 @@ class WorkflowController{
     redirect(url: params.ref)
   }
 
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  def download(){
-    log.debug("Download ${params}")
-    DataFile df = DataFile.findByGuid(params.id)
-    if (df != null){
-      //HTML is causing problems, browser thinks it should render something, other way around this?
-      response.setContentType("application/octet-stream")
-      response.addHeader("Content-Disposition", "attachment; filename=\"${df.uploadName}\"")
-      response.outputStream << df.fileData
-    }
-  }
-
-  /**
-   *  authorizeVariant : Used to replace the name of a component by one of its variant names.
-   * @param id : The id of the variant name
-   */
-
-  // Deprecated – use action in AjaxSupport instead
-  @Deprecated
-  @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  def authorizeVariant(){
-    log.debug("${params}")
-    def result = ['result': 'OK', 'params': params]
-    def variant = KBComponentVariantName.get(params.id)
-
-    if (variant != null && variant.owner.isEditable()){
-      // Does the current owner.name exist in a variant? If not, we should create one so we don't loose the info
-      def current_name_as_variant = variant.owner.variantNames.find{ it.variantName == variant.owner.name }
-      if (current_name_as_variant == null){
-        log.debug("No variant name found for current name: ${variant.owner.name} ")
-        def variant_name = variant.owner.getId()
-        if (variant.owner.name){
-          variant_name = variant.owner.name
-        }
-        else if (variant.owner?.respondsTo('getDisplayName') && variant.owner.getDisplayName()){
-          variant_name = variant.owner.getDisplayName()?.trim()
-        }
-        else if (variant.owner?.respondsTo('getName')){
-          variant_name = variant.owner?.getName()?.trim()
-        }
-        def new_variant = new KBComponentVariantName(owner: variant.owner, variantName: variant_name).save(flush: true)
-      }
-      else{
-        log.debug("Found existing variant name: ${current_name_as_variant}")
-      }
-      variant.variantType = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_VARIANTNAME_VARIANT_TYPE, 'Authorized')
-      variant.owner.name = variant.variantName
-
-      if (variant.owner.validate()){
-        variant.owner.save(flush: true)
-      }
-      else{
-        result.result = 'ERROR'
-        result.code = 400
-        result.message = "This name already belongs to another component of the same type!"
-        flash.error = "This name already belongs to another component of the same type!"
-      }
-    }
-    else if (!variant){
-      result.result = 'ERROR'
-      result.code = 404
-      result.message = "Could not find variant!"
-    }
-    else{
-      result.result = 'ERROR'
-      result.code = 403
-      result.message = "Owner object is not editable!"
-      flash.error = "Owner object is not editable!"
-    }
-
-    withFormat{
-      html{
-        def redirect_to = request.getHeader('referer')
-
-        if (params.redirect){
-          redirect_to = params.redirect
-        }
-        else if ((params.fragment) && (params.fragment.length() > 0)){
-          redirect_to = "${redirect_to}#${params.fragment}"
-        }
-      }
-      json{
-        render result as JSON
-      }
-    }
-  }
-
-  /**
-   *  deleteVariant : Used to delete a variant name of a component.
-   * @param id : The id of the variant name
-   */
-
-  // Deprecated – use action in AjaxSupport instead
-  @Deprecated
-  @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  def deleteVariant(){
-    log.debug("${params}")
-    def result = ['result': 'OK', 'params': params]
-    def variant = KBComponentVariantName.get(params.id)
-
-    if (variant != null && variantOwner.isEditable()){
-      def variantOwner = variant.owner
-      def variantName = variant.variantName
-
-      variant.delete()
-      variantOwner.lastUpdateComment = "Deleted Alternate Name ${variantName}."
-      variantOwner.save(flush: true)
-
-      result.owner_oid = "${variantOwner.class.name}:${variantOwner.id}"
-      result.deleted_variant = "${variantName}"
-    }
-    else if (!variant){
-      result.result = 'ERROR'
-      result.code = 404
-      result.message = "Could not find variant!"
-    }
-    else{
-      result.result = 'ERROR'
-      result.code = 403
-      result.message = "Owner object is not editable!"
-    }
-
-    withFormat{
-      html{
-        def redirect_to = request.getHeader('referer')
-
-        if (params.redirect){
-          redirect_to = params.redirect
-        }
-        else if ((params.fragment) && (params.fragment.length() > 0)){
-          redirect_to = "${redirect_to}#${params.fragment}"
-        }
-      }
-      json{
-        render result as JSON
-      }
-    }
-  }
-
-  /**
-   *  deleteCoverageStatement : Used to delete a TIPPCoverageStatement.
-   * @param id : The id of the coverage statement object
-   */
-
-  // Deprecated – use action in AjaxSupport instead
-  @Deprecated
-  @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  def deleteCoverageStatement(){
-    log.debug("${params}")
-    def result = ['result': 'OK', 'params': params]
-    def tcs = TIPPCoverageStatement.get(params.id)
-    def tipp = tcs.owner
-
-    if (tcs != null && tipp.isEditable()){
-      tcs.delete()
-      tipp.lastUpdateComment = "Deleted Coverage Statement."
-      tipp.save(flush: true)
-    }
-    else if (!tcs){
-      result.result = 'ERROR'
-      result.code = 404
-      result.message = "Could not find coverage statement!"
-    }
-    else{
-      result.result = 'ERROR'
-      result.code = 403
-      result.message = "This TIPP is not editable!"
-    }
-
-    withFormat{
-      html{
-        def redirect_to = request.getHeader('referer')
-
-        if (params.redirect){
-          redirect_to = params.redirect
-        }
-        else if ((params.fragment) && (params.fragment.length() > 0)){
-          redirect_to = "${redirect_to}#${params.fragment}"
-        }
-      }
-      json{
-        render result as JSON
-      }
-    }
-  }
-
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  def processCreateWebHook(){
-
-    log.debug("processCreateWebHook ${params}")
-    def result = [:]
-
-    result.ref = params.from
-
-    try{
-
-      def webook_endpoint = null
-      if ((params.existingHook != null) && (params.existingHook.length() > 0)){
-        log.debug("From existing hook")
-        webook_endpoint = genericOIDService.resolveOID2(params.existingHook)
-      }
-      else{
-        webook_endpoint = new WebHookEndpoint(name: params.newHookName,
-            url: params.newHookUrl,
-            authmethod: Long.parseLong(params.newHookAuth),
-            principal: params.newHookPrin,
-            credentials: params.newHookCred,
-            owner: request.user)
-        if (webook_endpoint.save(flush: true)){
-        }
-        else{
-          log.error("Problem saving new webhook endpoint : ${webook_endpoint.errors}")
-        }
-      }
-
-
-      params.each{ p ->
-        if ((p.key.startsWith('tt:')) && (p.value) && (p.value instanceof String)){
-          def tt = p.key.substring(3)
-          def wh = new WebHook(oid: tt, endpoint: webook_endpoint)
-          if (wh.save(flush: true)){
-          }
-          else{
-            log.error(wh.errors)
-          }
-        }
-      }
-    }
-    catch (Exception e){
-      log.error("Problem", e)
-    }
-
-    redirect(url: result.ref)
-  }
-
   @Transactional
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   def processRRTransfer(){
@@ -1527,36 +1289,6 @@ class WorkflowController{
     redirect(url: result.ref)
   }
 
-
-  // @Transactional(readOnly = true)
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  private def packageKBartExport(packages_to_export){
-    def filename = null
-    if (packages_to_export.size() == 0){
-      return
-    }
-
-    def export_date = dateFormatService.formatDate(new Date())
-    if (packages_to_export.size() == 1){
-      filename = "kbart_${packages_to_export[0].provider?.name}_${packages_to_export[0].name}_${export_date}"
-    }
-    else{
-      filename = "kbart_multiple_packages_${export_date}.tsv"
-      response.setContentType('text/tab-separated-values')
-    }
-
-    try{
-      response.setHeader("Content-disposition", "attachment; filename=\"${filename}\"")
-      packages_to_export.each{ pkg ->
-        exportService.exportOriginalKBART(response.outputStream, pkg)
-      }
-    }
-    catch (Exception e){
-      log.error("Problem with export", e)
-    }
-  }
-
-
   private writeExportLine(Writer writer, Closure<String> sanitize, TitleInstancePackagePlatform tipp, def tippCoverageStatement){
     writer.write(
         sanitize(tipp.name) + '\t' +
@@ -1586,36 +1318,6 @@ class WorkflowController{
             sanitize(tipp.accessType?.value) + '\t' +  // access_type
             sanitize(tipp.title.getIdentifierValue('ZDB')) +
             '\n')
-  }
-
-
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  private def packageTSVExport(packages_to_export){
-    def filename = null
-    if (packages_to_export.size() == 0){
-      return
-    }
-
-    def export_date = dateFormatService.formatDate(new Date())
-    if (packages_to_export.size() == 1){
-      filename = "wekb_package_${packages_to_export[0].provider?.name}_${packages_to_export[0].name}_${export_date}.tsv"
-    }
-    else{
-      filename = "wekb_package_multiple_packages_${export_date}.txt"
-    }
-
-    try{
-      response.setContentType('text/tab-separated-values')
-      response.setHeader("Content-disposition", "attachment; filename=\"${filename}\"")
-      response.contentType = "text/tab-separated-values" // "text/tsv"
-
-      packages_to_export.each{ pkg ->
-        exportService.exportPackageTippsAsTSV(response.outputStream, pkg)
-      }
-    }
-    catch (Exception e){
-      log.error("Problem with export", e)
-    }
   }
 
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
@@ -1672,7 +1374,7 @@ class WorkflowController{
 
         def old_org = Org.get(org_id)
 
-        if (old_org && neworg && old_org.isEditable()){
+        if (old_org && neworg && accessService.checkEditableObject(old_org, params)){
           log.debug("Got org to deprecate and neworg...  Process now")
           // Updating all combo.toComponent
           // Updating all combo.fromComponent
@@ -1733,44 +1435,6 @@ class WorkflowController{
     result
   }
 
-  /**
-   *  deleteCombo : Used to delete a combo object.
-   * @param id : The id of the combo object
-   */
-
-  // Deprecated – use action in AjaxSupport instead
-  @Deprecated
-  @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  def deleteCombo(){
-    Combo c = Combo.get(params.id)
-    if (c.fromComponent.isEditable()){
-      log.debug("Delete combo..")
-      c.delete(flush: true)
-    }
-    else{
-      log.debug("Not deleting combo.. no edit permissions on fromComponent!")
-    }
-
-    withFormat{
-      html{
-        def redirect_to = request.getHeader('referer')
-
-        if (params.redirect){
-          redirect_to = params.redirect
-        }
-        else if ((params.fragment) && (params.fragment.length() > 0)){
-          redirect_to = "${redirect_to}#${params.fragment}"
-        }
-
-        redirect(url: redirect_to)
-      }
-      json{
-        render result as JSON
-      }
-    }
-  }
-
   @Transactional
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   private def verifyTitleList(packages_to_verify){
@@ -1797,8 +1461,6 @@ class WorkflowController{
     triggerSourceUpdate(packages_to_update, true)
   }
 
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-
   private def triggerSourceUpdate(packages_to_update, boolean allTitles=false) {
     log.info("triggerSourceUpdate for Packages ${packages_to_update}..")
     def user = springSecurityService.currentUser
@@ -1823,6 +1485,10 @@ class WorkflowController{
           if (pkgObj?.isEditable() && (is_curator || !curated_pkg  || user.authorities.contains(Role.findByAuthority('ROLE_SUPERUSER')))) {
             Map result = autoUpdatePackagesService.updateFromSource(pkgObj, user, allTitles)
 
+            if(result.ygorData){
+              autoUpdatePackagesService.importJsonFromUpdateSource(result.ygorData)
+            }
+
             if (result.result == JobResult.STATUS_SUCCESS){
               flash.success = result.message
             }
@@ -1846,6 +1512,22 @@ class WorkflowController{
       }
     }
     log.debug('triggerSourceUpdate() done - redirecting')
+    redirect(url: request.getHeader('referer'))
+  }
+
+  @Secured(['ROLE_SUPERUSER', 'IS_AUTHENTICATED_FULLY'])
+  def deleteIdentifierNamespace(identifierNamespaces) {
+    log.info("deleteIdentifierNamespace ${identifierNamespaces}..")
+    identifierNamespaces.each { idn ->
+      IdentifierNamespace identifierNamespace = IdentifierNamespace.get(idn.id)
+      if(!Org.findByPackageNamespace(identifierNamespace) && !Platform.findByTitleNamespace(identifierNamespace) && !Source.findByTargetNamespace(identifierNamespace) && !Identifier.findByNamespace(identifierNamespace)){
+        identifierNamespace.delete(flush: true)
+      }else {
+        flash.error = "Identifier Namespace is linked with identifier or org or source or platform! Please unlink first!"
+      }
+
+
+    }
     redirect(url: request.getHeader('referer'))
   }
 }

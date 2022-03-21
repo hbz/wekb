@@ -20,7 +20,10 @@
             </g:link>
         </g:if>
         <g:else>
-            ${(d.pkg?.name) ?: 'Empty'}
+            <g:if test="${d.pkg}">
+                <g:link controller="public" action="packageContent"
+                        id="${d.pkg.uuid}">${d.pkg.name}</g:link>
+            </g:if>
         </g:else>
     </dd>
 
@@ -48,7 +51,7 @@
     <dd class="col-9 text-left">
         <gokb:xEditable  owner="${d}" field="url"/>
         <g:if test="${d.url}">
-            &nbsp;<a aria-label="${d.url}" href="${d.url}" target="new"><i class="fas fa-external-link-alt"></i></a>
+            &nbsp;<a aria-label="${d.url}" href="${d.url.startsWith('http') ? d.url : 'http://' + d.url}" target="new"><i class="fas fa-external-link-alt"></i></a>
         </g:if>
 
     </dd>

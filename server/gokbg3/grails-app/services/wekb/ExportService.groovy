@@ -2,6 +2,7 @@ package wekb
 
 import de.hbznrw.ygor.tools.UrlToolkit
 import de.wekb.helper.RCConstants
+import de.wekb.helper.RDStore
 import gokbg3.DateFormatService
 import grails.gorm.transactions.Transactional
 import org.apache.commons.io.FileUtils
@@ -13,11 +14,16 @@ import org.apache.poi.xssf.usermodel.XSSFDataValidationConstraint
 import org.apache.poi.xssf.usermodel.XSSFDataValidationHelper
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import org.gokb.cred.ComponentPrice
+import org.gokb.cred.Identifier
 import org.gokb.cred.IdentifierNamespace
 import org.gokb.cred.Package
+import org.gokb.cred.Platform
 import org.gokb.cred.RefdataCategory
+import org.gokb.cred.RefdataValue
 import org.gokb.cred.TIPPCoverageStatement
 import org.gokb.cred.TitleInstancePackagePlatform
+import org.hibernate.Session
 
 import java.nio.file.Files
 import java.text.SimpleDateFormat
@@ -28,7 +34,7 @@ class ExportService {
 
     DateFormatService dateFormatService
 
-    def exportPackageTippsAsTSV(def outputStream, Package pkg) {
+    /*def exportPackageTippsAsTSV(def outputStream, Package pkg) {
 
         def export_date = dateFormatService.formatDate(new Date())
 
@@ -86,8 +92,8 @@ class ExportService {
                     'oa_apc_usd\t'+
                     'oa_apc_gbp\t'+
                     'package_isil\t'+
-                    'title_gokb_uuid\t'+
-                    'package_gokb_uuid\t'+
+                    'title_wekb_uuid\t'+
+                    'package_wekb_uuid\t'+
                     'package_isci\t'+
                     'ill_indicator\t'+
                     'preceding_publication_title_id\t'+
@@ -122,7 +128,7 @@ class ExportService {
                                 sanitize(tipp.getTitleID()) + '\t' +
                                 sanitize(tipp.getIdentifierValue('DOI')) + '\t' +
                                 sanitize(tipp.subjectArea) + '\t' +
-                                sanitize(tipp.languages?.value.join(';')) + '\t' +
+                                sanitize(tipp.languages?.language.value.join(';')) + '\t' +
                                 sanitize(tipp.accessType?.value) + '\t' +
                                 sanitize(tipp.coverageDepth?.value) + '\t' +
                                 sanitize(tipp.pkg.name) + '\t' +
@@ -178,7 +184,7 @@ class ExportService {
                             sanitize(tipp.getTitleID()) + '\t' +
                             sanitize(tipp.getIdentifierValue('DOI')) + '\t' +
                             sanitize(tipp.subjectArea) + '\t' +
-                            sanitize(tipp.languages?.value.join(';')) + '\t' +
+                            sanitize(tipp.languages?.language.value.join(';')) + '\t' +
                             sanitize(tipp.accessType?.value) + '\t' +
                             sanitize(tipp.coverageDepth?.value) + '\t' +
                             sanitize(tipp.pkg.name) + '\t' +
@@ -227,7 +233,7 @@ class ExportService {
             writer.close();
         }
         outputStream.close()
-    }
+    }*/
 
     /*public void exportPackageTippsAsKBART(def outputStream, Package pkg) {
 
@@ -409,7 +415,7 @@ class ExportService {
     def exportPackageBatchImportTemplate(def outputStream) {
 
         List titles = ["package_uuid", "package_name", "provider_uuid", "nominal_platform_uuid", "description", "url", "breakable", "content_type",
-                              "file", "open_access", "payment_type", "scope", "national_range", "regional_range", "anbieter_produkt_id", "ddc", "source_url", "frequency", "title_id_namespace", "automated_updates"]
+                              "file", "open_access", "payment_type", "scope", "national_range", "regional_range", "anbieter_produkt_id", "ddc", "source_url", "frequency", "title_id_namespace", "automated_updates", "archiving_agency", "open_access_of_archiving_agency", "post_cancellation_access_of_archiving_agency"]
 
 
         XSSFWorkbook workbook = new XSSFWorkbook()
@@ -453,6 +459,12 @@ class ExportService {
                 case 'title_id_namespace': //Because more than 255 values // datas = IdentifierNamespace.findAllByFamily('ttl_prv').sort{it.value}.collect{ it -> it.value}
                     break
                 case 'automated_updates': datas = RefdataCategory.lookup(RCConstants.YN).sort{it.value}.collect { it -> it.value }
+                    break
+                case 'archiving_agency': datas = RefdataCategory.lookup(RCConstants.PAA_ARCHIVING_AGENCY).sort{it.value}.collect { it -> it.value }
+                    break
+                case 'open_access_of_archiving_agency': datas = RefdataCategory.lookup(RCConstants.PAA_OPEN_ACCESS).sort{it.value}.collect { it -> it.value }
+                    break
+                case 'post_cancellation_access_of_archiving_agency': datas = RefdataCategory.lookup(RCConstants.PAA_POST_CANCELLATION_ACCESS).sort{it.value}.collect { it -> it.value }
                     break
             }
 
@@ -510,9 +522,80 @@ class ExportService {
         List<String> titleHeaders = getTitleHeadersTSV()
         Map<String,List> export = [titleRow:titleHeaders,rows:[]]
 
-        SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd')
+        SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd HH:mm:ss')
 
         def sanitize = { it ? (it instanceof Date ? sdf.format(it) : "${it}".trim()) : "" }
+
+        List<String> printIdentifier = ["issn", "pisbn"]
+        List<String> onlineIdentifier = ["eissn", "isbn"]
+
+        String doiIdentifier = "DOI"
+        String zdbIdentifier = "zdb"
+        String ezbIdentifier = "ezb"
+        String packageEzbAnchor = "package_ezb_anchor"
+        String packageIsci = "package_isci"
+
+        String titleIdNameSpace = pkg.source ? pkg.source.targetNamespace.value : 'FAKE'
+
+        RefdataValue priceTypeList = RDStore.PRICE_TYPE_LIST
+        RefdataValue priceTypeOAAPC = RDStore.PRICE_TYPE_OA_APC
+
+        String hqlQuery = "select tipp.id," +
+                " tipp.name, " +
+                " tipp.firstAuthor, " +
+                " tipp.firstEditor, " +
+                " tipp.publisherName, " +
+                " (select value from RefdataValue where tipp.id = tipp.publicationType), " +
+                " (select value from RefdataValue where tipp.id = tipp.medium), " +
+                " tipp.url, " +
+                " 'printIdentifier', " +
+                " 'onlineIdentifier', " +
+                " 'titleIdNameSpace'," +
+                " 'doiIdentifier',"+
+                " tipp.subjectArea, " +
+                " 'languages', " +
+                " (select value from RefdataValue where id = tipp.accessType), " +
+                " (select value from RefdataValue where id = tipp.coverageDepth), " +
+                " 'pkg.name', " +
+                " '', " + // package_id
+                " tipp.accessStartDate, " +
+                " tipp.accessEndDate, " +
+                " tipp.lastChangedExternal, " +
+                " (select value from RefdataValue where id = tipp.status), " +
+                " 'listprice_eur', " +
+                " 'listprice_usd', " +
+                " 'listprice_gbp', " +
+                " tipp.note, " +
+                " tipp.dateFirstInPrint, " +
+                " tipp.dateFirstOnline, " +
+                " tipp.volumeNumber, " +
+                " tipp.editionStatement, " +
+                " tipp.series, " +
+                " tipp.parentPublicationTitleId, " +
+                " cs.startDate, " +
+                " cs.startVolume, " +
+                " cs.startIssue, " +
+                " cs.endDate, " +
+                " cs.endVolume, " +
+                " cs.endIssue, " +
+                " 'zdb_id', "+
+                " 'ezb_id', "+
+                " 'package_ezb_anchor', " +
+                " '', " + // oa_gold
+                " '', " + // oa_hybrid
+                " 'oa_apc_eur', " +
+                " 'oa_apc_usd', " +
+                " 'oa_apc_gbp', " +
+                " '', " + // package_isil
+                " tipp.uuid, " +
+                " 'pkg.uuid', " +
+                " 'package_isci', " +
+                " '', " + // ill_indicator
+                " tipp.precedingPublicationTitleId, " +
+                " tipp.supersedingPublicationTitleId, " +
+                " (select value from RefdataValue where id = cs.coverageDepth) " +
+                "from TitleInstancePackagePlatform as tipp join tipp.coverageStatements as cs where tipp.id in (:tippIDs) order by tipp.name"
+
 
         def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
         def combo_pkg_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
@@ -522,136 +605,245 @@ class ExportService {
         queryParams.sd = status_deleted
         queryParams.ct = combo_pkg_tipps
 
-        List<TitleInstancePackagePlatform> tipps = TitleInstancePackagePlatform.executeQuery("select tipp from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=:p and c.toComponent=tipp and tipp.status != :sd and c.type = :ct order by tipp.name", queryParams, [readOnly: true])
+        List<Long> tippIDs = TitleInstancePackagePlatform.executeQuery("select tipp.id from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=:p and c.toComponent=tipp and tipp.status != :sd and c.type = :ct order by tipp.name", queryParams, [readOnly: true])
 
-        tipps.each { TitleInstancePackagePlatform tipp ->
-
-            if(tipp.publicationType?.value == 'Serial') {
-                tipp.coverageStatements.each { TIPPCoverageStatement tippCoverageStatement ->
-
+        int max = 500
+        TitleInstancePackagePlatform.withSession { Session sess ->
+            for (int offset = 0; offset < tippIDs.size(); offset += max) {
+                List tippAttributes = TitleInstancePackagePlatform.executeQuery(hqlQuery, [tippIDs: tippIDs.drop(offset).take(max)], [readOnly: true])
+                tippAttributes.each { def attribute ->
                     List row = []
-                    row.add(sanitize(tipp.name))
-                    row.add(sanitize(tipp.firstAuthor))
-                    row.add(sanitize(tipp.firstEditor))
-                    row.add(sanitize(tipp.publisherName)) //publisher_name
-                    row.add(sanitize(tipp.publicationType?.value))
-                    row.add(sanitize(tipp.medium?.value))
-                    row.add(sanitize(tipp.url))
-                    row.add(sanitize(tipp.getPrintIdentifier()))
-                    row.add(sanitize(tipp.getOnlineIdentifier()))
-                    row.add(sanitize(tipp.getTitleID()))
-                    row.add(sanitize(tipp.getIdentifierValue('DOI')))
-                    row.add(sanitize(tipp.subjectArea))
-                    row.add(sanitize(tipp.languages?.value.join(';')))
-                    row.add(sanitize(tipp.accessType?.value))
-                    row.add(sanitize(tipp.coverageDepth?.value))
-                    row.add(sanitize(tipp.pkg.name))
-                    row.add("") //package_id
-                    row.add(sanitize(tipp.accessStartDate))
-                    row.add(sanitize(tipp.accessEndDate))
-                    row.add(sanitize(tipp.lastChangedExternal))
-                    row.add(sanitize(tipp.status?.value))
-                    row.add(sanitize(tipp.getListPriceInEUR())) //listprice_eur
-                    row.add(sanitize(tipp.getListPriceInUSD())) //listprice_usd
-                    row.add(sanitize(tipp.getListPriceInGBP())) //listprice_gbp
-                    row.add(sanitize(tipp.note))
-                    row.add(sanitize(tipp.dateFirstInPrint))
-                    row.add(sanitize(tipp.dateFirstOnline))
-                    row.add(sanitize(tipp.volumeNumber))
-                    row.add(sanitize(tipp.editionStatement))
-                    row.add(sanitize(tipp.series))
-                    row.add(sanitize(tipp.parentPublicationTitleId))
-                    row.add(sanitize(tippCoverageStatement.startDate)) //date_first_issue_online
-                    row.add(sanitize(tippCoverageStatement.startVolume)) //num_first_vol_online
-                    row.add(sanitize(tippCoverageStatement.startIssue)) //num_first_issue_online
-                    row.add(sanitize(tippCoverageStatement.endDate)) //date_last_issue_online
-                    row.add(sanitize(tippCoverageStatement.endVolume)) //num_last_vol_online
-                    row.add(sanitize(tippCoverageStatement.endIssue)) //num_last_issue_online
-                    row.add(sanitize(tipp.getIdentifierValue('zdb')))
-                    row.add(sanitize(tipp.getIdentifierValue('ezb')))
-                    row.add("") //package_ezb_anchor
-                    row.add("") //oa_gold
-                    row.add("") //oa_hybrid
-                    row.add(sanitize(tipp.getOAAPCPriceInEUR())) //oa_apc_eur
-                    row.add(sanitize(tipp.getOAAPCPriceInUSD())) //oa_apc_usd
-                    row.add(sanitize(tipp.getOAAPCPriceInGBP())) //oa_apc_gbp
-                    row.add("") //package_isil
-                    row.add(sanitize(tipp.uuid))
-                    row.add(sanitize(tipp.pkg.uuid))
-                    row.add("") //package_isci
-                    row.add("") //ill_indicator
-                    row.add(sanitize(tipp.precedingPublicationTitleId))
-                    row.add(sanitize(tipp.supersedingPublicationTitleId)) //superseding_publication_title_id
-                    row.add(sanitize(tippCoverageStatement.coverageDepth?.value)) //embargo_info
+                    Long tippID
+                    attribute.eachWithIndex { def attributeValue, int index ->
+                        if(index == 0){
+                            tippID = attribute[index]
+                        }
+                        else {
+                            switch (attribute[index]) {
+                                case 'listprice_eur':
+                                    List existPrice = ComponentPrice.executeQuery('select price from ComponentPrice where price is not null and owner.id = :owner and priceType = :priceType and currency = :currency ', [owner: tippID, priceType: priceTypeList, currency: RDStore.CURRENCY_EUR], [readOnly: true])
 
-                    export.rows.add(row)
+                                    if (existPrice.size() > 0) {
+                                        row.add(sanitize(existPrice[0]))
+                                    } else {
+                                        row.add("")
+                                    }
+                                    break;
+                                case 'listprice_usd':
+                                    List existPrice = ComponentPrice.executeQuery('select price from ComponentPrice where price is not null and owner.id = :owner and priceType = :priceType and currency = :currency ', [owner: tippID, priceType: priceTypeList, currency: RDStore.CURRENCY_USD], [readOnly: true])
+
+                                    if (existPrice.size() > 0) {
+                                        row.add(sanitize(existPrice[0]))
+                                    } else {
+                                        row.add("")
+                                    }
+                                    break;
+                                case 'listprice_gbp':
+                                    List existPrice = ComponentPrice.executeQuery('select price from ComponentPrice where price is not null and owner.id = :owner and priceType = :priceType and currency = :currency ', [owner: tippID, priceType: priceTypeList, currency: RDStore.CURRENCY_GBP], [readOnly: true])
+
+                                    if (existPrice.size() > 0) {
+                                        row.add(sanitize(existPrice[0]))
+                                    } else {
+                                        row.add("")
+                                    }
+                                    break;
+                                case 'oa_apc_eur':
+                                    List existPrice = ComponentPrice.executeQuery('select price from ComponentPrice where price is not null and owner.id = :owner and priceType = :priceType and currency = :currency ', [owner: tippID, priceType: priceTypeOAAPC, currency: RDStore.CURRENCY_EUR], [readOnly: true])
+
+                                    if (existPrice.size() > 0) {
+                                        row.add(sanitize(existPrice[0]))
+                                    } else {
+                                        row.add("")
+                                    }
+                                    break;
+                                case 'oa_apc_usd':
+                                    List existPrice = ComponentPrice.executeQuery('select price from ComponentPrice where price is not null and owner.id = :owner and priceType = :priceType and currency = :currency ', [owner: tippID, priceType: priceTypeOAAPC, currency: RDStore.CURRENCY_USD], [readOnly: true])
+
+                                    if (existPrice.size() > 0) {
+                                        row.add(sanitize(existPrice[0]))
+                                    } else {
+                                        row.add("")
+                                    }
+                                    break;
+                                case 'oa_apc_gbp':
+                                    List existPrice = ComponentPrice.executeQuery('select price from ComponentPrice where price is not null and owner.id = :owner and priceType = :priceType and currency = :currency ', [owner: tippID, priceType: priceTypeOAAPC, currency: RDStore.CURRENCY_GBP], [readOnly: true])
+
+                                    if (existPrice.size() > 0) {
+                                        row.add(sanitize(existPrice[0]))
+                                    } else {
+                                        row.add("")
+                                    }
+                                    break;
+                                case 'printIdentifier':
+                                    List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where LOWER(i.namespace.value) in :namespaceValue and c.fromComponent.id = :tippID and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: printIdentifier, tippID: tippID, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
+
+                                    if (identifiers.size() > 0) {
+                                        row.add(sanitize(identifiers.join(';')))
+                                    } else {
+                                        row.add("")
+                                    }
+                                    break;
+                                case 'onlineIdentifier':
+                                    List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where LOWER(i.namespace.value) in :namespaceValue and c.fromComponent.id = :tippID and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: onlineIdentifier, tippID: tippID, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
+
+                                    if (identifiers.size() > 0) {
+                                        row.add(sanitize(identifiers.join(';')))
+                                    } else {
+                                        row.add("")
+                                    }
+                                    break;
+                                case 'titleIdNameSpace':
+
+                                    if(titleIdNameSpace == 'FAKE') {
+                                        Platform platform = Platform.executeQuery('select p from Platform as p,  Combo as c where c.toComponent.id = :tippID and c.type = :comboType and c.fromComponent = p and c.status = :comboStatus', [tippID: tippID, comboType: RDStore.COMBO_TYPE_PLT_HOSTEDTIPPS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])[0]
+                                        titleIdNameSpace = platform.titleNamespace ? platform.titleNamespace.value : 'FAKE'
+                                    }
+
+                                    List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where LOWER(i.namespace.value) = :namespaceValue and c.fromComponent.id = :tippID and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: titleIdNameSpace.toLowerCase(), tippID: tippID, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
+
+                                    if (identifiers.size() > 0) {
+                                        row.add(sanitize(identifiers.join(';')))
+                                    } else {
+                                        row.add("")
+                                    }
+                                    break;
+                                case 'doiIdentifier':
+                                    List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where LOWER(i.namespace.value) = :namespaceValue and c.fromComponent.id = :tippID and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: doiIdentifier.toLowerCase(), tippID: tippID, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
+
+                                    if (identifiers.size() > 0) {
+                                        row.add(sanitize(identifiers.join(';')))
+                                    } else {
+                                        row.add("")
+                                    }
+                                    break;
+                                case 'zdb_id':
+                                    List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where LOWER(i.namespace.value) = :namespaceValue and c.fromComponent.id = :tippID and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: zdbIdentifier.toLowerCase(), tippID: tippID, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
+
+                                    if (identifiers.size() > 0) {
+                                        row.add(sanitize(identifiers.join(';')))
+                                    } else {
+                                        row.add("")
+                                    }
+                                    break;
+                                case 'ezb_id':
+                                    List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where LOWER(i.namespace.value) = :namespaceValue and c.fromComponent.id = :tippID and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: ezbIdentifier.toLowerCase(), tippID: tippID, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
+
+                                    if (identifiers.size() > 0) {
+                                        row.add(sanitize(identifiers.join(';')))
+                                    } else {
+                                        row.add("")
+                                    }
+                                    break;
+                                case 'package_ezb_anchor':
+                                    List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where LOWER(i.namespace.value) = :namespaceValue and c.fromComponent.id = :package and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: packageEzbAnchor.toLowerCase(), package: pkg.id, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
+
+                                    if (identifiers.size() > 0) {
+                                        row.add(sanitize(identifiers.join(';')))
+                                    } else {
+                                        row.add("")
+                                    }
+                                    break;
+                                case 'package_isci':
+                                    List identifiers = Identifier.executeQuery('select i.value from Identifier as i, Combo as c where LOWER(i.namespace.value) = :namespaceValue and c.fromComponent.id = :package and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: packageIsci.toLowerCase(), package: pkg.id, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
+
+                                    if (identifiers.size() > 0) {
+                                        row.add(sanitize(identifiers.join(';')))
+                                    } else {
+                                        row.add("")
+                                    }
+                                    break;
+                                case 'languages':
+                                    List<KBComponentLanguage> languages = KBComponentLanguage.executeQuery('select language.value from KBComponentLanguage where kbcomponent.id = :tippID', [tippID: tippID], [readOnly: true])
+
+                                    if (languages.size() > 0) {
+                                        row.add(sanitize(languages.join(';')))
+                                    } else {
+                                        row.add("")
+                                    }
+                                    break;
+                                case 'pkg.name':
+                                        row.add(sanitize(pkg.name))
+                                    break;
+                                case 'pkg.uuid':
+                                    row.add(sanitize(pkg.uuid))
+                                    break;
+                                default:
+                                    row.add(sanitize(attribute[index]))
+                            }
+                        }
+                        if (attribute.size() - 1 == index) {
+                            export.rows.add(row)
+                        }
+
+                    }
                 }
-            }else{
-                List row = []
-                row.add(sanitize(tipp.name))
-                row.add(sanitize(tipp.firstAuthor))
-                row.add(sanitize(tipp.firstEditor))
-                row.add(sanitize(tipp.publisherName)) //publisher_name
-                row.add(sanitize(tipp.publicationType?.value))
-                row.add(sanitize(tipp.medium?.value))
-                row.add(sanitize(tipp.url))
-                row.add(sanitize(tipp.getPrintIdentifier()))
-                row.add(sanitize(tipp.getOnlineIdentifier()))
-                row.add(sanitize(tipp.getTitleID()))
-                row.add(sanitize(tipp.getIdentifierValue('DOI')))
-                row.add(sanitize(tipp.subjectArea))
-                row.add(sanitize(tipp.languages?.value.join(';')))
-                row.add(sanitize(tipp.accessType?.value))
-                row.add(sanitize(tipp.coverageDepth?.value))
-                row.add(sanitize(tipp.pkg.name))
-                row.add("") //package_id
-                row.add(sanitize(tipp.accessStartDate))
-                row.add(sanitize(tipp.accessEndDate))
-                row.add(sanitize(tipp.lastChangedExternal))
-                row.add(sanitize(tipp.status?.value))
-                row.add(sanitize(tipp.getListPriceInEUR())) //listprice_eur
-                row.add(sanitize(tipp.getListPriceInUSD())) //listprice_usd
-                row.add(sanitize(tipp.getListPriceInGBP())) //listprice_gbp
-                row.add(sanitize(tipp.note))
-                row.add(sanitize(tipp.dateFirstInPrint))
-                row.add(sanitize(tipp.dateFirstOnline))
-                row.add(sanitize(tipp.volumeNumber))
-                row.add(sanitize(tipp.editionStatement))
-                row.add(sanitize(tipp.parentPublicationTitleId))
-                row.add("") //date_first_issue_online
-                row.add("") //num_first_vol_online
-                row.add("") //num_first_issue_online
-                row.add("") //date_last_issue_online
-                row.add("") //num_last_vol_online
-                row.add("") //num_last_issue_online
-                row.add(sanitize(tipp.getIdentifierValue('zdb')))
-                row.add(sanitize(tipp.getIdentifierValue('ezb')))
-                row.add("") //package_ezb_anchor
-                row.add("") //oa_gold
-                row.add("") //oa_hybrid
-                row.add(sanitize(tipp.getOAAPCPriceInEUR())) //oa_apc_eur
-                row.add(sanitize(tipp.getOAAPCPriceInUSD())) //oa_apc_usd
-                row.add(sanitize(tipp.getOAAPCPriceInGBP())) //oa_apc_gbp
-                row.add("") //package_isil
-                row.add(sanitize(tipp.uuid))
-                row.add(sanitize(tipp.pkg.uuid))
-                row.add("") //package_isci
-                row.add("") //ill_indicator
-                row.add(sanitize(tipp.precedingPublicationTitleId))
-                row.add(sanitize(tipp.supersedingPublicationTitleId)) //superseding_publication_title_id
-                row.add("") //embargo_info
-
-                export.rows.add(row)
+                log.debug("flushing after ${offset} ...")
+                sess.flush()
             }
         }
 
         outputStream.withWriter { writer ->
-            writer.write("we:kb Export : ${pkg.provider?.name} : ${pkg.name} : ${export_date}\n");
-            writer.write(generateSeparatorTableString(export.titleRow, export.rows, '|'))
+            writer.write("we:kb Export : Provider (${pkg.provider?.name}) : Package (${pkg.name}) : ${export_date}\n");
+            writer.write(generateSeparatorTableString(export.titleRow, export.rows, '\t'))
         }
         outputStream.flush()
         outputStream.close()
     }
+
+
+    def exportPackages(def outputStream, def packages) {
+
+        def export_date = dateFormatService.formatDate(new Date())
+        List<String> titleHeaders = ["package_uuid", "package_name", "provider_name", "provider_uuid", "nominal_platform_name",
+                                     "nominal_platform_uuid", "description", "url", "breakable", "content_type",
+                                     "file", "open_access", "payment_type", "scope", "national_range", "regional_range", "anbieter_produkt_id", "ddc",
+                                     "source_url", "frequency", "title_id_namespace", "automated_updates",
+                                     "archiving_agency", "open_access_of_archiving_agency", "post_cancellation_access_of_archiving_agency"]
+        Map<String,List> export = [titleRow:titleHeaders,rows:[]]
+
+        SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd HH:mm:ss')
+
+        def sanitize = { it ? (it instanceof Date ? sdf.format(it) : "${it}".trim()) : "" }
+
+        packages.each { Package pkg ->
+
+            List row = []
+            row.add(sanitize(pkg.uuid))
+            row.add(sanitize(pkg.name))
+            row.add(sanitize(pkg.provider?.name))
+            row.add(sanitize(pkg.provider?.uuid))
+            row.add(sanitize(pkg.nominalPlatform?.name))
+            row.add(sanitize(pkg.nominalPlatform?.uuid))
+            row.add(sanitize(pkg.description))
+            row.add(sanitize(pkg.descriptionURL))
+            row.add(sanitize(pkg.breakable?.value))
+            row.add(sanitize(pkg.contentType?.value))
+            row.add(sanitize(pkg.file?.value))
+            row.add(sanitize(pkg.openAccess?.value))
+            row.add(sanitize(pkg.paymentType?.value))
+            row.add(sanitize(pkg.scope?.value))
+            row.add(sanitize(pkg.nationalRanges?.value.join(',')))
+            row.add(sanitize(pkg.regionalRanges?.value.join(',')))
+            row.add(sanitize(pkg.getIdentifierValue('Anbieter_Produkt_Id')))
+            row.add(sanitize(pkg.ddcs?.value.join(',')))
+            row.add(sanitize(pkg.source?.url))
+            row.add(sanitize(pkg.source?.frequency?.value))
+            row.add(sanitize(pkg.source?.targetNamespace?.value))
+            row.add(sanitize(pkg.source?.automaticUpdates ? 'Yes': 'No'))
+            row.add(sanitize(pkg.paas?.archivingAgency?.value))
+            row.add(sanitize(pkg.paas?.openAccess?.value))
+            row.add(sanitize(pkg.paas?.postCancellationAccess?.value))
+            export.rows.add(row)
+        }
+
+        outputStream.withWriter { writer ->
+            writer.write("we:kb Export : Packages (${packages.size()}) : ${export_date}\n");
+            writer.write(generateSeparatorTableString(export.titleRow, export.rows, '\t'))
+        }
+        outputStream.flush()
+        outputStream.close()
+    }
+
 
     List<String> getTitleHeadersTSV() {
         ['publication_title',
@@ -700,8 +892,8 @@ class ExportService {
          'oa_apc_usd',
          'oa_apc_gbp',
          'package_isil',
-         'title_gokb_uuid',
-         'package_gokb_uuid',
+         'title_wekb_uuid',
+         'package_wekb_uuid',
          'package_isci',
          'ill_indicator',
          'preceding_publication_title_id',

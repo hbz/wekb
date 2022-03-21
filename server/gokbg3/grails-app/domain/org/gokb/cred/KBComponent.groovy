@@ -3,6 +3,7 @@ package org.gokb.cred
 import de.wekb.helper.RCConstants
 import grails.util.GrailsNameUtils
 import groovy.util.logging.*
+import wekb.KBComponentLanguage
 
 import javax.persistence.Transient
 
@@ -297,7 +298,6 @@ abstract class KBComponent implements Auditable{
   Set languages
   String lastUpdateComment
 
-  // Set tags = []
   List additionalProperties = []
   Set outgoingCombos = []
   Set incomingCombos = []
@@ -334,8 +334,7 @@ abstract class KBComponent implements Auditable{
 
   // ids moved to combos.
   static manyByCombo = [
-      ids            : Identifier,
-      fileAttachments: DataFile,
+      ids            : Identifier
   ]
 
 
@@ -345,21 +344,18 @@ abstract class KBComponent implements Auditable{
       additionalProperties: 'fromComponent',
       variantNames        : 'owner',
       reviewRequests      : 'componentToReview',
-      people              : 'component',
       prices              : 'owner'
   ]
 
 
   static hasMany = [
-      // tags:RefdataValue,
       outgoingCombos      : Combo,
       incomingCombos      : Combo,
       additionalProperties: KBComponentAdditionalProperty,
       variantNames        : KBComponentVariantName,
       reviewRequests      : ReviewRequest,
-      people              : ComponentPerson,
       prices              : ComponentPrice,
-      languages            : RefdataValue
+      languages            : KBComponentLanguage
   ]
 
 
@@ -376,7 +372,6 @@ abstract class KBComponent implements Auditable{
     source column: 'kbc_source_fk'
     status column: 'kbc_status_rv_fk', index: 'kbc_status_idx'
     shortcode column: 'kbc_shortcode', index: 'kbc_shortcode_idx'
-    // tags joinTable: [name: 'kb_component_tags_value', key: 'kbctgs_kbc_id', column: 'kbctgs_rdv_id']
     dateCreated column: 'kbc_date_created', index: 'kbc_date_created_idx'
     lastUpdated column: 'kbc_last_updated', index: 'kbc_last_updated_idx'
     duplicateOf column: 'kbc_duplicate_of'
@@ -393,11 +388,6 @@ abstract class KBComponent implements Auditable{
     variantNames cascade: "all,delete-orphan", lazy: false
     //dateCreatedYearMonth formula: "DATE_FORMAT(kbc_date_created, '%Y-%m')"
     //lastUpdatedYearMonth formula: "DATE_FORMAT(kbc_last_updated, '%Y-%m')"
-    languages             joinTable: [
-        name:   'kbc_language',
-        key:    'kbc_fk',
-        column: 'kbc_language_rv_fk', type:   'BIGINT'
-    ], lazy: false
   }
 
 
@@ -417,7 +407,6 @@ abstract class KBComponent implements Auditable{
     bucketHash(nullable: true, blank: false)
     componentDiscriminator(nullable: true, blank: false)
     componentHash(nullable: true, blank: false)
-    languages(nullable:true)
   }
 
 
@@ -863,13 +852,11 @@ abstract class KBComponent implements Auditable{
         'outgoingCombos',
         'incomingCombos',
 //      'reviewRequests',
-        'tags',
         'systemOnly',
         'additionalProperties',
 //      'skippedTitles',
         'variantNames',
-        'ids',
-        'fileAttachments'
+        'ids'
     ]
 
     // Get the domain class.
@@ -920,13 +907,11 @@ abstract class KBComponent implements Auditable{
         'outgoingCombos',
         'incomingCombos',
         'reviewRequests',
-        'tags',
         'systemOnly',
         'additionalProperties',
 //      'skippedTitles',
 //      'variantNames',
-        'ids',
-        'fileAttachments'
+        'ids'
     ]
     // Get the domain class.
     def domainClass = grailsApplication.getDomainClass(this."class".name)
@@ -1262,8 +1247,6 @@ abstract class KBComponent implements Auditable{
         }
     }
     ReviewRequest.executeUpdate("delete from ReviewRequest as c where c.componentToReview=:component", [component: this])
-    ComponentPerson.executeUpdate("delete from ComponentPerson as c where c.component=:component", [component: this])
-    ComponentIngestionSource.executeUpdate("delete from ComponentIngestionSource as c where c.component=:component", [component: this])
     KBComponent.executeUpdate("update KBComponent set duplicateOf = NULL where duplicateOf=:component", [component: this])
     KBComponent.executeUpdate("delete from ComponentPrice where owner=:component", [component: this])
     this.delete(failOnError: true)
@@ -1293,8 +1276,6 @@ abstract class KBComponent implements Auditable{
         ComponentHistoryEvent.executeUpdate("delete from ComponentHistoryEvent as c where c.id = ?", [it.id])
       }
       ReviewRequest.executeUpdate("delete from ReviewRequest as c where c.componentToReview.id IN (:component)", [component: batch])
-      ComponentPerson.executeUpdate("delete from ComponentPerson as c where c.component.id IN (:component)", [component: batch])
-      ComponentIngestionSource.executeUpdate("delete from ComponentIngestionSource as c where c.component.id IN (:component)", [component: batch])
       KBComponent.executeUpdate("update KBComponent set duplicateOf = NULL where duplicateOf.id IN (:component)", [component: batch])
       ComponentPrice.executeUpdate("delete from ComponentPrice as cp where cp.owner.id IN (:component)", [component: batch])
       result.num_expunged += KBComponent.executeUpdate("delete KBComponent as c where c.id IN (:component)", [component: batch])
@@ -1316,7 +1297,7 @@ abstract class KBComponent implements Auditable{
     if (languages){
       builder.'languages'{
         languages.each{ lan ->
-          builder.'language'(lan.value)
+          builder.'language'(lan.language.value)
         }
       }
     }
@@ -1345,23 +1326,6 @@ abstract class KBComponent implements Auditable{
           String pName = prop.propertyDefn?.propertyName
           if (pName && prop.apValue){
             builder.'additionalProperty'('name': pName, 'value': prop.apValue)
-          }
-        }
-      }
-    }
-    if (fileAttachments){
-      builder.'fileAttachments'{
-        fileAttachments.each{ fa ->
-          builder.'fileAttachment'{
-            builder.'guid'(fa.guid)
-            builder.'md5'(fa.md5)
-            builder.'uploadName'(fa.uploadName)
-            builder.'uploadMimeType'(fa.uploadMimeType)
-            builder.'filesize'(fa.filesize)
-            builder.'doctype'(fa.doctype)
-            builder.'content'{
-              builder.'mkp'.yieldUnescaped "<![CDATA[${fa.fileData.encodeBase64().toString()}]]>"
-            }
           }
         }
       }
@@ -1432,15 +1396,19 @@ abstract class KBComponent implements Auditable{
       if (currency) {
         rdv_currency = RefdataCategory.lookupOrCreate(RCConstants.CURRENCY, currency.trim()).save(flush: true, failOnError: true)
       }
-      ComponentPrice existPrice = ComponentPrice.findWhere(owner: this, priceType: rdv_type, currency: rdv_currency, price: f)
-      if (existPrice){
+      List<ComponentPrice> existPrices = ComponentPrice.findAllByOwnerAndPriceTypeAndCurrency(this, rdv_type, rdv_currency, [sort: 'lastUpdated', order: 'ASC'])
+      if (existPrices.size() > 0){
+        ComponentPrice existPrice = existPrices[0]
         if (start != null) {
           existPrice.startDate = start
         }
         if (start != null) {
           existPrice.endDate = end
         }
-        existPrice.save()
+        if(existPrice.price != f) {
+          existPrice.price = f
+          existPrice.save()
+        }
         save()
       }
       else {
@@ -1452,10 +1420,11 @@ abstract class KBComponent implements Auditable{
                 startDate: start ?: today,
                 endDate: end)
         cp.save()
+        /*ERMS-3813: Preishistory nicht mehr nötig in wekb
         // set the end date for the current price(s)
         ComponentPrice.executeUpdate('update ComponentPrice set endDate=:start where owner=:tipp and' +
             '(endDate is null or endDate>:start) and priceType=:type and currency=:currency' ,
-            [start: cp.startDate, tipp: this, type: cp.priceType, currency:cp.currency])
+            [start: cp.startDate, tipp: this, type: cp.priceType, currency:cp.currency])*/
         // enter the new price
         prices << cp
         save()

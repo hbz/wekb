@@ -5,7 +5,9 @@ import de.wekb.annotations.KbartAnnotation
 import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
 import org.gokb.ComponentLookupService
+import org.grails.web.json.JSONArray
 import org.grails.web.json.JSONObject
+import wekb.KBComponentLanguage
 
 import javax.persistence.Transient
 import com.k_int.ClassUtils
@@ -147,7 +149,9 @@ class TitleInstancePackagePlatform extends KBComponent {
       'supersedingPublicationTitleId':"supersedingPublicationTitleId",
       'lastChangedExternal'   : "lastChangedExternal",
       'medium'                : "medium",
-      'languages'              : "languages"
+      'languages'              : "languages",
+      'accessType'              : "accessType",
+      'openAccess'              : "openAccess"
     ],
     'defaultLinks' : [
       'pkg',
@@ -195,7 +199,7 @@ class TitleInstancePackagePlatform extends KBComponent {
   ]
 
   def getPersistentId() {
-    "${uuid ?: 'gokb:TIPP:' + title?.id + ':' + pkg?.id + ':' + hostPlatform?.id}"
+    "${uuid ?: 'wekb:TIPP:' + title?.id + ':' + pkg?.id + ':' + hostPlatform?.id}"
   }
 
   static isTypeCreatable(boolean defaultValue = false) {
@@ -273,7 +277,7 @@ class TitleInstancePackagePlatform extends KBComponent {
      [code: 'setStatus::Deleted', label: 'Delete', perm: 'delete'],
      [code: 'setStatus::Expected', label: 'Mark Expected'],
      [code: 'setStatus::Current', label: 'Set Current'],
-     [code: 'tipp::move', label: 'Move TIPP']
+     /*[code: 'tipp::move', label: 'Move TIPP']*/
     ]
   }
 
@@ -838,6 +842,7 @@ class TitleInstancePackagePlatform extends KBComponent {
 
     if (pkg && plt && ti && curator) {
       log.debug("See if we already have a tipp")
+      //and tipp.status != ? ??????
       def tipps = TitleInstancePackagePlatform.executeQuery('select tipp from TitleInstancePackagePlatform as tipp, Combo as pkg_combo, Combo as platform_combo  ' +
         'where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg ' +
         'and platform_combo.toComponent=tipp and platform_combo.fromComponent = :platform ' +
@@ -846,52 +851,96 @@ class TitleInstancePackagePlatform extends KBComponent {
       def uuid_tipp = tipp_dto.uuid ? TitleInstancePackagePlatform.findByUuid(tipp_dto.uuid) : null
       TitleInstancePackagePlatform tipp = null
 
-      //TODO: MOE
+
       if (uuid_tipp && uuid_tipp.pkg == pkg && uuid_tipp.hostPlatform == plt && (uuid_tipp.name == ti.name || uuid_tipp.name == tipp_dto.name)) {
         tipp = uuid_tipp
       }
 
       if (!tipp) {
-        switch (tipps.size()) {
-          case 1:
-            log.debug("found")
+        if(tipps.size() == 0){
+          if (trimmed_url && trimmed_url.size() > 0) {
+            log.debug("not found Tipp with title. research in pkg ${pkg} with url")
+            tipps = TitleInstancePackagePlatform.executeQuery('select tipp from TitleInstancePackagePlatform as tipp, Combo as pkg_combo, Combo as platform_combo  ' +
+                    'where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg ' +
+                    'and platform_combo.toComponent=tipp and platform_combo.fromComponent = :platform ' +
+                    'and tipp.url = :url',
+                    [pkg: pkg, platform: plt, url: trimmed_url])
+          }
 
+          if(tipps.size() == 0) {
+            log.debug("not found Tipp with title. research in pkg ${pkg} with tile_id")
+            tipps = TitleInstancePackagePlatform.executeQuery('select tipp from TitleInstancePackagePlatform as tipp, Combo as pkg_combo, Combo as platform_combo  ' +
+                    'where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg ' +
+                    'and platform_combo.toComponent=tipp and platform_combo.fromComponent = :platform ',
+                    [pkg: pkg, platform: plt])
+          }
+
+        }
+        switch (tipps.size()) {
+          case 0:
+            log.debug("not found Tipp: [pkg: ${pkg}, platform: ${plt}, tiName: ${ti.name}, tiDtoName: ${tipp_dto.name}]")
+            break
+          case 1:
             if (trimmed_url && trimmed_url.size() > 0) {
               if (!tipps[0].url || tipps[0].url == trimmed_url) {
+                log.debug("found tipp")
                 tipp = tipps[0]
               } else {
-                log.debug("matched tipp has a different url..")
+
+                //if url changed find tipp over title id
+                TitleInstancePackagePlatform tippMatchedByTitleID = tippMatchingByTitleID(tipp_dto.identifiers, pkg, plt)
+                if (tippMatchedByTitleID && tippMatchedByTitleID.id == tipps[0].id) {
+                  log.debug("found tipp")
+                  tipp = tipps[0]
+                } else {
+                  log.debug("not found Tipp because url changed: [pkg: ${pkg}, platform: ${plt}, tiName: ${ti.name}, tiDtoName: ${tipp_dto.name}, url: ${trimmed_url}]")
+                }
               }
             } else {
+              log.debug("found tipp")
               tipp = tipps[0]
             }
-            break;
-          case 0:
-            log.debug("not found");
-
-            break;
+            break
           default:
             if (trimmed_url && trimmed_url.size() > 0) {
               tipps = tipps.findAll { !it.url || it.url == trimmed_url };
               log.debug("found ${tipps.size()} tipps for URL ${trimmed_url}")
             }
 
-            def cur_tipps = tipps.findAll { it.status == status_current };
-            def ret_tipps = tipps.findAll { it.status == status_retired };
+            List<TitleInstancePackagePlatform> cur_tipps = tipps.findAll { it.status == status_current }
+            List<TitleInstancePackagePlatform> ret_tipps = tipps.findAll { it.status == status_retired }
 
             if (cur_tipps.size() > 0) {
-              tipp = cur_tipps[0]
-
+              if (cur_tipps.size() == 1) {
+                tipp = cur_tipps[0]
+              } else {
+                TitleInstancePackagePlatform tippMatchedByTitleID = tippMatchingByTitleID(tipp_dto.identifiers, pkg, plt)
+                if (tippMatchedByTitleID) {
+                  log.debug("found tipp")
+                  tipp = cur_tipps.find { it.id == tippMatchedByTitleID.id }
+                } else {
+                  log.debug("not found Tipp after cur_tipps and tippMatchingByTitleID: [pkg: ${pkg}, platform: ${plt}, tiName: ${ti.name}, tiDtoName: ${tipp_dto.name}, url: ${trimmed_url}, ids: ${tipp_dto.identifiers}]")
+                }
+              }
               log.warn("found ${cur_tipps.size()} current TIPPs!")
             } else if (ret_tipps.size() > 0) {
-              tipp = ret_tipps[0]
-
-              log.warn("found ${ret_tipps.size()} retired TIPPs!")
+              if (ret_tipps.size() == 1) {
+                tipp = ret_tipps[0]
+              } else {
+                TitleInstancePackagePlatform tippMatchedByTitleID = tippMatchingByTitleID(tipp_dto.identifiers, pkg, plt)
+                if (tippMatchedByTitleID) {
+                  log.debug("found tipp")
+                  tipp = ret_tipps.find { it.id == tippMatchedByTitleID.id }
+                } else {
+                  log.debug("not found Tipp after ret_tipps and tippMatchingByTitleID: [pkg: ${pkg}, platform: ${plt}, tiName: ${ti.name}, tiDtoName: ${tipp_dto.name}, url: ${trimmed_url}, ids: ${tipp_dto.identifiers}]")
+                }
+              }
             } else {
               log.debug("None of the matched TIPPs are 'Current' or 'Retired'!")
             }
-            break;
+            break
         }
+
       }
 
       if (!tipp) {
@@ -1108,8 +1157,11 @@ class TitleInstancePackagePlatform extends KBComponent {
         if (tipp_dto.language) {
           tipp_dto.language.each{ String lan ->
             RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.KBCOMPONENT_LANGUAGE, lan)
-            if(refdataValue && !(refdataValue in tipp.languages)){
-              tipp.addToLanguages(refdataValue)
+            if(refdataValue){
+              if(!KBComponentLanguage.findByKbcomponentAndLanguage(tipp, refdataValue)){
+                KBComponentLanguage kbComponentLanguage = new KBComponentLanguage(kbcomponent: tipp, language: refdataValue)
+                kbComponentLanguage.save()
+              }
             }
           }
         }
@@ -1186,8 +1238,8 @@ class TitleInstancePackagePlatform extends KBComponent {
         builder.'lastChangedExternal'(lastChangedExternal?.trim())
         builder.'medium'(medium?.value.trim())
         builder.'languages' {
-          languages.each { lan ->
-            builder.'language'(lan?.value.trim())
+          languages.each {KBComponentLanguage lan ->
+            builder.'language'(lan.language.value.trim())
           }
         }
         builder.'title'([id: ti.id, uuid: ti.uuid]) {
@@ -1486,6 +1538,8 @@ class TitleInstancePackagePlatform extends KBComponent {
       String result = null
       if(pkg.source && pkg.source.targetNamespace){
         result = getIdentifierValue(pkg.source.targetNamespace.value)
+      }else if(hostPlatform.titleNamespace){
+        result = getIdentifierValue(hostPlatform.titleNamespace.value)
       }
     return result
   }
@@ -1566,6 +1620,81 @@ class TitleInstancePackagePlatform extends KBComponent {
       result = existPrice.price.toString()
     }
     return result
+
+  }
+
+  @Transient
+  static TitleInstancePackagePlatform tippMatchingByTitleID(JSONArray identifiers, Package aPackage, Platform platform) {
+    if(identifiers && aPackage.source && aPackage.source.targetNamespace){
+
+      String value = identifiers.find {it.type == aPackage.source.targetNamespace.value}?.value
+
+      def norm_id = Identifier.normalizeIdentifier(value)
+      List<Identifier> identifierList = Identifier.findAllByNamespaceAndNormname(aPackage.source.targetNamespace, norm_id)
+
+      if(identifierList.size() == 1){
+
+        log.debug("tippMatchingByTitleID: "+ identifierList.id)
+        List<TitleInstancePackagePlatform> tippCombos = Combo.executeQuery("select c.fromComponent from Combo as c where c.toComponent = :identifier and c.fromComponent in (:tipps)", [identifier: identifierList[0], tipps: aPackage.tipps])
+
+        if(tippCombos.size() == 1) {
+          log.debug("tippMatchingByTitleID provider internal identifier matching by "+tippCombos.size() + ": "+ tippCombos.id)
+          return tippCombos[0]
+        }
+
+      }
+    }
+    else if(identifiers && platform.titleNamespace){
+      String value = identifiers.find {it.type == platform.titleNamespace.value}?.value
+
+      def norm_id = Identifier.normalizeIdentifier(value)
+      List<Identifier> identifierList = Identifier.findAllByNamespaceAndNormname(platform.titleNamespace, norm_id)
+
+      if(identifierList.size() == 1){
+
+        log.debug("tippMatchingByTitleID identifierList: "+ identifierList.id)
+        List<TitleInstancePackagePlatform> tippCombos = Combo.executeQuery("select c.fromComponent from Combo as c where c.toComponent = :identifier and c.fromComponent in (:tipps)", [identifier: identifierList[0], tipps: aPackage.tipps])
+
+        if(tippCombos.size() == 1) {
+          log.debug("tippMatchingByTitleID provider internal identifier matching by "+tippCombos.size() + ": "+ tippCombos.id)
+          return tippCombos[0]
+        }
+
+      }
+    }
+
+  }
+
+  @Transient
+  static TitleInstancePackagePlatform tippMatchingByPrintAndOnlineIdentifiers(JSONArray identifiers, Package aPackage, Platform platform) {
+    if(identifiers){
+
+      List<String> printIdentifier = ["issn", "pisbn"]
+      List<String> onlineIdentifier = ["eissn", "isbn"]
+
+      List<String> values = identifiers.findAll {it.type in (printIdentifier+onlineIdentifier)}?.value
+
+      List<String> norm_ids = []
+      values.each {String value ->
+        norm_ids << Identifier.normalizeIdentifier(value)
+      }
+
+      List<IdentifierNamespace> identifierNamespaces = IdentifierNamespace.findAllByValueInList(printIdentifier+onlineIdentifier)
+
+      List<Identifier> identifierList = Identifier.findAllByValueInListAndNamespaceInList(norm_ids, identifierNamespaces)
+
+      if(identifierList.size() > 0){
+
+        log.debug("tippMatchingByPrintAndOnlineIdentifiers: "+ identifierList.id)
+        List<TitleInstancePackagePlatform> tippCombos = Combo.executeQuery("select c.fromComponent from Combo as c where c.toComponent = :identifier and c.fromComponent in (:tipps)", [identifier: identifierList[0], tipps: aPackage.tipps])
+
+        if(tippCombos.size() == 1) {
+          log.debug("tippMatchingByPrintAndOnlineIdentifiers by "+tippCombos.size() + ": "+ tippCombos.id)
+          return tippCombos[0]
+        }
+
+      }
+    }
 
   }
 

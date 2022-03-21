@@ -32,12 +32,7 @@
     <dd>
         <gokb:xEditable owner="${d}" field="primaryUrl">${d.primaryUrl}</gokb:xEditable>
         <g:if test="${d.primaryUrl}">
-            <g:if test="${d.primaryUrl.startsWith('http')}">
-                &nbsp; <a href="${d.primaryUrl}" target="new"><i class="fas fa-external-link-alt"></i></a>
-            </g:if>
-            <g:else>
-                &nbsp; <span class="badge badge-warning">!Unknown URL format!</span>
-            </g:else>
+                &nbsp; <a href="${d.primaryUrl.startsWith('http') ? d.primaryUrl : 'http://' + d.primaryUrl}" target="new"><i class="fas fa-external-link-alt"></i></a>
         </g:if>
     </dd>
 

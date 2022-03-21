@@ -5,6 +5,7 @@ import grails.gorm.transactions.Transactional
 import grails.plugin.springsecurity.SpringSecurityService
 import grails.plugin.springsecurity.SpringSecurityUtils
 import grails.web.servlet.mvc.GrailsParameterMap
+import org.gokb.cred.CuratoryGroup
 import org.gokb.cred.User
 
 @Transactional
@@ -18,18 +19,22 @@ class AccessService {
         if (!(o.respondsTo('isSystemComponent') && o.isSystemComponent())) {
 
             def curatedObj = o.respondsTo("getCuratoryGroups") ? o : ( o.hasProperty('pkg') ? o.pkg : false )
-
+            User user = springSecurityService.currentUser
             if (curatedObj && curatedObj.curatoryGroups && curatedObj.niceName != 'User') {
-                User user = springSecurityService.currentUser
 
                 if(user.curatoryGroups?.id.intersect(curatedObj.curatoryGroups?.id).size() > 0)
                 {
-                    editable = SecurityApi.isTypeEditable(o.getClass(), true) ?: (grailsParameterMap.curationOverride == 'true' && grailsParameterMap.isAdmin())
+                    editable = SecurityApi.isTypeEditable(o.getClass(), true) ?: (grailsParameterMap.curationOverride == 'true' && user.isAdmin())
                 }else {
                     editable = SpringSecurityUtils.ifAnyGranted('ROLE_SUPERUSER') ?: false
                 }
             }else {
-                editable = SecurityApi.isTypeEditable(o.getClass(), true)
+                if(o instanceof CuratoryGroup && o.id in user.curatoryGroups?.id){
+                    editable = SecurityApi.isTypeEditable(o.getClass(), true)
+                }
+                else{
+                    editable = SpringSecurityUtils.ifAnyGranted('ROLE_SUPERUSER') ?: false
+                }
             }
         }
 

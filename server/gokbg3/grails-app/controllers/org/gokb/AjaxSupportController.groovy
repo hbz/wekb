@@ -13,6 +13,7 @@ import grails.core.GrailsClass
 import org.grails.datastore.mapping.model.*
 import org.grails.datastore.mapping.model.types.*
 import wekb.AccessService
+import wekb.KBComponentLanguage
 
 import java.text.SimpleDateFormat
 
@@ -772,14 +773,6 @@ class AjaxSupportController {
       result.values = []
       result.error = "Unable to locate domain class ${params.baseClass}, or this user is not permitted to view it."
     }
-    //result.values = [[id:'Person:45',text:'Fred'],
-    //                 [id:'Person:23',text:'Jim'],
-    //                 [id:'Person:22',text:'Jimmy'],
-    //                 [id:'Person:3',text:'JimBob']]
-
-    //     if ( params.addEmpty=='Y' || params.addEmpty=='y' ) {
-    //       result.values.add(0, [id:'', text:'']);
-    //     }
 
     render result as JSON
   }
@@ -1568,6 +1561,53 @@ class AjaxSupportController {
     }
 
     render result as JSON
+  }
+
+  @Transactional
+  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  def deleteLanguage() {
+    log.debug("${params}");
+    def result = ['result':'OK', 'params': params]
+    KBComponentLanguage kbComponentLanguage = KBComponentLanguage.get(params.id)
+    def user = springSecurityService.currentUser
+
+    if ( kbComponentLanguage != null ) {
+      def editable = checkEditable(kbComponentLanguage.kbcomponent)
+
+      if (editable) {
+        kbComponentLanguage.delete()
+      }
+      else {
+        result.result = 'ERROR'
+        result.code = 403
+        result.message = "No permission to edit language for this object!"
+        flash.error = "No permission to edit language for this object!"
+      }
+    }
+    else if (!kbComponentLanguage) {
+      result.result = 'ERROR'
+      result.code = 404
+      flash.error = message(code:'default.not.found.message', args:["Language", params.id])
+      result.message = "Language with id ${params.id} not found!".toString()
+    }
+
+    withFormat {
+      html {
+        def redirect_to = request.getHeader('referer')
+
+        if ( params.redirect ) {
+          redirect_to = params.redirect
+        }
+        else if ( ( params.fragment ) && ( params.fragment.length() > 0 ) ) {
+          redirect_to = "${redirect_to}#${params.fragment}"
+        }
+
+        redirect(url: redirect_to);
+      }
+      json {
+        render result as JSON
+      }
+    }
   }
 
 }

@@ -8,7 +8,6 @@ import grails.converters.JSON
 import grails.util.GrailsNameUtils
 import groovy.util.logging.*
 import org.gokb.cred.*
-import org.gokb.refine.RefineProject
 import org.hibernate.criterion.CriteriaSpecification
 import org.hibernate.criterion.Subqueries
 import org.springframework.security.access.annotation.Secured
@@ -26,7 +25,6 @@ class ApiController {
 
   TsvSuperlifterService tsvSuperlifterService
   SecureRandom rand = new SecureRandom()
-  UploadAnalysisService uploadAnalysisService
   def ESSearchService
 
   static def reversemap = ['subject':'subjectKw','componentType':'componentType','identifier':'identifiers.value']
@@ -39,27 +37,6 @@ class ApiController {
       "username"    : "${u.username}",
       "displayName"   : "${u.displayName ?: u.username}"
     ]
-  }
-
-  private static final Closure TRANSFORMER_PROJECT = {
-
-    // Treat as refine project.
-    RefineProject proj = it as RefineProject
-
-    // Populate the map manually instead of excluding more and more.
-    TreeMap props = [
-      "id"                : proj.id,
-      "localProjectID"    : proj.localProjectID,
-      "name"              : proj.name,
-      "description"       : proj.description,
-      "projectStatus"     : proj.projectStatus,
-      "lastCheckedOutBy"  : ApiController.TRANSFORMER_USER (proj.lastCheckedOutBy),
-      "progress"          : proj.progress,
-      "modified"          : proj.modified,
-      "createdBy"         : ApiController.TRANSFORMER_USER (proj.createdBy),
-    ]
-
-    return props
   }
 
   def springSecurityService
@@ -886,7 +863,7 @@ class ApiController {
   /**
    * See the service method {@link com.k_int.ESSearchService#getApiTunnel(java.lang.Object)} for usage instructions.
    */
-  def elasticsearchTunnel() {
+  /*def elasticsearchTunnel() {
     def result = [:]
     try {
       result = ESSearchService.getApiTunnel(params)
@@ -907,5 +884,5 @@ class ApiController {
     }
 
     render result as JSON
-  }
+  }*/
 }

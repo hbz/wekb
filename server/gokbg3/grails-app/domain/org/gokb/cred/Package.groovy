@@ -4,6 +4,7 @@ package org.gokb.cred
 import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
 import de.wekb.helper.RDStore
+import wekb.PackageArchivingAgency
 import org.gokb.GOKbTextUtils
 
 import javax.persistence.Transient
@@ -11,7 +12,6 @@ import groovy.util.logging.*
 import groovy.time.TimeCategory
 
 
-import org.gokb.refine.*
 
 @Slf4j
 class Package extends KBComponent {
@@ -48,7 +48,6 @@ class Package extends KBComponent {
   @RefdataAnnotation(cat = RCConstants.PACKAGE_EDITING_STATUS)
   RefdataValue editingStatus
 
-  RefineProject lastProject
   String globalNote
 
   String descriptionURL
@@ -89,11 +88,11 @@ class Package extends KBComponent {
           nationalRanges : RefdataValue,
           regionalRanges : RefdataValue,
           ddcs : RefdataValue,
+          paas : PackageArchivingAgency,
   ]
 
   static mapping = {
     includes KBComponent.mapping
-    lastProject column: 'pkg_refine_project_fk'
     scope column: 'pkg_scope_rv_fk'
     breakable column: 'pkg_breakable_rv_fk'
     consistent column: 'pkg_consistent_rv_fk'
@@ -124,7 +123,6 @@ class Package extends KBComponent {
   }
 
   static constraints = {
-    lastProject(nullable: true, blank: false)
     scope(nullable: true, blank: false)
     breakable(nullable: true, blank: false)
     consistent(nullable: true, blank: false)
@@ -133,7 +131,6 @@ class Package extends KBComponent {
     openAccess (nullable: true, blank: true)
     file (nullable: true, blank: true)
     editingStatus (nullable: true, blank: true)
-    lastProject(nullable: true, blank: false)
     descriptionURL(nullable: true, blank: true)
     name(validator: { val, obj ->
       if (obj.hasChanged('name')) {
@@ -153,6 +150,7 @@ class Package extends KBComponent {
     nationalRanges(nullable:true)
     regionalRanges(nullable:true)
     ddcs(nullable:true)
+    paas(nullable:true)
   }
 
   public String getRestPath() {
@@ -161,7 +159,6 @@ class Package extends KBComponent {
 
   static jsonMapping = [
     'ignore'       : [
-      'lastProject',
       'updateToken'
     ],
     'es'           : [
@@ -303,6 +300,17 @@ class Package extends KBComponent {
   @Transient
   public getExpectedTippCount() {
     def refdata_status = RDStore.KBC_STATUS_EXPECTED
+    def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
+
+    int result = Combo.executeQuery("select count(c.id) from Combo as c where c.fromComponent = ? and c.type = ? and c.toComponent.status = ?"
+            , [this, combo_tipps, refdata_status])[0]
+
+    result
+  }
+
+  @Transient
+  public getDeletedTippCount() {
+    def refdata_status = RDStore.KBC_STATUS_DELETED
     def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
 
     int result = Combo.executeQuery("select count(c.id) from Combo as c where c.fromComponent = ? and c.type = ? and c.toComponent.status = ?"
@@ -474,22 +482,10 @@ select tipp.id,
     [
       [code: 'method::deleteSoft', label: 'Delete (with associated TIPPs)', perm: 'delete'],
       [code: 'method::retire', label: 'Retire Package (with associated TIPPs)'],
-      [code: 'exportPackage', label: 'TSV Export'],
-      [code: 'kbartExport', label: 'KBART Export'],
-      [code: 'verifyTitleList', label: 'Verify Title List'],
+      /*[code: 'verifyTitleList', label: 'Verify Title List'],*/
       [code: 'packageUrlUpdate', label: 'Trigger Update (Changed Titles)'],
       [code: 'packageUrlUpdateAllTitles', label: 'Trigger Update (all Titles)']
-      // [code:'method::registerWebhook', label:'Register Web Hook']
     ]
-  }
-
-  @Transient
-  def getWebHooks() {
-    def result = []
-
-    result.hooks = WebHook.findAllByOid("org.gokb.cred.Package:${this.id}");
-
-    result
   }
 
   @Transient
@@ -810,4 +806,47 @@ select tipp.id,
 
     result
   }
+
+  @Transient
+  public getAutoUpdateJobResult() {
+    def result = []
+
+    if (this.id) {
+      result = JobResult.executeQuery('select jobR from JobResult as jobR where jobR.linkedItemId = :packageID and jobR.type in (:types) order by jobR.startTime desc',
+              [packageID: this.id,
+              types: [RefdataCategory.lookup(RCConstants.JOB_TYPE, 'PackageCrossRef Auto')]])
+    }
+    return result
+  }
+
+  void createCoreIdentifiersIfNotExist(){
+     boolean isChanged = false
+      ['Anbieter_Produkt_ID'].each{ coreNs ->
+        if ( ! ids.find {it.namespace.value == coreNs}){
+          addOnlySpecialIdentifiers(coreNs, 'Unknown')
+          isChanged = true
+        }
+      }
+      if (isChanged) refresh()
+  }
+
+  void addOnlySpecialIdentifiers(String ns, String value) {
+    boolean found = false
+    this.ids.each {
+      if ( it.namespace?.value == ns && it.value == value ) {
+        found = true
+      }
+    }
+
+    if ( !found && value != '') {
+      value = value?.trim()
+      ns = ns.trim()
+      def norm_id = Identifier.normalizeIdentifier(value)
+      IdentifierNamespace namespace = IdentifierNamespace.findByValueIlike(ns)
+      Identifier identifier = new Identifier(namespace: namespace, value: value, normname: norm_id).save(flush:true, failOnError:true)
+      def new_id = new Combo(fromComponent: this, toComponent: identifier, status: RDStore.COMBO_STATUS_ACTIVE, type: RDStore.COMBO_TYPE_KB_IDS).save(flush: true, failOnError: true)
+
+    }
+  }
+
 }

@@ -15,6 +15,8 @@ import org.gokb.cred.KBComponentAdditionalProperty
 import org.gokb.cred.TIPPCoverageStatement
 import org.gokb.cred.RefdataValue
 import wekb.Contact
+import wekb.KBComponentLanguage
+import wekb.PackageArchivingAgency
 
 import java.text.Normalizer
 
@@ -26,6 +28,14 @@ class FTUpdateService {
   def dateFormatService
 
   public static boolean running = false
+
+  static Map indicesPerType = [
+          "TitleInstancePackagePlatform" : "wekbtipps",
+          "Org" : "wekborgs",
+          "Package" : "wekbpackages",
+          "Platform" : "wekbplatforms",
+          "DeletedKBComponent": "wekbdeletedcomponents"
+  ]
 
 
   /**
@@ -138,10 +148,17 @@ class FTUpdateService {
         }
 
         result.languages = []
-        kbc.languages.each { RefdataValue lan ->
-          result.languages.add([value     : lan.value,
-                                value_de  : lan.value_de,
-                                value_en  : lan.value_en])
+        kbc.languages.each { KBComponentLanguage kbl ->
+          result.languages.add([value     : kbl.language.value,
+                                value_de  : kbl.language.value_de,
+                                value_en  : kbl.language.value_en])
+        }
+
+        result.packageArchivingAgencies = []
+        kbc.paas.each { PackageArchivingAgency paa ->
+          result.packageArchivingAgencies.add([archivingAgency: paa.archivingAgency?.value,
+                                               openAccess  : paa.openAccess?.value,
+                                               postCancellationAccess  : paa.postCancellationAccess?.value])
         }
 
 
@@ -202,12 +219,13 @@ class FTUpdateService {
         kbc.contacts.each { Contact contact ->
           result.contacts.add([  content: contact.content,
                                  contentType: contact.contentType?.value,
-                                 type: contact.type,
+                                 type: contact.type?.value,
                                  language: contact.language?.value])
         }
 
         result.kbartDownloaderURL = kbc.kbartDownloaderURL
         result.metadataDownloaderURL = kbc.metadataDownloaderURL
+        result.homepage = kbc.homepage
 
         result
       }
@@ -268,7 +286,7 @@ class FTUpdateService {
         result.counterR4SushiServerUrl = kbc.counterR4SushiServerUrl
         result.counterR5SushiServerUrl = kbc.counterR5SushiServerUrl
         result.counterRegistryUrl = kbc.counterRegistryUrl
-        result.counterCertified = kbc.counterCertified
+        result.counterCertified = kbc.counterCertified?.value
         result.statisticsAdminPortalUrl = kbc.statisticsAdminPortalUrl
         result.statisticsUpdate = kbc.statisticsUpdate?.value
         result.proxySupported = kbc.proxySupported?.value
@@ -453,7 +471,6 @@ class FTUpdateService {
           if (kbc.title?.dateFirstOnline) result.titleDateFirstOnline = dateFormatService.formatIsoTimestamp(kbc.title.dateFirstOnline)
           result.titleFirstEditor = kbc.title?.firstEditor ?: ""
           result.titleFirstAuthor = kbc.title?.firstAuthor ?: ""
-          result.titleImprint = kbc.title?.imprint?.name ?: ""
         }*/
 
         if (kbc.pkg) {
@@ -510,6 +527,7 @@ class FTUpdateService {
         if (kbc.status) result.status = kbc.status.value
         if (kbc.publicationType) result.publicationType = kbc.publicationType.value
         if (kbc.openAccess) result.openAccess = kbc.openAccess.value
+        if (kbc.accessType) result.accessType = kbc.accessType.value
 
         result.identifiers = []
         kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
@@ -559,11 +577,28 @@ class FTUpdateService {
         }
 
         result.languages = []
-        kbc.languages.each { RefdataValue lan ->
-          result.languages.add([value     : lan.value,
-                                value_de  : lan.value_de,
-                                value_en  : lan.value_en])
+        kbc.languages.each { KBComponentLanguage kbl ->
+          result.languages.add([value     : kbl.language.value,
+                                value_de  : kbl.language.value_de,
+                                value_en  : kbl.language.value_en])
         }
+
+        result
+      }
+
+      updateES(esclient, wekb.DeletedKBComponent.class) { wekb.DeletedKBComponent deletedKBComponent ->
+
+        def result = [:]
+        result.recid = "${deletedKBComponent.class.name}:${deletedKBComponent.id}"
+        result.uuid = deletedKBComponent.uuid
+        result.name = deletedKBComponent.name
+        result.componentType = deletedKBComponent.componentType
+        result.status = deletedKBComponent.status.value
+        result.dateCreated = dateFormatService.formatIsoTimestamp(deletedKBComponent.dateCreated)
+        result.lastUpdated = dateFormatService.formatIsoTimestamp(deletedKBComponent.lastUpdated)
+        result.oldDateCreated = dateFormatService.formatIsoTimestamp(deletedKBComponent.oldDateCreated)
+        result.oldLastUpdated = dateFormatService.formatIsoTimestamp(deletedKBComponent.oldLastUpdated)
+        result.oldId = deletedKBComponent.oldId
 
         result
       }
@@ -630,28 +665,30 @@ class FTUpdateService {
           break
         }
         Object r = domain.get(r_id)
-        log.debug("${r.id} ${domain.name} -- (rects)${r.lastUpdated} > (from)${from}")
-        def idx_record = recgen_closure(r)
-        def es_index = ESSearchService.indicesPerType.get(idx_record['componentType'])
-        if (idx_record != null) {
-          def recid = idx_record['_id'].toString()
-          idx_record.remove('_id')
+        if(ESSearchService.indicesPerType.get(r.class.simpleName)) {
+          log.debug("${r.id} ${domain.name} -- (rects)${r.lastUpdated} > (from)${from}")
+          def idx_record = recgen_closure(r)
+          def es_index = indicesPerType.get(idx_record['componentType'])
+          if (idx_record != null) {
+            def recid = idx_record['_id'].toString()
+            idx_record.remove('_id')
 
-          IndexRequest request = new IndexRequest(es_index);
-          request.id(recid);
-          String jsonString = idx_record as JSON
-          //String jsonString = JsonOutput.toJson(idx_record)
-          //println(jsonString)
-          request.source(jsonString, XContentType.JSON)
+            IndexRequest request = new IndexRequest(es_index);
+            request.id(recid);
+            String jsonString = idx_record as JSON
+            //String jsonString = JsonOutput.toJson(idx_record)
+            //println(jsonString)
+            request.source(jsonString, XContentType.JSON)
 
-          bulkRequest.add(request)
+            bulkRequest.add(request)
+          }
+          if (r.lastUpdated?.getTime() > highest_timestamp) {
+            highest_timestamp = r.lastUpdated?.getTime()
+          }
+          highest_id = r.id
+          count++
+          total++
         }
-        if (r.lastUpdated?.getTime() > highest_timestamp) {
-          highest_timestamp = r.lastUpdated?.getTime()
-        }
-        highest_id = r.id
-        count++
-        total++
         if (count > 250) {
           count = 0
           log.debug("interim:: processed ${total} out of ${countq} records (${domain.name}) - updating highest timestamp to ${highest_timestamp} interim flush")

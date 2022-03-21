@@ -100,7 +100,7 @@
 <div id="my-tab-content" class="tab-content">
     <g:render template="/tabTemplates/showCoverages" model="${[d: d]}"/>
 
-    <g:render template="/tabTemplates/showIdentifiers" model="${[d: d]}"/>
+    <g:render template="/tabTemplates/showIdentifiers" model="${[d: d, activeTab: d.publicationType?.value != 'Serial']}"/>
 
    %{-- <div class="tab-pane" id="addprops" role="tabpanel">
         <g:render template="/apptemplates/secondTemplates/addprops"

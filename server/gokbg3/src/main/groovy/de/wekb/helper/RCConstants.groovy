@@ -50,9 +50,6 @@ class RCConstants {
     public static final String MEMBERSHIP_ROLE = "MembershipRole"
     public static final String MEMBERSHIP_STATUS = "MembershipStatus"
 
-    public static final String LICENSE_CATEGORY = "License.Category"
-    public static final String LICENSE_TYPE = "License.Type"
-
     public static final String ORG_MISSION = "Org.Mission"
     public static final String ORG_ROLE = "Org.Role"
 
@@ -67,6 +64,10 @@ class RCConstants {
     public static final String PACKAGE_PAYMENT_TYPE = "Package.PaymentType"
     public static final String PACKAGE_OPEN_ACCESS = "Package.OpenAccess"
     public static final String PACKAGE_SCOPE = "Package.Scope"
+
+    public static final String PAA_ARCHIVING_AGENCY = "PackageArchivingAgency.ArchivingAgency"
+    public static final String PAA_OPEN_ACCESS = "PackageArchivingAgency.OpenAccess"
+    public static final String PAA_POST_CANCELLATION_ACCESS = "PackageArchivingAgency.PostCancellationAccess"
 
     public static final String PLATFORM_IP_AUTH= "Platform.IPAuthentication"
     public static final String PLATFORM_ROLE = "Platform.Role"

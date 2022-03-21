@@ -1,4 +1,4 @@
-<%@ page import="de.wekb.helper.RCConstants; org.gokb.cred.RefdataCategory;" %>
+<%@ page import="de.wekb.helper.RCConstants; org.gokb.cred.RefdataCategory; de.wekb.helper.RDStore;" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -34,7 +34,10 @@
                         <gokb:annotatedLabel owner="${pkg}" property="source">Source</gokb:annotatedLabel>
                     </dt>
                     <dd class="col-9 text-left">
-                        <gokb:manyToOneReferenceTypedown owner="${pkg}" field="source" baseClass="org.gokb.cred.Source" >${pkg.source?.name}</gokb:manyToOneReferenceTypedown>
+                        <g:if test="${pkg.source}">
+                            <g:link controller="public" action="sourceContent"
+                                    id="${pkg.source.uuid}">${pkg.source.name}</g:link>
+                        </g:if>
                     </dd>
 
                     <dt class="col-3 text-right">
@@ -64,7 +67,7 @@
                     <dt class="col-3 text-right"> <gokb:annotatedLabel owner="${pkg}" property="descriptionURL">URL</gokb:annotatedLabel> </dt>
                     <dd class="col-9 text-left"> <gokb:xEditable  owner="${pkg}" field="descriptionURL" />
                         <g:if test="${pkg.descriptionURL}">
-                        &nbsp;<a aria-label="${pkg.descriptionURL}" href="${pkg.descriptionURL}" target="new"><i class="fas fa-external-link-alt"></i></a>
+                        &nbsp;<a aria-label="${pkg.descriptionURL}" href="${pkg.descriptionURL.startsWith('http') ? pkg.descriptionURL : 'http://' + pkg.descriptionURL}" target="new"><i class="fas fa-external-link-alt"></i></a>
                         </g:if>
                     </dd>
 
@@ -136,6 +139,38 @@
                         </g:if>
                     </dd>
 
+                    <dt class="col-3 text-right">
+                        <gokb:annotatedLabel owner="${pkg}" property="paas">Archiving Agency</gokb:annotatedLabel>
+                    </dt>
+                    <dd class="col-9 text-left">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Archiving Agency</th>
+                                <th>Open Access</th>
+                                <th>Post-Cancellation Access (PCA)</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <g:each in="${pkg.paas?.sort { it.archivingAgency?.value }}" var="paa" status="i">
+                                <tr>
+                                    <td>${i+1}</td>
+                                    <td><gokb:xEditableRefData owner="${paa}" field="archivingAgency"
+                                                               config="${RCConstants.PAA_ARCHIVING_AGENCY}"/>
+                                    <td><gokb:xEditableRefData owner="${paa}" field="openAccess"
+                                                               config="${RCConstants.PAA_OPEN_ACCESS}"/>
+                                    </td>
+                                    <td>
+                                        <gokb:xEditableRefData owner="${paa}" field="postCancellationAccess"
+                                                               config="${RCConstants.PAA_POST_CANCELLATION_ACCESS}"/>
+                                    </td>
+                                </tr>
+                            </g:each>
+                            </tbody>
+                        </table>
+                    </dd>
+
                 </dl>
             </div>
             <g:render template="rightBox" model="${[d: pkg]}"/>
@@ -159,6 +194,13 @@
                         <span class="badge badge-pill badge-info">${expectedTitleCount}</span>
                     </a>
                 </li>
+
+                <li class="nav-item">
+                    <a class="nav-link ${params.tab == 'deletedTipps' ? 'active' : ''}" href="#deletedTipps" data-toggle="tab" role="tab">Deleted Titles
+                        <span class="badge badge-pill badge-info">${deletedTitleCount}</span>
+                    </a>
+                </li>
+
                 <li class="nav-item">
                     <a class="nav-link" href="#identifiers" data-toggle="tab" role="tab">Identifiers
                         <span  class="badge badge-pill badge-info">${pkg?.getCombosByPropertyNameAndStatus('ids', 'Active').size()}</span>
@@ -181,11 +223,29 @@
             <div id="my-tab-content" class="tab-content">
                 <div class="tab-pane ${params.tab == 'currentTipps' ? 'active' : ''}" id="currentTipps" role="tabpanel">
 
+                    <div class="float-right">
+                    <g:link controller="public" action="search" class="btn btn-primary"
+                            params="[qbe: 'g:tipps', qp_pkg_id: pkg.id, refOid: pkg.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg', 'qp_status_id', 'qp_status'], qp_status_id: RDStore.KBC_STATUS_CURRENT.id]"
+                            id="">Search View</g:link>
+                    </div>
+
+                    <br>
+                    <br>
+
                     <g:render template="tippsTab" model="[tippsCount: currentTitleCount, tipps: currentTipps, tab: 'currentTipps']"/>
 
                 </div>
 
                 <div class="tab-pane ${params.tab == 'retiredTipps' ? 'active' : ''}" id="retiredTipps" role="tabpanel">
+
+                    <div class="float-right">
+                        <g:link controller="public" action="search" class="btn btn-primary"
+                                params="[qbe: 'g:tipps', qp_pkg_id: pkg.id, refOid: pkg.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg', 'qp_status_id', 'qp_status'], qp_status_id: RDStore.KBC_STATUS_RETIRED.id]"
+                                id="">Search View</g:link>
+                    </div>
+
+                    <br>
+                    <br>
 
                     <g:render template="tippsTab" model="[tippsCount: retiredTitleCount, tipps: retiredTipps, tab: 'retiredTipps']"/>
 
@@ -193,7 +253,31 @@
 
                 <div class="tab-pane ${params.tab == 'expectedTipps' ? 'active' : ''}" id="expectedTipps" role="tabpanel">
 
+                    <div class="float-right">
+                        <g:link controller="public" action="search" class="btn btn-primary"
+                                params="[qbe: 'g:tipps', qp_pkg_id: pkg.id, refOid: pkg.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg', 'qp_status_id', 'qp_status'], qp_status_id: RDStore.KBC_STATUS_EXPECTED.id]"
+                                id="">Search View</g:link>
+                    </div>
+
+                    <br>
+                    <br>
+
                     <g:render template="tippsTab" model="[tippsCount: expectedTitleCount, tipps: expectedTipps, tab: 'expectedTipps']"/>
+
+                </div>
+
+                <div class="tab-pane ${params.tab == 'deletedTipps' ? 'active' : ''}" id="deletedTipps" role="tabpanel">
+
+                    <div class="float-right">
+                        <g:link controller="public" action="search" class="btn btn-primary"
+                                params="[qbe: 'g:tipps', qp_pkg_id: pkg.id, refOid: pkg.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg', 'qp_status_id', 'qp_status'], qp_status_id: RDStore.KBC_STATUS_DELETED.id]"
+                                id="">Search View</g:link>
+                    </div>
+
+                    <br>
+                    <br>
+
+                    <g:render template="tippsTab" model="[tippsCount: deletedTitleCount, tipps: deletedTipps, tab: 'deletedTipps']"/>
 
                 </div>
 

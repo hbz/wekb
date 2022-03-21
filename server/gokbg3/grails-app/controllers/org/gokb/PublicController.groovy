@@ -21,6 +21,7 @@ class PublicController {
   ExportService exportService
   MailService mailService
   SearchService searchService
+  def globalSearchTemplatesService
 
   public static String TIPPS_QRY = 'from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=? and c.toComponent=tipp and c.type = ? and tipp.status = ?';
 
@@ -74,6 +75,7 @@ class PublicController {
         def status_current = RDStore.KBC_STATUS_CURRENT
         def status_retired = RDStore.KBC_STATUS_RETIRED
         def status_expected = RDStore.KBC_STATUS_EXPECTED
+        def status_deleted = RDStore.KBC_STATUS_DELETED
         
         result.pkgId = result.pkg.id
         result.pkgName = result.pkg.name
@@ -105,6 +107,9 @@ class PublicController {
         result.expectedTitleCount = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_expected])[0]
         result.expectedTipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY + " order by ${params.sort} ${params.order}",[result.pkgId, tipp_combo_rdv, status_expected], params)
 
+        result.deletedTitleCount = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_deleted])[0]
+        result.deletedTipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY + " order by ${params.sort} ${params.order}",[result.pkgId, tipp_combo_rdv, status_deleted], params)
+
       }else {
         flash.error = "Package not found"
       }
@@ -126,7 +131,27 @@ class PublicController {
       }
 
       if (!result.tipp) {
-        flash.error = "Tipp not found"
+        flash.error = "Title not found"
+      }
+    }
+    result
+  }
+
+  def identifierContent() {
+    log.debug("identifierContent::${params}")
+    def result = [:]
+    if ( params.id ) {
+      def identifier_id_components = params.id.split(':');
+
+      if ( identifier_id_components?.size() == 2 ) {
+        result.identifier = Identifier.get(Long.parseLong(identifier_id_components[1]));
+      }
+      else {
+        result.identifier = Identifier.findByUuid(params.id)
+      }
+
+      if (!result.identifier) {
+        flash.error = "Identifier not found"
       }
     }
     result
@@ -146,7 +171,27 @@ class PublicController {
       }
 
       if (!result.org) {
-        flash.error = "Tipp not found"
+        flash.error = "Organization not found"
+      }
+    }
+    result
+  }
+
+  def sourceContent() {
+    log.debug("sourceContent::${params}")
+    def result = [:]
+    if ( params.id ) {
+      def source_id_components = params.id.split(':');
+
+      if ( source_id_components?.size() == 2 ) {
+        result.source = Source.get(Long.parseLong(source_id_components[1]));
+      }
+      else {
+        result.source = Source.findByUuid(params.id)
+      }
+
+      if (!result.source) {
+        flash.error = "Source not found"
       }
     }
     result
@@ -262,7 +307,7 @@ class PublicController {
 
     String export_date = dateFormatService.formatDate(new Date());
 
-    String filename = "kbart_${pkg.name}_${export_date}"
+    String filename = "kbart_${pkg.name}_${export_date}.txt"
 
     try {
 
@@ -293,7 +338,7 @@ class PublicController {
 
     String export_date = dateFormatService.formatDate(new Date());
 
-    String filename = "wekb_package_${pkg.name.toLowerCase()}_${export_date}.txt"
+    String filename = "wekb_package_${pkg.name.toLowerCase()}_${export_date}.tsv"
 
     try {
       response.setContentType('text/tab-separated-values');
@@ -301,7 +346,7 @@ class PublicController {
 
       def out = response.outputStream
 
-      exportService.exportPackageTippsAsTSV(out, pkg)
+      exportService.exportPackageTippsAsTSVNew(out, pkg)
 
     }
     catch ( Exception e ) {

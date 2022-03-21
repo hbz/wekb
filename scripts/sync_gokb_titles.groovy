@@ -42,7 +42,7 @@ while ( moredata ) {
       
       
       directAddFields (data, ['defaultAccessURL', 'publishedFrom', 'publishedTo', 
-        'continuingSeries', 'OAStatus', 'imprint', 'issuer',"editionNumber","editionDifferentiator", "editionStatement", "volumeNumber", "summaryOfContent", "firstAuthor", "firstEditor", "dateFirstInPrint", "dateFirstOnline"], resourceFieldMap)
+        'continuingSeries', 'OAStatus', 'issuer',"editionNumber","editionDifferentiator", "editionStatement", "volumeNumber", "summaryOfContent", "firstAuthor", "firstEditor", "dateFirstInPrint", "dateFirstOnline"], resourceFieldMap)
 
       String medium = "${cleanText(data.medium?.text())}"
       resourceFieldMap['medium'] = medium

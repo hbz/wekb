@@ -445,6 +445,7 @@ class CleanupService {
     }
   }
 
+  /*@Deprecated
   def housekeeping(Job j = null) {
     log.debug("Housekeeping")
     Identifier.withNewSession {
@@ -483,7 +484,7 @@ class CleanupService {
     }
 
     j?.endTime = new Date()
-  }
+  }*/
 
   private final def duplicateIdentifierCleanup = {
     log.debug("Beginning duplicate identifier tidyup.")
@@ -701,8 +702,6 @@ class CleanupService {
         }
 
         ReviewRequest.executeUpdate("delete from ReviewRequest as c where c.componentToReview.id IN (:component)", [component: batch]);
-        ComponentPerson.executeUpdate("delete from ComponentPerson as c where c.component.id IN (:component)", [component: batch]);
-        ComponentIngestionSource.executeUpdate("delete from ComponentIngestionSource as c where c.component.id IN (:component)", [component: batch]);
         KBComponent.executeUpdate("update KBComponent set duplicateOf = NULL where duplicateOf.id IN (:component)", [component: batch])
         ComponentPrice.executeUpdate("delete from ComponentPrice as cp where cp.owner.id IN (:component)", [component: batch])
 
@@ -710,15 +709,17 @@ class CleanupService {
           KBComponent kbc = KBComponent.get(it)
           def oid = "${kbc.class.name}:${it}"
 
-          DeleteRequest request = new DeleteRequest(
-                  ESSearchService.indicesPerType.get(kbc.class.simpleName),
-                  oid)
-          DeleteResponse deleteResponse = esclient.delete(
-                  request, RequestOptions.DEFAULT);
-          if (deleteResponse.getResult() == DocWriteResponse.Result.NOT_FOUND) {
-            log.debug("ES doc not found ${oid}")
+          if(ESSearchService.indicesPerType.get(kbc.class.simpleName)) {
+            DeleteRequest request = new DeleteRequest(
+                    ESSearchService.indicesPerType.get(kbc.class.simpleName),
+                    oid)
+            DeleteResponse deleteResponse = esclient.delete(
+                    request, RequestOptions.DEFAULT);
+            if (deleteResponse.getResult() == DocWriteResponse.Result.NOT_FOUND) {
+              log.debug("ES doc not found ${oid}")
+            }
+            log.debug("ES deleteResponse: ${deleteResponse}")
           }
-          log.debug("ES deleteResponse: ${deleteResponse}")
 
         }
         result.num_expunged += KBComponent.executeUpdate("delete KBComponent as c where c.id IN (:component)", [component: batch])

@@ -20,8 +20,6 @@ KBComponent.Status;KBComponent Status;KBComponent Status
 KBComponentVariantName.Locale;KBComponent VariantName Locale;KBComponent VariantName Locale
 KBComponentVariantName.Status;KBComponent VariantName Status;KBComponent VariantName Status
 KBComponentVariantName.VariantType;KBComponent VariantName VariantType;KBComponent VariantName VariantType
-License.Category;License Category;License Category
-License.Type;License Type;License Type
 MembershipRole;Membership Role;Membership Role
 MembershipStatus;Membership Status;Membership Status
 Org.Mission;Org Mission;Org Mission
@@ -37,6 +35,9 @@ Package.OpenAccess;Package Open Access;Package Open Access
 Package.RegionalRange; Package RegionalRange; Package RegionalRange
 Package.PaymentType;Package Payment Type;Package Payment Type
 Package.Scope;Package Scope;Package Scope
+PackageArchivingAgency.ArchivingAgency;Archiving Agency;Archiving Agency
+PackageArchivingAgency.OpenAccess;Open Access;Open Access
+PackageArchivingAgency.PostCancellationAccess;Post-Cancellation Access;Post-Cancellation Access
 Platform.IPAuthentication;Platform IP Authentication;Platform IP Authentication
 Platform.Role;Platform Role;Platform Role
 Platform.Roles;Platform Roles;Platform Roles

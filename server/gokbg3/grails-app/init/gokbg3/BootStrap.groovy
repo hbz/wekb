@@ -198,21 +198,42 @@ class BootStrap {
 
         log.info("Ensure default Identifier namespaces")
         def namespaces = [
-                [value: 'isbn', name: 'ISBN', family: 'isxn', pattern: "^(?=[0-9]{13}\$|(?=(?:[0-9]+-){4})[0-9-]{17}\$)97[89]-?[0-9]{1,5}-?[0-9]+-?[0-9]+-?[0-9]\$"],
-                [value: 'pisbn', name: 'Print-ISBN', family: 'isxn', pattern: "^(?=[0-9]{13}\$|(?=(?:[0-9]+-){4})[0-9-]{17}\$)97[89]-?[0-9]{1,5}-?[0-9]+-?[0-9]+-?[0-9]\$"],
-                [value: 'issn', name: 'p-ISSN', family: 'isxn', pattern: "^\\d{4}\\-\\d{3}[\\dX]\$"],
-                [value: 'eissn', name: 'e-ISSN', family: 'isxn', pattern: "^\\d{4}\\-\\d{3}[\\dX]\$"],
-                [value: 'issnl', name: 'ISSN-L', family: 'isxn', pattern: "^\\d{4}\\-\\d{3}[\\dX]\$"],
-                [value: 'doi', name: 'DOI'],
-                [value: 'zdb', name: 'ZDB-ID', pattern: "^\\d+-[\\dxX]\$"],
-                [value: 'isil', name: 'ISIL', pattern: "^(?=[0-9A-Z-]{4,16}\$)[A-Z]{1,4}-[A-Z0-9]{1,11}(-[A-Z0-9]+)?\$"],
-                [value: 'package_ezb_anchor', name: 'EZB Anchor'],
-                [value: 'ezb', name: 'EZB-ID'],
-                [value: 'package_isci', name: 'Package ISCI'],
+                [value: 'cup', name: 'cup', targetType: 'TitleInstancePackagePlatform'],
+                [value: 'dnb', name: 'dnb', targetType: 'TitleInstancePackagePlatform'],
+                [value: 'doi', name: 'DOI', targetType: 'TitleInstancePackagePlatform'],
+                [value: 'eissn', name: 'e-ISSN', family: 'isxn', pattern: "^\\d{4}\\-\\d{3}[\\dX]\$", targetType: 'TitleInstancePackagePlatform'],
+                [value: 'ezb', name: 'EZB-ID', targetType: 'TitleInstancePackagePlatform'],
+                [value: 'gnd-id', name: 'gnd-id', targetType: 'TitleInstancePackagePlatform'],
+                [value: 'isbn', name: 'ISBN', family: 'isxn', pattern: "^(?=[0-9]{13}\$|(?=(?:[0-9]+-){4})[0-9-]{17}\$)97[89]-?[0-9]{1,5}-?[0-9]+-?[0-9]+-?[0-9]\$", targetType: 'TitleInstancePackagePlatform'],
+                [value: 'issn', name: 'p-ISSN', family: 'isxn', pattern: "^\\d{4}\\-\\d{3}[\\dX]\$", targetType: 'TitleInstancePackagePlatform'],
+                [value: 'issnl', name: 'ISSN-L', family: 'isxn', pattern: "^\\d{4}\\-\\d{3}[\\dX]\$", targetType: 'TitleInstancePackagePlatform'],
+                [value: 'isil', name: 'ISIL', pattern: "^(?=[0-9A-Z-]{4,16}\$)[A-Z]{1,4}-[A-Z0-9]{1,11}(-[A-Z0-9]+)?\$",  targetType: 'TitleInstancePackagePlatform'],
+                [value: 'pisbn', name: 'Print-ISBN', family: 'isxn', pattern: "^(?=[0-9]{13}\$|(?=(?:[0-9]+-){4})[0-9-]{17}\$)97[89]-?[0-9]{1,5}-?[0-9]+-?[0-9]+-?[0-9]\$", targetType: 'TitleInstancePackagePlatform'],
+                [value: 'oclc', name: 'oclc', targetType: 'TitleInstancePackagePlatform'],
+                [value: 'preselect', name: 'preselect', targetType: 'TitleInstancePackagePlatform'],
+                [value: 'zdb', name: 'ZDB-ID', pattern: "^\\d+-[\\dxX]\$", targetType: 'TitleInstancePackagePlatform'],
+
+
+                [value: 'Anbieter_Produkt_ID', name: 'Anbieter_Produkt_ID', targetType: 'Package'],
+                [value: 'dnb', name: 'dnb', targetType: 'Package'],
+                [value: 'doi', name: 'DOI', targetType: 'Package'],
+                [value: 'ezb', name: 'EZB-ID', targetType: 'Package'],
+                [value: 'gvk_ppn', name: 'gvk_ppn', targetType: 'Package'],
+                [value: 'isil', name: 'ISIL', pattern: "^(?=[0-9A-Z-]{4,16}\$)[A-Z]{1,4}-[A-Z0-9]{1,11}(-[A-Z0-9]+)?\$",  targetType: 'Package'],
+                [value: 'package_isci', name: 'Package ISCI',  targetType: 'Package'],
+                [value: 'package_ezb_anchor', name: 'EZB Anchor',  targetType: 'Package'],
+                [value: 'zdb', name: 'ZDB-ID', pattern: "^\\d+-[\\dxX]\$", targetType: 'Package'],
+                [value: 'zdb_ppn', name: 'EZB Anchor',  targetType: 'Package'],
+
+
+                [value: 'gnd-id', name: 'gnd-id', targetType: 'Org'],
+                [value: 'isil', name: 'ISIL', pattern: "^(?=[0-9A-Z-]{4,16}\$)[A-Z]{1,4}-[A-Z0-9]{1,11}(-[A-Z0-9]+)?\$",  targetType: 'Org'],
+                [value: 'zdb_ppn', name: 'EZB Anchor',  targetType: 'Org'],
         ]
 
         namespaces.each { ns ->
-            def ns_obj = IdentifierNamespace.findByValue(ns.value)
+            RefdataValue targetType = RefdataValue.findByValueAndOwner(ns.targetType, RefdataCategory.findByDesc(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE))
+            def ns_obj = IdentifierNamespace.findByValueAndTargetType(ns.value, targetType)
 
             if (ns_obj) {
                 if (ns.pattern && !ns_obj.pattern) {
@@ -224,7 +245,13 @@ class BootStrap {
                     ns_obj.name = ns.name
                     ns_obj.save(flush: true)
                 }
+
+                if (ns.targetType) {
+                    ns_obj.targetType = targetType
+                    ns_obj.save(flush: true)
+                }
             } else {
+                ns.targetType = targetType
                 ns_obj = new IdentifierNamespace(ns).save(flush: true, failOnError: true)
             }
 
@@ -257,31 +284,6 @@ class BootStrap {
         log.info("------------------------------------Init End--------------------------------------------")
     }
 
-    def migrateDiskFilesToDatabase() {
-        /*log.info("Migrate Disk Files");
-        def baseUploadDir = grailsApplication.config.baseUploadDir ?: '.'
-
-        DataFile.findAll("from DataFile as df where df.fileData is null").each { df ->
-            log.debug("Migrating files for ${df.uploadName}::${df.guid}")
-            def sub1 = df.guid.substring(0, 2);
-            def sub2 = df.guid.substring(2, 4);
-            def temp_file_name = "${baseUploadDir}/${sub1}/${sub2}/${df.guid}";
-            try {
-                def source_file = new File(temp_file_name);
-                df.fileData = source_file.getBytes()
-                if (df.save(flush: true)) {
-                    //success
-                    source_file.delete()
-                } else {
-                    log.debug("Errors while trying to save DataFile fileData:")
-                    log.debug(df.errors)
-                }
-            } catch (Exception e) {
-                log.error("Exception while migrating files to database. File ${temp_file_name}", e)
-            }
-        }*/
-    }
-
     def cleanUpMissingDomains() {
 
         log.info("cleanUpMissingDomains()")
@@ -309,7 +311,6 @@ class BootStrap {
             // to add to the class or not. This defaults to "true". Have overriden on the GrailsDomainHelperApi utils
             // and moved the selective code there. This means that *ALL* domain classes will still receive the methods in the
             // SecurityApi.
-            // II: has this caused projects under org.gokb.refine to no longer be visible? Not sure how to fix it.
 
             // log.debug("Considering ${c}")
             grailsApplication.config.apiClasses.each { String className ->
@@ -369,7 +370,6 @@ class BootStrap {
         if (!p) {
             def content_provider_role = RefdataCategory.lookupOrCreate('Org Role', 'Content Provider');
             p = new Org(name: name)
-            p.tags.add(content_provider_role);
             p.save(flush: true);
         }
 
@@ -589,15 +589,12 @@ class BootStrap {
         RefdataCategory.lookupOrCreate(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE, 'Database').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE, 'Other').save(flush: true, failOnError: true)
 
-        RefdataCategory.lookupOrCreate(RCConstants.ORG_ROLE, 'Licensor').save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.ORG_ROLE, 'Licensee').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.ORG_ROLE, 'Broker').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.ORG_ROLE, 'Vendor').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.ORG_ROLE, 'Content Provider').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.ORG_ROLE, 'Platform Provider').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.ORG_ROLE, 'Issuing Body').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.ORG_ROLE, 'Publisher').save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.ORG_ROLE, 'Imprint').save(flush: true, failOnError: true)
 
         RefdataCategory.lookupOrCreate(RCConstants.COUNTRY, 'Afghanistan').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.COUNTRY, 'Albania').save(flush: true, failOnError: true)
@@ -843,8 +840,6 @@ class BootStrap {
         //    RefdataCategory.lookupOrCreate('ComboType','Split').save()
         //    RefdataCategory.lookupOrCreate('ComboType','Transferred').save()
 
-        RefdataCategory.lookupOrCreate(RCConstants.LICENSE_TYPE, 'Template').save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.LICENSE_TYPE, 'Other').save(flush: true, failOnError: true)
 
         RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_VARIANTNAME_VARIANT_TYPE, 'Misspelling').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_VARIANTNAME_VARIANT_TYPE, 'Authorized').save(flush: true, failOnError: true)
@@ -908,9 +903,6 @@ class BootStrap {
         RefdataCategory.lookupOrCreate(RCConstants.DC_TYPE, 'Standard', "200").save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.DC_TYPE, 'Support', "300").save(flush: true, failOnError: true)
 
-        RefdataCategory.lookupOrCreate(RCConstants.LICENSE_CATEGORY, 'Content').save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.LICENSE_CATEGORY, 'Software').save(flush: true, failOnError: true)
-
         RefdataCategory.lookupOrCreate(RCConstants.SOURCE_DATA_SUPPLY_METHOD, 'eMail').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.SOURCE_DATA_SUPPLY_METHOD, 'HTTP Url').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.SOURCE_DATA_SUPPLY_METHOD, 'FTP').save(flush: true, failOnError: true)
@@ -938,12 +930,10 @@ class BootStrap {
         RefdataCategory.lookupOrCreate(RCConstants.PLATFORM_ROLES, 'Host').save(flush: true, failOnError: true)
 
         RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'KBComponent.Ids').save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'KBComponent.FileAttachments').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'TitleInstance.Tipps').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'TitleInstance.Tipls').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'TitleInstance.Publisher').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'TitleInstance.Issuer').save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'TitleInstance.Imprint').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'TitleInstance.TranslatedFrom').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'TitleInstance.AbsorbedBy').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'TitleInstance.MergedWith').save(flush: true, failOnError: true)
@@ -957,12 +947,9 @@ class BootStrap {
         RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Platform.Provider').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Office.Org').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Office.CuratoryGroups').save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Org.Imprint').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Org.Previous').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Org.Parent').save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Org.OwnedImprints').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Org.CuratoryGroups').save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Org.Imprint').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Package.Provider').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Package.Tipps').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Package.CuratoryGroups').save(flush: true, failOnError: true)
@@ -972,8 +959,6 @@ class BootStrap {
         RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Package.Vendor').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Package.Broker').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Package.Licensor').save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'License.Licensee').save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'IngestionProfile.Source').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Source.CuratoryGroups').save(flush: true, failOnError: true)
 
 
@@ -999,8 +984,6 @@ class BootStrap {
         RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'PackageCrossRef').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'TitleCrossRef').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'BootstrapIdentifierCleanup').save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'DepositDatafile').save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'RegenerateLicenseSummaries').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'TidyOrgsData').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'EnsureUUIDs').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'EnsureTIPLs').save(flush: true, failOnError: true)

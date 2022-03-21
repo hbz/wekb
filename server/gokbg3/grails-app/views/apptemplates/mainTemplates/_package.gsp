@@ -57,18 +57,6 @@
       </dd>
     </g:if>
 
-    <g:if test="${d.lastProject}">
-      <dt>
-        <gokb:annotatedLabel owner="${d}" property="lastProject">Last Project</gokb:annotatedLabel>
-      </dt>
-      <dd>
-        <g:link controller="resource" action="show"
-          id="${d.lastProject?.getClassName()+':'+d.lastProject?.id}">
-          ${d.lastProject?.name}
-        </g:link>
-      </dd>
-    </g:if>
-
     <dt> <gokb:annotatedLabel owner="${d}" property="lastUpdateComment">Last Update Comment</gokb:annotatedLabel> </dt>
     <dd> <gokb:xEditable  owner="${d}" field="lastUpdateComment" /> </dd>
 
@@ -76,7 +64,11 @@
     <dd> <gokb:xEditable  owner="${d}" field="description" /> </dd>
 
     <dt> <gokb:annotatedLabel owner="${d}" property="descriptionURL">URL</gokb:annotatedLabel> </dt>
-    <dd> <gokb:xEditable  owner="${d}" field="descriptionURL" /> </dd>
+    <dd> <gokb:xEditable  owner="${d}" field="descriptionURL" />
+      <g:if test="${d.descriptionURL}">
+        &nbsp;<a aria-label="${d.descriptionURL}" href="${d.descriptionURL.startsWith('http') ? d.descriptionURL : 'http://' + d.descriptionURL}" target="new"><i class="fas fa-external-link-alt"></i></a>
+      </g:if>
+    </dd>
 
     <dt>
       <gokb:annotatedLabel owner="${d}" property="globalNote">Global Note</gokb:annotatedLabel>
@@ -145,6 +137,50 @@
             <g:render template="/apptemplates/secondTemplates/regionalRange" />
           </g:if>
         </dd>
+        <dt class="dt-label">
+          <gokb:annotatedLabel owner="${d}" property="paas">Archiving Agency</gokb:annotatedLabel>
+        </dt>
+        <dd>
+              <table class="table">
+                <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Archiving Agency</th>
+                  <th>Open Access</th>
+                  <th>Post-Cancellation Access (PCA)</th>
+                  <th></th>
+                </tr>
+                </thead>
+                <tbody>
+            <g:each in="${d.paas?.sort { it.archivingAgency?.value }}" var="paa" status="i">
+              <tr>
+                <td>${i+1}</td>
+                <td><gokb:xEditableRefData owner="${paa}" field="archivingAgency"
+                                           config="${RCConstants.PAA_ARCHIVING_AGENCY}"/>
+                <td><gokb:xEditableRefData owner="${paa}" field="openAccess"
+                                           config="${RCConstants.PAA_OPEN_ACCESS}"/>
+                </td>
+                <td>
+                  <gokb:xEditableRefData owner="${paa}" field="postCancellationAccess"
+                                         config="${RCConstants.PAA_POST_CANCELLATION_ACCESS}"/>
+                </td>
+                <td>
+                  <g:if test="${editable}">
+                    <g:link controller='ajaxSupport'
+                            action='delete'
+                            params="${["__context": "${paa.class.name}:${paa.id}"]}">Unlink</g:link>
+                  </g:if>
+                </td>
+              </tr>
+            </g:each>
+            </tbody>
+          </table>
+
+          <g:if test="${editable}">
+            <a data-toggle="modal" data-cache="false"
+               data-target="#paaModal">Add Archiving Agency</a>
+          </g:if>
+        </dd>
     </g:if>
 
 
@@ -156,6 +192,7 @@
         <li role="presentation" class="active"><a href="#currentTitles" data-toggle="tab">Current Titles <span class="badge badge-warning"> ${d.currentTippCount} </span></a></li>
         <li role="presentation"><a href="#retiredTitles" data-toggle="tab">Retired Titles <span class="badge badge-warning"> ${d.retiredTippCount} </span></a></li>
         <li role="presentation"><a href="#expectedTitles" data-toggle="tab">Expected Titles <span class="badge badge-warning"> ${d.expectedTippCount} </span></a></li>
+        <li role="presentation"><a href="#deletedTitles" data-toggle="tab">Deleted Titles <span class="badge badge-warning"> ${d.deletedTippCount} </span></a></li>
         <li role="presentation"><a href="#identifiers" data-toggle="tab">Identifiers <span class="badge badge-warning"> ${d.getCombosByPropertyNameAndStatus('ids','Active').size()} </span></a></li>
 
         <li role="presentation"><a href="#altnames" data-toggle="tab">Alternate Names
@@ -174,6 +211,9 @@
         </g:if>
         <li role="presentation"><a href="#activity" data-toggle="tab">Activity</a></li>
         <li role="presentation"><a href="#review" data-toggle="tab">Review Requests</a></li>
+        <g:if test="${d.source && d.source.automaticUpdates}">
+          <li role="presentation"><a href="#autoUp" data-toggle="tab">Automatic Updates History</a></li>
+        </g:if>
       </g:if>
       <g:else>
         <li class="disabled" title="${message(code:'component.create.idMissing.label')}"><span class="nav-tab-disabled">Titles </span></li>
@@ -223,6 +263,19 @@
             <dd>
               <g:link class="display-inline" controller="search" action="index"
                       params="[qbe: 'g:tipps', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status_id: RDStore.KBC_STATUS_EXPECTED.id]"
+                      id="">Titles in this package</g:link>
+            </dd>
+          </dl>
+        </g:if>
+      </div>
+
+      <div class="tab-pane" id="deletedTitles">
+        <g:if test="${params.controller != 'create'}">
+          <dl>
+            <dt><gokb:annotatedLabel owner="${d}" property="tipps">Deleted Titles</gokb:annotatedLabel></dt>
+            <dd>
+              <g:link class="display-inline" controller="search" action="index"
+                      params="[qbe: 'g:tipps', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status_id: RDStore.KBC_STATUS_DELETED.id]"
                       id="">Titles in this package</g:link>
             </dd>
           </dl>
@@ -321,11 +374,128 @@
         </div>
       </div>
 
+      <div class="tab-pane" id="autoUp">
+
+        <h3>History of Auto Updates</h3>
+
+        <table class="table table-bordered table-striped">
+          <thead>
+          <tr>
+            <th>#</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Status</th>
+            <th>Info</th>
+          </tr>
+          </thead>
+          <tbody>
+          <g:each in="${d.getAutoUpdateJobResult()}" var="jobResult" status="i">
+            <g:set var="json" value="${jobResult.resultJson}" />
+            <tr>
+              <td>${i+1}</td>
+              <td>${jobResult.startTime}</td>
+              <td>${jobResult.endTime}</td>
+              <td>${jobResult.statusText}</td>
+
+              <td><g:if test="${json}">
+
+                <b>${json.message}</b>
+                <br>
+                <br>
+                <g:if test="${json.packageUpdateNote}">
+                  ${json.packageUpdateNote}
+                  <br>
+                  <br>
+                </g:if>
+
+                <g:if test="${json.messages}">
+                  Messages:
+                  <ul>
+                    <g:each in="${json.messages}" var="m">
+                      <g:if test="${m instanceof String}">
+                        <li>${m}</li>
+                      </g:if>
+                      <g:else>
+                        <li>${m.message}</li>
+                      </g:else>
+                    </g:each>
+                  </ul>
+                </g:if>
+                <g:if test="${!json.messages}">
+                  No Messages
+                </g:if>
+
+                <g:if test="${json.errors?.global}">
+                  <div>Global Errors</div>
+                  <ul>
+                    <g:each in="${json.errors?.global}" var="ge">
+                      <li>${ge}</li>
+                    </g:each>
+                  </ul>
+                </g:if>
+                <g:if test="${json.errors?.tipps}">
+                  <div>Titles Errors</div>
+                  <ul>
+                    <g:each in="${json.errors?.tipps}" var="te">
+                      <li>${te}</li>
+                    </g:each>
+                  </ul>
+                </g:if>
+                <g:if test="${!json.errors}">
+                  No Errors
+                </g:if>
+
+
+                <g:if test="${json.ygorStatisticResultHash}">
+                  <br>
+                  <br>
+                  <g:link controller="package" action="showYgorStatistic" id="${json.ygorStatisticResultHash}" class="btn btn-default" target="_blank">Show Ygor Statistic</g:link>
+                </g:if>
+
+              </g:if>
+              </td>
+            </tr>
+          </g:each>
+          </tbody>
+        </table>
+      </div>
+
     </div>
 
       <g:render template="/apptemplates/secondTemplates/componentStatus"/>
 
   </div>
+
+<g:if test="${editable}">
+  <bootStrap:modal id="paaModal" title="Add Archiving Agency">
+
+    <g:form controller="ajaxSupport" action="addToCollection"
+            class="form-inline">
+      <input type="hidden" name="__context" value="${d.class.name}:${d.id}"/>
+      <input type="hidden" name="__newObjectClass" value="wekb.PackageArchivingAgency"/>
+      <input type="hidden" name="__recip" value="pkg"/>
+      <dt class="dt-label">Archiving Agency</dt>
+      <dd>
+        <gokb:simpleReferenceTypedown class="form-control" name="archivingAgency"
+                                      baseClass="org.gokb.cred.RefdataValue"
+                                      filter1="${RCConstants.PAA_ARCHIVING_AGENCY}"/>
+      </dd>
+      <dt class="dt-label">Open Access</dt>
+      <dd>
+        <gokb:simpleReferenceTypedown class="form-control" name="openAccess"
+                                      baseClass="org.gokb.cred.RefdataValue"
+                                      filter1="${RCConstants.PAA_OPEN_ACCESS}"/>
+      </dd>
+
+      <dt class="dt-label">Post-Cancellation Access (PCA)</dt>
+      <dd>
+        <gokb:simpleReferenceTypedown class="form-control" name="postCancellationAccess"
+                                      baseClass="org.gokb.cred.RefdataValue"
+                                      filter1="${RCConstants.PAA_POST_CANCELLATION_ACCESS}"/>
+      </dd>
+    </g:form>
+  </bootStrap:modal>
+</g:if>
 
     <g:javascript>
       $(document).ready(function(){

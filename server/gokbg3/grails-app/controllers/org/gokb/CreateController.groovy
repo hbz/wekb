@@ -14,6 +14,7 @@ import org.springframework.transaction.TransactionStatus
 import org.springframework.web.multipart.MultipartFile
 import wekb.AccessService
 import wekb.ExportService
+import wekb.PackageArchivingAgency
 
 import java.time.Instant
 import java.time.ZoneId
@@ -297,7 +298,7 @@ class CreateController {
     User user = springSecurityService.currentUser
 
     result.mappingCols = ["package_uuid", "package_name", "provider_uuid", "nominal_platform_uuid", "description", "url", "breakable", "content_type",
-            "file", "open_access", "payment_type", "scope", "national_range", "regional_range", "anbieter_produkt_id", "ddc", "source_url", "frequency", "title_id_namespace", "automated_updates"]
+            "file", "open_access", "payment_type", "scope", "national_range", "regional_range", "anbieter_produkt_id", "ddc", "source_url", "frequency", "title_id_namespace", "automated_updates", "archiving_agency", "open_access_of_archiving_agency", "post_cancellation_access_of_archiving_agency"]
 
     result
   }
@@ -387,6 +388,12 @@ class CreateController {
         case "title_id_namespace": colMap.title_id_namespace = c
           break
         case "automated_updates": colMap.automated_updates = c
+          break
+        case 'archiving_agency': colMap.archiving_agency = c
+          break
+        case 'open_access_of_archiving_agency': colMap.open_access_of_archiving_agency = c
+          break
+        case 'post_cancellation_access_of_archiving_agency': colMap.post_cancellation_access_of_archiving_agency = c
           break
       }
     }
@@ -604,6 +611,37 @@ class CreateController {
 
                   if (pkg.save(flush: true)) {
 
+                    if (colMap.archiving_agency != null) {
+                      String value = cols[colMap.archiving_agency].trim()
+                      if (value) {
+                        RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.PAA_ARCHIVING_AGENCY, value)
+                        if (refdataValue){
+                          PackageArchivingAgency packageArchivingAgency = new PackageArchivingAgency(archivingAgency: refdataValue, pkg: pkg)
+                          if (packageArchivingAgency.save(flush: true)) {
+                            if (colMap.open_access_of_archiving_agency != null) {
+                              String paaOp = cols[colMap.open_access_of_archiving_agency].trim()
+                              if (paaOp) {
+                                RefdataValue refdataValuePaaOP = RefdataCategory.lookup(RCConstants.PAA_OPEN_ACCESS, paaOp)
+                                if (refdataValuePaaOP)
+                                  packageArchivingAgency.openAccess = refdataValuePaaOP
+                              }
+                            }
+
+                            if (colMap.post_cancellation_access_of_archiving_agency != null) {
+                              String paaPCA = cols[colMap.post_cancellation_access_of_archiving_agency].trim()
+                              if (paaPCA) {
+                                RefdataValue refdataValuePaaPCA = RefdataCategory.lookup(RCConstants.PAA_POST_CANCELLATION_ACCESS, paaPCA)
+                                if (refdataValuePaaPCA)
+                                  packageArchivingAgency.postCancellationAccess = refdataValuePaaPCA
+                              }
+                            }
+                            packageArchivingAgency.save(flush: true)
+                          }
+
+                        }
+                      }
+                    }
+
                     user.curatoryGroups.each { CuratoryGroup cg ->
                       if (!(cg in pkg.curatoryGroups)) {
                         def combo_type = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.CuratoryGroups')
@@ -644,8 +682,18 @@ class CreateController {
                           String value = cols[colMap.automated_updates].trim()
                           if (value) {
                             RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.YN, value)
-                            if (refdataValue)
+                            if (refdataValue) {
                               source.automaticUpdates = (refdataValue.value == "Yes") ? true : false
+                            }
+
+                            if (refdataValue && refdataValue.value == "Yes") {
+                              String charset = (('a'..'z') + ('0'..'9')).join()
+                              String tokenValue = RandomStringUtils.random(255, charset.toCharArray())
+                              if (!UpdateToken.findByPkg(pkg)) {
+                                UpdateToken newToken = new UpdateToken(pkg: pkg, updateUser: user, value: tokenValue).save(flush: true)
+                              }
+                            }
+
                           }
                         }
 
@@ -688,7 +736,11 @@ class CreateController {
               }
 
             }catch ( Exception e ) {
-              e.printStackTrace()
+
+              if(pkg){
+                pkg.delete(flush: true)
+              }
+              log.error(e.printStackTrace())
               globalErrors << "Error on package with the name '${name}'. Please try agian!"
             }
           }

@@ -151,33 +151,7 @@
                                        </ul>
                                    </dd>
                                </g:if>
-                               <dt>
-                                   <gokb:annotatedLabel owner="${d}" property="imprints">Imprints</gokb:annotatedLabel>
-                               </dt>
-                               <dd>
-                                   <table class="table table-striped table-bordered">
-                                       <thead>
-                                       <tr>
-                                           <th>Imprint Name</th>
-                                           <th>Combo Status</th>
-                                           <th>Imprint From</th>
-                                           <th>Imprint To</th>
-                                           <th>Actions</th>
-                                       </tr>
-                                       </thead>
-                                       <tbody>
-                                       <g:each in="${d.getCombosByPropertyName('ownedImprints')}" var="p">
-                                           <tr>
-                                               <td><g:link controller="resource" action="show" id="${p.toComponent.class.name}:${p.toComponent.id}"> ${p.toComponent.name} </g:link></td>
-                                               <td><gokb:xEditableRefData owner="${p}" field="status" config="${RCConstants.COMBO_STATUS}" /></td>
-                                               <td><gokb:xEditable  owner="${p}" field="startDate" type="date" /></td>
-                                               <td><gokb:xEditable  owner="${p}" field="endDate" type="date" /></td>
-                                               <td><g:link controller="ajaxSupport" action="deleteCombo" id="${p.id}">Delete</g:link></td>
-                                           </tr>
-                                       </g:each>
-                                       </tbody>
-                                   </table>
-                               </dd>
+
                            </dl>
                    </div>--}%
 

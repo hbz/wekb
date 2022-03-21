@@ -6,4 +6,5 @@
 
 //=require gokb/inline-content
 
-console.log('+ application-public.js')
+console.log('+ application-public.js');
+

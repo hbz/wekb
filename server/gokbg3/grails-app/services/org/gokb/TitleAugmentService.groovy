@@ -1,6 +1,5 @@
 package org.gokb
 
-import org.gokb.refine.*;
 import org.gokb.cred.*;
 
 import groovy.util.slurpersupport.GPathResult

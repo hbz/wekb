@@ -14,6 +14,8 @@ import org.gokb.cred.*
 import org.gokb.exceptions.MultipleComponentsMatchedException
 import org.grails.web.json.JSONObject
 
+import java.nio.file.Files
+
 @Slf4j
 class CrossRefPkgRun {
 
@@ -155,7 +157,7 @@ class CrossRefPkgRun {
         }
         else {
           log.error("No package")
-          currentTippError.put('package', ['message': messageService.resolveCode('crossRef.package.tipps.error.pkgId', [json_tipp.title.name], request_locale), baddata: json_tipp.package])
+          currentTippError.put('package', ['message': messageService.resolveCode('crossRef.package.tipps.error.pkgId', [json_tipp.title.name], locale), baddata: json_tipp.package])
           invalidTipps << json_tipp
         }
 /*        if (!invalidTipps.contains(json_tipp)) {
@@ -287,6 +289,8 @@ class CrossRefPkgRun {
         }
 
         if (autoUpdate && pkg.source) {
+          job.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'PackageCrossRef Auto')
+
           Source src = Source.get(pkg.source.id)
           src.lastRun = new Date()
           src.lastUpdateUrl = rjson.updateURL
@@ -302,8 +306,18 @@ class CrossRefPkgRun {
                   creator: user,
                   note: note).save(flush: true)
 
-          job.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'PackageCrossRef Auto')
+          jsonResult.packageUpdateNote = note
 
+          if(rjson.ygorStatisticResultHash && Holders.grailsApplication.config.ygorUploadLocation && Holders.grailsApplication.config.ygorStatisticStorageLocation) {
+              File dowloadFolder = new File("${Holders.grailsApplication.config.ygorUploadLocation.toString()}/${rjson.ygorStatisticResultHash}.raw.zip")
+
+              File uploadFolder = new File("${Holders.grailsApplication.config.ygorStatisticStorageLocation.toString()}/${rjson.ygorStatisticResultHash}.raw.zip")
+
+              Files.copy(dowloadFolder.toPath(), uploadFolder.toPath())
+
+              jsonResult.ygorStatisticResultHash = rjson.ygorStatisticResultHash
+
+          }
         }
       }
       log.debug("final flush");
@@ -333,19 +347,19 @@ class CrossRefPkgRun {
     }
 
     JobResult.withNewSession {
-      JobResult result_object = JobResult.findByUuid(job.uuid)
+      JobResult result_object = JobResult.findByUuid(job?.uuid)
 
       def job_map = [
-              uuid: (job.uuid),
-              description: (job.description),
+              uuid: (job?.uuid),
+              description: (job?.description),
               resultObject: (jsonResult ? (jsonResult as JSON).toString() : null),
-              type: (job.type),
-              statusText: (jsonResult ? (jsonResult.result) : job.status),
-              ownerId: (job.ownerId),
-              groupId: (job.groupId ?: curatoryGroup?.id),
-              startTime: (job.startTime),
-              endTime: (job.endTime),
-              linkedItemId: (job.linkedItem?.id)
+              type: (job?.type),
+              statusText: (jsonResult ? (jsonResult.result) : job?.status),
+              ownerId: (job?.ownerId),
+              groupId: (job?.groupId ?: curatoryGroup?.id),
+              startTime: (job?.startTime),
+              endTime: (job?.endTime),
+              linkedItemId: (job?.linkedItem?.id)
       ]
 
       if (!result_object) {
@@ -443,16 +457,6 @@ class CrossRefPkgRun {
       )
 
       if (ti?.id && !ti.hasErrors()) {
-        if (titleObj.imprint) {
-          if (ti.imprint?.name == titleObj.imprint) {
-            // Imprint already set
-          }
-          else {
-            def imprint = Imprint.findByName(titleObj.imprint) ?: new Imprint(name: titleObj.imprint).save(failOnError: true)
-            ti.imprint = imprint
-            title_changed = true
-          }
-        }
 
         // Add the core data.
         componentUpdateService.ensureCoreData(ti, titleObj, fullsync, user)
@@ -470,19 +474,6 @@ class CrossRefPkgRun {
 
         title_changed |= ClassUtils.setDateIfPresent(pubFrom, ti, 'publishedFrom')
         title_changed |= ClassUtils.setDateIfPresent(pubTo, ti, 'publishedTo')
-
-        if (titleObj.historyEvents?.size() > 0) {
-          def he_result = titleHistoryService.processHistoryEvents(ti, titleObj, title_class_name, user, fullsync, locale)
-          if (he_result.errors) {
-            if (!currentTippError.title) {
-              currentTippError.title = [:]
-            }
-            currentTippError[title].put('historyEvents': [
-              message: messageService.resolveCode('crossRef.package.tipps.error.title.history', null, locale),
-              baddata: tippJson.title,
-              errors : he_result.errors])
-          }
-        }
 
         if (title_class_name == 'org.gokb.cred.BookInstance') {
           log.debug("Adding Monograph fields for ${ti.class.name}: ${ti}")
@@ -695,23 +686,6 @@ class CrossRefPkgRun {
         log.debug("Upserted TIPP ${upserted_tipp} with URL ${upserted_tipp?.url}")
         upserted_tipp.merge(flush: true)
         componentUpdateService.ensureCoreData(upserted_tipp, tippJson, fullsync, user)
-
-
-        /*if (titleObj.historyEvents?.size() > 0) {
-          def he_result = titleHistoryService.processHistoryEvents(ti, titleObj, title_class_name, user, fullsync, locale)
-          if (he_result.errors) {
-            if (!currentTippError.title) {
-              currentTippError.title = [:]
-            }
-            currentTippError[title].put('historyEvents': [
-                    message: messageService.resolveCode('crossRef.package.tipps.error.title.history', null, locale),
-                    baddata: tippJson.title,
-                    errors : he_result.errors])
-          }
-        }
-
-        titleLookupService.addPublisherHistory(ti, titleObj.publisher_history)*/
-
 
       }
       catch (grails.validation.ValidationException ve) {

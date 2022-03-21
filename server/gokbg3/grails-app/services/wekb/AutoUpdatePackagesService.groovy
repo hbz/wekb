@@ -4,10 +4,13 @@ import com.k_int.ConcurrencyManagerService
 import de.hbznrw.ygor.tools.UrlToolkit
 import de.wekb.helper.RCConstants
 import grails.converters.JSON
+import grails.util.Holders
+import groovy.json.JsonSlurper
 import groovyx.net.http.RESTClient
 import org.apache.commons.lang.RandomStringUtils
 import org.apache.commons.lang.StringUtils
 import org.apache.xmlbeans.impl.store.Cur
+import org.gokb.CrossReferenceService
 import org.gokb.cred.CuratoryGroup
 import org.gokb.cred.JobResult
 import org.gokb.cred.Package
@@ -15,6 +18,10 @@ import org.gokb.cred.RefdataCategory
 import org.gokb.cred.Source
 import org.gokb.cred.UpdateToken
 import org.gokb.cred.User
+
+import java.nio.file.Files
+import java.time.LocalTime
+import java.time.temporal.ChronoUnit
 
 import static grails.async.Promises.task
 import static groovyx.net.http.Method.GET
@@ -26,6 +33,7 @@ class AutoUpdatePackagesService {
     def grailsApplication
     ConcurrencyManagerService concurrencyManagerService
     Map result = [result: JobResult.STATUS_SUCCESS]
+    CrossReferenceService crossReferenceService
 
     public static Date runningStartDate
 
@@ -59,8 +67,9 @@ class AutoUpdatePackagesService {
                 }
 
                 log.debug("UpdateFromSource started")
-                if (startSourceUpdate(p, user, ignoreLastChanged)) {
-                    result = [result: JobResult.STATUS_SUCCESS, message: (user ? "Manuell" : "Auto") + " Update Package success"]
+                Map ygorData = startSourceUpdate(p, user, ignoreLastChanged)
+                if (ygorData.size() > 0) {
+                    result = [ygorData: ygorData, result: JobResult.STATUS_SUCCESS, message: (user ? "Manuell" : "Auto") + " Update Package success"]
                 }
                 if (!user) {
                     runningStartDate = null
@@ -114,10 +123,11 @@ class AutoUpdatePackagesService {
      * Bad configurations will result in failure.
      * The autoUpdate frequency in the source is ignored: the update starts immediately.
      */
-    private boolean startSourceUpdate(Package p, User user = null, boolean ignoreLastChanged = false) {
+    private Map startSourceUpdate(Package p, User user = null, boolean ignoreLastChanged = false) {
         log.debug("Source update start..")
-        //println("Source update start..")
         boolean error = false
+        Map ygorData = [:]
+        ygorData.pkg = p
         def ygorBaseUrl = grailsApplication.config.gokb.ygorUrl
 
 
@@ -161,40 +171,65 @@ class AutoUpdatePackagesService {
                         // wait for ygor to finish the enrichment
                         boolean processing = true
                         respData = data
+
                         if (!respData || !respData.jobId) {
                             log.error("no ygor job Id received, skipping update of ${p.id}!")
                             if (respData?.message) {
                                 log.error("ygor message: ${respData.message}")
                             }
 
+                            if (respData?.ygorFeedback) {
+                                log.error("ygorFeedback: ${respData.ygorFeedback}")
+                            }
+
                             result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "YGOR ERROR: ${respData.message}"]]]
                             processing = false
-                            error = true
+                            //error = true
                         }
 
-                        if (respData?.ygorFeedback) {
-                            log.error("ygorFeedback: ${respData.ygorFeedback}")
-                        }
-                        def statusService = new RESTClient(ygorBaseUrl + "/enrichment/getStatus?jobId=${respData.jobId}")
+                        String statusUrl = ygorBaseUrl + "/enrichment/getStatus?noGokbJobId=true&jobId=${respData.jobId}"
+                        def statusService = new RESTClient(statusUrl)
 
+                        LocalTime ygorStartTime = LocalTime.now()
+                        String ygorStatus = ""
                         while (processing == true) {
-                            log.debug("GET ygor/enrichment/getStatus?jobId=${respData.jobId}")
+                            log.debug("GET ${statusUrl}")
                             statusService.request(GET) { req ->
                                 response.success = { statusResp, statusData ->
-                                    log.debug("GET ygor/enrichment/getStatus?jobId=${respData.jobId} => success")
+                                    log.debug("GET  ${statusUrl} => success")
                                     log.debug("status of Ygor ${statusData.status} gokbJob #${statusData.gokbJobId}")
                                     if (statusData.status == 'FINISHED_UNDEFINED') {
                                         processing = false
-                                        result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "YGOR ERROR: No valid URLs found."]]]
-                                        log.debug("No valid URLs found.")
-                                    }
-
-                                    if (statusData.gokbJobId) {
+                                        result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "YGOR ERROR: ${statusData.message}"]]]
+                                        log.debug("${statusData.message}")
+                                    } else if (statusData.status == 'ERROR') {
                                         processing = false
-                                        task {
-                                            checkPackageJob(statusData.gokbJobId, p)
-                                        }
+                                        result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "YGOR ERROR: ${statusData.message}"]]]
+                                        log.debug("${statusData.message}")
+                                    }
+                                    else if (statusData.status == 'SUCCESS') {
+                                        processing = false
+                                        ygorData.ygorJobId = respData.jobId
+                                        ygorData.ygorResultHash = statusData.resultHash
+                                        /*task {
+                                            checkPackageJob(respData.jobId, p)
+                                        }*/
                                     } else {
+
+                                        if (ygorStartTime < LocalTime.now().minus(45, ChronoUnit.MINUTES)){
+                                            processing = false
+                                            log.error("ygor status is still the same after 45 minutes: $statusData.status")
+                                            result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "YGOR ERROR: Ygor couldn't process the kbart after 45 minutes"]]]
+                                            //error = true
+                                        }
+
+                                        if(ygorStatus != statusData.status)
+                                        {
+                                            ygorStatus = statusData.status
+                                            ygorStartTime = LocalTime.now()
+                                        }
+
+
                                         sleep(10000) // 10 sec
                                     }
                                 }
@@ -202,33 +237,38 @@ class AutoUpdatePackagesService {
                                     log.error("GET ygor/enrichment/getStatus?jobId=${respData.jobId} => failure")
                                     log.error("ygor response message: $statusData.message")
 
-                                    result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "YGOR ERROR: response message: $statusData.message"]]]
+                                    result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "YGOR ERROR: Response message: $statusData.message"]]]
                                     processing = false
-                                    error = true
+                                    //error = true
                                 }
                             }
                         }
                     }
-                    response.failure = { resp ->
+                    response.failure = { resp, data ->
                         log.error("GET ygor${path} => failure")
                         log.error("ygor response: ${resp.responseBase}")
+                        respData = data
 
-                        result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "YGOR ERROR: response: ${resp.responseBase}"]]]
-                        error = true
+                        if (respData.ygorFeedback) {
+                            log.error("ygorFeedback: ${respData.ygorFeedback}")
+                        }
+
+                        result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "YGOR ERROR: Response message: ${respData.message}"]]]
+                        //error = true
                     }
                 }
             } catch (Exception e) {
                 log.error("SourceUpdate Exception:", e);
                 result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "wekb ERROR: SourceUpdate Exception"]]]
-                error = true
+                //error = true
             }
         } else {
             result = [result: JobResult.STATUS_ERROR, errors: [global: [message: "wekb ERROR: No user provided and no existing updateToken found!"]]]
             log.debug("No user provided and no existing updateToken found!")
-            error = true
+            //error = true
         }
 
-        return !error
+        return ygorData
     }
 
 
@@ -246,8 +286,10 @@ class AutoUpdatePackagesService {
         }
     }
 
+    @Deprecated
     private void checkPackageJob(String gokbJobId, Package aPackage) {
         log.debug("task start...")
+
         ConcurrencyManagerService.Job job = concurrencyManagerService.getJob(gokbJobId)
         while (!job.isDone() && job.get() == null) {
             this.wait(5000) // 5 sec
@@ -274,7 +316,6 @@ class AutoUpdatePackagesService {
                 if (updateUrls.size() > 0) {
                     while (urlsIterator.hasPrevious()) {
                         URL url = urlsIterator.previous()
-                        println(url)
                     }
                 }
                 aPackage.source.lastRun = new Date()
@@ -283,6 +324,46 @@ class AutoUpdatePackagesService {
                 log.debug("set ${aPackage.source.getNormname()}.lastRun = now")
             }
         }
+    }
+
+    void importJsonFromUpdateSource(Map ygorData) {
+        log.debug("importJsonFromUpdateSource .. ${ygorData}")
+        if (grailsApplication.config.ygorUploadJsonLocation && ygorData.size() > 0) {
+            boolean addOnly = false
+            boolean fullsync = false
+            if (ygorData.ygorResultHash) {
+
+                //String jsonSlurper = new JsonSlurper().parse().toString()
+                JSON json = new JSON()
+                InputStream inputStream = new FileInputStream(new File("${grailsApplication.config.ygorUploadJsonLocation}/${ygorData.ygorResultHash}.packageWithTitleData.json"))
+                def jsonData = json.parse(inputStream, 'UTF-8')
+
+                UpdateToken updateToken = UpdateToken.findByPkg(ygorData.pkg)
+                User request_user = updateToken.updateUser
+
+                if (jsonData.packageHeader) {
+                    jsonData.packageHeader.uuid = updateToken.pkg.uuid
+                }
+
+                if (ygorData.ygorResultHash) {
+                    jsonData.ygorStatisticResultHash = ygorData.ygorResultHash
+                }
+
+                ConcurrencyManagerService.Job background_job = concurrencyManagerService.createJob { ConcurrencyManagerService.Job job ->
+                    crossReferenceService.xRefPkg(jsonData, addOnly, fullsync,
+                            true, Locale.ENGLISH, request_user, job)
+                }
+                log.debug("Starting job ${background_job}..")
+                background_job.description = "Package CrossRef (${jsonData.packageHeader.name})"
+                background_job.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'PackageCrossRef')
+                background_job.linkedItem = [name: jsonData.packageHeader.name,
+                                             type: "Package"]
+                background_job.message("Starting upsert for Package ${jsonData.packageHeader.name}")
+                background_job.startOrQueue()
+                background_job.startTime = new Date()
+            }
+        }
+
     }
 
 }

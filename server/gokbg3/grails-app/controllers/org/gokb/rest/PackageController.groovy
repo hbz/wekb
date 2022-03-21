@@ -41,7 +41,6 @@ class PackageController {
   def sessionFactory
   def reviewRequestService
   def titleLookupService
-  def titleHistoryService
 
   @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
   def index() {
@@ -118,7 +117,7 @@ class PackageController {
   }
 
   @Transactional
-  @Secured(value = ["hasRole('ROLE_CONTRIBUTOR')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
+  @Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
   def save() {
     def result = ['result': 'OK', 'params': params]
     def reqBody = request.JSON
@@ -238,7 +237,7 @@ class PackageController {
     render result as JSON
   }
 
-  @Secured(value = ["hasRole('ROLE_CONTRIBUTOR')", 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
   @Transactional
   def update() {
     def result = ['result': 'OK', 'params': params]
@@ -269,7 +268,6 @@ class PackageController {
         def jsonMap = obj.jsonMapping
 
         jsonMap.ignore = [
-          'lastProject',
         ]
 
         jsonMap.immutable = []
@@ -487,7 +485,7 @@ class PackageController {
     errors
   }
 
-  @Secured(value = ["hasRole('ROLE_EDITOR')", 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
   @Transactional
   def delete() {
     def result = ['result': 'OK', 'params': params]
@@ -823,16 +821,7 @@ class PackageController {
                             )
 
                             if (ti?.id && !ti.hasErrors()) {
-                              if (titleObj.imprint) {
-                                if (title.imprint?.name == titleObj.imprint) {
-                                  // Imprint already set
-                                }
-                                else {
-                                  def imprint = Imprint.findByName(titleObj.imprint) ?: new Imprint(name: titleObj.imprint).save(flush: true, failOnError: true);
-                                  title.imprint = imprint;
-                                  title_changed = true
-                                }
-                              }
+
 
                               // Add the core data.
                               componentUpdateService.ensureCoreData(ti, titleObj, fullsync, user)
@@ -851,23 +840,14 @@ class PackageController {
                               title_changed |= ClassUtils.setDateIfPresent(pubFrom, ti, 'publishedFrom')
                               title_changed |= ClassUtils.setDateIfPresent(pubTo, ti, 'publishedTo')
 
-                              if (titleObj.historyEvents?.size() > 0) {
-                                def he_result = titleHistoryService.processHistoryEvents(ti, titleObj, title_class_name, user, fullsync, locale)
 
-                                if (he_result.errors) {
-                                  result.errors = he_result.errors
-                                }
-                              }
 
                               if (title_class_name == 'org.gokb.cred.BookInstance') {
 
                                 log.debug("Adding Monograph fields for ${ti.class.name}: ${ti}")
                                 def mg_change = addMonographFields(ti, titleObj)
 
-                                // TODO: Here we will have to add authors and editors, like addPerson() in TSVIngestionService
-                                if (mg_change) {
-                                  title_changed = true
-                                }
+
                               }
 
                               titleLookupService.addPublisherHistory(ti, titleObj.publisher_history)

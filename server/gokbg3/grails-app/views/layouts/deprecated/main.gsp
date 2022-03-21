@@ -63,9 +63,6 @@
 
           <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Create</a>
             <ul class="dropdown-menu">
-              <g:if test="${org.gokb.cred.License.isTypeCreatable(false)==true}">
-                <li><g:link controller="create" action="index" params="${[tmpl:'org.gokb.cred.License']}">License</g:link></li>
-              </g:if>
               <g:if test="${org.gokb.cred.Office.isTypeCreatable(false)==true}">
                 <li><g:link controller="create" action="index" params="${[tmpl:'org.gokb.cred.Office']}">Office</g:link></li>
               </g:if>
@@ -83,12 +80,6 @@
               </g:if>
               <g:if test="${org.gokb.cred.Source.isTypeCreatable(false)==true}">
                 <li><g:link controller="create" action="index" params="${[tmpl:'org.gokb.cred.Source']}">Source</g:link></li>
-              </g:if>
-              <g:if test="${org.gokb.cred.TitleInstance.isTypeCreatable(false)==true}">
-                <li><g:link controller="create" action="index" params="${[tmpl:'org.gokb.cred.TitleInstance']}">Title</g:link></li>
-              </g:if>
-              <g:if test="${org.gokb.cred.Imprint.isTypeCreatable(false)==true}">
-                <li><g:link controller="create" action="index" params="${[tmpl:'org.gokb.cred.Imprint']}">Imprint</g:link></li>
               </g:if>
 
               <sec:ifAnyGranted roles="ROLE_ADMIN">
@@ -113,7 +104,6 @@
             <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin</a>
               <ul class="dropdown-menu">
                 <li><g:link controller="admin" action="tidyOrgData">Tidy Orgs Data</g:link></li>
-                <li><g:link controller="admin" action="reSummariseLicenses">Regenerate License Summaries</g:link></li>
                 <li><g:link controller="admin" action="updateTextIndexes">Update Free Text Indexes</g:link></li>
                 <li><g:link controller="admin" action="resetTextIndexes">Reset Free Text Indexes</g:link></li>
                 <li><g:link controller="admin" action="masterListUpdate">Force Master List Update</g:link></li>
@@ -148,17 +138,6 @@
     </div>
   </div>
 
-%{--  <g:if test="${(grailsApplication.config.kuali?.analytics?.code instanceof String ) }">
-    <g:javascript>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-  
-        ga('create', '${grailsApplication.config.kuali.analytics.code}', 'kuali.org');
-        ga('send', 'pageview');
-      </g:javascript>
-  </g:if>--}%
 </body>
 <r:layoutResources />
 </html>

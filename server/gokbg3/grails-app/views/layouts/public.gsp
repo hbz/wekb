@@ -19,15 +19,6 @@
 
     <title><g:message code="gokb.appname" default="we:kb"/></title>
 
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Josefin+Slab:100,300,400,600,700,100italic,300italic,400italic,600italic,700italic" rel="stylesheet" type="text/css">
-
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
 </head>
 
 <wekb:serviceInjection />
@@ -55,7 +46,7 @@
             <div class="collapse navbar-collapse flex-grow-1 text-right" id="public-navigation">
                <ul class="navbar-nav ml-auto flex-nowrap">
                   <g:if test="${grailsApplication.config.gokb.ygorUrl}">
-                    <li class="nav-item"><a class="nav-link" href ="${grailsApplication.config.gokb.ygorUrl}">Ygor</a></li>
+                    <li class="nav-item"><a class="nav-link" href ="${grailsApplication.config.gokb.ygorUrl}" target="_blank">Ygor</a></li>
                   </g:if>
 
                   <li class="nav-item"><g:link class="nav-link" controller="home" action="index">Login</g:link></li>

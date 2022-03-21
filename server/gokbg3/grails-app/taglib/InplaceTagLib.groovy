@@ -38,13 +38,9 @@ class InplaceTagLib {
       tl_editable = true
     }
 
-    if ( !tl_editable && owner?.class?.name == 'org.gokb.cred.Combo' ) {
+/*    if ( !tl_editable && owner?.class?.name == 'org.gokb.cred.Combo' ) {
       tl_editable = owner.fromComponent.isEditable()
-    }
-
-    if ( !tl_editable && owner?.class?.name == 'org.gokb.cred.Combo' ) {
-      tl_editable = owner.fromComponent.isEditable()
-    }
+    }*/
 
     if (!tl_editable && attrs.editable) {
       tl_editable = attrs.editable
@@ -418,7 +414,7 @@ class InplaceTagLib {
 
     // The check editable should output the read only version so we should just exit
     // if read only.
-    if (!checkEditable(attrs, body, out)) return;
+    //if (!checkEditable(attrs, body, out)) return;
 
     out << "<input type=\"hidden\" value=\"${attrs.value?:''}\" name=\"${attrs.name}\" data-domain=\"${attrs.baseClass}\" "
     if ( attrs.id ) {

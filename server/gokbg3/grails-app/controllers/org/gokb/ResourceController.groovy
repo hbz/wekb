@@ -61,6 +61,10 @@ class ResourceController {
 
         if (read_perm) {
 
+          if(displayobj instanceof Package){
+            displayobj.createCoreIdentifiersIfNotExist()
+          }
+
           // Need to figure out whether the current user has curatorial rights (or is an admin).
           // Defaults to true as not all components have curatorial groups defined.
 
