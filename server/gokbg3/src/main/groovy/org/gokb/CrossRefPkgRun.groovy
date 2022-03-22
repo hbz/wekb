@@ -1,18 +1,18 @@
 package org.gokb
 
-import com.k_int.ClassUtils
+
 import com.k_int.ConcurrencyManagerService.Job
 import de.wekb.helper.RCConstants
 import gokbg3.MessageService
 import grails.converters.JSON
 import grails.plugin.springsecurity.SpringSecurityService
 import grails.util.Holders
-import grails.validation.ValidationException
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang.RandomStringUtils
 import org.gokb.cred.*
-import org.gokb.exceptions.MultipleComponentsMatchedException
 import org.grails.web.json.JSONObject
+import wekb.KbartImportService
+import wekb.KbartImportValidationService
 
 import java.nio.file.Files
 
@@ -20,12 +20,12 @@ import java.nio.file.Files
 class CrossRefPkgRun {
 
   static MessageService messageService = Holders.grailsApplication.mainContext.getBean('messageService')
-  static PackageService packageService = Holders.grailsApplication.mainContext.getBean('packageService')
   static SpringSecurityService springSecurityService = Holders.grailsApplication.mainContext.getBean('springSecurityService')
   static ComponentUpdateService componentUpdateService = Holders.grailsApplication.mainContext.getBean('componentUpdateService')
-  static TitleLookupService titleLookupService = Holders.grailsApplication.mainContext.getBean('titleLookupService')
   static ReviewRequestService reviewRequestService = Holders.grailsApplication.mainContext.getBean('reviewRequestService')
   static CleanupService cleanupService = Holders.grailsApplication.mainContext.getBean('cleanupService')
+  static KbartImportValidationService kbartImportValidationService = Holders.grailsApplication.mainContext.getBean('kbartImportValidationService')
+  static KbartImportService kBartImportService = Holders.grailsApplication.mainContext.getBean('kbartImportService')
 
   def rjson // request JSON
   boolean addOnly
@@ -108,7 +108,7 @@ class CrossRefPkgRun {
       //TODO: Permission AccessService!!!!!
 
       // Package Validation
-      pkg_validation = Package.validateDTO(rjson.packageHeader, locale)
+      pkg_validation = kbartImportValidationService.packagevalidateDTO(rjson.packageHeader, locale)
       if (!pkg_validation.valid) {
         globalError([code   : 403,
                      message: messageService.resolveCode('crossRef.package.error.validation.global', null, locale),
@@ -119,7 +119,7 @@ class CrossRefPkgRun {
       }
 
       // upsert Package
-      def proxy = packageService.upsertDTO(rjson.packageHeader, user)
+      def proxy = kBartImportService.packageUpsertDTO(rjson.packageHeader)
       if (!proxy) {
         globalError([code   : 400,
                      message: messageService.resolveCode('crossRef.package.error', null, locale),
@@ -151,22 +151,16 @@ class CrossRefPkgRun {
       for (def json_tipp : rjson.tipps) {
         idx++
         def currentTippError = [index: idx]
-        log.info("Crossreferencing #$idx title ${json_tipp.name ?: json_tipp.title.name}")
+        log.info("Crossreferencing #$idx title ${json_tipp.name}")
         if ((json_tipp.package == null) && (pkg.id)) {
           json_tipp.package = [internalId: pkg.id]
         }
         else {
           log.error("No package")
-          currentTippError.put('package', ['message': messageService.resolveCode('crossRef.package.tipps.error.pkgId', [json_tipp.title.name], locale), baddata: json_tipp.package])
+          currentTippError.put('package', ['message': messageService.resolveCode('crossRef.package.tipps.error.pkgId', [json_tipp.name], locale), baddata: json_tipp.package])
           invalidTipps << json_tipp
         }
-/*        if (!invalidTipps.contains(json_tipp)) {
-          // validate and upsert TitleInstance
-          Map titleErrorMap = handleTitle(json_tipp)
-          if (titleErrorMap.size() > 0) {
-            currentTippError.put('title', titleErrorMap)
-          }
-        }*/
+
         if (!invalidTipps.contains(json_tipp)) {
           // validate and upsert PlatformInstance
           Map pltErrorMap = handlePlt(json_tipp)
@@ -185,7 +179,7 @@ class CrossRefPkgRun {
           reviewRequestService.raise(
             pkg,
             "TIPP rejected",
-            "TIPP ${json_tipp.name ?: json_tipp.title.name} coudn't be imported. ${(currentTippError as JSON).toString()}",
+            "TIPP ${json_tipp.name} coudn't be imported. ${(currentTippError as JSON).toString()}",
             rr_type,
             null,
             (currentTippError as JSON).toString(),
@@ -390,7 +384,6 @@ class CrossRefPkgRun {
   }
 
   private def handleUpdateToken() {
-    boolean curated_pkg = false
     def curatory_group_ids = null
     if (pkg.curatoryGroups && pkg.curatoryGroups?.size() > 0) {
       curatory_group_ids = user.curatoryGroups?.id?.intersect(pkg.curatoryGroups?.id)
@@ -402,12 +395,10 @@ class CrossRefPkgRun {
         job?.groupId = curatory_group_ids[0]
       }
       curatoryGroup = CuratoryGroup.get(job?.groupId)
-      curated_pkg = true
     }
 
-    if (curatory_group_ids || !curated_pkg
-      || user.authorities.contains(Role.findByAuthority('ROLE_SUPERUSER'))) {
-      componentUpdateService.ensureCoreData(pkg, rjson.packageHeader, fullsync, user)
+/*    if (curatory_group_ids || user.authorities.contains(Role.findByAuthority('ROLE_SUPERUSER'))) {
+      //componentUpdateService.ensureCoreData(pkg, rjson.packageHeader, fullsync, user)
 
       if (!pkg_validation.match && rjson.packageHeader.generateToken) {
         String charset = (('a'..'z') + ('0'..'9')).join()
@@ -422,10 +413,10 @@ class CrossRefPkgRun {
         def update_token = new UpdateToken(pkg: pkg, updateUser: user, value: tokenValue).merge(flush: true)
         jsonResult.updateToken = update_token.value
       }
-    }
+    }*/
   }
 
-  @Deprecated
+ /* @Deprecated
   private Map handleTitle(JSONObject tippJson) {
     Map titleErrorMap = [:] // [<jsonPropertyName>: [message: <msg>, baddata: <jsonPropertyValue>], ..]
     def title_validation = Class.forName(IntegrationController.determineTitleClass(tippJson.title)).validateDTO(tippJson.title, locale)
@@ -517,21 +508,24 @@ class CrossRefPkgRun {
         baddata: tippJson?.title?.name])
     }
     return titleErrorMap
-  }
+  }*/
 
   private Map handlePlt(JSONObject tippJson) {
-    def pltKey = 'platform'
-    def tippPlt = tippJson[pltKey]
+    def tippPlt = tippJson.hostPlatform ?: tippJson.platform
     def pltError = [:]
-    if (!tippPlt) {
-      pltKey = 'hostPlatform'
-      tippPlt = tippJson[pltKey]
+
+    Platform pl = null
+    if(tippPlt.oid) {
+      List platform_id_components = tippPlt.oid.split(':')
+      if (platform_id_components.size() == 2) {
+        pl = pltCache[platform_id_components[1].trim()]
+      }
     }
 
-    def pl = pltCache[tippPlt.name]
+
     if (!pl) {
       log.debug("validating platform $tippPlt")
-      def valid_plt = Platform.validateDTO(tippPlt)
+      def valid_plt = kbartImportValidationService.platformValidateDTO(tippPlt)
       if (valid_plt && !valid_plt.valid) {
         log.error("platform ${tippPlt} invalid!")
         invalidTipps << tippJson
@@ -542,11 +536,11 @@ class CrossRefPkgRun {
           pltError.putAll(valid_plt.errors)
         }
         try {
-          pl = Platform.upsertDTO(tippPlt, user)
+          pl = kBartImportService.platformUpsertDTO(tippPlt)
           if (pl) {
-            pltCache[tippPlt.name] = pl
+            pltCache[pl.id.toString()] = pl
             pl.merge(flush: true)
-            componentUpdateService.ensureCoreData(pl, tippPlt, fullsync, user)
+            //componentUpdateService.ensureCoreData(pl, tippPlt, fullsync, user)
           }
           else {
             log.error("Could not find/create ${tippPlt}")
@@ -564,7 +558,7 @@ class CrossRefPkgRun {
         }
       }
     }
-    tippJson[pltKey].internalId = pl.id
+    tippPlt.internalId = pl.id
     return pltError
   }
 
@@ -668,24 +662,23 @@ class CrossRefPkgRun {
 
   private Map handleTIPPNew(JSONObject tippJson) {
     Map tippError = [:]
-    def validation_result = TitleInstancePackagePlatform.validateDTONew(tippJson, locale)
-    log.debug("validate TIPP ${tippJson.name ?: tippJson.title.name}")
+    def validation_result = kbartImportValidationService.tippValidateDTONew(tippJson, locale)
+    log.debug("validate TIPP ${tippJson.name}")
     if (!validation_result.valid) {
       invalidTipps << tippJson
-      log.debug("TIPP Validation failed on ${tippJson.name ?: tippJson.title.name}")
+      log.debug("TIPP Validation failed on ${tippJson.name}")
       return validation_result.errors
     }
     else {
       if (validation_result.errors?.size() > 0) {
         tippError.putAll(validation_result.errors)
       }
-      log.debug("upsert TIPP ${tippJson.name ?: tippJson.title.name}")
+      log.debug("upsert TIPP ${tippJson.name}")
       def upserted_tipp = null
       try {
-        upserted_tipp = TitleInstancePackagePlatform.upsertDTO(tippJson, user)
+        upserted_tipp = kBartImportService.tippUpsertDTO(tippJson, user)
         log.debug("Upserted TIPP ${upserted_tipp} with URL ${upserted_tipp?.url}")
         upserted_tipp.merge(flush: true)
-        componentUpdateService.ensureCoreData(upserted_tipp, tippJson, fullsync, user)
 
       }
       catch (grails.validation.ValidationException ve) {
@@ -697,7 +690,7 @@ class CrossRefPkgRun {
       catch (Exception ge) {
         log.error("Exception attempting to cross reference TIPP:", ge)
         def tipp_error = [
-                message: messageService.resolveCode('crossRef.package.tipps.error', [tippJson.title.name], locale),
+                message: messageService.resolveCode('crossRef.package.tipps.error', [tippJson.name], locale),
                 baddata: tippJson,
                 errors : [message: ge.toString()]
         ]
@@ -759,7 +752,7 @@ class CrossRefPkgRun {
         log.debug("Could not reference TIPP")
         invalidTipps << tippJson
         def tipp_error = [
-                message: messageService.resolveCode('crossRef.package.tipps.error', [tippJson.title.name], locale),
+                message: messageService.resolveCode('crossRef.package.tipps.error', [tippJson.name], locale),
                 baddata: tippJson
         ]
         return tipp_error

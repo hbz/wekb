@@ -609,6 +609,7 @@ class TitleInstance extends KBComponent {
    *   ],
    *   type:'Serial' or 'Monograph'
    *}*/
+  @Deprecated
   @Transient
   static def validateDTO(JSONObject titleDTO, Locale locale) {
     def result = ['valid': true]
@@ -756,6 +757,7 @@ class TitleInstance extends KBComponent {
     }
   }
 
+  @Deprecated
   @Transient
   static TitleInstance upsertDTO(titleLookupService, titleDTO, user = null, fullsync = false) {
     def result = null;

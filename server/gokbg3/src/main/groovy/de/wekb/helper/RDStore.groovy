@@ -29,6 +29,11 @@ class RDStore {
     public static final PRICE_TYPE_LIST = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'list')
     public static final PRICE_TYPE_OA_APC = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'open access apc')
 
+    public static final TIPP_PUBLIC_TYPE_SERIAL = RefdataCategory.lookup(RCConstants.TIPP_PUBLICATION_TYPE, "Serial")
+    public static final TIPP_PUBLIC_TYPE_MONO = RefdataCategory.lookup(RCConstants.TIPP_PUBLICATION_TYPE, "Monograph")
+    public static final TIPP_PUBLIC_TYPE_DB = RefdataCategory.lookup(RCConstants.TIPP_PUBLICATION_TYPE, "Database")
+    public static final TIPP_PUBLIC_TYPE_OTHER = RefdataCategory.lookup(RCConstants.TIPP_PUBLICATION_TYPE, "Other")
+
 
 
 

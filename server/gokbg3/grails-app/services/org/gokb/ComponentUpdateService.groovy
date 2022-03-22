@@ -55,57 +55,6 @@ class ComponentUpdateService {
 
       if (namespace_val && ci.value && namespace_val.toLowerCase() != "originediturl") {
 
-        if(component instanceof TitleInstancePackagePlatform){
-
-          Identifier identifier
-          List<Identifier> identifiersWithSameNamespace = Identifier.executeQuery('select i from Identifier as i, Combo as c where LOWER(i.namespace.value) = :namespaceValue and c.fromComponent.id = :tipp and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: namespace_val, tipp: component.id, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
-
-          List deleteComboIds = []
-
-          identifiersWithSameNamespace.each { Identifier tippIdentifier ->
-            List<Combo> identifierLinkedToComponents = Combo.executeQuery("from Combo as c where c.toComponent = :identifier ", [identifier: tippIdentifier])
-            log.debug("identifierLinkedToComponents:"+identifierLinkedToComponents)
-              if(identifierLinkedToComponents.size() == 1){
-                if (identifierLinkedToComponents[0].fromComponent == component) {
-                  tippIdentifier.value = ci.value
-                  tippIdentifier.save(flush: true, failOnError: true)
-
-                  identifierLinkedToComponents[0].status = combo_active
-                  identifierLinkedToComponents[0].save(flush: true, failOnError: true)
-                  hasChanged = true
-                }
-              }
-              if(identifierLinkedToComponents.size() > 1) {
-                identifierLinkedToComponents.each { Combo combo ->
-                  if (combo.fromComponent == component) {
-                    deleteComboIds << combo.id
-                    def norm_id = Identifier.normalizeIdentifier(ci.value)
-                    IdentifierNamespace ns = IdentifierNamespace.findByValueIlike(namespace_val)
-                    identifier = new Identifier(namespace: ns, value: ci.value, normname: norm_id).save(flush:true, failOnError:true)
-                    def new_id = new Combo(fromComponent: component, toComponent: identifier, status: combo_active, type: combo_type_id).save(flush: true, failOnError: true)
-                    hasChanged = true
-                  }
-                }
-              }
-            }
-
-          deleteComboIds.each {
-            Combo combo = Combo.get(it)
-            log.debug("deleted Combo:"+combo)
-            combo.delete()
-          }
-
-            //If no Identifier for the tipp, create new identifier
-            if(identifiersWithSameNamespace.size() == 0){
-              def norm_id = Identifier.normalizeIdentifier(ci.value)
-              IdentifierNamespace ns = IdentifierNamespace.findByValueIlike(namespace_val)
-              identifier = new Identifier(namespace: ns, value: ci.value, normname: norm_id).save(flush:true, failOnError:true)
-              def new_id = new Combo(fromComponent: component, toComponent: identifier, status: combo_active, type: combo_type_id).save(flush: true, failOnError: true)
-              hasChanged = true
-            }
-
-        }else {
-
           if (!ids.contains(testKey)) {
             def canonical_identifier = null
 
@@ -148,7 +97,6 @@ class ComponentUpdateService {
               log.debug("Could not find or create Identifier!")
             }
           }
-        }
       }
     }
 

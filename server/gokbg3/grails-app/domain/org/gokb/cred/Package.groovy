@@ -712,100 +712,7 @@ select tipp.id,
     }
   }
 
-  /**
-   * Definitive rules for a valid package header
-   */
-  public static def validateDTO(packageHeaderDTO, locale) {
-    def result = [valid: true, errors: [:], match: false]
 
-    if (!packageHeaderDTO.name?.trim()) {
-      result.valid = false
-      result.errors.name = [[message: messageService.resolveCode('crossRef.package.error.name', null, locale), baddata: packageHeaderDTO.name]]
-    }
-
-    String idJsonKey = 'ids'
-    def ids_list = packageHeaderDTO[idJsonKey]
-    if (!ids_list) {
-      idJsonKey = 'identifiers'
-      ids_list = packageHeaderDTO[idJsonKey]
-    }
-    if (ids_list) {
-      def id_errors = Identifier.validateDTOs(ids_list, locale)
-      if (id_errors.size() > 0) {
-        result.errors.put(idJsonKey, id_errors)
-      }
-    }
-
-    if (packageHeaderDTO.provider && packageHeaderDTO.provider instanceof Integer) {
-      def prov = Org.get(packageHeaderDTO.provider)
-
-      if (!prov) {
-        result.errors.provider = [[message: messageService.resolveCode('crossRef.error.lookup', ["Provider", "ID"], locale), code: 404, baddata: packageHeaderDTO.provider]]
-        result.valid = false
-      }
-    }
-
-    if (packageHeaderDTO.nominalPlatform && packageHeaderDTO.nominalPlatform instanceof Integer) {
-      def prov = Platform.get(packageHeaderDTO.nominalPlatform)
-
-      if (!prov) {
-        result.errors.nominalPlatform = [[message: messageService.resolveCode('crossRef.error.lookup', ["Platform", "ID"], locale), code: 404, baddata: packageHeaderDTO.nominalPlatform]]
-        result.valid = false
-      }
-    }
-
-    if (result.valid) {
-      def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
-      def pkg_normname = Package.generateNormname(packageHeaderDTO.name)
-
-      def name_candidates = Package.executeQuery("from Package as p where p.normname = ? and p.status <> ?", [pkg_normname, status_deleted])
-      def full_matches = []
-
-      if (packageHeaderDTO.uuid) {
-        result.match = Package.findByUuid(packageHeaderDTO.uuid) ? true : false
-      }
-
-      if (!result.match && name_candidates.size() == 1) {
-        result.match = true
-      }
-
-      if (!result.match) {
-        def variant_normname = GOKbTextUtils.normaliseString(packageHeaderDTO.name)
-        def variant_candidates = Package.executeQuery("select distinct p from Package as p join p.variantNames as v where v.normVariantName = ? and p.status <> ? ", [variant_normname, status_deleted]);
-
-        if (variant_candidates.size() == 1) {
-          result.match = true
-          log.debug("Package matched via existing variantName.")
-        }
-      }
-
-      if (!result.match) {
-        log.debug("Did not find a match via existing variantNames, trying supplied variantNames..")
-        packageHeaderDTO.variantNames.each {
-
-          if (it.trim().size() > 0) {
-            def var_pkg = Package.findByName(it)
-
-            if (var_pkg) {
-              log.debug("Found existing package name for variantName ${it}")
-            }
-            else {
-
-              def variant_normname = GOKbTextUtils.normaliseString(it)
-              def variant_candidates = Package.executeQuery("select distinct p from Package as p join p.variantNames as v where v.normVariantName = ? and p.status <> ? ", [variant_normname, status_deleted]);
-
-              if (variant_candidates.size() == 1) {
-                log.debug("Found existing package variant name for variantName ${it}")
-                result.match = true
-              }
-            }
-          }
-        }
-      }
-    }
-
-    result
-  }
 
   @Transient
   public getAutoUpdateJobResult() {
@@ -847,6 +754,10 @@ select tipp.id,
       def new_id = new Combo(fromComponent: this, toComponent: identifier, status: RDStore.COMBO_STATUS_ACTIVE, type: RDStore.COMBO_TYPE_KB_IDS).save(flush: true, failOnError: true)
 
     }
+  }
+
+  void findTippDuplicates() {
+
   }
 
 }
