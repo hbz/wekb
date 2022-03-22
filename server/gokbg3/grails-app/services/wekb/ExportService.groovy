@@ -460,7 +460,7 @@ class ExportService {
                     break
                 case 'automated_updates': datas = RefdataCategory.lookup(RCConstants.YN).sort{it.value}.collect { it -> it.value }
                     break
-                case 'archiving_agency': datas = RefdataCategory.lookup(RCConstants.PAA_ARCHIVING_AGENCY).sort{it.value}.collect { it -> it.value }
+                case 'archiving_agency': //Because more than 255 values // datas = RefdataCategory.lookup(RCConstants.PAA_ARCHIVING_AGENCY).sort{it.value}.collect { it -> it.value }
                     break
                 case 'open_access_of_archiving_agency': datas = RefdataCategory.lookup(RCConstants.PAA_OPEN_ACCESS).sort{it.value}.collect { it -> it.value }
                     break
@@ -837,7 +837,7 @@ class ExportService {
         }
 
         outputStream.withWriter { writer ->
-            writer.write("we:kb Export : Packages (${packages.size()}) : ${export_date}\n");
+           // writer.write("we:kb Export : Packages (${packages.size()}) : ${export_date}\n");
             writer.write(generateSeparatorTableString(export.titleRow, export.rows, '\t'))
         }
         outputStream.flush()
