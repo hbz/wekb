@@ -213,6 +213,12 @@ class BootStrap {
                 [value: 'preselect', name: 'preselect', targetType: 'TitleInstancePackagePlatform'],
                 [value: 'zdb', name: 'ZDB-ID', pattern: "^\\d+-[\\dxX]\$", targetType: 'TitleInstancePackagePlatform'],
 
+                //Kbart Import
+                [value: 'ill_indicator', name: 'Ill Indicator',  targetType: 'TitleInstancePackagePlatform'],
+                [value: 'package_isci', name: 'Package ISCI',  targetType: 'TitleInstancePackagePlatform'],
+                [value: 'package_isil', name: 'Package ISIL',  targetType: 'TitleInstancePackagePlatform'],
+                [value: 'package_ezb_anchor', name: 'EZB Anchor',  targetType: 'TitleInstancePackagePlatform'],
+
 
                 [value: 'Anbieter_Produkt_ID', name: 'Anbieter_Produkt_ID', targetType: 'Package'],
                 [value: 'dnb', name: 'dnb', targetType: 'Package'],
@@ -1161,7 +1167,12 @@ class BootStrap {
     def ensureEsIndices() {
         def esIndices = grailsApplication.config.gokb.es.indices?.values()
         for (String indexName in esIndices) {
-            ESWrapperService.createIndex(indexName)
+            try {
+                ESWrapperService.createIndex(indexName)
+            }
+            catch (Exception e) {
+                log.error("Problem by ensureEsIndices -> Exception: ${e}")
+            }
         }
     }
 
