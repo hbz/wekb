@@ -155,9 +155,10 @@ databaseChangeLog = {
         grailsChange {
             change {
 
-                def ns_objs_forPlaftorms = IdentifierNamespace.findAllByFamilyAndTargetType('ttl_prv ', RefdataValue.findByValueAndOwner('Title', RefdataCategory.findByDesc(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE)))
+                RefdataCategory refdataCategory = RefdataCategory.findByDesc(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE)
+                def ns_objs_forPlaftorms = IdentifierNamespace.findAllByFamilyAndTargetType('ttl_prv ', RefdataValue.findByValueAndOwner('Title', refdataCategory))
 
-                RefdataValue targetTypeTipp = RefdataValue.findByValueAndOwner('TitleInstancePackagePlatform', RefdataCategory.findByDesc(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE))
+                RefdataValue targetTypeTipp = RefdataValue.findByValueAndOwner('TitleInstancePackagePlatform', refdataCategory)
 
                 ns_objs_forPlaftorms.each{IdentifierNamespace identifierNamespace ->
 
@@ -172,6 +173,8 @@ databaseChangeLog = {
     changeSet(author: "djebeniani (generated)", id: "1647956457885-14") {
         grailsChange {
             change {
+
+                RefdataCategory refdataCategory = RefdataCategory.findByDesc(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE)
 
                 def namespaces = [
                         [value: 'cup', name: 'cup', targetType: 'TitleInstancePackagePlatform'],
@@ -214,7 +217,7 @@ databaseChangeLog = {
                 ]
 
                 namespaces.each { ns ->
-                    RefdataValue targetType = RefdataValue.findByValueAndOwner(ns.targetType, RefdataCategory.findByDesc(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE))
+                    RefdataValue targetType = RefdataValue.findByValueAndOwner(ns.targetType, refdataCategory)
                     def ns_obj = IdentifierNamespace.findByValueAndTargetType(ns.value, targetType)
 
                     if (ns_obj) {
@@ -242,28 +245,30 @@ databaseChangeLog = {
 
                 def identifierCount = sql.rows("select count(id_id) from identifier_new")[0]
 
+                println(identifierCount.count)
                 counts.identifierCount = identifierCount.count
                 counts.identifierNamespaceChangeCountPkg = 0
                 counts.identifierNamespaceChangeCountOrg = 0
                 counts.identifierNamespaceChangeCountTipp = 0
 
-                RefdataValue targetTypeTipp = RefdataValue.findByValueAndOwner('TitleInstancePackagePlatform', RefdataCategory.findByDesc(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE))
-                RefdataValue targetTypePkg = RefdataValue.findByValueAndOwner('Package', RefdataCategory.findByDesc(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE))
-                RefdataValue targetTypeOrg = RefdataValue.findByValueAndOwner('Org', RefdataCategory.findByDesc(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE))
+
+                RefdataValue targetTypeTipp = RefdataValue.findByValueAndOwner('TitleInstancePackagePlatform', refdataCategory)
+                RefdataValue targetTypePkg = RefdataValue.findByValueAndOwner('Package', refdataCategory)
+                RefdataValue targetTypeOrg = RefdataValue.findByValueAndOwner('Org', refdataCategory)
 
                 for (int i = 0; i <= identifierCount.count; i = i + 100000) {
 
+                    println(i)
                     List identifiers = sql.rows("select * from identifier_new ORDER BY id_id LIMIT 100000 OFFSET ${i}")
                     identifiers.each { Map identifier_new ->
                         List pkg = sql.rows("select * from package where kbc_id = ${identifier_new.id_kbcomponent_fk}")
                         if (pkg.size() > 0) {
-                            IdentifierNamespace oldNameSpace = IdentifierNamespace.findById(identifier_new.id_namespace_fk)
-                            IdentifierNamespace newNameSpace = IdentifierNamespace.findByValueAndTargetType(oldNameSpace.value, targetTypePkg)
+                            Map oldNameSpace = sql.rows("select * from identifier_namespace where id = ${identifier_new.id_namespace_fk}")[0]
+                            Map newNameSpace = sql.rows("select * from identifier_namespace where idns_value = ${oldNameSpace.idns_value} and idns_targettype = ${targetTypePkg.id}")[0]
 
-                            if (newNameSpace) {
-                                Identifier identifier = Identifier.findById(identifier_new.id_id)
-                                identifier.namespace = newNameSpace
-                                identifier.save(flush: true)
+                            if (newNameSpace && newNameSpace.id) {
+                                sql.executeUpdate('update identifier_new set id_namespace_fk = :newNamespace where id_id = :identifierID',
+                                        [newNamespace:  newNameSpace.id, identifierID:  identifier_new.id_id])
                                 counts.identifierNamespaceChangeCountPkg = counts.identifierNamespaceChangeCountPkg + 1
                             }
 
@@ -271,13 +276,12 @@ databaseChangeLog = {
 
                         List org = sql.rows("select * from org where kbc_id = ${identifier_new.id_kbcomponent_fk}")
                         if (org.size() > 0) {
-                            IdentifierNamespace oldNameSpace = IdentifierNamespace.findById(identifier_new.id_namespace_fk)
-                            IdentifierNamespace newNameSpace = IdentifierNamespace.findByValueAndTargetType(oldNameSpace.value, targetTypeOrg)
+                            Map oldNameSpace = sql.rows("select * from identifier_namespace where id = ${identifier_new.id_namespace_fk}")[0]
+                            Map newNameSpace = sql.rows("select * from identifier_namespace where idns_value = ${oldNameSpace.idns_value} and idns_targettype = ${targetTypeOrg.id}")[0]
 
-                            if (newNameSpace) {
-                                Identifier identifier = Identifier.findById(identifier_new.id_id)
-                                identifier.namespace = newNameSpace
-                                identifier.save(flush: true)
+                            if (newNameSpace && newNameSpace.id) {
+                                sql.executeUpdate('update identifier_new set id_namespace_fk = :newNamespace where id_id = :identifierID',
+                                        [newNamespace:  newNameSpace.id, identifierID:  identifier_new.id_id])
                                 counts.identifierNamespaceChangeCountOrg = counts.identifierNamespaceChangeCountOrg + 1
                             }
 
@@ -285,13 +289,12 @@ databaseChangeLog = {
 
                         List tipp = sql.rows("select * from title_instance_package_platform where kbc_id = ${identifier_new.id_kbcomponent_fk}")
                         if (tipp.size() > 0) {
-                            IdentifierNamespace oldNameSpace = IdentifierNamespace.findById(identifier_new.id_namespace_fk)
-                            IdentifierNamespace newNameSpace = IdentifierNamespace.findByValueAndTargetType(oldNameSpace.value, targetTypeTipp)
+                            Map oldNameSpace = sql.rows("select * from identifier_namespace where id = ${identifier_new.id_namespace_fk}")[0]
+                            Map newNameSpace = sql.rows("select * from identifier_namespace where idns_value = ${oldNameSpace.idns_value} and idns_targettype = ${targetTypeTipp.id}")[0]
 
-                            if (newNameSpace) {
-                                Identifier identifier = Identifier.findById(identifier_new.id_id)
-                                identifier.namespace = newNameSpace
-                                identifier.save(flush: true)
+                            if (newNameSpace && newNameSpace.id) {
+                                sql.executeUpdate('update identifier_new set id_namespace_fk = :newNamespace where id_id = :identifierID',
+                                        [newNamespace:  newNameSpace.id, identifierID:  identifier_new.id_id])
                                 counts.identifierNamespaceChangeCountTipp = counts.identifierNamespaceChangeCountTipp + 1
                             }
 
