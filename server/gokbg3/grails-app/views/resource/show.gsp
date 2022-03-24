@@ -36,7 +36,7 @@
                 </g:elseif>
             </span>
         </div>
-        <g:if test="${displayobj && response.status != 403}">
+        <g:if test="${displayobj && response.status != 403 && displayobj.class.simpleName in ["Package", "Org", "Platform", "TitleInstancePackagePlatform"]}">
             <ul class="nav navbar-nav navbar-right">
                 <g:if test="${org.gokb.cred.KBComponent.isAssignableFrom(displayobj.class)}">
                     <li><a onClick="javascript:toggleWatch('${displayobj.class.name}:${displayobj.id}')"
