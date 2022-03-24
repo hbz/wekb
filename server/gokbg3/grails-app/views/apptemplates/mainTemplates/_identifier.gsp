@@ -1,4 +1,4 @@
-<%@ page import="org.gokb.cred.TitleInstancePackagePlatform; org.gokb.cred.Combo; de.wekb.helper.RDStore; org.gokb.cred.Package; org.gokb.cred.Org;" %>
+<%@ page import="org.gokb.cred.TitleInstancePackagePlatform; org.gokb.cred.Identifier; org.gokb.cred.Combo; de.wekb.helper.RDStore; org.gokb.cred.Package; org.gokb.cred.Org;" %>
 <dl class="dl-horizontal">
     <dt><gokb:annotatedLabel owner="${d}" property="namespace">Identifier Namespace</gokb:annotatedLabel></dt>
     <dd>${d.namespace?.value}</dd>
@@ -10,21 +10,21 @@
 
 <br>
 <br>
-<h4>Identified Components:</h4>
+<h4>Identified Components with same Identifier:</h4>
             <%
                 List tippIDs = []
                 List pkgIDs = []
                 List orgIDs = []
 
-                d.identifiedComponents.each {
-                    if (it.class.simpleName == TitleInstancePackagePlatform.simpleName) {
-                        tippIDs << it
+                Identifier.findAllByValue(d.value).each {
+                    if (it.kbcomponent.class.simpleName == TitleInstancePackagePlatform.simpleName) {
+                        tippIDs << it.kbcomponent
                     }
-                    if (it.class.simpleName == Package.simpleName) {
-                        pkgIDs << it
+                    if (it.kbcomponent.class.simpleName == Package.simpleName) {
+                        pkgIDs << it.kbcomponent
                     }
-                    if (it.class.simpleName == Org.simpleName) {
-                        orgIDs << it
+                    if (it.kbcomponent.class.simpleName == Org.simpleName) {
+                        orgIDs << it.kbcomponent
                     }
                 }
             %>
@@ -43,9 +43,6 @@
                 </thead>
                 <tbody>
                 <g:each in="${tippIDs.sort { it.name }}" var="component">
-                    <g:set var="combo"
-                           value="${Combo.findByFromComponentAndTypeAndToComponent(component, RDStore.COMBO_TYPE_KB_IDS, d)}"/>
-                    <g:if test="${combo.status == RDStore.COMBO_STATUS_ACTIVE}">
                         <tr>
                             <td>
                                 <g:if test="${controllerName == 'public'}">
@@ -71,19 +68,18 @@
                                 </g:link>
                         </g:else>
                             </td>
-                            <g:if test="${editable}">
+                            <g:set var="identifierOfComponent" value="${Identifier.findByValueAndKbcomponent(d.value, component)}"/>
+                            <g:if test="${editable && identifierOfComponent}">
                                 <td>
-                                    <g:link
-                                            controller='ajaxSupport'
-                                            action='deleteCombo'
-                                            params="${['id': combo.id, 'fragment': fragment, 'propagate': "true"]}"
+                                    <g:link controller='ajaxSupport'
+                                            action='delete'
+                                            params="${["__context": "${identifierOfComponent.class.name}:${identifierOfComponent.id}", 'fragment': fragment]}"
                                             class="confirm-click btn-delete"
                                             title="Delete this link"
                                             data-confirm-message="Are you sure you wish to delete this Identifier from the title ${component}?">Delete</g:link>
                                 </td>
                             </g:if>
                         </tr>
-                    </g:if>
                 </g:each>
                 </tbody>
             </table>
@@ -101,9 +97,6 @@
                     </thead>
                     <tbody>
                     <g:each in="${pkgIDs.sort { it.name }}" var="component">
-                        <g:set var="combo"
-                               value="${Combo.findByFromComponentAndTypeAndToComponent(component, RDStore.COMBO_TYPE_KB_IDS, d)}"/>
-                        <g:if test="${combo.status == RDStore.COMBO_STATUS_ACTIVE}">
                             <tr>
                                 <td>
                                     <g:if test="${controllerName == 'public'}">
@@ -117,19 +110,18 @@
                                             </g:link>
                                     </g:else>
                                 </td>
-                                <g:if test="${editable}">
+                                <g:set var="identifierOfComponent" value="${Identifier.findByValueAndKbcomponent(d.value, component)}"/>
+                                <g:if test="${editable && identifierOfComponent}">
                                     <td>
-                                        <g:link
-                                                controller='ajaxSupport'
-                                                action='deleteCombo'
-                                                params="${['id': combo.id, 'fragment': fragment, 'propagate': "true"]}"
+                                        <g:link controller='ajaxSupport'
+                                                action='delete'
+                                                params="${["__context": "${identifierOfComponent.class.name}:${identifierOfComponent.id}", 'fragment': fragment]}"
                                                 class="confirm-click btn-delete"
                                                 title="Delete this link"
                                                 data-confirm-message="Are you sure you wish to delete this Identifier from the title ${component}?">Delete</g:link>
                                     </td>
                                 </g:if>
                             </tr>
-                        </g:if>
                     </g:each>
                     </tbody>
                 </table>
@@ -147,9 +139,6 @@
                     </thead>
                     <tbody>
                     <g:each in="${orgIDs.sort { it.name }}" var="component">
-                        <g:set var="combo"
-                               value="${Combo.findByFromComponentAndTypeAndToComponent(component, RDStore.COMBO_TYPE_KB_IDS, d)}"/>
-                        <g:if test="${combo.status == RDStore.COMBO_STATUS_ACTIVE}">
                             <tr>
                                 <td>
                                     <g:if test="${controllerName == 'public'}">
@@ -163,19 +152,18 @@
                                             </g:link>
                                     </g:else>
                                 </td>
-                                <g:if test="${editable}">
+                                <g:set var="identifierOfComponent" value="${Identifier.findByValueAndKbcomponent(d.value, component)}"/>
+                                <g:if test="${editable && identifierOfComponent}">
                                     <td>
-                                        <g:link
-                                                controller='ajaxSupport'
-                                                action='deleteCombo'
-                                                params="${['id': combo.id, 'fragment': fragment, 'propagate': "true"]}"
+                                        <g:link controller='ajaxSupport'
+                                                action='delete'
+                                                params="${["__context": "${identifierOfComponent.class.name}:${identifierOfComponent.id}", 'fragment': fragment]}"
                                                 class="confirm-click btn-delete"
                                                 title="Delete this link"
                                                 data-confirm-message="Are you sure you wish to delete this Identifier from the title ${component}?">Delete</g:link>
                                     </td>
                                 </g:if>
                             </tr>
-                        </g:if>
                     </g:each>
                     </tbody>
                 </table>

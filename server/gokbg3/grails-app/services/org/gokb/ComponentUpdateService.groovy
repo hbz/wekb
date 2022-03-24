@@ -49,7 +49,8 @@ class ComponentUpdateService {
     RefdataValue combo_deleted = RDStore.COMBO_STATUS_DELETED
     RefdataValue combo_type_id = RDStore.COMBO_TYPE_KB_IDS
 
-    data.identifiers.each { ci ->
+    //NOT WORKING ANY MORE: IDENTIFIER STRUCTUR had modified
+    /*data.identifiers.each { ci ->
       def namespace_val = ci.type ?: ci.namespace
       String testKey = "${namespace_val}|${ci.value}".toString()
 
@@ -98,7 +99,7 @@ class ComponentUpdateService {
             }
           }
       }
-    }
+    }*/
 
     if (sync) {
       log.debug("Cleaning up deprecated IDs ..")

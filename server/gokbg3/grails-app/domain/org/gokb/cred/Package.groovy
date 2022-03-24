@@ -748,10 +748,8 @@ select tipp.id,
     if ( !found && value != '') {
       value = value?.trim()
       ns = ns.trim()
-      def norm_id = Identifier.normalizeIdentifier(value)
       IdentifierNamespace namespace = IdentifierNamespace.findByValueIlike(ns)
-      Identifier identifier = new Identifier(namespace: namespace, value: value, normname: norm_id).save(flush:true, failOnError:true)
-      def new_id = new Combo(fromComponent: this, toComponent: identifier, status: RDStore.COMBO_STATUS_ACTIVE, type: RDStore.COMBO_TYPE_KB_IDS).save(flush: true, failOnError: true)
+      Identifier identifier = new Identifier(namespace: namespace, value: value, kbcomponent: this).save(flush:true, failOnError:true)
 
     }
   }

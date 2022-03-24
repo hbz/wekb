@@ -498,9 +498,6 @@ class KbartImportService {
         def status_retired = RDStore.KBC_STATUS_RETIRED
         def trimmed_url = tipp_dto.url ? tipp_dto.url.trim() : null
 
-        RefdataValue combo_active = RDStore.COMBO_STATUS_ACTIVE
-        RefdataValue combo_deleted = RDStore.COMBO_STATUS_DELETED
-        RefdataValue combo_type_id = RDStore.COMBO_TYPE_KB_IDS
         //TODO: Moe
         def curator = pkg?.curatoryGroups?.size() > 0 ? (user.adminStatus || user.curatoryGroups?.id.intersect(pkg?.curatoryGroups?.id)) : false
 
@@ -1050,48 +1047,33 @@ class KbartImportService {
 
     void createOrUpdateIdentifierForTipp(TitleInstancePackagePlatform tipp, String namespace_val, String identifierValue){
         Identifier identifier
-        List<Identifier> identifiersWithSameNamespace = Identifier.executeQuery('select i from Identifier as i, Combo as c where LOWER(i.namespace.value) = :namespaceValue and c.fromComponent.id = :tipp and c.type = :kbTypeIDs and c.toComponent = i and c.status = :comboStatus', [namespaceValue: namespace_val, tipp: tipp.id, kbTypeIDs: RDStore.COMBO_TYPE_KB_IDS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])
+        IdentifierNamespace ns = IdentifierNamespace.findByValueAndTargetType(namespace_val, RDStore.IDENTIFIER_NAMESPACE_TARGET_TYPE_TIPP)
 
-        List deleteComboIds = []
+        List<Identifier> identifiersWithSameNamespace = tipp.ids.findAll{it.namespace.value == namespace_val}
 
-        identifiersWithSameNamespace.each { Identifier tippIdentifier ->
-            List<Combo> identifierLinkedToComponents = Combo.executeQuery("from Combo as c where c.toComponent = :identifier ", [identifier: tippIdentifier])
-            log.debug("identifierLinkedToComponents:" + identifierLinkedToComponents)
-            if (identifierLinkedToComponents.size() == 1) {
-                if (identifierLinkedToComponents[0].fromComponent == tipp) {
-                    tippIdentifier.value = identifierValue
-                    tippIdentifier.save(flush: true, failOnError: true)
-
-                    identifierLinkedToComponents[0].status = RDStore.COMBO_STATUS_ACTIVE
-                    identifierLinkedToComponents[0].save(flush: true, failOnError: true)
+        switch (identifiersWithSameNamespace.size()) {
+            case 0:
+                identifier = new Identifier(namespace: ns, value: identifierValue, kbcomponent: tipp).save(flush: true, failOnError: true)
+                break
+            case 1:
+                identifiersWithSameNamespace[0].value = identifierValue
+                identifiersWithSameNamespace[0].save(flush: true, failOnError: true)
+                identifier = identifiersWithSameNamespace[0]
+                break
+            default:
+                List toDeletedIdentifier = []
+                identifiersWithSameNamespace.each{Identifier tippIdentifier ->
+                    toDeletedIdentifier << tippIdentifier.id
                 }
-            }
-            if (identifierLinkedToComponents.size() > 1) {
-                identifierLinkedToComponents.each { Combo combo ->
-                    if (combo.fromComponent == tipp) {
-                        deleteComboIds << combo.id
-                        def norm_id = Identifier.normalizeIdentifier(identifierValue)
-                        IdentifierNamespace ns = IdentifierNamespace.findByValueIlike(namespace_val)
-                        identifier = new Identifier(namespace: ns, value: identifierValue, normname: norm_id).save(flush: true, failOnError: true)
-                        def new_id = new Combo(fromComponent: tipp, toComponent: identifier, status: RDStore.COMBO_STATUS_ACTIVE, type: RDStore.COMBO_TYPE_KB_IDS).save(flush: true, failOnError: true)
-                    }
+
+                toDeletedIdentifier.each{
+                    Identifier.executeUpdate("delete from Identifier where id_id = :id", [id: it])
                 }
-            }
+
+                identifier = new Identifier(namespace: ns, value: identifierValue, kbcomponent: tipp).save(flush: true, failOnError: true)
+                break
         }
 
-        deleteComboIds.each {
-            Combo combo = Combo.get(it)
-            log.debug("deleted Combo:" + combo)
-            combo.delete()
-        }
-
-        //If no Identifier for the tipp, create new identifier
-        if (identifiersWithSameNamespace.size() == 0) {
-            def norm_id = Identifier.normalizeIdentifier(identifierValue)
-            IdentifierNamespace ns = IdentifierNamespace.findByValueIlike(namespace_val)
-            identifier = new Identifier(namespace: ns, value: identifierValue, normname: norm_id).save(flush: true, failOnError: true)
-            def new_id = new Combo(fromComponent: tipp, toComponent: identifier, status: RDStore.COMBO_STATUS_ACTIVE, type: RDStore.COMBO_TYPE_KB_IDS).save(flush: true, failOnError: true)
-        }
     }
 
     void createOrUpdateCoverageForTipp(TitleInstancePackagePlatform tipp, def coverage){

@@ -47,7 +47,7 @@ class Identifier {
   }
 
   static mapping = {
-    table("identifierNew")
+    table("identifier_new")
     id column: 'id_id'
     version column: 'id_version'
     value column: 'id_value', index: 'id_value_idx'
@@ -75,14 +75,6 @@ class Identifier {
     }
   }
 
-/*  static manyByCombo = [
-    identifiedComponents: KBComponent
-  ]
-
-  static mappedByCombo = [
-    identifiedComponents: 'ids',
-  ]*/
-
 
   public static normalizeIdentifier(String id) {
     return id.toLowerCase().trim().replaceAll("\\W", "")
@@ -97,11 +89,11 @@ class Identifier {
     "${namespace.value}:${value} (Identifier ${id})".toString()
   }
 
-  /*static Identifier construct(Map<String, Object> map) {
+ /* static Identifier construct(Map<String, Object> map) {
 
     withTransaction {
       String value     = map.get('value')
-      Object reference = map.get('reference')
+      KBComponent kbcomponent = map.get('kbcomponent')
       def namespace    = map.get('namespace')
       def targetType    = map.get('targetType')
 
@@ -133,8 +125,8 @@ class Identifier {
       String attr = Identifier.getAttributeName(reference)
 
       def ident = Identifier.executeQuery(
-              'select ident from Identifier ident where ident.value = :val and ident.ns = :ns and ident.' + attr + ' = :ref order by ident.id',
-              [val: value, ns: ns, ref: reference]
+              'select ident from Identifier ident where ident.value = :val and ident.ns = :ns and ident.kbcomponent = :kbcomponent order by ident.id',
+              [val: value, ns: ns, kbcomponent: kbcomponent]
 
       )
       if (ident){

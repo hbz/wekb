@@ -65,14 +65,18 @@ class IdentifierNamespace {
     def result = [];
     def ql = null;
     if(params.filter1){
-      RefdataValue refdataValue = RefdataValue.findByValueAndOwner(params.filter1, RefdataCategory.findByDesc(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE))
-      ql = IdentifierNamespace.executeQuery("select t.id, t.value from IdentifierNamespace as t where lower(t.value) like :value and (t.targetType is null or t.targetType = :targetType) order by t.value", [value: "${params.q?.toLowerCase()}%", targetType: refdataValue], [max: params.max])
+      if(params.filter1 == "all"){
+        ql = IdentifierNamespace.executeQuery("from IdentifierNamespace as t order by t.value", [max: params.max])
+      }else {
+        RefdataValue refdataValue = RefdataValue.findByValueAndOwner(params.filter1, RefdataCategory.findByDesc(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE))
+        ql = IdentifierNamespace.executeQuery("from IdentifierNamespace as t where lower(t.value) like :value and (t.targetType is null or t.targetType = :targetType) order by t.value", [value: "${params.q?.toLowerCase()}%", targetType: refdataValue], [max: params.max])
+      }
     }else {
-      ql = IdentifierNamespace.executeQuery("select t.id, t.value from IdentifierNamespace as t where lower(t.value) like :value and t.targetType is null order by t.value", [value: "${params.q?.toLowerCase()}%"], [max: params.max]);
+      ql = IdentifierNamespace.executeQuery("from IdentifierNamespace as t where lower(t.value) like :value and t.targetType is null order by t.value", [value: "${params.q?.toLowerCase()}%"], [max: params.max]);
     }
     if ( ql ) {
       ql.each { t ->
-        result.add([id:"org.gokb.cred.IdentifierNamespace:${t[0]}",text:"${t[1]} "])
+        result.add([id:"org.gokb.cred.IdentifierNamespace:${t.id}",text:"${t.value} ${params.filter1 == 'all' ? ( t.targetType ? '(for '+t.targetType.value+')' : '' ) : ''}"])
       }
     }
     result

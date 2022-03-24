@@ -10,7 +10,7 @@
         <li class="nav-item">
             <a class="nav-link ${d.publicationType?.value != 'Serial' ? 'active' : ''}" href="#identifiers"
                data-toggle="tab" role="tab">Identifiers <span
-                    class="badge badge-pill badge-info">${d.getCombosByPropertyNameAndStatus('ids', 'Active').size()}</span>
+                    class="badge badge-pill badge-info">${d.ids.size()}</span>
             </a>
         </li>
 
@@ -56,7 +56,7 @@
         </g:if>
         <li class="${d.publicationType?.value != 'Serial' ? 'active' : ''}"><a href="#identifiers"
                                                                                data-toggle="tab">Identifiers <span
-                    class="badge badge-warning">${d.getCombosByPropertyNameAndStatus('ids', 'Active').size()}</span>
+                    class="badge badge-warning">${d.ids.size()}</span>
         </a>
         </li>
 

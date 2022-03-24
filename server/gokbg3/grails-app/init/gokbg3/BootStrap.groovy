@@ -173,17 +173,6 @@ class BootStrap {
             rr_std.delete()
         }
 
-        log.info("GoKB missing normalised identifiers");
-
-        def id_ctr = 0;
-        Identifier.executeQuery("select id.id from Identifier as id where id.normname is null and id.value is not null").each { id_id ->
-            Identifier i = Identifier.get(id_id)
-            i.generateNormname()
-            i.save(flush: true, failOnError: true)
-            id_ctr++
-        }
-        log.debug("${id_ctr} identifiers updated");
-
         log.info("Fix missing Combo status");
 
         def status_active = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE)

@@ -332,11 +332,6 @@ abstract class KBComponent implements Auditable{
   String componentDiscriminator
 
 
-  // ids moved to combos.
-  static manyByCombo = [
-      ids            : Identifier
-  ]
-
 
   static mappedBy = [
       outgoingCombos      : 'fromComponent',
@@ -355,7 +350,8 @@ abstract class KBComponent implements Auditable{
       variantNames        : KBComponentVariantName,
       reviewRequests      : ReviewRequest,
       prices              : ComponentPrice,
-      languages            : KBComponentLanguage
+      languages           : KBComponentLanguage,
+      ids                 : Identifier
   ]
 
 
