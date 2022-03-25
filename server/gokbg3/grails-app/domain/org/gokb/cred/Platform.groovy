@@ -61,7 +61,9 @@ class Platform extends KBComponent {
 
   Date lastAuditDate
 
-  static hasMany = [roles: RefdataValue]
+  static hasMany = [
+          roles: RefdataValue,
+          ids: Identifier]
 
   static hasByCombo = [
     provider: Org
@@ -301,5 +303,13 @@ class Platform extends KBComponent {
             , [this, combo_tipps, refdata_current])[0]
 
     result
+  }
+
+  @Transient
+  String getIdentifierValue(idtype){
+    // As ids are combo controlled it should be enough just to call find here.
+    // This will return only the first match and stop looking afterwards.
+    // Null returned if no match.
+    ids?.find{ it.namespace.value.toLowerCase() == idtype.toLowerCase() }?.value
   }
 }

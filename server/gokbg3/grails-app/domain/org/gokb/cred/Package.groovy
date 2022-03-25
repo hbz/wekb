@@ -89,6 +89,7 @@ class Package extends KBComponent {
           regionalRanges : RefdataValue,
           ddcs : RefdataValue,
           paas : PackageArchivingAgency,
+          ids: Identifier
   ]
 
   static mapping = {
@@ -579,16 +580,6 @@ select tipp.id,
                 builder.'name'(tipp[1]?.trim())
                 builder.'type'(getTitleClass(tipp[2]))
                 builder.'status'(tipp[15]?.value)
-                builder.'identifiers' {
-                  getTitleIds(tipp[2]).each { tid ->
-                    builder.'identifier'('namespace': tid[0], 'namespaceName': tid[3], 'value': tid[1], 'type': tid[2])
-                  }
-                }
-              }
-              builder.'identifiers' {
-                getTippIds(tipp[0]).each { tid ->
-                  builder.'identifier'('namespace': tid[0], 'namespaceName': tid[3], 'value': tid[1], 'type': tid[2])
-                }
               }
               'platform'([id: tipp[4], 'uuid': tipp[14]]) {
                 'primaryUrl'(tipp[10]?.trim())
@@ -619,22 +610,6 @@ select tipp.id,
     }
 
     log.debug("toGoKBXml complete...");
-  }
-
-  @Transient
-  private static getTitleIds(Long title_id) {
-    def refdata_ids = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'KBComponent.Ids');
-    def status_active = RefdataCategory.lookupOrCreate(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE)
-    def result = Identifier.executeQuery("select i.namespace.value, i.value, i.namespace.family, i.namespace.name from Identifier as i, Combo as c where c.fromComponent.id = ? and c.type = ? and c.toComponent = i and c.status = ?", [title_id, refdata_ids, status_active], [readOnly: true]);
-    result
-  }
-
-  @Transient
-  private static getTippIds(Long tipp_id) {
-    def refdata_ids = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'KBComponent.Ids');
-    def status_active = RefdataCategory.lookupOrCreate(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE)
-    def result = Identifier.executeQuery("select i.namespace.value, i.value, i.namespace.family, i.namespace.name from Identifier as i, Combo as c where c.fromComponent.id = ? and c.type = ? and c.toComponent = i and c.status = ?", [tipp_id, refdata_ids, status_active], [readOnly: true]);
-    result
   }
 
   @Transient
@@ -749,13 +724,21 @@ select tipp.id,
       value = value?.trim()
       ns = ns.trim()
       IdentifierNamespace namespace = IdentifierNamespace.findByValueIlike(ns)
-      Identifier identifier = new Identifier(namespace: namespace, value: value, kbcomponent: this).save(flush:true, failOnError:true)
+      Identifier identifier = new Identifier(namespace: namespace, value: value, pkg: this).save(flush:true, failOnError:true)
 
     }
   }
 
   void findTippDuplicates() {
 
+  }
+
+  @Transient
+  String getIdentifierValue(idtype){
+    // As ids are combo controlled it should be enough just to call find here.
+    // This will return only the first match and stop looking afterwards.
+    // Null returned if no match.
+    ids?.find{ it.namespace.value.toLowerCase() == idtype.toLowerCase() }?.value
   }
 
 }

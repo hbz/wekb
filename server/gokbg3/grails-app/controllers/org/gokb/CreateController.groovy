@@ -580,12 +580,8 @@ class CreateController {
                 if (colMap.anbieter_produkt_id != null) {
                   String value = cols[colMap.anbieter_produkt_id].trim()
                   if (value) {
-                    Identifier canonical_identifier = componentLookupService.lookupOrCreateCanonicalIdentifier("Anbieter_Produkt_ID", value)
-                    if (canonical_identifier) {
-                        if(!Combo.findByFromComponentAndToComponentAndStatusAndType(pkg, canonical_identifier, combo_type_status, combo_type_id)) {
-                            def new_id = new Combo(fromComponent: pkg, toComponent: canonical_identifier, status: combo_type_status, type: combo_type_id).save(flush: true)
-                          }
-                    }
+
+                    pkg.addOnlySpecialIdentifiers("Anbieter_Produkt_ID", value)
                   }
                 }
 

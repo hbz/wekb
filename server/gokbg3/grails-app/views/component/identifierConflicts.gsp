@@ -117,19 +117,19 @@
                     <td>
                       <g:each in="${Identifier.findAllByValue(did.value)}" var="idc">
                         <div>
-                        <g:if test="${idc.kbcomponent instanceof TitleInstancePackagePlatform}">
+                        <g:if test="${idc.tipp}">
                           Title: <g:link controller="resource" action="show" id="${idc.uuid}">${idc.kbcomponent.name}</g:link> (Package: <g:link controller="resource" action="show" id="${idc.kbcomponent.uuid}">${idc.kbcomponent.pkg.name}</g:link>)
                         </g:if>
 
-                        <g:if test="${idc.kbcomponent instanceof Platform}">
+                        <g:if test="${idc.platform}">
                           Plaftorm: <g:link controller="resource" action="show" id="${idc.uuid}">${idc.kbcomponent.name}</g:link>
                         </g:if>
 
-                        <g:if test="${idc.kbcomponent instanceof Package}">
+                        <g:if test="${idc.pkg}">
                           Package: <g:link controller="resource" action="show" id="${idc.uuid}">${idc.kbcomponent.name}</g:link>
                         </g:if>
 
-                        <g:if test="${idc.kbcomponent instanceof Org}">
+                        <g:if test="${idc.org}">
                           Provider <g:link controller="resource" action="show" id="${idc.uuid}">${idc.kbcomponent.name}</g:link>
                         </g:if>
                         </div>

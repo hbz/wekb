@@ -1,6 +1,7 @@
 package org.gokb.cred
 
 import groovy.util.logging.*
+import org.aspectj.weaver.ast.Or
 
 
 @Slf4j
@@ -15,31 +16,26 @@ class Identifier {
   Date lastUpdated
 
   static belongsTo = [
-          kbcomponent: KBComponent
+          tipp: TitleInstancePackagePlatform,
+          org: Org,
+          platform: Platform,
+          pkg: Package
   ]
 
 
   static constraints = {
     uuid(nullable: true, unique: false, blank: false, maxSize: 2048)
+    tipp(nullable:true)
+    org(nullable:true)
+    platform(nullable:true)
+    pkg(nullable:true)
     namespace(nullable: false, blank: false)
     value(validator: { val, obj ->
       if (!val || !val.trim()) {
         return ['notNull']
       }
 
-      def dupes = Identifier.findAllByNamespaceAndValue(obj.namespace, val)
       def pattern = obj.namespace.pattern ? ~"${obj.namespace.pattern}" : null
-      def isDupe = false
-
-      dupes.each { d ->
-        if (d != obj) {
-          isDupe = true
-        }
-      }
-      if (isDupe) {
-        return ['notUnique']
-      }
-
       if (pattern && !(val ==~ pattern)) {
         return ['illegalIdForm']
       }
@@ -53,7 +49,10 @@ class Identifier {
     value column: 'id_value', index: 'id_value_idx'
     namespace column: 'id_namespace_fk', index: 'id_namespace_idx'
     uuid column: 'id_uuid', type: 'text', index: 'id_uuid_idx'
-    kbcomponent column: 'id_kbcomponent_fk'
+    tipp column: 'id_tipp_fk'
+    org column: 'id_org_fk'
+    platform column: 'id_platform_fk'
+    pkg column: 'id_pkg_fk'
     lastUpdated column: 'id_last_updated'
     dateCreated column: 'id_date_created'
   }
@@ -87,6 +86,24 @@ class Identifier {
 
   public String toString() {
     "${namespace.value}:${value} (Identifier ${id})".toString()
+  }
+
+  static String getAttributeName(def object) {
+    String name
+
+    name = object instanceof Org ?      'org' : name
+    name = object instanceof Package ?  'pkg' : name
+    name = object instanceof TitleInstancePackagePlatform ? 'tipp' : name
+    name = object instanceof Platform ?      'platform' : name
+
+    name
+  }
+
+  void setReference(def owner) {
+    org  = owner instanceof Org ? owner : org
+    pkg  = owner instanceof Package ? owner : pkg
+    platform = owner instanceof Platform ?  owner : platform
+    tipp = owner instanceof TitleInstancePackagePlatform ? owner : tipp
   }
 
  /* static Identifier construct(Map<String, Object> map) {

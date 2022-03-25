@@ -190,7 +190,8 @@ class TitleInstancePackagePlatform extends KBComponent {
 
   static hasMany = [
     coverageStatements: TIPPCoverageStatement,
-    ddcs: RefdataValue
+    ddcs: RefdataValue,
+    ids: Identifier
 
   ]
 
@@ -468,14 +469,6 @@ class TitleInstancePackagePlatform extends KBComponent {
     }
   }
 
-  @Transient
-  getTitleIds() {
-    def refdata_ids = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'KBComponent.Ids');
-    def status_active = RefdataCategory.lookupOrCreate(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE)
-    def result = Identifier.executeQuery("select i.namespace.value, i.value, i.namespace.family, i.namespace.name from Identifier as i, Combo as c where c.fromComponent = ? and c.type = ? and c.toComponent = i and c.status = ?", [title, refdata_ids, status_active], [readOnly: true]);
-    result
-  }
-
 
   @Transient
   getTitleClass() {
@@ -574,6 +567,14 @@ class TitleInstancePackagePlatform extends KBComponent {
     }
     return result
 
+  }
+
+  @Transient
+  String getIdentifierValue(idtype){
+    // As ids are combo controlled it should be enough just to call find here.
+    // This will return only the first match and stop looking afterwards.
+    // Null returned if no match.
+    ids?.find{ it.namespace.value.toLowerCase() == idtype.toLowerCase() }?.value
   }
 
 

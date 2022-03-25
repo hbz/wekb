@@ -17,14 +17,14 @@
                 List orgIDs = []
 
                 Identifier.findAllByValue(d.value).each {
-                    if (it.kbcomponent.class.simpleName == TitleInstancePackagePlatform.simpleName) {
-                        tippIDs << it.kbcomponent
+                    if (it.tipp) {
+                        tippIDs << it.tipp
                     }
-                    if (it.kbcomponent.class.simpleName == Package.simpleName) {
-                        pkgIDs << it.kbcomponent
+                    if (it.pkg) {
+                        pkgIDs << it.pkg
                     }
-                    if (it.kbcomponent.class.simpleName == Org.simpleName) {
-                        orgIDs << it.kbcomponent
+                    if (it.org) {
+                        orgIDs << it.org
                     }
                 }
             %>
@@ -68,7 +68,7 @@
                                 </g:link>
                         </g:else>
                             </td>
-                            <g:set var="identifierOfComponent" value="${Identifier.findByValueAndKbcomponent(d.value, component)}"/>
+                            <g:set var="identifierOfComponent" value="${Identifier.findByValueAndTipp(d.value, component)}"/>
                             <g:if test="${editable && identifierOfComponent}">
                                 <td>
                                     <g:link controller='ajaxSupport'
@@ -110,7 +110,7 @@
                                             </g:link>
                                     </g:else>
                                 </td>
-                                <g:set var="identifierOfComponent" value="${Identifier.findByValueAndKbcomponent(d.value, component)}"/>
+                                <g:set var="identifierOfComponent" value="${Identifier.findByValueAndPkg(d.value, component)}"/>
                                 <g:if test="${editable && identifierOfComponent}">
                                     <td>
                                         <g:link controller='ajaxSupport'
@@ -152,7 +152,7 @@
                                             </g:link>
                                     </g:else>
                                 </td>
-                                <g:set var="identifierOfComponent" value="${Identifier.findByValueAndKbcomponent(d.value, component)}"/>
+                                <g:set var="identifierOfComponent" value="${Identifier.findByValueAndOrg(d.value, component)}"/>
                                 <g:if test="${editable && identifierOfComponent}">
                                     <td>
                                         <g:link controller='ajaxSupport'

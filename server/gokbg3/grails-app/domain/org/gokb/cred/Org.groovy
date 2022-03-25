@@ -69,6 +69,7 @@ class Org extends KBComponent {
   static hasMany = [
     roles: RefdataValue,
     contacts: Contact,
+    ids: Identifier
   ]
 
   static mapping = {
@@ -358,5 +359,13 @@ class Org extends KBComponent {
     }
 
     result
+  }
+
+  @Transient
+  String getIdentifierValue(idtype){
+    // As ids are combo controlled it should be enough just to call find here.
+    // This will return only the first match and stop looking afterwards.
+    // Null returned if no match.
+    ids?.find{ it.namespace.value.toLowerCase() == idtype.toLowerCase() }?.value
   }
 }

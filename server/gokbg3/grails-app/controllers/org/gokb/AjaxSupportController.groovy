@@ -1026,16 +1026,18 @@ class AjaxSupportController {
         if (editable) {
           // Lookup or create Identifier
           try {
+            String attr = Identifier.getAttributeName(owner)
             def ident = Identifier.executeQuery(
-                    'select ident from Identifier ident where ident.value = :val and ident.namespace = :namespace and ident.kbcomponent = :kbcomponent order by ident.id',
-                    [val: params.identifierValue, namespace: ns, kbcomponent: owner])
+                    'select ident from Identifier ident where ident.value = :val and ident.namespace = :namespace and ident.' + attr +' = :owner order by ident.id',
+                    [val: params.identifierValue, namespace: ns, owner: owner])
 
             if (ident){
               flash.error = message(code:'identifier.no.unique.by.component')
             }
 
             if (!ident) {
-                ident = new Identifier(namespace: ns, value: params.identifierValue, kbcomponent: owner)
+                ident = new Identifier(namespace: ns, value: params.identifierValue)
+                ident.setReference(owner)
                 boolean success = ident.save()
                 if (success){
                   flash.message = message(code:'identifier.create.success')
