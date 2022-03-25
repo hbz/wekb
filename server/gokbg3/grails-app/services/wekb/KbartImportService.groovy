@@ -646,7 +646,7 @@ class KbartImportService {
                 if (tipp_dto.type) {
                     publicationType = determinePublicationType(tipp_dto)
                     if (publicationType) {
-                        com.k_int.ClassUtils.setRefdataIfPresent(publicationType.value, tipp, 'publicationType', RCConstants.TIPP_PUBLICATION_TYPE)
+                        com.k_int.ClassUtils.setRefdataIfDifferent(publicationType.value, tipp, 'publicationType', RCConstants.TIPP_PUBLICATION_TYPE, false)
                     }
                 }
 
@@ -654,7 +654,7 @@ class KbartImportService {
                 if (tipp_dto.medium) {
                     RefdataValue mediumRef = determineMediumRef(tipp_dto)
                     if (mediumRef) {
-                        com.k_int.ClassUtils.setRefdataIfPresent(mediumRef.value, tipp, 'medium', RCConstants.TIPP_MEDIUM)
+                        com.k_int.ClassUtils.setRefdataIfDifferent(mediumRef.value, tipp, 'medium', RCConstants.TIPP_MEDIUM, false)
                     }
                 }
 
@@ -725,14 +725,14 @@ class KbartImportService {
                 }
 
                 // KBART -> access_start_date -> accessStartDate -> accessStartDate
-                com.k_int.ClassUtils.setDateIfPresent(tipp_dto.accessStartDate, tipp, 'accessStartDate')
+                com.k_int.ClassUtils.setDateIfPresent(tipp_dto.accessStartDate, tipp, 'accessStartDate', true)
                 // KBART -> access_end_date -> accessEndDate -> accessEndDate
-                com.k_int.ClassUtils.setDateIfPresent(tipp_dto.accessEndDate, tipp, 'accessEndDate')
+                com.k_int.ClassUtils.setDateIfPresent(tipp_dto.accessEndDate, tipp, 'accessEndDate', true)
                 // KBART -> last_changed -> lastChangedExternal -> lastChangedExternal
-                com.k_int.ClassUtils.setDateIfPresent(tipp_dto.lastChanged, tipp, 'lastChangedExternal')
+                com.k_int.ClassUtils.setDateIfPresent(tipp_dto.lastChanged, tipp, 'lastChangedExternal', true)
 
                 // KBART -> status -> status -> status
-                com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.status, tipp, 'status', RCConstants.KBCOMPONENT_STATUS)
+                com.k_int.ClassUtils.setRefdataIfDifferent(tipp_dto.status, tipp, 'status', RCConstants.KBCOMPONENT_STATUS, false)
 
                 // KBART -> listprice_eur, listprice_usd, listprice_gbp
                 if (tipp_dto.prices) {
@@ -747,9 +747,9 @@ class KbartImportService {
                 //com.k_int.ClassUtils.setStringIfDifferent(tipp, 'note', tipp_dto.coverage_notes)
 
                 // KBART -> date_monograph_published_print -> dateFirstInPrint -> dateFirstInPrint
-                com.k_int.ClassUtils.setDateIfPresent(tipp_dto.dateFirstInPrint, tipp, 'dateFirstInPrint')
+                com.k_int.ClassUtils.setDateIfPresent(tipp_dto.dateFirstInPrint, tipp, 'dateFirstInPrint', true)
                 // KBART -> date_monograph_published_online -> dateFirstOnline -> dateFirstOnline
-                com.k_int.ClassUtils.setDateIfPresent(tipp_dto.dateFirstOnline, tipp, 'dateFirstOnline')
+                com.k_int.ClassUtils.setDateIfPresent(tipp_dto.dateFirstOnline, tipp, 'dateFirstOnline', true)
 
                 // KBART -> monograph_volume -> volumeNumber -> volumeNumber
                 com.k_int.ClassUtils.setStringIfDifferent(tipp, 'volumeNumber', tipp_dto.volumeNumber)
@@ -762,7 +762,7 @@ class KbartImportService {
                 com.k_int.ClassUtils.setStringIfDifferent(tipp, 'parentPublicationTitleId', tipp_dto.parent_publication_title_id)
 
                 // KBART -> oa_type -> oaType -> openAccess
-                com.k_int.ClassUtils.setRefdataIfPresent(tipp_dto.oaType, tipp, 'openAccess', RCConstants.TIPP_OPEN_ACCESS)
+                com.k_int.ClassUtils.setRefdataIfDifferent(tipp_dto.oaType, tipp, 'openAccess', RCConstants.TIPP_OPEN_ACCESS, true)
 
                 // KBART -> oa_apc_eur -> oa_apc_eur -> prices
                 if (tipp_dto.oa_apc_eur) {
@@ -840,69 +840,21 @@ class KbartImportService {
 
             String value = identifiers.find {it.type == aPackage.source.targetNamespace.value}?.value
 
-            def norm_id = Identifier.normalizeIdentifier(value)
-            List<Identifier> identifierList = Identifier.findAllByNamespaceAndNormname(aPackage.source.targetNamespace, norm_id)
+            List<TitleInstancePackagePlatform> tippList = Identifier.executeQuery('select i.tipp from Identifier as i where LOWER(i.namespace.value) = :namespaceValue and i.value = :value and i.tipp is not null', [namespaceValue: aPackage.source.targetNamespace.value.toLowerCase(), value: value])
 
-            if(identifierList.size() == 1){
-
-                log.debug("tippMatchingByTitleID: "+ identifierList.id)
-                List<TitleInstancePackagePlatform> tippCombos = Combo.executeQuery("select c.fromComponent from Combo as c where c.toComponent = :identifier and c.fromComponent in (:tipps)", [identifier: identifierList[0], tipps: aPackage.tipps])
-
-                if(tippCombos.size() == 1) {
-                    log.debug("tippMatchingByTitleID provider internal identifier matching by "+tippCombos.size() + ": "+ tippCombos.id)
-                    return tippCombos[0]
-                }
-
+            if(tippList.size() == 1){
+                    log.debug("tippMatchingByTitleID provider internal identifier matching by "+tippList.size() + ": "+ tippList.id)
+                    return tippList[0]
             }
         }
         else if(identifiers && platform.titleNamespace){
             String value = identifiers.find {it.type == platform.titleNamespace.value}?.value
 
-            def norm_id = Identifier.normalizeIdentifier(value)
-            List<Identifier> identifierList = Identifier.findAllByNamespaceAndNormname(platform.titleNamespace, norm_id)
+            List<TitleInstancePackagePlatform> tippList = Identifier.executeQuery('select i.tipp from Identifier as i where LOWER(i.namespace.value) = :namespaceValue and i.value = :value and i.tipp is not null', [namespaceValue: platform.titleNamespace.value.toLowerCase(), value: value])
 
-            if(identifierList.size() == 1){
-
-                log.debug("tippMatchingByTitleID identifierList: "+ identifierList.id)
-                List<TitleInstancePackagePlatform> tippCombos = Combo.executeQuery("select c.fromComponent from Combo as c where c.toComponent = :identifier and c.fromComponent in (:tipps)", [identifier: identifierList[0], tipps: aPackage.tipps])
-
-                if(tippCombos.size() == 1) {
-                    log.debug("tippMatchingByTitleID provider internal identifier matching by "+tippCombos.size() + ": "+ tippCombos.id)
-                    return tippCombos[0]
-                }
-
-            }
-        }
-
-    }
-    
-    TitleInstancePackagePlatform tippMatchingByPrintAndOnlineIdentifiers(JSONArray identifiers, Package aPackage, Platform platform) {
-        if(identifiers){
-
-            List<String> printIdentifier = ["issn", "pisbn"]
-            List<String> onlineIdentifier = ["eissn", "isbn"]
-
-            List<String> values = identifiers.findAll {it.type in (printIdentifier+onlineIdentifier)}?.value
-
-            List<String> norm_ids = []
-            values.each {String value ->
-                norm_ids << Identifier.normalizeIdentifier(value)
-            }
-
-            List<IdentifierNamespace> identifierNamespaces = IdentifierNamespace.findAllByValueInList(printIdentifier+onlineIdentifier)
-
-            List<Identifier> identifierList = Identifier.findAllByValueInListAndNamespaceInList(norm_ids, identifierNamespaces)
-
-            if(identifierList.size() > 0){
-
-                log.debug("tippMatchingByPrintAndOnlineIdentifiers: "+ identifierList.id)
-                List<TitleInstancePackagePlatform> tippCombos = Combo.executeQuery("select c.fromComponent from Combo as c where c.toComponent = :identifier and c.fromComponent in (:tipps)", [identifier: identifierList[0], tipps: aPackage.tipps])
-
-                if(tippCombos.size() == 1) {
-                    log.debug("tippMatchingByPrintAndOnlineIdentifiers by "+tippCombos.size() + ": "+ tippCombos.id)
-                    return tippCombos[0]
-                }
-
+            if(tippList.size() == 1){
+                log.debug("tippMatchingByTitleID provider internal identifier matching by "+tippList.size() + ": "+ tippList.id)
+                return tippList[0]
             }
         }
 
@@ -1053,7 +1005,7 @@ class KbartImportService {
 
         switch (identifiersWithSameNamespace.size()) {
             case 0:
-                identifier = new Identifier(namespace: ns, value: identifierValue, kbcomponent: tipp).save(flush: true, failOnError: true)
+                identifier = new Identifier(namespace: ns, value: identifierValue, tipp: tipp).save(flush: true, failOnError: true)
                 break
             case 1:
                 identifiersWithSameNamespace[0].value = identifierValue
@@ -1070,7 +1022,7 @@ class KbartImportService {
                     Identifier.executeUpdate("delete from Identifier where id_id = :id", [id: it])
                 }
 
-                identifier = new Identifier(namespace: ns, value: identifierValue, kbcomponent: tipp).save(flush: true, failOnError: true)
+                identifier = new Identifier(namespace: ns, value: identifierValue, tipp: tipp).save(flush: true, failOnError: true)
                 break
         }
 
@@ -1087,7 +1039,7 @@ class KbartImportService {
                 new_ids.add(c.id)
             }
             com.k_int.ClassUtils.setStringIfDifferent(tipp, 'coverageNote', c.coverageNote)
-            com.k_int.ClassUtils.setRefdataIfPresent(c.coverageDepth, tipp, 'coverageDepth', RCConstants.TIPP_COVERAGE_DEPTH)
+            com.k_int.ClassUtils.setRefdataIfDifferent(c.coverageDepth, tipp, 'coverageDepth', RCConstants.TIPP_COVERAGE_DEPTH, true)
 
             def cs_match = false
             def conflict = false
@@ -1102,13 +1054,13 @@ class KbartImportService {
                     com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endIssue', c.endIssue)
                     com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startVolume', c.startVolume)
                     com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endVolume', c.endVolume)
-                    com.k_int.ClassUtils.setDateIfPresent(parsedStart, tcs, 'startDate')
-                    com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tcs, 'endDate')
+                    com.k_int.ClassUtils.setDateIfPresent(parsedStart, tcs, 'startDate', true)
+                    com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tcs, 'endDate', true)
 
                     com.k_int.ClassUtils.setStringIfDifferent(tcs, 'embargo', c.embargo)
 
                     com.k_int.ClassUtils.setStringIfDifferent(tcs, 'coverageNote', c.coverageNote)
-                    com.k_int.ClassUtils.setRefdataIfPresent(tcs.coverageDepth, tcs, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH)
+                    com.k_int.ClassUtils.setRefdataIfDifferent(tcs.coverageDepth, tcs, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, true)
 
                     cs_match = true
                 } else if (!cs_match) {
@@ -1138,11 +1090,11 @@ class KbartImportService {
                         com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endIssue', c.endIssue)
                         com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startVolume', c.startVolume)
                         com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endVolume', c.endVolume)
-                        com.k_int.ClassUtils.setDateIfPresent(parsedStart, tcs, 'startDate')
-                        com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tcs, 'endDate')
+                        com.k_int.ClassUtils.setDateIfPresent(parsedStart, tcs, 'startDate', true)
+                        com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tcs, 'endDate', true)
                         com.k_int.ClassUtils.setStringIfDifferent(tcs, 'embargo', c.embargo)
                         com.k_int.ClassUtils.setStringIfDifferent(tcs, 'coverageNote', c.coverageNote)
-                        com.k_int.ClassUtils.setRefdataIfPresent(tcs.coverageDepth, tcs, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH)
+                        com.k_int.ClassUtils.setRefdataIfDifferent(tcs.coverageDepth, tcs, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, true)
                     }
                 } else {
                     log.debug("Matched new coverage ${c} on multiple existing coverages!")

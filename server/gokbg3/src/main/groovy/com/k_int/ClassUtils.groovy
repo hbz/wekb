@@ -34,8 +34,13 @@ class ClassUtils {
   /**
    * Attempt automatic parsing.
    */
-  static boolean setDateIfPresent(def value, obj, prop) {
+  static boolean setDateIfPresent(def value, obj, prop, boolean acceptNullValue = false) {
     LocalDateTime ldt = null
+    if(acceptNullValue && (value == null || value == "")){
+      obj[prop] = null
+      return true
+    }
+
     if (value && value.toString().trim()) {
       if (value instanceof LocalDateTime) {
         ldt = value
@@ -189,8 +194,26 @@ class ClassUtils {
   }
 
 
+  static boolean setRefdataIfDifferent(String value, Object kbc, String prop, String cat = null, boolean acceptNullValue) {
+    boolean result = false
+    def v = null
+    if(acceptNullValue && (value == null || value == "")){
+      result = kbc[prop] != null
+      kbc[prop] = null
+    }
+    else if (value.trim() && cat) {
+      v = RefdataCategory.lookup(cat, value)
+      if (v) {
+        result = kbc[prop] != v
+        kbc[prop] = v
+      }
+    }
+    result
+  }
+
   static boolean setStringIfDifferent(obj, prop, value) {
-    if ((obj != null) && (prop != null) && (value) && (value.toString().length() > 0))
+    //if ((obj != null) && (prop != null) && (value) && (value.toString().length() > 0))
+    if ((obj != null) && (prop != null))
       if (obj[prop] != value) {
         obj[prop] = value
         return true
