@@ -56,7 +56,7 @@ class KbartImportValidationService {
             }
 
             if (ns_obj && id_def.size() > 0) {
-                if (!Identifier.findByNamespaceAndNormname(ns_obj, Identifier.normalizeIdentifier(id_def.value))) {
+                if (!Identifier.findByTippIsNotNullAndValueAndNamespace(id_def.value, ns_obj)) {
                     if (ns_obj.pattern && !(id_def.value ==~ ns_obj.pattern)) {
                         log.warn("Validation for ${id_def.type}:${id_def.value} failed!")
                         id_errors.put(idobj.type, [message: "validation failed", baddata: idobj.value])
