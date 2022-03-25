@@ -90,7 +90,7 @@ databaseChangeLog = {
             change {
 
                 RefdataCategory refdataCategory = RefdataCategory.findByDesc(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE)
-                def ns_objs_forPlaftorms = IdentifierNamespace.findAllByFamilyAndTargetType('ttl_prv ', RefdataValue.findByValueAndOwner('Title', refdataCategory))
+                def ns_objs_forPlaftorms = IdentifierNamespace.findAllByFamilyAndTargetType('ttl_prv', RefdataValue.findByValueAndOwner('Title', refdataCategory))
 
 
 
