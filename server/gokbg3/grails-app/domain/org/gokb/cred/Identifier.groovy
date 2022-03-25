@@ -24,7 +24,7 @@ class Identifier {
 
 
   static constraints = {
-    uuid(nullable: true, unique: false, blank: false, maxSize: 2048)
+    uuid(nullable: false, unique: false, blank: false, maxSize: 2048)
     tipp(nullable:true)
     org(nullable:true)
     platform(nullable:true)
@@ -104,6 +104,23 @@ class Identifier {
     pkg  = owner instanceof Package ? owner : pkg
     platform = owner instanceof Platform ?  owner : platform
     tipp = owner instanceof TitleInstancePackagePlatform ? owner : tipp
+  }
+
+  Object getReference() {
+    int refCount = 0
+    def ref
+
+    List<String> fks = ['platform', 'org', 'pkg', 'tipp']
+    fks.each { fk ->
+      if (this."${fk}") {
+        refCount++
+        ref = this."${fk}"
+      }
+    }
+    if (refCount == 1) {
+      return ref
+    }
+    return null
   }
 
  /* static Identifier construct(Map<String, Object> map) {

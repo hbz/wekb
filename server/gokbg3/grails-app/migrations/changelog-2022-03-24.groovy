@@ -162,8 +162,8 @@ databaseChangeLog = {
                     def ns_obj = IdentifierNamespace.findByValueAndTargetType(ns.value, targetType)
 
                     if (targetType && !ns_obj){
-                        sql.execute("""insert into identifier_namespace(id, version, idns_value, idns_name, idns_targettype, idns_last_updated, idns_date_created) values
-                                   ((select nextval ('hibernate_sequence')), 0, ${ns.value}, ${ns.name}, ${targetType.id}, (select now()), (select now()))""")
+                        sql.execute("""insert into identifier_namespace(id, version, id_uuid, idns_value, idns_name, idns_targettype, idns_last_updated, idns_date_created) values
+                                   ((select nextval ('hibernate_sequence')), 0, (select gen_random_uuid()), ${ns.value}, ${ns.name}, ${targetType.id}, (select now()), (select now()))""")
                     }
                 }
 
