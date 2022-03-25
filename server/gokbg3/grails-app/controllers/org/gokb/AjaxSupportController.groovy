@@ -1033,9 +1033,7 @@ class AjaxSupportController {
 
             if (ident){
               flash.error = message(code:'identifier.no.unique.by.component')
-            }
-
-            if (!ident) {
+            }else if (!ident) {
                 ident = new Identifier(namespace: ns, value: params.identifierValue)
                 ident.setReference(owner)
                 boolean success = ident.save()

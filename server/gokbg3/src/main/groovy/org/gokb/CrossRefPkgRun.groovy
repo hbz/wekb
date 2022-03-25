@@ -179,7 +179,7 @@ class CrossRefPkgRun {
           reviewRequestService.raise(
             pkg,
             "TIPP rejected",
-            "TIPP ${json_tipp.name} coudn't be imported. ${(currentTippError as JSON).toString()}",
+            "TIPP ${json_tipp.name} couldn't be imported. ${(currentTippError as JSON).toString()}",
             rr_type,
             null,
             (currentTippError as JSON).toString(),

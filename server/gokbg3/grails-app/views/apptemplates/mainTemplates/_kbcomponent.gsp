@@ -6,7 +6,7 @@
 		<gokb:xEditable  owner="${d}" field="shortcode" />
 	</dd>
 
-	<g:if test="${ d.ids?.size() > 0 }">
+	<g:if test="${ d.ids.size() > 0 }">
 		<dt>
 			<gokb:annotatedLabel owner="${d}" property="identifiers">Identifiers</gokb:annotatedLabel>
 		</dt>
