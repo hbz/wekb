@@ -350,7 +350,7 @@ abstract class KBComponent implements Auditable{
       variantNames        : KBComponentVariantName,
       reviewRequests      : ReviewRequest,
       prices              : ComponentPrice,
-      languages           : KBComponentLanguage,
+      languages           : KBComponentLanguage
   ]
 
 

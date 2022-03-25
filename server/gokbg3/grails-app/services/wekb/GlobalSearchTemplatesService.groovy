@@ -517,7 +517,7 @@ class GlobalSearchTemplatesService {
                         qbeResults: [
                                 [heading: 'Namespace', property: 'namespace.value', sort: 'namespace.value'],
                                 [heading: 'Value', property: 'value', link: true, sort: 'value'],
-                                [heading: 'Component', property: 'kbcomponent', link: true, sort: 'kbcomponent.name'],
+                                [heading: 'Component', property: 'reference'],
                                 [heading: 'Date Created', property: 'dateCreated', sort: 'dateCreated'],
                                 [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
                         ]

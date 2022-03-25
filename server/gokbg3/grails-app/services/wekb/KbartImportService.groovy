@@ -628,7 +628,6 @@ class KbartImportService {
 
             if (tipp) {
 
-                //TODO: WAS SOLL PASSIEREN BEI LEEREN FELDER?
                 //Kbart Fields to Ygor and then to wekb (siehe Wiki)
 
                 // KBART -> publication_title -> name -> name
