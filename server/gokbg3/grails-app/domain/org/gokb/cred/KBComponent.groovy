@@ -332,11 +332,6 @@ abstract class KBComponent implements Auditable{
   String componentDiscriminator
 
 
-  // ids moved to combos.
-  static manyByCombo = [
-      ids            : Identifier
-  ]
-
 
   static mappedBy = [
       outgoingCombos      : 'fromComponent',
@@ -355,7 +350,7 @@ abstract class KBComponent implements Auditable{
       variantNames        : KBComponentVariantName,
       reviewRequests      : ReviewRequest,
       prices              : ComponentPrice,
-      languages            : KBComponentLanguage
+      languages           : KBComponentLanguage
   ]
 
 
@@ -491,33 +486,6 @@ abstract class KBComponent implements Auditable{
   }
 
 
-  /**
-   *  ignore any namespace or type - see if we can find a component where a linked identifier has the specified value
-   *  @return LIST of all components with this identifier as a value
-   */
-  static def lookupByIdentifierValue(String[] idvalue){
-    def result = []
-    if (idvalue != null){
-      def crit = Identifier.createCriteria()
-      // def combotype = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE,'KBComponent.Ids')
-      def lr = crit.list{
-        or{
-          idvalue.each{
-            if ((it != null) && (it.trim().length() > 0)){
-              eq('value', it)
-            }
-          }
-        }
-      }
-      lr?.each{ id ->
-        id.identifiedComponents.each{ component ->
-          result.add(component)
-        }
-      }
-    }
-    result
-  }
-
 
   /**
    *  refdataFind generic pattern needed by inplace edit taglib to provide reference data to typedowns and other UI components.
@@ -615,15 +583,6 @@ abstract class KBComponent implements Auditable{
     if (user != null){
       this.lastUpdatedBy = user
     }
-  }
-
-
-  @Transient
-  String getIdentifierValue(idtype){
-    // As ids are combo controlled it should be enough just to call find here.
-    // This will return only the first match and stop looking afterwards.
-    // Null returned if no match.
-    ids?.find{ it.namespace.value.toLowerCase() == idtype.toLowerCase() }?.value
   }
 
 
@@ -843,7 +802,7 @@ abstract class KBComponent implements Auditable{
     // difference between f(x) and f([x]) closure called with a list containing one argument. Not been able to fully
     // wrap my head around A_Api yet, so added skippedTitles here as a stop-gap. Substantial changes already made to A_Api and don't
     // want to change any more yet.
-    // added variantNames, ids
+    // added variantNames
 
     // SO: Think the issue was actually that deproxy was being called on the list of items when iterating [each (el in val)]
     // should have been called on el not val.
@@ -855,8 +814,7 @@ abstract class KBComponent implements Auditable{
         'systemOnly',
         'additionalProperties',
 //      'skippedTitles',
-        'variantNames',
-        'ids'
+        'variantNames'
     ]
 
     // Get the domain class.
@@ -910,8 +868,7 @@ abstract class KBComponent implements Auditable{
         'systemOnly',
         'additionalProperties',
 //      'skippedTitles',
-//      'variantNames',
-        'ids'
+//      'variantNames'
     ]
     // Get the domain class.
     def domainClass = grailsApplication.getDomainClass(this."class".name)
@@ -1286,9 +1243,6 @@ abstract class KBComponent implements Auditable{
 
   @Transient
   def addCoreGOKbXmlFields(builder, attr) {
-    def refdata_ids = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'KBComponent.Ids')
-    def status_active = RefdataCategory.lookupOrCreate(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE)
-    def cids = Identifier.executeQuery("select i.namespace.value, i.namespace.name, i.value, i.namespace.family from Identifier as i, Combo as c where c.fromComponent = ? and c.type = ? and c.toComponent = i and c.status = ?", [this, refdata_ids, status_active], [readOnly: true])
     String cName = this.class.name
 
     // Single props.
@@ -1303,15 +1257,6 @@ abstract class KBComponent implements Auditable{
     }
     builder.'shortcode'(shortcode)
 
-    // Identifiers
-    builder.'identifiers'{
-      cids?.each{ tid ->
-        builder.'identifier'('namespace': tid[0], 'namespaceName': tid[1], 'value': tid[2], 'type': tid[3])
-      }
-      if (grailsApplication.config.serverUrl || grailsApplication.config.baseUrl){
-        builder.'identifier'('namespace': 'originEditUrl', 'value': "${grailsApplication.config.serverUrl ?: grailsApplication.config.baseUrl}/resource/show/${cName}:${id}")
-      }
-    }
     // Variant Names
     if (variantNames){
       builder.'variantNames'{

@@ -41,7 +41,7 @@ class IdentifierController {
     def start_db = LocalDateTime.now()
 
 
-    params['_embed'] = params['_embed'] ?: 'identifiedComponents'
+    params['_embed'] = params['_embed'] ?: ''
 
     result = componentLookupService.restLookup(user, Identifier, params)
     log.debug("DB duration: ${Duration.between(start_db, LocalDateTime.now()).toMillis();}")
@@ -70,7 +70,7 @@ class IdentifierController {
 
       if (obj) {
 
-        params['_embed'] = params['_embed'] ?: 'identifiedComponents'
+        params['_embed'] = params['_embed'] ?: ''
 
         result = restMappingService.mapObjectToJson(obj, params, user)
 
@@ -152,7 +152,7 @@ class IdentifierController {
                 comp.ids.add(obj)
                 comp.save(flush:true)
 
-                params['_embed'] = params['_embed'] ?: 'identifiedComponents'
+                params['_embed'] = params['_embed'] ?: ''
                 response.setStatus(201)
 
                 result = restMappingService.mapObjectToJson(obj, params, user)

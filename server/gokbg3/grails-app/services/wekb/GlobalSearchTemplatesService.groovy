@@ -21,6 +21,7 @@ class GlobalSearchTemplatesService {
         globalSearchTemplates.put('databases', databases())
         globalSearchTemplates.put('journals', journals())
         globalSearchTemplates.put('folderContents', folderContents())
+        globalSearchTemplates.put('identifiers', identifiers())
         globalSearchTemplates.put('jobResults', jobResults())
         globalSearchTemplates.put('namespaces', namespaces())
         globalSearchTemplates.put('notes', notes())
@@ -486,6 +487,45 @@ class GlobalSearchTemplatesService {
         result
     }
 
+    Map identifiers() {
+        Map result = [
+                baseclass: 'org.gokb.cred.Identifier',
+                title    : 'Identifiers',
+                group    : 'Tertiary',
+                defaultSort : 'value',
+                defaultOrder: 'asc',
+                qbeConfig: [
+                        qbeForm   : [
+                                [
+                                        prompt     : 'Namespace',
+                                        qparam     : 'qp_namespace_value',
+                                        placeholder: 'Namespace',
+                                        filter1    : 'all',
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.IdentifierNamespace',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'namespace'],
+                                ],
+                                [
+                                        prompt     : 'Identifier',
+                                        qparam     : 'qp_identifier',
+                                        placeholder: 'Identifier Value',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'value'],
+                                ],
+                        ],
+                        qbeGlobals: [
+                        ],
+                        qbeResults: [
+                                [heading: 'Namespace', property: 'namespace.value', sort: 'namespace.value'],
+                                [heading: 'Value', property: 'value', link: true, sort: 'value'],
+                                [heading: 'Component', property: 'reference'],
+                                [heading: 'Date Created', property: 'dateCreated', sort: 'dateCreated'],
+                                [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
+                        ]
+                ]
+        ]
+        result
+    }
+
     Map jobResults() {
         Map result = [
                 baseclass   : 'org.gokb.cred.JobResult',
@@ -534,15 +574,31 @@ class GlobalSearchTemplatesService {
                                         placeholder: 'value',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'value', 'wildcard': 'B']
                                 ],
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.RefdataValue',
+                                        filter1    : RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE,
+                                        prompt     : 'Target Type',
+                                        qparam     : 'qp_targetType',
+                                        placeholder: 'Target Type',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'targetType']
+                                ],
+                                [
+                                        prompt     : 'Category',
+                                        qparam     : 'qp_family',
+                                        placeholder: 'Category',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'family', 'wildcard': 'B']
+                                ],
                         ],
+
                         qbeGlobals: [
                         ],
                         qbeResults: [
                                 [heading: 'Name', property: 'name', sort: 'name'],
                                 [heading: 'Value', property: 'value', link: true, sort: 'value'],
                                 [heading: 'Category', property: 'family', sort: 'family'],
-                                [heading: 'Target Type', property: 'targetType.value'],
-                                [heading: 'Count', property: 'identifiersCount']
+                                [heading: 'Target Type', property: 'targetType.value', sort: 'targetType.value'],
+                                [heading: 'Count', property: 'identifiersCount', sort: 'identifiersCount']
                         ]
                 ]
         ]

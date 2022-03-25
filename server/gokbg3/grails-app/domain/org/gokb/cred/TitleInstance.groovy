@@ -609,6 +609,7 @@ class TitleInstance extends KBComponent {
    *   ],
    *   type:'Serial' or 'Monograph'
    *}*/
+  @Deprecated
   @Transient
   static def validateDTO(JSONObject titleDTO, Locale locale) {
     def result = ['valid': true]
@@ -648,14 +649,6 @@ class TitleInstance extends KBComponent {
         ids_list = titleDTO[idJsonKey]
       }
 
-      def id_errors = Identifier.validateDTOs(ids_list, locale)
-
-      if (id_errors.size() > 0) {
-        valErrors.put(idJsonKey, id_errors)
-        if (titleDTO[idJsonKey].size() == 0) {
-          valErrors.put(idJsonKey, [message: 'no valid identifiers left'])
-        }
-      }
     }
 
     if (titleDTO.medium) {
@@ -756,6 +749,7 @@ class TitleInstance extends KBComponent {
     }
   }
 
+  @Deprecated
   @Transient
   static TitleInstance upsertDTO(titleLookupService, titleDTO, user = null, fullsync = false) {
     def result = null;

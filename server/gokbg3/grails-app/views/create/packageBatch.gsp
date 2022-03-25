@@ -21,7 +21,7 @@
     <div class="panel-body">
         The option "Upload Packages" allows you to create several packages at once via the provided package template below.
         <br><br>
-        In order to create your packages, download the template below and type in the name of the packages. Give all the relevant information for each individual package and save the template file as a csv file (tab separated and UTF-8 coded).
+        In order to create your packages, download the template below and type in the name of the packages. Give all the relevant information for each individual package and save the template file as a tsv file (tab separated and UTF-8 coded).
         <br>
         For the upload of the package template, click on „Durchsuchen“ to choose the file you created and Upload it to the we:kb.
         <br><br>

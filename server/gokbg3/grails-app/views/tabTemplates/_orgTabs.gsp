@@ -8,7 +8,7 @@
 
                 <li class="nav-item">
                     <a class="nav-link active" href="#identifiers" data-toggle="tab" role="tab">Identifiers <span
-                            class="badge badge-warning">${d.getCombosByPropertyNameAndStatus('ids', 'Active').size()}</span>
+                            class="badge badge-warning">${d.ids.size()}</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -52,7 +52,7 @@
             <ul id="tabs" class="nav nav-tabs">
                 <li class="active">
                     <a href="#identifiers" data-toggle="tab">Identifiers <span
-                            class="badge badge-warning">${d.getCombosByPropertyNameAndStatus('ids', 'Active').size()}</span>
+                            class="badge badge-warning">${d.ids.size()}</span>
                     </a>
                 </li>
                 <li>

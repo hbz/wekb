@@ -1026,18 +1026,21 @@ class AjaxSupportController {
         if (editable) {
           // Lookup or create Identifier
           try {
-              identifier_instance = componentLookupService.lookupOrCreateCanonicalIdentifier(ns.value, params.identifierValue)
+            String attr = Identifier.getAttributeName(owner)
+            def ident = Identifier.executeQuery(
+                    'select ident from Identifier ident where ident.value = :val and ident.namespace = :namespace and ident.' + attr +' = :owner order by ident.id',
+                    [val: params.identifierValue, namespace: ns, owner: owner])
 
-              if (identifier_instance && !identifier_instance.hasErrors()) {
-
-                log.debug("Got ID: ${identifier_instance}")
-                // Link if not existing
-                if (!owner.ids.contains(identifier_instance)) {
-                  owner.ids.add(identifier_instance)
-                  owner.save()
-                }
-                else {
-                  flash.error = message(code:'identifier.link.unique')
+            if (ident){
+              flash.error = message(code:'identifier.no.unique.by.component')
+            }else if (!ident) {
+                ident = new Identifier(namespace: ns, value: params.identifierValue)
+                ident.setReference(owner)
+                boolean success = ident.save()
+                if (success){
+                  flash.message = message(code:'identifier.create.success')
+                } else {
+                  flash.error = message(code:'identifier.create.fail')
                 }
               }
           }

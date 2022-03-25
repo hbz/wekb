@@ -173,17 +173,6 @@ class BootStrap {
             rr_std.delete()
         }
 
-        log.info("GoKB missing normalised identifiers");
-
-        def id_ctr = 0;
-        Identifier.executeQuery("select id.id from Identifier as id where id.normname is null and id.value is not null").each { id_id ->
-            Identifier i = Identifier.get(id_id)
-            i.generateNormname()
-            i.save(flush: true, failOnError: true)
-            id_ctr++
-        }
-        log.debug("${id_ctr} identifiers updated");
-
         log.info("Fix missing Combo status");
 
         def status_active = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE)
@@ -212,6 +201,12 @@ class BootStrap {
                 [value: 'oclc', name: 'oclc', targetType: 'TitleInstancePackagePlatform'],
                 [value: 'preselect', name: 'preselect', targetType: 'TitleInstancePackagePlatform'],
                 [value: 'zdb', name: 'ZDB-ID', pattern: "^\\d+-[\\dxX]\$", targetType: 'TitleInstancePackagePlatform'],
+
+                //Kbart Import
+                [value: 'ill_indicator', name: 'Ill Indicator',  targetType: 'TitleInstancePackagePlatform'],
+                [value: 'package_isci', name: 'Package ISCI',  targetType: 'TitleInstancePackagePlatform'],
+                [value: 'package_isil', name: 'Package ISIL',  targetType: 'TitleInstancePackagePlatform'],
+                [value: 'package_ezb_anchor', name: 'EZB Anchor',  targetType: 'TitleInstancePackagePlatform'],
 
 
                 [value: 'Anbieter_Produkt_ID', name: 'Anbieter_Produkt_ID', targetType: 'Package'],
@@ -1161,7 +1156,12 @@ class BootStrap {
     def ensureEsIndices() {
         def esIndices = grailsApplication.config.gokb.es.indices?.values()
         for (String indexName in esIndices) {
-            ESWrapperService.createIndex(indexName)
+            try {
+                ESWrapperService.createIndex(indexName)
+            }
+            catch (Exception e) {
+                log.error("Problem by ensureEsIndices -> Exception: ${e}")
+            }
         }
     }
 

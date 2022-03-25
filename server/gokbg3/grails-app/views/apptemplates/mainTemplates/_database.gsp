@@ -85,7 +85,7 @@
       </g:if>
       <li><a href="#identifiers" data-toggle="tab">Identifiers <span
           class="badge badge-warning">
-            ${d.ids?.size() ?: '0'}
+            ${d.ids.size() ?: '0'}
         </span></a></li>
       <li><a href="#publishers" data-toggle="tab">Publishers <span
           class="badge badge-warning">

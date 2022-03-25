@@ -49,6 +49,9 @@
             <li><g:link controller="search" action="index" params="[qbe:'g:orgs']" title="Search Orgs" ><i class='fa fa-angle-double-right fa-fw'></i> Organizations</g:link></li>
             <li><g:link controller="search" action="index" params="[qbe:'g:sources']" title="Search Sources" ><i class='fa fa-angle-double-right fa-fw'></i> Sources</g:link></li>
 
+            <li class="divider"></li>
+            <li><g:link controller="search" action="index" params="[qbe:'g:identifiers']" title="Search Identifiers" ><i class='fa fa-angle-double-right fa-fw'></i> Identifiers</g:link></li>
+
           </ul> <!-- /.nav-second-level -->
         </li>
         <sec:ifAnyGranted roles='ROLE_ADMIN,ROLE_EDITOR,ROLE_CONTRIBUTOR'>

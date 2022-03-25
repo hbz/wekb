@@ -119,7 +119,7 @@ class FTUpdateService {
         result.status = kbc.status?.value
         result.editingStatus = kbc.editingStatus?.value
         result.identifiers = []
-        kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
+        kbc.ids.each { idc ->
           result.identifiers.add([namespace    : idc.toComponent.namespace.value,
                                   value        : idc.toComponent.value,
                                   namespaceName: idc.toComponent.namespace.name])
@@ -193,7 +193,7 @@ class FTUpdateService {
 
         result.status = kbc.status?.value
         result.identifiers = []
-        kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
+        kbc.ids.each { idc ->
           result.identifiers.add([namespace    : idc.toComponent.namespace.value,
                                   value        : idc.toComponent.value,
                                   namespaceName: idc.toComponent.namespace.name])
@@ -260,7 +260,7 @@ class FTUpdateService {
         result.primaryUrl = kbc.primaryUrl
         result.status = kbc.status?.value
         result.identifiers = []
-        kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
+        kbc.ids.each { idc ->
           result.identifiers.add([namespace    : idc.toComponent.namespace.value,
                                   value        : idc.toComponent.value,
                                   namespaceName: idc.toComponent.namespace.name])
@@ -314,7 +314,7 @@ class FTUpdateService {
         result.lastUpdatedDisplay = dateFormatService.formatIsoTimestamp(kbc.lastUpdated)
         result.status = kbc.status?.value
         result.identifiers = []
-        kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
+        kbc.ids.each { idc ->
           result.identifiers.add([namespace    : idc.toComponent.namespace.value,
                                   value        : idc.toComponent.value,
                                   namespaceName: idc.toComponent.namespace.name])
@@ -343,7 +343,7 @@ class FTUpdateService {
         result.lastUpdatedDisplay = dateFormatService.formatIsoTimestamp(kbc.lastUpdated)
         result.status = kbc.status?.value
         result.identifiers = []
-        kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
+        kbc.ids.each { idc ->
           result.identifiers.add([namespace    : idc.toComponent.namespace.value,
                                   value        : idc.toComponent.value,
                                   namespaceName: idc.toComponent.namespace.name])
@@ -374,7 +374,7 @@ class FTUpdateService {
         result.lastUpdatedDisplay = dateFormatService.formatIsoTimestamp(kbc.lastUpdated)
         result.status = kbc.status?.value
         result.identifiers = []
-        kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
+        kbc.ids.each { idc ->
           result.identifiers.add([namespace    : idc.toComponent.namespace.value,
                                   value        : idc.toComponent.value,
                                   namespaceName: idc.toComponent.namespace.name])
@@ -405,7 +405,7 @@ class FTUpdateService {
         result.lastUpdatedDisplay = dateFormatService.formatIsoTimestamp(kbc.lastUpdated)
         result.status = kbc.status?.value
         result.identifiers = []
-        kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
+        kbc.ids.each { idc ->
           result.identifiers.add([namespace    : idc.toComponent.namespace.value,
                                   value        : idc.toComponent.value,
                                   namespaceName: idc.toComponent.namespace.name])
@@ -530,7 +530,7 @@ class FTUpdateService {
         if (kbc.accessType) result.accessType = kbc.accessType.value
 
         result.identifiers = []
-        kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
+        kbc.ids.each { idc ->
           result.identifiers.add([namespace    : idc.toComponent.namespace.value,
                                   value        : idc.toComponent.value,
                                   namespaceName: idc.toComponent.namespace.name])
