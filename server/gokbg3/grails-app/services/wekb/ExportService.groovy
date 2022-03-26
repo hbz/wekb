@@ -696,7 +696,7 @@ class ExportService {
 
                                     if(titleIdNameSpace == 'FAKE') {
                                         Platform platform = Platform.executeQuery('select p from Platform as p,  Combo as c where c.toComponent.id = :tippID and c.type = :comboType and c.fromComponent = p and c.status = :comboStatus', [tippID: tippID, comboType: RDStore.COMBO_TYPE_PLT_HOSTEDTIPPS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])[0]
-                                        titleIdNameSpace = platform.titleNamespace ? platform.titleNamespace.value : 'FAKE'
+                                        titleIdNameSpace = (platform && platform.titleNamespace) ? platform.titleNamespace.value : 'FAKE'
                                     }
 
                                     List identifiers = Identifier.executeQuery('select i.value from Identifier as i where LOWER(i.namespace.value) = :namespaceValue and i.tipp.id = :tippID', [namespaceValue: titleIdNameSpace.toLowerCase(), tippID: tippID], [readOnly: true])

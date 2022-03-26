@@ -201,7 +201,7 @@ class ClassUtils {
       result = kbc[prop] != null
       kbc[prop] = null
     }
-    else if (value.trim() && cat) {
+    else if (value && value.trim() && cat) {
       v = RefdataCategory.lookup(cat, value)
       if (v) {
         result = kbc[prop] != v

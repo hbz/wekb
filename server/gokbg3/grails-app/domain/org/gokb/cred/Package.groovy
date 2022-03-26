@@ -723,7 +723,9 @@ select tipp.id,
     if ( !found && value != '') {
       value = value?.trim()
       ns = ns.trim()
-      IdentifierNamespace namespace = IdentifierNamespace.findByValueIlike(ns)
+      RefdataCategory refdataCategory = RefdataCategory.findByDesc(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE)
+
+      IdentifierNamespace namespace = IdentifierNamespace.findByValueIlikeAndTargetType(ns, RefdataValue.findByValueAndOwner('Package', refdataCategory))
       Identifier identifier = new Identifier(namespace: namespace, value: value, pkg: this).save(flush:true, failOnError:true)
 
     }
