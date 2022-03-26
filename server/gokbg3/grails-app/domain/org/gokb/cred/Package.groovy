@@ -729,8 +729,45 @@ select tipp.id,
     }
   }
 
-  void findTippDuplicates() {
+  @Transient
+  List<TitleInstancePackagePlatform> findTippDuplicatesByName() {
 
+    List<TitleInstancePackagePlatform> tippsDuplicates = TitleInstancePackagePlatform.executeQuery("select tipp from TitleInstancePackagePlatform as tipp, Combo as pkg_combo" +
+            " where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg and " +
+            " tipp.name in (select tipp2.name from TitleInstancePackagePlatform tipp2, Combo as pkg_combo2 where pkg_combo2.toComponent=tipp2 and pkg_combo2.fromComponent = :pkg group by tipp2.name having count(tipp2.name) > 1)" +
+            " order by tipp.name",
+            [pkg: this]) ?: []
+  }
+
+  @Transient
+  List<TitleInstancePackagePlatform> findTippDuplicatesByURL() {
+
+    List<TitleInstancePackagePlatform> tippsDuplicates = TitleInstancePackagePlatform.executeQuery("select tipp from TitleInstancePackagePlatform as tipp, Combo as pkg_combo" +
+            " where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg and " +
+            " tipp.url in (select tipp2.url from TitleInstancePackagePlatform tipp2, Combo as pkg_combo2 where pkg_combo2.toComponent=tipp2 and pkg_combo2.fromComponent = :pkg group by tipp2.url having count(tipp2.url) > 1)" +
+            " order by tipp.name",
+            [pkg: this]) ?: []
+  }
+
+  @Transient
+  Integer getTippDuplicatesByNameCount() {
+
+    int result = TitleInstancePackagePlatform.executeQuery("select count(tipp.id) from TitleInstancePackagePlatform as tipp, Combo as pkg_combo" +
+            " where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg and " +
+            " tipp.name in (select tipp2.name from TitleInstancePackagePlatform tipp2, Combo as pkg_combo2 where pkg_combo2.toComponent=tipp2 and pkg_combo2.fromComponent = :pkg group by tipp2.name having count(tipp2.name) > 1)",
+            [pkg: this])[0]
+    return result
+  }
+
+  @Transient
+  Integer getTippDuplicatesByURLCount() {
+
+    int result = TitleInstancePackagePlatform.executeQuery("select count(tipp.id) from TitleInstancePackagePlatform as tipp, Combo as pkg_combo" +
+            " where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg and " +
+            " tipp.url in (select tipp2.url from TitleInstancePackagePlatform tipp2, Combo as pkg_combo2 where pkg_combo2.toComponent=tipp2 and pkg_combo2.fromComponent = :pkg group by tipp2.url having count(tipp2.url) > 1)",
+            [pkg: this])[0]
+
+    return result
   }
 
   @Transient
