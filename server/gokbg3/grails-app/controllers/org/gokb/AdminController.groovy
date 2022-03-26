@@ -3,6 +3,7 @@ package org.gokb
 import com.k_int.ConcurrencyManagerService
 import com.k_int.ConcurrencyManagerService.Job
 import de.wekb.helper.RCConstants
+import de.wekb.helper.RDStore
 import gokbg3.DateFormatService
 import grails.converters.JSON
 import grails.plugin.springsecurity.SpringSecurityService
@@ -698,20 +699,49 @@ class AdminController {
     result
   }
 
-  def findTippDuplicates() {
+  def findTippDuplicatesByPkg() {
     log.debug("findTippDuplicates::${params}")
     def result = [:]
 
-    params.pkg = Package.get(40893351)
+    Package aPackage = Package.findByUuid(params.id)
 
-    List<TitleInstancePackagePlatform> tippsWithUrlDuplicates = TitleInstancePackagePlatform.executeQuery("select tipp from TitleInstancePackagePlatform as tipp, Combo as pkg_combo" +
-            " where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg and " +
-            " tipp.url in (select tipp2.url from TitleInstancePackagePlatform tipp2, Combo as pkg_combo2 where pkg_combo2.toComponent=tipp2 and pkg_combo2.fromComponent = :pkg group by tipp2.url having count(tipp2.url) > 1)" +
-            " order by tipp.url",
-            [pkg: params.pkg])
+    List<TitleInstancePackagePlatform> tippsDuplicatesByName = aPackage.findTippDuplicatesByName()
+    List<TitleInstancePackagePlatform> tippsDuplicatesByUrl = aPackage.findTippDuplicatesByURL()
 
-    result.tipps = tippsWithUrlDuplicates
+    result.tippsDuplicatesByName = tippsDuplicatesByName
+    result.tippsDuplicatesByUrl = tippsDuplicatesByUrl
 
+    //println(result)
+
+    result
+  }
+
+  def findPackagesWithTippDuplicates() {
+    log.debug("findPackagesWithTippDuplicates::${params}")
+    def result = [:]
+
+    List pkgs = []
+
+    Package.findAllByStatus(RDStore.KBC_STATUS_CURRENT, [sort: 'name']).each {Package aPackage ->
+      Integer tippDuplicatesByNameCount = aPackage.getTippDuplicatesByNameCount()
+      Integer tippDuplicatesByUrlCount = aPackage.getTippDuplicatesByURLCount()
+
+      if(tippDuplicatesByNameCount > 0 || tippDuplicatesByUrlCount > 0){
+        pkgs << [pkg: aPackage, tippDuplicatesByNameCount: tippDuplicatesByNameCount, tippDuplicatesByUrlCount: tippDuplicatesByUrlCount]
+      }
+    }
+
+    if (params.sort == 'tippDuplicatesByNameCount') {
+      result.pkgs = pkgs.sort {
+        it.tippDuplicatesByNameCount
+      }
+    } else if (params.sort == 'tippDuplicatesByUrlCount') {
+      result.pkgs = pkgs.sort {
+        it.tippDuplicatesByUrlCount
+      }
+    } else {
+      result.pkgs = pkgs
+    }
     result
   }
 }
