@@ -236,7 +236,7 @@
             <dt><gokb:annotatedLabel owner="${d}" property="tipps">Current Titles</gokb:annotatedLabel></dt>
             <dd>
               <g:link class="display-inline" controller="search" action="index"
-                      params="[qbe: 'g:tipps', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status_id: RDStore.KBC_STATUS_CURRENT.id]"
+                      params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status_id: RDStore.KBC_STATUS_CURRENT.id]"
                       id="">Titles in this package</g:link>
             </dd>
           </dl>
@@ -249,7 +249,7 @@
             <dt><gokb:annotatedLabel owner="${d}" property="tipps">Retired Titles</gokb:annotatedLabel></dt>
             <dd>
               <g:link class="display-inline" controller="search" action="index"
-                      params="[qbe: 'g:tipps', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status_id: RDStore.KBC_STATUS_RETIRED.id]"
+                      params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status_id: RDStore.KBC_STATUS_RETIRED.id]"
                       id="">Titles in this package</g:link>
             </dd>
           </dl>
@@ -262,7 +262,7 @@
             <dt><gokb:annotatedLabel owner="${d}" property="tipps">Expected Titles</gokb:annotatedLabel></dt>
             <dd>
               <g:link class="display-inline" controller="search" action="index"
-                      params="[qbe: 'g:tipps', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status_id: RDStore.KBC_STATUS_EXPECTED.id]"
+                      params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status_id: RDStore.KBC_STATUS_EXPECTED.id]"
                       id="">Titles in this package</g:link>
             </dd>
           </dl>
@@ -275,7 +275,7 @@
             <dt><gokb:annotatedLabel owner="${d}" property="tipps">Deleted Titles</gokb:annotatedLabel></dt>
             <dd>
               <g:link class="display-inline" controller="search" action="index"
-                      params="[qbe: 'g:tipps', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status_id: RDStore.KBC_STATUS_DELETED.id]"
+                      params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status_id: RDStore.KBC_STATUS_DELETED.id]"
                       id="">Titles in this package</g:link>
             </dd>
           </dl>
