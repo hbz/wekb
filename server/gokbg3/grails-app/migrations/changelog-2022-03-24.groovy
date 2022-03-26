@@ -162,8 +162,8 @@ databaseChangeLog = {
                     def ns_obj = IdentifierNamespace.findByValueAndTargetType(ns.value, targetType)
 
                     if (targetType && !ns_obj){
-                        sql.execute("""insert into identifier_namespace(id, version, id_uuid, idns_value, idns_name, idns_targettype, idns_last_updated, idns_date_created) values
-                                   ((select nextval ('hibernate_sequence')), 0, (select gen_random_uuid()), ${ns.value}, ${ns.name}, ${targetType.id}, (select now()), (select now()))""")
+                        sql.execute("""insert into identifier_namespace(id, version, idns_value, idns_name, idns_targettype, idns_last_updated, idns_date_created) values
+                                   ((select nextval ('hibernate_sequence')), 0, ${ns.value}, ${ns.name}, ${targetType.id}, (select now()), (select now()))""")
                     }
                 }
 
@@ -206,8 +206,8 @@ databaseChangeLog = {
 
                                 def kbcomponent = sql.rows("select * from kbcomponent where kbc_id = ${identifier.kbc_id}")[0]
 
-                                sql.execute("""insert into identifier_new(id_id, id_version, id_value, id_namespace_fk, id_pkg_fk, id_last_updated, id_date_created) values
-                                   ((select nextval ('hibernate_sequence')), 0, ${identifier.id_value}, ${(newNameSpace && newNameSpace.id) ? newNameSpace.id : identifier.id_namespace_fk}, ${combo.combo_from_fk}, ${kbcomponent.kbc_last_updated}, ${kbcomponent.kbc_date_created})""")
+                                sql.execute("""insert into identifier_new(id_id, id_version, id_uuid, id_value, id_namespace_fk, id_pkg_fk, id_last_updated, id_date_created) values
+                                   ((select nextval ('hibernate_sequence')), 0, (select gen_random_uuid()), ${identifier.id_value}, ${(newNameSpace && newNameSpace.id) ? newNameSpace.id : identifier.id_namespace_fk}, ${combo.combo_from_fk}, ${kbcomponent.kbc_last_updated}, ${kbcomponent.kbc_date_created})""")
                                 counts.identifierNewCount =  counts.identifierNewCount+1
                                 counts.identifierPkgNewCount =  counts.identifierPkgNewCount+1
                             }
@@ -222,8 +222,8 @@ databaseChangeLog = {
 
                                 def kbcomponent = sql.rows("select * from kbcomponent where kbc_id = ${identifier.kbc_id}")[0]
 
-                                sql.execute("""insert into identifier_new(id_id, id_version, id_value, id_namespace_fk, id_org_fk, id_last_updated, id_date_created) values
-                                   ((select nextval ('hibernate_sequence')), 0, ${identifier.id_value}, ${(newNameSpace && newNameSpace.id) ? newNameSpace.id : identifier.id_namespace_fk}, ${combo.combo_from_fk}, ${kbcomponent.kbc_last_updated}, ${kbcomponent.kbc_date_created})""")
+                                sql.execute("""insert into identifier_new(id_id, id_version, id_uuid, id_value, id_namespace_fk, id_org_fk, id_last_updated, id_date_created) values
+                                   ((select nextval ('hibernate_sequence')), 0, (select gen_random_uuid()), ${identifier.id_value}, ${(newNameSpace && newNameSpace.id) ? newNameSpace.id : identifier.id_namespace_fk}, ${combo.combo_from_fk}, ${kbcomponent.kbc_last_updated}, ${kbcomponent.kbc_date_created})""")
                                 counts.identifierNewCount =  counts.identifierNewCount+1
                                 counts.identifierOrgNewCount =  counts.identifierOrgNewCount+1
                             }
@@ -238,8 +238,8 @@ databaseChangeLog = {
 
                                 def kbcomponent = sql.rows("select * from kbcomponent where kbc_id = ${identifier.kbc_id}")[0]
 
-                                sql.execute("""insert into identifier_new(id_id, id_version, id_value, id_namespace_fk, id_tipp_fk, id_last_updated, id_date_created) values
-                                   ((select nextval ('hibernate_sequence')), 0, ${identifier.id_value}, ${(newNameSpace && newNameSpace.id) ? newNameSpace.id : identifier.id_namespace_fk}, ${combo.combo_from_fk}, ${kbcomponent.kbc_last_updated}, ${kbcomponent.kbc_date_created})""")
+                                sql.execute("""insert into identifier_new(id_id, id_version, id_uuid, id_value, id_namespace_fk, id_tipp_fk, id_last_updated, id_date_created) values
+                                   ((select nextval ('hibernate_sequence')), 0, (select gen_random_uuid()), ${identifier.id_value}, ${(newNameSpace && newNameSpace.id) ? newNameSpace.id : identifier.id_namespace_fk}, ${combo.combo_from_fk}, ${kbcomponent.kbc_last_updated}, ${kbcomponent.kbc_date_created})""")
                                 counts.identifierNewCount =  counts.identifierNewCount+1
                                 counts.identifierTippNewCount =  counts.identifierTippNewCount+1
                             }
