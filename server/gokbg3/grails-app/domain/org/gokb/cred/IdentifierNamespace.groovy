@@ -66,13 +66,13 @@ class IdentifierNamespace {
     def ql = null;
     if(params.filter1){
       if(params.filter1 == "all"){
-        ql = IdentifierNamespace.executeQuery("from IdentifierNamespace as t order by t.value", [max: params.max])
+        ql = IdentifierNamespace.executeQuery("from IdentifierNamespace as t order by t.value")
       }else {
         RefdataValue refdataValue = RefdataValue.findByValueAndOwner(params.filter1, RefdataCategory.findByDesc(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE))
-        ql = IdentifierNamespace.executeQuery("from IdentifierNamespace as t where lower(t.value) like :value and (t.targetType is null or t.targetType = :targetType) order by t.value", [value: "${params.q?.toLowerCase()}%", targetType: refdataValue], [max: params.max])
+        ql = IdentifierNamespace.executeQuery("from IdentifierNamespace as t where lower(t.value) like :value and (t.targetType is null or t.targetType = :targetType) order by t.value", [value: "${params.q?.toLowerCase()}%", targetType: refdataValue])
       }
     }else {
-      ql = IdentifierNamespace.executeQuery("from IdentifierNamespace as t where lower(t.value) like :value and t.targetType is null order by t.value", [value: "${params.q?.toLowerCase()}%"], [max: params.max]);
+      ql = IdentifierNamespace.executeQuery("from IdentifierNamespace as t where lower(t.value) like :value and t.targetType is null order by t.value", [value: "${params.q?.toLowerCase()}%"])
     }
     if ( ql ) {
       ql.each { t ->
