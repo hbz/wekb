@@ -63,7 +63,8 @@ class Identifier {
     }
   }
 
-  def beforeInsert(){
+  def beforeValidate (){
+    log.debug("beforeValidate for ${this}")
     generateUuid()
   }
 

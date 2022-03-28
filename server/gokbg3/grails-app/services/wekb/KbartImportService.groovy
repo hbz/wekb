@@ -1000,7 +1000,7 @@ class KbartImportService {
         Identifier identifier
         IdentifierNamespace ns = IdentifierNamespace.findByValueAndTargetType(namespace_val, RDStore.IDENTIFIER_NAMESPACE_TARGET_TYPE_TIPP)
 
-        List<Identifier> identifiersWithSameNamespace = tipp.ids.findAll{it.namespace.value == namespace_val}
+        LinkedHashSet<Identifier> identifiersWithSameNamespace = tipp.ids.findAll{it.namespace.value == namespace_val}
 
         switch (identifiersWithSameNamespace.size()) {
             case 0:

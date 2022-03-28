@@ -120,9 +120,9 @@ class FTUpdateService {
         result.editingStatus = kbc.editingStatus?.value
         result.identifiers = []
         kbc.ids.each { idc ->
-          result.identifiers.add([namespace    : idc.toComponent.namespace.value,
-                                  value        : idc.toComponent.value,
-                                  namespaceName: idc.toComponent.namespace.name])
+          result.identifiers.add([namespace    : idc.namespace.value,
+                                  value        : idc.value,
+                                  namespaceName: idc.namespace.name])
         }
         result.componentType = kbc.class.simpleName
 
@@ -194,9 +194,9 @@ class FTUpdateService {
         result.status = kbc.status?.value
         result.identifiers = []
         kbc.ids.each { idc ->
-          result.identifiers.add([namespace    : idc.toComponent.namespace.value,
-                                  value        : idc.toComponent.value,
-                                  namespaceName: idc.toComponent.namespace.name])
+          result.identifiers.add([namespace    : idc.namespace.value,
+                                  value        : idc.value,
+                                  namespaceName: idc.namespace.name])
         }
         result.componentType = kbc.class.simpleName
         result.platforms = []
@@ -261,9 +261,9 @@ class FTUpdateService {
         result.status = kbc.status?.value
         result.identifiers = []
         kbc.ids.each { idc ->
-          result.identifiers.add([namespace    : idc.toComponent.namespace.value,
-                                  value        : idc.toComponent.value,
-                                  namespaceName: idc.toComponent.namespace.name])
+          result.identifiers.add([namespace    : idc.namespace.value,
+                                  value        : idc.value,
+                                  namespaceName: idc.namespace.name])
         }
         result.componentType = kbc.class.simpleName
 
@@ -531,9 +531,9 @@ class FTUpdateService {
 
         result.identifiers = []
         kbc.ids.each { idc ->
-          result.identifiers.add([namespace    : idc.toComponent.namespace.value,
-                                  value        : idc.toComponent.value,
-                                  namespaceName: idc.toComponent.namespace.name])
+          result.identifiers.add([namespace    : idc.namespace.value,
+                                  value        : idc.value,
+                                  namespaceName: idc.namespace.name])
         }
         if (kbc.dateFirstOnline) result.dateFirstOnline = dateFormatService.formatIsoTimestamp(kbc.dateFirstOnline)
         if (kbc.dateFirstInPrint) result.dateFristInPrint = dateFormatService.formatIsoTimestamp(kbc.dateFirstInPrint)
