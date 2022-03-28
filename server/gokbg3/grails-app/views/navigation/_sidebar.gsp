@@ -127,7 +127,7 @@
                 <li><g:link controller="admin" action="jobs"><i class="fa fa-angle-double-right fa-fw"></i> Manage Jobs</g:link></li>
                 <li><g:link controller="admin" action="manageFTControl"><i class="fa fa-angle-double-right fa-fw"></i> Manage FT Control</g:link></li>
               <li><g:link controller="admin" action="packagesChanges"><i class="fa fa-angle-double-right fa-fw"></i> Packages Changes</g:link></li>
-              <g:link controller="admin" action="findPackagesWithTippDuplicates"><i class="fa fa-angle-double-right fa-fw"></i> Packages with Tipp Duplicates</g:link></li>
+              <li><g:link controller="admin" action="findPackagesWithTippDuplicates"><i class="fa fa-angle-double-right fa-fw"></i> Packages with Tipp Duplicates</g:link></li>
             </ul>
           </li>
           <li><a href="#"><i class="fa fa-wrench fa-fw"></i>Admin Jobs<span class="fa arrow"></span></a>
