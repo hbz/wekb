@@ -233,18 +233,21 @@ class BootStrap {
             if (ns_obj) {
                 if (ns.pattern && !ns_obj.pattern) {
                     ns_obj.pattern = ns.pattern
-                    ns_obj.save(flush: true)
                 }
 
                 if (ns.name && !ns_obj.name) {
                     ns_obj.name = ns.name
-                    ns_obj.save(flush: true)
+                }
+
+                if (ns.family && !ns_obj.family) {
+                    ns_obj.family = ns.family
                 }
 
                 if (ns.targetType) {
                     ns_obj.targetType = targetType
-                    ns_obj.save(flush: true)
                 }
+
+                ns_obj.save(flush: true)
             } else {
                 ns.targetType = targetType
                 ns_obj = new IdentifierNamespace(ns).save(flush: true, failOnError: true)
