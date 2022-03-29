@@ -63,9 +63,30 @@ class Identifier {
     }
   }
 
+  protected def updateLastUpdatedFromLinkedObject(){
+    def ref = this.getReference()
+
+    if(ref instanceof KBComponent){
+      ref.lastUpdated = new Date()
+      ref.save()
+    }
+  }
+
   def beforeValidate (){
     log.debug("beforeValidate for ${this}")
     generateUuid()
+  }
+
+  def afterInsert (){
+    log.debug("afterSave for ${this}")
+    updateLastUpdatedFromLinkedObject()
+
+  }
+
+  def afterDelete (){
+    log.debug("afterDelete for ${this}")
+    updateLastUpdatedFromLinkedObject()
+
   }
 
   def beforeUpdate(){
@@ -75,12 +96,11 @@ class Identifier {
     }
   }
 
+  def afterUpdate(){
+    log.debug("afterUpdate for ${this}")
+    updateLastUpdatedFromLinkedObject()
 
-  public static normalizeIdentifier(String id) {
-    return id.toLowerCase().trim().replaceAll("\\W", "")
   }
-
-
   public String getName() {
     return value
   }
