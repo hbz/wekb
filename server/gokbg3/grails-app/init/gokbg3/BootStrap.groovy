@@ -265,17 +265,6 @@ class BootStrap {
         log.info("Ensuring ElasticSearch index")
         ensureEsIndices()
 
-
-        log.info("Bootstrap Identifier Cleanup")
-        Job hk_job = concurrencyManagerService.createJob {
-            cleanupService.housekeeping()
-        }.startOrQueue()
-
-        hk_job.description = "Bootstrap Identifier Cleanup"
-        hk_job.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'BootstrapIdentifierCleanup')
-
-        hk_job.startTime = new Date()
-
         log.info("Checking for missing component statistics")
         ComponentStatisticService.updateCompStats()
 

@@ -37,6 +37,32 @@ class AutoUpdatePackagesService {
 
     public static Date runningStartDate
 
+    Map findPackageToUpdateAndUpdate() {
+        List ygorDataList = []
+        def updPacks = Package.executeQuery(
+                "from Package p " +
+                        "where p.source is not null and " +
+                        "p.source.automaticUpdates = true " +
+                        "and (p.source.lastRun is null or p.source.lastRun < current_date)")
+        updPacks.each { Package p ->
+            if (p.source.needsUpdate()) {
+                def result = updateFromSource(p)
+                if(result.ygorData){
+                    ygorDataList << result.ygorData
+                }
+                sleep(10000)
+            }
+        }
+        log.debug("findPackageToUpdateAndUpdate: Package with Source and lastRun < currentDate (${updPacks.size()})")
+        if(ygorDataList.size() > 0){
+            log.debug("findPackageToUpdateAndUpdate: updPacks: ${updPacks.size()}, ygorDataList: ${ygorDataList.size()}")
+            ygorDataList.each { Map ygorData ->
+                importJsonFromUpdateSource(ygorData)
+            }
+        }
+
+    }
+
     Map updateFromSource(Package p, User user = null, ignoreLastChanged = false) {
         log.debug("updateFromSource")
 

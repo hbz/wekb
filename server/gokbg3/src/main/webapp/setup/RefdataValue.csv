@@ -325,11 +325,9 @@ Job.Type;CleanupDeletedComponents;CleanupDeletedComponents;CleanupDeletedCompone
 Job.Type;CleanupRejectedComponents;CleanupRejectedComponents;CleanupRejectedComponents
 Job.Type;DeleteTIWithoutHistory;DeleteTIWithoutHistory;DeleteTIWithoutHistory
 Job.Type;EnrichmentService;EnrichmentService;EnrichmentService
-Job.Type;EnsureTIPLs;EnsureTIPLs;EnsureTIPLs
 Job.Type;EnsureUUIDs;EnsureUUIDs;EnsureUUIDs
 Job.Type;GeneratePackageTypes;GeneratePackageTypes;GeneratePackageTypes
 Job.Type;GenerateTIPPCoverage;GenerateTIPPCoverage;GenerateTIPPCoverage
-Job.Type;Housekeeping;Housekeeping;Housekeeping
 Job.Type;IdentifierCleanup;IdentifierCleanup;IdentifierCleanup
 Job.Type;MarkInconsDateRanges;MarkInconsDateRanges;MarkInconsDateRanges
 Job.Type;MasterListUpdate;MasterListUpdate;MasterListUpdate
