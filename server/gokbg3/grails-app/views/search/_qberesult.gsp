@@ -146,6 +146,12 @@
                       ${c.value}
                     </g:link>
                   </g:if>
+                  <g:elseif test="${c.outGoingLink != null}">
+                    ${c.value}
+                    <g:if test="${c.value}">
+                      &nbsp;<a aria-label="${c.value}" href="${c.value.startsWith('http') ? c.value : 'http://' + c.value}" target="new"><i class="fas fa-external-link-alt"></i></a>
+                    </g:if>
+                  </g:elseif>
                   <g:elseif test="${c.value instanceof Boolean}">
                     <g:if test="${c.value}">
                       <i class="fa fa-check-circle text-success fa-lg"

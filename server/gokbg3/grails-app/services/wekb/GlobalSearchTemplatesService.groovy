@@ -1259,14 +1259,14 @@ class GlobalSearchTemplatesService {
                                  'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
                         ],*/
                         qbeResults: [
-                                [heading: 'Title Persistent Id', property: 'persistentId', link: true],
                                 [heading: 'Title', property: 'name', link: true],
                                 [heading: 'Type', property: 'publicationType?.value', sort: 'publicationType.value'],
                                 [heading: 'Medium', property: 'medium?.value', sort: 'medium.value'],
                                 [heading: 'Package', qpEquiv: 'qp_pkg_id', property: 'pkg?.name', link: true],
                                 [heading: 'Platform', qpEquiv: 'qp_plat_id', property: 'hostPlatform?.name', link: true],
                                 [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
-                                [heading: 'Status', property: 'status?.value', sort: 'status.value']
+                                [heading: 'Status', property: 'status?.value', sort: 'status.value'],
+                                [heading: 'URL', property: 'url', sort: 'url', outGoingLink: true]
                         ]
                 ]
         ]
@@ -1423,14 +1423,13 @@ class GlobalSearchTemplatesService {
 
                         ],
                         qbeResults: [
-                                [heading: 'Title Persistent Id', property: 'persistentId', link: true],
                                 [heading: 'Title', property: 'name', link: true],
                                 [heading: 'Type', property: 'publicationType?.value', sort: 'publicationType.value'],
                                 [heading: 'Medium', property: 'medium?.value', sort: 'medium.value'],
-                                [heading: 'Package', qpEquiv: 'qp_pkg_id', property: 'pkg?.name', link: true],
                                 [heading: 'Platform', qpEquiv: 'qp_plat_id', property: 'hostPlatform?.name', link: true],
                                 [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
-                                [heading: 'Status', property: 'status?.value', sort: 'status.value']
+                                [heading: 'Status', property: 'status?.value', sort: 'status.value'],
+                                [heading: 'URL', property: 'url', sort: 'url', outGoingLink: true]
                         ]
                 ]
         ]
