@@ -174,7 +174,7 @@ class CreateController {
 
             log.debug("Saving..");
             if ( !result.newobj.validate() ) {
-              flash.error = []
+              result.errors = []
 
               result.newobj.errors.allErrors.each { eo ->
 
@@ -203,17 +203,15 @@ class CreateController {
                 }
 
                 if (errorMessage) {
-                  flash.error.add(errorMessage)
+                  result.errors.add(errorMessage)
                 }else{
                   log.debug("No message found for ${eo.getCodes()}")
                 }
               }
 
-              if ( flash.error.size() == 0 ) {
+             /* if ( flash.error.size() == 0 ) {
                 flash.error.add("There has been an error creating the component. Please try again.")
-              }
-
-              result.errors = flash.error
+              }*/
 
               result.uri = createLink([controller: 'create', action:'index', params:[tmpl:params.cls]])
             } else {
