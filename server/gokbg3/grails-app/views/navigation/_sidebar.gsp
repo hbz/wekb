@@ -127,6 +127,7 @@
                 <li><g:link controller="admin" action="manageFTControl"><i class="fa fa-angle-double-right fa-fw"></i> Manage FT Control</g:link></li>
               <li><g:link controller="admin" action="packagesChanges"><i class="fa fa-angle-double-right fa-fw"></i> Packages Changes</g:link></li>
               <li><g:link controller="admin" action="findPackagesWithTippDuplicates"><i class="fa fa-angle-double-right fa-fw"></i> Packages with Tipp Duplicates</g:link></li>
+              <li><g:link controller="admin" action="tippIdentifiersWithSameNameSpace"><i class="fa fa-angle-double-right fa-fw"></i> Title Identifiers with same Identifier Namespace</g:link></li>
             </ul>
           </li>
           <li><a href="#"><i class="fa fa-wrench fa-fw"></i>Admin Jobs<span class="fa arrow"></span></a>
@@ -137,21 +138,17 @@
               <li><g:link controller="admin" action="cleanup" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Expunge Deleted Records</g:link></li>
               <li><g:link controller="admin" action="cleanupPlatforms" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Deprecate Platforms Without URLs</g:link></li>
               <li><g:link controller="admin" action="reviewDatesOfTippCoverage" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Add Reviews for wrong Tipp Coverage Dates</g:link></li>
-              <li><g:link controller="admin" action="cleanupRejected" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Expunge Rejected Records</g:link></li>
               <li><g:link controller="admin" action="ensureUuids" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Ensure UUIDs</g:link></li>
               <li><g:link controller="admin" action="addPackageTypes" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Ensure Package Content Types</g:link></li>
               <li><g:link controller="admin" action="autoUpdatePackages" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i>Auto Update Packages</g:link></li>
+              <li><g:link controller="admin" action="cleanupTippIdentifersWithSameNamespace" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i>Cleanup Tipp Identifers with same Namespace</g:link></li>
+              <li><g:link controller="admin" action="setTippsWithoutUrlToDeleted" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i>Set Tipps without Url to deleted</g:link></li>
             </ul>
           </li>
           <li  class="${controllerName == "frontend" && actionName == 'index' ? 'active' : ''}" ><g:link controller="frontend" action="index"><i class="fa fa-angle-double-right fa-fw"></i> Frontend</g:link></li>
           <li class="${controllerName == "home" && actionName == 'about' ? 'active' : ''}" ><g:link controller="home" action="about"><i class="fa fa-info fa-fw"></i> Operating environment</g:link></li>
         </sec:ifAnyGranted>
 
-        <g:if test="${ grailsApplication.config.gokb.decisionSupport}">
-          <sec:ifAnyGranted roles="ROLE_EDITOR">
-            <li><g:link controller="decisionSupport"><i class="fa fa-search fa-fw"></i> Decision Support Dashboard</g:link></li>
-          </sec:ifAnyGranted>
-        </g:if>
 
       </sec:ifLoggedIn>
       <sec:ifNotLoggedIn>

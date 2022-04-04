@@ -48,12 +48,12 @@
                     <g:if test="${controllerName == 'public'}">
                         <g:link controller="public" action="tippContent" id="${component.uuid}">
                             ${component.name}
-                        </g:link>
+                        </g:link> <b> (${component.status?.value}) </b>
                     </g:if>
                     <g:else>
                         <g:link controller="resource" action="show" id="${component.uuid}">
                             ${component.name}
-                        </g:link>
+                        </g:link> <b> (${component.status?.value}) </b>
                     </g:else>
                 </td>
                 <td>
@@ -104,12 +104,12 @@
                     <g:if test="${controllerName == 'public'}">
                         <g:link controller="public" action="packageContent" id="${component.uuid}">
                             ${component.name}
-                        </g:link>
+                        </g:link> <b> (${component.status?.value}) </b>
                     </g:if>
                     <g:else>
                         <g:link controller="resource" action="show" id="${component.uuid}">
                             ${component.name}
-                        </g:link>
+                        </g:link> <b> (${component.status?.value}) </b>
                     </g:else>
                 </td>
                 <g:set var="identifierOfComponent" value="${Identifier.findByValueAndPkg(d.value, component)}"/>
@@ -146,12 +146,12 @@
                     <g:if test="${controllerName == 'public'}">
                         <g:link controller="public" action="orgContent" id="${component.uuid}">
                             ${component.name}
-                        </g:link>
+                        </g:link> <b> (${component.status?.value}) </b>
                     </g:if>
                     <g:else>
                         <g:link controller="resource" action="show" id="${component.uuid}">
                             ${component.name}
-                        </g:link>
+                        </g:link> <b> (${component.status?.value}) </b>
                     </g:else>
                 </td>
                 <g:set var="identifierOfComponent" value="${Identifier.findByValueAndOrg(d.value, component)}"/>

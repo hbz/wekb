@@ -41,7 +41,8 @@ class ComponentController {
           if (params.ctype == 'st') {
 
             final String query = '''SELECT kb.kbc_id FROM kbcomponent AS kb WHERE
-             kb.kbc_id in (select id_new.id_kbcomponent_fk FROM identifier_new AS id_new WHERE id_new.id_namespace_fk = :namespace group by id_new.id_kbcomponent_fk having count(id_new.id_kbcomponent_fk) > 1)
+             kb.kbc_id in (select id_new.id_tipp_fk FROM identifier_new AS id_new WHERE id_new.id_namespace_fk = :namespace group by id_new.id_tipp_fk having count(id_new.id_tipp_fk) > 1)
+             and kb.kbc_status_rv_fk != :status
               order by kb.kbc_name limit :limit offset :offset ;
             '''
 
@@ -54,17 +55,20 @@ class ComponentController {
             '''*/
 
             final String cqry = '''SELECT count(kb.kbc_id) FROM kbcomponent AS kb WHERE
-              kb.kbc_id in (select id_new.id_kbcomponent_fk FROM identifier_new AS id_new WHERE id_new.id_namespace_fk = :namespace group by id_new.id_kbcomponent_fk having count(id_new.id_kbcomponent_fk) > 1);
+              kb.kbc_id in (select id_new.id_tipp_fk FROM identifier_new AS id_new WHERE id_new.id_namespace_fk = :namespace group by id_new.id_tipp_fk having count(id_new.id_tipp_fk) > 1)
+              and kb.kbc_status_rv_fk != :status
             '''
 
             final singleTitlesCount = session.createSQLQuery(cqry)
               .setParameter('namespace', ns.id)
+              .setParameter('status', status_deleted.id)
               .list()
 
             result.titleCount = singleTitlesCount[0]
 
             final singleTitles = session.createSQLQuery(query)
               .setParameter('namespace', ns.id)
+              .setParameter('status', status_deleted.id)
               .setParameter('limit', max)
               .setParameter('offset', offset)
               .list()

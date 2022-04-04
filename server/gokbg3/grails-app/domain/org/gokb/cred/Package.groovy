@@ -747,8 +747,24 @@ select tipp.id,
     List<TitleInstancePackagePlatform> tippsDuplicates = TitleInstancePackagePlatform.executeQuery("select tipp from TitleInstancePackagePlatform as tipp, Combo as pkg_combo" +
             " where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg and " +
             " tipp.url in (select tipp2.url from TitleInstancePackagePlatform tipp2, Combo as pkg_combo2 where pkg_combo2.toComponent=tipp2 and pkg_combo2.fromComponent = :pkg group by tipp2.url having count(tipp2.url) > 1)" +
-            " order by tipp.name",
+            " order by tipp.url",
             [pkg: this]) ?: []
+  }
+
+  @Transient
+  List<TitleInstancePackagePlatform> findTippDuplicatesByTitleID() {
+
+    IdentifierNamespace identifierNamespace = this.source ? this.source.targetNamespace : null
+
+    if(identifierNamespace) {
+      List<TitleInstancePackagePlatform> tippsDuplicates = TitleInstancePackagePlatform.executeQuery("select tipp from TitleInstancePackagePlatform as tipp join tipp.ids as ident, Combo as pkg_combo" +
+              " where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg " +
+              " and ident.value in (select ident2.value FROM Identifier AS ident2, TitleInstancePackagePlatform as tipp, Combo as pkg_combo WHERE ident2.namespace = :namespace and ident2.tipp = tipp and pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg" +
+              " group by ident2.value having count(ident2.value) > 1)",
+              [pkg: this, namespace: identifierNamespace]) ?: []
+    }else {
+      return []
+    }
   }
 
   @Transient
@@ -770,6 +786,22 @@ select tipp.id,
             [pkg: this])[0]
 
     return result
+  }
+
+  @Transient
+  Integer getTippDuplicatesByTitleIDCount() {
+    IdentifierNamespace identifierNamespace = this.source ? this.source.targetNamespace : null
+
+    if(identifierNamespace) {
+      int result = TitleInstancePackagePlatform.executeQuery("select count(tipp.id) from TitleInstancePackagePlatform as tipp join tipp.ids as ident, Combo as pkg_combo" +
+              " where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg " +
+              " and ident.value in (select ident2.value FROM Identifier AS ident2, TitleInstancePackagePlatform as tipp, Combo as pkg_combo WHERE ident2.namespace = :namespace and ident2.tipp = tipp and pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg" +
+              " group by ident2.value having count(ident2.value) > 1)",
+              [pkg: this, namespace: identifierNamespace])[0]
+      return result
+    }else {
+      return 0
+    }
   }
 
   @Transient

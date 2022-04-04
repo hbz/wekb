@@ -30,11 +30,6 @@
                 <li><a href="#altnames" data-toggle="tab">Alternate Names <span
                         class="badge badge-warning">${d.variantNames.size()}</span></a></li>
 
-                <g:if test="${grailsApplication.config.gokb.decisionSupport?.active}">
-
-                    <li><a href="#ds" data-toggle="tab">Decision Support</a></li>
-                </g:if>
-
                 <li><a href="#review" data-toggle="tab">Review Tasks (Open/Total)<span
                         class="badge badge-warning">
                     ${d.reviewRequests?.findAll { it.status == org.gokb.cred.RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STATUS, 'Open') }.size()}/${d.reviewRequests.size()}

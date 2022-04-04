@@ -6,6 +6,7 @@ import de.wekb.helper.RCConstants
 import de.wekb.helper.RDStore
 import gokbg3.DateFormatService
 import grails.converters.JSON
+import grails.gorm.transactions.Transactional
 import grails.plugin.springsecurity.SpringSecurityService
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
@@ -181,20 +182,6 @@ class AdminController {
 
     j.description = "Cleanup Deleted Components"
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'CleanupDeletedComponents')
-    j.startTime = new Date()
-
-    redirect(controller: 'admin', action: 'jobs');
-  }
-
-  def cleanupRejected() {
-    Job j = concurrencyManagerService.createJob { Job j ->
-      cleanupService.expungeRejectedComponents(j)
-    }.startOrQueue()
-
-    log.debug "Triggering cleanup task. Started job #${j.uuid}"
-
-    j.description = "Cleanup Rejected Components"
-    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'CleanupRejectedComponents')
     j.startTime = new Date()
 
     redirect(controller: 'admin', action: 'jobs');
@@ -474,4 +461,97 @@ class AdminController {
     }
     result
   }
+
+  def cleanupTippIdentifersWithSameNamespace() {
+    /*Job j = concurrencyManagerService.createJob { Job j ->
+      cleanupService.cleanupTippIdentifersWithSameNamespace(j)
+    }.startOrQueue()
+
+    log.debug("Cleanup Tipp Identifers with same namespace #${j.uuid}")
+
+    j.description = "Cleanup Tipp Identifers with same namespace"
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'TIPPCleanup')
+    j.startTime = new Date()
+*/
+    cleanupService.cleanupTippIdentifersWithSameNamespace()
+    redirect(controller: 'admin', action: 'jobs');
+  }
+
+  def tippIdentifiersWithSameNameSpace(){
+      log.debug("tippIdentifiersWithSameNameSpace")
+
+      List<IdentifierNamespace> identifierNamespaces = IdentifierNamespace.findAllByTargetType(RDStore.IDENTIFIER_NAMESPACE_TARGET_TYPE_TIPP, [sort: 'value'])
+
+      String countQuery = "SELECT count(tipp.id) FROM TitleInstancePackagePlatform AS tipp WHERE " +
+              "tipp.id in (select ident.tipp FROM Identifier AS ident WHERE ident.namespace.id = :namespace group by ident.tipp having count(ident.tipp) > 1)"
+
+      String idQuery = "SELECT tipp.id FROM TitleInstancePackagePlatform AS tipp WHERE " +
+              "tipp.id in (select ident.tipp FROM Identifier AS ident WHERE ident.namespace.id = :namespace group by ident.tipp having count(ident.tipp) > 1)"
+
+
+      Integer total = 0
+      Map result = [:]
+      List namespaces = []
+      identifierNamespaces.each {IdentifierNamespace identifierNamespace ->
+        Integer tippCount = TitleInstancePackagePlatform.executeQuery(countQuery, [namespace: identifierNamespace.id])[0]
+        total = total + tippCount
+        Map namespace = [:]
+
+        List<Long> tippIds = TitleInstancePackagePlatform.executeQuery(idQuery, [namespace: identifierNamespace.id])
+
+        if(tippIds.size() > 0) {
+          namespace.name = identifierNamespace.value
+          namespace.family = identifierNamespace.family
+          namespace.count = tippCount
+          namespace.namespaceID = identifierNamespace.id
+          namespaces << namespace
+
+        }
+      }
+      result.namespaces = namespaces
+      result.total = total
+
+      log.debug("cleanupTippIdentifersWithSameNamespace: count ${total}")
+
+      result
+  }
+
+  def tippIdentifiersWithSameNameSpaceByNameSpace(){
+    log.debug("tippIdentifiersWithSameNameSpaceByNameSpace")
+
+    String countQuery = "SELECT count(tipp.id) FROM TitleInstancePackagePlatform AS tipp WHERE " +
+            "tipp.id in (select ident.tipp FROM Identifier AS ident WHERE ident.namespace.id = :namespace group by ident.tipp having count(ident.tipp) > 1)"
+
+    String query = "SELECT tipp FROM TitleInstancePackagePlatform AS tipp WHERE " +
+            "tipp.id in (select ident.tipp FROM Identifier AS ident WHERE ident.namespace.id = :namespace group by ident.tipp having count(ident.tipp) > 1)"
+
+    Map result = [:]
+    IdentifierNamespace identifierNamespace = IdentifierNamespace.findById(params.id)
+    Integer tippCount = TitleInstancePackagePlatform.executeQuery(countQuery, [namespace: identifierNamespace.id])[0]
+    List<TitleInstancePackagePlatform> tipps = TitleInstancePackagePlatform.executeQuery(query, [namespace: identifierNamespace.id])
+
+    result.namespace = identifierNamespace.value
+    result.count = tippCount
+    result.namespaceID = identifierNamespace.id
+
+    if (tipps.size() > 0) {
+
+      result.tipps = tipps
+    }
+
+    result
+  }
+
+  def setTippsWithoutUrlToDeleted(){
+    log.debug("setTippsWithoutUrlToDeleted")
+
+    List<Long> tippsIds = TitleInstancePackagePlatform.executeQuery("select id from TitleInstancePackagePlatform where (url is null or url = '') and status != :deleted", [deleted: RDStore.KBC_STATUS_DELETED])
+
+    Integer tippsToDeleted = tippsIds ? KBComponent.executeUpdate("update KBComponent set status = :deleted where id in (:tippIds)", [deleted: RDStore.KBC_STATUS_DELETED, tippIds: tippsIds]) : 0
+
+    flash.message = "Tipp without Url: ${tippsIds.size()}, Set tipps to deleted: ${tippsToDeleted}"
+
+    redirect(controller: 'admin', action: 'jobs')
+  }
+
 }

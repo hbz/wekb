@@ -29,6 +29,7 @@
                     <th>Curatory Groups</th>
                     <g:sortableColumn property="tippDuplicatesByNameCount" title="Tipp Duplicates By Name"/>
                     <g:sortableColumn property="tippDuplicatesByUrlCount" title="Tipp Duplicates By Url"/>
+                    <g:sortableColumn property="tippDuplicatesByTitleIDCount" title="Tipp Duplicates By Title ID"/>
                 </tr>
                 </thead>
                 <tbody>
@@ -64,10 +65,20 @@
                                 ${pkgMap.tippDuplicatesByUrlCount}
                             </g:link>
                         </td>
+                        <td>
+                            <g:link controller="admin" action="findTippDuplicatesByPkg" id="${pkg.uuid}">
+                                ${pkgMap.tippDuplicatesByTitleIDCount}
+                            </g:link>
+                        </td>
                     </tr>
                 </g:each>
                 </tbody>
             </table>
+
+            <div class="pagination mb-4 d-flex justify-content-center">
+                <g:paginate controller="${controllerName}" action="${actionName}" params="[id: params.id]" next="&raquo;" prev="&laquo;"
+                            max="${max}" offset="${offset}" total="${totalCount}"/>
+            </div>
 
         </div>
     </div>
