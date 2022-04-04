@@ -21,7 +21,10 @@ class AccessService {
             def curatedObj = null
             if(o instanceof Identifier){
                 curatedObj = o.reference.respondsTo("getCuratoryGroups") ? o.reference : ( o.reference.hasProperty('pkg') ? o.reference.pkg : false )
-            }else {
+            }else if(o instanceof Contact){
+                curatedObj = o.org
+            }
+            else {
                 curatedObj = o.respondsTo("getCuratoryGroups") ? o : ( o.hasProperty('pkg') ? o.pkg : false )
             }
 
