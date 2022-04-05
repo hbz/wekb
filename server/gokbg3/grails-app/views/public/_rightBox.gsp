@@ -1,5 +1,5 @@
 <%@page import="org.gokb.cred.TitleInstancePackagePlatform;"%>
-<g:set var="curatoryGroups" value="${d instanceof TitleInstancePackagePlatform ? d.pkg.curatoryGroups : d.curatoryGroups }" />
+<g:set var="curatoryGroups" value="${(d instanceof TitleInstancePackagePlatform && d.pkg) ? d.pkg.curatoryGroups : d.curatoryGroups }" />
 
 <div class="col-md-3">
     <div class="card p-4">
