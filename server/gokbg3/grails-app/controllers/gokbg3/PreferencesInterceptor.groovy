@@ -16,7 +16,6 @@ class PreferencesInterceptor {
     match(controller: 'group')
     match(controller: 'home')
     match(controller: 'ingest')
-    match(controller: 'masterList')
     match(controller: 'packages')
     match(controller: 'resource')
     match(controller: 'savedItems')

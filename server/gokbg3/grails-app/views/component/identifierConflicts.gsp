@@ -15,7 +15,7 @@
           <div class="input-group">
             <dt class="dt-label">Identifier Namespace</dt>
             <dd>
-              <gokb:simpleReferenceTypedown class="form-control" name="id" baseClass="org.gokb.cred.IdentifierNamespace" value="${namespace ? 'org.gokb.cred.IdentifierNamespace:' + namespace.id : ''}" />
+              <gokb:simpleReferenceTypedown class="form-control" name="id" baseClass="org.gokb.cred.IdentifierNamespace" value="${namespace ? 'org.gokb.cred.IdentifierNamespace:' + namespace.id : ''}" filter1="all"/>
             </dd>
             <dt class="dt-label">Conflict type</dt>
             <dd>
@@ -118,19 +118,19 @@
                       <g:each in="${Identifier.findAllByValue(did.value)}" var="idc">
                         <div>
                         <g:if test="${idc.tipp}">
-                          Title: <g:link controller="resource" action="show" id="${idc.uuid}">${idc.kbcomponent.name}</g:link> (Package: <g:link controller="resource" action="show" id="${idc.kbcomponent.uuid}">${idc.kbcomponent.pkg.name}</g:link>)
+                          Title: <g:link controller="resource" action="show" id="${idc.uuid}">${idc.tipp.name}</g:link> (Package: <g:link controller="resource" action="show" id="${idc.tipp.pkg.uuid}">${idc.tipp.pkg.name}</g:link>)
                         </g:if>
 
                         <g:if test="${idc.platform}">
-                          Plaftorm: <g:link controller="resource" action="show" id="${idc.uuid}">${idc.kbcomponent.name}</g:link>
+                          Plaftorm: <g:link controller="resource" action="show" id="${idc.uuid}">${idc.platform.name}</g:link>
                         </g:if>
 
                         <g:if test="${idc.pkg}">
-                          Package: <g:link controller="resource" action="show" id="${idc.uuid}">${idc.kbcomponent.name}</g:link>
+                          Package: <g:link controller="resource" action="show" id="${idc.uuid}">${idc.pkg.name}</g:link>
                         </g:if>
 
                         <g:if test="${idc.org}">
-                          Provider <g:link controller="resource" action="show" id="${idc.uuid}">${idc.kbcomponent.name}</g:link>
+                          Provider <g:link controller="resource" action="show" id="${idc.uuid}">${idc.org.name}</g:link>
                         </g:if>
                         </div>
 

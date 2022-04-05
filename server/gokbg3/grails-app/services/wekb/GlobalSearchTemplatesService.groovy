@@ -14,13 +14,7 @@ class GlobalSearchTemplatesService {
         globalSearchTemplates.put('allocatedReviewGroups', allocatedReviewGroups())
         globalSearchTemplates.put('components', components())
         globalSearchTemplates.put('curatoryGroups', curatoryGroups())
-        globalSearchTemplates.put('dsCategorys',dsCategorys())
-        globalSearchTemplates.put('dsCriterions', dsCriterions())
         globalSearchTemplates.put('domains', domains())
-        globalSearchTemplates.put('books', books())
-        globalSearchTemplates.put('databases', databases())
-        globalSearchTemplates.put('journals', journals())
-        globalSearchTemplates.put('folderContents', folderContents())
         globalSearchTemplates.put('identifiers', identifiers())
         globalSearchTemplates.put('jobResults', jobResults())
         globalSearchTemplates.put('namespaces', namespaces())
@@ -30,11 +24,11 @@ class GlobalSearchTemplatesService {
         globalSearchTemplates.put('packages', packages())
         globalSearchTemplates.put('platforms', platforms())
         globalSearchTemplates.put('refdataCategories', refdataCategories())
+        globalSearchTemplates.put('refdataValues', refdataValues())
         globalSearchTemplates.put('reviewRequests', reviewRequests())
         globalSearchTemplates.put('sources', sources())
         globalSearchTemplates.put('tipps', tipps())
         globalSearchTemplates.put('tippsOfPkg', tippsOfPkg())
-        globalSearchTemplates.put('titles', titles())
         globalSearchTemplates.put('userOrganisation', userOrganisations())
         globalSearchTemplates.put('users', users())
         globalSearchTemplates.put('userJobs', userJobs())
@@ -239,57 +233,6 @@ class GlobalSearchTemplatesService {
         result
     }
 
-    Map dsCategorys() {
-        Map result = [
-                baseclass: 'org.gokb.cred.DSCategory',
-                title    : 'DS Categories',
-                group    : 'Tertiary',
-                qbeConfig: [
-                        qbeForm   : [
-                                [
-                                        prompt     : 'Description',
-                                        qparam     : 'qp_descr',
-                                        placeholder: 'Description',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'description', 'wildcard': 'B']
-                                ],
-                        ],
-                        qbeGlobals: [
-                        ],
-                        qbeResults: [
-                                [heading: 'Code', property: 'code', link: true],
-                                [heading: 'Description', property: 'description', link: true],
-                        ]
-                ]
-        ]
-        result
-    }
-
-    Map dsCriterions() {
-        Map result = [
-                baseclass: 'org.gokb.cred.DSCriterion',
-                title    : 'DS Criterion',
-                group    : 'Tertiary',
-                qbeConfig: [
-                        qbeForm   : [
-                                [
-                                        prompt     : 'Description',
-                                        qparam     : 'qp_descr',
-                                        placeholder: 'Description',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'description', 'wildcard': 'B']
-                                ],
-                        ],
-                        qbeGlobals: [
-                        ],
-                        qbeResults: [
-                                [heading: 'Category', property: 'owner.description', link: true],
-                                [heading: 'Title', property: 'title'],
-                                [heading: 'Description', property: 'description'],
-                        ]
-                ]
-        ]
-        result
-    }
-
     Map domains() {
         Map result = [
                 baseclass: 'org.gokb.cred.KBDomainInfo',
@@ -310,178 +253,6 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Display Name', property: 'displayName'],
                                 [heading: 'Sort Key', property: 'dcSortOrder'],
                                 [heading: 'Type', property: 'type?.value'],
-                        ]
-                ]
-        ]
-        result
-    }
-
-    Map books() {
-        Map result = [
-                baseclass   : 'org.gokb.cred.BookInstance',
-                title       : 'eBooks',
-                group       : 'Secondary',
-                defaultSort : 'name',
-                defaultOrder: 'asc',
-                qbeConfig   : [
-                        qbeForm   : [
-                                [
-                                        prompt     : 'Book Title',
-                                        qparam     : 'qp_name',
-                                        placeholder: 'Name or title of item',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'name', 'wildcard': 'R']
-                                ],
-                                [
-                                        type       : 'lookup',
-                                        baseClass  : 'org.gokb.cred.Org',
-                                        prompt     : 'Publisher',
-                                        qparam     : 'qp_pub',
-                                        placeholder: 'Publisher',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'publisher'],
-                                        hide       : true
-                                ],
-                                [
-                                        prompt     : 'Identifier',
-                                        qparam     : 'qp_identifier',
-                                        placeholder: 'Identifier Value',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'ids.value'],
-                                        hide       : false
-                                ],
-                        ],
-                        qbeGlobals: [
-                                ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
-                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
-                        ],
-                        qbeResults: [
-                                [heading: 'Title', property: 'name', link: true, sort: 'name'],
-                                [heading: 'Status', property: 'status?.value', sort: 'status'],
-                                [heading: 'Date Created', property: 'dateCreated', sort: 'dateCreated'],
-                                [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
-                        ]
-                ]
-        ]
-        result
-    }
-
-    Map databases() {
-        Map result = [
-                baseclass   : 'org.gokb.cred.DatabaseInstance',
-                title       : 'Databases',
-                group       : 'Secondary',
-                defaultSort : 'name',
-                defaultOrder: 'asc',
-                qbeConfig   : [
-                        qbeForm   : [
-                                [
-                                        prompt     : 'Database Title',
-                                        qparam     : 'qp_name',
-                                        placeholder: 'Name or title of item',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'name', 'wildcard': 'R']
-                                ],
-                                [
-                                        type       : 'lookup',
-                                        baseClass  : 'org.gokb.cred.Org',
-                                        prompt     : 'Publisher',
-                                        qparam     : 'qp_pub',
-                                        placeholder: 'Publisher',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'publisher'],
-                                        hide       : true
-                                ],
-                        ],
-                        qbeGlobals: [
-                                ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
-                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
-                        ],
-                        qbeResults: [
-                                [heading: 'Title', property: 'name', link: true, sort: 'name'],
-                                [heading: 'Status', property: 'status?.value', sort: 'status'],
-                                [heading: 'Date Created', property: 'dateCreated', sort: 'dateCreated'],
-                                [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
-                        ]
-                ]
-        ]
-        result
-    }
-
-    Map journals() {
-        Map result = [
-                baseclass   : 'org.gokb.cred.JournalInstance',
-                title       : 'Journals',
-                group       : 'Secondary',
-                defaultSort : 'name',
-                defaultOrder: 'asc',
-                qbeConfig   : [
-                        qbeForm   : [
-                                [
-                                        prompt     : 'Journal Title',
-                                        qparam     : 'qp_name',
-                                        placeholder: 'Name or title of item',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'name', 'wildcard': 'R']
-                                ],
-                                [
-                                        type       : 'lookup',
-                                        baseClass  : 'org.gokb.cred.Org',
-                                        prompt     : 'Publisher',
-                                        qparam     : 'qp_pub',
-                                        placeholder: 'Publisher',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'publisher'],
-                                        hide       : false
-                                ],
-                                [
-                                        prompt     : 'Identifier',
-                                        qparam     : 'qp_identifier',
-                                        placeholder: 'Identifier Value',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'ids.value'],
-                                        hide       : false
-                                ],
-                                [
-                                        type       : 'lookup',
-                                        baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : RCConstants.KBCOMPONENT_STATUS,
-                                        prompt     : 'Status',
-                                        qparam     : 'qp_status',
-                                        placeholder: 'Status of item',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'status'],
-                                        // II: Default not yet implemented
-                                        default    : [type: 'query', query: 'select r from RefdataValue where r.value=:v and r.owner.description=:o', params: ['Current', RCConstants.KBCOMPONENT_STATUS]]
-                                ],
-                        ],
-                        qbeGlobals: [
-                                ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
-                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
-                        ],
-                        qbeResults: [
-                                [heading: 'Title', property: 'name', link: true, sort: 'name'],
-                                [heading: 'Status', property: 'status?.value', sort: 'status'],
-                                [heading: 'Date Created', property: 'dateCreated', sort: 'dateCreated'],
-                                [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
-                        ]
-                ]
-        ]
-        result
-    }
-
-    Map folderContents() {
-        Map result = [
-                baseclass   : 'org.gokb.cred.FolderEntry',
-                title       : 'Folder Contents',
-                group       : 'Secondary',
-                defaultSort : 'id',
-                defaultOrder: 'asc',
-                qbeConfig   : [
-                        qbeForm   : [
-                                [
-                                        prompt     : 'Folder ID',
-                                        qparam     : 'qp_folder_id',
-                                        placeholder: 'Folder ID',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'folder.id', 'type': 'java.lang.Long']
-                                ],
-                        ],
-                        qbeGlobals: [
-                        ],
-                        qbeResults: [
-                                [heading: 'Name/Title', property: 'displayName', link: true],
-                                [heading: 'Availability', property: 'linkedItem.tipps?.size()?:"none"'],
                         ]
                 ]
         ]
@@ -851,7 +622,7 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
                                 [heading: 'Titles', property: 'currentTippCount'],
-                                [heading: 'T', property: 'tippDuplicatesByUrlCount'],
+                               //[heading: 'T', property: 'tippDuplicatesByURLCount'],
                                 [heading: 'Source', property: 'source?.name', link: true],
                         ],
                         actions   : [
@@ -934,6 +705,8 @@ class GlobalSearchTemplatesService {
                 baseclass: 'org.gokb.cred.RefdataCategory',
                 title    : 'Refdata Categories ',
                 group    : 'Secondary',
+                defaultSort : 'desc',
+                defaultOrder: 'asc',
                 qbeConfig: [
                         qbeForm   : [
                                 [
@@ -948,6 +721,53 @@ class GlobalSearchTemplatesService {
                         ],
                         qbeResults: [
                                 [heading: 'Description', sort: 'desc', property: 'desc', link: true],
+                                [heading: 'Description EN', sort: 'desc_en', property: 'desc_en'],
+                                [heading: 'Description DE', sort: 'desc_de', property: 'desc_de'],
+                                [heading: 'Hard Data', sort: 'isHardData', property: 'isHardData'],
+                                [heading: 'Date Created', property: 'dateCreated', sort: 'dateCreated'],
+                                [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
+                                [heading: 'Refdata Values', sort: 'valuesCount', property: 'valuesCount'],
+                        ]
+                ]
+        ]
+
+        result
+    }
+
+    Map refdataValues() {
+        Map result = [
+                baseclass: 'org.gokb.cred.RefdataValue',
+                title    : 'Refdata Values ',
+                group    : 'Secondary',
+                defaultSort : 'owner',
+                defaultOrder: 'asc',
+                qbeConfig: [
+                        qbeForm   : [
+                                [
+                                        prompt     : 'Description',
+                                        qparam     : 'qp_desc',
+                                        placeholder: 'Description',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'desc']
+                                ],
+
+                                [
+                                        prompt     : 'Value',
+                                        qparam     : 'qp_value',
+                                        placeholder: 'Value',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'value']
+                                ],
+                        ],
+                        qbeGlobals: [
+                        ],
+                        qbeResults: [
+                                [heading: 'Description', sort: 'desc', property: 'desc', link: true],
+                                [heading: 'Value', sort: 'value', property: 'value'],
+                                /*[heading: 'Value EN', sort: 'value_en', property: 'value_en'],
+                                [heading: 'Value DE', sort: 'value_de', property: 'value_de'],
+                                [heading: 'Hard Data', sort: 'isHardData', property: 'isHardData'],
+                                [heading: 'Date Created', property: 'dateCreated', sort: 'dateCreated'],
+                                [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
+                                [heading: 'Refdata Category', sort: 'owner', property: 'owner'],*/
                         ]
                 ]
         ]
@@ -1046,87 +866,6 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Last Run', property: 'lastRun'],
                                 [heading: 'Identifier Namespace', property: 'targetNamespace?.value'],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
-                        ]
-                ]
-        ]
-        result
-    }
-
-    Map titles() {
-        Map result = [
-                baseclass: 'org.gokb.cred.TitleInstance',
-                title    : 'Titles (General)',
-                group    : 'Secondary',
-                // defaultSort:'name',
-                // defaultOrder:'asc',
-                // useDistinct: true,
-                qbeConfig: [
-                        qbeForm   : [
-                                [
-                                        prompt     : 'Name or Title',
-                                        qparam     : 'qp_name',
-                                        placeholder: 'Name or title of item',
-                                        // contextTree:['ctxtp':'qry', 'comparator' : 'ilike', 'prop':'name','wildcard':'R']
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'name', 'wildcard': 'R'] // , normalise:true
-                                ],
-                                [
-                                        type       : 'lookup',
-                                        baseClass  : 'org.gokb.cred.Org',
-                                        prompt     : 'Publisher',
-                                        qparam     : 'qp_pub',
-                                        placeholder: 'Publisher',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'publisher'],
-                                        hide       : false
-                                ],
-                                [
-                                        prompt     : 'Identifier',
-                                        qparam     : 'qp_identifier',
-                                        placeholder: 'Identifier Value',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'ids.value'],
-                                        hide       : false
-                                ],
-                                [
-                                        type       : 'lookup',
-                                        baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : RCConstants.TITLEINSTANCE_MEDIUM,
-                                        prompt     : 'Type',
-                                        qparam     : 'qp_medium',
-                                        placeholder: 'Medium of item',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'medium'],
-                                        // II: Default not yet implemented
-                                ],
-                                [
-                                        type       : 'lookup',
-                                        baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : RCConstants.KBCOMPONENT_STATUS,
-                                        prompt     : 'Status',
-                                        qparam     : 'qp_status',
-                                        placeholder: 'Status of item',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'status'],
-                                        // II: Default not yet implemented
-                                        default    : [type: 'query', query: 'select r from RefdataValue where r.value=:v and r.owner.description=:o', params: ['Current', RCConstants.KBCOMPONENT_STATUS]]
-                                ],
-
-                                // In order for this to work as users expect, we're going to need a unique clause at the root context, or we get
-                                // repeated rows where a wildcard matches multiple titles. [That or this clause needs to be an "exists" caluse]
-                                // [
-                                //   prompt:'Identifier',
-                                //   qparam:'qp_identifier',
-                                //   placeholder:'Any identifier',
-                                //   contextTree:['ctxtp':'qry', 'comparator' : 'ilike', 'prop':'ids.value','wildcard':'B']
-                                // ],
-                        ],
-                        qbeGlobals: [
-                                ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
-                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
-                        ],
-                        qbeResults: [
-                                [heading: 'ID', property: 'id', link: true, sort: 'name'],
-                                [heading: 'Name/Title', property: 'name', sort: 'name', link: true],
-                                [heading: 'Type', property: 'medium?.value', sort: 'name'],
-                                [heading: 'Status', property: 'status?.value', sort: 'status'],
-                                [heading: 'Date Created', property: 'dateCreated', sort: 'dateCreated'],
-                                [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
                         ]
                 ]
         ]
@@ -1259,14 +998,14 @@ class GlobalSearchTemplatesService {
                                  'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']
                         ],*/
                         qbeResults: [
-                                [heading: 'Title Persistent Id', property: 'persistentId', link: true],
                                 [heading: 'Title', property: 'name', link: true],
                                 [heading: 'Type', property: 'publicationType?.value', sort: 'publicationType.value'],
                                 [heading: 'Medium', property: 'medium?.value', sort: 'medium.value'],
                                 [heading: 'Package', qpEquiv: 'qp_pkg_id', property: 'pkg?.name', link: true],
                                 [heading: 'Platform', qpEquiv: 'qp_plat_id', property: 'hostPlatform?.name', link: true],
                                 [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
-                                [heading: 'Status', property: 'status?.value', sort: 'status.value']
+                                [heading: 'Status', property: 'status?.value', sort: 'status.value'],
+                                [heading: 'URL', property: 'url', sort: 'url', outGoingLink: true]
                         ]
                 ]
         ]
@@ -1423,14 +1162,13 @@ class GlobalSearchTemplatesService {
 
                         ],
                         qbeResults: [
-                                [heading: 'Title Persistent Id', property: 'persistentId', link: true],
                                 [heading: 'Title', property: 'name', link: true],
                                 [heading: 'Type', property: 'publicationType?.value', sort: 'publicationType.value'],
                                 [heading: 'Medium', property: 'medium?.value', sort: 'medium.value'],
-                                [heading: 'Package', qpEquiv: 'qp_pkg_id', property: 'pkg?.name', link: true],
                                 [heading: 'Platform', qpEquiv: 'qp_plat_id', property: 'hostPlatform?.name', link: true],
                                 [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
-                                [heading: 'Status', property: 'status?.value', sort: 'status.value']
+                                [heading: 'Status', property: 'status?.value', sort: 'status.value'],
+                                [heading: 'URL', property: 'url', sort: 'url', outGoingLink: true]
                         ]
                 ]
         ]

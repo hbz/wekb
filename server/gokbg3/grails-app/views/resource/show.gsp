@@ -170,8 +170,7 @@
     </div>
 </div>
 
-<g:render template="/apptemplates/secondTemplates/messages"
-          model="${["preMessage": preMsg]}"/>
+<g:render template="/apptemplates/secondTemplates/messages"/>
 
 <div id="infoModal" class="qmodal modal fade modal-wide" role="dialog">
     <div class="modal-dialog">

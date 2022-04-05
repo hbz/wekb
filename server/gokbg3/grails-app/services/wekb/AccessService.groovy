@@ -6,6 +6,7 @@ import grails.plugin.springsecurity.SpringSecurityService
 import grails.plugin.springsecurity.SpringSecurityUtils
 import grails.web.servlet.mvc.GrailsParameterMap
 import org.gokb.cred.CuratoryGroup
+import org.gokb.cred.Identifier
 import org.gokb.cred.User
 
 @Transactional
@@ -17,8 +18,16 @@ class AccessService {
         boolean editable = false
 
         if (!(o.respondsTo('isSystemComponent') && o.isSystemComponent())) {
+            def curatedObj = null
+            if(o instanceof Identifier){
+                curatedObj = o.reference.respondsTo("getCuratoryGroups") ? o.reference : ( o.reference.hasProperty('pkg') ? o.reference.pkg : false )
+            }else if(o instanceof Contact){
+                curatedObj = o.org
+            }
+            else {
+                curatedObj = o.respondsTo("getCuratoryGroups") ? o : ( o.hasProperty('pkg') ? o.pkg : false )
+            }
 
-            def curatedObj = o.respondsTo("getCuratoryGroups") ? o : ( o.hasProperty('pkg') ? o.pkg : false )
             User user = springSecurityService.currentUser
             if (curatedObj && curatedObj.curatoryGroups && curatedObj.niceName != 'User') {
 

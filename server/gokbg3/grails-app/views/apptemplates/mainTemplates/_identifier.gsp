@@ -48,12 +48,12 @@
                     <g:if test="${controllerName == 'public'}">
                         <g:link controller="public" action="tippContent" id="${component.uuid}">
                             ${component.name}
-                        </g:link>
+                        </g:link> <b> (${component.status?.value}) </b>
                     </g:if>
                     <g:else>
                         <g:link controller="resource" action="show" id="${component.uuid}">
                             ${component.name}
-                        </g:link>
+                        </g:link> <b> (${component.status?.value}) </b>
                     </g:else>
                 </td>
                 <td>
@@ -75,7 +75,7 @@
                     <td>
                         <g:link controller='ajaxSupport'
                                 action='delete'
-                                params="${["__context": "${identifierOfComponent.class.name}:${identifierOfComponent.id}", 'fragment': fragment]}"
+                                params="${["__context": "${identifierOfComponent.class.name}:${identifierOfComponent.id}", 'fragment': 'identifiers']}"
                                 class="confirm-click btn-delete"
                                 title="Delete this link"
                                 data-confirm-message="Are you sure you wish to delete this Identifier from the title ${component}?">Delete</g:link>
@@ -104,12 +104,12 @@
                     <g:if test="${controllerName == 'public'}">
                         <g:link controller="public" action="packageContent" id="${component.uuid}">
                             ${component.name}
-                        </g:link>
+                        </g:link> <b> (${component.status?.value}) </b>
                     </g:if>
                     <g:else>
                         <g:link controller="resource" action="show" id="${component.uuid}">
                             ${component.name}
-                        </g:link>
+                        </g:link> <b> (${component.status?.value}) </b>
                     </g:else>
                 </td>
                 <g:set var="identifierOfComponent" value="${Identifier.findByValueAndPkg(d.value, component)}"/>
@@ -117,7 +117,7 @@
                     <td>
                         <g:link controller='ajaxSupport'
                                 action='delete'
-                                params="${["__context": "${identifierOfComponent.class.name}:${identifierOfComponent.id}", 'fragment': fragment]}"
+                                params="${["__context": "${identifierOfComponent.class.name}:${identifierOfComponent.id}", 'fragment': 'identifiers']}"
                                 class="confirm-click btn-delete"
                                 title="Delete this link"
                                 data-confirm-message="Are you sure you wish to delete this Identifier from the title ${component}?">Delete</g:link>
@@ -146,12 +146,12 @@
                     <g:if test="${controllerName == 'public'}">
                         <g:link controller="public" action="orgContent" id="${component.uuid}">
                             ${component.name}
-                        </g:link>
+                        </g:link> <b> (${component.status?.value}) </b>
                     </g:if>
                     <g:else>
                         <g:link controller="resource" action="show" id="${component.uuid}">
                             ${component.name}
-                        </g:link>
+                        </g:link> <b> (${component.status?.value}) </b>
                     </g:else>
                 </td>
                 <g:set var="identifierOfComponent" value="${Identifier.findByValueAndOrg(d.value, component)}"/>
@@ -159,7 +159,7 @@
                     <td>
                         <g:link controller='ajaxSupport'
                                 action='delete'
-                                params="${["__context": "${identifierOfComponent.class.name}:${identifierOfComponent.id}", 'fragment': fragment]}"
+                                params="${["__context": "${identifierOfComponent.class.name}:${identifierOfComponent.id}", 'fragment': 'identifiers']}"
                                 class="confirm-click btn-delete"
                                 title="Delete this link"
                                 data-confirm-message="Are you sure you wish to delete this Identifier from the title ${component}?">Delete</g:link>
