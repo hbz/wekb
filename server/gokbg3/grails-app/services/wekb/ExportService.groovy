@@ -535,7 +535,7 @@ class ExportService {
         String packageEzbAnchor = "package_ezb_anchor"
         String packageIsci = "package_isci"
 
-        String titleIdNameSpace = pkg.source ? pkg.source.targetNamespace.value : 'FAKE'
+        String titleIdNameSpace = (pkg.source && pkg.source.targetNamespace) ? pkg.source.targetNamespace.value : 'FAKE'
 
         RefdataValue priceTypeList = RDStore.PRICE_TYPE_LIST
         RefdataValue priceTypeOAAPC = RDStore.PRICE_TYPE_OA_APC
