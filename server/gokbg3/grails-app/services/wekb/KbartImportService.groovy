@@ -16,6 +16,7 @@ import org.gokb.cred.Package
 import org.gokb.cred.Platform
 import org.gokb.cred.RefdataCategory
 import org.gokb.cred.RefdataValue
+import org.gokb.cred.TIPPCoverageStatement
 import org.gokb.cred.TitleInstancePackagePlatform
 import org.grails.web.json.JSONArray
 
@@ -1046,7 +1047,7 @@ class KbartImportService {
             def endAsDate = (parsedEnd ? Date.from(parsedEnd.atZone(ZoneId.systemDefault()).toInstant()) : null)
             def conflicting_statements = []
 
-            tipp.coverageStatements?.each { tcs ->
+            tipp.coverageStatements?.each { TIPPCoverageStatement tcs ->
                 if (c.id && tcs.id == c.id) {
 
                     com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startIssue', c.startIssue)
@@ -1059,7 +1060,7 @@ class KbartImportService {
                     com.k_int.ClassUtils.setStringIfDifferent(tcs, 'embargo', c.embargo)
 
                     com.k_int.ClassUtils.setStringIfDifferent(tcs, 'coverageNote', c.coverageNote)
-                    com.k_int.ClassUtils.setRefdataIfDifferent(tcs.coverageDepth, tcs, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, true)
+                    com.k_int.ClassUtils.setRefdataIfDifferent(tcs.coverageDepth?.value, tcs, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, true)
 
                     cs_match = true
                 } else if (!cs_match) {
@@ -1093,7 +1094,7 @@ class KbartImportService {
                         com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tcs, 'endDate', true)
                         com.k_int.ClassUtils.setStringIfDifferent(tcs, 'embargo', c.embargo)
                         com.k_int.ClassUtils.setStringIfDifferent(tcs, 'coverageNote', c.coverageNote)
-                        com.k_int.ClassUtils.setRefdataIfDifferent(tcs.coverageDepth, tcs, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, true)
+                        com.k_int.ClassUtils.setRefdataIfDifferent(tcs.coverageDepth?.value, tcs, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, true)
                     }
                 } else {
                     log.debug("Matched new coverage ${c} on multiple existing coverages!")
