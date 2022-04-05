@@ -6,11 +6,36 @@
 </head>
 
 <body>
+<g:set var="showView" value="${null}"/>
+
 
 <div class="container">
     <g:if test="${qbetemplate}">
-        <h1 class="page-header">${qbetemplate.title ?: ''} <g:if test="${refObject}">for ${refObject.niceName}: <g:link
-                controller="resource" action="show" id="${refObject.id}">${refObject.name}</g:link></g:if></h1>
+        <h1 class="page-header">${qbetemplate.title ?: ''}
+            <g:if test="${refObject}">
+                <%
+                    showView = null
+                    if (refObject.niceName != null && refObject.niceName != "") {
+                        if (refObject.niceName.contains("TitleInstancePackagePlatform")) {
+                            showView = "tippContent"
+                        }
+                        else if (refObject.niceName.contains("Package")) {
+                            showView = "packageContent"
+                        }
+                        else if (refObject.niceName.contains("Platform")) {
+                            showView = "platformContent"
+                        }
+                        else if (refObject.niceName.contains("Org")) {
+                            showView = "orgContent"
+                        }
+
+                    }
+                %>
+
+            for ${refObject.niceName}: <g:link
+                controller="public" action="${showView}" id="${refObject.class.name}:${refObject.id}">${refObject.name}</g:link>
+            </g:if>
+        </h1>
         <br>
         <br>
     </g:if>

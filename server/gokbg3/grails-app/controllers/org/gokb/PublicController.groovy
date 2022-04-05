@@ -370,7 +370,7 @@ class PublicController {
 
     def searchResult = [:]
 
-    List allowedSearch = ["g:tipps", "g:platforms", "g:packages", "g:packages", "g:orgs"]
+    List allowedSearch = ["g:tipps", "g:platforms", "g:packages", "g:orgs", "g:tippsOfPkg"]
 
     if(params.qbe in allowedSearch) {
 

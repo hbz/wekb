@@ -3,6 +3,7 @@ package org.gokb.cred
 import de.wekb.helper.RCConstants
 
 import javax.persistence.Transient
+import java.sql.Timestamp
 import java.time.LocalDate
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -218,16 +219,16 @@ class Source extends KBComponent {
   }
 
   @Transient
-  Date nextUpdateDate() {
+  Timestamp getNextUpdateTimestamp() {
     //20:00:00 is time of Cronjob in AutoUpdatePackagesJob
-    if (lastRun == null) {
-      return Date.parse('dd.MM.yy hh:mm:SS', "${new Date().getDateString()} 20:00:00")
+    if (automaticUpdates && lastRun == null) {
+      return Date.parse('dd.MM.yy hh:mm:SS', "${new Date().getDateString()} 20:00:00").toTimestamp()
     }
-    if (frequency != null) {
+    if (automaticUpdates && frequency != null) {
       def interval = intervals.get(frequency.value)
       if (interval != null){
         Date due = getUpdateDay(interval)
-          return Date.parse('dd.MM.yy hh:mm:SS', "${due.getDateString()} 20:00:00")
+          return Date.parse('dd.MM.yy hh:mm:SS', "${due.getDateString()} 20:00:00").toTimestamp()
       }else {
         log.info("Source needsUpdate(): Frequency (${frequency}) is not null but intervals is null")
       }
