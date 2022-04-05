@@ -10,6 +10,8 @@ import org.hibernate.ScrollableResults
 import wekb.ExportService
 import wekb.SearchService
 
+import javax.servlet.ServletOutputStream
+
 
 class PublicController {
 
@@ -344,9 +346,16 @@ class PublicController {
       response.setContentType('text/tab-separated-values');
       response.setHeader("Content-disposition", "attachment; filename=\"${filename}\"")
 
-      def out = response.outputStream
+      ServletOutputStream out = response.outputStream
 
-      exportService.exportPackageTippsAsTSVNew(out, pkg)
+      Map<String,List> export = exportService.exportPackageTippsAsTSVNew(pkg)
+
+      out.withWriter { writer ->
+        writer.write("we:kb Export : Provider (${pkg.provider?.name}) : Package (${pkg.name}) : ${export_date}\n");
+        writer.write(exportService.generateSeparatorTableString(export.titleRow, export.rows, '\t'))
+      }
+      out.flush()
+      out.close()
 
     }
     catch ( Exception e ) {

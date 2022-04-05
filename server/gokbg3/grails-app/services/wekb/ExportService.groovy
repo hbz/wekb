@@ -25,6 +25,7 @@ import org.gokb.cred.TIPPCoverageStatement
 import org.gokb.cred.TitleInstancePackagePlatform
 import org.hibernate.Session
 
+import javax.servlet.ServletOutputStream
 import java.nio.file.Files
 import java.text.SimpleDateFormat
 
@@ -516,7 +517,7 @@ class ExportService {
     }
 
 
-    def exportPackageTippsAsTSVNew(def outputStream, Package pkg) {
+    Map<String,List> exportPackageTippsAsTSVNew(Package pkg) {
 
         def export_date = dateFormatService.formatDate(new Date())
         List<String> titleHeaders = getTitleHeadersTSV()
@@ -782,12 +783,8 @@ class ExportService {
             }
         }
 
-        outputStream.withWriter { writer ->
-            writer.write("we:kb Export : Provider (${pkg.provider?.name}) : Package (${pkg.name}) : ${export_date}\n");
-            writer.write(generateSeparatorTableString(export.titleRow, export.rows, '\t'))
-        }
-        outputStream.flush()
-        outputStream.close()
+        return export
+
     }
 
 
