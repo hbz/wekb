@@ -330,7 +330,6 @@ Job.Type;GeneratePackageTypes;GeneratePackageTypes;GeneratePackageTypes
 Job.Type;GenerateTIPPCoverage;GenerateTIPPCoverage;GenerateTIPPCoverage
 Job.Type;IdentifierCleanup;IdentifierCleanup;IdentifierCleanup
 Job.Type;MarkInconsDateRanges;MarkInconsDateRanges;MarkInconsDateRanges
-Job.Type;MasterListUpdate;MasterListUpdate;MasterListUpdate
 Job.Type;PackageCrossRef;PackageCrossRef;PackageCrossRef
 Job.Type;PackageCrossRef Auto;PackageCrossRef Auto;PackageCrossRef Auto
 Job.Type;PlatformCleanup;PlatformCleanup;PlatformCleanup

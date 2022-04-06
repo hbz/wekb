@@ -4,7 +4,6 @@ import grails.converters.JSON
 import grails.gorm.transactions.Transactional
 import grails.web.servlet.mvc.GrailsParameterMap
 import org.gokb.ClassExaminationService
-import org.gokb.DisplayTemplateService
 import org.gokb.GenericOIDService
 import org.gokb.GokbAclService
 import org.gokb.cred.KBComponent
