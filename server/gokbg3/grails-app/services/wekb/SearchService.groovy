@@ -219,7 +219,10 @@ class SearchService {
                         api_record["${rh.heading}"] = cobj ?: null
                     }
                     else {
-                        response_record.cols.add([link: (rh.link ? (final_oid ?: response_record.oid ) : null), value: (cobj != null ? (cobj ?: false) : '-Empty-')])
+                        response_record.cols.add([
+                                link: (rh.link ? (final_oid ?: response_record.oid ) : null),
+                                value: (cobj != null ? (cobj ?: false) : '-Empty-'),
+                                outGoingLink: rh.outGoingLink ?: null])
                     }
                 }
             }

@@ -1,4 +1,4 @@
-<%@ page import="org.gokb.cred.TitleInstancePackagePlatform; org.gokb.cred.Combo; de.wekb.helper.RDStore; org.gokb.cred.Package; org.gokb.cred.Org;" %>
+<%@ page import="org.gokb.cred.TitleInstancePackagePlatform; org.gokb.cred.Identifier; org.gokb.cred.Combo; de.wekb.helper.RDStore; org.gokb.cred.Package; org.gokb.cred.Org;" %>
 <dl class="dl-horizontal">
     <dt><gokb:annotatedLabel owner="${d}" property="namespace">Identifier Namespace</gokb:annotatedLabel></dt>
     <dd>${d.namespace?.value}</dd>
@@ -10,174 +10,164 @@
 
 <br>
 <br>
-<h4>Identified Components:</h4>
-            <%
-                List tippIDs = []
-                List pkgIDs = []
-                List orgIDs = []
+<h4>Identified Components with same Identifier:</h4>
+<%
+    List tippIDs = []
+    List pkgIDs = []
+    List orgIDs = []
 
-                d.identifiedComponents.each {
-                    if (it.class.simpleName == TitleInstancePackagePlatform.simpleName) {
-                        tippIDs << it
-                    }
-                    if (it.class.simpleName == Package.simpleName) {
-                        pkgIDs << it
-                    }
-                    if (it.class.simpleName == Org.simpleName) {
-                        orgIDs << it
-                    }
-                }
-            %>
+    Identifier.findAllByValue(d.value).each {
+        if (it.tipp) {
+            tippIDs << it.tipp
+        }
+        if (it.pkg) {
+            pkgIDs << it.pkg
+        }
+        if (it.org) {
+            orgIDs << it.org
+        }
+    }
+%>
 
 
-            <g:if test="${tippIDs}">
-            <table class="table table-striped table-bordered">
-                <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Package</th>
-                    <g:if test="${editable}">
-                        <th>Actions</th>
+<g:if test="${tippIDs}">
+    <table class="table table-striped table-bordered">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Package</th>
+            <g:if test="${editable}">
+                <th>Actions</th>
+            </g:if>
+        </tr>
+        </thead>
+        <tbody>
+        <g:each in="${tippIDs.sort { it.name }}" var="component">
+            <tr>
+                <td>
+                    <g:if test="${controllerName == 'public'}">
+                        <g:link controller="public" action="tippContent" id="${component.uuid}">
+                            ${component.name}
+                        </g:link> <b> (${component.status?.value}) </b>
                     </g:if>
-                </tr>
-                </thead>
-                <tbody>
-                <g:each in="${tippIDs.sort { it.name }}" var="component">
-                    <g:set var="combo"
-                           value="${Combo.findByFromComponentAndTypeAndToComponent(component, RDStore.COMBO_TYPE_KB_IDS, d)}"/>
-                    <g:if test="${combo.status == RDStore.COMBO_STATUS_ACTIVE}">
-                        <tr>
-                            <td>
-                                <g:if test="${controllerName == 'public'}">
-                                    <g:link controller="public" action="tippContent" id="${component.uuid}">
-                                        ${component.name}
-                                    </g:link>
-                                </g:if>
-                                <g:else>
-                                        <g:link controller="resource" action="show" id="${component.uuid}">
-                                            ${component.name}
-                                        </g:link>
-                                </g:else>
-                            </td>
-                            <td>
+                    <g:else>
+                        <g:link controller="resource" action="show" id="${component.uuid}">
+                            ${component.name}
+                        </g:link> <b> (${component.status?.value}) </b>
+                    </g:else>
+                </td>
+                <td>
+                    <g:if test="${component.pkg}">
                         <g:if test="${controllerName == 'public'}">
                             <g:link controller="public" action="packageContent" id="${component.pkg.uuid}">
                                 ${component.pkg.name}
                             </g:link>
                         </g:if>
                         <g:else>
-                                <g:link controller="resource" action="show" id="${component.pkg.uuid}">
-                                    ${component.pkg.name}
-                                </g:link>
+                            <g:link controller="resource" action="show" id="${component.pkg.uuid}">
+                                ${component.pkg.name}
+                            </g:link>
                         </g:else>
-                            </td>
-                            <g:if test="${editable}">
-                                <td>
-                                    <g:link
-                                            controller='ajaxSupport'
-                                            action='deleteCombo'
-                                            params="${['id': combo.id, 'fragment': fragment, 'propagate': "true"]}"
-                                            class="confirm-click btn-delete"
-                                            title="Delete this link"
-                                            data-confirm-message="Are you sure you wish to delete this Identifier from the title ${component}?">Delete</g:link>
-                                </td>
-                            </g:if>
-                        </tr>
                     </g:if>
-                </g:each>
-                </tbody>
-            </table>
-            </g:if>
+                </td>
+                <g:set var="identifierOfComponent" value="${Identifier.findByValueAndTipp(d.value, component)}"/>
+                <g:if test="${editable && identifierOfComponent}">
+                    <td>
+                        <g:link controller='ajaxSupport'
+                                action='delete'
+                                params="${["__context": "${identifierOfComponent.class.name}:${identifierOfComponent.id}", 'fragment': 'identifiers']}"
+                                class="confirm-click btn-delete"
+                                title="Delete this link"
+                                data-confirm-message="Are you sure you wish to delete this Identifier from the title ${component}?">Delete</g:link>
+                    </td>
+                </g:if>
+            </tr>
+        </g:each>
+        </tbody>
+    </table>
+</g:if>
 
-            <g:if test="${pkgIDs}">
-                <table class="table table-striped table-bordered">
-                    <thead>
-                    <tr>
-                        <th>Package</th>
-                        <g:if test="${editable}">
-                            <th>Actions</th>
-                        </g:if>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <g:each in="${pkgIDs.sort { it.name }}" var="component">
-                        <g:set var="combo"
-                               value="${Combo.findByFromComponentAndTypeAndToComponent(component, RDStore.COMBO_TYPE_KB_IDS, d)}"/>
-                        <g:if test="${combo.status == RDStore.COMBO_STATUS_ACTIVE}">
-                            <tr>
-                                <td>
-                                    <g:if test="${controllerName == 'public'}">
-                                        <g:link controller="public" action="packageContent" id="${component.uuid}">
-                                            ${component.name}
-                                        </g:link>
-                                    </g:if>
-                                    <g:else>
-                                            <g:link controller="resource" action="show" id="${component.uuid}">
-                                                ${component.name}
-                                            </g:link>
-                                    </g:else>
-                                </td>
-                                <g:if test="${editable}">
-                                    <td>
-                                        <g:link
-                                                controller='ajaxSupport'
-                                                action='deleteCombo'
-                                                params="${['id': combo.id, 'fragment': fragment, 'propagate': "true"]}"
-                                                class="confirm-click btn-delete"
-                                                title="Delete this link"
-                                                data-confirm-message="Are you sure you wish to delete this Identifier from the title ${component}?">Delete</g:link>
-                                    </td>
-                                </g:if>
-                            </tr>
-                        </g:if>
-                    </g:each>
-                    </tbody>
-                </table>
+<g:if test="${pkgIDs}">
+    <table class="table table-striped table-bordered">
+        <thead>
+        <tr>
+            <th>Package</th>
+            <g:if test="${editable}">
+                <th>Actions</th>
             </g:if>
+        </tr>
+        </thead>
+        <tbody>
+        <g:each in="${pkgIDs.sort { it.name }}" var="component">
+            <tr>
+                <td>
+                    <g:if test="${controllerName == 'public'}">
+                        <g:link controller="public" action="packageContent" id="${component.uuid}">
+                            ${component.name}
+                        </g:link> <b> (${component.status?.value}) </b>
+                    </g:if>
+                    <g:else>
+                        <g:link controller="resource" action="show" id="${component.uuid}">
+                            ${component.name}
+                        </g:link> <b> (${component.status?.value}) </b>
+                    </g:else>
+                </td>
+                <g:set var="identifierOfComponent" value="${Identifier.findByValueAndPkg(d.value, component)}"/>
+                <g:if test="${editable && identifierOfComponent}">
+                    <td>
+                        <g:link controller='ajaxSupport'
+                                action='delete'
+                                params="${["__context": "${identifierOfComponent.class.name}:${identifierOfComponent.id}", 'fragment': 'identifiers']}"
+                                class="confirm-click btn-delete"
+                                title="Delete this link"
+                                data-confirm-message="Are you sure you wish to delete this Identifier from the title ${component}?">Delete</g:link>
+                    </td>
+                </g:if>
+            </tr>
+        </g:each>
+        </tbody>
+    </table>
+</g:if>
 
-            <g:if test="${orgIDs}">
-                <table class="table table-striped table-bordered">
-                    <thead>
-                    <tr>
-                        <th>Provider</th>
-                        <g:if test="${editable}">
-                            <th>Actions</th>
-                        </g:if>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <g:each in="${orgIDs.sort { it.name }}" var="component">
-                        <g:set var="combo"
-                               value="${Combo.findByFromComponentAndTypeAndToComponent(component, RDStore.COMBO_TYPE_KB_IDS, d)}"/>
-                        <g:if test="${combo.status == RDStore.COMBO_STATUS_ACTIVE}">
-                            <tr>
-                                <td>
-                                    <g:if test="${controllerName == 'public'}">
-                                        <g:link controller="public" action="orgContent" id="${component.uuid}">
-                                            ${component.name}
-                                        </g:link>
-                                    </g:if>
-                                    <g:else>
-                                            <g:link controller="resource" action="show" id="${component.uuid}">
-                                                ${component.name}
-                                            </g:link>
-                                    </g:else>
-                                </td>
-                                <g:if test="${editable}">
-                                    <td>
-                                        <g:link
-                                                controller='ajaxSupport'
-                                                action='deleteCombo'
-                                                params="${['id': combo.id, 'fragment': fragment, 'propagate': "true"]}"
-                                                class="confirm-click btn-delete"
-                                                title="Delete this link"
-                                                data-confirm-message="Are you sure you wish to delete this Identifier from the title ${component}?">Delete</g:link>
-                                    </td>
-                                </g:if>
-                            </tr>
-                        </g:if>
-                    </g:each>
-                    </tbody>
-                </table>
+<g:if test="${orgIDs}">
+    <table class="table table-striped table-bordered">
+        <thead>
+        <tr>
+            <th>Provider</th>
+            <g:if test="${editable}">
+                <th>Actions</th>
             </g:if>
+        </tr>
+        </thead>
+        <tbody>
+        <g:each in="${orgIDs.sort { it.name }}" var="component">
+            <tr>
+                <td>
+                    <g:if test="${controllerName == 'public'}">
+                        <g:link controller="public" action="orgContent" id="${component.uuid}">
+                            ${component.name}
+                        </g:link> <b> (${component.status?.value}) </b>
+                    </g:if>
+                    <g:else>
+                        <g:link controller="resource" action="show" id="${component.uuid}">
+                            ${component.name}
+                        </g:link> <b> (${component.status?.value}) </b>
+                    </g:else>
+                </td>
+                <g:set var="identifierOfComponent" value="${Identifier.findByValueAndOrg(d.value, component)}"/>
+                <g:if test="${editable && identifierOfComponent}">
+                    <td>
+                        <g:link controller='ajaxSupport'
+                                action='delete'
+                                params="${["__context": "${identifierOfComponent.class.name}:${identifierOfComponent.id}", 'fragment': 'identifiers']}"
+                                class="confirm-click btn-delete"
+                                title="Delete this link"
+                                data-confirm-message="Are you sure you wish to delete this Identifier from the title ${component}?">Delete</g:link>
+                    </td>
+                </g:if>
+            </tr>
+        </g:each>
+        </tbody>
+    </table>
+</g:if>
 

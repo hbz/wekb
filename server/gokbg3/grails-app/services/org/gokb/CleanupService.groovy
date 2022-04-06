@@ -166,46 +166,6 @@ class CleanupService {
 
 
   @Transactional
-  def deleteOrphanedTipps(Job j = null) {
-    log.debug("Expunging TIPPs with missing links")
-
-    def delete_candidates = TitleInstancePackagePlatform.executeQuery("select tipp.id from TitleInstancePackagePlatform as tipp where not exists (from Combo as c where c.toComponent = tipp AND c.type.value = 'TitleInstance.Tipps')")
-
-    log.debug("Found ${delete_candidates.size()} erroneous TIPPs..")
-
-    def result = expungeByIds(delete_candidates, j)
-
-    log.debug("Done");
-    return new Date();
-  }
-
-
-  @Transactional
-  def deleteOrphanedIdentifiers(Job j = null) {
-    log.debug("Expunging Identifiers with missing links or missing linked components...")
-    def delete_candidates = new HashSet()
-    delete_candidates.addAll(
-        Identifier.executeQuery("SELECT id.id FROM Identifier AS id " +
-            "WHERE NOT EXISTS (SELECT 1 FROM Combo AS co WHERE co.toComponent = id)")
-    )
-    delete_candidates.addAll(
-        Identifier.executeQuery("SELECT id.id FROM Combo AS co, Identifier AS id, KBComponent AS kbc " +
-            "WHERE co.toComponent = id " +
-            "AND co.fromComponent = null")
-    )
-    delete_candidates.addAll(
-        Identifier.executeQuery("SELECT id.id FROM Combo AS co, Identifier AS id " +
-            "WHERE co.toComponent = id " +
-            "AND NOT EXISTS (SELECT 1 FROM KBComponent AS kbc WHERE kbc = co.fromComponent)")
-    )
-    log.debug("... found ${delete_candidates.size()} Identifier(s) with missing links or missing linked components.")
-    expungeByIds(delete_candidates, j)
-    log.debug("... Done: expunging Identifiers with missing links or missing linked components.")
-    return new Date()
-  }
-
-
-  @Transactional
   def expungeDeletedComponents(Job j = null) {
 
     log.debug("Process delete candidates");
@@ -342,149 +302,6 @@ class CleanupService {
     j.endTime = new Date()
   }
 
-  @Transactional
-  def ensureTipls(Job j = null)  {
-    log.debug("GOKb missing tipl check..")
-
-    def ctr = 0
-    def new_tipl = 0
-    def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
-    def combo_status_active = RefdataCategory.lookupOrCreate(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE)
-    def combo_tipp = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'TitleInstance.Tipps')
-    def combo_tipl = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'TitleInstance.Tipls')
-
-    try {
-
-      log.debug("Getting count..")
-      def count = TitleInstancePackagePlatform.executeQuery("select count(tipp.id) from TitleInstancePackagePlatform as tipp where tipp.status != ?",[status_deleted])[0]
-      def tipp_crit = new DetachedCriteria(TitleInstancePackagePlatform).build{
-        ne('status', status_deleted)
-      }
-      log.debug("Got criteria..")
-
-      def batchsize = 50
-      def offset = 0
-
-      while (offset < count) {
-
-        if ( Thread.currentThread().isInterrupted() ) {
-          log.debug("Job cancelling ..")
-          j.endTime = new Date()
-          break;
-        }
-
-        def tipps = tipp_crit.list (max: batchsize, offset: offset) {}
-
-        for (tipp in tipps) {
-
-          def tipls = checkForTipl(tipp.title, tipp.hostPlatform, tipp.url)
-          def final_tipl = null
-
-          if ( tipls?.size() == 0 ) {
-            final_tipl = new TitleInstancePlatform(url:tipp.url).save()
-
-            def plt_combo_type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Platform.HostedTitles')
-            def plt_combo = new Combo(toComponent:final_tipl, fromComponent:tipp.hostPlatform, type:plt_combo_type, status:combo_status_active).save();
-
-            def ti_combo_type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'TitleInstance.Tipls')
-            def ti_combo = new Combo(toComponent:final_tipl, fromComponent:tipp.title, type:ti_combo_type, status:combo_status_active).save();
-
-            new_tipl++
-          }
-          else if ( tipls?.size() == 1 ) {
-            final_tipl = tipls[0]
-
-            if (tipp.url && final_tipl.url != tipp.url) {
-              final_tipl.url = tipp.url
-            }
-
-          }
-          else {
-            log.debug("Found more than one TIPL for ${tipp.title} on ${tipp.hostPlatform}!")
-          }
-
-          log.debug("TIPL ${final_tipl}")
-          j.setProgress(ctr, count)
-          ctr++
-        }
-        offset += batchsize
-        log.debug("ensureTipls :: Processed ${ctr} TIPPs")
-        Thread.yield()
-        cleanUpGorm()
-      }
-
-      j.message("Finished checking for missing TIPLs, with ${new_tipl} newly created.".toString())
-      j.setProgress(100)
-
-    }
-    catch ( Exception e ) {
-      log.error("Problem with ensure TIPLs",e)
-      j.message("There was an error ensuring TIPLs.. check logs for info.".toString())
-    }
-    finally {
-      log.debug("ensureTipls finished (${ctr} TIPPs)");
-    }
-
-    j.endTime = new Date()
-  }
-
-  private def checkForTipl(title, platform, url) {
-    if ( ( title != null ) && ( platform != null ) && ( url?.trim()?.length() > 0 ) ) {
-      def status_current = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Current')
-      def result = TitleInstancePlatform.executeQuery('''select tipl
-              from TitleInstancePlatform as tipl,
-              Combo as titleCombo,
-              Combo as platformCombo
-              where titleCombo.toComponent=tipl
-              and titleCombo.fromComponent=?
-              and platformCombo.toComponent=tipl
-              and platformCombo.fromComponent=?
-              and tipl.status=?
-              ''',[title, platform, status_current])
-      result
-    }
-  }
-
-  /*@Deprecated
-  def housekeeping(Job j = null) {
-    log.debug("Housekeeping")
-    Identifier.withNewSession {
-      try {
-        def unused = Identifier.executeQuery("select i.id from Identifier as i where not exists (select c from Combo as c where c.toComponent = i)")
-        def rem_unused = expungeAll(unused, j)
-
-        log.debug("Removed ${rem_unused.num_expunged} unused identifiers")
-        j?.message("Removed ${rem_unused.num_expunged} unused identifiers".toString())
-
-        def dupes_vals = Identifier.executeQuery("select count(*), i.normname, i.namespace.id from Identifier as i group by i.normname, i.namespace.id having count(*) > 1")
-        def dupes_to_remove = []
-
-        dupes_vals?.each { d ->
-          def duplicates = Identifier.executeQuery("from Identifier as i where i.normname = :val and i.namespace.id = :ns", [val: d[1], ns: d[2]])
-          def first = duplicates[0]
-
-          duplicates.eachWithIndex { dui, idx ->
-            if (idx > 0) {
-              Combo.executeUpdate("update Combo as c set c.toComponent = :firstID where c.toComponent = :idc and not exists (select ci from Combo as ci where ci.toComponent.id = :firstID and ci.fromComponent = c.fromComponent)", [firstID: first, idc: dui])
-              dupes_to_remove.add(dui.id)
-            }
-          }
-        }
-        def rem_dupes = expungeAll(dupes_to_remove, j)
-
-        log.debug("Removed ${rem_dupes.num_expunged} linked identifiers")
-        j?.message("Removed ${rem_dupes.num_expunged} linked identifiers".toString())
-        // Cleanup duplicate identifiers too.
-        duplicateIdentifierCleanup()
-      }
-      catch ( Exception e ) {
-        e.printStackTrace()
-        j?.message('Housekeeping was aborted due to errors.')
-      }
-    }
-
-    j?.endTime = new Date()
-  }*/
 
   private final def duplicateIdentifierCleanup = {
     log.debug("Beginning duplicate identifier tidyup.")
@@ -581,7 +398,7 @@ class CleanupService {
 
 
 
-  def reviewDates(Job j = null) {
+  def reviewDatesOfTippCoverage(Job j = null) {
     log.debug("Adding Reviews to components with inconsistent dates")
     TitleInstancePackagePlatform.withNewSession {
       def tippCoverageDates = TIPPCoverageStatement.executeQuery("from TIPPCoverageStatement where endDate < startDate",[readOnly: true])
@@ -655,26 +472,6 @@ class CleanupService {
     def session = sessionFactory.currentSession
     session.flush()
     session.clear()
-  }
-
-  def rejectWrongTitles(Job job) {
-    log.debug("GOKb mark wrong titles for deletion")
-    def ctr = 0
-    def tick=TitleInstance.withNewSession {
-      Date now = new Date()
-      def deleted_status = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED)
-      def tipps_combo = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'TitleInstance.Tipps')
-
-      def res = TitleInstance.executeUpdate("update TitleInstance as title set title.status = :ds, lastUpdateComment = 'Deleted via title cleanup', lastUpdated = :now where status <> :ds and (title.id not in " +
-              "(select fromComponent.id from Combo where type = :tc)" +
-              " or title.id not in " +
-              "(select fromComponent.id from Combo where type = :tc and toComponent.status <> :ds))" +
-              " and title.id not in " +
-              "(select participant.id from ComponentHistoryEventParticipant)",[ds: deleted_status, tc: tipps_combo, now: now])
-
-      job.message("${res} titles set to status 'Deleted'")
-    }
-    job.endTime = new Date()
   }
 
   def expungeAll(List components, Job j = null) {

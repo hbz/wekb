@@ -22,12 +22,20 @@ class RDStore {
     public static final COMBO_STATUS_ACTIVE = getRefdataValue(Combo.STATUS_ACTIVE, RCConstants.COMBO_STATUS)
     public static final COMBO_STATUS_DELETED = getRefdataValue(Combo.STATUS_DELETED, RCConstants.COMBO_STATUS)
 
-    public static final CURRENCY_EUR = RefdataCategory.lookup(RCConstants.CURRENCY, 'EUR')
-    public static final CURRENCY_USD = RefdataCategory.lookup(RCConstants.CURRENCY, 'USD')
-    public static final CURRENCY_GBP = RefdataCategory.lookup(RCConstants.CURRENCY, 'GBP')
+    public static final CURRENCY_EUR = getRefdataValue('EUR', RCConstants.CURRENCY)
+    public static final CURRENCY_USD = getRefdataValue('USD', RCConstants.CURRENCY)
+    public static final CURRENCY_GBP = getRefdataValue('GBP', RCConstants.CURRENCY)
 
-    public static final PRICE_TYPE_LIST = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'list')
-    public static final PRICE_TYPE_OA_APC = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'open access apc')
+    public static final PRICE_TYPE_LIST = getRefdataValue('list', RCConstants.PRICE_TYPE)
+    public static final PRICE_TYPE_OA_APC = getRefdataValue('open access apc', RCConstants.PRICE_TYPE)
+
+    public static final TIPP_PUBLIC_TYPE_SERIAL = getRefdataValue('Serial', RCConstants.TIPP_PUBLICATION_TYPE)
+    public static final TIPP_PUBLIC_TYPE_MONO = getRefdataValue('Monograph', RCConstants.TIPP_PUBLICATION_TYPE)
+    public static final TIPP_PUBLIC_TYPE_DB = getRefdataValue('Database', RCConstants.TIPP_PUBLICATION_TYPE)
+    public static final TIPP_PUBLIC_TYPE_OTHER = getRefdataValue('Other', RCConstants.TIPP_PUBLICATION_TYPE)
+
+    public static final IDENTIFIER_NAMESPACE_TARGET_TYPE_TIPP = getRefdataValue('TitleInstancePackagePlatform', RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE)
+
 
 
 

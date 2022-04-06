@@ -36,7 +36,7 @@
                 </g:elseif>
             </span>
         </div>
-        <g:if test="${displayobj && response.status != 403}">
+        <g:if test="${displayobj && response.status != 403 && displayobj.class.simpleName in ["Package", "Org", "Platform", "TitleInstancePackagePlatform"]}">
             <ul class="nav navbar-nav navbar-right">
                 <g:if test="${org.gokb.cred.KBComponent.isAssignableFrom(displayobj.class)}">
                     <li><a onClick="javascript:toggleWatch('${displayobj.class.name}:${displayobj.id}')"
@@ -170,8 +170,7 @@
     </div>
 </div>
 
-<g:render template="/apptemplates/secondTemplates/messages"
-          model="${["preMessage": preMsg]}"/>
+<g:render template="/apptemplates/secondTemplates/messages"/>
 
 <div id="infoModal" class="qmodal modal fade modal-wide" role="dialog">
     <div class="modal-dialog">

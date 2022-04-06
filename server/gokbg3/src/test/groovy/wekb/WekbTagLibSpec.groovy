@@ -3,7 +3,7 @@ package wekb
 import grails.testing.web.taglib.TagLibUnitTest
 import spock.lang.Specification
 
-class WekbInjectionTagLibSpec extends Specification implements TagLibUnitTest<WekbInjectionTagLib> {
+class WekbTagLibSpec extends Specification implements TagLibUnitTest<WekbTagLib> {
 
     def setup() {
     }

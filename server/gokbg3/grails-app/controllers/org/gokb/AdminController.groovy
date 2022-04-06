@@ -3,8 +3,10 @@ package org.gokb
 import com.k_int.ConcurrencyManagerService
 import com.k_int.ConcurrencyManagerService.Job
 import de.wekb.helper.RCConstants
+import de.wekb.helper.RDStore
 import gokbg3.DateFormatService
 import grails.converters.JSON
+import grails.gorm.transactions.Transactional
 import grails.plugin.springsecurity.SpringSecurityService
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
@@ -24,17 +26,14 @@ import java.util.concurrent.CancellationException
 @Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
 class AdminController {
 
-  def FTUpdateService
   def packageService
   def componentStatisticService
-  def grailsCacheAdminService
-  def titleAugmentService
+
   ConcurrencyManagerService concurrencyManagerService
   CleanupService cleanupService
   AdminService adminService
   AutoUpdatePackagesService autoUpdatePackagesService
   def ESWrapperService
-  DateFormatService dateFormatService
   SpringSecurityService springSecurityService
 
   static Map typePerIndex = [
@@ -44,77 +43,6 @@ class AdminController {
           "wekbplatforms": "Platform",
           "wekbdeletedcomponents": "DeletedKBComponent"
   ]
-
-  @Deprecated
-  def tidyOrgData() {
-
-    Job j = concurrencyManagerService.createJob {
-
-      // Cleanup our problem orgs.
-      cleanupService.tidyMissnamedPublishers()
-
-
-      def result = [:]
-
-      def publisher_combo_type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'TitleInstance.Publisher');
-
-      result.nonMasterOrgs = Org.executeQuery('''
-      select org
-      from org.gokb.cred.Org as org
-      where tag.owner.desc = 'Org.Authorized'
-        and tag.value = 'N'
-      ''');
-
-      result.nonMasterOrgs.each { nmo ->
-
-        if (nmo.parent != null) {
-
-          nmo.parent.variantNames.add(new KBComponentVariantName(variantName: nmo.name, owner: nmo.parent))
-          nmo.parent.save();
-
-          log.debug("${nmo.id} ${nmo.parent?.id}")
-          def combosToDelete = []
-          nmo.incomingCombos.each { ic ->
-            combosToDelete.add(ic); //ic.delete(flush:true)
-
-            if (ic.type == publisher_combo_type) {
-              log.debug("Got a publisher combo");
-              if (nmo.parent != null) {
-                def new_pub_combo = new Combo(fromComponent: ic.fromComponent, toComponent: nmo.parent, type: ic.type, status: ic.status).save();
-              } else {
-                def authorized_rdv = RefdataCategory.lookupOrCreate('Org.Authorized', 'Y')
-                log.debug("No parent set.. try and find an authorised org with the appropriate name(${ic.toComponent.name})");
-                def authorized_orgs = Org.executeQuery("select distinct o from Org o join o.variantNames as vn where ( o.name = ? or vn.variantName = ?) AND ? in elements(o.tags)", [ic.toComponent.name, ic.toComponent.name, authorized_rdv]);
-                if (authorized_orgs.size() == 1) {
-                  def ao = authorized_orgs.get(0)
-                  log.debug("Create new publisher link to ${ao}");
-                  def new_pub_combo = new Combo(fromComponent: ic.fromComponent, toComponent: ao, type: ic.type, status: ic.status).save();
-                }
-              }
-            }
-          }
-          nmo.outgoingCombos.each { oc ->
-            combosToDelete.add(oc); //ic.delete(flush:true)
-            // oc.delete(flush:true)
-          }
-
-          nmo.incomingCombos.clear();
-          nmo.outgoingCombos.clear();
-
-          combosToDelete.each { cd ->
-            cd.delete(flush: true)
-          }
-
-          nmo.delete(flush: true)
-        }
-      }
-    }.startOrQueue()
-
-    j.description = "Tidy Orgs Data"
-    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'TidyOrgsData')
-
-    redirect(controller: 'admin', action: 'jobs');
-  }
 
   def ensureUuids() {
 
@@ -130,22 +58,10 @@ class AdminController {
 
   }
 
-  def ensureTipls() {
+
+  def reviewDatesOfTippCoverage() {
     Job j = concurrencyManagerService.createJob { Job j ->
-      cleanupService.ensureTipls(j)
-    }.startOrQueue()
-
-    j.description = "Ensure TIPLs for all TIPPs"
-    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'EnsureTIPLs')
-    j.startTime = new Date()
-
-    redirect(controller: 'admin', action: 'jobs');
-  }
-
-
-  def markInconsistentDates() {
-    Job j = concurrencyManagerService.createJob { Job j ->
-      cleanupService.reviewDates(j)
+      cleanupService.reviewDatesOfTippCoverage(j)
     }.startOrQueue()
 
     j.description = "Mark insonsistent date ranges"
@@ -153,45 +69,6 @@ class AdminController {
     j.startTime = new Date()
 
     redirect(controller: 'admin', action: 'jobs');
-  }
-
-  def copyUploadedFile(inputfile, deposit_token) {
-
-    def baseUploadDir = grailsApplication.config.baseUploadDir ?: '.'
-
-    log.debug("copyUploadedFile...");
-    def sub1 = deposit_token.substring(0, 2);
-    def sub2 = deposit_token.substring(2, 4);
-    validateUploadDir("${baseUploadDir}");
-    validateUploadDir("${baseUploadDir}/${sub1}");
-    validateUploadDir("${baseUploadDir}/${sub1}/${sub2}");
-    def temp_file_name = "${baseUploadDir}/${sub1}/${sub2}/${deposit_token}";
-    def temp_file = new File(temp_file_name)
-
-    OutputStream outStream = null;
-    ByteArrayOutputStream byteOutStream = null;
-    try {
-      outStream = new FileOutputStream(temp_file);
-      byteOutStream = new ByteArrayOutputStream();
-      // writing bytes in to byte output stream
-      byteOutStream.write(inputfile); //data
-      byteOutStream.writeTo(outStream);
-    } catch (IOException e) {
-      e.printStackTrace();
-    } finally {
-      outStream.close();
-    }
-    log.debug("Created temp_file ${temp_file.size()}")
-
-    temp_file
-  }
-
-  private def validateUploadDir(path) {
-    File f = new File(path);
-    if (!f.exists()) {
-      log.debug("Creating upload directory path")
-      f.mkdirs();
-    }
   }
 
   def updateTextIndexes() {
@@ -216,40 +93,6 @@ class AdminController {
 
     j.description = "Reset Free Text Indexes"
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'ResetFreeTextIndexes')
-    j.startTime = new Date()
-
-    redirect(controller: 'admin', action: 'jobs');
-  }
-
-  def masterListUpdate() {
-    log.debug("Force master list update")
-    Job j = concurrencyManagerService.createJob {
-      packageService.updateAllMasters(true)
-    }.startOrQueue()
-
-    j.description = "Master List Update"
-    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'MasterListUpdate')
-    j.startTime = new Date()
-
-    redirect(controller: 'admin', action: 'jobs');
-  }
-
-  def clearBlockCache() {
-    // clear the cache used by the blocks tag…
-    log.debug("Clearing block cache .. ")
-    grailsCacheAdminService.clearBlocksCache()
-
-    forward(controller: 'home', action: 'index', params: [reset: true])
-  }
-
-  def triggerEnrichments() {
-    Job j = concurrencyManagerService.createJob {
-      log.debug("manually trigger enrichment service");
-      titleAugmentService.doEnrichment();
-    }.startOrQueue()
-
-    j.description = "Enrichment Service"
-    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'EnrichmentService')
     j.startTime = new Date()
 
     redirect(controller: 'admin', action: 'jobs');
@@ -329,19 +172,6 @@ class AdminController {
     redirect(controller: 'admin', action: 'jobs');
   }
 
-  def housekeeping() {
-    Job j = concurrencyManagerService.createJob { Job j ->
-      cleanupService.housekeeping(j)
-    }.startOrQueue()
-
-    j.description = "Housekeeping"
-    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'Housekeeping')
-    j.startTime = new Date()
-
-    log.debug "Triggering housekeeping task. Started job #${j.uuid}"
-
-    redirect(controller: 'admin', action: 'jobs');
-  }
 
   def cleanup() {
     Job j = concurrencyManagerService.createJob { Job j ->
@@ -352,79 +182,6 @@ class AdminController {
 
     j.description = "Cleanup Deleted Components"
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'CleanupDeletedComponents')
-    j.startTime = new Date()
-
-    redirect(controller: 'admin', action: 'jobs');
-  }
-
-  def cleanupRejected() {
-    Job j = concurrencyManagerService.createJob { Job j ->
-      cleanupService.expungeRejectedComponents(j)
-    }.startOrQueue()
-
-    log.debug "Triggering cleanup task. Started job #${j.uuid}"
-
-    j.description = "Cleanup Rejected Components"
-    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'CleanupRejectedComponents')
-    j.startTime = new Date()
-
-    redirect(controller: 'admin', action: 'jobs');
-  }
-
-
-  def cleanupOrphanedTipps() {
-    Job j = concurrencyManagerService.createJob { Job j ->
-      cleanupService.deleteOrphanedTipps(j)
-    }.startOrQueue()
-
-    log.debug("Triggering cleanup orphaned TIPPs task. Started job #${j.uuid}")
-
-    j.description = "TIPP Cleanup"
-    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'TIPPCleanup')
-    j.startTime = new Date()
-
-    redirect(controller: 'admin', action: 'jobs');
-  }
-
-
-  def cleanupOrphanedIdentifiers() {
-    Job j = concurrencyManagerService.createJob { Job j ->
-      cleanupService.deleteOrphanedIdentifiers(j)
-    }.startOrQueue()
-
-    log.debug("Triggering cleanup orphaned Identifiers task. Started job #${j.uuid}")
-
-    j.description = "Identifier Cleanup"
-    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'IdentifierCleanup')
-    j.startTime = new Date()
-
-    redirect(controller: 'admin', action: 'jobs');
-  }
-
-
-  def rejectWrongTitles() {
-    Job j = concurrencyManagerService.createJob { Job j ->
-      cleanupService.rejectWrongTitles(j)
-    }.startOrQueue()
-
-    log.debug("Reject wrong titles. Started job #${j.uuid}")
-
-    j.description = "Set status of TitleInstances without package+history to 'Deleted'"
-    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'DeleteTIWithoutHistory')
-    j.startTime = new Date()
-
-    redirect(controller: 'admin', action: 'jobs');
-  }
-
-  def rejectNoIdTitles() {
-    Job j = concurrencyManagerService.createJob { Job j ->
-      cleanupService.rejectNoIdTitles(j)
-    }.startOrQueue()
-
-    log.debug("Reject wrong titles. Started job #${j.uuid}")
-
-    j.description = "Set status of TitleInstances without identifiers+tipps to 'Rejected'"
-    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'RejectTIWithoutIdentifier')
     j.startTime = new Date()
 
     redirect(controller: 'admin', action: 'jobs');
@@ -442,28 +199,6 @@ class AdminController {
     j.startTime = new Date()
 
     redirect(controller: 'admin', action: 'jobs');
-  }
-
-  def exportGroups() {
-    def result = [:]
-    CuratoryGroup.createCriteria().list({
-      createAlias('status', 'cstatus', CriteriaSpecification.LEFT_JOIN)
-      or {
-        isNull 'status'
-        and {
-          ne 'cstatus.value', KBComponent.STATUS_DELETED
-          ne 'cstatus.value', KBComponent.STATUS_RETIRED
-        }
-      }
-    })?.each { CuratoryGroup group ->
-      result["${group.name}"] = [
-              users     : group.users.collect { it.username },
-              owner     : group.owner?.username,
-              status    : group.status?.value
-      ]
-    }
-
-    render result as JSON
   }
 
   def recalculateStats() {
@@ -490,34 +225,17 @@ class AdminController {
   @Secured(['ROLE_SUPERUSER'])
   def autoUpdatePackages() {
       log.debug("Beginning scheduled auto update packages job.")
-      // find all updateable packages
-      List ygorDataList = []
-      def updPacks = Package.executeQuery(
-              "from Package p " +
-                      "where p.source is not null and " +
-                      "p.source.automaticUpdates = true " +
-                      "and (p.source.lastRun is null or p.source.lastRun < current_date)")
-      updPacks.each { Package p ->
-        if (p.source.needsUpdate()) {
-            def result = autoUpdatePackagesService.updateFromSource(p)
-            log.debug("Result of update: ${result}")
-            if(result.ygorData){
-              ygorDataList << result.ygorData
-            }
-            sleep(10000)
-        }
-      }
-      if(ygorDataList.size() > 0){
-        log.debug("updPacks: ${updPacks.size()}, ygorDataList: ${ygorDataList.size()}")
-        ygorDataList.each { Map ygorData ->
-          autoUpdatePackagesService.importJsonFromUpdateSource(ygorData)
-        }
+    Job j = concurrencyManagerService.createJob {
+      autoUpdatePackagesService.findPackageToUpdateAndUpdate()
+    }.startOrQueue()
 
-      }
+    j.description = "Start Manuel Auto Update Packages"
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'AutoUpdatePackagesJob')
+    j.startTime = new Date()
 
-      log.info("auto update packages job completed.")
+    log.info("auto update packages job completed.")
 
-    redirect(controller: 'admin', action: 'jobs');
+    redirect(controller: 'admin', action: 'jobs')
   }
 
   @Secured(['ROLE_SUPERUSER'])
@@ -697,4 +415,143 @@ class AdminController {
     def result = [:]
     result
   }
+
+  def findTippDuplicatesByPkg() {
+    log.debug("findTippDuplicates::${params}")
+    def result = [:]
+
+    Package aPackage = Package.findByUuid(params.id)
+
+    List<TitleInstancePackagePlatform> tippsDuplicatesByName = aPackage.findTippDuplicatesByName()
+    List<TitleInstancePackagePlatform> tippsDuplicatesByUrl = aPackage.findTippDuplicatesByURL()
+
+    result.tippsDuplicatesByName = tippsDuplicatesByName
+    result.tippsDuplicatesByUrl = tippsDuplicatesByUrl
+
+    //println(result)
+
+    result
+  }
+
+  def findPackagesWithTippDuplicates() {
+    log.debug("findPackagesWithTippDuplicates::${params}")
+    def result = [:]
+
+    List pkgs = []
+
+    Package.findAllByStatus(RDStore.KBC_STATUS_CURRENT, [sort: 'name']).each {Package aPackage ->
+      Integer tippDuplicatesByNameCount = aPackage.getTippDuplicatesByNameCount()
+      Integer tippDuplicatesByUrlCount = aPackage.getTippDuplicatesByURLCount()
+
+      if(tippDuplicatesByNameCount > 0 || tippDuplicatesByUrlCount > 0){
+        pkgs << [pkg: aPackage, tippDuplicatesByNameCount: tippDuplicatesByNameCount, tippDuplicatesByUrlCount: tippDuplicatesByUrlCount]
+      }
+    }
+
+    if (params.sort == 'tippDuplicatesByNameCount') {
+      result.pkgs = pkgs.sort {
+        it.tippDuplicatesByNameCount
+      }
+    } else if (params.sort == 'tippDuplicatesByUrlCount') {
+      result.pkgs = pkgs.sort {
+        it.tippDuplicatesByUrlCount
+      }
+    } else {
+      result.pkgs = pkgs
+    }
+    result
+  }
+
+  def cleanupTippIdentifersWithSameNamespace() {
+    /*Job j = concurrencyManagerService.createJob { Job j ->
+      cleanupService.cleanupTippIdentifersWithSameNamespace(j)
+    }.startOrQueue()
+
+    log.debug("Cleanup Tipp Identifers with same namespace #${j.uuid}")
+
+    j.description = "Cleanup Tipp Identifers with same namespace"
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'TIPPCleanup')
+    j.startTime = new Date()
+*/
+    cleanupService.cleanupTippIdentifersWithSameNamespace()
+    redirect(controller: 'admin', action: 'jobs');
+  }
+
+  def tippIdentifiersWithSameNameSpace(){
+      log.debug("tippIdentifiersWithSameNameSpace")
+
+      List<IdentifierNamespace> identifierNamespaces = IdentifierNamespace.findAllByTargetType(RDStore.IDENTIFIER_NAMESPACE_TARGET_TYPE_TIPP, [sort: 'value'])
+
+      String countQuery = "SELECT count(tipp.id) FROM TitleInstancePackagePlatform AS tipp WHERE " +
+              "tipp.id in (select ident.tipp FROM Identifier AS ident WHERE ident.namespace.id = :namespace group by ident.tipp having count(ident.tipp) > 1)"
+
+      String idQuery = "SELECT tipp.id FROM TitleInstancePackagePlatform AS tipp WHERE " +
+              "tipp.id in (select ident.tipp FROM Identifier AS ident WHERE ident.namespace.id = :namespace group by ident.tipp having count(ident.tipp) > 1)"
+
+
+      Integer total = 0
+      Map result = [:]
+      List namespaces = []
+      identifierNamespaces.each {IdentifierNamespace identifierNamespace ->
+        Integer tippCount = TitleInstancePackagePlatform.executeQuery(countQuery, [namespace: identifierNamespace.id])[0]
+        total = total + tippCount
+        Map namespace = [:]
+
+        List<Long> tippIds = TitleInstancePackagePlatform.executeQuery(idQuery, [namespace: identifierNamespace.id])
+
+        if(tippIds.size() > 0) {
+          namespace.name = identifierNamespace.value
+          namespace.family = identifierNamespace.family
+          namespace.count = tippCount
+          namespace.namespaceID = identifierNamespace.id
+          namespaces << namespace
+
+        }
+      }
+      result.namespaces = namespaces
+      result.total = total
+
+      log.debug("cleanupTippIdentifersWithSameNamespace: count ${total}")
+
+      result
+  }
+
+  def tippIdentifiersWithSameNameSpaceByNameSpace(){
+    log.debug("tippIdentifiersWithSameNameSpaceByNameSpace")
+
+    String countQuery = "SELECT count(tipp.id) FROM TitleInstancePackagePlatform AS tipp WHERE " +
+            "tipp.id in (select ident.tipp FROM Identifier AS ident WHERE ident.namespace.id = :namespace group by ident.tipp having count(ident.tipp) > 1)"
+
+    String query = "SELECT tipp FROM TitleInstancePackagePlatform AS tipp WHERE " +
+            "tipp.id in (select ident.tipp FROM Identifier AS ident WHERE ident.namespace.id = :namespace group by ident.tipp having count(ident.tipp) > 1)"
+
+    Map result = [:]
+    IdentifierNamespace identifierNamespace = IdentifierNamespace.findById(params.id)
+    Integer tippCount = TitleInstancePackagePlatform.executeQuery(countQuery, [namespace: identifierNamespace.id])[0]
+    List<TitleInstancePackagePlatform> tipps = TitleInstancePackagePlatform.executeQuery(query, [namespace: identifierNamespace.id])
+
+    result.namespace = identifierNamespace.value
+    result.count = tippCount
+    result.namespaceID = identifierNamespace.id
+
+    if (tipps.size() > 0) {
+
+      result.tipps = tipps
+    }
+
+    result
+  }
+
+  def setTippsWithoutUrlToDeleted(){
+    log.debug("setTippsWithoutUrlToDeleted")
+
+    List<Long> tippsIds = TitleInstancePackagePlatform.executeQuery("select id from TitleInstancePackagePlatform where (url is null or url = '') and status != :deleted", [deleted: RDStore.KBC_STATUS_DELETED])
+
+    Integer tippsToDeleted = tippsIds ? KBComponent.executeUpdate("update KBComponent set status = :deleted where id in (:tippIds)", [deleted: RDStore.KBC_STATUS_DELETED, tippIds: tippsIds]) : 0
+
+    flash.message = "Tipp without Url: ${tippsIds.size()}, Set tipps to deleted: ${tippsToDeleted}"
+
+    redirect(controller: 'admin', action: 'jobs')
+  }
+
 }

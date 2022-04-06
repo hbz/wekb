@@ -69,6 +69,7 @@ class Org extends KBComponent {
   static hasMany = [
     roles: RefdataValue,
     contacts: Contact,
+    ids: Identifier
   ]
 
   static mapping = {
@@ -358,5 +359,11 @@ class Org extends KBComponent {
     }
 
     result
+  }
+
+  @Transient
+  String getIdentifierValue(idtype){
+    // Null returned if no match.
+    ids?.find{ it.namespace.value.toLowerCase() == idtype.toLowerCase() }?.value
   }
 }

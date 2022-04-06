@@ -12,6 +12,7 @@ import wekb.AccessService
 import wekb.AutoUpdatePackagesService
 import wekb.ExportService
 import wekb.GlobalSearchTemplatesService
+import wekb.KbartImportService
 
 @Secured(['IS_AUTHENTICATED_FULLY'])
 class WorkflowController{
@@ -25,6 +26,7 @@ class WorkflowController{
   ExportService exportService
   AutoUpdatePackagesService autoUpdatePackagesService
   AccessService accessService
+  KbartImportService kBartImportService
 
   def actionConfig = [
       'method::deleteSoft'     : [actionType: 'simple'],
@@ -788,7 +790,7 @@ class WorkflowController{
 
         def new_title = TitleInstance.get(newtipp.title_id)
         // def new_tipp = new TitleInstancePackagePlatform(
-        def new_tipp = TitleInstancePackagePlatform.upsertDTO([
+        def new_tipp = kBartImportService.tippUpsertDTO([
             package    : ['internalId': new_package.id],
             platform   : ['internalId': new_platform.id],
             title      : ['internalId': current_tipp.title.id],
@@ -980,7 +982,7 @@ class WorkflowController{
             ]
             tipp_dto.coverage.add(cst)
           }
-          def new_tipp = TitleInstancePackagePlatform.upsertDTO(tipp_dto, request.user)
+          def new_tipp = kBartImportService.tippUpsertDTO(tipp_dto, request.user)
           log.debug("Added new TIPP ${new_tipp} to TI ${new_ti}")
         }
         old_tipp.status = status_deleted
@@ -1026,7 +1028,7 @@ class WorkflowController{
         def new_platform = Platform.get(newtipp.platform_id)
 
         // def new_tipp = new TitleInstancePackagePlatform(
-        def new_tipp = TitleInstancePackagePlatform.upsertDTO([
+        def new_tipp = kBartImportService.tippUpsertDTO([
             package    : ['internalId': new_package.id],
             platform   : ['internalId': new_platform.id],
             title      : ['internalId': current_tipp.title.id],
@@ -1157,7 +1159,7 @@ class WorkflowController{
         ])
       }
 
-      def new_tipp = TitleInstancePackagePlatform.upsertDTO([
+      def new_tipp = kBartImportService.tippUpsertDTO([
           package : ['internalId': (new_package ? new_package.id : tipp_obj.pkg.id)],
           platform: ['internalId': (new_platform ? new_platform.id : tipp_obj.hostPlatform.id)],
           title   : ['internalId': (new_title ? new_title.id : tipp_obj.title.id)],
