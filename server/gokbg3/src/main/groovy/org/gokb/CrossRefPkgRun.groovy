@@ -3,6 +3,7 @@ package org.gokb
 
 import com.k_int.ConcurrencyManagerService.Job
 import de.wekb.helper.RCConstants
+import de.wekb.helper.RDStore
 import gokbg3.MessageService
 import grails.converters.JSON
 import grails.plugin.springsecurity.SpringSecurityService
@@ -44,6 +45,8 @@ class CrossRefPkgRun {
   def pltCache = [:] // DTO.name : validPlatformInstance
   Job job = null
 
+  List setTippsNotToDeleted = []
+
   def status_current
   def status_deleted
   def status_retired
@@ -72,18 +75,22 @@ class CrossRefPkgRun {
     int total = 0
 
     try {
-      status_current = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Current')
-      status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
-      status_retired = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Retired')
-      status_expected = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Expected')
+      status_current = RDStore.KBC_STATUS_CURRENT
+      status_deleted = RDStore.KBC_STATUS_DELETED
+      status_retired = RDStore.KBC_STATUS_RETIRED
+      status_expected = RDStore.KBC_STATUS_EXPECTED
       rr_deleted = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Status Deleted')
       rr_nonCurrent = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Platform Noncurrent')
       rr_TIPPs_retired = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'TIPPs Retired')
       rr_TIPPs_invalid = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Invalid TIPPs')
       rr_type = RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'Import Request')
 
+      List listStatus = []
 
-      springSecurityService.reauthenticate(user.username)
+      listStatus = [status_current, status_expected, status_deleted, status_retired]
+
+
+      //springSecurityService.reauthenticate(user.username)
       user = User.get(user.id)
       job?.ownerId = user.id
 
@@ -143,11 +150,12 @@ class CrossRefPkgRun {
           "tipp.status in :status and " +
           "combo.toComponent = tipp and " +
           "combo.fromComponent = :package",
-        [package: pkg, status: [status_current, status_expected]])
+        [package: pkg, status: listStatus])
       log.debug("Matched package has ${pkg.tipps.size()} TIPPs")
       total = rjson.tipps.size() + (addOnly ? 0 : existing_tipp_ids.size())
 
       int idx = 0
+
       for (def json_tipp : rjson.tipps) {
         idx++
         def currentTippError = [index: idx]
@@ -269,6 +277,7 @@ class CrossRefPkgRun {
             )
           }
         }*/
+
 
         log.debug("Removed ${removedNum} TIPPS from the matched package!")
         jsonResult.result = 'OK'

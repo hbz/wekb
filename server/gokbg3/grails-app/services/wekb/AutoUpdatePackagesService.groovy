@@ -131,7 +131,7 @@ class AutoUpdatePackagesService {
             def job_map = [
                     uuid        : uuid,
                     description : (user ? "Manuell" : "Auto") + " Update Packages Job (${p.name})",
-                    resultObject: (result as JSON).toString(),
+                    resultObject: result.toString(),
                     type        : user ? RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'ManuellUpdatePackageJob') : RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'AutoUpdatePackagesJob'),
                     statusText  : result.result,
                     startTime   : startTime,

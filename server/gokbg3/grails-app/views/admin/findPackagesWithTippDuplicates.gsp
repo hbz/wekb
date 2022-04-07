@@ -11,7 +11,7 @@
 
 
 <div class="container">
-    <h1>Packges with Tipp Duplicates</h1>
+    <h1>Packges with Tipp Duplicates ${totalCount}</h1>
 
 </div>
 
@@ -74,12 +74,6 @@
                 </g:each>
                 </tbody>
             </table>
-
-            <div class="pagination mb-4 d-flex justify-content-center">
-                <g:paginate controller="${controllerName}" action="${actionName}" params="[id: params.id]" next="&raquo;" prev="&laquo;"
-                            max="${max}" offset="${offset}" total="${totalCount}"/>
-            </div>
-
         </div>
     </div>
 

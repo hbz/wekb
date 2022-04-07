@@ -663,7 +663,7 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
                                 [heading: 'Titles', property: 'currentTippCount'],
                                //[heading: 'T', property: 'tippDuplicatesByURLCount'],
-                                [heading: 'Source', property: 'source?.name', link: true],
+                                [heading: 'Source', property: 'source?.name', link: true, sort: 'source.name']
                         ],
                         actions   : [
                         ]
