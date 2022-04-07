@@ -97,7 +97,7 @@ class RefdataValue  extends AbstractI10n implements Auditable {
     ql = RefdataValue.findAll(query, query_params, params)
 
     if ( ql ) {
-      ql.each { RefdataValue refdataValue ->
+      ql.sort {it.getI10n('value')}.each { RefdataValue refdataValue ->
         result.add([id:"${refdataValue.class.name}:${refdataValue.id}", text:"${refdataValue.getI10n('value')} ${refdataValue.description ? "- "+refdataValue.description :''}"])
       }
     }

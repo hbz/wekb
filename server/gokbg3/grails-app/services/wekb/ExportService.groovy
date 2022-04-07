@@ -25,6 +25,7 @@ import org.gokb.cred.TIPPCoverageStatement
 import org.gokb.cred.TitleInstancePackagePlatform
 import org.hibernate.Session
 
+import javax.servlet.ServletOutputStream
 import java.nio.file.Files
 import java.text.SimpleDateFormat
 
@@ -516,7 +517,7 @@ class ExportService {
     }
 
 
-    def exportPackageTippsAsTSVNew(def outputStream, Package pkg) {
+    Map<String,List> exportPackageTippsAsTSVNew(Package pkg) {
 
         def export_date = dateFormatService.formatDate(new Date())
         List<String> titleHeaders = getTitleHeadersTSV()
@@ -535,7 +536,7 @@ class ExportService {
         String packageEzbAnchor = "package_ezb_anchor"
         String packageIsci = "package_isci"
 
-        String titleIdNameSpace = pkg.source ? pkg.source.targetNamespace.value : 'FAKE'
+        String titleIdNameSpace = (pkg.source && pkg.source.targetNamespace) ? pkg.source.targetNamespace.value : 'FAKE'
 
         RefdataValue priceTypeList = RDStore.PRICE_TYPE_LIST
         RefdataValue priceTypeOAAPC = RDStore.PRICE_TYPE_OA_APC
@@ -782,12 +783,8 @@ class ExportService {
             }
         }
 
-        outputStream.withWriter { writer ->
-            writer.write("we:kb Export : Provider (${pkg.provider?.name}) : Package (${pkg.name}) : ${export_date}\n");
-            writer.write(generateSeparatorTableString(export.titleRow, export.rows, '\t'))
-        }
-        outputStream.flush()
-        outputStream.close()
+        return export
+
     }
 
 

@@ -424,11 +424,24 @@ class AdminController {
 
     List<TitleInstancePackagePlatform> tippsDuplicatesByName = aPackage.findTippDuplicatesByName()
     List<TitleInstancePackagePlatform> tippsDuplicatesByUrl = aPackage.findTippDuplicatesByURL()
+    List<TitleInstancePackagePlatform> tippsDuplicatesByTitleID = aPackage.findTippDuplicatesByURL()
 
-    result.tippsDuplicatesByName = tippsDuplicatesByName
-    result.tippsDuplicatesByUrl = tippsDuplicatesByUrl
+    result.offsetByName = params.papaginateByName ? Integer.parseInt(params.offset) : 0
+    result.maxByName = params.papaginateByName ? Integer.parseInt(params.max) : 25
 
-    //println(result)
+    result.offsetByUrl = params.papaginateByUrl ? Integer.parseInt(params.offset) : 0
+    result.maxByUrl = params.papaginateByUrl ? Integer.parseInt(params.max) : 25
+
+    result.offsetByTitleID = params.papaginateByTitleID ? Integer.parseInt(params.offset) : 0
+    result.maxByTitleID = params.papaginateByTitleID ? Integer.parseInt(params.max) : 25
+
+    result.totalCountByName = tippsDuplicatesByName.size()
+    result.totalCountByUrl = tippsDuplicatesByUrl.size()
+    result.totalCountByTitleID = tippsDuplicatesByTitleID.size()
+
+    result.tippsDuplicatesByName = tippsDuplicatesByName.drop((int) result.offsetByName).take((int) result.maxByName)
+    result.tippsDuplicatesByUrl = tippsDuplicatesByUrl.drop((int) result.offsetByUrl).take((int) result.maxByUrl)
+    result.tippsDuplicatesByTitleID = tippsDuplicatesByTitleID.drop((int) result.offsetByTitleID).take((int) result.maxByTitleID)
 
     result
   }
@@ -438,27 +451,43 @@ class AdminController {
     def result = [:]
 
     List pkgs = []
+    List<Source> sourceList = Source.findAllByAutomaticUpdatesAndTargetNamespaceIsNotNull(true)
 
-    Package.findAllByStatus(RDStore.KBC_STATUS_CURRENT, [sort: 'name']).each {Package aPackage ->
+    Package.findAllBySourceInListAndStatus(sourceList, RDStore.KBC_STATUS_CURRENT, [sort: 'name']).eachWithIndex {Package aPackage, int index ->
       Integer tippDuplicatesByNameCount = aPackage.getTippDuplicatesByNameCount()
       Integer tippDuplicatesByUrlCount = aPackage.getTippDuplicatesByURLCount()
+      Integer tippDuplicatesByTitleIDCount = aPackage.getTippDuplicatesByTitleIDCount()
 
-      if(tippDuplicatesByNameCount > 0 || tippDuplicatesByUrlCount > 0){
-        pkgs << [pkg: aPackage, tippDuplicatesByNameCount: tippDuplicatesByNameCount, tippDuplicatesByUrlCount: tippDuplicatesByUrlCount]
+      if(tippDuplicatesByNameCount > 0 || tippDuplicatesByUrlCount > 0 || tippDuplicatesByTitleIDCount > 0){
+        pkgs << [pkg: aPackage, tippDuplicatesByNameCount: tippDuplicatesByNameCount, tippDuplicatesByUrlCount: tippDuplicatesByUrlCount, tippDuplicatesByTitleIDCount: tippDuplicatesByTitleIDCount]
       }
     }
+
+    //result.offset = params.offset ? Integer.parseInt(params.offset) : 0
+    //result.max = params.max ? Integer.parseInt(params.max) : 25
+
+    result.totalCount = pkgs.size()
 
     if (params.sort == 'tippDuplicatesByNameCount') {
       result.pkgs = pkgs.sort {
         it.tippDuplicatesByNameCount
       }
+      result.pkgs = result.pkgs.reverse()
     } else if (params.sort == 'tippDuplicatesByUrlCount') {
       result.pkgs = pkgs.sort {
         it.tippDuplicatesByUrlCount
       }
+      result.pkgs = result.pkgs.reverse()
+    } else if (params.sort == 'tippDuplicatesByTitleIDCount') {
+      result.pkgs = pkgs.sort {
+        it.tippDuplicatesByTitleIDCount
+      }
+      result.pkgs = result.pkgs.reverse()
     } else {
       result.pkgs = pkgs
     }
+
+    //result.pkgs = result.pkgs.drop((int) result.offset).take((int) result.max)
     result
   }
 

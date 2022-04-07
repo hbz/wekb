@@ -148,7 +148,7 @@
                   </g:if>
                   <g:elseif test="${c.outGoingLink != null}">
                     ${c.value}
-                    <g:if test="${c.value}">
+                    <g:if test="${c.value && c.value != '-Empty-'}">
                       &nbsp;<a aria-label="${c.value}" href="${c.value.startsWith('http') ? c.value : 'http://' + c.value}" target="new"><i class="fas fa-external-link-alt"></i></a>
                     </g:if>
                   </g:elseif>
@@ -156,6 +156,15 @@
                     <g:if test="${c.value}">
                       <i class="fa fa-check-circle text-success fa-lg"
                          title="${message(code: 'default.boolean.true')}"></i>
+                    </g:if>
+                    <g:else>
+                      <i class="fa fa-times-circle text-danger fa-lg"
+                         title="${message(code: 'default.boolean.false')}"></i>
+                    </g:else>
+                  </g:elseif>
+                  <g:elseif test="${c.value instanceof java.lang.Integer}">
+                    <g:if test="${c.value}">
+                      <g:formatNumber number="${c.value}" type="number"/>
                     </g:if>
                     <g:else>
                       <i class="fa fa-times-circle text-danger fa-lg"
