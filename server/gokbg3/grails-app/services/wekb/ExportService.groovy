@@ -556,7 +556,7 @@ class ExportService {
                 " tipp.subjectArea, " +
                 " 'languages', " +
                 " (select value from RefdataValue where id = tipp.accessType), " +
-                " (select value from RefdataValue where id = tipp.coverageDepth), " +
+                " (select value from RefdataValue where id = cs.coverageDepth), " +
                 " 'pkg.name', " +
                 " '', " + // package_id
                 " tipp.accessStartDate, " +
@@ -594,7 +594,7 @@ class ExportService {
                 " '', " + // ill_indicator
                 " tipp.precedingPublicationTitleId, " +
                 " tipp.supersedingPublicationTitleId, " +
-                " (select value from RefdataValue where id = cs.coverageDepth) " +
+                " cs.embargo " +
                 "from TitleInstancePackagePlatform as tipp join tipp.coverageStatements as cs where tipp.id in (:tippIDs) order by tipp.name"
 
 
