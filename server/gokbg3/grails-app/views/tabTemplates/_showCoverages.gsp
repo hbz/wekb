@@ -67,19 +67,7 @@
 					</dl>
 				</g:if>
 			</dd>
-			<dt>
-				<gokb:annotatedLabel owner="${d}" property="coverageNote">Coverage Note</gokb:annotatedLabel>
-			</dt>
-			<dd>
-				<gokb:xEditable  owner="${d}" field="coverageNote"/>
-			</dd>
-			<dt>
-				<gokb:annotatedLabel owner="${d}" property="coverageDepth">Coverage Depth</gokb:annotatedLabel>
-			</dt>
-			<dd>
-				<gokb:xEditableRefData owner="${d}" field="coverageDepth"
-									   config="${RCConstants.TIPP_COVERAGE_DEPTH}"/>
-			</dd>
+
 		</dl>
 	</div>
 	<g:if test="${editable}">
