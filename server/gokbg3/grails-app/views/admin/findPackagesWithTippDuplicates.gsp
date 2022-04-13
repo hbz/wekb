@@ -27,8 +27,8 @@
                     <th>Provider</th>
                     <th>Platform</th>
                     <th>Curatory Groups</th>
-                    <th>Titles</th>
                     <th>Auto Update</th>
+                    <th>Titles</th>
                     <g:sortableColumn property="tippDuplicatesByNameCount" title="Tipp Duplicates By Name"/>
                     <g:sortableColumn property="tippDuplicatesByUrlCount" title="Tipp Duplicates By Url"/>
                     <g:sortableColumn property="tippDuplicatesByTitleIDCount" title="Tipp Duplicates By Title ID"/>
