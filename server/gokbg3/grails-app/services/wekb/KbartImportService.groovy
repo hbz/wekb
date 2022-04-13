@@ -818,6 +818,13 @@ class KbartImportService {
 
                 if (tipp_dto.coverage && tipp_dto.coverage.size() > 0 && publicationType && publicationType != RDStore.TIPP_PUBLIC_TYPE_SERIAL) {
                     com.k_int.ClassUtils.setStringIfDifferent(tipp, 'note', tipp_dto.coverage[0].coverageNote)
+                    if(tipp.coverageStatements.size() > 0){
+                        def cStsIDs = tipp.coverageStatements.id.clone()
+                        cStsIDs.each {
+                            tipp.removeFromCoverageStatements(TIPPCoverageStatement.get(it))
+                        }
+                        tipp.save()
+                    }
                 }
 
                 // KBART -> package_ezb_anchor -> package_ezb_anchor -> identifiers['package_ezb_anchor']
