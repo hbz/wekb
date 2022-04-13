@@ -597,16 +597,14 @@ class ExportService {
                 " cs.embargo " +
                 "from TitleInstancePackagePlatform as tipp join tipp.coverageStatements as cs where tipp.id in (:tippIDs) order by tipp.name"
 
-
-        def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
         def combo_pkg_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
 
         Map queryParams = [:]
         queryParams.p = pkg.id
-        queryParams.sd = status_deleted
+        queryParams.sd = [RDStore.KBC_STATUS_DELETED, RDStore.KBC_STATUS_REMOVED]
         queryParams.ct = combo_pkg_tipps
 
-        List<Long> tippIDs = TitleInstancePackagePlatform.executeQuery("select tipp.id from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=:p and c.toComponent=tipp and tipp.status != :sd and c.type = :ct order by tipp.name", queryParams, [readOnly: true])
+        List<Long> tippIDs = TitleInstancePackagePlatform.executeQuery("select tipp.id from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=:p and c.toComponent=tipp and tipp.status not in :sd and c.type = :ct order by tipp.name", queryParams, [readOnly: true])
 
         int max = 500
         TitleInstancePackagePlatform.withSession { Session sess ->
