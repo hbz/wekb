@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name='layout' content='sb-admin'/>
-    <title><g:message code="gokb.appname" default="we:kb"/>: Packges with Tipp Duplicates</title>
+    <title><g:message code="gokb.appname" default="we:kb"/>: Packages with Tipp Duplicates</title>
 </head>
 
 <body>
@@ -11,7 +11,7 @@
 
 
 <div class="container">
-    <h1>Packges with Tipp Duplicates ${totalCount}</h1>
+    <h1>Packages with Tipp Duplicates (${totalCount})</h1>
 
 </div>
 
@@ -27,6 +27,8 @@
                     <th>Provider</th>
                     <th>Platform</th>
                     <th>Curatory Groups</th>
+                    <th>Titles</th>
+                    <th>Auto Update</th>
                     <g:sortableColumn property="tippDuplicatesByNameCount" title="Tipp Duplicates By Name"/>
                     <g:sortableColumn property="tippDuplicatesByUrlCount" title="Tipp Duplicates By Url"/>
                     <g:sortableColumn property="tippDuplicatesByTitleIDCount" title="Tipp Duplicates By Title ID"/>
@@ -54,6 +56,19 @@
                             <g:each in="${pkg.curatoryGroups}" var="curatoryGroup">
                                 ${curatoryGroup.name}
                             </g:each>
+                        </td>
+                        <td>
+                            <g:if test="${pkg.source?.automaticUpdates}">
+                                <i class="fa fa-check-circle text-success fa-lg"
+                                   title="${message(code: 'default.boolean.true')}"></i>
+                            </g:if>
+                            <g:else>
+                                <i class="fa fa-times-circle text-danger fa-lg"
+                                   title="${message(code: 'default.boolean.false')}"></i>
+                            </g:else>
+                        </td>
+                        <td>
+                                ${pkg.tipps.size()}
                         </td>
                         <td>
                             <g:link controller="admin" action="findTippDuplicatesByPkg" id="${pkg.uuid}">

@@ -453,7 +453,7 @@ class AdminController {
     List pkgs = []
     List<Source> sourceList = Source.findAllByAutomaticUpdatesAndTargetNamespaceIsNotNull(true)
 
-    Package.findAllBySourceInListAndStatus(sourceList, RDStore.KBC_STATUS_CURRENT, [sort: 'name']).eachWithIndex {Package aPackage, int index ->
+    Package.findAllByStatus(RDStore.KBC_STATUS_CURRENT, [sort: 'name']).eachWithIndex {Package aPackage, int index ->
       Integer tippDuplicatesByNameCount = aPackage.getTippDuplicatesByNameCount()
       Integer tippDuplicatesByUrlCount = aPackage.getTippDuplicatesByURLCount()
       Integer tippDuplicatesByTitleIDCount = aPackage.getTippDuplicatesByTitleIDCount()
