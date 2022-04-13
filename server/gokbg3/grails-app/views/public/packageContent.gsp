@@ -1,4 +1,4 @@
-<%@ page import="de.wekb.helper.RCConstants; org.gokb.cred.RefdataCategory; de.wekb.helper.RDStore;" %>
+<%@ page import="org.gokb.cred.RefdataValue; de.wekb.helper.RCConstants; org.gokb.cred.RefdataCategory; de.wekb.helper.RDStore;" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -225,7 +225,7 @@
 
                     <div class="float-right">
                     <g:link controller="public" action="search" class="btn btn-primary"
-                            params="[qbe: 'g:tippsOfPkg', qp_pkg_id: pkg.id, refOid: pkg.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg', 'qp_status_id', 'qp_status'], qp_status_id: RDStore.KBC_STATUS_CURRENT.id]"
+                            params="[qbe: 'g:tippsOfPkg', qp_pkg_id: pkg.id, refOid: pkg.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: RefdataValue.class.name+':'+RDStore.KBC_STATUS_CURRENT.id]"
                             id="">Search View</g:link>
                     </div>
 
@@ -240,7 +240,7 @@
 
                     <div class="float-right">
                         <g:link controller="public" action="search" class="btn btn-primary"
-                                params="[qbe: 'g:tippsOfPkg', qp_pkg_id: pkg.id, refOid: pkg.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg', 'qp_status_id', 'qp_status'], qp_status_id: RDStore.KBC_STATUS_RETIRED.id]"
+                                params="[qbe: 'g:tippsOfPkg', qp_pkg_id: pkg.id, refOid: pkg.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: RefdataValue.class.name+':'+RDStore.KBC_STATUS_RETIRED.id]"
                                 id="">Search View</g:link>
                     </div>
 
@@ -255,7 +255,7 @@
 
                     <div class="float-right">
                         <g:link controller="public" action="search" class="btn btn-primary"
-                                params="[qbe: 'g:tippsOfPkg', qp_pkg_id: pkg.id, refOid: pkg.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg', 'qp_status_id', 'qp_status'], qp_status_id: RDStore.KBC_STATUS_EXPECTED.id]"
+                                params="[qbe: 'g:tippsOfPkg', qp_pkg_id: pkg.id, refOid: pkg.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: RefdataValue.class.name+':'+RDStore.KBC_STATUS_EXPECTED.id]"
                                 id="">Search View</g:link>
                     </div>
 
@@ -270,7 +270,7 @@
 
                     <div class="float-right">
                         <g:link controller="public" action="search" class="btn btn-primary"
-                                params="[qbe: 'g:tippsOfPkg', qp_pkg_id: pkg.id, refOid: pkg.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg', 'qp_status_id', 'qp_status'], qp_status_id: RDStore.KBC_STATUS_DELETED.id]"
+                                params="[qbe: 'g:tippsOfPkg', qp_pkg_id: pkg.id, refOid: pkg.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: RefdataValue.class.name+':'+RDStore.KBC_STATUS_DELETED.id]"
                                 id="">Search View</g:link>
                     </div>
 
