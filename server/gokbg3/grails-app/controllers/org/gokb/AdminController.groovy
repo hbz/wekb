@@ -574,11 +574,11 @@ class AdminController {
   def setTippsWithoutUrlToDeleted(){
     log.debug("setTippsWithoutUrlToDeleted")
 
-    List<Long> tippsIds = TitleInstancePackagePlatform.executeQuery("select id from TitleInstancePackagePlatform where (url is null or url = '') and status != :deleted", [deleted: RDStore.KBC_STATUS_DELETED])
+    List<Long> tippsIds = TitleInstancePackagePlatform.executeQuery("select id from TitleInstancePackagePlatform where (url is null or url = '') and status != :removed", [deleted: RDStore.KBC_STATUS_REMOVED])
 
-    Integer tippsToDeleted = tippsIds ? KBComponent.executeUpdate("update KBComponent set status = :deleted where id in (:tippIds)", [deleted: RDStore.KBC_STATUS_DELETED, tippIds: tippsIds]) : 0
+    Integer tippsToRemoved = tippsIds ? KBComponent.executeUpdate("update KBComponent set status = :removed where id in (:tippIds)", [removed: RDStore.KBC_STATUS_REMOVED, tippIds: tippsIds]) : 0
 
-    flash.message = "Tipp without Url: ${tippsIds.size()}, Set tipps to deleted: ${tippsToDeleted}"
+    flash.message = "Tipp without Url: ${tippsIds.size()}, Set tipps to removed: ${tippsToRemoved}"
 
     redirect(controller: 'admin', action: 'jobs')
   }
