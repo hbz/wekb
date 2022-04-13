@@ -1094,7 +1094,7 @@ class KbartImportService {
                         'endDate': endAsDate
                 )
             }
-        }else if(countNewCoverages > 0 && countTippCoverages > 0) {
+        }else if(countNewCoverages > 1 && countTippCoverages > 1) {
             def cStsIDs = tipp.coverageStatements.id.clone()
             cStsIDs.each {
                 tipp.removeFromCoverageStatements(TIPPCoverageStatement.get(it))
