@@ -508,8 +508,8 @@ class KbartImportService {
             def tipps = TitleInstancePackagePlatform.executeQuery('select tipp from TitleInstancePackagePlatform as tipp, Combo as pkg_combo, Combo as platform_combo  ' +
                     'where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg ' +
                     'and platform_combo.toComponent=tipp and platform_combo.fromComponent = :platform ' +
-                    'and tipp.name = :tiDtoName',
-                    [pkg: pkg, platform: plt, tiDtoName: tipp_dto.name])
+                    'and tipp.name = :tiDtoName and tipp.status != :removed',
+                    [pkg: pkg, platform: plt, tiDtoName: tipp_dto.name, removed: RDStore.KBC_STATUS_REMOVED])
             def uuid_tipp = tipp_dto.uuid ? TitleInstancePackagePlatform.findByUuid(tipp_dto.uuid) : null
             TitleInstancePackagePlatform tipp = null
 
@@ -525,16 +525,16 @@ class KbartImportService {
                         tipps = TitleInstancePackagePlatform.executeQuery('select tipp from TitleInstancePackagePlatform as tipp, Combo as pkg_combo, Combo as platform_combo  ' +
                                 'where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg ' +
                                 'and platform_combo.toComponent=tipp and platform_combo.fromComponent = :platform ' +
-                                'and tipp.url = :url',
-                                [pkg: pkg, platform: plt, url: trimmed_url])
+                                'and tipp.url = :url and tipp.status != :removed',
+                                [pkg: pkg, platform: plt, url: trimmed_url, removed: RDStore.KBC_STATUS_REMOVED])
                     }
 
                     if(tipps.size() == 0) {
                         log.debug("not found Tipp with title. research in pkg ${pkg} with tile_id")
                         tipps = TitleInstancePackagePlatform.executeQuery('select tipp from TitleInstancePackagePlatform as tipp, Combo as pkg_combo, Combo as platform_combo  ' +
                                 'where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg ' +
-                                'and platform_combo.toComponent=tipp and platform_combo.fromComponent = :platform ',
-                                [pkg: pkg, platform: plt])
+                                'and platform_combo.toComponent=tipp and platform_combo.fromComponent = :platform and tipp.status != :removed',
+                                [pkg: pkg, platform: plt, removed: RDStore.KBC_STATUS_REMOVED])
                     }
 
                 }
@@ -551,7 +551,7 @@ class KbartImportService {
 
                                 //if url changed find tipp over title id
                                 TitleInstancePackagePlatform tippMatchedByTitleID = tippMatchingByTitleID(tipp_dto.identifiers, pkg, plt)
-                                if (tippMatchedByTitleID && tippMatchedByTitleID.id == tipps[0].id) {
+                                if (tippMatchedByTitleID && tippMatchedByTitleID.id == tipps[0].id && tippMatchedByTitleID.status != RDStore.KBC_STATUS_REMOVED) {
                                     log.debug("found tipp")
                                     tipp = tipps[0]
                                 } else {
@@ -577,7 +577,7 @@ class KbartImportService {
                                 tipp = cur_tipps[0]
                             } else {
                                 TitleInstancePackagePlatform tippMatchedByTitleID = tippMatchingByTitleID(tipp_dto.identifiers, pkg, plt)
-                                if (tippMatchedByTitleID) {
+                                if (tippMatchedByTitleID && tippMatchedByTitleID.status != RDStore.KBC_STATUS_REMOVED) {
                                     log.debug("found tipp")
                                     tipp = cur_tipps.find { it.id == tippMatchedByTitleID.id }
                                 } else {
@@ -590,7 +590,7 @@ class KbartImportService {
                                 tipp = ret_tipps[0]
                             } else {
                                 TitleInstancePackagePlatform tippMatchedByTitleID = tippMatchingByTitleID(tipp_dto.identifiers, pkg, plt)
-                                if (tippMatchedByTitleID) {
+                                if (tippMatchedByTitleID && tippMatchedByTitleID.status != RDStore.KBC_STATUS_REMOVED) {
                                     log.debug("found tipp")
                                     tipp = ret_tipps.find { it.id == tippMatchedByTitleID.id }
                                 } else {
@@ -612,7 +612,7 @@ class KbartImportService {
                         'hostPlatform': plt,
                         'url'         : trimmed_url,
                         'uuid'        : (tipp_dto.uuid ?: null),
-                        'status'      : (tipp_dto.status ?: null),
+                        'status'      : (tipp_dto.status ?: 'Current'),
                         'name'        : (tipp_dto.name ?: null),
                         'type'        : (tipp_dto.type ?: null),
                         'medium'    : (tipp_dto.medium ?: null),
@@ -620,8 +620,6 @@ class KbartImportService {
                 ]
 
                 tipp = tippCreate(tmap)
-                // Hibernate problem
-
                 if (!tipp) {
                     log.error("TIPP creation failed!")
                 }
@@ -881,7 +879,7 @@ class KbartImportService {
      */
     TitleInstancePackagePlatform tippCreate(tipp_fields = [:]) {
 
-        def tipp_status = tipp_fields.status ? RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, tipp_fields.status) : null
+        RefdataValue tipp_status = tipp_fields.status ? RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, tipp_fields.status) : null
 
         RefdataValue tipp_medium = null
         if (tipp_fields.medium) {
