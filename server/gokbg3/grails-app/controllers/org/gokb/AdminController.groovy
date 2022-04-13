@@ -424,16 +424,16 @@ class AdminController {
 
     List<TitleInstancePackagePlatform> tippsDuplicatesByName = aPackage.findTippDuplicatesByName()
     List<TitleInstancePackagePlatform> tippsDuplicatesByUrl = aPackage.findTippDuplicatesByURL()
-    List<TitleInstancePackagePlatform> tippsDuplicatesByTitleID = aPackage.findTippDuplicatesByURL()
+    List<TitleInstancePackagePlatform> tippsDuplicatesByTitleID = aPackage.findTippDuplicatesByTitleID()
 
     result.offsetByName = params.papaginateByName ? Integer.parseInt(params.offset) : 0
-    result.maxByName = params.papaginateByName ? Integer.parseInt(params.max) : 25
+    result.maxByName = params.papaginateByName ? Integer.parseInt(params.max) : 100
 
     result.offsetByUrl = params.papaginateByUrl ? Integer.parseInt(params.offset) : 0
-    result.maxByUrl = params.papaginateByUrl ? Integer.parseInt(params.max) : 25
+    result.maxByUrl = params.papaginateByUrl ? Integer.parseInt(params.max) : 100
 
     result.offsetByTitleID = params.papaginateByTitleID ? Integer.parseInt(params.offset) : 0
-    result.maxByTitleID = params.papaginateByTitleID ? Integer.parseInt(params.max) : 25
+    result.maxByTitleID = params.papaginateByTitleID ? Integer.parseInt(params.max) : 100
 
     result.totalCountByName = tippsDuplicatesByName.size()
     result.totalCountByUrl = tippsDuplicatesByUrl.size()
@@ -489,6 +489,32 @@ class AdminController {
 
     //result.pkgs = result.pkgs.drop((int) result.offset).take((int) result.max)
     result
+  }
+
+  def removeTippDuplicatesByUrl(){
+    Package aPackage = Package.findByUuid(params.id)
+
+    List<TitleInstancePackagePlatform> tippsDuplicatesByUrl = aPackage.findTippDuplicatesByURL()
+
+    int countRemoved = 0
+    tippsDuplicatesByUrl.groupBy {it.url}.each {String key, List<TitleInstancePackagePlatform> tipps ->
+      //println(key)
+      //println(tipps.sort {it.lastUpdated}.reverse().lastUpdated)
+      List list = tipps.sort {it.lastUpdated}.reverse()
+      list.eachWithIndex { TitleInstancePackagePlatform titleInstancePackagePlatform, int index ->
+        if(index != 0){
+          titleInstancePackagePlatform.status = RDStore.KBC_STATUS_REMOVED
+          titleInstancePackagePlatform.save(flush: true)
+          countRemoved++
+        }
+      }
+
+    }
+
+    flash.message = "Tipps ${countRemoved} set to removed because of tipp duplicates by url"
+
+    redirect(action: 'findTippDuplicatesByPkg', params: [id: params.id, papaginateByUrl: true, max: 100, offset: 0] )
+
   }
 
   def cleanupTippIdentifersWithSameNamespace() {

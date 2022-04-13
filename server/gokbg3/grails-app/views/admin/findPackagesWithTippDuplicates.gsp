@@ -37,7 +37,7 @@
                 <tbody>
                 <g:each in="${pkgs}" var="pkgMap" status="i">
                     <g:set var="pkg" value="${pkgMap.pkg}"/>
-                    <tr>
+                    <tr class="${pkgMap.tippDuplicatesByTitleIDCount > 0 ? 'info' : (pkgMap.tippDuplicatesByUrlCount > 0 ? 'success' : '')}">
                         <td>
                             ${(params.offset ? params.offset.toInteger() : 0) + i + 1}
                         </td>
@@ -71,17 +71,17 @@
                                 ${pkg.tipps.size()}
                         </td>
                         <td>
-                            <g:link controller="admin" action="findTippDuplicatesByPkg" id="${pkg.uuid}">
+                            <g:link controller="admin" action="findTippDuplicatesByPkg" id="${pkg.uuid}" target="_blank" params="[papaginateByName: true, max: 100, offset: 0]">
                                 ${pkgMap.tippDuplicatesByNameCount}
                             </g:link>
                         </td>
                         <td>
-                            <g:link controller="admin" action="findTippDuplicatesByPkg" id="${pkg.uuid}">
+                            <g:link controller="admin" action="findTippDuplicatesByPkg" id="${pkg.uuid}" target="_blank" params="[papaginateByUrl: true, max: 100, offset: 0]">
                                 ${pkgMap.tippDuplicatesByUrlCount}
                             </g:link>
                         </td>
                         <td>
-                            <g:link controller="admin" action="findTippDuplicatesByPkg" id="${pkg.uuid}">
+                            <g:link controller="admin" action="findTippDuplicatesByPkg" id="${pkg.uuid}" target="_blank" params="[papaginateByTitleID: true, max: 100, offset: 0]">
                                 ${pkgMap.tippDuplicatesByTitleIDCount}
                             </g:link>
                         </td>
