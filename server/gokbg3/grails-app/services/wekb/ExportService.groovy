@@ -556,7 +556,7 @@ class ExportService {
                 " tipp.subjectArea, " +
                 " 'languages', " +
                 " (select value from RefdataValue where id = tipp.accessType), " +
-                " (select value from RefdataValue where id = tipp.coverageDepth), " +
+                " (select value from RefdataValue where id = cs.coverageDepth), " +
                 " 'pkg.name', " +
                 " '', " + // package_id
                 " tipp.accessStartDate, " +
@@ -594,19 +594,17 @@ class ExportService {
                 " '', " + // ill_indicator
                 " tipp.precedingPublicationTitleId, " +
                 " tipp.supersedingPublicationTitleId, " +
-                " (select value from RefdataValue where id = cs.coverageDepth) " +
+                " cs.embargo " +
                 "from TitleInstancePackagePlatform as tipp join tipp.coverageStatements as cs where tipp.id in (:tippIDs) order by tipp.name"
 
-
-        def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
         def combo_pkg_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
 
         Map queryParams = [:]
         queryParams.p = pkg.id
-        queryParams.sd = status_deleted
+        queryParams.sd = [RDStore.KBC_STATUS_DELETED, RDStore.KBC_STATUS_REMOVED]
         queryParams.ct = combo_pkg_tipps
 
-        List<Long> tippIDs = TitleInstancePackagePlatform.executeQuery("select tipp.id from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=:p and c.toComponent=tipp and tipp.status != :sd and c.type = :ct order by tipp.name", queryParams, [readOnly: true])
+        List<Long> tippIDs = TitleInstancePackagePlatform.executeQuery("select tipp.id from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=:p and c.toComponent=tipp and tipp.status not in :sd and c.type = :ct order by tipp.name", queryParams, [readOnly: true])
 
         int max = 500
         TitleInstancePackagePlatform.withSession { Session sess ->

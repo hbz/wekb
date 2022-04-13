@@ -190,7 +190,6 @@ class KbartImportValidationService {
         def pltLink = tipp_dto.hostPlatform ?: tipp_dto.platform
         //def titleMap = tipp_dto.title
         def result = ['valid': true]
-        //def result = validateDTOTitleObject(titleMap, locale)
         def errors = [:]
 
         if (!pkgLink) {
@@ -621,93 +620,4 @@ class KbartImportValidationService {
       return result
     }*/
 
-    @Deprecated
-    def validateDTOTitleObject(JSONObject titleDTO, Locale locale) {
-        def result = ['valid': true]
-        def valErrors = [:]
-
-        if (!titleDTO.name||titleDTO.name.trim()=='') {
-            result.valid = false
-            valErrors.put('name', [message: "missing"])
-        }
-        else {
-            /*LocalDateTime startDate = GOKbTextUtils.completeDateString(titleDTO.publishedFrom)
-            LocalDateTime endDate = GOKbTextUtils.completeDateString(titleDTO.publishedTo, false)
-
-            if (titleDTO.publishedFrom && !startDate) {
-              result.valid = false
-              valErrors.put('publishedFrom', [message: "Unable to parse", baddata: titleDTO.remove('publishedFrom')])
-            }
-
-            if (titleDTO.publishedTo && !endDate) {
-              result.valid = false
-              valErrors.put('publishedTo', [message: "Unable to parse", baddata: titleDTO.remove('publishedTo')])
-            }
-
-            if (startDate && endDate && (endDate < startDate)) {
-              valErrors.put('publishedTo', [message: "Publishing end date must not be prior to its start date!", baddata: titleDTO.publishedTo])
-              // switch dates
-              def tmp = titleDTO.publishedTo
-              titleDTO.publishedTo = titleDTO.publishedFrom
-              titleDTO.publishedFrom = tmp
-            }*/
-
-            String idJsonKey = 'ids'
-            def ids_list = titleDTO[idJsonKey]
-
-            if (!ids_list) {
-                idJsonKey = 'identifiers'
-                ids_list = titleDTO[idJsonKey]
-            }
-
-            def id_errors = identifierValidateDTOs(ids_list, locale)
-
-            if (id_errors.size() > 0) {
-                valErrors.put(idJsonKey, id_errors)
-                if (titleDTO[idJsonKey].size() == 0) {
-                    valErrors.put(idJsonKey, [message: 'no valid identifiers left'])
-                }
-            }
-        }
-
-        if (titleDTO.medium) {
-            RefdataValue medRef = kbartImportService.determineMediumRef(titleDTO)
-            if (!medRef) {
-                valErrors.put('medium', [message: "cannot parse", baddata: titleDTO.remove('medium')])
-            }
-        }
-
-        if (titleDTO.language) {
-            for (def lan in titleDTO.language){
-                RefdataValue languageRef = RefdataCategory.lookup('KBComponent.Language', lan)
-                if (!languageRef) {
-                    valErrors.put('language', [message: "cannot parse", baddata: titleDTO.remove('language')])
-                }
-            }
-        }
-
-/*    if (titleDTO.dateFirstInPrint) {
-      LocalDateTime dfip = GOKbTextUtils.completeDateString(titleDTO.dateFirstInPrint, false)
-      if (!dfip) {
-        valErrors.put('dateFirstInPrint', [message: "Unable to parse", baddata: titleDTO.remove('dateFirstInPrint')])
-      }
-    }
-
-    if (titleDTO.dateFirstOnline) {
-      LocalDateTime dfo = GOKbTextUtils.completeDateString(titleDTO.dateFirstOnline, false)
-      if (!dfo) {
-        valErrors.put('dateFirstOnline', [message: "Unable to parse", baddata: titleDTO.remove('dateFirstOnline')])
-      }
-    }*/
-
-        if (valErrors.size() > 0) {
-            if (result.errors) {
-                result.errors.putAll(valErrors)
-            }
-            else {
-                result.errors = valErrors
-            }
-        }
-        result
-    }
 }
