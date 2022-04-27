@@ -56,34 +56,6 @@
                         <g:if test="${c['otherVotes'].isEmpty()}">
                             No one else has rated yet
                         </g:if>
-                        <g:elseif test="${grailsApplication.config.gokb.decisionSupport.otherVoters}">
-                            <table class="otherVoters" style="margin: 0; padding: 0">
-                                <thead>
-                                <tr>
-                                    <th>Other Ratings</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <g:each in="${c['otherVotes']}" var="o">
-                                    <tr>
-                                        <td>
-                                            <p class="DSAuthor DSInlineBlock" title="${o[2]?.org?.name}">
-                                                <span>${o[2]?.displayName ?: o[2].username}</span>
-                                            </p>
-                                        </td>
-                                        <td>
-                                            <p class="DSVote DSInlineBlock">
-                                                <span id="${c['appliedTo']}_${id}_r_negative" class="${o[0]=='Red'?'text-negative':''}" ><i class="fa fa-times-circle fa-2x"></i></span> &nbsp;
-                                                <span id="${c['appliedTo']}_${id}_a_contentious" class="${o[0]=='Amber'?'text-contentious':''}" ><i class="fa fa-question-circle fa-2x"></i></span>&nbsp;
-                                                <span id="${c['appliedTo']}_${id}_g_positive" class="${o[0]=='Green'?'text-positive':''}" ><i class="fa fa-check-circle fa-2x"></i></span>
-                                                <g:if test="${o[0]=='Unknown'}"><i>(Commented only)</i></g:if>
-                                            </p>
-                                        </td>
-                                    </tr>
-                                </g:each>
-                                </tbody>
-                            </table>
-                        </g:elseif>
                         <g:else>
                             <div class="otherVoters">
                                 <table>
