@@ -40,7 +40,7 @@
         <gokb:annotatedLabel owner="${d}" property="titleNamespace">Title Namespace</gokb:annotatedLabel>
     </dt>
     <dd>
-        <gokb:manyToOneReferenceTypedown owner="${d}" field="titleNamespace" baseClass="org.gokb.cred.IdentifierNamespace">${(d.titleNamespace?.name)?:d.titleNamespace?.value}</gokb:manyToOneReferenceTypedown>
+        <gokb:manyToOneReferenceTypedown owner="${d}" field="titleNamespace" baseClass="org.gokb.cred.IdentifierNamespace" filter1="TitleInstancePackagePlatform">${(d.titleNamespace?.name)?:d.titleNamespace?.value}</gokb:manyToOneReferenceTypedown>
     </dd>
 
 

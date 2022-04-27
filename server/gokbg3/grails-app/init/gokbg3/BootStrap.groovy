@@ -127,12 +127,6 @@ class BootStrap {
         }
 
 
-        if (grailsApplication.config.gokb.decisionSupport) {
-            log.info("Configuring default decision support parameters");
-            DSConfig();
-        }
-
-
 //    log.debug("Theme:: ${grailsApplication.config.gokb.theme}");
 //
 
@@ -173,17 +167,6 @@ class BootStrap {
             rr_std.delete()
         }
 
-        log.info("GoKB missing normalised identifiers");
-
-        def id_ctr = 0;
-        Identifier.executeQuery("select id.id from Identifier as id where id.normname is null and id.value is not null").each { id_id ->
-            Identifier i = Identifier.get(id_id)
-            i.generateNormname()
-            i.save(flush: true, failOnError: true)
-            id_ctr++
-        }
-        log.debug("${id_ctr} identifiers updated");
-
         log.info("Fix missing Combo status");
 
         def status_active = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE)
@@ -213,6 +196,12 @@ class BootStrap {
                 [value: 'preselect', name: 'preselect', targetType: 'TitleInstancePackagePlatform'],
                 [value: 'zdb', name: 'ZDB-ID', pattern: "^\\d+-[\\dxX]\$", targetType: 'TitleInstancePackagePlatform'],
 
+                //Kbart Import
+                [value: 'ill_indicator', name: 'Ill Indicator',  targetType: 'TitleInstancePackagePlatform'],
+                [value: 'package_isci', name: 'Package ISCI',  targetType: 'TitleInstancePackagePlatform'],
+                [value: 'package_isil', name: 'Package ISIL',  targetType: 'TitleInstancePackagePlatform'],
+                [value: 'package_ezb_anchor', name: 'EZB Anchor',  targetType: 'TitleInstancePackagePlatform'],
+
 
                 [value: 'Anbieter_Produkt_ID', name: 'Anbieter_Produkt_ID', targetType: 'Package'],
                 [value: 'dnb', name: 'dnb', targetType: 'Package'],
@@ -238,18 +227,21 @@ class BootStrap {
             if (ns_obj) {
                 if (ns.pattern && !ns_obj.pattern) {
                     ns_obj.pattern = ns.pattern
-                    ns_obj.save(flush: true)
                 }
 
                 if (ns.name && !ns_obj.name) {
                     ns_obj.name = ns.name
-                    ns_obj.save(flush: true)
+                }
+
+                if (ns.family && !ns_obj.family) {
+                    ns_obj.family = ns.family
                 }
 
                 if (ns.targetType) {
                     ns_obj.targetType = targetType
-                    ns_obj.save(flush: true)
                 }
+
+                ns_obj.save(flush: true)
             } else {
                 ns.targetType = targetType
                 ns_obj = new IdentifierNamespace(ns).save(flush: true, failOnError: true)
@@ -266,17 +258,6 @@ class BootStrap {
 
         log.info("Ensuring ElasticSearch index")
         ensureEsIndices()
-
-
-        log.info("Bootstrap Identifier Cleanup")
-        Job hk_job = concurrencyManagerService.createJob {
-            cleanupService.housekeeping()
-        }.startOrQueue()
-
-        hk_job.description = "Bootstrap Identifier Cleanup"
-        hk_job.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'BootstrapIdentifierCleanup')
-
-        hk_job.startTime = new Date()
 
         log.info("Checking for missing component statistics")
         ComponentStatisticService.updateCompStats()
@@ -1022,84 +1003,6 @@ class BootStrap {
     }*/
 
 
-    def DSConfig() {
-        log.info("DSConfig()")
-        [
-                'accessdl': 'Access - Download',
-                'accessol': 'Access - Read Online',
-                'accbildl': 'Accessibility - Download',
-                'accbilol': 'Accessibility - Read Online',
-                'device'  : 'Device Requirements for Download',
-                'drm'     : 'DRM',
-                'format'  : 'Format',
-                'lic'     : 'Licensing',
-                'other'   : 'Other',
-                'ref'     : 'Referencing',
-        ].each { k, v ->
-            def dscat = DSCategory.findByCode(k) ?: new DSCategory(code: k, description: v).save(flush: true, failOnError: true)
-        }
-
-        [
-                ['format', 'Downloadable PDF', '', ''],
-                ['format', 'Embedded PDF', '', ''],
-                ['format', 'ePub', '', ''],
-                ['format', 'OeB', '', ''],
-                ['accessol', 'Book Navigation', '', ''],
-                ['accessol', 'Table of contents navigation', '', ''],
-                ['accessol', 'Pagination', '', ''],
-                ['accessol', 'Page Search', '', ''],
-                ['accessol', 'Search Within Book', '', ''],
-                ['accessdl', 'Download Extent', '', ''],
-                ['accessdl', 'Download Time', '', ''],
-                ['accessdl', 'Download Reading View Navigation', '', ''],
-                ['accessdl', 'Table of Contents Navigation', '', ''],
-                ['accessdl', 'Pagination', '', ''],
-                ['accessdl', 'Page Search', '', ''],
-                ['accessdl', 'Search Within Book', '', ''],
-                ['accessdl', 'Read Aloud or Listen Option', '', ''],
-                ['device', 'General', '', ''],
-                ['device', 'Android', '', ''],
-                ['device', 'iOS', '', ''],
-                ['device', 'Kindle Fire', '', ''],
-                ['device', 'PC', '', ''],
-                ['drm', 'Copying', '', ''],
-                ['drm', 'Printing', '', ''],
-                ['accbilol', 'Dictionary', '', ''],
-                ['accbilol', 'Text Resize', '', ''],
-                ['accbilol', 'Change Reading Colour', '', ''],
-                ['accbilol', 'Read aloud or Listen Option', '', ''],
-                ['accbilol', 'Integrated Help', '', ''],
-                ['accbildl', 'Copying', '', ''],
-                ['accbildl', 'Printing', '', ''],
-                ['accbildl', 'Add Notes', '', ''],
-                ['accbildl', 'Dictionary', '', ''],
-                ['accbildl', 'Text Resize', '', ''],
-                ['accbildl', 'Change Reading Colour', '', ''],
-                ['accbildl', 'Integrated Help', '', ''],
-                ['accbildl', 'Other Accessibility features or Support', '', ''],
-                ['ref', 'Export to bibliographic software', '', ''],
-                ['ref', 'Sharing / Social Media', '', ''],
-                ['other', 'Changes / Redevelopment in the near future', '', ''],
-                ['lic', 'Number of users', '', ''],
-                ['lic', 'Credit Payment Model', '', ''],
-                ['lic', 'Publishers Included', '', '']
-        ].each { crit ->
-            def cat = DSCategory.findByCode(crit[0]);
-            if (cat) {
-                def c = DSCriterion.findByOwnerAndTitle(cat, crit[1]) ?: new DSCriterion(
-                        owner: cat,
-                        title: crit[1],
-                        description: crit[2],
-                        explanation: crit[3]).save(flush: true, failOnError: true)
-            } else {
-                log.error("Unable to locate category: ${crit[0]}")
-            }
-        }
-        //log.debug(titleLookupService.getTitleFieldForIdentifier([[ns:'isbn',value:'9780195090017']],'publishedFrom'));
-        //log.debug(titleLookupService.getTitleFieldForIdentifier([[ns:'isbn',value:'9780195090017']],'publishedTo'));
-    }
-
-
     def registerUsers() {
         grailsApplication.config.sysusers.each { su ->
             log.debug("test ${su.name} ${su.pass} ${su.display} ${su.roles}")
@@ -1161,7 +1064,12 @@ class BootStrap {
     def ensureEsIndices() {
         def esIndices = grailsApplication.config.gokb.es.indices?.values()
         for (String indexName in esIndices) {
-            ESWrapperService.createIndex(indexName)
+            try {
+                ESWrapperService.createIndex(indexName)
+            }
+            catch (Exception e) {
+                log.error("Problem by ensureEsIndices -> Exception: ${e}")
+            }
         }
     }
 

@@ -1,75 +1,41 @@
 package org.gokb.cred
 
-import gokbg3.MessageService
-import grails.util.Holders
-import groovy.transform.Synchronized
-import org.grails.web.json.JSONArray
-import org.grails.web.json.JSONObject
-
-import javax.persistence.Transient
-import java.util.regex.Pattern
 import groovy.util.logging.*
+import org.aspectj.weaver.ast.Or
 
 
 @Slf4j
-class Identifier extends KBComponent {
-
-  static def messageService
+class Identifier {
 
   IdentifierNamespace namespace
   String value
+  String uuid
 
-  @Override
-  Collection<String> getLogIncluded() {
-    ['value']
-  }
+  // Timestamps
+  Date dateCreated
+  Date lastUpdated
 
-  @Override
-  String getLogEntityId() {
-    "${this.class.name}:${id}"
-  }
-
-  public String getRestPath() {
-    return "/identifiers"
-  }
-
-  static jsonMapping = [
-    'ignore'      : [
-      'lastUpdatedBy',
-      'dateCreated',
-      'name',
-      'status',
-      'lastUpdated',
-      'description',
-      'source',
-      '_links'
-    ],
-    'defaultLinks': [
-      'namespace'
-    ]
+  static belongsTo = [
+          tipp: TitleInstancePackagePlatform,
+          org: Org,
+          platform: Platform,
+          pkg: Package
   ]
 
+
   static constraints = {
+    uuid(nullable: false, unique: false, blank: false, maxSize: 2048)
+    tipp(nullable:true)
+    org(nullable:true)
+    platform(nullable:true)
+    pkg(nullable:true)
     namespace(nullable: false, blank: false)
     value(validator: { val, obj ->
       if (!val || !val.trim()) {
         return ['notNull']
       }
 
-      def norm_id = Identifier.normalizeIdentifier(val)
-      def dupes = Identifier.findAllByNamespaceAndNormname(obj.namespace, norm_id)
       def pattern = obj.namespace.pattern ? ~"${obj.namespace.pattern}" : null
-      def isDupe = false
-
-      dupes.each { d ->
-        if (d != obj) {
-          isDupe = true
-        }
-      }
-      if (isDupe) {
-        return ['notUnique']
-      }
-
       if (pattern && !(val ==~ pattern)) {
         return ['illegalIdForm']
       }
@@ -77,120 +43,180 @@ class Identifier extends KBComponent {
   }
 
   static mapping = {
-    includes KBComponent.mapping
+    table("identifier_new")
+    id column: 'id_id'
+    version column: 'id_version'
     value column: 'id_value', index: 'id_value_idx'
     namespace column: 'id_namespace_fk', index: 'id_namespace_idx'
+    uuid column: 'id_uuid', type: 'text', index: 'id_uuid_idx'
+    tipp column: 'id_tipp_fk'
+    org column: 'id_org_fk'
+    platform column: 'id_platform_fk'
+    pkg column: 'id_pkg_fk'
+    lastUpdated column: 'id_last_updated'
+    dateCreated column: 'id_date_created'
   }
 
-  static manyByCombo = [
-    identifiedComponents: KBComponent
-  ]
-
-  static mappedByCombo = [
-    identifiedComponents: 'ids',
-  ]
-
-  @Override
-  protected def generateNormname() {
-    if (!normname && value) {
-      normname = Identifier.normalizeIdentifier(value)
+  protected def generateUuid(){
+    if (!uuid){
+      uuid = UUID.randomUUID().toString()
     }
   }
 
-  public static normalizeIdentifier(String id) {
-    return id.toLowerCase().trim().replaceAll("\\W", "")
-  }
+  protected def updateLastUpdatedFromLinkedObject(){
+    def ref = this.getReference()
 
-  @Override
-  protected def generateShortcode() {
-    if (!shortcode && namespace && value) {
-      // Generate the short code.
-      shortcode = generateShortcode("${namespace.value}:${value}").replaceAll("\\W", "-")
+    if(ref instanceof KBComponent){
+      ref.lastUpdated = new Date()
+      ref.save()
     }
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (obj != null) {
-      def dep = KBComponent.deproxy(obj)
-      if (dep instanceof Identifier) {
-        return this.normname == dep.normname &&
-          this.namespace == dep.namespace
-      }
-    }
-    return false
+  def beforeValidate (){
+    log.debug("beforeValidate for ${this}")
+    generateUuid()
   }
 
-  @Override
+  def afterInsert (){
+    log.debug("afterSave for ${this}")
+    updateLastUpdatedFromLinkedObject()
+
+  }
+
+  def afterDelete (){
+    log.debug("afterDelete for ${this}")
+    updateLastUpdatedFromLinkedObject()
+
+  }
+
+  def beforeUpdate(){
+    log.debug("beforeUpdate for ${this}")
+    if (!uuid){
+      generateUuid()
+    }
+  }
+
+  def afterUpdate(){
+    log.debug("afterUpdate for ${this}")
+    updateLastUpdatedFromLinkedObject()
+
+  }
   public String getName() {
     return value
   }
 
-  @Override
   public String toString() {
-    "${namespace.value}:${value} (${getNiceName()} ${id})".toString()
+    "${namespace.value}:${value} (Identifier ${id})".toString()
   }
 
-  @Transient
-  public static def validateDTOs(JSONArray identifierDTOs, Locale locale) {
-    def id_errors = [:]
-    def to_remove = []
-    identifierDTOs?.each { idobj ->
-      def id_def = [:]
-      def ns_obj = null
-      if (idobj instanceof Map) {
-        def id_ns = idobj.type ?: (idobj.namespace ?: null)
+  static String getAttributeName(def object) {
+    String name
 
-        id_def.value = idobj.value
+    name = object instanceof Org ?      'org' : name
+    name = object instanceof Package ?  'pkg' : name
+    name = object instanceof TitleInstancePackagePlatform ? 'tipp' : name
+    name = object instanceof Platform ?      'platform' : name
 
-        if (id_ns instanceof String) {
-          log.debug("Default namespace handling for ${id_ns}..")
-          ns_obj = IdentifierNamespace.findByValueIlike(id_ns)
-        }
-        else if (id_ns) {
-          log.debug("Handling namespace def ${id_ns}")
-          ns_obj = IdentifierNamespace.get(id_ns)
-        }
+    name
+  }
 
-        if (!ns_obj) {
-          id_errors.put('namespace', [message: messageService.resolveCode('default.not.found.message', ["Namespace", id_ns], locale), baddata: id_ns])
-          to_remove.add(idobj)
-        }
-        else {
-          id_def.type = ns_obj.value
-        }
+  void setReference(def owner) {
+    org  = owner instanceof Org ? owner : org
+    pkg  = owner instanceof Package ? owner : pkg
+    platform = owner instanceof Platform ?  owner : platform
+    tipp = owner instanceof TitleInstancePackagePlatform ? owner : tipp
+  }
+
+  Object getReference() {
+    int refCount = 0
+    def ref
+
+    List<String> fks = ['platform', 'org', 'pkg', 'tipp']
+    fks.each { fk ->
+      if (this."${fk}") {
+        refCount++
+        ref = this."${fk}"
       }
-      else if (idobj instanceof Integer) {
-        Identifier the_id = Identifier.get(idobj)
+    }
+    if (refCount == 1) {
+      return ref
+    }
+    return null
+  }
 
-        if (!the_id) {
-          id_errors.put(idobj.type, [message: messageService.resolveCode('crossRef.error.lookup', ["Identifier", "ID"], locale), baddata: idobj.value])
-          to_remove.add(idobj)
-        }
+ /* static Identifier construct(Map<String, Object> map) {
+
+    withTransaction {
+      String value     = map.get('value')
+      KBComponent kbcomponent = map.get('kbcomponent')
+      def namespace    = map.get('namespace')
+      def targetType    = map.get('targetType')
+
+      if(targetType){
+        targetType = RefdataValue.findByValueAndOwner(targetType, RefdataCategory.findByDesc(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE))
+      }
+
+      IdentifierNamespace ns
+      if (namespace instanceof IdentifierNamespace) {
+        ns = namespace
       }
       else {
-        log.warn("Missing information in id object ${idobj}")
-        id_errors.put(idobj.type, [message: "missing information", baddata: idobj.value])
-        to_remove.add(idobj)
+        if (targetType){
+          ns = IdentifierNamespace.findByValueAndTargetType(namespace?.trim(), RefdataValue.findByValueAndOwner(targetType, RefdataCategory.findByDesc(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE)))
+        } else {
+          ns = IdentifierNamespace.findByValue(namespace?.trim())
+        }
+
+        if(! ns) {
+          if (targetType){
+            ns = new IdentifierNamespace(value: namespace, name:  namespace, targetType: targetType)
+          } else {
+            ns = new IdentifierNamespace(value: namespace, name: namespace)
+          }
+          ns.save()
+        }
       }
 
-      if (ns_obj && id_def.size() > 0) {
-        if (!Identifier.findByNamespaceAndNormname(ns_obj, Identifier.normalizeIdentifier(id_def.value))) {
-          if (ns_obj.pattern && !(id_def.value ==~ ns_obj.pattern)) {
-            log.warn("Validation for ${id_def.type}:${id_def.value} failed!")
-            id_errors.put(idobj.type, [message: "validation failed", baddata: idobj.value])
-            to_remove.add(idobj)
-          }
-          else {
-            log.debug("New identifier ..")
-          }
+      String attr = Identifier.getAttributeName(reference)
+
+      def ident = Identifier.executeQuery(
+              'select ident from Identifier ident where ident.value = :val and ident.ns = :ns and ident.kbcomponent = :kbcomponent order by ident.id',
+              [val: value, ns: ns, kbcomponent: kbcomponent]
+
+      )
+      if (ident){
+        factoryResult.status += FactoryResult.STATUS_ERR_UNIQUE_BUT_ALREADY_EXISTS_IN_REFERENCE_OBJ
+      }
+      if (! ident.isEmpty()) {
+        if (ident.size() > 1) {
+          factoryResult.status += FactoryResult.STATUS_ERR_UNIQUE_BUT_ALREADY_SEVERAL_EXIST_IN_REFERENCE_OBJ
+          static_logger.debug("WARNING: multiple matches found for ( ${value}, ${ns}, ${reference} )")
         }
-        else {
-          log.debug("Found existing identifier ..")
+        ident = ident.first()
+      }
+
+      if (! ident) {
+        Identifier identifierInDB = Identifier.findByNsAndValue(ns, value)
+        if (ns.isUnique && identifierInDB && value != "Unknown") {
+          static_logger.debug("NO IDENTIFIER CREATED: multiple occurrences found for unique namespace ( ${value}, ${ns} )")
+          factoryResult.status += FactoryResult.STATUS_ERR_UNIQUE_BUT_ALREADY_SEVERAL_EXIST_IN_REFERENCE_OBJ
+//                factoryResult.result = identifierInDB
+          ident = identifierInDB
+        } else {
+          static_logger.debug("INFO: no match found; creating new identifier for ( ${value}, ${ns}, ${reference.class} )")
+          ident = new Identifier(ns: ns, value: value)
+          if(parent)
+            ident.instanceOf = parent
+          ident.setReference(reference)
+          ident.note = note
+          boolean success = ident.save()
+          if (success){
+            factoryResult.status += FactoryResult.STATUS_OK
+          } else {
+            factoryResult.status += FactoryResult.STATUS_ERR
+          }
         }
       }
     }
-    identifierDTOs.removeAll(to_remove)
-    return id_errors
-  }
+  }*/
 }

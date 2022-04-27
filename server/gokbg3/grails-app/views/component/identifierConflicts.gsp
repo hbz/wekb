@@ -1,3 +1,5 @@
+<%@ page import="org.gokb.cred.TitleInstancePackagePlatform; org.gokb.cred.Identifier; org.gokb.cred.Platform; org.gokb.cred.Package; org.gokb.cred.Org;" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,7 +15,7 @@
           <div class="input-group">
             <dt class="dt-label">Identifier Namespace</dt>
             <dd>
-              <gokb:simpleReferenceTypedown class="form-control" name="id" baseClass="org.gokb.cred.IdentifierNamespace" value="${namespace ? 'org.gokb.cred.IdentifierNamespace:' + namespace.id : ''}" />
+              <gokb:simpleReferenceTypedown class="form-control" name="id" baseClass="org.gokb.cred.IdentifierNamespace" value="${namespace ? 'org.gokb.cred.IdentifierNamespace:' + namespace.id : ''}" filter1="all"/>
             </dd>
             <dt class="dt-label">Conflict type</dt>
             <dd>
@@ -32,7 +34,7 @@
   </div>
   <g:if test="${namespace}">
     <g:if test="${ctype == 'st'}">
-      <h1 class="page-header">Components with multiple IDs of namespace <g:link controller="resource" action="show" id="org.gokb.cred.IdentifierNamespace:${namespace.id}">${namespace.value}</g:link> (${titleCount})</h1>
+      <h1 class="page-header">Components with multiple Identifiers of namespace <g:link controller="resource" action="show" id="org.gokb.cred.IdentifierNamespace:${namespace.id}">${namespace.value}</g:link> (${titleCount})</h1>
       <div id="mainarea" class="panel panel-default">
 
         <g:if test="${singleTitles.size() > 0}">
@@ -47,14 +49,25 @@
               <g:each in="${singleTitles}" var="st">
                 <tr>
                   <td>
-                    <g:link controller="resource" action="show" id="${st.uuid}">${st.name}</g:link>
-                    <ul>
-                      <li>Latest Publisher: ${st.currentPublisher?.name ?: 'None'}</li>
-                    </ul>
+                    <g:if test="${st instanceof TitleInstancePackagePlatform}">
+                      Title: <g:link controller="resource" action="show" id="${st.uuid}">${st.name}</g:link> (Package: <g:link controller="resource" action="show" id="${st.pkg.uuid}">${st.pkg.name}</g:link>)
+                    </g:if>
+
+                    <g:if test="${st instanceof Platform}">
+                      Plaftorm: <g:link controller="resource" action="show" id="${st.uuid}">${st.name}</g:link>
+                    </g:if>
+
+                    <g:if test="${st instanceof Package}">
+                      Package: <g:link controller="resource" action="show" id="${st.uuid}">${st.name}</g:link>
+                    </g:if>
+
+                    <g:if test="${st instanceof Org}">
+                      Provider <g:link controller="resource" action="show" id="${st.uuid}">${st.name}</g:link>
+                    </g:if>
                   </td>
                   <td>
                     <ul>
-                    <g:each in="${st.ids}" var="cid">
+                    <g:each in="${st.ids.sort{it.namespace.value}}" var="cid">
                       <li><span style="${cid.namespace.value == namespace.value ?'font-weight:bold;':''}">${cid.namespace.value}:${cid.value}</span></li>
                     </g:each>
                     </ul>
@@ -94,16 +107,33 @@
             <thead>
               <tr>
                 <th>Identifier</th>
-                <th>Identified Components</th>
+                <th>Identified Components with same Identifier</th>
               </tr>
             </thead>
             <tbody>
               <g:each in="${dispersedIds}" var="did">
                   <tr>
-                    <td><g:link controller="resource" action="show" id="${did.uuid}"><span style="white-space:nowrap">${did.value}</span></g:link></td>
+                    <td><g:link controller="resource" action="show" id="${did.class.name}:${did.id}"><span style="white-space:nowrap">${did.value}</span></g:link></td>
                     <td>
-                      <g:each in="${did.identifiedComponents}" var="idc">
-                        <div><g:link controller="resource" action="show" id="${idc.uuid}">${idc.name} (${idc.status?.value ?: 'Unknown Status'})</g:link></div>
+                      <g:each in="${Identifier.findAllByValue(did.value)}" var="idc">
+                        <div>
+                        <g:if test="${idc.tipp}">
+                          Title: <g:link controller="resource" action="show" id="${idc.uuid}">${idc.tipp.name}</g:link> (Package: <g:link controller="resource" action="show" id="${idc.tipp.pkg.uuid}">${idc.tipp.pkg.name}</g:link>)
+                        </g:if>
+
+                        <g:if test="${idc.platform}">
+                          Plaftorm: <g:link controller="resource" action="show" id="${idc.uuid}">${idc.platform.name}</g:link>
+                        </g:if>
+
+                        <g:if test="${idc.pkg}">
+                          Package: <g:link controller="resource" action="show" id="${idc.uuid}">${idc.pkg.name}</g:link>
+                        </g:if>
+
+                        <g:if test="${idc.org}">
+                          Provider <g:link controller="resource" action="show" id="${idc.uuid}">${idc.org.name}</g:link>
+                        </g:if>
+                        </div>
+
                       </g:each>
                     </td>
                   </tr>

@@ -13,32 +13,31 @@
         </thead>
         <tbody>
             <g:each in="${d.ids?.sort { it.namespace?.value }}" var="identifier">
-                <g:set var="combo" value="${Combo.findByFromComponentAndTypeAndToComponent(d, RDStore.COMBO_TYPE_KB_IDS, identifier)}"/>
                 <tr>
                     <td>
                         ${identifier.namespace.value}
                     </td>
                     <td>
                         <g:if test="${controllerName == 'public'}">
-                                <g:link controller="public" action="identifierContent" id="${identifier.uuid}">
+                                <g:link controller="public" action="identifierContent" id="${identifier.class.name}:${identifier.id}">
                                     ${identifier.value}
                                 </g:link>
                         </g:if>
                         <g:else>
-                            <g:link controller="resource" action="show" id="${identifier.uuid}">
-                                ${identifier.value}
-                            </g:link>
+                            <gokb:xEditable owner="${identifier}" field="value" />
+                            &nbsp;
+                            <g:link controller="resource" action="show" id="${identifier.class.name}:${identifier.id}" title="Jump to resource"><i class="fas fa-eye"></i></g:link>
                         </g:else>
                     </td>
-                    <g:if test="${editable && combo}">
+                    <g:if test="${editable}">
                         <td>
-                            <g:link
-                                    controller='ajaxSupport'
-                                    action='deleteCombo'
-                                    params="${['id': combo.id, 'fragment': 'identifiers', 'propagate': "true"]}"
+                            <g:link controller='ajaxSupport'
+                                    action='delete'
+                                    params="${["__context": "${identifier.class.name}:${identifier.id}", 'fragment': fragment]}"
                                     class="confirm-click btn-delete"
                                     title="Delete this link"
-                                    data-confirm-message="Are you sure you wish to delete this Identifier (${identifier.namespace.value}: ${identifier.value})?">Delete</g:link></td>
+                                    data-confirm-message="Are you sure you wish to delete this Identifier (${identifier.namespace.value}: ${identifier.value})?">Delete</g:link>
+                        </td>
                     </g:if>
                 </tr>
             </g:each>

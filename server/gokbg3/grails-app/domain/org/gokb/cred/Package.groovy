@@ -89,6 +89,7 @@ class Package extends KBComponent {
           regionalRanges : RefdataValue,
           ddcs : RefdataValue,
           paas : PackageArchivingAgency,
+          ids: Identifier
   ]
 
   static mapping = {
@@ -579,16 +580,6 @@ select tipp.id,
                 builder.'name'(tipp[1]?.trim())
                 builder.'type'(getTitleClass(tipp[2]))
                 builder.'status'(tipp[15]?.value)
-                builder.'identifiers' {
-                  getTitleIds(tipp[2]).each { tid ->
-                    builder.'identifier'('namespace': tid[0], 'namespaceName': tid[3], 'value': tid[1], 'type': tid[2])
-                  }
-                }
-              }
-              builder.'identifiers' {
-                getTippIds(tipp[0]).each { tid ->
-                  builder.'identifier'('namespace': tid[0], 'namespaceName': tid[3], 'value': tid[1], 'type': tid[2])
-                }
               }
               'platform'([id: tipp[4], 'uuid': tipp[14]]) {
                 'primaryUrl'(tipp[10]?.trim())
@@ -619,22 +610,6 @@ select tipp.id,
     }
 
     log.debug("toGoKBXml complete...");
-  }
-
-  @Transient
-  private static getTitleIds(Long title_id) {
-    def refdata_ids = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'KBComponent.Ids');
-    def status_active = RefdataCategory.lookupOrCreate(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE)
-    def result = Identifier.executeQuery("select i.namespace.value, i.value, i.namespace.family, i.namespace.name from Identifier as i, Combo as c where c.fromComponent.id = ? and c.type = ? and c.toComponent = i and c.status = ?", [title_id, refdata_ids, status_active], [readOnly: true]);
-    result
-  }
-
-  @Transient
-  private static getTippIds(Long tipp_id) {
-    def refdata_ids = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'KBComponent.Ids');
-    def status_active = RefdataCategory.lookupOrCreate(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE)
-    def result = Identifier.executeQuery("select i.namespace.value, i.value, i.namespace.family, i.namespace.name from Identifier as i, Combo as c where c.fromComponent.id = ? and c.type = ? and c.toComponent = i and c.status = ?", [tipp_id, refdata_ids, status_active], [readOnly: true]);
-    result
   }
 
   @Transient
@@ -712,100 +687,7 @@ select tipp.id,
     }
   }
 
-  /**
-   * Definitive rules for a valid package header
-   */
-  public static def validateDTO(packageHeaderDTO, locale) {
-    def result = [valid: true, errors: [:], match: false]
 
-    if (!packageHeaderDTO.name?.trim()) {
-      result.valid = false
-      result.errors.name = [[message: messageService.resolveCode('crossRef.package.error.name', null, locale), baddata: packageHeaderDTO.name]]
-    }
-
-    String idJsonKey = 'ids'
-    def ids_list = packageHeaderDTO[idJsonKey]
-    if (!ids_list) {
-      idJsonKey = 'identifiers'
-      ids_list = packageHeaderDTO[idJsonKey]
-    }
-    if (ids_list) {
-      def id_errors = Identifier.validateDTOs(ids_list, locale)
-      if (id_errors.size() > 0) {
-        result.errors.put(idJsonKey, id_errors)
-      }
-    }
-
-    if (packageHeaderDTO.provider && packageHeaderDTO.provider instanceof Integer) {
-      def prov = Org.get(packageHeaderDTO.provider)
-
-      if (!prov) {
-        result.errors.provider = [[message: messageService.resolveCode('crossRef.error.lookup', ["Provider", "ID"], locale), code: 404, baddata: packageHeaderDTO.provider]]
-        result.valid = false
-      }
-    }
-
-    if (packageHeaderDTO.nominalPlatform && packageHeaderDTO.nominalPlatform instanceof Integer) {
-      def prov = Platform.get(packageHeaderDTO.nominalPlatform)
-
-      if (!prov) {
-        result.errors.nominalPlatform = [[message: messageService.resolveCode('crossRef.error.lookup', ["Platform", "ID"], locale), code: 404, baddata: packageHeaderDTO.nominalPlatform]]
-        result.valid = false
-      }
-    }
-
-    if (result.valid) {
-      def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
-      def pkg_normname = Package.generateNormname(packageHeaderDTO.name)
-
-      def name_candidates = Package.executeQuery("from Package as p where p.normname = ? and p.status <> ?", [pkg_normname, status_deleted])
-      def full_matches = []
-
-      if (packageHeaderDTO.uuid) {
-        result.match = Package.findByUuid(packageHeaderDTO.uuid) ? true : false
-      }
-
-      if (!result.match && name_candidates.size() == 1) {
-        result.match = true
-      }
-
-      if (!result.match) {
-        def variant_normname = GOKbTextUtils.normaliseString(packageHeaderDTO.name)
-        def variant_candidates = Package.executeQuery("select distinct p from Package as p join p.variantNames as v where v.normVariantName = ? and p.status <> ? ", [variant_normname, status_deleted]);
-
-        if (variant_candidates.size() == 1) {
-          result.match = true
-          log.debug("Package matched via existing variantName.")
-        }
-      }
-
-      if (!result.match) {
-        log.debug("Did not find a match via existing variantNames, trying supplied variantNames..")
-        packageHeaderDTO.variantNames.each {
-
-          if (it.trim().size() > 0) {
-            def var_pkg = Package.findByName(it)
-
-            if (var_pkg) {
-              log.debug("Found existing package name for variantName ${it}")
-            }
-            else {
-
-              def variant_normname = GOKbTextUtils.normaliseString(it)
-              def variant_candidates = Package.executeQuery("select distinct p from Package as p join p.variantNames as v where v.normVariantName = ? and p.status <> ? ", [variant_normname, status_deleted]);
-
-              if (variant_candidates.size() == 1) {
-                log.debug("Found existing package variant name for variantName ${it}")
-                result.match = true
-              }
-            }
-          }
-        }
-      }
-    }
-
-    result
-  }
 
   @Transient
   public getAutoUpdateJobResult() {
@@ -841,12 +723,91 @@ select tipp.id,
     if ( !found && value != '') {
       value = value?.trim()
       ns = ns.trim()
-      def norm_id = Identifier.normalizeIdentifier(value)
-      IdentifierNamespace namespace = IdentifierNamespace.findByValueIlike(ns)
-      Identifier identifier = new Identifier(namespace: namespace, value: value, normname: norm_id).save(flush:true, failOnError:true)
-      def new_id = new Combo(fromComponent: this, toComponent: identifier, status: RDStore.COMBO_STATUS_ACTIVE, type: RDStore.COMBO_TYPE_KB_IDS).save(flush: true, failOnError: true)
+      RefdataCategory refdataCategory = RefdataCategory.findByDesc(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE)
+
+      IdentifierNamespace namespace = IdentifierNamespace.findByValueIlikeAndTargetType(ns, RefdataValue.findByValueAndOwner('Package', refdataCategory))
+      Identifier identifier = new Identifier(namespace: namespace, value: value, pkg: this).save(flush:true, failOnError:true)
 
     }
+  }
+
+  @Transient
+  List<TitleInstancePackagePlatform> findTippDuplicatesByName() {
+
+    List<TitleInstancePackagePlatform> tippsDuplicates = TitleInstancePackagePlatform.executeQuery("select tipp from TitleInstancePackagePlatform as tipp, Combo as pkg_combo" +
+            " where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg and " +
+            " tipp.name in (select tipp2.name from TitleInstancePackagePlatform tipp2, Combo as pkg_combo2 where pkg_combo2.toComponent=tipp2 and pkg_combo2.fromComponent = :pkg group by tipp2.name having count(tipp2.name) > 1)" +
+            " order by tipp.name",
+            [pkg: this]) ?: []
+  }
+
+  @Transient
+  List<TitleInstancePackagePlatform> findTippDuplicatesByURL() {
+
+    List<TitleInstancePackagePlatform> tippsDuplicates = TitleInstancePackagePlatform.executeQuery("select tipp from TitleInstancePackagePlatform as tipp, Combo as pkg_combo" +
+            " where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg and " +
+            " tipp.url in (select tipp2.url from TitleInstancePackagePlatform tipp2, Combo as pkg_combo2 where pkg_combo2.toComponent=tipp2 and pkg_combo2.fromComponent = :pkg group by tipp2.url having count(tipp2.url) > 1)" +
+            " order by tipp.url",
+            [pkg: this]) ?: []
+  }
+
+  @Transient
+  List<TitleInstancePackagePlatform> findTippDuplicatesByTitleID() {
+
+    IdentifierNamespace identifierNamespace = this.source ? this.source.targetNamespace : null
+
+    if(identifierNamespace) {
+      List<TitleInstancePackagePlatform> tippsDuplicates = TitleInstancePackagePlatform.executeQuery("select tipp from TitleInstancePackagePlatform as tipp join tipp.ids as ident, Combo as pkg_combo" +
+              " where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg " +
+              " and ident.value in (select ident2.value FROM Identifier AS ident2, TitleInstancePackagePlatform as tipp, Combo as pkg_combo WHERE ident2.namespace = :namespace and ident2.tipp = tipp and pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg" +
+              " group by ident2.value having count(ident2.value) > 1)",
+              [pkg: this, namespace: identifierNamespace]) ?: []
+    }else {
+      return []
+    }
+  }
+
+  @Transient
+  Integer getTippDuplicatesByNameCount() {
+
+    int result = TitleInstancePackagePlatform.executeQuery("select count(tipp.id) from TitleInstancePackagePlatform as tipp, Combo as pkg_combo" +
+            " where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg and " +
+            " tipp.name in (select tipp2.name from TitleInstancePackagePlatform tipp2, Combo as pkg_combo2 where pkg_combo2.toComponent=tipp2 and pkg_combo2.fromComponent = :pkg group by tipp2.name having count(tipp2.name) > 1)",
+            [pkg: this])[0]
+    return result
+  }
+
+  @Transient
+  Integer getTippDuplicatesByURLCount() {
+
+    int result = TitleInstancePackagePlatform.executeQuery("select count(tipp.id) from TitleInstancePackagePlatform as tipp, Combo as pkg_combo" +
+            " where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg and " +
+            " tipp.url in (select tipp2.url from TitleInstancePackagePlatform tipp2, Combo as pkg_combo2 where pkg_combo2.toComponent=tipp2 and pkg_combo2.fromComponent = :pkg group by tipp2.url having count(tipp2.url) > 1)",
+            [pkg: this])[0]
+
+    return result
+  }
+
+  @Transient
+  Integer getTippDuplicatesByTitleIDCount() {
+    IdentifierNamespace identifierNamespace = this.source ? this.source.targetNamespace : null
+
+    if(identifierNamespace) {
+      int result = TitleInstancePackagePlatform.executeQuery("select count(tipp.id) from TitleInstancePackagePlatform as tipp join tipp.ids as ident, Combo as pkg_combo" +
+              " where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg " +
+              " and ident.value in (select ident2.value FROM Identifier AS ident2, TitleInstancePackagePlatform as tipp, Combo as pkg_combo WHERE ident2.namespace = :namespace and ident2.tipp = tipp and pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg" +
+              " group by ident2.value having count(ident2.value) > 1)",
+              [pkg: this, namespace: identifierNamespace])[0]
+      return result
+    }else {
+      return 0
+    }
+  }
+
+  @Transient
+  String getIdentifierValue(idtype){
+    // Null returned if no match.
+    ids?.find{ it.namespace.value.toLowerCase() == idtype.toLowerCase() }?.value
   }
 
 }

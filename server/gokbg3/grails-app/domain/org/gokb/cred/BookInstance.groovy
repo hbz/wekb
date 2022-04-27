@@ -124,7 +124,7 @@ class BookInstance extends TitleInstance {
   }
 
 
-
+  @Deprecated
   static def validateDTO(JSONObject titleDTO, locale) {
     def result = TitleInstance.validateDTO(titleDTO, locale)
     def valErrors = [:]

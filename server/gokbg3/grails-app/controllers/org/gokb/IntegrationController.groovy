@@ -231,7 +231,7 @@ class IntegrationController {
     def id = request.JSON.'@id'
     def new_org = new Org(name: name)
 
-    def primary_identifier = componentLookupService.lookupOrCreateCanonicalIdentifier('global', id)
+
     new_org.ids.add(primary_identifier)
 
     request.JSON.'owl:sameAs'?.each { said ->
@@ -239,7 +239,7 @@ class IntegrationController {
       // Double check that this identifier is NOT already used
       def existing_usage = KBComponent.lookupByIO('global', said)
       if (existing_usage == null) {
-        def identifier = componentLookupService.lookupOrCreateCanonicalIdentifier('global', said)
+
         new_org.ids.add(identifier)
       }
       else {

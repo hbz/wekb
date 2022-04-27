@@ -247,4 +247,8 @@ class RefdataCategory extends AbstractI10n {
     }
   }
 
+  Integer getValuesCount(){
+    return values.size()
+  }
+
 }

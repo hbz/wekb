@@ -49,6 +49,9 @@
             <li><g:link controller="search" action="index" params="[qbe:'g:orgs']" title="Search Orgs" ><i class='fa fa-angle-double-right fa-fw'></i> Organizations</g:link></li>
             <li><g:link controller="search" action="index" params="[qbe:'g:sources']" title="Search Sources" ><i class='fa fa-angle-double-right fa-fw'></i> Sources</g:link></li>
 
+            <li class="divider"></li>
+            <li><g:link controller="search" action="index" params="[qbe:'g:identifiers']" title="Search Identifiers" ><i class='fa fa-angle-double-right fa-fw'></i> Identifiers</g:link></li>
+
           </ul> <!-- /.nav-second-level -->
         </li>
         <sec:ifAnyGranted roles='ROLE_ADMIN,ROLE_EDITOR,ROLE_CONTRIBUTOR'>
@@ -120,59 +123,32 @@
           <li class="${controllerName == "admin" ? 'active' : ''}"><a href="#"><i class="fa fa-wrench fa-fw"></i> Admin<span class="fa arrow"></span></a>
             <ul class="nav nav-second-level">
               <li><g:link controller="user" action="search"><i class="fa fa-angle-double-right fa-fw"></i> User Management Console</g:link></li>
-              <%-- <li><g:link controller="admin" action="tidyOrgData" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Tidy Orgs Data</g:link></li> --%>
                 <li><g:link controller="admin" action="jobs"><i class="fa fa-angle-double-right fa-fw"></i> Manage Jobs</g:link></li>
                 <li><g:link controller="admin" action="manageFTControl"><i class="fa fa-angle-double-right fa-fw"></i> Manage FT Control</g:link></li>
               <li><g:link controller="admin" action="packagesChanges"><i class="fa fa-angle-double-right fa-fw"></i> Packages Changes</g:link></li>
+              <li><g:link controller="admin" action="findPackagesWithTippDuplicates"><i class="fa fa-angle-double-right fa-fw"></i> Packages with Tipp Duplicates</g:link></li>
+              <li><g:link controller="admin" action="tippIdentifiersWithSameNameSpace"><i class="fa fa-angle-double-right fa-fw"></i> Title Identifiers with same Identifier Namespace</g:link></li>
             </ul>
           </li>
           <li><a href="#"><i class="fa fa-wrench fa-fw"></i>Admin Jobs<span class="fa arrow"></span></a>
             <ul class="nav nav-third-level">
               <li><g:link controller="admin" action="updateTextIndexes" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Update Free Text Indexes</g:link></li>
 %{--              <li><g:link controller="admin" action="resetTextIndexes" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Reset Free Text Indexes</g:link></li>--}%
-%{--              <li><g:link controller="admin" action="masterListUpdate" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Force Master List Update</g:link></li>
-              <li><g:link controller="admin" action="clearBlockCache" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Clear Block Cache (eg Stats)</g:link></li>--}%
               <li><g:link controller="admin" action="recalculateStats" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Recalculate Statistics</g:link></li>
               <li><g:link controller="admin" action="cleanup" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Expunge Deleted Records</g:link></li>
               <li><g:link controller="admin" action="cleanupPlatforms" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Deprecate Platforms Without URLs</g:link></li>
-              <li><g:link controller="admin" action="markInconsistentDates" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Add Reviews for wrong Dates</g:link></li>
-              <li><g:link controller="admin" action="cleanupRejected" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Expunge Rejected Records</g:link></li>
-              <li><g:link controller="admin" action="cleanupOrphanedTipps" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Expunge Orphaned TIPPs</g:link></li>
-              <li><g:link controller="admin" action="cleanupOrphanedIdentifiers" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Expunge Orphaned Identifiers</g:link></li>
-              %{--<li><g:link controller="admin" action="rejectWrongTitles" onclick="return confirm('This will set ALL titles without any active TIPPs to status -Deleted-!\\n\\nAre you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Cleanup Titles without TIPPs</g:link></li>
-              --}%
+              <li><g:link controller="admin" action="reviewDatesOfTippCoverage" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Add Reviews for wrong Tipp Coverage Dates</g:link></li>
               <li><g:link controller="admin" action="ensureUuids" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Ensure UUIDs</g:link></li>
-              <li><g:link controller="admin" action="ensureTipls" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Ensure TIPLs</g:link></li>
               <li><g:link controller="admin" action="addPackageTypes" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Ensure Package Content Types</g:link></li>
-             %{-- <li><g:link controller="admin" action="triggerEnrichments" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Trigger enrichments</g:link></li>
-              --}%
               <li><g:link controller="admin" action="autoUpdatePackages" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i>Auto Update Packages</g:link></li>
-              <%--      <li><g:link controller="admin" action="housekeeping" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Housekeeping</g:link></li> --%>
-
-              <!--
-
-                  <li><g:link controller="api" action="downloadUpdate"><i class="fa fa-angle-double-right fa-fw"></i> Get Refine Extension</g:link></li>
-                  -->
-              %{--<li><a href="https://github.com/openlibraryenvironment/gokb/wiki/Integration-APIs:-Telling-GOKb-about-new-or-corresponding-resources-and-local-identifiers"><i class="fa fa-database fa-fw"></i> Integration API</a></li>--}%
-
-              <li><g:link controller="api" action="downloadUpdate"><i class="fa fa-angle-double-right fa-fw"></i> Get Refine Extension</g:link></li>
-              -->
-              <li class="divider"></li>
-              <li><a href="https://github.com/openlibraryenvironment/gokb/wiki/Integration-APIs:-Telling-GOKb-about-new-or-corresponding-resources-and-local-identifiers"><i class="fa fa-database fa-fw"></i> Integration API</a></li>
-              <li class="divider"></li>
-              
-
+              <li><g:link controller="admin" action="cleanupTippIdentifersWithSameNamespace" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i>Cleanup Tipp Identifers with same Namespace</g:link></li>
+              <li><g:link controller="admin" action="setTippsWithoutUrlToDeleted" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i>Set Tipps without Url to deleted</g:link></li>
             </ul>
           </li>
           <li  class="${controllerName == "frontend" && actionName == 'index' ? 'active' : ''}" ><g:link controller="frontend" action="index"><i class="fa fa-angle-double-right fa-fw"></i> Frontend</g:link></li>
           <li class="${controllerName == "home" && actionName == 'about' ? 'active' : ''}" ><g:link controller="home" action="about"><i class="fa fa-info fa-fw"></i> Operating environment</g:link></li>
         </sec:ifAnyGranted>
 
-        <g:if test="${ grailsApplication.config.gokb.decisionSupport}">
-          <sec:ifAnyGranted roles="ROLE_EDITOR">
-            <li><g:link controller="decisionSupport"><i class="fa fa-search fa-fw"></i> Decision Support Dashboard</g:link></li>
-          </sec:ifAnyGranted>
-        </g:if>
 
       </sec:ifLoggedIn>
       <sec:ifNotLoggedIn>

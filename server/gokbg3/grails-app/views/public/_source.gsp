@@ -58,7 +58,7 @@
     </dt>
     <dd class="col-9 text-left">
         <gokb:manyToOneReferenceTypedown owner="${d}" field="targetNamespace"
-                                         baseClass="org.gokb.cred.IdentifierNamespace">${d.targetNamespace}</gokb:manyToOneReferenceTypedown>
+                                         baseClass="org.gokb.cred.IdentifierNamespace" filter1="TitleInstancePackagePlatform">${d.targetNamespace}</gokb:manyToOneReferenceTypedown>
     </dd>
     <dt class="col-3 text-right">
         <gokb:annotatedLabel owner="${d}" property="ezbMatch">EZB Matching Enabled</gokb:annotatedLabel>
