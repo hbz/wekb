@@ -12,7 +12,6 @@ class UserDetailsInterceptor {
     match(controller: 'component')
     match(controller: 'coreference')
     match(controller: 'create')
-    match(controller: 'decisionSupport')
     match(controller: 'file')
     match(controller: 'folderUpload')
     match(controller: 'fwk')

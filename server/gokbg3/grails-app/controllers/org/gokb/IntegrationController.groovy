@@ -22,16 +22,7 @@ class IntegrationController {
 
   def springSecurityService
   def concurrencyManagerService
-  def classExaminationService
-  def componentUpdateService
-  def componentLookupService
-  def titleLookupService
-  def applicationEventService
-  def reviewRequestService
   def sessionFactory
-  def packageService
-  def messageService
-  def titleHistoryService
   def crossReferenceService
 
   @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')

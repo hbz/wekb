@@ -1,4 +1,4 @@
-package org.gokb
+package wekb
 
 import de.wekb.helper.RCConstants
 import grails.gorm.transactions.Transactional

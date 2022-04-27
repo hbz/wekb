@@ -211,9 +211,6 @@ gokb:
     ygorUrl: null
     languagesUrl: http://localhost:8070
     ftupdate_enabled: true
-    decisionSupport:
-        active: false
-        otherVoters: false
     costInfo: false
     packageUpdate:
         enabled: false

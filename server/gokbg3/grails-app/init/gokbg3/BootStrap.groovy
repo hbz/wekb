@@ -1,13 +1,11 @@
 package gokbg3
 
 
-import de.wekb.helper.RCConstants;
-import grails.util.Environment
+import de.wekb.helper.RCConstants
 import grails.core.GrailsClass
 import grails.core.GrailsApplication
-import grails.converters.JSON
 import liquibase.util.csv.opencsv.CSVReader
-import org.gokb.LanguagesService
+import wekb.LanguagesService
 
 import javax.servlet.http.HttpServletRequest
 import grails.plugin.springsecurity.acl.*
@@ -16,8 +14,7 @@ import org.gokb.DomainClassExtender
 import org.gokb.ComponentStatisticService
 import org.gokb.cred.*
 
-import com.k_int.apis.A_Api;
-import com.k_int.ConcurrencyManagerService.Job
+import com.k_int.apis.A_Api
 
 class BootStrap {
 
@@ -26,7 +23,6 @@ class BootStrap {
     def ComponentStatisticService
     def concurrencyManagerService
     def ESWrapperService
-    //def titleLookupService
 
     def init = { servletContext ->
 
@@ -972,7 +968,6 @@ class BootStrap {
         RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'MarkInconsDateRanges').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'UpdateFreeTextIndexes').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'ResetFreeTextIndexes').save(flush: true, failOnError: true)
-        RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'MasterListUpdate').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'EnrichmentService').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'GeneratePackageTypes').save(flush: true, failOnError: true)
         RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'Housekeeping').save(flush: true, failOnError: true)

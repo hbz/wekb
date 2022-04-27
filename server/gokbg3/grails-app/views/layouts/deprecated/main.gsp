@@ -98,7 +98,6 @@
                   params="${[qbe:'g:reviewRequests']}">Data Review</g:link></li>
             </ul></li>
           <li><g:link controller="upload" action="index">File Upload</g:link></li>
-          <li><g:link controller="masterList" action="index">Master List</g:link></li>
           <li><g:link controller="coreference" action="index">Coreference</g:link></li>
           <sec:ifAnyGranted roles="ROLE_ADMIN">
             <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin</a>
@@ -106,7 +105,6 @@
                 <li><g:link controller="admin" action="tidyOrgData">Tidy Orgs Data</g:link></li>
                 <li><g:link controller="admin" action="updateTextIndexes">Update Free Text Indexes</g:link></li>
                 <li><g:link controller="admin" action="resetTextIndexes">Reset Free Text Indexes</g:link></li>
-                <li><g:link controller="admin" action="masterListUpdate">Force Master List Update</g:link></li>
                 <li><g:link controller="admin" action="clearBlockCache">Clear Block Cache (eg Stats)</g:link></li>
                 <li><g:link controller="user" action="search">User Management Console</g:link></li>
                 <li><g:link controller="home" action="about">About</g:link></li>
