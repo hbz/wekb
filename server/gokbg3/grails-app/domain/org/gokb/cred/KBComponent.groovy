@@ -1,6 +1,7 @@
 package org.gokb.cred
 
 import de.wekb.helper.RCConstants
+import de.wekb.helper.RDStore
 import grails.util.GrailsNameUtils
 import groovy.util.logging.*
 import wekb.KBComponentLanguage
@@ -642,7 +643,7 @@ abstract class KBComponent implements Auditable{
 
   void deleteSoft(context){
     // Set the status to deleted.
-    setStatus(RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, STATUS_DELETED))
+    setStatus(RDStore.KBC_STATUS_DELETED)
     save(flush: true, failOnError: true)
   }
 
@@ -650,44 +651,44 @@ abstract class KBComponent implements Auditable{
   void retire(def context = null){
     log.debug("KBComponent::retire")
     // Set the status to retired.
-    setStatus(RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, STATUS_RETIRED))
+    setStatus(RDStore.KBC_STATUS_RETIRED)
     save(flush: true, failOnError: true)
   }
 
 
   void setActive(context){
-    setStatus(RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, STATUS_CURRENT))
+    setStatus(RDStore.KBC_STATUS_CURRENT)
     save(flush: true, failOnError: true)
   }
 
 
   void setExpected(context){
-    setStatus(RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, STATUS_EXPECTED))
+    setStatus(RDStore.KBC_STATUS_EXPECTED)
     save(flush: true, failOnError: true)
   }
 
 
   @Transient
   boolean isRetired(){
-    return (getStatus() == RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, STATUS_RETIRED))
+    return (getStatus() == RDStore.KBC_STATUS_RETIRED)
   }
 
 
   @Transient
   boolean isDeleted(){
-    return (getStatus() == RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, STATUS_DELETED))
+    return (getStatus() == RDStore.KBC_STATUS_DELETED)
   }
 
 
   @Transient
   boolean isCurrent(){
-    return (getStatus() == RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, STATUS_CURRENT))
+    return (getStatus() == RDStore.KBC_STATUS_CURRENT)
   }
 
 
   @Transient
   boolean isExpected(){
-    return (getStatus() == RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, STATUS_EXPECTED))
+    return (getStatus() == RDStore.KBC_STATUS_EXPECTED)
   }
 
 
@@ -1371,7 +1372,7 @@ abstract class KBComponent implements Auditable{
             '(endDate is null or endDate>:start) and priceType=:type and currency=:currency' ,
             [start: cp.startDate, tipp: this, type: cp.priceType, currency:cp.currency])*/
         // enter the new price
-        prices << cp
+        //prices << cp
         save()
       }
     }

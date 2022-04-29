@@ -23,15 +23,21 @@ class TitleInstancePackagePlatform extends KBComponent {
 
   def dateFormatService
 
+  @Deprecated
   String hybridOAUrl
+
+  @Deprecated
   String coverageNote
 
+  @Deprecated
   @RefdataAnnotation(cat = RCConstants.TIPP_PRIMARY)
   RefdataValue primary
 
+  @Deprecated
   @RefdataAnnotation(cat = RCConstants.TIPP_HYBRIDA_OA)
   RefdataValue hybridOA
 
+  @Deprecated
   @RefdataAnnotation(cat = RCConstants.TIPP_DELAYED_OA)
   RefdataValue delayedOA
 
@@ -94,6 +100,7 @@ class TitleInstancePackagePlatform extends KBComponent {
   @RefdataAnnotation(cat = RCConstants.TIPP_ACCESS_TYPE)
   RefdataValue accessType
 
+  @Deprecated
   @KbartAnnotation(kbartField = 'coverage_depth' , type='all')
   @RefdataAnnotation(cat = RCConstants.TIPP_COVERAGE_DEPTH)
   RefdataValue coverageDepth
@@ -121,7 +128,6 @@ class TitleInstancePackagePlatform extends KBComponent {
       'accessType',
       'delayedOA',
       'hybridOA',
-      'coverageNote',
       'primary',
       'coverageDepth',
       'description',

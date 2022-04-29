@@ -3,7 +3,6 @@ package org.gokb.cred
 import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
 
-import javax.persistence.Transient
 
 class TIPPCoverageStatement {
 
@@ -66,17 +65,17 @@ class TIPPCoverageStatement {
   def afterUpdate() {
     this.owner?.lastUpdateComment = "Coverage Statement ${this.id} updated"
 
-    if (!coverageDepth) {
+   /* if (!coverageDepth) {
       coverageDepth = RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, 'Fulltext')
-    }
+    }*/
   }
 
   def afterInsert() {
     this.owner?.lastUpdateComment = "Coverage Statement ${this.id} created"
 
-    if (!coverageDepth) {
+   /* if (!coverageDepth) {
       coverageDepth = RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, 'Fulltext')
-    }
+    }*/
   }
 
 }

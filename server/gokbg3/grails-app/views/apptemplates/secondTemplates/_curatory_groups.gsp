@@ -1,5 +1,5 @@
 <%@page import="org.gokb.cred.CuratoryGroup; org.gokb.cred.TitleInstancePackagePlatform;"%>
-<g:set var="curatoryGroups" value="${d instanceof TitleInstancePackagePlatform ? d.pkg.curatoryGroups : d.curatoryGroups }" />
+<g:set var="curatoryGroups" value="${(d instanceof TitleInstancePackagePlatform && d.pkg) ? d.pkg.curatoryGroups : d.curatoryGroups }" />
 
 <g:set var="cur_editable" value="${ CuratoryGroup.isTypeAdministerable() || ( (editable && d.class.name != 'org.gokb.cred.User' ) && ((curatoryGroups?.size() == 0) || (request.curator?.size() > 0) || (params.curationOverride == "true" && request.user.isAdmin()))) }" />
 <g:set var="editable" value="${d.isAdministerable() || d == user || (editable && ((curatoryGroups ? (request.curator != null && request.curator.size() > 0) : true) || (params.curationOverride == 'true' && request.user.isAdmin())) ) }" />

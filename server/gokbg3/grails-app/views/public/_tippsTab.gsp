@@ -20,7 +20,7 @@
         <th>Platform</th>
         <g:sortableColumn property="tipp.publicationType" title="Publication Type"/>
         <g:sortableColumn property="tipp.medium" title="Medium"/>
-        <th>Coverage</th>
+        <th>Note</th>
     </tr>
     </thead>
     <tbody>
@@ -50,7 +50,7 @@
             <td>${t.publicationType?.value}</td>
             <td>${t.medium?.value}</td>
             <td>
-                ${t.coverageDepth?.value}<br/>${t.coverageNote}
+                ${t.note}
             </td>
         </tr>
     </g:each>

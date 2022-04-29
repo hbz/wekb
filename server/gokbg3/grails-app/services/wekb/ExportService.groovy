@@ -25,6 +25,7 @@ import org.gokb.cred.TIPPCoverageStatement
 import org.gokb.cred.TitleInstancePackagePlatform
 import org.hibernate.Session
 
+import javax.servlet.ServletOutputStream
 import java.nio.file.Files
 import java.text.SimpleDateFormat
 
@@ -516,7 +517,7 @@ class ExportService {
     }
 
 
-    def exportPackageTippsAsTSVNew(def outputStream, Package pkg) {
+    Map<String,List> exportPackageTippsAsTSVNew(Package pkg) {
 
         def export_date = dateFormatService.formatDate(new Date())
         List<String> titleHeaders = getTitleHeadersTSV()
@@ -535,7 +536,7 @@ class ExportService {
         String packageEzbAnchor = "package_ezb_anchor"
         String packageIsci = "package_isci"
 
-        String titleIdNameSpace = pkg.source ? pkg.source.targetNamespace.value : 'FAKE'
+        String titleIdNameSpace = (pkg.source && pkg.source.targetNamespace) ? pkg.source.targetNamespace.value : 'FAKE'
 
         RefdataValue priceTypeList = RDStore.PRICE_TYPE_LIST
         RefdataValue priceTypeOAAPC = RDStore.PRICE_TYPE_OA_APC
@@ -555,7 +556,7 @@ class ExportService {
                 " tipp.subjectArea, " +
                 " 'languages', " +
                 " (select value from RefdataValue where id = tipp.accessType), " +
-                " (select value from RefdataValue where id = tipp.coverageDepth), " +
+                " (select value from RefdataValue where id = cs.coverageDepth), " +
                 " 'pkg.name', " +
                 " '', " + // package_id
                 " tipp.accessStartDate, " +
@@ -593,19 +594,17 @@ class ExportService {
                 " '', " + // ill_indicator
                 " tipp.precedingPublicationTitleId, " +
                 " tipp.supersedingPublicationTitleId, " +
-                " (select value from RefdataValue where id = cs.coverageDepth) " +
+                " cs.embargo " +
                 "from TitleInstancePackagePlatform as tipp join tipp.coverageStatements as cs where tipp.id in (:tippIDs) order by tipp.name"
 
-
-        def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
         def combo_pkg_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
 
         Map queryParams = [:]
         queryParams.p = pkg.id
-        queryParams.sd = status_deleted
+        queryParams.sd = [RDStore.KBC_STATUS_DELETED, RDStore.KBC_STATUS_REMOVED]
         queryParams.ct = combo_pkg_tipps
 
-        List<Long> tippIDs = TitleInstancePackagePlatform.executeQuery("select tipp.id from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=:p and c.toComponent=tipp and tipp.status != :sd and c.type = :ct order by tipp.name", queryParams, [readOnly: true])
+        List<Long> tippIDs = TitleInstancePackagePlatform.executeQuery("select tipp.id from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=:p and c.toComponent=tipp and tipp.status not in :sd and c.type = :ct order by tipp.name", queryParams, [readOnly: true])
 
         int max = 500
         TitleInstancePackagePlatform.withSession { Session sess ->
@@ -782,12 +781,8 @@ class ExportService {
             }
         }
 
-        outputStream.withWriter { writer ->
-            writer.write("we:kb Export : Provider (${pkg.provider?.name}) : Package (${pkg.name}) : ${export_date}\n");
-            writer.write(generateSeparatorTableString(export.titleRow, export.rows, '\t'))
-        }
-        outputStream.flush()
-        outputStream.close()
+        return export
+
     }
 
 

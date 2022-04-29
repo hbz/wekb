@@ -1,4 +1,4 @@
-<%@ page import="de.wekb.helper.RCConstants" %>
+<%@ page import="de.wekb.helper.RCConstants; de.wekb.helper.RDStore;" %>
 <g:if test="${d.id}">
     <div id="content">
 
@@ -46,12 +46,12 @@
 
                 <g:if test="${controllerName == 'public'}">
                     <g:link class="display-inline" controller="public" action="search"
-                            params="[qbe: 'g:tipps', qp_plat_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_plat', 'qp_plat_id']]"
+                            params="[qbe: 'g:tipps', qp_plat_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_plat', 'qp_plat_id', 'qp_status'], qp_status_id: RDStore.KBC_STATUS_CURRENT.id]"
                             id="">Titles on this Platform</g:link>
                 </g:if>
                 <g:else>
                     <g:link class="display-inline" controller="search" action="index"
-                            params="[qbe: 'g:tipps', qp_plat_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_plat', 'qp_plat_id']]"
+                            params="[qbe: 'g:tipps', qp_plat_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_plat', 'qp_plat_id', 'qp_status'], qp_status_id: RDStore.KBC_STATUS_CURRENT.id]"
                             id="">Titles on this Platform</g:link>
                 </g:else>
 

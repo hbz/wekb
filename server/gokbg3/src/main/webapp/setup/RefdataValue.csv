@@ -346,6 +346,7 @@ KBComponent.Status;Current;Current;Current
 KBComponent.Status;Deleted;Deleted;Deleted
 KBComponent.Status;Expected;Expected;Expected
 KBComponent.Status;Retired;Retired;Retired
+KBComponent.Status;Removed;Removed;Removed
 KBComponentVariantName.Locale;de;de;de
 KBComponentVariantName.Locale;en;en;en
 KBComponentVariantName.Locale;en_GB;en_GB;en_GB

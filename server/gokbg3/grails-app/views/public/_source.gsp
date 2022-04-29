@@ -93,7 +93,7 @@
         <gokb:annotatedLabel owner="${d}" property="nextRun">Next Run</gokb:annotatedLabel>
     </dt>
     <dd class="col-9 text-left">
-        <g:formatDate date="${d.nextUpdateDate()}" format="${message(code: 'default.date.format.noZ')}"/>
+        ${d.getNextUpdateTimestamp()}
     </dd>
 </dl>
 
