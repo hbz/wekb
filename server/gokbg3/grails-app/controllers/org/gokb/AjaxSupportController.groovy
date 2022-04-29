@@ -1036,7 +1036,7 @@ class AjaxSupportController {
             }else if (!ident) {
                 ident = new Identifier(namespace: ns, value: params.identifierValue)
                 ident.setReference(owner)
-                boolean success = ident.save()
+                boolean success = ident.save(flush: true) //needed to trigger afterInsert(); temp solution
                 if (success){
                   flash.message = message(code:'identifier.create.success')
                 } else {
