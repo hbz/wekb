@@ -4,7 +4,7 @@ import asset.pipeline.grails.AssetsTagLib
 import de.wekb.helper.ServerUtils
 import org.grails.io.support.GrailsResourceUtils
 
-class WekbInjectionTagLib {
+class WekbTagLib {
     static namespace = 'wekb'
 
 
