@@ -63,7 +63,7 @@
     <dt> <gokb:annotatedLabel owner="${d}" property="description">Description</gokb:annotatedLabel> </dt>
     <dd> <gokb:xEditable  owner="${d}" field="description" /> </dd>
 
-    <dt> <gokb:annotatedLabel owner="${d}" property="descriptionURL">URL</gokb:annotatedLabel> </dt>
+    <dt> <gokb:annotatedLabel owner="${d}" property="descriptionURL">Description URL</gokb:annotatedLabel> </dt>
     <dd> <gokb:xEditable  owner="${d}" field="descriptionURL" />
       <g:if test="${d.descriptionURL}">
         &nbsp;<a aria-label="${d.descriptionURL}" href="${d.descriptionURL.startsWith('http') ? d.descriptionURL : 'http://' + d.descriptionURL}" target="new"><i class="fas fa-external-link-alt"></i></a>
