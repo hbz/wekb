@@ -10,7 +10,51 @@
             </div>
             <div class="col-sm-8">
                 <div class="col-sm-4 footer-social">
-                 <h2>Contact Us</h4>
+                    <h2>About <g:message code="gokb.appname"/></h2>
+                    <ul>
+                        <li><a target="_blank" class="content"
+                               href="https://service-wiki.hbz-nrw.de/display/WEKB/About+we%3Akb">About  <g:message
+                                    code="gokb.appname"/></a></li>
+                        <li><a target="_blank" class="content"
+                               href="https://service-wiki.hbz-nrw.de/pages/viewpage.action?pageId=771129406">Manual  <g:message
+                                    code="gokb.appname"/></a></li>
+                    </ul>
+
+                    <h2>Technical Details</h2>
+                    <ul>
+                        <%-- App version --%>
+                        <li>
+                            <a target="_blank" class="content"
+                               href="https://github.com/hbz/wekb/releases">Version: ${grailsApplication.metadata['info.app.version']}</a>
+                        </li>
+                        <g:if test="${grailsApplication.metadata['build.git.branch']}">
+                        <%-- Git branch --%>
+                            <li>
+                                <a target="_blank" class="content"
+                                   href="https://github.com/hbz/wekb/tree/${grailsApplication.metadata['git.branch']}">
+                                    Branch: ${grailsApplication.metadata['build.git.branch']}
+                                </a>
+                            </li>
+                        </g:if>
+                        <g:if test="${grailsApplication.metadata['build.git.revision']}">
+                        <%-- Git Commit --%>
+                            <li>
+                                <a target="_blank" class="content"
+                                   href="https://github.com/hbz/wekb/tree/${grailsApplication.metadata['build.git.revision']}">
+                                    Git Commit: ${grailsApplication.metadata['build.git.revision']}
+                                </a>
+                            </li>
+                        </g:if>
+                        <g:if test="${grailsApplication.metadata['build.time']}">
+                        <%-- Timestamp --%>
+                            <li>
+                                Build: ${grailsApplication.metadata['build.time']}
+                            </li>
+                        </g:if>
+                    </ul>
+                </div>
+                <div class="col-sm-4 footer-social">
+                 <h2>Contact Us</h2>
                  <ul>
                      <li><a class="content" href="mailto:laser@hbz-nrw.de">E-Mail</a></li>
                      <li><a target="_blank" class="content" href="https://www.hbz-nrw.de/ueber-uns/kontakt/anreise">How to reach us</a></li>
@@ -19,42 +63,11 @@
                  </ul>
                 </div>
                 <div class="col-sm-4 footer-social">
-                 <h2>Accessibility</h4>
+                 <h2>Accessibility</h2>
                  <ul>
                      <li><a target="_blank" class="content" href="https://www.hbz-nrw.de/barrierefreiheit">Accessibility Statement</a></li>
                      <li><g:link controller="public" action="wcagPlainEnglish">Plain English</g:link></li>
                      <li><g:link controller="public" action="wcagFeedbackForm">Accessibility Feedback Form</g:link></li>
-                 </ul>
-                </div>
-                <div class="col-sm-4 footer-social">
-                 <h2>Technical Details</h4>
-                 <ul>
-                     <%-- App version --%>
-                     <li>
-                         <a target="_blank" class="content" href="https://github.com/hbz/wekb/releases">Version: ${grailsApplication.metadata['info.app.version']}</a>
-                     </li>
-                     <%-- Git branch --%>
-                    <li>
-                         <g:if test="${grailsApplication.metadata['build.git.branch']}">
-                             <a target="_blank" class="content"  href="https://github.com/hbz/wekb/tree/${grailsApplication.metadata['git.branch']}">
-                                 Branch: ${grailsApplication.metadata['build.git.branch']}
-                             </a>
-                         </g:if>
-                     </li>
-                     <%-- Git Commit --%>
-                     <li>
-                         <g:if test="${grailsApplication.metadata['build.git.revision']}">
-                             <a target="_blank" class="content" href="https://github.com/hbz/wekb/tree/${grailsApplication.metadata['build.git.revision']}">
-                                 Git Commit: ${grailsApplication.metadata['build.git.revision']}
-                             </a>
-                         </g:if>
-                     </li>
-                     <%-- Timestamp --%>
-                     <li>
-                         <g:if test="${grailsApplication.metadata['build.time']}">
-                             Build: ${grailsApplication.metadata['build.time']}
-                         </g:if>
-                     </li>
                  </ul>
                 </div>
             </div>
