@@ -1004,6 +1004,8 @@ class KbartImportService {
         Identifier identifier
         IdentifierNamespace ns = IdentifierNamespace.findByValueAndTargetType(namespace_val, RDStore.IDENTIFIER_NAMESPACE_TARGET_TYPE_TIPP)
 
+        tipp = tipp.refresh()
+
         LinkedHashSet<Identifier> identifiersWithSameNamespace = tipp.ids.findAll{it.namespace.value == namespace_val}
 
         switch (identifiersWithSameNamespace.size()) {
@@ -1032,6 +1034,8 @@ class KbartImportService {
     }
 
     void createOrUpdateCoverageForTipp(TitleInstancePackagePlatform tipp, def coverage){
+
+        tipp = tipp.refresh()
 
         Integer countNewCoverages = coverage.size()
         Integer countTippCoverages = tipp.coverageStatements.size()
