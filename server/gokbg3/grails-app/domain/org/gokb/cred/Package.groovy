@@ -288,6 +288,16 @@ class Package extends KBComponent {
   }
 
   @Transient
+  public getTippCount() {
+    def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
+
+    int result = Combo.executeQuery("select count(c.id) from Combo as c where c.fromComponent = ? and c.type = ?"
+            , [this, combo_tipps])[0]
+
+    result
+  }
+
+  @Transient
   public getRetiredTippCount() {
     def refdata_status = RDStore.KBC_STATUS_RETIRED
     def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')

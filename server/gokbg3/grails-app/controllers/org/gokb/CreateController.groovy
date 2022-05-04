@@ -78,7 +78,7 @@ class CreateController {
   def process() {
     log.debug("CreateController::process... ${params}");
 
-    def result=['responseText':'OK']
+    def result=[:]
 
 
     // II: Defaulting this to true - don't like it much, but we need to be able to create a title without any
@@ -163,13 +163,13 @@ class CreateController {
 
           if (result.newobj instanceof TitleInstancePackagePlatform && (params.pkg == null || params.hostPlatform == null || params.url == null || params.name == null)) {
             flash.error="Please fill Package, Platform and Host Platform URL to create the component."
-            result.uri = g.createLink([controller: 'create', action:'index', params:[tmpl:params.cls]])
+            result.urlMap = [controller: 'create', action:'index', params:[tmpl:params.cls]]
           }
           else if (!propertyWasSet) {
             // Add an error message here if no property was set via data sent through from the form.
             log.debug("No properties set");
             flash.error="Please fill in at least one piece of information to create the component."
-            result.uri = g.createLink([controller: 'create', action:'index', params:[tmpl:params.cls]])
+            result.urlMap = [controller: 'create', action:'index', params:[tmpl:params.cls]]
           } else {
 
             log.debug("Saving..");
@@ -209,11 +209,15 @@ class CreateController {
                 }
               }
 
-             /* if ( flash.error.size() == 0 ) {
-                flash.error.add("There has been an error creating the component. Please try again.")
-              }*/
+              if(result.errors.size() > 0){
+                flash.error = result.errors
+              }
 
-              result.uri = createLink([controller: 'create', action:'index', params:[tmpl:params.cls]])
+             if ( result.errors.size() == 0 ) {
+                flash.error = "There has been an error creating the component. Please try again."
+              }
+
+              result.urlMap = [controller: 'create', action:'index', params:[tmpl:params.cls]]
             } else {
               result.newobj.save(flush:true)
 
@@ -252,20 +256,24 @@ class CreateController {
                   result.newobj.save(flush:true)
               }
 
-              result.uri = createLink([controller: 'resource', action:'show', id:"${params.cls}:${result.newobj.id}"])
+              result.urlMap = [controller: 'resource', action:'show', id:"${params.cls}:${result.newobj.id}"]
             }
           }
         }
         catch ( Exception e ) {
           log.error("Problem",e);
           flash.error = "Could not create component!"
-          result.uri = createLink([controller: 'resource', action:'show', id:"${params.cls}:${result.newobj.id}"])
+          result.urlMap = [controller: 'create', action:'index', params:[tmpl:params.cls]]
         }
       }
     }
     log.debug("CreateController::process return ${result}");
 
-    render result as JSON
+    if(result.urlMap) {
+      redirect(result.urlMap)
+    }else {
+      redirect(url: request.getHeader('referer'))
+    }
   }
 
   @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])

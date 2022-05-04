@@ -113,10 +113,10 @@ class InplaceTagLib {
       if (oid && (oid != '')) out << " data-pk=\"${oid}\""
       out << " data-name=\"${attrs.field}\""
 
-      // SO: fix for FF not honouring no-wrap css.
+/*      // SO: fix for FF not honouring no-wrap css.
       if ((attrs.type ?: 'textarea') == 'textarea') {
         out << " data-tpl=\"${'<textarea wrap=\'off\'></textarea>'.encodeAsHTML()}\""
-      }
+      }*/
 
       def data_link = null
       switch (attrs.type) {
@@ -139,7 +139,6 @@ class InplaceTagLib {
           out << " data-value='${dv}'"
 
           break;
-        case 'string':
         default:
           data_link = createLink(controller: 'ajaxSupport', action: 'editableSetValue')
           out << " data-type=\"${attrs.type ?: 'textarea'}\""

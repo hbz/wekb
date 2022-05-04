@@ -2,7 +2,7 @@
 <g:if test="${flash.error}">
   <div id="error" style="display:none">
     <ul>
-    <g:if test="${flash.success instanceof Map || flash.success instanceof List }">
+    <g:if test="${flash.error instanceof Map || flash.error instanceof List }">
       <g:each in="${flash.error}" var="error">
         <g:if test="${error instanceof String}">
           <li>${error}</li>

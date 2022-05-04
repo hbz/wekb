@@ -46,12 +46,12 @@
 
                 <g:if test="${controllerName == 'public'}">
                     <g:link class="display-inline" controller="public" action="search"
-                            params="[qbe: 'g:tipps', qp_plat_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_plat', 'qp_plat_id', 'qp_status'], qp_status_id: RDStore.KBC_STATUS_CURRENT.id]"
+                            params="[qbe: 'g:tipps', qp_plat_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_plat', 'qp_plat_id'], qp_status: org.gokb.cred.RefdataValue.class.name+':'+RDStore.KBC_STATUS_CURRENT.id]"
                             id="">Titles on this Platform</g:link>
                 </g:if>
                 <g:else>
                     <g:link class="display-inline" controller="search" action="index"
-                            params="[qbe: 'g:tipps', qp_plat_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_plat', 'qp_plat_id', 'qp_status'], qp_status_id: RDStore.KBC_STATUS_CURRENT.id]"
+                            params="[qbe: 'g:tipps', qp_plat_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_plat', 'qp_plat_id'], qp_status: org.gokb.cred.RefdataValue.class.name+':'+RDStore.KBC_STATUS_CURRENT.id]"
                             id="">Titles on this Platform</g:link>
                 </g:else>
 
