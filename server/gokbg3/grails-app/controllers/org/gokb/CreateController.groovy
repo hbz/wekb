@@ -211,7 +211,6 @@ class CreateController {
 
               if(result.errors.size() > 0){
                 flash.error = result.errors
-                println("Moe")
               }
 
              if ( result.errors.size() == 0 ) {
