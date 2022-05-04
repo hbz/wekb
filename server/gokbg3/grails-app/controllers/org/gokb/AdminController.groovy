@@ -457,6 +457,7 @@ class AdminController {
       Integer tippDuplicatesByNameCount = aPackage.getTippDuplicatesByNameCount()
       Integer tippDuplicatesByUrlCount = aPackage.getTippDuplicatesByURLCount()
       Integer tippDuplicatesByTitleIDCount = aPackage.getTippDuplicatesByTitleIDCount()
+      log.debug("Package ${aPackage.name} : ${index}")
 
       if(tippDuplicatesByNameCount > 0 || tippDuplicatesByUrlCount > 0 || tippDuplicatesByTitleIDCount > 0){
         pkgs << [pkg: aPackage, tippDuplicatesByNameCount: tippDuplicatesByNameCount, tippDuplicatesByUrlCount: tippDuplicatesByUrlCount, tippDuplicatesByTitleIDCount: tippDuplicatesByTitleIDCount]
@@ -464,7 +465,7 @@ class AdminController {
     }
 
     //result.offset = params.offset ? Integer.parseInt(params.offset) : 0
-    //result.max = params.max ? Integer.parseInt(params.max) : 25
+    //result.max = params.max ? Integer.parseInt(params.max) : 250
 
     result.totalCount = pkgs.size()
 
@@ -528,7 +529,7 @@ class AdminController {
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'TIPPCleanup')
     j.startTime = new Date()
 */
-    cleanupService.cleanupTippIdentifersWithSameNamespace()
+    //cleanupService.cleanupTippIdentifersWithSameNamespace()
     redirect(controller: 'admin', action: 'jobs');
   }
 

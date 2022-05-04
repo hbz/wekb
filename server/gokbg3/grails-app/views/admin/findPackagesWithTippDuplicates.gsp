@@ -50,7 +50,7 @@
                             ${pkg.provider}
                         </td>
                         <td>
-                            ${pkg.nominalPlatform}
+                           ${pkg.nominalPlatform}
                         </td>
                         <td>
                             <g:each in="${pkg.curatoryGroups}" var="curatoryGroup">
@@ -68,7 +68,7 @@
                             </g:else>
                         </td>
                         <td>
-                                ${pkg.tipps.size()}
+                              ${pkg.getTippCount()}
                         </td>
                         <td>
                             <g:link controller="admin" action="findTippDuplicatesByPkg" id="${pkg.uuid}" target="_blank" params="[papaginateByName: true, max: 100, offset: 0]">
@@ -89,6 +89,11 @@
                 </g:each>
                 </tbody>
             </table>
+
+          %{--  <div class="pagination mb-4 d-flex justify-content-center">
+                <g:paginate controller="${controllerName}" action="${actionName}" params="[id: params.id]" next="&raquo;" prev="&laquo;"
+                            max="${max}" offset="${offset}" total="${totalCount}"/>
+            </div>--}%
         </div>
     </div>
 

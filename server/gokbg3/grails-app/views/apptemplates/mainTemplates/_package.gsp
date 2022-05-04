@@ -63,7 +63,7 @@
     <dt> <gokb:annotatedLabel owner="${d}" property="description">Description</gokb:annotatedLabel> </dt>
     <dd> <gokb:xEditable  owner="${d}" field="description" /> </dd>
 
-    <dt> <gokb:annotatedLabel owner="${d}" property="descriptionURL">URL</gokb:annotatedLabel> </dt>
+    <dt> <gokb:annotatedLabel owner="${d}" property="descriptionURL">Description URL</gokb:annotatedLabel> </dt>
     <dd> <gokb:xEditable  owner="${d}" field="descriptionURL" />
       <g:if test="${d.descriptionURL}">
         &nbsp;<a aria-label="${d.descriptionURL}" href="${d.descriptionURL.startsWith('http') ? d.descriptionURL : 'http://' + d.descriptionURL}" target="new"><i class="fas fa-external-link-alt"></i></a>
@@ -230,7 +230,7 @@
             <dt><gokb:annotatedLabel owner="${d}" property="tipps">Current Titles</gokb:annotatedLabel></dt>
             <dd>
               <g:link class="display-inline" controller="search" action="index"
-                      params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status_id: RDStore.KBC_STATUS_CURRENT.id]"
+                      params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: org.gokb.cred.RefdataValue.class.name+':'+RDStore.KBC_STATUS_CURRENT.id]"
                       id="">Titles in this package</g:link>
             </dd>
           </dl>
@@ -243,7 +243,7 @@
             <dt><gokb:annotatedLabel owner="${d}" property="tipps">Retired Titles</gokb:annotatedLabel></dt>
             <dd>
               <g:link class="display-inline" controller="search" action="index"
-                      params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status_id: RDStore.KBC_STATUS_RETIRED.id]"
+                      params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: org.gokb.cred.RefdataValue.class.name+':'+RDStore.KBC_STATUS_RETIRED.id]"
                       id="">Titles in this package</g:link>
             </dd>
           </dl>
@@ -256,7 +256,7 @@
             <dt><gokb:annotatedLabel owner="${d}" property="tipps">Expected Titles</gokb:annotatedLabel></dt>
             <dd>
               <g:link class="display-inline" controller="search" action="index"
-                      params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status_id: RDStore.KBC_STATUS_EXPECTED.id]"
+                      params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: org.gokb.cred.RefdataValue.class.name+':'+RDStore.KBC_STATUS_EXPECTED.id]"
                       id="">Titles in this package</g:link>
             </dd>
           </dl>
@@ -269,7 +269,7 @@
             <dt><gokb:annotatedLabel owner="${d}" property="tipps">Deleted Titles</gokb:annotatedLabel></dt>
             <dd>
               <g:link class="display-inline" controller="search" action="index"
-                      params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status_id: RDStore.KBC_STATUS_DELETED.id]"
+                      params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: org.gokb.cred.RefdataValue.class.name+':'+RDStore.KBC_STATUS_DELETED.id]"
                       id="">Titles in this package</g:link>
             </dd>
           </dl>
