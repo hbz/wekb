@@ -680,7 +680,13 @@ class KbartImportService {
                 // KBART -> language -> language -> languages
                 if (tipp_dto.language) {
                     if (tipp.languages) {
-                        KBComponentLanguage.executeUpdate("delete from KBComponentLanguage where kbcomponent = :tipp", [tipp: tipp])
+                        def langIDs = tipp.languages.id.clone()
+                        langIDs.each {
+                            tipp.removeFromLanguages(KBComponentLanguage.get(it))
+                            KBComponentLanguage.get(it).delete()
+                        }
+                        tipp.save()
+                        //KBComponentLanguage.executeUpdate("delete from KBComponentLanguage where kbcomponent = :tipp", [tipp: tipp])
                     }
 
                     tipp_dto.language.each{ String lan ->
@@ -1058,7 +1064,9 @@ class KbartImportService {
             com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tipp.coverageStatements[0], 'endDate', true)
             com.k_int.ClassUtils.setStringIfDifferent(tipp.coverageStatements[0], 'embargo', coverage[0].embargo)
             com.k_int.ClassUtils.setStringIfDifferent(tipp.coverageStatements[0], 'coverageNote', coverage[0].coverageNote)
-            com.k_int.ClassUtils.setRefdataIfDifferent(cov_depth, tipp.coverageStatements[0], 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, true)
+            if(cov_depth) {
+                com.k_int.ClassUtils.setRefdataIfDifferent(cov_depth.value, tipp.coverageStatements[0], 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, true)
+            }
         }
         else if(countNewCoverages == 0 && countTippCoverages > 0){
             def cStsIDs = tipp.coverageStatements.id.clone()
