@@ -39,4 +39,27 @@ class PackageArchivingAgency {
         postCancellationAccess (nullable:true)
         pkg  (nullable:false)
     }
+
+    protected def updateLastUpdatedFromLinkedObject(){
+        pkg.lastUpdated = new Date()
+        pkg.save()
+    }
+
+    def afterInsert (){
+        log.debug("afterSave for ${this}")
+        updateLastUpdatedFromLinkedObject()
+
+    }
+
+    def afterDelete (){
+        log.debug("afterDelete for ${this}")
+        updateLastUpdatedFromLinkedObject()
+
+    }
+
+    def afterUpdate(){
+        log.debug("afterUpdate for ${this}")
+        updateLastUpdatedFromLinkedObject()
+
+    }
 }

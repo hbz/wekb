@@ -88,4 +88,28 @@ class ComponentPrice {
     }
     true
   }
+
+  protected def updateLastUpdatedFromLinkedObject(){
+    owner.lastUpdated = new Date()
+    owner.save()
+  }
+
+  def afterInsert (){
+    log.debug("afterSave for ${this}")
+    updateLastUpdatedFromLinkedObject()
+
+  }
+
+  def afterDelete (){
+    log.debug("afterDelete for ${this}")
+    updateLastUpdatedFromLinkedObject()
+
+  }
+
+  def afterUpdate(){
+    log.debug("afterUpdate for ${this}")
+    updateLastUpdatedFromLinkedObject()
+
+  }
+
 }

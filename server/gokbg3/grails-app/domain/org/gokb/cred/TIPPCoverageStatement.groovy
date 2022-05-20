@@ -62,20 +62,29 @@ class TIPPCoverageStatement {
     lastUpdated(nullable:true, blank:true)
   }
 
-  def afterUpdate() {
-    this.owner?.lastUpdateComment = "Coverage Statement ${this.id} updated"
-
-   /* if (!coverageDepth) {
-      coverageDepth = RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, 'Fulltext')
-    }*/
+  protected def updateLastUpdatedFromLinkedObject(){
+    owner.lastUpdated = new Date()
+    owner.save()
   }
 
-  def afterInsert() {
+  def afterInsert (){
+    log.debug("afterSave for ${this}")
     this.owner?.lastUpdateComment = "Coverage Statement ${this.id} created"
+    updateLastUpdatedFromLinkedObject()
 
-   /* if (!coverageDepth) {
-      coverageDepth = RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, 'Fulltext')
-    }*/
+  }
+
+  def afterDelete (){
+    log.debug("afterDelete for ${this}")
+    updateLastUpdatedFromLinkedObject()
+
+  }
+
+  def afterUpdate(){
+    log.debug("afterUpdate for ${this}")
+    this.owner?.lastUpdateComment = "Coverage Statement ${this.id} created"
+    updateLastUpdatedFromLinkedObject()
+
   }
 
 }
