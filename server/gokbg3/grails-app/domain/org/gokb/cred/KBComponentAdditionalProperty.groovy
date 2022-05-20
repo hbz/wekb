@@ -24,5 +24,28 @@ class KBComponentAdditionalProperty {
         lastUpdated(nullable:true, blank:true)
     }
 
+    protected def updateLastUpdatedFromLinkedObject(){
+        fromComponent.lastUpdated = new Date()
+        fromComponent.save()
+    }
+
+    def afterInsert (){
+        log.debug("afterSave for ${this}")
+        updateLastUpdatedFromLinkedObject()
+
+    }
+
+    def afterDelete (){
+        log.debug("afterDelete for ${this}")
+        updateLastUpdatedFromLinkedObject()
+
+    }
+
+    def afterUpdate(){
+        log.debug("afterUpdate for ${this}")
+        updateLastUpdatedFromLinkedObject()
+
+    }
+
 
 }

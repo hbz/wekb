@@ -698,6 +698,9 @@ class KbartImportService {
                             }
                         }
                     }
+
+                    tipp.save()
+                    tipp.refresh()
                 }
 
                 // KBART -> access_type -> accessType -> accessType
@@ -1010,7 +1013,7 @@ class KbartImportService {
         Identifier identifier
         IdentifierNamespace ns = IdentifierNamespace.findByValueAndTargetType(namespace_val, RDStore.IDENTIFIER_NAMESPACE_TARGET_TYPE_TIPP)
 
-        tipp = tipp.refresh()
+        //tipp = tipp.refresh()
 
         LinkedHashSet<Identifier> identifiersWithSameNamespace = tipp.ids.findAll{it.namespace.value == namespace_val}
 

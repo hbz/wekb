@@ -31,4 +31,27 @@ class KBComponentLanguage {
         dateCreated           column: 'kbc_lang_date_created'
         lastUpdated           column: 'kbc_lang_last_updated'
     }
+
+    protected def updateLastUpdatedFromLinkedObject(){
+        kbcomponent.lastUpdated = new Date()
+        kbcomponent.save()
+    }
+
+    def afterInsert (){
+        log.debug("afterSave for ${this}")
+        updateLastUpdatedFromLinkedObject()
+
+    }
+
+    def afterDelete (){
+        log.debug("afterDelete for ${this}")
+        updateLastUpdatedFromLinkedObject()
+
+    }
+
+    def afterUpdate(){
+        log.debug("afterUpdate for ${this}")
+        updateLastUpdatedFromLinkedObject()
+
+    }
 }
