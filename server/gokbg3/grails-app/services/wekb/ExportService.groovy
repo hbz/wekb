@@ -595,7 +595,7 @@ class ExportService {
                 " tipp.precedingPublicationTitleId, " +
                 " tipp.supersedingPublicationTitleId, " +
                 " cs.embargo " +
-                "from TitleInstancePackagePlatform as tipp join tipp.coverageStatements as cs where tipp.id in (:tippIDs) order by tipp.name"
+                "from TitleInstancePackagePlatform as tipp left join tipp.coverageStatements as cs where tipp.id in (:tippIDs) order by tipp.name"
 
         def combo_pkg_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
 
