@@ -42,7 +42,6 @@
         </td>
         <g:if test="${d.isEditable()}">
           <td>
-              <g:link controller="workflow" action="DeleteTitleHistoryEvent" class="confirm-click" data-confirm-message="Are you sure you wish to delete this Title History entry?" id="${theevent?.id}">Delete</g:link>
           </td>
         </g:if>
       </tr>
