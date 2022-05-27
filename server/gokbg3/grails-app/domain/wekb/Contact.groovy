@@ -4,13 +4,14 @@ import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
 import groovy.util.logging.Slf4j
 import org.apache.commons.logging.LogFactory
-import org.gokb.cred.KBComponent
 import org.gokb.cred.Org
-import org.gokb.cred.RefdataCategory
 import org.gokb.cred.RefdataValue
 
 @Slf4j
 class Contact{
+
+
+    def cascadingUpdateService
 
     String content
     Org org
@@ -107,26 +108,21 @@ class Contact{
         }
     }
 
-    protected def updateLastUpdatedFromLinkedObject(){
-            org.lastUpdated = new Date()
-            org.save()
-    }
-
     def afterInsert (){
         log.debug("afterSave for ${this}")
-        updateLastUpdatedFromLinkedObject()
+        cascadingUpdateService.update(this, dateCreated)
 
     }
 
-    def afterDelete (){
-        log.debug("afterDelete for ${this}")
-        updateLastUpdatedFromLinkedObject()
+    def beforeDelete (){
+        log.debug("beforeDelete for ${this}")
+        cascadingUpdateService.update(this, lastUpdated)
 
     }
 
     def afterUpdate(){
         log.debug("afterUpdate for ${this}")
-        updateLastUpdatedFromLinkedObject()
+        cascadingUpdateService.update(this, lastUpdated)
 
     }
 

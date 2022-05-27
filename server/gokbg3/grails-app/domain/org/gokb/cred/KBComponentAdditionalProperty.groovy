@@ -1,6 +1,11 @@
 package org.gokb.cred
 
+
+
 class KBComponentAdditionalProperty {
+
+
+  def cascadingUpdateService
 
   AdditionalPropertyDefinition propertyDefn
   String apValue
@@ -24,26 +29,21 @@ class KBComponentAdditionalProperty {
         lastUpdated(nullable:true, blank:true)
     }
 
-    protected def updateLastUpdatedFromLinkedObject(){
-        fromComponent.lastUpdated = new Date()
-        fromComponent.save()
-    }
-
     def afterInsert (){
         log.debug("afterSave for ${this}")
-        updateLastUpdatedFromLinkedObject()
+        cascadingUpdateService.update(this, dateCreated)
 
     }
 
-    def afterDelete (){
-        log.debug("afterDelete for ${this}")
-        updateLastUpdatedFromLinkedObject()
+    def beforeDelete (){
+        log.debug("beforeDelete for ${this}")
+        cascadingUpdateService.update(this, lastUpdated)
 
     }
 
     def afterUpdate(){
         log.debug("afterUpdate for ${this}")
-        updateLastUpdatedFromLinkedObject()
+        cascadingUpdateService.update(this, lastUpdated)
 
     }
 

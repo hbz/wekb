@@ -7,6 +7,9 @@ import org.gokb.cred.RefdataValue
 
 class PackageArchivingAgency {
 
+
+    def cascadingUpdateService
+
     Package pkg
 
     Date dateCreated
@@ -40,26 +43,21 @@ class PackageArchivingAgency {
         pkg  (nullable:false)
     }
 
-    protected def updateLastUpdatedFromLinkedObject(){
-        pkg.lastUpdated = new Date()
-        pkg.save()
-    }
-
     def afterInsert (){
         log.debug("afterSave for ${this}")
-        updateLastUpdatedFromLinkedObject()
+        cascadingUpdateService.update(this, dateCreated)
 
     }
 
-    def afterDelete (){
-        log.debug("afterDelete for ${this}")
-        updateLastUpdatedFromLinkedObject()
+    def beforeDelete (){
+        log.debug("beforeDelete for ${this}")
+        cascadingUpdateService.update(this, lastUpdated)
 
     }
 
     def afterUpdate(){
         log.debug("afterUpdate for ${this}")
-        updateLastUpdatedFromLinkedObject()
+        cascadingUpdateService.update(this, lastUpdated)
 
     }
 }

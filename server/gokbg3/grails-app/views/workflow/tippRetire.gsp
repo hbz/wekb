@@ -34,7 +34,7 @@
                                                                     ${o.id}
                                                                 </td>
 								<td>
-                                                                    ${o.title.name}
+                                                                    ${o.name}
 								</td>
 								<td>
                                                                     ${o.pkg.name}

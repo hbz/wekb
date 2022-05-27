@@ -4,7 +4,12 @@ import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
 
 
+
+
 class TIPPCoverageStatement {
+
+
+  def cascadingUpdateService
 
   TitleInstancePackagePlatform owner
 
@@ -62,28 +67,23 @@ class TIPPCoverageStatement {
     lastUpdated(nullable:true, blank:true)
   }
 
-  protected def updateLastUpdatedFromLinkedObject(){
-    owner.lastUpdated = new Date()
-    owner.save()
-  }
-
   def afterInsert (){
     log.debug("afterSave for ${this}")
     this.owner?.lastUpdateComment = "Coverage Statement ${this.id} created"
-    updateLastUpdatedFromLinkedObject()
+    cascadingUpdateService.update(this, dateCreated)
 
   }
 
-  def afterDelete (){
-    log.debug("afterDelete for ${this}")
-    updateLastUpdatedFromLinkedObject()
+  def beforeDelete (){
+    log.debug("beforeDelete for ${this}")
+    cascadingUpdateService.update(this, lastUpdated)
 
   }
 
   def afterUpdate(){
     log.debug("afterUpdate for ${this}")
     this.owner?.lastUpdateComment = "Coverage Statement ${this.id} created"
-    updateLastUpdatedFromLinkedObject()
+    cascadingUpdateService.update(this, lastUpdated)
 
   }
 
