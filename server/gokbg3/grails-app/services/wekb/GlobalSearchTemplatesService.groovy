@@ -1098,6 +1098,12 @@ class GlobalSearchTemplatesService {
                                         // II: Default not yet implemented
                                         default    : [type: 'query', query: 'select r from RefdataValue where r.value=:v and r.owner.description=:o', params: ['Current', RCConstants.KBCOMPONENT_STATUS]]
                                 ],
+                                [
+                                        prompt     : 'URL',
+                                        qparam     : 'qp_url',
+                                        placeholder: 'URL',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'url'],
+                                ],
                         ],
                        /* qbeGlobals: [
                                 ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
@@ -1264,6 +1270,12 @@ class GlobalSearchTemplatesService {
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'status'],
                                         // II: Default not yet implemented
                                         default    : [type: 'query', query: 'select r from RefdataValue where r.value=:v and r.owner.description=:o', params: ['Current', RCConstants.KBCOMPONENT_STATUS]]
+                                ],
+                                [
+                                        prompt     : 'URL',
+                                        qparam     : 'qp_url',
+                                        placeholder: 'URL',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'url'],
                                 ],
 
                         ],
