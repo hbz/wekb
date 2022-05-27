@@ -1,11 +1,13 @@
 package org.gokb.cred
 
 import groovy.util.logging.*
-import org.aspectj.weaver.ast.Or
 
 
 @Slf4j
 class Identifier {
+
+
+  def cascadingUpdateService
 
   IdentifierNamespace namespace
   String value
@@ -63,15 +65,6 @@ class Identifier {
     }
   }
 
-  protected def updateLastUpdatedFromLinkedObject(){
-    def ref = this.getReference()
-
-    if(ref instanceof KBComponent){
-      ref.lastUpdated = new Date()
-      ref.save()
-    }
-  }
-
   def beforeValidate (){
     log.debug("beforeValidate for ${this}")
     generateUuid()
@@ -79,13 +72,16 @@ class Identifier {
 
   def afterInsert (){
     log.debug("afterSave for ${this}")
-    updateLastUpdatedFromLinkedObject()
+    def ref = this.getReference()
+    if(ref instanceof KBComponent){
+      cascadingUpdateService.update(this, dateCreated)
+    }
 
   }
 
-  def afterDelete (){
-    log.debug("afterDelete for ${this}")
-    updateLastUpdatedFromLinkedObject()
+  def beforeDelete (){
+    log.debug("beforeDelete for ${this}")
+    cascadingUpdateService.update(this, lastUpdated)
 
   }
 
@@ -98,7 +94,10 @@ class Identifier {
 
   def afterUpdate(){
     log.debug("afterUpdate for ${this}")
-    updateLastUpdatedFromLinkedObject()
+    def ref = this.getReference()
+    if(ref instanceof KBComponent){
+      cascadingUpdateService.update(this, lastUpdated)
+    }
 
   }
   public String getName() {

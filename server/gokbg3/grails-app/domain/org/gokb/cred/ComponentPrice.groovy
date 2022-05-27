@@ -1,5 +1,7 @@
 package org.gokb.cred
 
+
+
 /**
  * ComponentPrice - variant prices for a component based on different scenarios.
  * Allow a package/tipp to hold multiple variant prices - EG list price for a normal subscription, list price for 
@@ -7,6 +9,9 @@ package org.gokb.cred
  * Requirements derived from Jisc DAC project - See owen stephens for more info.
  */
 class ComponentPrice {
+
+
+  def cascadingUpdateService
 
   KBComponent owner
   RefdataValue priceType  // Examples are list, list-perpetual, list, list-topup, etc
@@ -89,26 +94,21 @@ class ComponentPrice {
     true
   }
 
-  protected def updateLastUpdatedFromLinkedObject(){
-    owner.lastUpdated = new Date()
-    owner.save()
-  }
-
   def afterInsert (){
     log.debug("afterSave for ${this}")
-    updateLastUpdatedFromLinkedObject()
+    cascadingUpdateService.update(this, dateCreated)
 
   }
 
-  def afterDelete (){
-    log.debug("afterDelete for ${this}")
-    updateLastUpdatedFromLinkedObject()
+  def beforeDelete (){
+    log.debug("beforeDelete for ${this}")
+    cascadingUpdateService.update(this, lastUpdated)
 
   }
 
   def afterUpdate(){
     log.debug("afterUpdate for ${this}")
-    updateLastUpdatedFromLinkedObject()
+    cascadingUpdateService.update(this, lastUpdated)
 
   }
 

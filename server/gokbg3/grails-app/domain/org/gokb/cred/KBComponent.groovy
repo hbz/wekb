@@ -112,7 +112,8 @@ abstract class KBComponent implements Auditable{
       }
     }
 
-    if (hasProperty("touchOnUpdate")){
+    //Replaced with CascadingUpdateService
+/*    if (hasProperty("touchOnUpdate")){
       // We should also update the object(s).
       this.touchOnUpdate.each{ dep_name ->
         // Get the dependant.
@@ -134,7 +135,7 @@ abstract class KBComponent implements Auditable{
           }
         }
       }
-    }
+    }*/
   }
 
 

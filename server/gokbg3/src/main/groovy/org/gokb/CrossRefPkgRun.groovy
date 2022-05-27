@@ -166,17 +166,23 @@ class CrossRefPkgRun {
           "combo.toComponent = tipp and " +
           "combo.fromComponent = :package",
         [package: pkg, status: listStatus])
-      log.debug("Matched package has ${pkg.tipps.size()} TIPPs")
+
+      log.info("Matched package has ${pkg.tipps.size()} TIPPs")
       total = rjson.tipps.size() + (addOnly ? 0 : existing_tipp_ids.size())
 
       int idx = 0
 
       LinkedHashMap tippsWithCoverage = [:]
+      List<Long> tippDuplicates = []
+
+      List<Long> tippsFound = []
+
+      int jsonTipps = rjson.tipps.size()
 
       for (def json_tipp : rjson.tipps) {
         idx++
         def currentTippError = [index: idx]
-        log.info("Crossreferencing #$idx title ${json_tipp.name}")
+        log.info("Crossreferencing (#$idx of $jsonTipps): title ${json_tipp.name}")
         if ((json_tipp.package == null) && (pkg.id)) {
           json_tipp.package = [internalId: pkg.id]
         }
@@ -195,7 +201,7 @@ class CrossRefPkgRun {
         }
         if (!invalidTipps.contains(json_tipp)) {
           // validate and upsert TIPP
-          Map tippErrorMap = handleTIPPNew(json_tipp, setAllTippsNotInKbartToDeleted, tippsWithCoverage)
+          Map tippErrorMap = handleTIPPNew(json_tipp, setAllTippsNotInKbartToDeleted, tippsWithCoverage, tippDuplicates, tippsFound)
           if (tippErrorMap.size() > 0) {
             currentTippError.put('tipp', tippErrorMap)
           }
@@ -235,6 +241,17 @@ class CrossRefPkgRun {
         }
       }
 
+      if(tippDuplicates.size() > 0){
+        log.debug("remove tippDuplicates -> ${tippDuplicates.size()}: ${tippDuplicates}")
+
+        tippDuplicates.each {
+          if(!(it in tippsFound)){
+            KBComponent.executeUpdate("update KBComponent set status = :deleted where id = (:tippId)", [deleted: status_deleted, tippId: it])
+          }
+        }
+
+      }
+
       if (!cancelled) {
         pkg = Package.get(pkg.id)
 
@@ -250,7 +267,7 @@ class CrossRefPkgRun {
         if (rjson.tipps?.size() > 0 && rjson.tipps.size() > invalidTipps.size()) {
         }
         else {
-          log.debug("imported Package $pkg.name contains no valid TIPPs")
+          log.info("imported Package $pkg.name contains no valid TIPPs")
         }
 
         //Setzt vorraus, dass das Paket immer mit dem gleichen Paket-Inhalt importiert wird. Jedoch kann ein Anbieter auch nur ein Zuschnitt eines Paket aktualisieren!!!
@@ -296,7 +313,7 @@ class CrossRefPkgRun {
         }*/
 
 
-        log.debug("Removed ${removedNum} TIPPS from the matched package!")
+        log.info("Removed ${removedNum} TIPPS from the matched package!")
         jsonResult.result = 'OK'
         def msg = messageService.resolveCode('crossRef.package.success', [rjson.packageHeader.name, rjson.tipps.size(), existing_tipp_ids.size(), removedNum, addNewNum], locale)
         jsonResult.message = msg
@@ -610,7 +627,7 @@ class CrossRefPkgRun {
     return pltError
   }
 
-  private Map handleTIPPNew(JSONObject tippJson, boolean setAllTippsNotInKbartToDeleted, LinkedHashMap tippsWithCoverage) {
+  private Map handleTIPPNew(JSONObject tippJson, boolean setAllTippsNotInKbartToDeleted, LinkedHashMap tippsWithCoverage, List<Long> tippDuplicates, List<Long> tippFounds) {
     Map tippError = [:]
     def validation_result = kbartImportValidationService.tippValidateDTONew(tippJson, locale)
     log.debug("validate TIPP ${tippJson.name}")
@@ -626,7 +643,7 @@ class CrossRefPkgRun {
       log.debug("upsert TIPP ${tippJson.name}")
       def upserted_tipp = null
       try {
-        upserted_tipp = kBartImportService.tippUpsertDTO(tippJson, user, tippsWithCoverage)
+        upserted_tipp = kBartImportService.tippUpsertDTO(tippJson, user, tippsWithCoverage, tippDuplicates)
         if(setAllTippsNotInKbartToDeleted && upserted_tipp.status != status_current){
           upserted_tipp.status = status_current
           setTippsNotToDeleted << upserted_tipp.id
@@ -634,6 +651,7 @@ class CrossRefPkgRun {
 
         log.debug("Upserted TIPP ${upserted_tipp} with URL ${upserted_tipp?.url}")
         upserted_tipp.merge(flush: true)
+        tippFounds << upserted_tipp.id
 
       }
       catch (grails.validation.ValidationException ve) {
@@ -654,9 +672,9 @@ class CrossRefPkgRun {
       }
       if (upserted_tipp) {
 
-        if(autoUpdate && (pkg.source && (upserted_tipp.dateCreated > pkg.source.lastRun || pkg.source.lastRun == null))){
+       /* if(autoUpdate && (pkg.source && (upserted_tipp.dateCreated > pkg.source.lastRun || pkg.source.lastRun == null))){
           addNewNum++
-        }
+        }*/
 
         /*if (existing_tipp_ids.size() > 0 && existing_tipp_ids.contains(upserted_tipp.id)) {
           log.debug("Existing TIPP matched!")
