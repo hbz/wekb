@@ -22,6 +22,7 @@ import java.time.ZoneId
 class TitleInstancePackagePlatform extends KBComponent {
 
   def dateFormatService
+  def cascadingUpdateService
 
   @Deprecated
   String hybridOAUrl
@@ -279,11 +280,12 @@ class TitleInstancePackagePlatform extends KBComponent {
   public static final String restPath = "/package-titles"
 
   def availableActions() {
-    [[code: 'setStatus::Retired', label: 'Retire'],
-     [code: 'tipp::retire', label: 'Retire (with Date)'],
-     [code: 'setStatus::Deleted', label: 'Delete', perm: 'delete'],
+    [[code: 'setStatus::Retired', label: 'Mark Retire'],
+     /*[code: 'tipp::retire', label: 'Retire (with Date)'],*/
+     [code: 'setStatus::Deleted', label: 'Mark Delete', perm: 'delete'],
+     [code: 'setStatus::Removed', label: 'Remove', perm: 'delete'],
      [code: 'setStatus::Expected', label: 'Mark Expected'],
-     [code: 'setStatus::Current', label: 'Set Current'],
+     [code: 'setStatus::Current', label: 'Mark Current'],
      /*[code: 'tipp::move', label: 'Move TIPP']*/
     ]
   }
@@ -579,6 +581,24 @@ class TitleInstancePackagePlatform extends KBComponent {
   String getIdentifierValue(idtype){
     // Null returned if no match.
     ids?.find{ it.namespace.value.toLowerCase() == idtype.toLowerCase() }?.value
+  }
+
+  def afterInsert (){
+    log.debug("afterSave for ${this}")
+    cascadingUpdateService.update(this, dateCreated)
+
+  }
+
+  def beforeDelete (){
+    log.debug("beforeDelete for ${this}")
+    cascadingUpdateService.update(this, lastUpdated)
+
+  }
+
+  def afterUpdate(){
+    log.debug("afterUpdate for ${this}")
+    cascadingUpdateService.update(this, lastUpdated)
+
   }
 
 

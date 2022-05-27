@@ -1,6 +1,11 @@
 package org.gokb.cred
 
+
+
 class KBComponentAdditionalProperty {
+
+
+  def cascadingUpdateService
 
   AdditionalPropertyDefinition propertyDefn
   String apValue
@@ -22,6 +27,24 @@ class KBComponentAdditionalProperty {
     static constraints = {
         dateCreated(nullable:true, blank:true)
         lastUpdated(nullable:true, blank:true)
+    }
+
+    def afterInsert (){
+        log.debug("afterSave for ${this}")
+        cascadingUpdateService.update(this, dateCreated)
+
+    }
+
+    def beforeDelete (){
+        log.debug("beforeDelete for ${this}")
+        cascadingUpdateService.update(this, lastUpdated)
+
+    }
+
+    def afterUpdate(){
+        log.debug("afterUpdate for ${this}")
+        cascadingUpdateService.update(this, lastUpdated)
+
     }
 
 
