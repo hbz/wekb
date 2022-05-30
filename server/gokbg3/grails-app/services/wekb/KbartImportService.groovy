@@ -471,6 +471,9 @@ class KbartImportService {
         Package pkg = null
         Platform plt = null
 
+
+        List identifierNameSpacesExistOnTipp = []
+
         if (tipp_dto.pkg || tipp_dto.package) {
             def pkg_info = tipp_dto.package ?: tipp_dto.pkg
 
@@ -793,16 +796,19 @@ class KbartImportService {
                 // KBART -> package_isil -> package_isil -> identifiers['package_isil']
                 if (tipp_dto.package_isil) {
                     createOrUpdateIdentifierForTipp(tipp, "package_isil", tipp_dto.package_isil)
+                    identifierNameSpacesExistOnTipp << "package_isil"
                 }
 
                 // KBART -> package_isci -> package_isci -> identifiers['package_isci']
                 if (tipp_dto.package_isci) {
                     createOrUpdateIdentifierForTipp(tipp, "package_isci", tipp_dto.package_isci)
+                    identifierNameSpacesExistOnTipp << "package_isci"
                 }
 
                 // KBART -> ill_indicator -> ill_indicator -> identifiers['ill_indicator']
                 if (tipp_dto.ill_indicator) {
                     createOrUpdateIdentifierForTipp(tipp, "ill_indicator", tipp_dto.ill_indicator)
+                    identifierNameSpacesExistOnTipp << "ill_indicator"
                 }
 
 
@@ -841,6 +847,7 @@ class KbartImportService {
                 // KBART -> package_ezb_anchor -> package_ezb_anchor -> identifiers['package_ezb_anchor']
                 if (tipp_dto.package_ezb_anchor) {
                     createOrUpdateIdentifierForTipp(tipp, "package_ezb_anchor", tipp_dto.package_ezb_anchor)
+                    identifierNameSpacesExistOnTipp << "package_ezb_anchor"
                 }
 
                 // KBART -> zdb_id, ezb_id, print_identifier, online_identifier, title_id, doi_identifier  -> identifiers
@@ -849,7 +856,20 @@ class KbartImportService {
 
                     if (namespace_val && identifierMap.value && namespace_val.toLowerCase() != "originediturl") {
                         createOrUpdateIdentifierForTipp(tipp, namespace_val, identifierMap.value)
+                        identifierNameSpacesExistOnTipp << namespace_val
                     }
+                }
+
+                //Cleanup Identifiers
+                List<Long> deleteIdentifiers = []
+                tipp.ids.each { Identifier identifier ->
+                    if(!(identifier.namespace.value in identifierNameSpacesExistOnTipp)){
+                        deleteIdentifiers << identifier.id
+                    }
+                }
+
+                deleteIdentifiers.each{
+                    Identifier.executeUpdate("delete from Identifier where id_id = :id", [id: it])
                 }
 
                 tipp.save(flush: true, failOnError: true)

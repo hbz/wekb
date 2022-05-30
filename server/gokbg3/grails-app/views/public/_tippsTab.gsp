@@ -21,6 +21,7 @@
         <g:sortableColumn property="tipp.publicationType" title="Publication Type"/>
         <g:sortableColumn property="tipp.medium" title="Medium"/>
         <th>Note</th>
+        <g:sortableColumn property="tipp.lastUpdated" title="Last Updated"/>
     </tr>
     </thead>
     <tbody>
@@ -51,6 +52,12 @@
             <td>${t.medium?.value}</td>
             <td>
                 ${t.note}
+            </td>
+            <td>
+                <g:if test="${t.lastUpdated}">
+                    <g:formatDate format="${message(code: 'default.date.format.noZ')}"
+                                  date="${t.lastUpdated}"/>
+                </g:if>
             </td>
         </tr>
     </g:each>
