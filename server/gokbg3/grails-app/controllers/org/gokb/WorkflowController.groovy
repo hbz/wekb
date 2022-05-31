@@ -495,6 +495,7 @@ class WorkflowController{
     def denied = false
 
     if (packages_to_update.size() > 1){
+      log.debug("Please select a single Package to update")
       flash.error = "Please select a single Package to update!"
     }
     else{
