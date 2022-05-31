@@ -123,9 +123,6 @@ class BootStrap {
         }
 
 
-//    log.debug("Theme:: ${grailsApplication.config.gokb.theme}");
-//
-
 
         refdataCats()
 
