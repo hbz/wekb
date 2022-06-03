@@ -9,38 +9,44 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="shortcut icon" href="${resource(dir: 'images', file: 'favicon.ico')}" type="image/x-icon">
-    <asset:script> var contextPath="${grailsApplication.config.server.contextPath ?: '/'}"; </asset:script>
+    <asset:script>var contextPath="${grailsApplication.config.server.contextPath ?: '/'}";</asset:script>
 
-    <asset:javascript src="wekb.js" />
-    <asset:stylesheet src="wekb.css" />
+    <asset:javascript src="wekb.js"/>
+    <asset:stylesheet src="wekb.css"/>
 
     <title><g:message code="gokb.appname" default="we:kb"/></title>
 
 </head>
 
-<wekb:serviceInjection />
+<wekb:serviceInjection/>
 <g:set var="currentServer" scope="page" value="${ServerUtils.getCurrentServer()}"/>
 
 <body id="page-body">
 <wekb:serverlabel server="${currentServer}"/>
 
-<main class="main ui container ${serverLabel}">
-
-    <div class="ui top fixed inverted stackable menu">
-        <a class="item" href="${grailsApplication.config.server.contextPath ?: ''}/">
-            <img alt="Logo wekb" src="${resource(dir: 'images', file: 'logo.svg')}"/>
-        </a>
+<div class="ui top fixed inverted stackable menu">
+    <div class="ui container">
+        <img alt="Logo wekb" src="${resource(dir: 'images', file: 'logo.svg')}"/>
 
         <div class="right menu">
             <g:if test="${grailsApplication.config.gokb.ygorUrl}">
-                <a class="item" href="${grailsApplication.config.gokb.ygorUrl}" target="_blank">Ygor</a>
+                <div class="item">
+                    <a class="ui inverted button" href="${grailsApplication.config.gokb.ygorUrl}"
+                       target="_blank">Ygor</a>
+                </div>
             </g:if>
-            <g:link class="item" controller="home" action="index">Login</g:link>
+            <div class="item">
+                <g:link class="ui inverted button" controller="home" action="index"><i class="sign-in icon"></i>Login</g:link>
+            </div>
         </div>
     </div>
+</div>
 
-    <g:layoutBody />
-
+<main class="ui main container ${serverLabel}">
+    <br>
+    <br>
+    <br>
+    <g:layoutBody/>
 
 </main>
 

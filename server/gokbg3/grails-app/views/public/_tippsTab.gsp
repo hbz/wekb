@@ -11,17 +11,17 @@
         </g:form>
     </div>
 </div>
-<table class="table table-striped wekb-table-responsive-stack">
+<table class="ui selectable striped sortable celled table">
     <thead>
     <tr>
         <th>#</th>
-        <g:sortableColumn property="tipp.name" title="Title"/>
+        <semui:sortableColumn property="tipp.name" title="Title"/>
         <th>Identifiers</th>
         <th>Platform</th>
-        <g:sortableColumn property="tipp.publicationType" title="Publication Type"/>
-        <g:sortableColumn property="tipp.medium" title="Medium"/>
+        <semui:sortableColumn property="tipp.publicationType" title="Publication Type"/>
+        <semui:sortableColumn property="tipp.medium" title="Medium"/>
         <th>Note</th>
-        <g:sortableColumn property="tipp.lastUpdated" title="Last Updated"/>
+        <semui:sortableColumn property="tipp.lastUpdated" title="Last Updated"/>
     </tr>
     </thead>
     <tbody>
@@ -36,11 +36,11 @@
                 </g:link>
             </td>
             <td>
-                <ul>
+                <div class="ui bulleted list">
                     <g:each in="${t.ids.sort{it.namespace.value}}" var="id">
-                        <li><strong>${id.namespace.value}</strong>:<g:link controller="public" action="identifierContent" id="${id.uuid}">  ${id.value}</g:link></li>
+                        <div class="item"><strong>${id.namespace.value}</strong>:<g:link controller="public" action="identifierContent" id="${id.uuid}">  ${id.value}</g:link></div>
                     </g:each>
-                </ul>
+                </div>
             </td>
             <td>
                 <g:link controller="public" action="platformContent"
@@ -65,8 +65,5 @@
 </table>
 
 <g:if test="${tippsCount ?: 0 > 0}">
-    <div class="pagination mb-4 d-flex justify-content-center">
-        <g:paginate controller="public" action="packageContent" params="${params+[tab: tab]}" next="&raquo;" prev="&laquo;"
-                    max="${max}" total="${tippsCount}"/>
-    </div>
+        <semui:paginate controller="public" action="packageContent" params="${params+[tab: tab]}" max="${max}" total="${tippsCount}"/>
 </g:if>

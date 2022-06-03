@@ -1,4 +1,3 @@
-
 <%@ page import="de.wekb.helper.RCConstants" %>
 <!DOCTYPE html>
 <html>
@@ -9,34 +8,26 @@
 
 <body>
 
-<div class="container">
+<g:if test="${flash.error}">
+    <semui:flashMessage data="${flash}"/>
+</g:if>
 
 
-    <g:if test="${flash.error}">
-        <div class="alert alert-warning" style="font-weight:bold;">
-            <p>${flash.error}</p>
-        </div>
-    </g:if>
+<g:if test="${d}">
 
+    <h1 class="ui header">Source: ${d.name}</h1>
 
-    <g:if test="${source}">
-
-        <h1>Source: <span style="font-weight:bolder;">${source.name}</span></h1>
-        <div class="row">
-            <div class="col-md-9">
-                <g:render template="source"  model="${[d: source]}"/>
-            </div>
-
-            <g:render template="rightBox" model="${[d: source]}"/>
-        </div>
-
-        <g:render template="componentStatus"
-                  model="${[d: source]}"/>
-
-    </g:if>
-    <div class="row justify-content-end">
-            <button class="btn btn-default btn-primary mb-5" onclick="window.history.back()">${message(code: 'default.button.back')}</button>
+    <div class="ui segment">
+        <g:render template="rightBox"/>
+        <g:render template="source"/>
     </div>
+
+</g:if>
+
+<div class="ui segment">
+    <button class="ui right floated button black"
+            onclick="window.history.back()">${message(code: 'default.button.back')}</button>
 </div>
+
 </body>
 </html>

@@ -66,22 +66,18 @@ class PublicController {
       def pkg_id_components = params.id.split(':');
       
       if ( pkg_id_components?.size() == 2 ) {
-        result.pkg = Package.get(Long.parseLong(pkg_id_components[1]));
+        result.d = Package.get(Long.parseLong(pkg_id_components[1]));
       }
       else {
-        result.pkg = Package.findByUuid(params.id)
+        result.d = Package.findByUuid(params.id)
       }
       
-      if (result.pkg) {
+      if (result.d) {
         def tipp_combo_rdv = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE,'Package.Tipps')
         def status_current = RDStore.KBC_STATUS_CURRENT
         def status_retired = RDStore.KBC_STATUS_RETIRED
         def status_expected = RDStore.KBC_STATUS_EXPECTED
         def status_deleted = RDStore.KBC_STATUS_DELETED
-        
-        result.pkgId = result.pkg.id
-        result.pkgName = result.pkg.name
-        log.debug("Tipp qry name: ${result.pkgName}")
 
         //result.refdata_properties = classExaminationService.getRefdataPropertyNames(result.pkg.class.name)
 
@@ -126,13 +122,13 @@ class PublicController {
       def tipp_id_components = params.id.split(':');
 
       if ( tipp_id_components?.size() == 2 ) {
-        result.tipp = TitleInstancePackagePlatform.get(Long.parseLong(tipp_id_components[1]));
+        result.d = TitleInstancePackagePlatform.get(Long.parseLong(tipp_id_components[1]));
       }
       else {
-        result.tipp = TitleInstancePackagePlatform.findByUuid(params.id)
+        result.d = TitleInstancePackagePlatform.findByUuid(params.id)
       }
 
-      if (!result.tipp) {
+      if (!result.d) {
         flash.error = "Title not found"
       }
     }
@@ -146,13 +142,13 @@ class PublicController {
       def identifier_id_components = params.id.split(':');
 
       if ( identifier_id_components?.size() == 2 ) {
-        result.identifier = Identifier.get(Long.parseLong(identifier_id_components[1]));
+        result.d = Identifier.get(Long.parseLong(identifier_id_components[1]));
       }
       else {
-        result.identifier = Identifier.findByUuid(params.id)
+        result.d = Identifier.findByUuid(params.id)
       }
 
-      if (!result.identifier) {
+      if (!result.d) {
         flash.error = "Identifier not found"
       }
     }
@@ -166,14 +162,14 @@ class PublicController {
       def org_id_components = params.id.split(':');
 
       if ( org_id_components?.size() == 2 ) {
-        result.org = Org.get(Long.parseLong(org_id_components[1]));
+        result.d = Org.get(Long.parseLong(org_id_components[1]));
       }
       else {
-        result.org = Org.findByUuid(params.id)
+        result.d = Org.findByUuid(params.id)
       }
 
-      if (!result.org) {
-        flash.error = "Organization not found"
+      if (!result.d) {
+        flash.error = "Provider not found"
       }
     }
     result
@@ -186,13 +182,13 @@ class PublicController {
       def source_id_components = params.id.split(':');
 
       if ( source_id_components?.size() == 2 ) {
-        result.source = Source.get(Long.parseLong(source_id_components[1]));
+        result.d = Source.get(Long.parseLong(source_id_components[1]));
       }
       else {
-        result.source = Source.findByUuid(params.id)
+        result.d = Source.findByUuid(params.id)
       }
 
-      if (!result.source) {
+      if (!result.d) {
         flash.error = "Source not found"
       }
     }
@@ -206,13 +202,13 @@ class PublicController {
       def platform_id_components = params.id.split(':');
 
       if ( platform_id_components?.size() == 2 ) {
-        result.platform = Platform.get(Long.parseLong(platform_id_components[1]));
+        result.d = Platform.get(Long.parseLong(platform_id_components[1]));
       }
       else {
-        result.platform = Platform.findByUuid(params.id)
+        result.d = Platform.findByUuid(params.id)
       }
 
-      if (!result.platform) {
+      if (!result.d) {
         flash.error = "Platform not found"
       }
     }

@@ -1,99 +1,101 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
 <dl class="row">
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="name">Source Name</gokb:annotatedLabel>
+    <dt>
+        Source Name
     </dt>
-    <dd class="col-9 text-left">
-        <gokb:xEditable owner="${d}" field="name"/>
+    <dd>
+        <semui:xEditable owner="${d}" field="name"/>
     </dd>
 
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="url">URL</gokb:annotatedLabel>
+    <dt>
+        URL
     </dt>
-    <dd class="col-9 text-left">
-        <gokb:xEditable owner="${d}" field="url"/>
+    <dd>
+        <semui:xEditable owner="${d}" field="url"/>
         <g:if test="${d.url}">
             &nbsp;<a href="${d.url.startsWith('http') ? d.url : 'http://' + d.url}" target="new"><i class="fas fa-external-link-alt"></i></a>
         </g:if>
     </dd>
 
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="frequency">Frequency</gokb:annotatedLabel>
+    <dt>
+        Frequency
     </dt>
-    <dd class="col-9 text-left">
-        <gokb:xEditableRefData owner="${d}" field="frequency" config="${RCConstants.SOURCE_FREQUENCY}"/>
+    <dd>
+        <semui:xEditableRefData owner="${d}" field="frequency" config="${RCConstants.SOURCE_FREQUENCY}"/>
     </dd>
 
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="defaultSupplyMethod">Default Supply Method</gokb:annotatedLabel>
+    <dt>
+        Default Supply Method
     </dt>
-    <dd class="col-9 text-left">
-        <gokb:xEditableRefData owner="${d}" field="defaultSupplyMethod"
+    <dd>
+        <semui:xEditableRefData owner="${d}" field="defaultSupplyMethod"
                                config="${RCConstants.SOURCE_DATA_SUPPLY_METHOD}"/>
     </dd>
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="defaultDataFormat">Default Data Format</gokb:annotatedLabel>
+    <dt>
+        Default Data Format
     </dt>
-    <dd class="col-9 text-left">
-        <gokb:xEditableRefData owner="${d}" field="defaultDataFormat"
+    <dd>
+        <semui:xEditableRefData owner="${d}" field="defaultDataFormat"
                                config="${RCConstants.SOURCE_DATA_FORMAT}"/>
     </dd>
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="responsibleParty">Responsible Party</gokb:annotatedLabel>
+    <dt>
+        Responsible Party
     </dt>
-    <dd class="col-9 text-left">
-        <gokb:manyToOneReferenceTypedown owner="${d}" field="responsibleParty"
+    <dd>
+        <semui:xEditableManyToOne owner="${d}" field="responsibleParty"
                                          baseClass="org.gokb.cred.Org">
             ${d.responsibleParty?.name ?: ''}
-        </gokb:manyToOneReferenceTypedown>
+        </semui:xEditableManyToOne>
     </dd>
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="automaticUpdates">Automated Updates</gokb:annotatedLabel>
+    <dt>
+        Automated Updates
     </dt>
-    <dd class="col-9 text-left">
-        <gokb:xEditableBoolean owner="${d}" field="automaticUpdates"/>
+    <dd>
+        <semui:xEditableBoolean owner="${d}" field="automaticUpdates"/>
     </dd>
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="targetNamespace">Title ID Namespace</gokb:annotatedLabel>
+    <dt>
+        Title ID Namespace
     </dt>
-    <dd class="col-9 text-left">
-        <gokb:manyToOneReferenceTypedown owner="${d}" field="targetNamespace"
-                                         baseClass="org.gokb.cred.IdentifierNamespace" filter1="TitleInstancePackagePlatform">${d.targetNamespace}</gokb:manyToOneReferenceTypedown>
+    <dd>
+        <semui:xEditableManyToOne owner="${d}" field="targetNamespace"
+                                         baseClass="org.gokb.cred.IdentifierNamespace" filter1="TitleInstancePackagePlatform">${d.targetNamespace}</semui:xEditableManyToOne>
     </dd>
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="ezbMatch">EZB Matching Enabled</gokb:annotatedLabel>
+    <dt>
+        EZB Matching Enabled
     </dt>
-    <dd class="col-9 text-left">
-        <gokb:xEditableBoolean owner="${d}" field="ezbMatch"/>
+    <dd>
+        <semui:xEditableBoolean owner="${d}" field="ezbMatch"/>
     </dd>
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="zdbMatch">ZDB Matching Enabled</gokb:annotatedLabel>
+    <dt>
+        ZDB Matching Enabled
     </dt>
-    <dd class="col-9 text-left">
-        <gokb:xEditableBoolean owner="${d}" field="zdbMatch"/>
+    <dd>
+        <semui:xEditableBoolean owner="${d}" field="zdbMatch"/>
     </dd>
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="lastRun">Last Run</gokb:annotatedLabel>
+    <dt>
+        Last Run
     </dt>
-    <dd class="col-9 text-left">
-        <gokb:xEditable owner="${d}" type="date" field="lastRun">${d.lastRun}</gokb:xEditable>
+    <dd>
+        <semui:xEditable owner="${d}" type="date" field="lastRun">${d.lastRun}</semui:xEditable>
     </dd>
 
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="lastUpdateUrl">Last Update Url</gokb:annotatedLabel>
+    <dt>
+        Last Update Url
     </dt>
-    <dd class="col-9 text-left">
-        <gokb:xEditable owner="${d}" field="lastUpdateUrl" overwriteEditable="${false}"/>
+    <dd>
+        <semui:xEditable owner="${d}" field="lastUpdateUrl" overwriteEditable="${false}"/>
         <g:if test="${d.lastUpdateUrl}">
             &nbsp;<a href="${d.lastUpdateUrl.startsWith('http') ? d.lastUpdateUrl : 'http://' + d.lastUpdateUrl}" target="new"><i class="fas fa-external-link-alt"></i></a>
         </g:if>
     </dd>
 
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="nextRun">Next Run</gokb:annotatedLabel>
+    <dt>
+        Next Run
     </dt>
-    <dd class="col-9 text-left">
+    <dd>
         ${d.getNextUpdateTimestamp()}
     </dd>
 </dl>
+
+
 

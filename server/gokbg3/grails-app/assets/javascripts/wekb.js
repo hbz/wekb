@@ -5,3 +5,23 @@
 //=require /semantic.min.js         //-- semantic
 
 console.log('+ wekb.js')
+
+
+$(function () {
+
+    $('.ui.sticky')
+        .sticky({
+            context: '#rightBox',
+            pushing: true,
+            setSize: true
+        })
+    ;
+
+    $('.ui.dropdown')
+        .dropdown()
+    ;
+
+    $('.menu .item')
+        .tab()
+    ;
+});
