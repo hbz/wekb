@@ -10,7 +10,7 @@
 <wekb:serviceInjection/>
 
 
-<g:render template="/apptemplates/secondTemplates/messages"/>
+<g:render template="/templates/messages"/>
 
 
 <div class="container">

@@ -1,16 +1,14 @@
-<div class="wekb-numberChartHero mb-4">
-    <div class="container">
-        <div class="row justify-content-between">
-            <g:each in="${componentsOfStatistic.sort{it}}" var="component">
-            <%-- <g:if test="${component != 'Platform'}">Platform</g:if--%>
-                <div class="col-sm text-center">
-                    <div class="mekb-title text-uppercase">
-                        <g:message code="public.index.component.${component.toLowerCase()}"/>
-                    </div>
-                    <div class="mekb-bigFont">
-                        <g:formatNumber number="${countComponent."${component.toLowerCase()}"}" type="number" format="###.###"/> </div>
-                </div>
-            </g:each>
+<div class="ui segment inverted">
+<div class="ui five inverted statistics">
+    <g:each in="${componentsOfStatistic.sort { it }}" var="component">
+        <div class="statistic" style="!important; min-width: 18%;">
+            <div class="value">
+                <g:formatNumber number="${countComponent."${component.toLowerCase()}"}" type="number"
+                                format="###.###"/></div>
+            <div class="label">
+                <g:message code="public.index.component.${component.toLowerCase()}"/>
+            </div>
         </div>
-    </div>
+    </g:each>
+</div>
 </div>

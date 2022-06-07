@@ -1,70 +1,80 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
-%{--<g:set var="editable"
-       value="${d.isEditable() && ((request.curator != null ? request.curator.size() > 0 ? true : false : true) || (params.curationOverride == 'true' && request.user.isAdmin()))}"/>--}%
-<dl class="row">
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel>
+<dl>
+    <dt>
+        Name
     </dt>
-    <dd class="col-9 text-left">
-        ${d.name}
+    <dd>
+        <semui:xEditable owner="${d}" field="name"/>
     </dd>
-
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="status">Status</gokb:annotatedLabel>
+    <dt>
+        Status
     </dt>
-    <dd class="col-9 text-left">
+    <dd>
+        <sec:ifAnyGranted roles="ROLE_SUPERUSER">
+            <semui:xEditableRefData owner="${d}" field="status" config="${RCConstants.KBCOMPONENT_STATUS}"/>
+        </sec:ifAnyGranted>
+        <sec:ifNotGranted roles="ROLE_SUPERUSER">
             ${d.status?.value ?: 'Not Set'}
+        </sec:ifNotGranted>
     </dd>
 
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="mission">Mission</gokb:annotatedLabel>
+    <dt>
+        Mission
     </dt>
-    <dd class="col-9 text-left">
-        ${d.mission}
+    <dd>
+        <semui:xEditableRefData owner="${d}" field="mission" config="${RCConstants.ORG_MISSION}"/>
     </dd>
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="homepage">Homepage</gokb:annotatedLabel>
+    <dt>
+        Homepage
     </dt>
-    <dd class="col-9 text-left">
-        ${d.homepage}
-    </dd>
-
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="metadataDownloaderURL">Metadata URL</gokb:annotatedLabel>
-    </dt>
-    <dd class="col-9 text-left">
-        <gokb:xEditable  owner="${d}" field="metadataDownloaderURL" />
+    <dd>
+        <semui:xEditable owner="${d}" field="homepage"/>
     </dd>
 
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="kbartDownloaderURL">KBART URL</gokb:annotatedLabel>
+    <dt>
+        Metadata Downloader URL
     </dt>
-    <dd class="col-9 text-left">
-        <gokb:xEditable  owner="${d}" field="kbartDownloaderURL" />
+    <dd>
+        <semui:xEditable owner="${d}" field="metadataDownloaderURL"/>
     </dd>
 
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="roles">Roles</gokb:annotatedLabel>
+    <dt>
+        KBART Downloader URL
     </dt>
-    <dd class="col-9 text-left">
-        <g:if test="${d.id != null}">
-            <ul>
-                <g:each in="${d.roles?.sort{it.getI10n('value')}}" var="t">
-                    <li>
-                        ${t.value}
-                    </li>
-                </g:each>
-            </ul>
+    <dd>
+        <semui:xEditable owner="${d}" field="kbartDownloaderURL"/>
+    </dd>
+
+    <dt class="dt-label">
+        Roles
+    </dt>
+    <dd>
+        <div class="ui bulleted list">
+            <g:each in="${d.roles?.sort { it.getI10n('value') }}" var="t">
+                <div class="item">
+                    ${t.value}
+                    <g:if test="${editable}">
+                        <g:link controller='ajaxSupport'
+                                action='unlinkManyToMany'
+                                params="${["__context": "${d.class.name}:${d.id}", "__property": "roles", "__itemToRemove": "${t.getClassName()}:${t.id}"]}">Unlink</g:link>
+                    </g:if>
+                </div>
+            </g:each>
+        </div>
+
+        <g:if test="${editable}">
+            <a data-toggle="modal" data-cache="false"
+               data-target="#rolesModal">Add Role</a>
         </g:if>
     </dd>
 
-    <dt class="col-3 text-right">
-        <gokb:annotatedLabel owner="${d}" property="contacts">Contacts</gokb:annotatedLabel>
+    <dt class="dt-label">
+        Contacts
     </dt>
-    <dd class="col-9 text-left">
+    <dd>
         <g:if test="${d.id != null}">
 
-            <table class="table">
+            <table class="ui small selectable striped celled table">
                 <thead>
                 <tr>
                     <th>#</th>
@@ -72,28 +82,89 @@
                     <th>Content Type</th>
                     <th>Contact Typ</th>
                     <th>Language</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
                 <g:each in="${d.contacts?.sort { it.content }}" var="contact" status="i">
                     <tr>
-                        <td>${i+1}</td>
-                        <td><gokb:xEditable owner="${contact}" field="content"/></td>
-                        <td><gokb:xEditableRefData owner="${contact}" field="contentType"
-                                                   config="${RCConstants.CONTACT_CONTENT_TYPE}"/>
-                        <td><gokb:xEditableRefData owner="${contact}" field="type"
-                                                   config="${RCConstants.CONTACT_TYPE}"/>
+                        <td>${i + 1}</td>
+                        <td><semui:xEditable owner="${contact}" field="content"/></td>
+                        <td><semui:xEditableRefData owner="${contact}" field="contentType"
+                                                    config="${RCConstants.CONTACT_CONTENT_TYPE}"/>
+                        <td><semui:xEditableRefData owner="${contact}" field="type"
+                                                    config="${RCConstants.CONTACT_TYPE}"/>
                         </td>
                         <td>
-                            <gokb:xEditableRefData owner="${contact}" field="language"
-                                                   config="${RCConstants.KBCOMPONENT_LANGUAGE}"/>
+                            <semui:xEditableRefData owner="${contact}" field="language"
+                                                    config="${RCConstants.KBCOMPONENT_LANGUAGE}"/>
+                        </td>
+                        <td>
+                            <g:if test="${editable}">
+                                <g:link controller='ajaxSupport'
+                                        action='delete'
+                                        params="${["__context": "${contact.class.name}:${contact.id}"]}">Unlink</g:link>
+                            </g:if>
                         </td>
                     </tr>
                 </g:each>
                 </tbody>
             </table>
+
+            <g:if test="${editable}">
+                <a data-toggle="modal" data-cache="false"
+                   data-target="#contactModal">Add Contact</a>
+            </g:if>
         </g:if>
     </dd>
 
 </dl>
+
+<g:if test="${editable}">
+    <semui:modal id="contactModal" title="Add Contact">
+
+        <g:form controller="ajaxSupport" action="addToCollection"
+                class="form-inline">
+            <input type="hidden" name="__context" value="${d.class.name}:${d.id}"/>
+            <input type="hidden" name="__newObjectClass" value="wekb.Contact"/>
+            <input type="hidden" name="__recip" value="org"/>
+            <input type="hidden" name="fragment" value="contact"/>
+            <dt class="dt-label">Value</dt>
+            <dd>
+                <input type="text" class="form-control select-m" name="content"/>
+            </dd>
+            <dt class="dt-label">Language</dt>
+            <dd>
+                <semui:simpleReferenceTypedown class="form-control" name="language"
+                                               baseClass="org.gokb.cred.RefdataValue"
+                                               filter1="${RCConstants.KBCOMPONENT_LANGUAGE}"/>
+            </dd>
+            <dt class="dt-label">Content Type</dt>
+            <dd>
+                <semui:simpleReferenceTypedown class="form-control" name="contentType"
+                                               baseClass="org.gokb.cred.RefdataValue"
+                                               filter1="${RCConstants.CONTACT_CONTENT_TYPE}"/>
+            </dd>
+
+            <dt class="dt-label">Contact Type</dt>
+            <dd>
+                <semui:simpleReferenceTypedown class="form-control" name="type"
+                                               baseClass="org.gokb.cred.RefdataValue"
+                                               filter1="${RCConstants.CONTACT_TYPE}"/>
+            </dd>
+        </g:form>
+    </semui:modal>
+
+    <semui:modal id="rolesModal" title="Add Role">
+
+        <g:form controller="ajaxSupport" action="addToStdCollection" class="form-inline">
+            <input type="hidden" name="__context" value="${d.class.name}:${d.id}"/>
+            <input type="hidden" name="__property" value="roles"/>
+            Role: <semui:simpleReferenceTypedown class="form-inline" style="display:inline-block;"
+                                                 name="__relatedObject"
+                                                 baseClass="org.gokb.cred.RefdataValue"
+                                                 filter1="${RCConstants.ORG_ROLE}"/>
+        </g:form>
+    </semui:modal>
+</g:if>
 

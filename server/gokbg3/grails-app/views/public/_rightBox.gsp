@@ -1,9 +1,11 @@
-<%@page import="org.gokb.cred.TitleInstancePackagePlatform;"%>
-<g:set var="curatoryGroups" value="${(d instanceof TitleInstancePackagePlatform && d.pkg) ? d.pkg.curatoryGroups : d.curatoryGroups }" />
+<%@ page import="org.gokb.cred.TitleInstancePackagePlatform;" %>
+<g:set var="curatoryGroups"
+       value="${(d instanceof TitleInstancePackagePlatform && d.pkg) ? d.pkg.curatoryGroups : d.curatoryGroups}"/>
 
-<div class="col-md-3">
-    <div class="card p-4">
-        <h2>Curated By</h2>
+
+<div class="ui right rail">
+    <div class="ui segment">
+        <h2 class="ui header">Curated By</h2>
         <ul>
             <g:each in="${curatoryGroups}" var="cg">
                 <li>${cg.name}</li>
@@ -15,9 +17,12 @@
         </ul>
 
         <div style="margin-top:10px;">
-            <g:link controller="resource" action="show"
-                    id="${d.uuid}">Switch to editing view (Login required)</g:link>
+            <g:link controller="resource" action="show" class="fluid ui button black"
+                    id="${d.uuid}"><i class="edit icon"></i> Edit (Login required)</g:link>
         </div>
+
+        <g:render template="/templates/componentStatus" model="${[d: d]}"/>
+
         <g:if test="${actionName == 'packageContent'}">
             <br>
             &nbsp;
@@ -26,11 +31,12 @@
             <div style="clear:both;">
 
                 <g:if test="${d.source && (d.source.lastUpdateUrl || d.source.url)}">
-                    <g:link controller="public" action="kbart" id="${params.id}">KBart File</g:link> &nbsp;
+                    <g:link controller="public" action="kbart" class="ui button black" id="${params.id}">KBart File</g:link> &nbsp;
                 </g:if>
-                <g:link controller="public" action="packageTSVExport" id="${params.id}"><g:message
+                <g:link controller="public" action="packageTSVExport" class="ui button black" id="${params.id}"><g:message
                         code="gokb.appname" default="we:kb"/> File</g:link>
             </div>
         </g:if>
     </div>
 </div>
+

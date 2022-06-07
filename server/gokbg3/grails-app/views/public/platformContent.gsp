@@ -2,38 +2,34 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name='layout' content='public'/>
+    <meta name='layout' content='public_semui'/>
     <title><g:message code="gokb.appname" default="we:kb"/>: Platform Content</title>
 </head>
 
 <body>
 
-<div class="container">
+<g:if test="${flash.error}">
+    <semui:flashMessage data="${flash}"/>
+</g:if>
 
-    <g:if test="${flash.error}">
-        <div class="alert alert-warning" style="font-weight:bold;">
-            <p>${flash.error}</p>
-        </div>
-    </g:if>
 
-    <g:if test="${platform}">
-        <h1>Platform: <span style="font-weight:bolder;">${platform.name}</span></h1>
-        <div class="row">
-            <div class="col-md-9">
-                <g:render template="platform"  model="${[d: platform]}"/>
-            </div>
-            <g:render template="rightBox" model="${[d: platform]}"/>
+    <g:if test="${d}">
+
+        <h1 class="ui header">Platform: ${d.name}</h1>
+
+        <div class="ui segment">
+            <g:render template="rightBox"/>
+            <g:render template="platform"/>
         </div>
 
-        <g:render template="/tabTemplates/platformTabs" model="${[d: platform]}"/>
-
-        <g:render template="componentStatus"
-                  model="${[d: platform]}"/>
+        <g:render template="/templates/tabTemplates/domainTabs/platformTabs"/>
 
     </g:if>
-    <div class="row justify-content-end">
-        <button class="btn btn-default btn-primary mb-5" onclick="window.history.back()">${message(code: 'default.button.back')}</button>
-    </div>
+
+<div class="ui segment">
+    <button class="ui right floated button black"
+            onclick="window.history.back()">${message(code: 'default.button.back')}</button>
 </div>
+
 </body>
 </html>

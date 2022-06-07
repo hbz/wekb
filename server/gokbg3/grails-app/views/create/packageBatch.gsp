@@ -11,7 +11,7 @@
     Upload Packages
 </h1>
 
-<g:render template="/apptemplates/secondTemplates/messages"/>
+<g:render template="/templates/messages"/>
 
 <div class="panel panel-default">
     <div class="panel-heading clearfix">
