@@ -1,10 +1,10 @@
 <g:set var="ctxoid" value="${org.gokb.cred.KBComponent.deproxy(d).class.name}:${d.id}"/>
 
 <g:if test="${d.id}">
-   <a data-toggle="modal" data-cache="false"
-       data-target="#identifiersModal">Add Identifier</a>
-
-    <bootStrap:modal id="identifiersModal" title="Add Identifier">
+  <a class="ui right floated black button" href="#" onclick="$('#identifiersModal').modal('show');">Add Identifier</a>
+  <br>
+  <br>
+    <semui:modal id="identifiersModal" title="Add Identifier">
 
       <g:form controller="ajaxSupport" action="addIdentifier" class="form-inline">
         <input type="hidden" name="hash" value="${hash}"/>
@@ -22,7 +22,7 @@
         </dd>
 
       </g:form>
-    </bootStrap:modal>
+    </semui:modal>
 
 </g:if>
 <g:else>

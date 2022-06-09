@@ -1,0 +1,122 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
+<dl>
+    <dt class="control-label">
+        Source Name
+    </dt>
+    <dd>
+        <semui:xEditable owner="${d}" field="name"/>
+    </dd>
+</dl>
+<dl>
+    <dt class="control-label">
+        URL
+    </dt>
+    <dd>
+        <semui:xEditable owner="${d}" field="url"/>
+        <g:if test="${d.url}">
+            &nbsp;<a href="${d.url.startsWith('http') ? d.url : 'http://' + d.url}" target="new"><i
+                class="fas fa-external-link-alt"></i></a>
+        </g:if>
+    </dd>
+</dl>
+<dl>
+    <dt class="control-label">
+        Frequency
+    </dt>
+    <dd>
+        <semui:xEditableRefData owner="${d}" field="frequency" config="${RCConstants.SOURCE_FREQUENCY}"/>
+    </dd>
+</dl>
+<dl>
+    <dt class="control-label">
+        Default Supply Method
+    </dt>
+    <dd>
+        <semui:xEditableRefData owner="${d}" field="defaultSupplyMethod"
+                                config="${RCConstants.SOURCE_DATA_SUPPLY_METHOD}"/>
+    </dd>
+</dl>
+<dl>
+    <dt class="control-label">
+        Default Data Format
+    </dt>
+    <dd>
+        <semui:xEditableRefData owner="${d}" field="defaultDataFormat"
+                                config="${RCConstants.SOURCE_DATA_FORMAT}"/>
+    </dd>
+</dl>
+<dl>
+    <dt class="control-label">
+        Responsible Party
+    </dt>
+    <dd>
+        <semui:xEditableManyToOne owner="${d}" field="responsibleParty"
+                                  baseClass="org.gokb.cred.Org">
+            ${d.responsibleParty?.name ?: ''}
+        </semui:xEditableManyToOne>
+    </dd>
+</dl>
+<dl>
+    <dt class="control-label">
+        Automated Updates
+    </dt>
+    <dd>
+        <semui:xEditableBoolean owner="${d}" field="automaticUpdates"/>
+    </dd>
+</dl>
+<dl>
+    <dt class="control-label">
+        Title ID Namespace
+    </dt>
+    <dd>
+        <semui:xEditableManyToOne owner="${d}" field="targetNamespace"
+                                  baseClass="org.gokb.cred.IdentifierNamespace"
+                                  filter1="TitleInstancePackagePlatform">${d.targetNamespace}</semui:xEditableManyToOne>
+    </dd>
+</dl>
+<dl>
+    <dt class="control-label">
+        EZB Matching Enabled
+    </dt>
+    <dd>
+        <semui:xEditableBoolean owner="${d}" field="ezbMatch"/>
+    </dd>
+</dl>
+<dl>
+    <dt class="control-label">
+        ZDB Matching Enabled
+    </dt>
+    <dd>
+        <semui:xEditableBoolean owner="${d}" field="zdbMatch"/>
+    </dd>
+</dl>
+<dl>
+    <dt class="control-label">
+        Last Run
+    </dt>
+    <dd>
+        <semui:xEditable owner="${d}" type="date" field="lastRun">${d.lastRun}</semui:xEditable>
+    </dd>
+</dl>
+<dl>
+    <dt class="control-label">
+        Last Update Url
+    </dt>
+    <dd>
+        <semui:xEditable owner="${d}" field="lastUpdateUrl" overwriteEditable="${false}"/>
+        <g:if test="${d.lastUpdateUrl}">
+            &nbsp;<a href="${d.lastUpdateUrl.startsWith('http') ? d.lastUpdateUrl : 'http://' + d.lastUpdateUrl}"
+                     target="new"><i class="fas fa-external-link-alt"></i></a>
+        </g:if>
+    </dd>
+</dl>
+<dl>
+    <dt class="control-label">
+        Next Run
+    </dt>
+    <dd>
+        ${d.getNextUpdateTimestamp()}
+    </dd>
+</dl>
+
+

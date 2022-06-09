@@ -12,7 +12,7 @@
 
     <semui:tabsItemContent tab="packages" class="active">
         <dl>
-            <dt>
+            <dt class="control-label">
                 <gokb:annotatedLabel owner="${d}" property="packages">Packages</gokb:annotatedLabel>
             </dt>
             <dd>
@@ -25,7 +25,7 @@
 
     <semui:tabsItemContent tab="notes">
         <dl>
-            <dt>
+            <dt class="control-label">
                 <gokb:annotatedLabel owner="${d}" property="notes">Notes</gokb:annotatedLabel>
             </dt>
             <dd>

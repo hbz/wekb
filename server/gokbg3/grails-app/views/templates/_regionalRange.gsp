@@ -13,8 +13,10 @@
     </div>
 
     <g:if test="${editable}">
-        <a data-toggle="modal" data-cache="false"
-           data-target="#regionalRangesModal">Add Regional Range</a>
+        <a class="ui right floated black button" href="#" onclick="$('#regionalRangesModal').modal('show');">Add Regional Range</a>
+
+        <br>
+        <br>
 
         <semui:modal id="regionalRangesModal" text="Add Regional Range">
             <g:form controller="ajaxSupport" action="addToStdCollection" class="form-inline">

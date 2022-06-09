@@ -24,27 +24,29 @@
                        name="q">
             </div>
 
-            <g:each in="${facets.sort { it.key }}" var="facet">
-                <div class="six wide field">
-                    <g:if test="${facet.key != 'type'}">
-                        <label for="${facet.key}"><g:message code="facet.so.${facet.key}"
-                                                             default="${facet.key}"/></label>
-                        <select name="${facet.key}" class="ui search selection fluid multiple dropdown"
-                                multiple="multiple" placeholder="">
-                            <g:each in="${facet.value?.sort { it.display.toLowerCase() }}" var="v">
+            <g:if test="${factes}">
+                <g:each in="${facets.sort { it.key }}" var="facet">
+                    <div class="six wide field">
+                        <g:if test="${facet.key != 'type'}">
+                            <label for="${facet.key}"><g:message code="facet.so.${facet.key}"
+                                                                 default="${facet.key}"/></label>
+                            <select name="${facet.key}" class="ui search selection fluid multiple dropdown"
+                                    multiple="multiple" placeholder="">
+                                <g:each in="${facet.value?.sort { it.display.toLowerCase() }}" var="v">
 
-                                <g:if test="${params.list(facet.key).contains('"' + v.term + '"')}">
-                                    <option value="${'"' + v.term + '"'}"
-                                            selected="selected">${v.display} (${v.count})</option>
-                                </g:if>
-                                <g:else>
-                                    <option value="${'"' + v.term + '"'}">${v.display} (${v.count})</option>
-                                </g:else>
-                            </g:each>
-                        </select>
-                    </g:if>
-                </div>
-            </g:each>
+                                    <g:if test="${params.list(facet.key).contains('"' + v.term + '"')}">
+                                        <option value="${'"' + v.term + '"'}"
+                                                selected="selected">${v.display} (${v.count})</option>
+                                    </g:if>
+                                    <g:else>
+                                        <option value="${'"' + v.term + '"'}">${v.display} (${v.count})</option>
+                                    </g:else>
+                                </g:each>
+                            </select>
+                        </g:if>
+                    </div>
+                </g:each>
+            </g:if>
 
         </div>
 
@@ -62,7 +64,7 @@
 <div class="ui container">
 
     <div class="ui header">
-        <h1>Results <span class="label label-default">${resultsTotal}</span></h1>
+        <h1>Results ${resultsTotal}</h1>
     </div>
 
     <div class="ui form">
@@ -99,13 +101,13 @@
                     ${(params.int('offset') ?: 0) + i + 1}
                 </td>
                 <td>
-                    <g:link controller="public" action="packageContent"
+                    <g:link controller="resource" action="show"
                             id="${hit.id}">${hit.getSourceAsMap().name}</g:link>
 
                 </td>
                 <td>
                     <g:if test="${hit.getSourceAsMap().providerUuid}">
-                        <g:link controller="public" action="orgContent"
+                        <g:link controller="resource" action="show"
                                 id="${hit.getSourceAsMap().providerUuid}">${Org.findByUuid(hit.getSourceAsMap().providerUuid).name}</g:link>
                     </g:if>
 

@@ -50,7 +50,7 @@
 
     <semui:tabsItemContent tab="statistic">
         <dl>
-            <dt>
+            <dt class="control-label">
                 Statistics Format
             </dt>
             <dd>
@@ -58,7 +58,7 @@
                                         config="${RCConstants.PLATFORM_STATISTICS_FORMAT}"/>
             </dd>
 
-            <dt>
+            <dt class="control-label">
                 Statistics Update
             </dt>
             <dd>
@@ -66,28 +66,28 @@
                                         config="${RCConstants.PLATFORM_STATISTICS_UPDATE}"/>
             </dd>
 
-            <dt>
+            <dt class="control-label">
                 Statistics Admin Portal Url
             </dt>
             <dd>
                 <semui:xEditable owner="${d}" field="statisticsAdminPortalUrl"/>
             </dd>
 
-            <dt>
+            <dt class="control-label">
                 Counter Certified
             </dt>
             <dd>
                 <semui:xEditableRefData owner="${d}" field="counterCertified" config="${RCConstants.YN}"/>
             </dd>
 
-            <dt>
+            <dt class="control-label">
                 Last Audit Date
             </dt>
             <dd>
                 <semui:xEditable owner="${d}" field="lastAuditDate" type="date"/>
             </dd>
 
-            <dt>
+            <dt class="control-label">
                 Counter Registry Url
             </dt>
             <dd>
@@ -95,28 +95,28 @@
             </dd>
 
 
-            <dt>
+            <dt class="control-label">
                 Counter R3 Supported
             </dt>
             <dd>
                 <semui:xEditableRefData owner="${d}" field="counterR3Supported" config="${RCConstants.YN}"/>
             </dd>
 
-            <dt>
+            <dt class="control-label">
                 Counter R4 Supported
             </dt>
             <dd>
                 <semui:xEditableRefData owner="${d}" field="counterR4Supported" config="${RCConstants.YN}"/>
             </dd>
 
-            <dt>
+            <dt class="control-label">
                 Counter R5 Supported
             </dt>
             <dd>
                 <semui:xEditableRefData owner="${d}" field="counterR5Supported" config="${RCConstants.YN}"/>
             </dd>
 
-            <dt>
+            <dt class="control-label">
                 Counter R4 Sushi Api Supported
             </dt>
             <dd>
@@ -124,7 +124,7 @@
                                         config="${RCConstants.YN}"/>
             </dd>
 
-            <dt>
+            <dt class="control-label">
                 Counter R5 Sushi Api Supported
             </dt>
             <dd>
@@ -132,14 +132,14 @@
                                         config="${RCConstants.YN}"/>
             </dd>
 
-            <dt>
+            <dt class="control-label">
                 Counter R4 Sushi Server Url
             </dt>
             <dd>
                 <semui:xEditable owner="${d}" field="counterR4SushiServerUrl"/>
             </dd>
 
-            <dt>
+            <dt class="control-label">
                 Counter R5 Sushi Server Url
             </dt>
             <dd>

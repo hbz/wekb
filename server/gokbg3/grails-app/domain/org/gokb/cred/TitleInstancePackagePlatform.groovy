@@ -601,5 +601,9 @@ class TitleInstancePackagePlatform extends KBComponent {
 
   }
 
+  @Transient
+  public String getDomainName() {
+    return "Title"
+  }
 
 }

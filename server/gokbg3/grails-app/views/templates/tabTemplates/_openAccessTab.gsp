@@ -2,7 +2,7 @@
 <semui:tabsItemContent tab="openAccess">
     <g:if test="${d.id != null}">
         <dl>
-            <dt>
+            <dt class="control-label">
                 Open Access
             </dt>
             <dd>

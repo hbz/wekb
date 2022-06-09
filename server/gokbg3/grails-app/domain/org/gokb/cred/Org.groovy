@@ -366,4 +366,9 @@ class Org extends KBComponent {
     // Null returned if no match.
     ids?.find{ it.namespace.value.toLowerCase() == idtype.toLowerCase() }?.value
   }
+
+  @Transient
+  public String getDomainName() {
+    return "Provider"
+  }
 }

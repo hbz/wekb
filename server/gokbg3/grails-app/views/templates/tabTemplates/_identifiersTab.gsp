@@ -18,16 +18,9 @@
                         ${identifier.namespace.value}
                     </td>
                     <td>
-                        <g:if test="${controllerName == 'public'}">
-                                <g:link controller="public" action="identifierContent" id="${identifier.class.name}:${identifier.id}">
-                                    ${identifier.value}
-                                </g:link>
-                        </g:if>
-                        <g:else>
                             <gokb:xEditable owner="${identifier}" field="value" />
                             &nbsp;
                             <g:link controller="resource" action="show" id="${identifier.class.name}:${identifier.id}" title="Jump to resource"><i class="fas fa-eye"></i></g:link>
-                        </g:else>
                     </td>
                     <g:if test="${editable}">
                         <td>

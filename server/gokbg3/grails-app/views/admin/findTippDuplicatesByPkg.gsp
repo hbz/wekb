@@ -10,7 +10,7 @@
 <wekb:serviceInjection/>
 
 
-<g:render template="/templates/messages"/>
+<semui:flashMessage data="${flash}"/>
 
 
 <div class="container">

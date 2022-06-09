@@ -13,8 +13,10 @@
     </div>
 
     <g:if test="${editable}">
-        <a data-toggle="modal" data-cache="false"
-           data-target="#languageModal">Add Language</a>
+        <a class="ui right floated black button" href="#" onclick="$('#languageModal').modal('show');">Add Language</a>
+
+        <br>
+        <br>
 
         <semui:modal id="languageModal" text="Add Language">
             <g:form controller="ajaxSupport" action="addToCollection"

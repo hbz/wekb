@@ -2,7 +2,7 @@
 <g:if test="${d.publicationType?.value == 'Serial'}">
 	<semui:tabsItemContent tab="tippcoverage">
 		<dl>
-			<dt>
+			<dt class="control-label">
 				Coverage
 			</dt>
 			<dd>
@@ -61,8 +61,10 @@
 				</table>
 				<g:if test="${editable}">
 					<dl>
-						<a data-toggle="modal" data-cache="false"
-						   data-target="#coverageStatementsModal">Add Coverage Statement</a>
+						<a class="ui right floated black button" href="#" onclick="$('#coverageStatementsModal').modal('show');">Add Coverage Statement</a>
+
+						<br>
+						<br>
 
 					</dl>
 				</g:if>
@@ -80,41 +82,41 @@
 			<input type="hidden" name="__newObjectClass"
 				   value="org.gokb.cred.TIPPCoverageStatement"/>
 			<input type="hidden" name="__recip" value="owner"/>
-			<dt class="dt-label">Start Date</dt>
+			<dt class="control-label">Start Date</dt>
 			<dd>
 				<input class="form-control" type="date" name="startDate"/>
 			</dd>
-			<dt class="dt-label">Start Volume</dt>
+			<dt class="control-label">Start Volume</dt>
 			<dd>
 				<input class="form-control" type="text" name="startVolume"/>
 			</dd>
-			<dt class="dt-label">Start Issue</dt>
+			<dt class="control-label">Start Issue</dt>
 			<dd>
 				<input class="form-control" type="text" name="startIssue"/>
 			</dd>
-			<dt class="dt-label">End Date</dt>
+			<dt class="control-label">End Date</dt>
 			<dd>
 				<input class="form-control" type="date" name="endDate"/>
 			</dd>
-			<dt class="dt-label">End Volume</dt>
+			<dt class="control-label">End Volume</dt>
 			<dd>
 				<input class="form-control" type="text" name="endVolume"/>
 			</dd>
-			<dt class="dt-label">End Issue</dt>
+			<dt class="control-label">End Issue</dt>
 			<dd>
 				<input class="form-control" type="text" name="endIssue"/>
 			</dd>
-			<dt class="dt-label">Embargo</dt>
+			<dt class="control-label">Embargo</dt>
 			<dd>
 				<input class="form-control" type="text" name="embargo"/>
 			</dd>
-			<dt class="dt-label">Coverage Depth</dt>
+			<dt class="control-label">Coverage Depth</dt>
 			<dd>
 				<semui:simpleReferenceTypedown name="coverageDepth"
 											  baseClass="org.gokb.cred.RefdataValue"
 											  filter1="${RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH}"/>
 			</dd>
-			<dt class="dt-label">Coverage Note</dt>
+			<dt class="control-label">Coverage Note</dt>
 			<dd>
 				<input class="form-control" type="text" name="coverageNote"/>
 			</dd>

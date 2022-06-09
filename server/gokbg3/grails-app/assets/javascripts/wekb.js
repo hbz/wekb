@@ -1,8 +1,10 @@
 // FileName: wekb.js
 // the order must be observed!!!
 
-//=require new/libs/jquery-3.6.0.min
+//=require /jquery-3.6.0.min        //-- externalLibs
 //=require /semantic.min.js         //-- semantic
+//=require /echarts.min.js        //-- externalLibs
+//=require /select2/js/select2.full.js        //-- externalLibs
 
 console.log('+ wekb.js')
 
@@ -24,4 +26,6 @@ $(function () {
     $('.menu .item')
         .tab()
     ;
+
 });
+

@@ -18,12 +18,9 @@ class PublicController {
   def genericOIDService
   def ESSearchService
   def dateFormatService
-  def sessionFactory
-  def classExaminationService
   ExportService exportService
   MailService mailService
   SearchService searchService
-  def globalSearchTemplatesService
 
   public static String TIPPS_QRY = 'from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=? and c.toComponent=tipp and c.type = ? and tipp.status = ?';
 
@@ -61,158 +58,32 @@ class PublicController {
 
   def packageContent() {
     log.debug("packageContent::${params}")
-    def result = [:]
-    if ( params.id ) {
-      def pkg_id_components = params.id.split(':');
-      
-      if ( pkg_id_components?.size() == 2 ) {
-        result.d = Package.get(Long.parseLong(pkg_id_components[1]));
-      }
-      else {
-        result.d = Package.findByUuid(params.id)
-      }
-      
-      if (result.d) {
-        def tipp_combo_rdv = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE,'Package.Tipps')
-        def status_current = RDStore.KBC_STATUS_CURRENT
-        def status_retired = RDStore.KBC_STATUS_RETIRED
-        def status_expected = RDStore.KBC_STATUS_EXPECTED
-        def status_deleted = RDStore.KBC_STATUS_DELETED
-
-        //result.refdata_properties = classExaminationService.getRefdataPropertyNames(result.pkg.class.name)
-
-        Map newParams = [:]
-        params.sort = params.sort ? "${params.sort}" : 'tipp.name'
-        params.order = params.order ? "${params.order}" : 'asc'
-
-        if (params.newMax) {
-          session.setAttribute("newMax", params.newMax)
-          params.remove(params.newMax)
-          params.offset = 0
-        }
-        params.offset = params.offset ?: 0
-        params.max = session.getAttribute("newMax") ?: 10
-
-        params.tab = params.tab ?: 'currentTipps'
-
-        result.currentTitleCount = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_current])[0]
-        result.currentTipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY + " order by ${params.sort} ${params.order}",[result.pkgId, tipp_combo_rdv, status_current], params)
-        //log.debug("Tipp qry done ${result.tipps?.size()}")
-
-        result.retiredTitleCount = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_retired])[0]
-        result.retiredTipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY + " order by ${params.sort} ${params.order}",[result.pkgId, tipp_combo_rdv, status_retired], params)
-
-        result.expectedTitleCount = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_expected])[0]
-        result.expectedTipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY + " order by ${params.sort} ${params.order}",[result.pkgId, tipp_combo_rdv, status_expected], params)
-
-        result.deletedTitleCount = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_deleted])[0]
-        result.deletedTipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY + " order by ${params.sort} ${params.order}",[result.pkgId, tipp_combo_rdv, status_deleted], params)
-
-      }else {
-        flash.error = "Package not found"
-      }
-    }
-    result
+    redirect(controller: 'resource', action: 'show', id: params.id)
   }
 
   def tippContent() {
     log.debug("tippContent::${params}")
-    def result = [:]
-    if ( params.id ) {
-      def tipp_id_components = params.id.split(':');
-
-      if ( tipp_id_components?.size() == 2 ) {
-        result.d = TitleInstancePackagePlatform.get(Long.parseLong(tipp_id_components[1]));
-      }
-      else {
-        result.d = TitleInstancePackagePlatform.findByUuid(params.id)
-      }
-
-      if (!result.d) {
-        flash.error = "Title not found"
-      }
-    }
-    result
+    redirect(controller: 'resource', action: 'show', id: params.id)
   }
 
   def identifierContent() {
     log.debug("identifierContent::${params}")
-    def result = [:]
-    if ( params.id ) {
-      def identifier_id_components = params.id.split(':');
-
-      if ( identifier_id_components?.size() == 2 ) {
-        result.d = Identifier.get(Long.parseLong(identifier_id_components[1]));
-      }
-      else {
-        result.d = Identifier.findByUuid(params.id)
-      }
-
-      if (!result.d) {
-        flash.error = "Identifier not found"
-      }
-    }
-    result
+    redirect(controller: 'resource', action: 'show', id: params.id)
   }
 
   def orgContent() {
     log.debug("orgContent::${params}")
-    def result = [:]
-    if ( params.id ) {
-      def org_id_components = params.id.split(':');
-
-      if ( org_id_components?.size() == 2 ) {
-        result.d = Org.get(Long.parseLong(org_id_components[1]));
-      }
-      else {
-        result.d = Org.findByUuid(params.id)
-      }
-
-      if (!result.d) {
-        flash.error = "Provider not found"
-      }
-    }
-    result
+    redirect(controller: 'resource', action: 'show', id: params.id)
   }
 
   def sourceContent() {
     log.debug("sourceContent::${params}")
-    def result = [:]
-    if ( params.id ) {
-      def source_id_components = params.id.split(':');
-
-      if ( source_id_components?.size() == 2 ) {
-        result.d = Source.get(Long.parseLong(source_id_components[1]));
-      }
-      else {
-        result.d = Source.findByUuid(params.id)
-      }
-
-      if (!result.d) {
-        flash.error = "Source not found"
-      }
-    }
-    result
+    redirect(controller: 'resource', action: 'show', id: params.id)
   }
 
   def platformContent() {
     log.debug("tippContent::${params}")
-    def result = [:]
-    if ( params.id ) {
-      def platform_id_components = params.id.split(':');
-
-      if ( platform_id_components?.size() == 2 ) {
-        result.d = Platform.get(Long.parseLong(platform_id_components[1]));
-      }
-      else {
-        result.d = Platform.findByUuid(params.id)
-      }
-
-      if (!result.d) {
-        flash.error = "Platform not found"
-      }
-    }
-    result
+    redirect(controller: 'resource', action: 'show', id: params.id)
   }
 
 
@@ -357,37 +228,5 @@ class PublicController {
     catch ( Exception e ) {
       log.error("Problem with export",e);
     }
-  }
-
-  def search() {
-    def start_time = System.currentTimeMillis();
-
-    log.debug("Entering SearchController:index ${params}")
-
-    def searchResult = [:]
-
-    List allowedSearch = ["g:tipps", "g:platforms", "g:packages", "g:orgs", "g:tippsOfPkg"]
-
-    if(params.qbe in allowedSearch) {
-
-      if (params.newMax) {
-        session.setAttribute("newMax", params.newMax)
-        params.remove(params.newMax)
-        params.offset = "0"
-      }
-      params.offset = params.offset ? params.offset.toString() : "0"
-      params.max = session.getAttribute("newMax") ? session.getAttribute("newMax").toString() : "10"
-
-      searchResult = searchService.search(null, searchResult, params, null)
-
-      log.debug("Search completed after ${System.currentTimeMillis() - start_time}");
-
-    }else {
-      searchResult.result = [:]
-      searchResult.result.message = "This search is not allowed!"
-    }
-      searchResult.result
-
-
   }
 }

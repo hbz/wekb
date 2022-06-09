@@ -238,4 +238,9 @@ class Source extends KBComponent {
     return null
   }
 
+  @Transient
+  public String getDomainName() {
+    return "Source"
+  }
+
 }
