@@ -87,7 +87,7 @@ class SemanticInplaceTagLib {
         boolean editable = isEditable(request.getAttribute('editable'), attrs.overwriteEditable)
 
         if (editable) {
-            def owner = ClassUtils.deproxy(attrs.owner);
+            def owner = ClassUtils.deproxy(attrs.owner)
 
             def oid = owner.id != null ? "${owner.class.name}:${owner.id}" : ''
             def id = attrs.id ?: "${oid}:${attrs.field}"
@@ -141,12 +141,14 @@ class SemanticInplaceTagLib {
             if (body) {
                 out << body()
             } else {
-                if (attrs.type != 'date') {
-                    out << owner[attrs.field]
-                } else if (owner[attrs.field]) {
-                    def sdf = new java.text.SimpleDateFormat(attrs."data-format" ?: 'yyyy-MM-dd')
-                    out << sdf.format(owner[attrs.field])
+                String content = (attrs.owner?."${attrs.field}" ? renderObjectValue(attrs.owner."${attrs.field}") : "")
+                out << "<span class='readonly${content ? '' : ' editable-empty'}' title='Read Only' >"
+                if(content){
+                    out << content
+                }else {
+                    out << "Empty"
                 }
+                out << "</span>"
             }
             out << "</span>"
         } else {
@@ -154,20 +156,25 @@ class SemanticInplaceTagLib {
             if (body) {
                 out << body()
             } else {
-                if (attrs.owner[attrs.field] && attrs.type == 'date') {
-                    SimpleDateFormat sdf = new SimpleDateFormat(attrs.format ?: message(code: 'default.date.format'))
-                    out << sdf.format(attrs.owner[attrs.field])
-                } else {
-                    if ((attrs.owner[attrs.field] == null) || (attrs.owner[attrs.field].toString().length() == 0)) {
-                        //out << "<span class='readonly editable-empty' title='Read Only' >Empty</span>"
-                    } else if (attrs.field == 'decValue') {
-                        out << NumberFormat.getInstance(LocaleContextHolder.getLocale()).format(attrs.owner[attrs.field])
-                    } else {
-                        out << attrs.owner[attrs.field]
-                    }
+                String content = (attrs.owner?."${attrs.field}" ? renderObjectValue(attrs.owner."${attrs.field}") : "")
+                out << "<span class='readonly${content ? '' : ' editable-empty'}' title='Read Only' >"
+                if(content){
+                    out << content
+                }else {
+                    out << "Empty"
                 }
+                out << "</span>"
             }
             out << '</span>'
+        }
+
+        if (attrs.outGoingLink && attrs.field && attrs.owner[attrs.field]) {
+            String url =  attrs.owner[attrs.field].startsWith('http') ? attrs.owner[attrs.field] : ('http://' + attrs.owner[attrs.field])
+            out << '&nbsp;<a aria-label="'
+            out << attrs.owner[attrs.field]
+            out << '" href="'
+            out << url
+            out << '" target="_blank"><i class="share square icon"></i></a>'
         }
     }
 
@@ -248,7 +255,7 @@ class SemanticInplaceTagLib {
      */
         // The check editable should output the read only version so we should just exit
         // if read only.
-        //if (!checkEditable(attrs, body, out)) return;
+        //if (!checkEditable(attrs, body, out)) return
 
         boolean editable = isEditable(request.getAttribute('editable'), attrs.overwriteEditable)
 
@@ -307,7 +314,6 @@ class SemanticInplaceTagLib {
     def renderObjectValue(value) {
         def result = ''
         if (value != null) {
-            log.debug("${value.class}")
             switch (value.class) {
                 case org.gokb.cred.RefdataValue.class:
                     if (value.icon != null) {
@@ -319,11 +325,15 @@ class SemanticInplaceTagLib {
                 case Boolean.class:
                     result = (value == true ? 'Yes' : 'No')
                     break;
+                case Date.class:
+                    def sdf = new java.text.SimpleDateFormat('yyyy-MM-dd')
+                    result = sdf.format(value)
+                    break
                 default:
                     result = value.toString();
             }
         }
-        result;
+        result
     }
 
 
@@ -336,7 +346,7 @@ class SemanticInplaceTagLib {
 
         // The check editable should output the read only version so we should just exit
         // if read only.
-        //if (!checkEditable(attrs, body, out)) return;
+        //if (!checkEditable(attrs, body, out)) return
 
         out << "<input type=\"hidden\" value=\"${attrs.value ?: ''}\" name=\"${attrs.name}\" data-domain=\"${attrs.baseClass}\" "
         if (attrs.id) {
@@ -348,7 +358,7 @@ class SemanticInplaceTagLib {
 
         if ((attrs.value != null) && (attrs.value.length() > 0)) {
             def o = genericOIDService.resolveOID2(attrs.value)
-            out << "data-displayValue=\"${o.toString()}\" ";
+            out << "data-displayValue=\"${o.toString()}\" "
         }
 
         if (attrs.elastic) {
@@ -378,13 +388,13 @@ class SemanticInplaceTagLib {
             def id = attrs.id ?: "${oid ?: owner.class.name}:${attrs.field}"
             def update_link = createLink(controller: 'ajaxSupport', action: 'genericSetRel')
 
-            def follow_link = null;
+            def follow_link = null
 
             if (viewable && owner != null && owner[attrs.field] != null) {
                 def field_class = "${ClassUtils.deproxy(owner[attrs.field]).class.name}"
 
                 follow_link = createLink(controller: 'resource', action: 'show')
-                follow_link = follow_link + '/' + field_class + ':' + owner[attrs.field].id;
+                follow_link = follow_link + '/' + field_class + ':' + owner[attrs.field].id
             }
 
             if (viewable && editable) {
@@ -399,11 +409,11 @@ class SemanticInplaceTagLib {
 
                 out << "data-type=\"select2\" data-name=\"${attrs.field}\" data-url=\"${update_link}\" >"
                 out << body()
-                out << "</a>";
+                out << "</a>"
             }
 
             if (follow_link) {
-                out << ' &nbsp; <a href="' + follow_link + '" title="Jump to resource"><i class="fas fa-eye"></i></a>'
+                out << ' &nbsp; <a href="' + follow_link + '" title="Jump to resource"><i class="info icon"></i></a>'
             }
         } else {
             if (body) {

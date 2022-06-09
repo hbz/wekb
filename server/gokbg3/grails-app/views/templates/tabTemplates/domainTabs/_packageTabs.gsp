@@ -32,8 +32,8 @@
 
     <semui:tabsItemContent tab="currentTipps" class="${(params.tab == null || params.tab == 'currentTipps') ? 'active' : ''}">
 
-        <div class="float-right">
-            <g:link controller="public" action="search" class="btn btn-primary"
+        <div class="ui right floated buttons">
+            <g:link controller="search" action="index" class="ui button black"
                     params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: RefdataValue.class.name + ':' + RDStore.KBC_STATUS_CURRENT.id]"
                     id="">Search View</g:link>
         </div>
@@ -48,8 +48,8 @@
 
 
     <semui:tabsItemContent tab="retiredTipps" class="${params.tab == 'retiredTipps' ? 'active' : ''}">
-        <div class="float-right">
-            <g:link controller="public" action="search" class="btn btn-primary"
+        <div class="ui right floated buttons">
+            <g:link controller="search" action="index" class="ui button black"
                     params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: RefdataValue.class.name + ':' + RDStore.KBC_STATUS_RETIRED.id]"
                     id="">Search View</g:link>
         </div>
@@ -64,8 +64,8 @@
 
 
     <semui:tabsItemContent tab="expectedTipps" class="${params.tab == 'expectedTipps' ? 'active' : ''}">
-        <div class="float-right">
-            <g:link controller="public" action="search" class="btn btn-primary"
+        <div class="ui right floated buttons">
+            <g:link controller="search" action="index" class="ui button black"
                     params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: RefdataValue.class.name + ':' + RDStore.KBC_STATUS_EXPECTED.id]"
                     id="">Search View</g:link>
         </div>
@@ -81,8 +81,8 @@
 
     <semui:tabsItemContent tab="deletedTipps" class="${params.tab == 'deletedTipps' ? 'active' : ''}">
 
-        <div class="float-right">
-            <g:link controller="public" action="search" class="btn btn-primary"
+        <div class="ui right floated buttons">
+            <g:link controller="search" action="index" class="ui button black"
                     params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: RefdataValue.class.name + ':' + RDStore.KBC_STATUS_DELETED.id]"
                     id="">Search View</g:link>
         </div>

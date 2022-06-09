@@ -2,6 +2,8 @@ package org.gokb.cred
 
 import groovy.util.logging.*
 
+import javax.persistence.Transient
+
 
 @Slf4j
 class Identifier {
@@ -218,4 +220,10 @@ class Identifier {
       }
     }
   }*/
+
+  @Transient
+  public String getDomainName() {
+    return "Identifier"
+  }
+
 }

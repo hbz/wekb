@@ -35,12 +35,7 @@
 </dl>
 <dl>
     <dt class="control-label">Description URL</dt>
-    <dd><semui:xEditable owner="${d}" field="descriptionURL"/>
-        <g:if test="${d.descriptionURL}">
-            &nbsp;<a aria-label="${d.descriptionURL}"
-                     href="${d.descriptionURL.startsWith('http') ? d.descriptionURL : 'http://' + d.descriptionURL}"
-                     target="new"><i class="fas fa-external-link-alt"></i></a>
-        </g:if>
+    <dd><semui:xEditable owner="${d}" field="descriptionURL" outGoingLink="true"/>
     </dd>
 </dl>
 

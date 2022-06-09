@@ -508,6 +508,7 @@ class GlobalSearchTemplatesService {
                         ],
                         qbeResults: [
                                 [heading: 'Name', property: 'name', sort: 'name', link: true],
+                                [heading: 'Homepage', property: 'homepage', sort: 'homepage', outGoingLink: true],
                                 [heading: 'Status', sort: 'status', property: 'status?.value'],
                                 [heading: 'Misson', sort: 'misson', property: 'misson?.value'],
                                 [heading: 'Current Titles', property: 'currentTippCount'],
@@ -690,6 +691,12 @@ class GlobalSearchTemplatesService {
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'name']
                                 ],
                                 [
+                                        prompt     : 'Platform URL',
+                                        qparam     : 'qp_url',
+                                        placeholder: 'Platform URL',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'primaryUrl']
+                                ],
+                                [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.RefdataValue',
                                         filter1    : RCConstants.KBCOMPONENT_STATUS,
@@ -732,8 +739,8 @@ class GlobalSearchTemplatesService {
                         ],
                         qbeResults: [
                                 [heading: 'Name/Title', property: 'name', sort: 'name', link: true],
-                                [heading: 'Primary URL', property: 'primaryUrl'],
-                                [heading: 'Provider', property: 'provider.name'],
+                                [heading: 'Primary URL', property: 'primaryUrl', sort: 'primaryUrl', outGoingLink: true],
+                                [heading: 'Provider', property: 'provider.name', link: true],
                                 [heading: 'Current Titles', property: 'currentTippCount'],
                                 [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
@@ -878,6 +885,8 @@ class GlobalSearchTemplatesService {
                 baseclass: 'org.gokb.cred.Source',
                 title    : 'Source',
                 group    : 'Secondary',
+                defaultSort : 'name',
+                defaultOrder: 'asc',
                 qbeConfig: [
                         qbeForm   : [
                                 [
@@ -901,9 +910,8 @@ class GlobalSearchTemplatesService {
                                  'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']*/
                         ],
                         qbeResults: [
-                                [heading: 'ID', property: 'id', sort: 'id', link: true],
                                 [heading: 'Name/Title', property: 'name', sort: 'name', link: true],
-                                [heading: 'Url', property: 'url', sort: 'url'],
+                                [heading: 'Url', property: 'url', sort: 'url', outGoingLink: true],
                                 [heading: 'automatic Updates', property: 'automaticUpdates'],
                                 [heading: 'Frequency', property: 'frequency?.value'],
                                 [heading: 'Last Run', property: 'lastRun'],
@@ -974,6 +982,12 @@ class GlobalSearchTemplatesService {
                                         placeholder: 'Identifier Value',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'ids.value'],
                                         hide       : false
+                                ],
+                                [
+                                        prompt     : 'Url',
+                                        qparam     : 'qp_url',
+                                        placeholder: 'Url',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'url'],
                                 ],
                                 [
                                         type       : 'lookup',
@@ -1181,6 +1195,12 @@ class GlobalSearchTemplatesService {
                                         placeholder: 'Identifier Value',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'ids.value'],
                                         hide       : false
+                                ],
+                                [
+                                        prompt     : 'Url',
+                                        qparam     : 'qp_url',
+                                        placeholder: 'Url',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'url'],
                                 ],
                                 [
                                         type       : 'lookup',

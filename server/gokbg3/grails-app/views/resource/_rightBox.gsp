@@ -1,20 +1,20 @@
-<%@ page import="org.gokb.cred.TitleInstancePackagePlatform;" %>
+<%@ page import="org.gokb.cred.CuratoryGroup; org.gokb.cred.TitleInstancePackagePlatform;" %>
 <g:set var="curatoryGroups"
-       value="${(d instanceof TitleInstancePackagePlatform && d.pkg) ? d.pkg.curatoryGroups : d.curatoryGroups}"/>
+       value="${(d instanceof TitleInstancePackagePlatform && d.pkg) ? d.pkg.curatoryGroups : (d.hasProperty('curatoryGroups') ? d.curatoryGroups : [])}"/>
 
 
 <div class="ui right rail">
     <div class="ui segment">
         <h2 class="ui header">Curated By</h2>
-        <ul>
+        <div class="ui bulleted list">
             <g:each in="${curatoryGroups}" var="cg">
-                <li>${cg.name}</li>
+                <div class="item">${cg.name}</div>
             </g:each>
 
             <g:if test="${!curatoryGroups}">
-                <li>There are currently no linked Curatory Groups</li>
+                <div class="item">There are currently no linked Curatory Groups</div>
             </g:if>
-        </ul>
+        </div>
 
         <sec:ifNotLoggedIn>
                 <div style="margin-top:10px;">

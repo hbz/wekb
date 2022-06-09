@@ -55,6 +55,7 @@ class AccessService {
         List allowedBaseClasses = ['org.gokb.cred.CuratoryGroup',
                                    'org.gokb.cred.JobResult',
                                    'org.gokb.cred.IdentifierNamespace',
+                                   'org.gokb.cred.Identifier',
                                    'org.gokb.cred.Org',
                                    'org.gokb.cred.Package',
                                    'org.gokb.cred.Platform',

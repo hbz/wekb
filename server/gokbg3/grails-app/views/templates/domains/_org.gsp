@@ -33,7 +33,7 @@
         Homepage
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="homepage"/>
+        <semui:xEditable owner="${d}" field="homepage" outGoingLink="true"/>
     </dd>
 </dl>
 <dl>
@@ -41,7 +41,7 @@
         Metadata Downloader URL
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="metadataDownloaderURL"/>
+        <semui:xEditable owner="${d}" field="metadataDownloaderURL" outGoingLink="true"/>
     </dd>
 </dl>
 <dl>
@@ -49,7 +49,7 @@
         KBART Downloader URL
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="kbartDownloaderURL"/>
+        <semui:xEditable owner="${d}" field="kbartDownloaderURL" outGoingLink="true"/>
     </dd>
 </dl>
 <dl>

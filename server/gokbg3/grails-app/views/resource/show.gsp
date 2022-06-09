@@ -85,7 +85,7 @@
     <br>
     <br>
     <g:if test="${displaytemplate != null}">
-        <g:if test="${displaytemplate.type == 'staticgsp'}">
+        <g:if test="${displaytemplate.type == 'staticgsp' && displaytemplate.rendername in ["org", "package", "platform", "source", "tipp"]}">
             <g:render template="/templates/tabTemplates/domainTabs/${displaytemplate.rendername}Tabs"
                       model="${[d: displayobj]}"/>
         </g:if>

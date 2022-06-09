@@ -73,7 +73,7 @@
 
                     </div>
 
-                    <g:if test="${frmidx % 2 == 1}">
+                    <g:if test="${(frmidx+1) % 2 == 1}">
                         </div>
                         <div class="two fields">
                     </g:if>

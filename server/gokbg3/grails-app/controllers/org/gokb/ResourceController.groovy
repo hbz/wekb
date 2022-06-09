@@ -53,11 +53,12 @@ class ResourceController {
       if ( displayobj ) {
 
         List allowedPublicShow = ['CuratoryGroup',
-                            'Org',
-                            'Package',
-                            'Platform',
-                            'Source',
-                            'TitleInstancePackagePlatform']
+                                  'Identifier',
+                                  'Org',
+                                  'Package',
+                                  'Platform',
+                                  'Source',
+                                  'TitleInstancePackagePlatform']
 
         if ((displayobj.class.simpleName in allowedPublicShow) || (sec.ifLoggedIn() && sec.ifAnyGranted("ROLE_ADMIN"))) {
 
