@@ -24,7 +24,7 @@
                        name="q">
             </div>
 
-            <g:if test="${factes}">
+            <g:if test="${facets}">
                 <g:each in="${facets.sort { it.key }}" var="facet">
                     <div class="six wide field">
                         <g:if test="${facet.key != 'type'}">
