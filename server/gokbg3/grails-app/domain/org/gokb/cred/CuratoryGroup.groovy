@@ -110,5 +110,10 @@ class CuratoryGroup extends KBComponent {
     super.deleteSoft(context)
   }
 
+  @Transient
+  public String getDomainName() {
+    return "Curatory Group"
+  }
+
 }
 

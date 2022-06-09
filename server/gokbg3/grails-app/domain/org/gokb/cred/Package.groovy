@@ -820,4 +820,9 @@ select tipp.id,
     ids?.find{ it.namespace.value.toLowerCase() == idtype.toLowerCase() }?.value
   }
 
+  @Transient
+  public String getDomainName() {
+   return "Package"
+  }
+
 }

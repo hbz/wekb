@@ -2,7 +2,7 @@
 <semui:tabsItemContent tab="ddcs">
     <g:if test="${d.id != null}">
         <dl>
-            <dt>
+            <dt class="control-label">
                 <gokb:annotatedLabel owner="${d}" property="ddcs">Dewey Decimal Classification</gokb:annotatedLabel>
             </dt>
             <dd>
@@ -19,10 +19,12 @@
                 </ul>
 
                 <g:if test="${editable}">
-                    <a data-toggle="modal" data-cache="false"
-                       data-target="#ddcModal">Add Dewey Decimal Classification</a>
+                    <a class="ui right floated black button" href="#" onclick="$('#ddcModal').modal('show');">Add Dewey Decimal Classification</a>
 
-                    <bootStrap:modal id="ddcModal" title="Add Dewey Decimal Classification">
+                    <br>
+                    <br>
+
+                    <semui:modal id="ddcModal" title="Add Dewey Decimal Classification">
 
                         <g:form controller="ajaxSupport" action="addToStdCollection" class="form-inline" params="[fragment: 'ddcs']">
                             <input type="hidden" name="__context" value="${d.class.name}:${d.id}" />
@@ -41,7 +43,7 @@
                                               value=""/>
                                 </div>
                         </g:form>
-                    </bootStrap:modal>
+                    </semui:modal>
 
                 </g:if>
             </dd>

@@ -1,40 +1,35 @@
 package org.gokb
 
-import grails.converters.*
 import org.springframework.security.access.annotation.Secured;
 
 import org.gokb.cred.*
 import wekb.SearchService
 
-@Secured(['IS_AUTHENTICATED_FULLY'])
 class SearchController {
 
-  def genericOIDService
-  def springSecurityService
-  SearchService searchService
+    def genericOIDService
+    def springSecurityService
+    SearchService searchService
 
+    def index() {
+        User user = springSecurityService.currentUser
+        def start_time = System.currentTimeMillis();
 
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  def index() {
-    User user = springSecurityService.currentUser
-    def start_time = System.currentTimeMillis();
+        log.debug("Entering SearchController:index ${params}")
 
-    log.debug("Entering SearchController:index ${params}");
+        def searchResult = [:]
+        List allowedSearch = ["g:tipps", "g:platforms", "g:packages", "g:orgs", "g:tippsOfPkg", "g:sources", "g:curatoryGroups", "g:identifiers"]
 
-    def searchResult = [:]
+        if ((params.qbe in allowedSearch) || (sec.ifLoggedIn() && sec.ifAnyGranted("ROLE_ADMIN"))) {
+            searchResult = searchService.search(user, searchResult, params, response.format)
 
-    searchResult = searchService.search(user, searchResult, params, response.format)
+            log.debug("Search completed after ${System.currentTimeMillis() - start_time}");
 
-    // log.debug("leaving SearchController::index...");
-    log.debug("Search completed after ${System.currentTimeMillis() - start_time}");
-
-    withFormat {
-      html searchResult.result
-      json { render searchResult.apiresponse as JSON }
-      xml { render searchResult.apiresponse as XML }
+        } else {
+            searchResult.result = [:]
+           flash.error = "This search is not allowed!"
+        }
+        searchResult.result
     }
-  }
-
-
 
 }

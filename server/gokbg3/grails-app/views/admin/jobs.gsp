@@ -10,7 +10,7 @@
     <span class="pull-right">${cms.executorService.executor.activeCount} out of ${cms.executorService.executor.poolSize} threads In use</span>
     Jobs</h1>
 
-<g:render template="/templates/messages"/>
+<semui:flashMessage data="${flash}"/>
 
 <div class="container-fluid">
     <div class="row">

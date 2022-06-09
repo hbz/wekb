@@ -3,7 +3,7 @@
 
     <semui:tabs>
         <semui:tabsItemWithoutLink tab="currentTipps" counts="${currentTitleCount}"
-                                   class="${params.tab == 'currentTipps' ? 'active' : ''}">
+                                   class="${(params.tab == null || params.tab == 'currentTipps') ? 'active' : ''}">
             Current Titles
         </semui:tabsItemWithoutLink>
         <semui:tabsItemWithoutLink tab="retiredTipps" counts="${retiredTitleCount}"
@@ -30,7 +30,7 @@
     </semui:tabs>
 
 
-    <semui:tabsItemContent tab="currentTipps" class="${params.tab == 'currentTipps' ? 'active' : ''}">
+    <semui:tabsItemContent tab="currentTipps" class="${(params.tab == null || params.tab == 'currentTipps') ? 'active' : ''}">
 
         <div class="float-right">
             <g:link controller="public" action="search" class="btn btn-primary"
@@ -41,7 +41,7 @@
         <br>
         <br>
 
-        <g:render template="tippsTab"
+        <g:render template="/templates/tabTemplates/tippsTab"
                   model="[tippsCount: currentTitleCount, tipps: currentTipps, tab: 'currentTipps']"/>
 
     </semui:tabsItemContent>
@@ -57,7 +57,7 @@
         <br>
         <br>
 
-        <g:render template="tippsTab"
+        <g:render template="/templates/tabTemplates/tippsTab"
                   model="[tippsCount: retiredTitleCount, tipps: retiredTipps, tab: 'retiredTipps']"/>
 
     </semui:tabsItemContent>
@@ -73,7 +73,7 @@
         <br>
         <br>
 
-        <g:render template="tippsTab"
+        <g:render template="/templates/tabTemplates/tippsTab"
                   model="[tippsCount: expectedTitleCount, tipps: expectedTipps, tab: 'expectedTipps']"/>
 
     </semui:tabsItemContent>
@@ -90,7 +90,7 @@
         <br>
         <br>
 
-        <g:render template="tippsTab"
+        <g:render template="/templates/tabTemplates/tippsTab"
                   model="[tippsCount: deletedTitleCount, tipps: deletedTipps, tab: 'deletedTipps']"/>
 
     </semui:tabsItemContent>

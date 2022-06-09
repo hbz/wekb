@@ -36,8 +36,10 @@
                 </table>
 
                 <g:if test="${editable}">
-                        <a data-toggle="modal" data-cache="false"
-                           data-target="#pricesModal">Add Price</a>
+                    <a class="ui right floated black button" href="#" onclick="$('#pricesModal').modal('show');">Add Price</a>
+
+                    <br>
+                    <br>
 
                         <semui:modal id="pricesModal" title="Add Price">
 
@@ -48,18 +50,18 @@
                                 <input type="hidden" name="__newObjectClass"
                                        value="org.gokb.cred.ComponentPrice"/>
                                 <input type="hidden" name="__recip" value="owner"/>
-                                <dt class="dt-label">Price Type</dt>
+                                <dt class="control-label">Price Type</dt>
                                 <dd>
                                     <semui:simpleReferenceTypedown class="form-control"
                                                                   name="priceType"
                                                                   baseClass="org.gokb.cred.RefdataValue"
                                                                   filter1="${RCConstants.PRICE_TYPE}"/>
                                 </dd>
-                                <dt class="dt-label">Price</dt>
+                                <dt class="control-label">Price</dt>
                                 <dd>
                                     <input type="number" class="form-control select-m" name="price" step="0.01"/>
                                 </dd>
-                                <dt class="dt-label">Currency</dt>
+                                <dt class="control-label">Currency</dt>
                                 <dd>
                                     <semui:simpleReferenceTypedown class="form-control" name="currency"
                                                                   baseClass="org.gokb.cred.RefdataValue"

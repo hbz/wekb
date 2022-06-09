@@ -35,8 +35,10 @@
         </table>
 
         <g:if test="${editable}">
-            <a data-toggle="modal" data-cache="false"
-               data-target="#variantnamesModal">Add Variant Name</a>
+            <a class="ui right floated black button" href="#" onclick="$('#variantnamesModal').modal('show');">Add Variant Name</a>
+
+            <br>
+            <br>
 
             <semui:modal id="variantnamesModal" title="Add Variant Name">
 
@@ -48,17 +50,17 @@
                        value="org.gokb.cred.KBComponentVariantName" />
                 <input type="hidden" name="__recip" value="owner" />
                 <input type="hidden" name="fragment" value="variantNames" />
-                <dt class="dt-label">Variant Name</dt>
+                <dt class="control-label">Variant Name</dt>
                 <dd>
                   <input type="text" class="form-control select-m" name="variantName" />
                 </dd>
-                <dt class="dt-label">Locale</dt>
+                <dt class="control-label">Locale</dt>
                 <dd>
                   <gokb:simpleReferenceTypedown class="form-control" name="locale"
                                                 baseClass="org.gokb.cred.RefdataValue"
                                                 filter1="${RCConstants.KBCOMPONENT_VARIANTNAME_LOCAL}" />
                 </dd>
-                <dt class="dt-label">Variant Type</dt>
+                <dt class="control-label">Variant Type</dt>
                 <dd>
                   <gokb:simpleReferenceTypedown class="form-control" name="variantType"
                                                 baseClass="org.gokb.cred.RefdataValue"

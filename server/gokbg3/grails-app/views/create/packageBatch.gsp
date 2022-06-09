@@ -11,7 +11,7 @@
     Upload Packages
 </h1>
 
-<g:render template="/templates/messages"/>
+<semui:flashMessage data="${flash}"/>
 
 <div class="panel panel-default">
     <div class="panel-heading clearfix">

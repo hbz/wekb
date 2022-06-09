@@ -40,10 +40,12 @@
 
 <g:if test="${editable}">
 
-        <a data-toggle="modal" data-cache="false"
-           data-target="#additionalPropertiesModal">Add Additional Property</a>
+    <a class="ui right floated black button" href="#" onclick="$('#additionalPropertiesModal').modal('show');">Add Additional Property</a>
 
-        <bootStrap:modal id="additionalPropertiesModal" title="Add Additional Property">
+    <br>
+    <br>
+
+        <semui:modal id="additionalPropertiesModal" title="Add Additional Property">
 
             <g:form controller="ajaxSupport" action="addToCollection" class="form-inline">
                 <input type="hidden" name="__context" value="${d.class.name}:${d.id}"/>
@@ -60,7 +62,7 @@
                     <input type="text" class="form-control" name="apValue"/>
                 </dd>
             </g:form>
-        </bootStrap:modal>
+        </semui:modal>
 
 </g:if>
 

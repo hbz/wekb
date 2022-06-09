@@ -25,7 +25,7 @@
           </g:if>
           <g:else>
             <g:form name="formCreateProcess" controller="create" action="process" params="[cls:params.tmpl]">
-                <g:render template="/templates/messages"/>
+              <semui:flashMessage data="${flash}"/>
                 <g:render template="/apptemplates/mainTemplates/${displaytemplate.rendername}"
                           model="${[d: displayobj, rd: refdata_properties, dtype: displayobjclassname_short]}"/>
                 <button id="save-btn" class="btn btn-default pull-right btn-sm">Create and Edit &gt;&gt;</button>

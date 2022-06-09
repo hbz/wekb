@@ -459,7 +459,7 @@ class GlobalSearchTemplatesService {
     Map orgs() {
         Map result = [
                 baseclass   : 'org.gokb.cred.Org',
-                title       : 'Organizations',
+                title       : 'Providers',
                 group       : 'Secondary',
                 defaultSort : 'name',
                 defaultOrder: 'asc',

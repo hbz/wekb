@@ -2,7 +2,7 @@
 <semui:tabsItemContent tab="subjectArea">
     <g:if test="${d.id != null}">
         <dl>
-            <dt>
+            <dt class="control-label">
                 Subject Area
             </dt>
             <dd>

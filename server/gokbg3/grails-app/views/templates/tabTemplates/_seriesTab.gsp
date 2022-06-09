@@ -2,28 +2,28 @@
 <semui:tabsItemContent tab="series">
     <g:if test="${d.id != null}">
         <dl>
-            <dt>
+            <dt class="control-label">
                 Series
             </dt>
             <dd>
                 <semui:xEditable owner="${d}" field="series"/>
             </dd>
 
-            <dt>
+            <dt class="control-label">
                 Parent publication title ID
             </dt>
             <dd>
                 <semui:xEditable  owner="${d}" field="parentPublicationTitleId"/>
             </dd>
 
-            <dt>
+            <dt class="control-label">
                 Superseding publication title ID
             </dt>
             <dd>
                 <semui:xEditable  owner="${d}" field="supersedingPublicationTitleId"/>
             </dd>
 
-            <dt>
+            <dt class="control-label">
                 Preceding publication title ID
             </dt>
             <dd>

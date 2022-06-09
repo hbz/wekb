@@ -1,76 +1,69 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="layout" content="sb-admin" />
-<title>Search <g:if test="${qbetemplate}">${qbetemplate.title}</g:if></title>
+    <meta name="layout" content="public_semui"/>
+    <title>Search <g:if test="${qbetemplate}">${qbetemplate.title}</g:if></title>
 </head>
+
 <body>
-	<g:if test="${qbetemplate}">
-		<h1 class="page-header">${qbetemplate.title ?:''} <g:if test="${refObject}">for ${refObject.niceName}: <g:link controller="resource" action="show" id="${refObject.id}">${refObject.name}</g:link></g:if></h1>
-	</g:if>
-	<g:else>
-		<h1 class="page-header">Search</h1>
-	</g:else>
-	<div class="${displayobj != null ? 'col-md-5 ' : ''}" >
-		<div id="mainarea" class="panel panel-default">
-			
-			<g:if test="${qbetemplate==null}">
 
-				<div class="panel-heading">
-					<h3 class="panel-title">
-						Please select a resource to search for
-					</h3>
-				</div>
-				<div class="panel-body">
-					<li><g:link controller="search" action="index" params="[qbe:'g:tipps']" title="Search Titles" > Titles</g:link></li>
-					<li><g:link controller="search" action="index" params="[qbe:'g:packages']" title="Search Packages" > Packages</g:link></li>
-					<li><g:link controller="search" action="index" params="[qbe:'g:platforms']" title="Search Platforms" > Platforms</g:link></li>
+<g:if test="${qbetemplate}">
+    <h1 class="ui header">Search ${qbetemplate.title ?: ''} <g:if test="${refObject}">for ${refObject.niceName}: <g:link
+            controller="resource" action="show" id="${refObject.id}">${refObject.name}</g:link></g:if></h1>
+</g:if>
+<g:else>
+    <h1 class="ui header">Search</h1>
+</g:else>
 
-					<li><g:link controller="search" action="index" params="[qbe:'g:curatoryGroups']" title="Search Curatory Groups" > Curatory Groups</g:link></li>
-					<li><g:link controller="search" action="index" params="[qbe:'g:orgs']" title="Search Orgs" > Organizations</g:link></li>
-					<li><g:link controller="search" action="index" params="[qbe:'g:sources']" title="Search Sources" > Sources</g:link></li>
-				</div>
-			</g:if>
-			<g:else>
-				<g:if test="${!params.inline}">
-					<div class="panel-heading">
-						<h3 class="panel-title">
-							Search
-						</h3>
-					</div>
-				</g:if>
-				<div class="panel-body">
-					<g:if test="${(qbetemplate.message != null)}">
-						<p style="text-align: center">
-							<div class="alert-info">
-								${qbetemplate.message}
-							</div>
-						</p>
-					</g:if>
-	
-					<g:render template="qbeform"
-						model="${[formdefn:qbetemplate.qbeConfig?.qbeForm, 'hide':(hide), cfg:qbetemplate.qbeConfig]}" />
-				</div>
-				<!-- panel-body -->
-				<g:if test="${recset && !init}">
-					<g:render template="qberesult"
-						model="${[qbeConfig:qbetemplate.qbeConfig, rows:new_recset, offset:offset, jumpToPage:'jumpToPage', det:det, page:page_current, page_max:page_total, baseClass:qbetemplate.baseclass]}" />
-				</g:if>
-				<g:elseif test="${!init && !params.inline}">
-					<div class="panel-footer">
-						<g:render template="qbeempty" />
-					</div>
-				</g:elseif>
-				<g:else>
-					<div class='no-results' >
-						<p>No results.</p>
-					</div>
-				</g:else>
-			</g:else>
-	 </div>
-  </div>
+<semui:flashMessage data="${flash}"/>
 
-	<g:if test="${displayobj != null}">
+<div class="container">
+
+    <g:if test="${qbetemplate == null}">
+
+        <h3 class="ui header">
+            Please select a resource to search for
+        </h3>
+
+        <div class="ui bulleted link list">
+        <g:link class="item" controller="search" action="index" params="[qbe: 'g:packages']">Packages</g:link>
+            <g:link class="item" controller="search" action="index" params="[qbe: 'g:platforms']">Platforms</g:link>
+            <g:link class="item" controller="search" action="index" params="[qbe: 'g:orgs']">Providers</g:link>
+            <g:link class="item" controller="search" action="index" params="[qbe: 'g:tipps']">Titles</g:link>
+            <g:link class="item" controller="search" action="index"
+                    params="[qbe: 'g:curatoryGroups']">Curatory Groups</g:link>
+            <g:link class="item" controller="search" action="index" params="[qbe: 'g:sources']">Sources</g:link>
+            <g:link class="item" controller="search" action="index"
+                    params="[qbe: 'g:identifiers']">Identifiers</g:link>
+        </div>
+
+		<br>
+		<br>
+    </g:if>
+    <g:else>
+        <g:if test="${(qbetemplate.message != null)}">
+            <semui:message message="${qbetemplate.message}"/>
+        </g:if>
+
+        <g:render template="qbeform"
+                  model="${[formdefn: qbetemplate.qbeConfig?.qbeForm, 'hide': (hide), cfg: qbetemplate.qbeConfig]}"/>
+
+        <g:if test="${recset && !init}">
+            <g:render template="qberesult"
+                      model="${[qbeConfig: qbetemplate.qbeConfig, rows: new_recset, offset: offset, jumpToPage: 'jumpToPage', det: det, page: page_current, page_max: page_total, baseClass: qbetemplate.baseclass]}"/>
+        </g:if>
+        <g:elseif test="${!init && !params.inline}">
+            <g:render template="qbeempty"/>
+        </g:elseif>
+        <g:else>
+            <semui:message>
+                <p>No results.</p>
+            </semui:message>
+        </g:else>
+    </g:else>
+</div>
+
+%{--	<g:if test="${displayobj != null}">
 	  <div class="col-md-7 desktop-only" >
 			<div class="panel panel-default quickview">
 				<div class="panel-heading">
@@ -167,6 +160,6 @@
 				</div>
 			</div>
 		</div>
-	</div>
+	</div>--}%
 </body>
 </html>

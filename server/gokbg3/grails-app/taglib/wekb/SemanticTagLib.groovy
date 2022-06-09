@@ -123,15 +123,37 @@ class SemanticTagLib {
         }
     }
 
+    Closure message = { attrs, body ->
+
+        def message = attrs.message
+
+        if (message || body()) {
+            out << '<div class="ui '
+            if(attrs.class)
+                out << attrs.class
+            out << ' message">'
+            out << '<i class="close icon"></i>'
+            out << '<p>'
+            if(message) {
+                out << message
+            }else{
+                out << body()
+            }
+            out <<
+            out << '</p>'
+            out << '</div>'
+        }
+    }
+
     Closure modal = { attrs, body ->
 
         String id           = attrs.id ? ' id="' + attrs.id + '" ' : ''
         String modalSize    = attrs.modalSize ? attrs.modalSize  : ''
-        String title        = attrs.text
+        String title        = attrs.title
         String isEditModal  = attrs.isEditModal
 
         String msgClose    = attrs.msgClose  ?: "Close"
-        String msgSave     = attrs.msgSave   ?: (isEditModal ? "Save" : "Create")
+        String msgSave     = attrs.msgSave   ?: (isEditModal ? "Save" : "Add")
         String msgDelete   = attrs.msgDelete ?: "${g.message(code:'default.button.delete.label')}"
 
         out << '<div role="dialog" class="ui large modal ' + modalSize + '"' + id + ' aria-label="Modal">'
@@ -242,6 +264,7 @@ class SemanticTagLib {
             linkTagAttrs.class = (currentstep == firststep) ? "item disabled prevLink" : "item prevLink"
 
             def prevLinkAttrs1 = linkTagAttrs.clone()
+            prevLinkAttrs1.title = "Previous ${linkParams.offset} results"
             out << link((prevLinkAttrs1), '<i class="double angle left icon"></i>')
 
             // | < |
@@ -249,6 +272,7 @@ class SemanticTagLib {
             linkTagAttrs.class = (currentstep == firststep) ? "item disabled prevLink" : "item prevLink"
 
             def prevLinkAttrs2 = linkTagAttrs.clone()
+            prevLinkAttrs2.title = "First results"
             out << link((prevLinkAttrs2), '<i class="angle left icon"></i>')
         }
 
@@ -309,6 +333,7 @@ class SemanticTagLib {
             linkTagAttrs.class = (currentstep == laststep) ? "item disabled nextLink" : "item nextLink"
 
             def nextLinkAttrs1 = linkTagAttrs.clone()
+            nextLinkAttrs1.title = "Next ${linkParams.offset} results"
             out << link((nextLinkAttrs1), '<i class="angle right icon"></i>')
             if (currentstep < laststep-maxsteps-1) {
                 int tmp = linkParams.offset + (max * maxsteps)
@@ -316,6 +341,7 @@ class SemanticTagLib {
                 linkTagAttrs.class = (currentstep == laststep) ? "item disabled nextLink" : "item nextLink"
 
                 def nextLinkAttrs2 = linkTagAttrs.clone()
+                nextLinkAttrs2.title = "Last results"
                 out << link((nextLinkAttrs2), '<i class="double angle right icon"></i>')
             }
         }
