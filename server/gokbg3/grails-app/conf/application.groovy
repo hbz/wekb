@@ -90,7 +90,6 @@ grails.plugin.springsecurity.controllerAnnotations.staticRules = [
   [pattern: '/public',                  access: ['permitAll']],
   [pattern: '/error',                   access: ['permitAll']],
   [pattern: '/error/**',                access: ['permitAll']],
-  [pattern: '/globalSearch/**',         access: ['ROLE_USER']],
   [pattern: '/home/**',                 access: ['ROLE_USER']],
   [pattern: '/assets/**',               access: ['permitAll']],
   [pattern: '/**/js/**',                access: ['permitAll']],
@@ -133,7 +132,8 @@ grails.plugin.springsecurity.controllerAnnotations.staticRules = [
   //[pattern: '/coreference/**',          access: ['permitAll']]
 
   [pattern: '/search/**',          access: ['permitAll']],
-  [pattern: '/resource/**',          access: ['permitAll']]
+  [pattern: '/resource/**',        access: ['permitAll']],
+  [pattern: '/globalSearch/**',    access: ['permitAll']]
 ]
 
 

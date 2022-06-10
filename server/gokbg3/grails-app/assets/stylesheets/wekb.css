@@ -2,7 +2,8 @@
  * FileName: wekb.css
  *
  *= require /semantic.min.css         //-- semantic
- *= require /select2/css/select2.min.css        //-- externalLibs
+
+  *= require /select2/css/select2-wekb.css        //-- externalLibs
  */
 
 .control-label {

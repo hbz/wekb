@@ -10,6 +10,8 @@
     <meta name="author" content="">
     <link rel="shortcut icon" href="${resource(dir: 'images', file: 'favicon.ico')}" type="image/x-icon">
 
+    <g:javascript> var globalSearchUrl="${g.createLink(controller:'globalSearch', action:'index')}";</g:javascript>
+
     <asset:javascript src="wekb.js"/>
     <asset:stylesheet src="wekb.css"/>
 

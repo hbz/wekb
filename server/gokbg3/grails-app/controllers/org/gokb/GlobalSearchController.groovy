@@ -12,7 +12,6 @@ import org.elasticsearch.search.sort.SortOrder
 import org.gokb.cred.User
 import org.springframework.security.access.annotation.Secured
 
-@Secured(['IS_AUTHENTICATED_FULLY'])
 class GlobalSearchController {
 
   static def reversemap = ['subject':'subjectKw','componentType':'componentType','status':'status']
@@ -40,7 +39,7 @@ class GlobalSearchController {
         params.q = params.q.replace(':',"")
 
         User user = springSecurityService.getCurrentUser()
-        result.max = params.max ? Integer.parseInt(params.max) : user.defaultPageSizeAsInteger
+        result.max = params.max ? Integer.parseInt(params.max) : (user ? user.defaultPageSizeAsInteger : 50)
         result.offset = params.offset ? Integer.parseInt(params.offset) : 0;
 
         def query_str = buildQuery(params);
