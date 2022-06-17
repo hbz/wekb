@@ -141,10 +141,8 @@ class SemanticInplaceTagLib {
             out << ">"
 
             if (body) {
-                println(body())
                 out << body()
             } else {
-                println("Test")
                 String content = (attrs.owner?."${attrs.field}" ? renderObjectValue(attrs.owner."${attrs.field}") : "")
                 out << "<span class='readonly${content ? '' : ' editable-empty'}' title='Read Only' >"
                 if(content){
@@ -158,10 +156,8 @@ class SemanticInplaceTagLib {
         } else {
             out << "<span class=\"${attrs.class ?: ''}\">"
             if (body) {
-                println("Test2")
                 out << body()
             } else {
-                println("Test")
                 String content = (attrs.owner?."${attrs.field}" ? renderObjectValue(attrs.owner."${attrs.field}") : "")
                 out << "<span class='readonly${content ? '' : ' editable-empty'}' title='Read Only' >"
                 if(content){
