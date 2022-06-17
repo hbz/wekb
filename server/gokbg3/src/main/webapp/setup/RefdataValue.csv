@@ -48,6 +48,7 @@ Contact.Content.Type;Mobil;Mobil;Mobil
 Contact.Content.Type;Phone 2;Phone 2;Phone 2
 Contact.Type;Technical Support;Technical Support;Technical Support
 Contact.Type;Service Support;Service Support;Service Support
+Contact.Type;Metadata Contact;Metadata Contact;Metadata Contact
 Country;AD;Andorra;Andorra
 Country;AE;Vereinigte Arabische Emirate;United Arab Emirates
 Country;AF;Afghanistan;Afghanistan
@@ -346,6 +347,7 @@ KBComponent.Status;Current;Current;Current
 KBComponent.Status;Deleted;Deleted;Deleted
 KBComponent.Status;Expected;Expected;Expected
 KBComponent.Status;Retired;Retired;Retired
+KBComponent.Status;Removed;Removed;Removed
 KBComponentVariantName.Locale;de;de;de
 KBComponentVariantName.Locale;en;en;en
 KBComponentVariantName.Locale;en_GB;en_GB;en_GB
@@ -579,6 +581,7 @@ TitleInstancePackagePlatform.Medium;Book;Book;Book
 TitleInstancePackagePlatform.Medium;Cartography;Cartography;Cartography
 TitleInstancePackagePlatform.Medium;Database;Database;Database
 TitleInstancePackagePlatform.Medium;Dataset;Dataset;Dataset
+TitleInstancePackagePlatform.Medium;Encyclopedia;Encyclopedia;Encyclopedia
 TitleInstancePackagePlatform.Medium;Film;Film;Film
 TitleInstancePackagePlatform.Medium;Image;Image;Image
 TitleInstancePackagePlatform.Medium;Journal;Journal;Journal

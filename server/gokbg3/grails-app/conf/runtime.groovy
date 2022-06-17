@@ -442,10 +442,6 @@ apiClasses = [
 ]
 
 
-
-gokb.theme = "yeti"
-
-
 waiting {
   timeout = 60
   retryInterval = 0.5

@@ -16,6 +16,7 @@ import org.gokb.cred.Package
 import org.gokb.cred.Platform
 import org.gokb.cred.RefdataCategory
 import org.gokb.cred.RefdataValue
+import org.gokb.cred.TIPPCoverageStatement
 import org.gokb.cred.TitleInstancePackagePlatform
 import org.grails.web.json.JSONArray
 
@@ -464,11 +465,14 @@ class KbartImportService {
         result
     }
 
-    TitleInstancePackagePlatform tippUpsertDTO(tipp_dto, def user = null) {
+    TitleInstancePackagePlatform tippUpsertDTO(tipp_dto, def user = null, LinkedHashMap tippsWithCoverage, List<Long> tippDuplicates = []) {
         def result = null
-        log.debug("tippUpsertDTO(${tipp_dto})")
+        log.info("tippUpsertDTO(${tipp_dto})")
         Package pkg = null
         Platform plt = null
+
+
+        List identifierNameSpacesExistOnTipp = []
 
         if (tipp_dto.pkg || tipp_dto.package) {
             def pkg_info = tipp_dto.package ?: tipp_dto.pkg
@@ -507,13 +511,14 @@ class KbartImportService {
             def tipps = TitleInstancePackagePlatform.executeQuery('select tipp from TitleInstancePackagePlatform as tipp, Combo as pkg_combo, Combo as platform_combo  ' +
                     'where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg ' +
                     'and platform_combo.toComponent=tipp and platform_combo.fromComponent = :platform ' +
-                    'and tipp.name = :tiDtoName',
-                    [pkg: pkg, platform: plt, tiDtoName: tipp_dto.name])
+                    'and tipp.name = :tiDtoName and tipp.status != :removed order by tipp.lastUpdated DESC',
+                    [pkg: pkg, platform: plt, tiDtoName: tipp_dto.name, removed: RDStore.KBC_STATUS_REMOVED])
             def uuid_tipp = tipp_dto.uuid ? TitleInstancePackagePlatform.findByUuid(tipp_dto.uuid) : null
+
             TitleInstancePackagePlatform tipp = null
 
 
-            if (uuid_tipp && uuid_tipp.pkg == pkg && uuid_tipp.hostPlatform == plt && (uuid_tipp.name == tipp_dto.name)) {
+            if (uuid_tipp && uuid_tipp.pkg == pkg && uuid_tipp.hostPlatform == plt) {
                 tipp = uuid_tipp
             }
 
@@ -524,16 +529,16 @@ class KbartImportService {
                         tipps = TitleInstancePackagePlatform.executeQuery('select tipp from TitleInstancePackagePlatform as tipp, Combo as pkg_combo, Combo as platform_combo  ' +
                                 'where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg ' +
                                 'and platform_combo.toComponent=tipp and platform_combo.fromComponent = :platform ' +
-                                'and tipp.url = :url',
-                                [pkg: pkg, platform: plt, url: trimmed_url])
+                                'and tipp.url = :url and tipp.status != :removed order by tipp.lastUpdated DESC',
+                                [pkg: pkg, platform: plt, url: trimmed_url, removed: RDStore.KBC_STATUS_REMOVED])
                     }
 
                     if(tipps.size() == 0) {
                         log.debug("not found Tipp with title. research in pkg ${pkg} with tile_id")
                         tipps = TitleInstancePackagePlatform.executeQuery('select tipp from TitleInstancePackagePlatform as tipp, Combo as pkg_combo, Combo as platform_combo  ' +
                                 'where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg ' +
-                                'and platform_combo.toComponent=tipp and platform_combo.fromComponent = :platform ',
-                                [pkg: pkg, platform: plt])
+                                'and platform_combo.toComponent=tipp and platform_combo.fromComponent = :platform and tipp.status != :removed order by tipp.lastUpdated DESC',
+                                [pkg: pkg, platform: plt, removed: RDStore.KBC_STATUS_REMOVED])
                     }
 
                 }
@@ -549,12 +554,15 @@ class KbartImportService {
                             } else {
 
                                 //if url changed find tipp over title id
-                                TitleInstancePackagePlatform tippMatchedByTitleID = tippMatchingByTitleID(tipp_dto.identifiers, pkg, plt)
-                                if (tippMatchedByTitleID && tippMatchedByTitleID.id == tipps[0].id) {
-                                    log.debug("found tipp")
-                                    tipp = tipps[0]
-                                } else {
-                                    log.debug("not found Tipp because url changed: [pkg: ${pkg}, platform: ${plt}, tiDtoName: ${tipp_dto.name}, url: ${trimmed_url}]")
+                                List<TitleInstancePackagePlatform> tippsMatchedByTitleID = tippsMatchingByTitleID(tipp_dto.identifiers, pkg, plt)
+
+                                tippsMatchedByTitleID.each{ TitleInstancePackagePlatform tippByTitleID ->
+                                    if (tippByTitleID.id == tipps[0].id) {
+                                        log.debug("found tipp")
+                                        tipp = tipps[0]
+                                    } else {
+                                        log.debug("not found Tipp because url changed: [pkg: ${pkg}, platform: ${plt}, tiDtoName: ${tipp_dto.name}, url: ${trimmed_url}]")
+                                    }
                                 }
                             }
                         } else {
@@ -568,36 +576,36 @@ class KbartImportService {
                             log.debug("found ${tipps.size()} tipps for URL ${trimmed_url}")
                         }
 
-                        List<TitleInstancePackagePlatform> cur_tipps = tipps.findAll { it.status == status_current }
-                        List<TitleInstancePackagePlatform> ret_tipps = tipps.findAll { it.status == status_retired }
+                        if (tipps.size() > 0) {
+                            log.warn("found ${tipps.size()} TIPPs with URL ${trimmed_url}!")
+                            if (tipps.size() == 1) {
+                                tipp = tipps[0]
+                            } else {
+                                List<TitleInstancePackagePlatform> tippsMatchedByTitleID = tippsMatchingByTitleID(tipp_dto.identifiers, pkg, plt)
 
-                        if (cur_tipps.size() > 0) {
-                            if (cur_tipps.size() == 1) {
-                                tipp = cur_tipps[0]
-                            } else {
-                                TitleInstancePackagePlatform tippMatchedByTitleID = tippMatchingByTitleID(tipp_dto.identifiers, pkg, plt)
-                                if (tippMatchedByTitleID) {
-                                    log.debug("found tipp")
-                                    tipp = cur_tipps.find { it.id == tippMatchedByTitleID.id }
-                                } else {
-                                    log.debug("not found Tipp after cur_tipps and tippMatchingByTitleID: [pkg: ${pkg}, platform: ${plt}, tiDtoName: ${tipp_dto.name}, url: ${trimmed_url}, ids: ${tipp_dto.identifiers}]")
-                                }
-                            }
-                            log.warn("found ${cur_tipps.size()} current TIPPs!")
-                        } else if (ret_tipps.size() > 0) {
-                            if (ret_tipps.size() == 1) {
-                                tipp = ret_tipps[0]
-                            } else {
-                                TitleInstancePackagePlatform tippMatchedByTitleID = tippMatchingByTitleID(tipp_dto.identifiers, pkg, plt)
-                                if (tippMatchedByTitleID) {
-                                    log.debug("found tipp")
-                                    tipp = ret_tipps.find { it.id == tippMatchedByTitleID.id }
-                                } else {
-                                    log.debug("not found Tipp after ret_tipps and tippMatchingByTitleID: [pkg: ${pkg}, platform: ${plt}, tiDtoName: ${tipp_dto.name}, url: ${trimmed_url}, ids: ${tipp_dto.identifiers}]")
+                                if(tippsMatchedByTitleID.size() > 0){
+                                    List<TitleInstancePackagePlatform> tippsByUrlAndTitleID = tipps.findAll { it.id in tippsMatchedByTitleID.id }.sort { it.lastUpdated }
+
+                                    tippsByUrlAndTitleID.reverse(true)
+
+                                    if (tippsByUrlAndTitleID.size() > 1) {
+                                        tippsByUrlAndTitleID.eachWithIndex { TitleInstancePackagePlatform titleInstancePackagePlatform, int index ->
+                                            if (index == 0) {
+                                                tipp = titleInstancePackagePlatform
+                                            } else {
+                                                tippDuplicates << titleInstancePackagePlatform.id
+                                            }
+                                        }
+
+                                    } else if (tippsByUrlAndTitleID.size() == 1) {
+                                        tipp = tippsByUrlAndTitleID[0]
+                                    }else {
+                                        log.debug("not found Tipp after tipps and tippMatchingByTitleID: [pkg: ${pkg}, platform: ${plt}, tiDtoName: ${tipp_dto.name}, url: ${trimmed_url}, ids: ${tipp_dto.identifiers}]")
+                                    }
                                 }
                             }
                         } else {
-                            log.debug("None of the matched TIPPs are 'Current' or 'Retired'!")
+                            log.debug("None of the matched TIPPs are found!")
                         }
                         break
                 }
@@ -611,7 +619,7 @@ class KbartImportService {
                         'hostPlatform': plt,
                         'url'         : trimmed_url,
                         'uuid'        : (tipp_dto.uuid ?: null),
-                        'status'      : (tipp_dto.status ?: null),
+                        'status'      : (tipp_dto.status ?: 'Current'),
                         'name'        : (tipp_dto.name ?: null),
                         'type'        : (tipp_dto.type ?: null),
                         'medium'    : (tipp_dto.medium ?: null),
@@ -619,8 +627,6 @@ class KbartImportService {
                 ]
 
                 tipp = tippCreate(tmap)
-                // Hibernate problem
-
                 if (!tipp) {
                     log.error("TIPP creation failed!")
                 }
@@ -695,7 +701,13 @@ class KbartImportService {
                 // KBART -> language -> language -> languages
                 if (tipp_dto.language) {
                     if (tipp.languages) {
-                        KBComponentLanguage.executeUpdate("delete from KBComponentLanguage where kbcomponent = :tipp", [tipp: tipp])
+                        def langIDs = tipp.languages.id.clone()
+                        langIDs.each {
+                            tipp.removeFromLanguages(KBComponentLanguage.get(it))
+                            KBComponentLanguage.get(it).delete()
+                        }
+                        tipp.save()
+                        //KBComponentLanguage.executeUpdate("delete from KBComponentLanguage where kbcomponent = :tipp", [tipp: tipp])
                     }
 
                     tipp_dto.language.each{ String lan ->
@@ -707,6 +719,9 @@ class KbartImportService {
                             }
                         }
                     }
+
+                    tipp.save()
+                    tipp.refresh()
                 }
 
                 // KBART -> access_type -> accessType -> accessType
@@ -781,16 +796,19 @@ class KbartImportService {
                 // KBART -> package_isil -> package_isil -> identifiers['package_isil']
                 if (tipp_dto.package_isil) {
                     createOrUpdateIdentifierForTipp(tipp, "package_isil", tipp_dto.package_isil)
+                    identifierNameSpacesExistOnTipp << "package_isil"
                 }
 
                 // KBART -> package_isci -> package_isci -> identifiers['package_isci']
                 if (tipp_dto.package_isci) {
                     createOrUpdateIdentifierForTipp(tipp, "package_isci", tipp_dto.package_isci)
+                    identifierNameSpacesExistOnTipp << "package_isci"
                 }
 
                 // KBART -> ill_indicator -> ill_indicator -> identifiers['ill_indicator']
                 if (tipp_dto.ill_indicator) {
                     createOrUpdateIdentifierForTipp(tipp, "ill_indicator", tipp_dto.ill_indicator)
+                    identifierNameSpacesExistOnTipp << "ill_indicator"
                 }
 
 
@@ -806,13 +824,30 @@ class KbartImportService {
                     tipp_dto.coverage = tipp_dto.coverageStatements
                 }
 
-                if (tipp_dto.coverage && publicationType && publicationType == RDStore.TIPP_PUBLIC_TYPE_SERIAL) {
-                    createOrUpdateCoverageForTipp(tipp, tipp_dto.coverage)
+                if (tipp_dto.coverage && tipp_dto.coverage.size() > 0 && publicationType && publicationType == RDStore.TIPP_PUBLIC_TYPE_SERIAL) {
+
+                    if(tippsWithCoverage[tipp.id]){
+                        tippsWithCoverage[tipp.id] << tipp_dto.coverage[0]
+                    }else {
+                        tippsWithCoverage[tipp.id] = [tipp_dto.coverage[0]]
+                    }
+                }
+
+                if (tipp_dto.coverage && tipp_dto.coverage.size() > 0 && publicationType && publicationType != RDStore.TIPP_PUBLIC_TYPE_SERIAL) {
+                    com.k_int.ClassUtils.setStringIfDifferent(tipp, 'note', tipp_dto.coverage[0].coverageNote)
+                    if(tipp.coverageStatements.size() > 0){
+                        def cStsIDs = tipp.coverageStatements.id.clone()
+                        cStsIDs.each {
+                            tipp.removeFromCoverageStatements(TIPPCoverageStatement.get(it))
+                        }
+                        tipp.save()
+                    }
                 }
 
                 // KBART -> package_ezb_anchor -> package_ezb_anchor -> identifiers['package_ezb_anchor']
                 if (tipp_dto.package_ezb_anchor) {
                     createOrUpdateIdentifierForTipp(tipp, "package_ezb_anchor", tipp_dto.package_ezb_anchor)
+                    identifierNameSpacesExistOnTipp << "package_ezb_anchor"
                 }
 
                 // KBART -> zdb_id, ezb_id, print_identifier, online_identifier, title_id, doi_identifier  -> identifiers
@@ -821,7 +856,20 @@ class KbartImportService {
 
                     if (namespace_val && identifierMap.value && namespace_val.toLowerCase() != "originediturl") {
                         createOrUpdateIdentifierForTipp(tipp, namespace_val, identifierMap.value)
+                        identifierNameSpacesExistOnTipp << namespace_val
                     }
+                }
+
+                //Cleanup Identifiers
+                List<Long> deleteIdentifiers = []
+                tipp.ids.each { Identifier identifier ->
+                    if(!(identifier.namespace.value in identifierNameSpacesExistOnTipp)){
+                        deleteIdentifiers << identifier.id
+                    }
+                }
+
+                deleteIdentifiers.each{
+                    Identifier.executeUpdate("delete from Identifier where id_id = :id", [id: it])
                 }
 
                 tipp.save(flush: true, failOnError: true)
@@ -859,12 +907,41 @@ class KbartImportService {
 
     }
 
+    List<TitleInstancePackagePlatform> tippsMatchingByTitleID(JSONArray identifiers, Package aPackage, Platform platform) {
+        if(identifiers && aPackage.source && aPackage.source.targetNamespace){
+
+            String value = identifiers.find {it.type == aPackage.source.targetNamespace.value}?.value
+
+            List<TitleInstancePackagePlatform> tippList = Identifier.executeQuery('select i.tipp from Identifier as i where LOWER(i.namespace.value) = :namespaceValue and i.value = :value and i.tipp is not null', [namespaceValue: aPackage.source.targetNamespace.value.toLowerCase(), value: value])
+
+            tippList = tippList.findAll {it.pkg == aPackage && it.status != RDStore.KBC_STATUS_REMOVED}
+
+            if(tippList.size() > 0){
+                log.debug("tippsMatchingByTitleID provider internal identifier matching by "+tippList.size() + ": "+ tippList.id)
+                return tippList
+            }
+        }
+        else if(identifiers && platform.titleNamespace){
+            String value = identifiers.find {it.type == platform.titleNamespace.value}?.value
+
+            List<TitleInstancePackagePlatform> tippList = Identifier.executeQuery('select i.tipp from Identifier as i where LOWER(i.namespace.value) = :namespaceValue and i.value = :value and i.tipp is not null', [namespaceValue: platform.titleNamespace.value.toLowerCase(), value: value])
+
+            tippList = tippList.findAll {it.pkg == aPackage && it.status != RDStore.KBC_STATUS_REMOVED}
+
+            if(tippList.size() > 0){
+                log.debug("tippsMatchingByTitleID provider internal identifier matching by "+tippList.size() + ": "+ tippList.id)
+                return tippList
+            }
+        }
+
+    }
+
     /**
      * Create a new TIPP
      */
     TitleInstancePackagePlatform tippCreate(tipp_fields = [:]) {
 
-        def tipp_status = tipp_fields.status ? RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, tipp_fields.status) : null
+        RefdataValue tipp_status = tipp_fields.status ? RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, tipp_fields.status) : null
 
         RefdataValue tipp_medium = null
         if (tipp_fields.medium) {
@@ -876,12 +953,12 @@ class KbartImportService {
         }
 
         TitleInstancePackagePlatform result = new TitleInstancePackagePlatform(
-                uuid: tipp_fields.uuid,
+                uuid: tipp_fields.uuid ?: UUID.randomUUID().toString(),
                 status: tipp_status,
                 name: tipp_fields.name,
                 medium: tipp_medium,
                 publicationType: tipp_publicationType,
-                url: tipp_fields.url).save(failOnError: true)
+                url: tipp_fields.url)
         if (result) {
 
             def pkg_combo_type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Package.Tipps')
@@ -893,6 +970,9 @@ class KbartImportService {
         } else {
             log.error("TIPP creation failed!")
         }
+
+        result.save(flush: true, failOnError: true)
+        result.refresh()
 
         result
     }
@@ -1000,6 +1080,8 @@ class KbartImportService {
         Identifier identifier
         IdentifierNamespace ns = IdentifierNamespace.findByValueAndTargetType(namespace_val, RDStore.IDENTIFIER_NAMESPACE_TARGET_TYPE_TIPP)
 
+        //tipp = tipp.refresh()
+
         LinkedHashSet<Identifier> identifiersWithSameNamespace = tipp.ids.findAll{it.namespace.value == namespace_val}
 
         switch (identifiersWithSameNamespace.size()) {
@@ -1028,17 +1110,106 @@ class KbartImportService {
     }
 
     void createOrUpdateCoverageForTipp(TitleInstancePackagePlatform tipp, def coverage){
-        def new_ids = []
 
-        coverage.each { c ->
+        tipp = tipp.refresh()
+
+        Integer countNewCoverages = coverage.size()
+        Integer countTippCoverages = tipp.coverageStatements.size()
+
+        if(countNewCoverages == 1 && countTippCoverages == 1){
+            RefdataValue cov_depth = null
+
+            if (coverage[0].coverageDepth instanceof String) {
+                cov_depth = RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, coverage[0].coverageDepth) ?: RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, "Fulltext")
+            }
+
+            def parsedStart = GOKbTextUtils.completeDateString(coverage[0].startDate)
+            def parsedEnd = GOKbTextUtils.completeDateString(coverage[0].endDate, false)
+
+            com.k_int.ClassUtils.setStringIfDifferent(tipp.coverageStatements[0], 'startIssue', coverage[0].startIssue)
+            com.k_int.ClassUtils.setStringIfDifferent(tipp.coverageStatements[0], 'endIssue', coverage[0].endIssue)
+            com.k_int.ClassUtils.setStringIfDifferent(tipp.coverageStatements[0], 'startVolume', coverage[0].startVolume)
+            com.k_int.ClassUtils.setStringIfDifferent(tipp.coverageStatements[0], 'endVolume', coverage[0].endVolume)
+            com.k_int.ClassUtils.setDateIfPresent(parsedStart, tipp.coverageStatements[0], 'startDate', true)
+            com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tipp.coverageStatements[0], 'endDate', true)
+            com.k_int.ClassUtils.setStringIfDifferent(tipp.coverageStatements[0], 'embargo', coverage[0].embargo)
+            com.k_int.ClassUtils.setStringIfDifferent(tipp.coverageStatements[0], 'coverageNote', coverage[0].coverageNote)
+            if(cov_depth) {
+                com.k_int.ClassUtils.setRefdataIfDifferent(cov_depth.value, tipp.coverageStatements[0], 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, true)
+            }
+        }
+        else if(countNewCoverages == 0 && countTippCoverages > 0){
+            def cStsIDs = tipp.coverageStatements.id.clone()
+            cStsIDs.each {
+                tipp.removeFromCoverageStatements(TIPPCoverageStatement.get(it))
+            }
+            tipp.save()
+
+        }else if(countNewCoverages > 0 && countTippCoverages == 0){
+            coverage.each { c ->
+                def parsedStart = GOKbTextUtils.completeDateString(c.startDate)
+                def parsedEnd = GOKbTextUtils.completeDateString(c.endDate, false)
+                def startAsDate = (parsedStart ? Date.from(parsedStart.atZone(ZoneId.systemDefault()).toInstant()) : null)
+                def endAsDate = (parsedEnd ? Date.from(parsedEnd.atZone(ZoneId.systemDefault()).toInstant()) : null)
+
+                RefdataValue cov_depth = null
+
+                if (c.coverageDepth instanceof String) {
+                    cov_depth = RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, c.coverageDepth) ?: RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, "Fulltext")
+                }
+
+                tipp.addToCoverageStatements(
+                        'startVolume': c.startVolume,
+                        'startIssue': c.startIssue,
+                        'endVolume': c.endVolume,
+                        'endIssue': c.endIssue,
+                        'embargo': c.embargo,
+                        'coverageDepth': cov_depth,
+                        'coverageNote': c.coverageNote,
+                        'startDate': startAsDate,
+                        'endDate': endAsDate
+                )
+            }
+        }else if(countNewCoverages > 1 && countTippCoverages > 1) {
+            def cStsIDs = tipp.coverageStatements.id.clone()
+            cStsIDs.each {
+                tipp.removeFromCoverageStatements(TIPPCoverageStatement.get(it))
+            }
+            tipp.save()
+
+            coverage.each { c ->
+                def parsedStart = GOKbTextUtils.completeDateString(c.startDate)
+                def parsedEnd = GOKbTextUtils.completeDateString(c.endDate, false)
+                def startAsDate = (parsedStart ? Date.from(parsedStart.atZone(ZoneId.systemDefault()).toInstant()) : null)
+                def endAsDate = (parsedEnd ? Date.from(parsedEnd.atZone(ZoneId.systemDefault()).toInstant()) : null)
+
+                RefdataValue cov_depth = null
+
+                if (c.coverageDepth instanceof String) {
+                    cov_depth = RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, c.coverageDepth) ?: RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, "Fulltext")
+                }
+
+                tipp.addToCoverageStatements(
+                        'startVolume': c.startVolume,
+                        'startIssue': c.startIssue,
+                        'endVolume': c.endVolume,
+                        'endIssue': c.endIssue,
+                        'embargo': c.embargo,
+                        'coverageDepth': cov_depth,
+                        'coverageNote': c.coverageNote,
+                        'startDate': startAsDate,
+                        'endDate': endAsDate
+                )
+            }
+
+        }
+
+       /* coverage.each { c ->
             def parsedStart = GOKbTextUtils.completeDateString(c.startDate)
             def parsedEnd = GOKbTextUtils.completeDateString(c.endDate, false)
 
-            if (c.id) {
-                new_ids.add(c.id)
-            }
-            com.k_int.ClassUtils.setStringIfDifferent(tipp, 'coverageNote', c.coverageNote)
-            com.k_int.ClassUtils.setRefdataIfDifferent(c.coverageDepth, tipp, 'coverageDepth', RCConstants.TIPP_COVERAGE_DEPTH, true)
+            //com.k_int.ClassUtils.setStringIfDifferent(tipp, 'coverageNote', c.coverageNote)
+            //com.k_int.ClassUtils.setRefdataIfDifferent(c.coverageDepth, tipp, 'coverageDepth', RCConstants.TIPP_COVERAGE_DEPTH, true)
 
             def cs_match = false
             def conflict = false
@@ -1046,25 +1217,29 @@ class KbartImportService {
             def endAsDate = (parsedEnd ? Date.from(parsedEnd.atZone(ZoneId.systemDefault()).toInstant()) : null)
             def conflicting_statements = []
 
-            tipp.coverageStatements?.each { tcs ->
-                if (c.id && tcs.id == c.id) {
 
-                    com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startIssue', c.startIssue)
-                    com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endIssue', c.endIssue)
-                    com.k_int.ClassUtils.setStringIfDifferent(tcs, 'startVolume', c.startVolume)
-                    com.k_int.ClassUtils.setStringIfDifferent(tcs, 'endVolume', c.endVolume)
-                    com.k_int.ClassUtils.setDateIfPresent(parsedStart, tcs, 'startDate', true)
-                    com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tcs, 'endDate', true)
 
-                    com.k_int.ClassUtils.setStringIfDifferent(tcs, 'embargo', c.embargo)
+            Map cMap = ["startIssue": c.startIssue,
+                          "endIssue": c.endIssue,
+                          "startVolume": c.startVolume,
+                          "endVolume": c.endVolume]
 
-                    com.k_int.ClassUtils.setStringIfDifferent(tcs, 'coverageNote', c.coverageNote)
-                    com.k_int.ClassUtils.setRefdataIfDifferent(tcs.coverageDepth, tcs, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, true)
+            println(cMap)
 
-                    cs_match = true
-                } else if (!cs_match) {
+            tipp.coverageStatements?.each { TIPPCoverageStatement tcs ->
+                Map tcsMap = ["startIssue": tcs.startIssue,
+                              "endIssue": tcs.endIssue,
+                              "startVolume": tcs.startVolume,
+                              "endVolume": tcs.endVolume]
+                println( tcsMap.equals(cMap))
+                println( tcsMap.toString() == cMap.toString())
+                println(tcsMap)
+                *//*if (!cs_match) {
                     if (!tcs.endDate && !endAsDate) {
                         conflict = true
+                    } else if (tcs.toString() == c.toString()) {
+                        log.debug("Matched CoverageStatement by Map")
+                        cs_match = true
                     } else if (tcs.startVolume && tcs.startVolume == c.startVolume) {
                         log.debug("Matched CoverageStatement by startVolume")
                         cs_match = true
@@ -1093,11 +1268,11 @@ class KbartImportService {
                         com.k_int.ClassUtils.setDateIfPresent(parsedEnd, tcs, 'endDate', true)
                         com.k_int.ClassUtils.setStringIfDifferent(tcs, 'embargo', c.embargo)
                         com.k_int.ClassUtils.setStringIfDifferent(tcs, 'coverageNote', c.coverageNote)
-                        com.k_int.ClassUtils.setRefdataIfDifferent(tcs.coverageDepth, tcs, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, true)
+                        com.k_int.ClassUtils.setRefdataIfDifferent(tcs.coverageDepth?.value, tcs, 'coverageDepth', RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, true)
                     }
                 } else {
                     log.debug("Matched new coverage ${c} on multiple existing coverages!")
-                }
+                }*//*
             }
 
             for (def cst : conflicting_statements) {
@@ -1120,7 +1295,8 @@ class KbartImportService {
                     }
                 }
 
-                tipp.addToCoverageStatements('startVolume': c.startVolume,
+                tipp.addToCoverageStatements(
+                        'startVolume': c.startVolume,
                         'startIssue': c.startIssue,
                         'endVolume': c.endVolume,
                         'endIssue': c.endIssue,
@@ -1132,16 +1308,7 @@ class KbartImportService {
                 )
             }
             // refdata setStringIfDifferent(tipp, 'coverageDepth', c.coverageDepth)
-        }
-
-        def old_cs = tipp.coverageStatements
-        if (new_ids?.size() > 0) {
-            for (def cs : old_cs) {
-                if (!new_ids.contains(cs.id)) {
-                    tipp.removeFromCoverageStatements(cs)
-                }
-            }
-        }
+        }*/
     }
 
 }

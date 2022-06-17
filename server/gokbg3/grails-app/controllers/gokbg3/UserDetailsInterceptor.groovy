@@ -97,7 +97,7 @@ class UserDetailsInterceptor {
                   if(userIsAdmin){
                     menus["admin"]["search"] << [
                             text : val.title,
-                            link : ['controller' : 'search', 'action' : 'index', 'params' : [qbe:'g:'+ key]],
+                            link : ['controller' : 'search', 'action' : 'index', 'params' : [qbe:'g:'+ key], 'class': 'item'],
                             attr : ['title' : "Search ${val.title}"]
                     ]
                   }
@@ -113,7 +113,7 @@ class UserDetailsInterceptor {
                   if(userIsAdmin){
                     menus["admin"]["create"] << [
                             text: d.displayName,
-                            link: ['controller': 'create', 'action': 'index', 'params': [tmpl: d.dcName]],
+                            link: ['controller': 'create', 'action': 'index', 'params': [tmpl: d.dcName], 'class': 'item'],
                             attr: ['title': "New ${d.displayName}"]
                     ]
                   }

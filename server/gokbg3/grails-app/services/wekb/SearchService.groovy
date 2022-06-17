@@ -25,7 +25,7 @@ class SearchService {
         com.k_int.HQLBuilder.build(grailsApplication, qbetemplate, params, result, target_class, genericOIDService)
     }
 
-    Map search(User user, Map result, GrailsParameterMap params, String responseFormat = null){
+    Map search(User user = null, Map result, GrailsParameterMap params, String responseFormat = null){
 
         if ( params.init ) {
             result.init = true
@@ -54,7 +54,7 @@ class SearchService {
         params.offset = result.offset
         result.hide = params.list("hide") ?: []
 
-        if ( params.searchAction == 'save' ) {
+        if ( params.searchAction == 'Save' ) {
             log.debug("Saving query... ${params.searchName}");
             def defn = [:] << params
             defn.remove('searchAction')

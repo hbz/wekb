@@ -1,11 +1,13 @@
 package org.gokb.cred
 
 import groovy.util.logging.*
-import org.aspectj.weaver.ast.Or
 
 
 @Slf4j
 class Identifier {
+
+
+  def cascadingUpdateService
 
   IdentifierNamespace namespace
   String value
@@ -49,10 +51,10 @@ class Identifier {
     value column: 'id_value', index: 'id_value_idx'
     namespace column: 'id_namespace_fk', index: 'id_namespace_idx'
     uuid column: 'id_uuid', type: 'text', index: 'id_uuid_idx'
-    tipp column: 'id_tipp_fk'
-    org column: 'id_org_fk'
-    platform column: 'id_platform_fk'
-    pkg column: 'id_pkg_fk'
+    tipp column: 'id_tipp_fk', index: 'id_tipp_idx'
+    org column: 'id_org_fk', index: 'id_org_idx'
+    platform column: 'id_platform_fk', index: 'id_platform_idx'
+    pkg column: 'id_pkg_fk', index: 'id_pkg_idx'
     lastUpdated column: 'id_last_updated'
     dateCreated column: 'id_date_created'
   }
@@ -63,15 +65,6 @@ class Identifier {
     }
   }
 
-  protected def updateLastUpdatedFromLinkedObject(){
-    def ref = this.getReference()
-
-    if(ref instanceof KBComponent){
-      ref.lastUpdated = new Date()
-      ref.save()
-    }
-  }
-
   def beforeValidate (){
     log.debug("beforeValidate for ${this}")
     generateUuid()
@@ -79,13 +72,16 @@ class Identifier {
 
   def afterInsert (){
     log.debug("afterSave for ${this}")
-    updateLastUpdatedFromLinkedObject()
+    def ref = this.getReference()
+    if(ref instanceof KBComponent){
+      cascadingUpdateService.update(this, dateCreated)
+    }
 
   }
 
-  def afterDelete (){
-    log.debug("afterDelete for ${this}")
-    updateLastUpdatedFromLinkedObject()
+  def beforeDelete (){
+    log.debug("beforeDelete for ${this}")
+    cascadingUpdateService.update(this, lastUpdated)
 
   }
 
@@ -98,7 +94,10 @@ class Identifier {
 
   def afterUpdate(){
     log.debug("afterUpdate for ${this}")
-    updateLastUpdatedFromLinkedObject()
+    def ref = this.getReference()
+    if(ref instanceof KBComponent){
+      cascadingUpdateService.update(this, lastUpdated)
+    }
 
   }
   public String getName() {

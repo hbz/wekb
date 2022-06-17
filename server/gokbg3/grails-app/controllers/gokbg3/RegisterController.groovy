@@ -52,7 +52,7 @@ class RegisterController extends grails.plugin.springsecurity.ui.RegisterControl
 	static final String FORGOT_PASSWORD_TEMPLATE = "/register/_forgotPasswordMail"
 	static final String VERIFY_REGISTRATION_TEMPLATE = "/register/_verifyRegistrationMail"
 
-  @Override
+ /* @Override
   @Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
   def register(RegisterCommand registerCommand) {
 
@@ -111,9 +111,9 @@ class RegisterController extends grails.plugin.springsecurity.ui.RegisterControl
     } else {
       redirectVerifyRegistration(uiRegistrationCodeStrategy.verifyRegistration(registrationCode.token))
     }
-  }
+  }*/
 
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+ /* @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   def verifyRegistration() {
 
     String token = params.t
@@ -142,7 +142,7 @@ class RegisterController extends grails.plugin.springsecurity.ui.RegisterControl
 
     flash.message = message(code: 'spring.security.ui.register.complete')
     redirect uri: registerPostRegisterUrl ?: successHandlerDefaultTargetUrl
-  }
+  }*/
 
   @Override
   protected void sendVerifyRegistrationMail(RegistrationCode registrationCode, user, String email) {
@@ -205,7 +205,7 @@ class RegisterController extends grails.plugin.springsecurity.ui.RegisterControl
 		[emailSent: true, forgotPasswordCommand: forgotPasswordCommand]
 	}
 
-	def resetPassword(ResetPasswordCommand resetPasswordCommand) {
+	/*def resetPassword(ResetPasswordCommand resetPasswordCommand) {
 
 		String token = params.t
 
@@ -234,7 +234,7 @@ class RegisterController extends grails.plugin.springsecurity.ui.RegisterControl
 		flash.message = message(code: 'spring.security.ui.resetPassword.success')
 
 		redirect uri: registerPostResetUrl ?: successHandlerDefaultTargetUrl
-	}
+	}*/
 
   protected String forgotPasswordEmailBody
   protected Boolean requireForgotPassEmailValidation

@@ -24,10 +24,12 @@
             </div>
           </g:if>
           <g:else>
-            <g:render template="/apptemplates/secondTemplates/messages"/>
-            <g:render template="/apptemplates/mainTemplates/${displaytemplate.rendername}"
-                      model="${[d: displayobj, rd: refdata_properties, dtype: displayobjclassname_short]}" />
-            <button id="save-btn" class="btn btn-default pull-right btn-sm">Create and Edit &gt;&gt;</button>
+            <g:form name="formCreateProcess" controller="create" action="process" params="[cls:params.tmpl]">
+              <semui:flashMessage data="${flash}"/>
+                <g:render template="/apptemplates/mainTemplates/${displaytemplate.rendername}"
+                          model="${[d: displayobj, rd: refdata_properties, dtype: displayobjclassname_short]}"/>
+                <button id="save-btn" class="btn btn-default pull-right btn-sm">Create and Edit &gt;&gt;</button>
+            </g:form>
           </g:else>
         </g:if>
       </g:if>
@@ -37,42 +39,24 @@
   <asset:script type="text/javascript">
 
       $('#save-btn').click(function() {
-      
-        // Build a list of params.
-        var params = {};
         $('span.editable').not('.editable-empty').each (function(){
             var editable = $(this);
 
             // Add the parameter to the params object.
-            var eVal = editable.editable('getValue', true)
+            var eVal = editable.editable('getValue', true);
 
-            params[editable.attr("data-name")] = eVal ? eVal : editable.text();
+             $('form[name="formCreateProcess"]').append('<input type="hidden" name="'+editable.attr('data-name')+'" value="'+(eVal ? eVal : editable.text())+'" />');
+
         });
 
         $('a.editable').not('.editable-empty').each (function(){
             var editable = $(this);
 
-            params[editable.attr("data-name")] = editable.attr('target-id');
+            $('form[name="formCreateProcess"]').append('<input type="hidden" name="'+editable.attr('data-name')+'" value="'+editable.attr('target-id')+'" />');
+
         })
 
-      	// Now we have the params let's submit them to the controller.
-      	var jqxhr = $.post( "${createLink(controller:'create', action: 'process', params:[cls:params.tmpl])}", params )
-					.done(function(data) {
-             // var msg = 'New user created! Now editables work in regular way.';
-             // $('#msg').addClass('alert-success').removeClass('alert-error').html(msg).show();
-             // $('#save-btn').hide(); 
-             window.location = data.uri;
-					})
-					.fail(function(data) {
-            var msg = '';
-            if(data.errors) {                //validation error
-              $.each(data.errors, function(k, v) { msg += k+": "+v+"<br>"; });  
-            } else if(data.responseText) {   //ajax error
-              msg = data.responseText; 
-            }
-            $('#msg').removeClass('alert-success').addClass('alert-error').html(msg).show();
-          })
-				;
+      	$('form[name="formCreateProcess"]').submit();
       });
 
       var hash = window.location.hash;

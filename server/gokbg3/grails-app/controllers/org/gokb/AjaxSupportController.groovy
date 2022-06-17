@@ -763,7 +763,7 @@ class AjaxSupportController {
     log.debug("AjaxController::lookup ${params}");
     def result = [:]
     User user = springSecurityService.getCurrentUser()
-    params.max = params.max ?: user.defaultPageSizeAsInteger
+    //params.max = params.max ?: user.defaultPageSizeAsInteger
     def domain_class = grailsApplication.getArtefact('Domain',params.baseClass)
     if ( domain_class && domain_class.getClazz().isTypeReadable() ) {
       result.values = domain_class.getClazz().refdataFind(params);
@@ -1036,7 +1036,7 @@ class AjaxSupportController {
             }else if (!ident) {
                 ident = new Identifier(namespace: ns, value: params.identifierValue)
                 ident.setReference(owner)
-                boolean success = ident.save()
+                boolean success = ident.save(flush: true) //needed to trigger afterInsert(); temp solution
                 if (success){
                   flash.message = message(code:'identifier.create.success')
                 } else {

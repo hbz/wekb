@@ -3,6 +3,7 @@ package org.gokb
 
 import com.k_int.ConcurrencyManagerService.Job
 import de.wekb.helper.RCConstants
+import de.wekb.helper.RDStore
 import gokbg3.MessageService
 import grails.converters.JSON
 import grails.plugin.springsecurity.SpringSecurityService
@@ -44,6 +45,8 @@ class CrossRefPkgRun {
   def pltCache = [:] // DTO.name : validPlatformInstance
   Job job = null
 
+  List setTippsNotToDeleted = []
+
   def status_current
   def status_deleted
   def status_retired
@@ -72,18 +75,22 @@ class CrossRefPkgRun {
     int total = 0
 
     try {
-      status_current = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Current')
-      status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
-      status_retired = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Retired')
-      status_expected = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Expected')
+      status_current = RDStore.KBC_STATUS_CURRENT
+      status_deleted = RDStore.KBC_STATUS_DELETED
+      status_retired = RDStore.KBC_STATUS_RETIRED
+      status_expected = RDStore.KBC_STATUS_EXPECTED
       rr_deleted = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Status Deleted')
       rr_nonCurrent = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Platform Noncurrent')
       rr_TIPPs_retired = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'TIPPs Retired')
       rr_TIPPs_invalid = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Invalid TIPPs')
       rr_type = RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'Import Request')
 
+      List listStatus = []
 
-      springSecurityService.reauthenticate(user.username)
+      listStatus = [status_current, status_expected, status_deleted, status_retired]
+
+
+      //springSecurityService.reauthenticate(user.username)
       user = User.get(user.id)
       job?.ownerId = user.id
 
@@ -138,20 +145,44 @@ class CrossRefPkgRun {
 
       handleUpdateToken()
 
+      //Needed if kbart not wekb standard
+      boolean setAllTippsNotInKbartToDeleted = true
+      listStatus = [status_current]
+
+      if(rjson.tipps.size() > 0){
+        if(rjson.tipps[0].containsKey("status")){
+          setAllTippsNotInKbartToDeleted = false
+          listStatus = [status_current, status_expected, status_deleted, status_retired]
+        }
+      }
+
+      if(addOnly){
+        setAllTippsNotInKbartToDeleted = false
+      }
+
       existing_tipp_ids = TitleInstancePackagePlatform.executeQuery(
         "select tipp.id from TitleInstancePackagePlatform tipp, Combo combo where " +
           "tipp.status in :status and " +
           "combo.toComponent = tipp and " +
           "combo.fromComponent = :package",
-        [package: pkg, status: [status_current, status_expected]])
-      log.debug("Matched package has ${pkg.tipps.size()} TIPPs")
+        [package: pkg, status: listStatus])
+
+      log.info("Matched package has ${pkg.tipps.size()} TIPPs")
       total = rjson.tipps.size() + (addOnly ? 0 : existing_tipp_ids.size())
 
       int idx = 0
+
+      LinkedHashMap tippsWithCoverage = [:]
+      List<Long> tippDuplicates = []
+
+      List<Long> tippsFound = []
+
+      int jsonTipps = rjson.tipps.size()
+
       for (def json_tipp : rjson.tipps) {
         idx++
         def currentTippError = [index: idx]
-        log.info("Crossreferencing #$idx title ${json_tipp.name}")
+        log.info("Crossreferencing (#$idx of $jsonTipps): title ${json_tipp.name}")
         if ((json_tipp.package == null) && (pkg.id)) {
           json_tipp.package = [internalId: pkg.id]
         }
@@ -170,7 +201,7 @@ class CrossRefPkgRun {
         }
         if (!invalidTipps.contains(json_tipp)) {
           // validate and upsert TIPP
-          Map tippErrorMap = handleTIPPNew(json_tipp)
+          Map tippErrorMap = handleTIPPNew(json_tipp, setAllTippsNotInKbartToDeleted, tippsWithCoverage, tippDuplicates, tippsFound)
           if (tippErrorMap.size() > 0) {
             currentTippError.put('tipp', tippErrorMap)
           }
@@ -210,6 +241,17 @@ class CrossRefPkgRun {
         }
       }
 
+      if(tippDuplicates.size() > 0){
+        log.debug("remove tippDuplicates -> ${tippDuplicates.size()}: ${tippDuplicates}")
+
+        tippDuplicates.each {
+          if(!(it in tippsFound)){
+            KBComponent.executeUpdate("update KBComponent set status = :deleted where id = (:tippId)", [deleted: status_deleted, tippId: it])
+          }
+        }
+
+      }
+
       if (!cancelled) {
         pkg = Package.get(pkg.id)
 
@@ -225,7 +267,7 @@ class CrossRefPkgRun {
         if (rjson.tipps?.size() > 0 && rjson.tipps.size() > invalidTipps.size()) {
         }
         else {
-          log.debug("imported Package $pkg.name contains no valid TIPPs")
+          log.info("imported Package $pkg.name contains no valid TIPPs")
         }
 
         //Setzt vorraus, dass das Paket immer mit dem gleichen Paket-Inhalt importiert wird. Jedoch kann ein Anbieter auch nur ein Zuschnitt eines Paket aktualisieren!!!
@@ -270,11 +312,34 @@ class CrossRefPkgRun {
           }
         }*/
 
-        log.debug("Removed ${removedNum} TIPPS from the matched package!")
+
+        log.info("Removed ${removedNum} TIPPS from the matched package!")
         jsonResult.result = 'OK'
         def msg = messageService.resolveCode('crossRef.package.success', [rjson.packageHeader.name, rjson.tipps.size(), existing_tipp_ids.size(), removedNum, addNewNum], locale)
         jsonResult.message = msg
         job?.message(msg)
+
+        if(setAllTippsNotInKbartToDeleted){
+
+          List<Long> tippsIds = setTippsNotToDeleted ? TitleInstancePackagePlatform.executeQuery("select tipp.id from TitleInstancePackagePlatform tipp, Combo combo where " +
+                  "tipp.status in :status and " +
+                  "combo.toComponent = tipp and " +
+                  "combo.fromComponent = :package and tipp.id not in (:setTippsNotToDeleted)",
+                  [package: pkg, status: [status_current, status_expected, status_retired], setTippsNotToDeleted: setTippsNotToDeleted]) : []
+
+          Integer tippsToDeleted = tippsIds ? KBComponent.executeUpdate("update KBComponent set status = :deleted where id in (:tippIds)", [deleted: status_deleted, tippIds: tippsIds]) : 0
+
+          log.info("kbart is not wekb standard. set title to deleted. Found tipps: ${tippsIds.size()}, Set tipps to deleted: ${tippsToDeleted}")
+        }
+
+        tippsWithCoverage.each {
+          TitleInstancePackagePlatform titleInstancePackagePlatform = TitleInstancePackagePlatform.get(it.key)
+
+          if(titleInstancePackagePlatform){
+            kBartImportService.createOrUpdateCoverageForTipp(titleInstancePackagePlatform, it.value)
+          }
+
+        }
 
         if (pkg.status != status_deleted) {
           pkg = Package.get(pkg.id)
@@ -562,105 +627,7 @@ class CrossRefPkgRun {
     return pltError
   }
 
-  @Deprecated
-  private Map handleTIPP(JSONObject tippJson) {
-    /*Map tippError = [:]
-    def validation_result = TitleInstancePackagePlatform.validateDTONew(tippJson, locale)
-    log.debug("validate TIPP ${tippJson.name ?: tippJson.title.name}")
-    if (!validation_result.valid) {
-      invalidTipps << tippJson
-      log.debug("TIPP Validation failed on ${tippJson.name ?: tippJson.title.name}")
-      return validation_result.errors
-    }
-    else {
-      if (validation_result.errors?.size() > 0) {
-        tippError.putAll(validation_result.errors)
-      }
-      log.debug("upsert TIPP ${tippJson.name ?: tippJson.title.name}")
-      def upserted_tipp = null
-      try {
-        upserted_tipp = TitleInstancePackagePlatform.upsertDTO(tippJson, user)
-        log.debug("Upserted TIPP ${upserted_tipp} with URL ${upserted_tipp?.url}")
-        upserted_tipp.merge(flush: true)
-        componentUpdateService.ensureCoreData(upserted_tipp, tippJson, fullsync, user)
-      }
-      catch (grails.validation.ValidationException ve) {
-        log.error("ValidationException attempting to cross reference TIPP", ve)
-        upserted_tipp?.discard()
-        tippError.putAll(messageService.processValidationErrors(ve.errors))
-        return tippError
-      }
-      catch (Exception ge) {
-        log.error("Exception attempting to cross reference TIPP:", ge)
-        def tipp_error = [
-          message: messageService.resolveCode('crossRef.package.tipps.error', [tippJson.title.name], locale),
-          baddata: tippJson,
-          errors : [message: ge.toString()]
-        ]
-        upserted_tipp?.discard()
-        return tipp_error
-      }
-      if (upserted_tipp) {
-        if (existing_tipp_ids.size() > 0 && existing_tipp_ids.contains(upserted_tipp.id)) {
-          log.debug("Existing TIPP matched!")
-          existing_tipp_ids.removeElement(upserted_tipp.id)
-        }
-        if (upserted_tipp.status != status_deleted && tippJson.status == "Deleted") {
-          upserted_tipp.deleteSoft()
-          removedNum++;
-        }
-        else if (upserted_tipp.status != status_retired && tippJson.status == "Retired") {
-          upserted_tipp.retire()
-          removedNum++;
-        }
-        else if (upserted_tipp.status != status_current && (!tippJson.status || tippJson.status == "Current")) {
-          if (upserted_tipp.isDeleted() && !fullsync) {
-            // upserted_tipp.merge(flush: true)
-            reviewRequestService.raise(
-              upserted_tipp,
-              "Matched TIPP was marked as Deleted.",
-              "Check TIPP Status.",
-              rr_type,
-              null,
-              null,
-              rr_deleted,
-              [curatoryGroup]
-            )
-          }
-          upserted_tipp.status = status_current
-        }
-//        upserted_tipp.save()
-        upserted_tipp.merge(flush: true)
-        if (upserted_tipp.isCurrent() && upserted_tipp.hostPlatform?.status != status_current) {
-          def additionalInfo = [:]
-          additionalInfo.vars = [upserted_tipp.hostPlatform.name, upserted_tipp.hostPlatform.status?.value]
-          reviewRequestService.raise(
-            upserted_tipp,
-            "The existing platform matched for this TIPP (${upserted_tipp.hostPlatform}) is marked as ${upserted_tipp.hostPlatform.status?.value}! Please review the URL/Platform for validity.",
-            "Platform not marked as current.",
-            rr_type,
-            null,
-            (additionalInfo as JSON).toString(),
-            rr_nonCurrent,
-            [curatoryGroup]
-          )
-        }
-      }
-      else {
-        log.debug("Could not reference TIPP")
-        invalidTipps << tippJson
-        def tipp_error = [
-          message: messageService.resolveCode('crossRef.package.tipps.error', [tippJson.title.name], locale),
-          baddata: tippJson
-        ]
-        return tipp_error
-      }
-    }
-    return tippError*/
-  }
-
-
-  private Map handleTIPPNew(JSONObject tippJson) {
+  private Map handleTIPPNew(JSONObject tippJson, boolean setAllTippsNotInKbartToDeleted, LinkedHashMap tippsWithCoverage, List<Long> tippDuplicates, List<Long> tippFounds) {
     Map tippError = [:]
     def validation_result = kbartImportValidationService.tippValidateDTONew(tippJson, locale)
     log.debug("validate TIPP ${tippJson.name}")
@@ -676,9 +643,15 @@ class CrossRefPkgRun {
       log.debug("upsert TIPP ${tippJson.name}")
       def upserted_tipp = null
       try {
-        upserted_tipp = kBartImportService.tippUpsertDTO(tippJson, user)
+        upserted_tipp = kBartImportService.tippUpsertDTO(tippJson, user, tippsWithCoverage, tippDuplicates)
+        if(setAllTippsNotInKbartToDeleted && upserted_tipp.status != status_current){
+          upserted_tipp.status = status_current
+          setTippsNotToDeleted << upserted_tipp.id
+        }
+
         log.debug("Upserted TIPP ${upserted_tipp} with URL ${upserted_tipp?.url}")
         upserted_tipp.merge(flush: true)
+        tippFounds << upserted_tipp.id
 
       }
       catch (grails.validation.ValidationException ve) {
@@ -699,9 +672,9 @@ class CrossRefPkgRun {
       }
       if (upserted_tipp) {
 
-        if(autoUpdate && (pkg.source && (upserted_tipp.dateCreated > pkg.source.lastRun || pkg.source.lastRun == null))){
+       /* if(autoUpdate && (pkg.source && (upserted_tipp.dateCreated > pkg.source.lastRun || pkg.source.lastRun == null))){
           addNewNum++
-        }
+        }*/
 
         /*if (existing_tipp_ids.size() > 0 && existing_tipp_ids.contains(upserted_tipp.id)) {
           log.debug("Existing TIPP matched!")

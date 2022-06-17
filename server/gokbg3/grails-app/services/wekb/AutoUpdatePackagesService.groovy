@@ -4,14 +4,12 @@ import com.k_int.ConcurrencyManagerService
 import de.hbznrw.ygor.tools.UrlToolkit
 import de.wekb.helper.RCConstants
 import grails.converters.JSON
-import grails.util.Holders
-import groovy.json.JsonSlurper
 import groovyx.net.http.RESTClient
 import org.apache.commons.lang.RandomStringUtils
 import org.apache.commons.lang.StringUtils
-import org.apache.xmlbeans.impl.store.Cur
+
 import org.gokb.CrossReferenceService
-import org.gokb.cred.CuratoryGroup
+
 import org.gokb.cred.JobResult
 import org.gokb.cred.Package
 import org.gokb.cred.RefdataCategory
@@ -19,16 +17,17 @@ import org.gokb.cred.Source
 import org.gokb.cred.UpdateToken
 import org.gokb.cred.User
 
-import java.nio.file.Files
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 
-import static grails.async.Promises.task
 import static groovyx.net.http.Method.GET
+
+import groovyx.gpars.GParsPool
 
 
 class AutoUpdatePackagesService {
 
+    static final THREAD_POOL_SIZE = 5
     public static boolean running = false;
     def grailsApplication
     ConcurrencyManagerService concurrencyManagerService
@@ -56,8 +55,11 @@ class AutoUpdatePackagesService {
         log.debug("findPackageToUpdateAndUpdate: Package with Source and lastRun < currentDate (${updPacks.size()})")
         if(ygorDataList.size() > 0){
             log.debug("findPackageToUpdateAndUpdate: updPacks: ${updPacks.size()}, ygorDataList: ${ygorDataList.size()}")
-            ygorDataList.each { Map ygorData ->
-                importJsonFromUpdateSource(ygorData)
+
+            GParsPool.withPool(THREAD_POOL_SIZE) { pool ->
+                ygorDataList.eachWithIndexParallel { Map ygorData ->
+                    importJsonFromUpdateSource(ygorData)
+                }
             }
         }
 
@@ -131,7 +133,7 @@ class AutoUpdatePackagesService {
             def job_map = [
                     uuid        : uuid,
                     description : (user ? "Manuell" : "Auto") + " Update Packages Job (${p.name})",
-                    resultObject: (result as JSON).toString(),
+                    resultObject: result.toString(),
                     type        : user ? RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'ManuellUpdatePackageJob') : RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'AutoUpdatePackagesJob'),
                     statusText  : result.result,
                     startTime   : startTime,

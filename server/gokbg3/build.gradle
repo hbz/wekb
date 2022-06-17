@@ -126,6 +126,9 @@ dependencies {
     // https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
     implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.0.0'
 
+    //The GPars framework offers Java developers intuitive and safe ways to handle Java or Groovy tasks concurrently
+    compile 'org.codehaus.gpars:gpars:1.2.1'
+
 }
 
 bootRun {
