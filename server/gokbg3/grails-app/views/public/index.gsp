@@ -13,7 +13,7 @@
 <g:render template="number-chart-hero"/>
 
 <div class="ui segment">
-    <h1>Filter</h1>
+    <h1 class="ui header">Filter</h1>
     <g:form controller="public" class="ui form" action="index" method="get" params="${params}">
 
         <div class="fields">

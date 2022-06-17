@@ -40,7 +40,7 @@
                 <td>${counter}</td>
                 <g:each in="${r.cols}" var="c">
                     <td>
-                        <g:if test="${c.link != null}">
+                        <g:if test="${c.link != null && c.value && c.value != '-Empty-'}">
                             <g:link controller="resource"
                                     action="show"
                                     id="${c.link}">
@@ -52,7 +52,7 @@
                             <g:if test="${c.value && c.value != '-Empty-'}">
                                 &nbsp;<a aria-label="${c.value}"
                                          href="${c.value.startsWith('http') ? c.value : 'http://' + c.value}"
-                                         target="new"><i class="share square icon"></i></a>
+                                         target="_blank"><i class="share square icon"></i></a>
                             </g:if>
                         </g:elseif>
                         <g:elseif test="${c.value instanceof Boolean}">
@@ -157,7 +157,7 @@
                         <td>${counter}</td>
                         <g:each in="${r.cols}" var="c">
                             <td style="vertical-align:middle;">
-                                <g:if test="${c.link != null}">
+                                <g:if test="${c.link != null && c.value && c.value != '-Empty-'}">
                                     <g:link controller="resource"
                                             action="show"
                                             id="${c.link}">
@@ -169,7 +169,7 @@
                                     <g:if test="${c.value && c.value != '-Empty-'}">
                                         &nbsp;<a aria-label="${c.value}"
                                                  href="${c.value.startsWith('http') ? c.value : 'http://' + c.value}"
-                                                 target="new"><i class="share square icon"></i></a>
+                                                 target="_blank"><i class="share square icon"></i></a>
                                     </g:if>
                                 </g:elseif>
                                 <g:elseif test="${c.value instanceof Boolean}">
@@ -198,7 +198,7 @@
                     %{--<g:if test="${request.user?.showQuickView?.value=='Yes'}">
                       <td>
                         <g:link class="btn btn-xs btn-default pull-right desktop-only" controller="search"
-                          action="index" params="${params+['det':counter]}"><i class="fa fa-eye" ></i></g:link>
+                          action="componentSearch" params="${params+['det':counter]}"><i class="fa fa-eye" ></i></g:link>
                       </td>
                     </g:if>--}%
                     </tr>

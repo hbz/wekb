@@ -79,9 +79,7 @@ class CuratoryGroup extends KBComponent {
     ql = CuratoryGroup.findAllByNameIlikeAndStatusNotEqual("${params.q}%", status_deleted ,params)
 
     ql.each { t ->
-      if( !params.filter1 || t.status?.value == params.filter1 ){
         result.add([id:"${t.class.name}:${t.id}", text:"${t.name}", status:"${t.status?.value}"])
-      }
     }
 
     result

@@ -71,7 +71,7 @@
     <div class="ui segment">
         <g:render template="rightBox" model="${[d: displayobj]}"/>
 
-        <div class="content we-inline-lists">
+        <div class="content wekb-inline-lists">
             <g:if test="${displaytemplate != null}">
                 <!-- Using display template ${displaytemplate.rendername} -->
                 <g:if test="${displaytemplate.type == 'staticgsp'}">
@@ -85,7 +85,7 @@
     <br>
     <br>
     <g:if test="${displaytemplate != null}">
-        <g:if test="${displaytemplate.type == 'staticgsp'}">
+        <g:if test="${displaytemplate.type == 'staticgsp' && displaytemplate.rendername in ["org", "package", "platform", "source", "tipp"]}">
             <g:render template="/templates/tabTemplates/domainTabs/${displaytemplate.rendername}Tabs"
                       model="${[d: displayobj]}"/>
         </g:if>

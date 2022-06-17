@@ -47,7 +47,7 @@
                                 id="${linkedoid}">${groovy.util.Eval.x(row, 'x.' + c.expr)}</g:link>
                     </g:if>
                     <g:elseif test="${c.action == 'editRefData'}">
-                        <gokb:xEditableRefData owner="${row}" field="${c.expr}" config="${RCConstants.COMBO_STATUS}"/>
+                        <semui:xEditableRefData owner="${row}" field="${c.expr}" config="${RCConstants.COMBO_STATUS}"/>
                     </g:elseif>
                     <g:else>
                         <span class="${row.status?.value == 'Deleted' ? 'text-deleted' : ''}"

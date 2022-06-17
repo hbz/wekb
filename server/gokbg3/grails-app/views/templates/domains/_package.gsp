@@ -35,12 +35,7 @@
 </dl>
 <dl>
     <dt class="control-label">Description URL</dt>
-    <dd><semui:xEditable owner="${d}" field="descriptionURL"/>
-        <g:if test="${d.descriptionURL}">
-            &nbsp;<a aria-label="${d.descriptionURL}"
-                     href="${d.descriptionURL.startsWith('http') ? d.descriptionURL : 'http://' + d.descriptionURL}"
-                     target="new"><i class="fas fa-external-link-alt"></i></a>
-        </g:if>
+    <dd><semui:xEditable owner="${d}" field="descriptionURL" outGoingLink="true"/>
     </dd>
 </dl>
 
@@ -188,20 +183,20 @@
             <input type="hidden" name="__recip" value="pkg"/>
             <dt class="control-label">Archiving Agency</dt>
             <dd>
-                <gokb:simpleReferenceTypedown class="form-control" name="archivingAgency"
+                <semui:simpleReferenceDropdown class="form-control" name="archivingAgency"
                                               baseClass="org.gokb.cred.RefdataValue"
                                               filter1="${RCConstants.PAA_ARCHIVING_AGENCY}"/>
             </dd>
             <dt class="control-label">Open Access</dt>
             <dd>
-                <gokb:simpleReferenceTypedown class="form-control" name="openAccess"
+                <semui:simpleReferenceDropdown class="form-control" name="openAccess"
                                               baseClass="org.gokb.cred.RefdataValue"
                                               filter1="${RCConstants.PAA_OPEN_ACCESS}"/>
             </dd>
 
             <dt class="control-label">Post-Cancellation Access (PCA)</dt>
             <dd>
-                <gokb:simpleReferenceTypedown class="form-control" name="postCancellationAccess"
+                <semui:simpleReferenceDropdown class="form-control" name="postCancellationAccess"
                                               baseClass="org.gokb.cred.RefdataValue"
                                               filter1="${RCConstants.PAA_POST_CANCELLATION_ACCESS}"/>
             </dd>

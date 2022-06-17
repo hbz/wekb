@@ -52,7 +52,7 @@
                                 <input type="hidden" name="__recip" value="owner"/>
                                 <dt class="control-label">Price Type</dt>
                                 <dd>
-                                    <semui:simpleReferenceTypedown class="form-control"
+                                    <semui:simpleReferenceDropdown
                                                                   name="priceType"
                                                                   baseClass="org.gokb.cred.RefdataValue"
                                                                   filter1="${RCConstants.PRICE_TYPE}"/>
@@ -63,7 +63,7 @@
                                 </dd>
                                 <dt class="control-label">Currency</dt>
                                 <dd>
-                                    <semui:simpleReferenceTypedown class="form-control" name="currency"
+                                    <semui:simpleReferenceDropdown name="currency"
                                                                   baseClass="org.gokb.cred.RefdataValue"
                                                                   filter1="${RCConstants.CURRENCY}"/>
                                 </dd>

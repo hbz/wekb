@@ -27,7 +27,7 @@
     </dt>
     <dd>
         <semui:xEditableManyToOne owner="${d}" field="provider"
-                                  baseClass="org.gokb.cred.Org">${d.provider?.name}</semui:xEditableManyToOne>
+                                  baseClass="org.gokb.cred.Org"/>
     </dd>
 </dl>
 <dl>
@@ -35,12 +35,7 @@
         Primary URL
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="primaryUrl">${d.primaryUrl}</semui:xEditable>
-        <g:if test="${d.primaryUrl}">
-            &nbsp; <a aria-label="${d.primaryUrl}"
-                      href="${d.primaryUrl.startsWith('http') ? d.primaryUrl : 'http://' + d.primaryUrl}"
-                      target="new"><i class="fas fa-external-link-alt"></i></a>
-        </g:if>
+        <semui:xEditable owner="${d}" field="primaryUrl" outGoingLink="true"/>
     </dd>
 </dl>
 <dl>

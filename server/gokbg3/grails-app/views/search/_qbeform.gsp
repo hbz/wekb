@@ -1,10 +1,9 @@
-<g:set var="s_action" value="${s_action ?: 'index'}"/>
+<g:set var="s_action" value="${s_action ?: 'componentSearch'}"/>
 <g:set var="s_controller" value="${s_controller ?: 'search'}"/>
 
 <g:if test="${hide.contains('SEARCH_FORM')}">
 </g:if>
 <g:elseif test="${params.inline}">
-    <div class="ui segment">
         <g:form method="get" class="ui form" controller="${s_controller}" action="${s_action}" id="${params.id}">
             <input type="hidden" name="qbe" value="${params.qbe}"/>
 
@@ -22,10 +21,11 @@
                 </g:if>
             </g:each>
 
+            <div class="ui right floated buttons">
             <button class="ui button black" type="submit" value="search"
                     name="searchAction">Search View</button>
+            </div>
         </g:form>
-    </div>
 </g:elseif>
 <g:else>
     <div class="ui segment">
@@ -51,7 +51,7 @@
                         <label for="${fld.qparam}">${fld.prompt}</label>
                         <g:if test="${fld.type == 'lookup'}">
                             <div class="ui field">
-                                <semui:simpleReferenceTypedown
+                                <semui:simpleReferenceDropdown
                                         id="refdata_combo_${params.inline ? 'inline_' : ''}${fld.qparam}"
                                         name="${fld.qparam}"
                                         baseClass="${fld.baseClass}"
@@ -73,7 +73,7 @@
 
                     </div>
 
-                    <g:if test="${frmidx % 2 == 1}">
+                    <g:if test="${(frmidx+1) % 2 == 0}">
                         </div>
                         <div class="two fields">
                     </g:if>
@@ -124,40 +124,4 @@
     </div>
 </g:else>
 
-<g:javascript>
-  // When DOM is ready.
-  $(document).ready(function(){
-
-   $(".simpleReferenceTypedown").select2({
-				placeholder: "Search for...",
-                minimumInputLength: 1,
-
-                formatInputTooShort: function () {
-                    return "Please enter one or more characters";
-                },
-                formatNoMatches: function() {
-                    return "No matches found";
-                },
-                formatSearching:  function() {
-                    return "Searching";
-                },
-				ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
-					url: "${createLink(controller: 'ajaxSupport', action: 'lookup')}",
-					dataType: 'json',
-					data: function (term, page) {
-						return {
-                            format:'json',
-							q: term, // search term
-							baseClass:$(this).data('domain'),
-							filter1:$(this).data('filter1'),
-							addEmpty:'Y'
-							};
-					},
-					results: function (data, page) {
-						return {results: data.values};
-					}
-				}
-			});
-  });
-</g:javascript>
 

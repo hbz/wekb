@@ -38,7 +38,7 @@ This action will replace the existing Publisher in all associated titles with th
             <dl>
               <dt>Org to Use:</dt>
               <dd>
-                 <gokb:simpleReferenceTypedown class="form-control" name="neworg" baseClass="org.gokb.cred.Org" />
+                 <semui:simpleReferenceDropdown class="form-control" name="neworg" baseClass="org.gokb.cred.Org" />
               </dd>
             </dl>
             <button class="btn btn-success" type="submit">Deprecate selected titles in favour of this one</button>

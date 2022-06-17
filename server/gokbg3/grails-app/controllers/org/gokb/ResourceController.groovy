@@ -53,13 +53,14 @@ class ResourceController {
       if ( displayobj ) {
 
         List allowedPublicShow = ['CuratoryGroup',
-                            'Org',
-                            'Package',
-                            'Platform',
-                            'Source',
-                            'TitleInstancePackagePlatform']
+                                  'Identifier',
+                                  'Org',
+                                  'Package',
+                                  'Platform',
+                                  'Source',
+                                  'TitleInstancePackagePlatform']
 
-        if ((displayobj.class.simpleName in allowedPublicShow) || (sec.ifLoggedIn() && sec.ifAnyGranted("ROLE_ADMIN"))) {
+        if ((displayobj.class.simpleName in allowedPublicShow) || (springSecurityService.isLoggedIn() && springSecurityService.ifAnyGranted("ROLE_ADMIN"))) {
 
           result.displayobjclassname = displayobj.class.name
           result.__oid = "${result.displayobjclassname}:${displayobj.id}"
@@ -76,7 +77,7 @@ class ResourceController {
 
           result.displayobj = displayobj
 
-          if(sec.ifLoggedIn()) {
+          if(springSecurityService.isLoggedIn()) {
             read_perm = accessService.checkReadable(displayobj.class.name)
 
             if (read_perm) {
@@ -126,6 +127,13 @@ class ResourceController {
         flash.error = "Unable to find the requested resource."
       }
     }
+    println(result.editable)
         result
     }
+
+  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  def showLogin() {
+
+    redirect(action: 'show', params: params)
   }
+}

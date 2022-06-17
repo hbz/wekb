@@ -56,13 +56,13 @@
                 </dd>
                 <dt class="control-label">Locale</dt>
                 <dd>
-                  <gokb:simpleReferenceTypedown class="form-control" name="locale"
+                  <semui:simpleReferenceDropdown class="form-control" name="locale"
                                                 baseClass="org.gokb.cred.RefdataValue"
                                                 filter1="${RCConstants.KBCOMPONENT_VARIANTNAME_LOCAL}" />
                 </dd>
                 <dt class="control-label">Variant Type</dt>
                 <dd>
-                  <gokb:simpleReferenceTypedown class="form-control" name="variantType"
+                  <semui:simpleReferenceDropdown class="form-control" name="variantType"
                                                 baseClass="org.gokb.cred.RefdataValue"
                                                 filter1="${RCConstants.KBCOMPONENT_VARIANTNAME_VARIANT_TYPE}" />
                 </dd>

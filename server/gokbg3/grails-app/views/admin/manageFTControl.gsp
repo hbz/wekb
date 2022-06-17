@@ -24,7 +24,7 @@
                     <tr>
                         <td>${ftControl.domainClassName}</td>
                         <td>
-                            <gokb:xEditable owner="${ftControl}" field="lastTimestamp"/>
+                            <semui:xEditable owner="${ftControl}" field="lastTimestamp"/>
                         </td>
                         <td>
                             <g:formatDate date="${new Date(ftControl.lastTimestamp)}"

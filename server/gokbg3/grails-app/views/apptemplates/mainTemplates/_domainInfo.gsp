@@ -4,27 +4,27 @@
 		<gokb:annotatedLabel owner="${d}" property="domainClassName">Domain Class Name</gokb:annotatedLabel>
 	</dt>
 	<dd>
-		<gokb:xEditable  owner="${d}" field="dcName" />
+		<semui:xEditable  owner="${d}" field="dcName" />
 	</dd>
 	<dt>
 		<gokb:annotatedLabel owner="${d}" property="displayName">Display Name</gokb:annotatedLabel>
 	</dt>
 	<dd>
-		<gokb:xEditable  owner="${d}" field="displayName" />
+		<semui:xEditable  owner="${d}" field="displayName" />
 	</dd>
 
 	<dt>
 		<gokb:annotatedLabel owner="${d}" property="dcSortOrder">Sort Order</gokb:annotatedLabel>
 	</dt>
 	<dd>
-		<gokb:xEditable  owner="${d}" field="dcSortOrder" />
+		<semui:xEditable  owner="${d}" field="dcSortOrder" />
 	</dd>
 
 	<dt>
 		<gokb:annotatedLabel owner="${d}" property="type">Type/Category</gokb:annotatedLabel>
 	</dt>
 	<dd>
-		<gokb:xEditableRefData owner="${d}" field="type" config="${RCConstants.DC_TYPE}" />
+		<semui:xEditableRefData owner="${d}" field="type" config="${RCConstants.DC_TYPE}" />
 	</dd>
 </dl>
 

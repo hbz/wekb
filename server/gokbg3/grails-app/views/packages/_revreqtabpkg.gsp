@@ -24,7 +24,7 @@
           <g:link controller="resource" action="show" id="org.gokb.cred.KBComponent:${rr.componentToReview.id}">${rr.componentToReview?.name}</g:link>
         </td>
         <td>
-          <gokb:xEditableRefData owner="${rr}" field="status" config="${RCConstants.REVIEW_REQUEST_STATUS}" />
+          <semui:xEditableRefData owner="${rr}" field="status" config="${RCConstants.REVIEW_REQUEST_STATUS}" />
         </td>
         <td>
           ${rr.dateCreated}

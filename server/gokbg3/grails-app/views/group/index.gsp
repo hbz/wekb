@@ -103,7 +103,7 @@
       </tbody>
     </table>--}%
   </div>
-%{--   <g:link class="display-inline" controller="search" action="index"
+%{--   <g:link class="display-inline" controller="search" action="inlineSearch"
           params="[qbe:'g:reviewRequests']"
           id="">Titles in this package</g:link> --}%
 

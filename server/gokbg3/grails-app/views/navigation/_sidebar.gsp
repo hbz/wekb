@@ -40,17 +40,17 @@
         <li class="${(controllerName == "search")  ? 'active' : ''}"><a href="#"><i class="fa fa-search fa-fw"></i> Search<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
             <li class="divider"></li>
-            <li><g:link controller="search" action="index" params="[qbe:'g:tipps']" title="Search Titles" ><i class='fa fa-angle-double-right fa-fw'></i> Titles</g:link></li>
-            <li><g:link controller="search" action="index" params="[qbe:'g:packages']" title="Search Packages" ><i class='fa fa-angle-double-right fa-fw'></i> Packages</g:link></li>
-            <li><g:link controller="search" action="index" params="[qbe:'g:platforms']" title="Search Platforms" ><i class='fa fa-angle-double-right fa-fw'></i> Platforms</g:link></li>
+            <li><g:link controller="search" action="componentSearch" params="[qbe:'g:tipps']" title="Search Titles" ><i class='fa fa-angle-double-right fa-fw'></i> Titles</g:link></li>
+            <li><g:link controller="search" action="componentSearch" params="[qbe:'g:packages']" title="Search Packages" ><i class='fa fa-angle-double-right fa-fw'></i> Packages</g:link></li>
+            <li><g:link controller="search" action="componentSearch" params="[qbe:'g:platforms']" title="Search Platforms" ><i class='fa fa-angle-double-right fa-fw'></i> Platforms</g:link></li>
 
             <li class="divider"></li>
-            <li><g:link controller="search" action="index" params="[qbe:'g:curatoryGroups']" title="Search Curatory Groups" ><i class='fa fa-angle-double-right fa-fw'></i> Curatory Groups</g:link></li>
-            <li><g:link controller="search" action="index" params="[qbe:'g:orgs']" title="Search Orgs" ><i class='fa fa-angle-double-right fa-fw'></i> Organizations</g:link></li>
-            <li><g:link controller="search" action="index" params="[qbe:'g:sources']" title="Search Sources" ><i class='fa fa-angle-double-right fa-fw'></i> Sources</g:link></li>
+            <li><g:link controller="search" action="componentSearch" params="[qbe:'g:curatoryGroups']" title="Search Curatory Groups" ><i class='fa fa-angle-double-right fa-fw'></i> Curatory Groups</g:link></li>
+            <li><g:link controller="search" action="componentSearch" params="[qbe:'g:orgs']" title="Search Orgs" ><i class='fa fa-angle-double-right fa-fw'></i> Organizations</g:link></li>
+            <li><g:link controller="search" action="componentSearch" params="[qbe:'g:sources']" title="Search Sources" ><i class='fa fa-angle-double-right fa-fw'></i> Sources</g:link></li>
 
             <li class="divider"></li>
-            <li><g:link controller="search" action="index" params="[qbe:'g:identifiers']" title="Search Identifiers" ><i class='fa fa-angle-double-right fa-fw'></i> Identifiers</g:link></li>
+            <li><g:link controller="search" action="componentSearch" params="[qbe:'g:identifiers']" title="Search Identifiers" ><i class='fa fa-angle-double-right fa-fw'></i> Identifiers</g:link></li>
 
           </ul> <!-- /.nav-second-level -->
         </li>
@@ -74,14 +74,14 @@
 
         <li><a href="#"><i class="fa fa-tasks fa-fw"></i> To Do<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
-            %{--<li><g:link controller="search" action="index"
+            %{--<li><g:link controller="search" action="componentSearch"
                         params="[
                                 qbe:'g:reviewRequests',
                                 qp_allocatedto:'org.gokb.cred.User:'+ applicationContext.springSecurityService.principal.id,
                                 qp_status: ('org.gokb.cred.RefdataValue:'+(RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STATUS, 'Open').id))
                         ]">
               <i class="fa fa-angle-double-right fa-fw"></i> My ToDos</g:link></li>--}%
-            <li><g:link controller="search" action="index"
+            <li><g:link controller="search" action="componentSearch"
                         params="${[
                                 qbe:'g:reviewRequests',
                                 qp_status: ('org.gokb.cred.RefdataValue:'+(RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_STATUS, 'Open').id))

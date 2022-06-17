@@ -783,7 +783,8 @@ abstract class KBComponent implements Auditable{
 
 
   String toString(){
-    "${name ?: ''} (${getNiceName()} ${this.id})".toString()
+    //"${name ?: ''} (${getNiceName()} ${this.id})".toString()
+    "${name ?: ''}".toString()
   }
 
 

@@ -33,7 +33,7 @@
         Homepage
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="homepage"/>
+        <semui:xEditable owner="${d}" field="homepage" outGoingLink="true"/>
     </dd>
 </dl>
 <dl>
@@ -41,7 +41,7 @@
         Metadata Downloader URL
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="metadataDownloaderURL"/>
+        <semui:xEditable owner="${d}" field="metadataDownloaderURL" outGoingLink="true"/>
     </dd>
 </dl>
 <dl>
@@ -49,7 +49,7 @@
         KBART Downloader URL
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="kbartDownloaderURL"/>
+        <semui:xEditable owner="${d}" field="kbartDownloaderURL" outGoingLink="true"/>
     </dd>
 </dl>
 <dl>
@@ -148,20 +148,20 @@
             </dd>
             <dt class="control-label">Language</dt>
             <dd>
-                <semui:simpleReferenceTypedown class="form-control" name="language"
+                <semui:simpleReferenceDropdown name="language"
                                                baseClass="org.gokb.cred.RefdataValue"
                                                filter1="${RCConstants.KBCOMPONENT_LANGUAGE}"/>
             </dd>
             <dt class="control-label">Content Type</dt>
             <dd>
-                <semui:simpleReferenceTypedown class="form-control" name="contentType"
+                <semui:simpleReferenceDropdown name="contentType"
                                                baseClass="org.gokb.cred.RefdataValue"
                                                filter1="${RCConstants.CONTACT_CONTENT_TYPE}"/>
             </dd>
 
             <dt class="control-label">Contact Type</dt>
             <dd>
-                <semui:simpleReferenceTypedown class="form-control" name="type"
+                <semui:simpleReferenceDropdown name="type"
                                                baseClass="org.gokb.cred.RefdataValue"
                                                filter1="${RCConstants.CONTACT_TYPE}"/>
             </dd>
@@ -173,7 +173,7 @@
         <g:form controller="ajaxSupport" action="addToStdCollection" class="form-inline">
             <input type="hidden" name="__context" value="${d.class.name}:${d.id}"/>
             <input type="hidden" name="__property" value="roles"/>
-            Role: <semui:simpleReferenceTypedown class="form-inline" style="display:inline-block;"
+            Role: <semui:simpleReferenceDropdown class="form-inline" style="display:inline-block;"
                                                  name="__relatedObject"
                                                  baseClass="org.gokb.cred.RefdataValue"
                                                  filter1="${RCConstants.ORG_ROLE}"/>

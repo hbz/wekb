@@ -2,7 +2,10 @@
  * FileName: wekb.css
  *
  *= require /semantic.min.css         //-- semantic
- *= require /select2/css/select2.min.css        //-- externalLibs
+
+ *= require /jquery-editable/css/jquery-editable.css //-- externalLibs
+
+
  */
 
 .control-label {
@@ -20,31 +23,31 @@
     font-weight: 700;
 }
 
-.we-inline-lists dl {
+.wekb-inline-lists dl {
     display: table-row;
 }
 
-.we-inline-lists dl dt,
-.we-inline-lists dl dd {
+.wekb-inline-lists dl dt,
+.wekb-inline-lists dl dd {
     display: table-cell;
     padding-top: 0.4rem;
     padding-bottom: 1rem;
 }
 
-.we-inline-lists dl dd {
+.wekb-inline-lists dl dd {
     padding-left: 1rem;
 }
 
-.we-inline-lists dl dd {
+.wekb-inline-lists dl dd {
     word-wrap: break-word;
 }
 
-.we-inline-lists .la-dl-no-table dl dt,
-.we-inline-lists .la-dl-no-table dl dd {
+.wekb-inline-lists .la-dl-no-table dl dt,
+.wekb-inline-lists .la-dl-no-table dl dd {
     display: inline;
 }
 
-.we-inline-lists .ui.card {
+.wekb-inline-lists .ui.card {
     width: 100%;
 }
 
@@ -66,3 +69,5 @@
     width: 70%;
     word-wrap: break-word;
 }
+
+

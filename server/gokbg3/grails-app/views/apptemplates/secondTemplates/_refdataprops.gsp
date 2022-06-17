@@ -6,7 +6,7 @@
 			</gokb:annotatedLabel>
 		</dt>
 		<dd>
-			<gokb:xEditableRefData owner="${d}" field="${entry.value.name}"
+			<semui:xEditableRefData owner="${d}" field="${entry.value.name}"
 				config="${entry.key}" />
 		</dd>
 	</g:if>

@@ -52,7 +52,7 @@
     <input type="hidden" name="__newObjectClass" value="org.gokb.cred.Combo"/>
     <input type="hidden" name="__recip" value="${recip}"/>
     <input type="hidden" name="type" value="${org.gokb.cred.RefdataCategory.getOID(RCConstants.COMBO_TYPE,d.getComboTypeValue(property))}"/>
-    Add To List : <gokb:simpleReferenceTypedown class="form-control" name="${comboprop}" baseClass="${targetClass}"/>
+    Add To List : <semui:simpleReferenceDropdown class="form-control" name="${comboprop}" baseClass="${targetClass}"/>
     <button type="submit" class="btn btn-default btn-primary btn-sm ">Add</button>
   </g:form>
 

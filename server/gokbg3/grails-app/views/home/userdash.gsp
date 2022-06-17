@@ -15,7 +15,7 @@
               <h3 class="panel-title">Your Most Recent Review Tasks</h3>
             </div>
             <div class="panel-body">
-              <g:link class="display-inline" controller="search" action="index"
+              <g:link class="display-inline" controller="search" action="inlineSearch"
                 params="[qbe:'g:reviewRequests', qp_allocatedto:'org.gokb.cred.User:' + Long.toString(request.user.id), qp_status:'org.gokb.cred.RefdataValue:' + Long.toString(org.gokb.cred.RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STATUS, 'Open').id), inline:true, hide:['qp_project', 'qp_allocatedto']]"
                 id="">Your Review Tasks</g:link>
             </div>
@@ -47,7 +47,7 @@
               <h3 class="panel-title">Most recently updated Watched Components</h3>
             </div>
             <div class="panel-body">
-              <g:link class="display-inline" controller="search" action="index"
+              <g:link class="display-inline" controller="search" action="inlineSearch"
                 params="[qbe:'g:userWatchedComponents', inline:true]"
                 id="">User Watched Components</g:link>
             </div>
@@ -57,7 +57,7 @@
               <h3 class="panel-title">Finished Upload Jobs</h3>
             </div>
             <div class="panel-body">
-              <g:link class="display-inline" controller="search" action="index"
+              <g:link class="display-inline" controller="search" action="inlineSearch"
                 params="[qbe:'g:userJobs', inline:true]"
                 id="">Finished Upload Jobs</g:link>
             </div>

@@ -139,7 +139,6 @@ class SemanticTagLib {
             }else{
                 out << body()
             }
-            out <<
             out << '</p>'
             out << '</div>'
         }

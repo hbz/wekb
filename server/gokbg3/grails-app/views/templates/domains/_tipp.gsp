@@ -1,7 +1,6 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
 %{--<g:set var="editable"
        value="${d.isEditable() && ((request.curator != null ? request.curator.size() > 0 ? true : false : true) || (params.curationOverride == 'true' && request.user.isAdmin()))}"/>--}%
-</dl>
 <dl>
     <dt class="control-label">
         Title
@@ -26,18 +25,10 @@
         Platform
     </dt>
     <dd>
-        <g:if test="${controllerName != 'public'}">
-            <g:link controller="resource" action="show"
-                    id="${d.hostPlatform?.class?.name + ':' + d.hostPlatform?.id}">
-                ${(d.hostPlatform?.name) ?: 'Empty'}
-            </g:link>
-        </g:if>
-        <g:else>
             <g:if test="${d.hostPlatform}">
                 <g:link controller="resource" action="show"
                         id="${d.hostPlatform.uuid}">${d.hostPlatform.name}</g:link>
             </g:if>
-        </g:else>
     </dd>
 </dl>
 <dl>
@@ -45,12 +36,7 @@
         Host Platform URL
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="url"/>
-        <g:if test="${d.url}">
-            &nbsp;<a aria-label="${d.url}" href="${d.url.startsWith('http') ? d.url : 'http://' + d.url}"
-                     target="new"><i class="fas fa-external-link-alt"></i></a>
-        </g:if>
-
+        <semui:xEditable owner="${d}" field="url" outGoingLink="true"/>
     </dd>
 </dl>
 <dl>
@@ -185,7 +171,7 @@
         Last Changed
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="lastChangedExternal" type='date'/>
+        <semui:xEditable owner="${d}" field="lastChangedExternal" type="date"/>
     </dd>
 
 </dl>
