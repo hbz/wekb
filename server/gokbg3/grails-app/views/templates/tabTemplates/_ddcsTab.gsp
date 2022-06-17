@@ -1,7 +1,7 @@
 <%@ page import="de.wekb.helper.RCConstants; org.gokb.cred.RefdataCategory" %>
 <semui:tabsItemContent tab="ddcs">
     <g:if test="${d.id != null}">
-        <div class="content we-inline-lists">
+        <div class="content wekb-inline-lists">
             <dl>
                 <dt class="control-label">
                     <gokb:annotatedLabel owner="${d}" property="ddcs">Dewey Decimal Classification</gokb:annotatedLabel>

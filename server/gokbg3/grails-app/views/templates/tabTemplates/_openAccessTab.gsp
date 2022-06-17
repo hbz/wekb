@@ -1,7 +1,7 @@
 <%@ page import="de.wekb.helper.RCConstants;" %>
 <semui:tabsItemContent tab="openAccess">
     <g:if test="${d.id != null}">
-        <div class="content we-inline-lists">
+        <div class="content wekb-inline-lists">
             <dl>
                 <dt class="control-label">
                     Open Access

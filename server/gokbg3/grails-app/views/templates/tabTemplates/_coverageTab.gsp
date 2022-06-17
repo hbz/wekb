@@ -1,7 +1,7 @@
 <%@ page import="de.wekb.helper.RCConstants;" %>
 <g:if test="${d.publicationType?.value == 'Serial'}">
 	<semui:tabsItemContent tab="tippcoverage">
-		<div class="content we-inline-lists">
+		<div class="content wekb-inline-lists">
 			<dl>
 				<dt class="control-label">
 					Coverage
@@ -114,7 +114,7 @@
 			</dd>
 			<dt class="control-label">Coverage Depth</dt>
 			<dd>
-				<semui:simpleReferenceTypedown name="coverageDepth"
+				<semui:simpleReferenceDropdown name="coverageDepth"
 											  baseClass="org.gokb.cred.RefdataValue"
 											  filter1="${RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH}"/>
 			</dd>

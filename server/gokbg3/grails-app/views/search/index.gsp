@@ -2,164 +2,150 @@
 <html>
 <head>
     <meta name="layout" content="public_semui"/>
-    <title>Search <g:if test="${qbetemplate}">${qbetemplate.title}</g:if></title>
+    <title><g:message code="gokb.appname" default="we:kb"/>: Search in All Components</title>
 </head>
 
 <body>
 
-<g:if test="${qbetemplate}">
-    <h1 class="ui header">Search ${qbetemplate.title ?: ''} <g:if test="${refObject}">for ${refObject.niceName}: <g:link
-            controller="resource" action="show" id="${refObject.id}">${refObject.name}</g:link></g:if></h1>
-</g:if>
-<g:else>
-    <h1 class="ui header">Search</h1>
-</g:else>
+<%
+    def addFacet = { params, facet, val ->
+        def newparams = [:]
+        newparams.putAll(params)
 
-<semui:flashMessage data="${flash}"/>
+        newparams.remove('offset');
+        newparams.remove('max');
 
-<div class="container">
+        def current = newparams[facet]
+        if (current == null) {
+            newparams[facet] = val
+        } else if (current instanceof String[]) {
+            newparams.remove(current)
+            newparams[facet] = current as List
+            newparams[facet].add(val);
+        } else {
+            newparams[facet] = [current, val]
+        }
+        newparams
+    }
 
-    <g:if test="${qbetemplate == null}">
+    def removeFacet = { params, facet, val ->
+        def newparams = [:]
+        newparams.putAll(params)
+        def current = newparams[facet]
 
-        <h3 class="ui header">
-            Please select a resource to search for
-        </h3>
+        newparams.remove('offset');
+        newparams.remove('max');
 
-        <div class="ui bulleted link list">
-        <g:link class="item" controller="search" action="index" params="[qbe: 'g:packages']">Packages</g:link>
-            <g:link class="item" controller="search" action="index" params="[qbe: 'g:platforms']">Platforms</g:link>
-            <g:link class="item" controller="search" action="index" params="[qbe: 'g:orgs']">Providers</g:link>
-            <g:link class="item" controller="search" action="index" params="[qbe: 'g:tipps']">Titles</g:link>
-            <g:link class="item" controller="search" action="index"
-                    params="[qbe: 'g:curatoryGroups']">Curatory Groups</g:link>
-            <g:link class="item" controller="search" action="index" params="[qbe: 'g:sources']">Sources</g:link>
-            <g:link class="item" controller="search" action="index"
-                    params="[qbe: 'g:identifiers']">Identifiers</g:link>
+        if (current == null) {
+        } else if (current instanceof String[]) {
+            newparams.remove(current)
+            newparams[facet] = current as List
+            newparams[facet].remove(val);
+        } else if (current?.equals(val.toString())) {
+            newparams.remove(facet);
+        }
+        newparams
+    }
+%>
+
+<h1 class="ui header">Search in All Components</h1>
+
+<div class="ui segment">
+    <g:form action="index" method="get" class="ui form">
+        <div class="sixteen wide field">
+            <input type="text" name="q" id="q" value="${params.q}" placeholder="Search for..."/>
         </div>
 
-		<br>
-		<br>
-    </g:if>
-    <g:else>
-        <g:if test="${(qbetemplate.message != null)}">
-            <semui:message message="${qbetemplate.message}"/>
-        </g:if>
+        <div class="ui right floated buttons">
+            <g:link class="ui button" controller="search" action="index">Reset</g:link>
+            <button class="ui button black" type="submit" value="yes" name="search">Search</button>
+        </div>
 
-        <g:render template="qbeform"
-                  model="${[formdefn: qbetemplate.qbeConfig?.qbeForm, 'hide': (hide), cfg: qbetemplate.qbeConfig]}"/>
-
-        <g:if test="${recset && !init}">
-            <g:render template="qberesult"
-                      model="${[qbeConfig: qbetemplate.qbeConfig, rows: new_recset, offset: offset, jumpToPage: 'jumpToPage', det: det, page: page_current, page_max: page_total, baseClass: qbetemplate.baseclass]}"/>
-        </g:if>
-        <g:elseif test="${!init && !params.inline}">
-            <g:render template="qbeempty"/>
-        </g:elseif>
-        <g:else>
-            <semui:message>
-                <p>No results.</p>
-            </semui:message>
-        </g:else>
-    </g:else>
+        <br>
+        <br>
+    </g:form>
 </div>
 
-%{--	<g:if test="${displayobj != null}">
-	  <div class="col-md-7 desktop-only" >
-			<div class="panel panel-default quickview">
-				<div class="panel-heading">
-					<h3 class="panel-title">Quick View</h3>
-				</div>
-				<div class="panel-body">
-					<!--class="well"-->
-	
-					<nav class="navbar navbar-inverse">
-						<div class="container-fluid">
-							<div class="navbar-header">
-								<span class="navbar-brand">Record ${det} of ${reccount}</span>
-							</div>
-	
-							<ul class="nav navbar-nav navbar-right">
-								<li><a data-toggle="modal" data-cache="false"
-									title="Show History"
-									data-remote='<g:createLink controller="fwk" action="history" id="${displayobj.class.name}:${displayobj.id}"/>'
-									data-target="#modal"><i class="far fa-clock"></i></a></li>
-	
-								<li><a data-toggle="modal" data-cache="false"
-									title="Show Notes"
-									data-remote='<g:createLink controller="fwk" action="notes" id="${displayobj.class.name}:${displayobj.id}"/>'
-									data-target="#modal"><i class="fas fa-comment"></i></a></li>
-	
-								<!-- li>
-		                      <a data-toggle="modal" 
-		                         data-cache="false" 
-		                         title="Show File Attachments"
-		                         data-remote='<g:createLink controller="fwk" action="attachments" id="${displayobj.class.name}:${displayobj.id}"/>' 
-		                         data-target="#modal"><i class="glyphicon glyphicon-file"></i></a>
-		                    </li -->
-								
-								<g:if test="${ det == 1 }">
-									<li class="disabled">
-										<a class="disabled" href="#" ><i class="fas fa-chevron-left"></i></a>
-									</li>
-								</g:if>
-								<g:else>
-									<li><g:link controller="search" title="Previous Record"
-											action="index"
-											params="${params+['det':det-1, offset:((int)((det-2) / max))*max]}">
-											<i class="fas fa-chevron-left"></i>
-										</g:link></li>
-								</g:else>
-								
-								<g:if test="${ det == reccount }">
-									<li class="disabled">
-										<a class="disabled" href="#" ><i class="fas fa-chevron-right"></i></a>
-									</li>
-								</g:if>
-								<g:else>
-									<li><g:link controller="search" title="Next Record"
-										action="index"
-										params="${params+['det':det+1, offset:((int)(det / max))*max]}">
-										<i class="fas fa-chevron-right"></i>
-									</g:link></li>
-								</g:else>
-								
-								<li><g:link controller="search" title="Close"
-                    action="index"
-                    params="${params+['det':null]}">
-                    <i class="fa fa-times"></i>
-                  </g:link></li>
-							</ul>
-						</div>
-					</nav>
-					<g:if test="${displaytemplate != null}">
-						<g:if test="${displaytemplate.type=='staticgsp'}">
-							<h4><g:render template="/apptemplates/secondTemplates/component_heading" model="${[d: displayobj]}" /></h4>
-							<g:render template="/apptemplates/mainTemplates/${displaytemplate.rendername}"
-								model="${[d: displayobj, rd: refdata_properties, dtype: displayobjclassname_short]}" />
-	
-						</g:if>
-					</g:if>
-					<g:else>
-		                No template currently available for instances of ${displayobjclassname}
-						${displayobj as grails.converters.JSON}
-					</g:else>
-				</div>
-			</div>
-		</div>
-	</g:if>
-	<div id="modal" class="qmodal modal fade" role="dialog">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h3 class="modal-title">Modal header</h3>
-				</div>
-				<div class="modal-body"></div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				</div>
-			</div>
-		</div>
-	</div>--}%
+
+<g:if test="${resultsTotal == null}">
+    <semui:message>
+        <p>Please enter criteria above (* to search all)</p>
+    </semui:message>
+</g:if>
+<g:else>
+    <div class="ui header">Search returned ${resultsTotal}</div>
+
+%{--<p>
+    <g:each in="${['componentType']}" var="facet">
+        <g:each in="${params.list(facet)}" var="fv">
+            <span class="badge alert-info">${facet}:${fv == 'TitleInstancePackagePlatform' ? 'Titles' : fv}&nbsp; <g:link
+                    controller="${controller}" action="${action}" params="${removeFacet(params, facet, fv)}"><i
+                        class="fa fa-times"></i></g:link></span>
+        </g:each>
+    </g:each>
+</p>--}%
+
+    <div class="ui grid">
+        <div class="four wide column">
+            <div class="ui segment">
+                <g:each in="${facets}" var="facet">
+                    <div class="ui header">
+                        <g:message code="facet.so.${facet.key}" default="${facet.key}"/>
+                    </div>
+
+                    <div class="ui bulleted list">
+                        <g:each in="${facet.value.sort { it.display }}" var="v">
+                            <div class="item">
+                                <g:set var="fname" value="facet:${facet.key + ':' + v.term}"/>
+
+                                <g:if test="${params.list('componentType').contains(v.term.toString())}">
+                                    ${v.display} (${v.count})
+                                </g:if>
+                                <g:else>
+                                    <g:link controller="${controller}" action="${action}"
+                                            params="${addFacet(params, 'componentType', v.term)}">${v.display}</g:link> (${v.count})
+                                </g:else>
+                            </div>
+                        </g:each>
+                    </div>
+                </g:each>
+            </div></div>
+
+        <div class="twelve wide column">
+            <table class="ui selectable striped sortable celled table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th style="width:10%">Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <g:each in="${hits}" var="hit">
+                    <tr>
+                        <td>
+                            <g:if test="${hit.getSourceAsMap().uuid}">
+                                <g:link controller="resource" action="show" id="${hit.getSourceAsMap().uuid}">
+                                    ${hit.getSourceAsMap().name ?: "- Not Set -"}
+                                </g:link>
+                            </g:if>
+                            <g:else>
+                                ${hit.getSourceAsMap().name ?: "- Not Set -"}
+                            </g:else>
+                        </td>
+                        <td>${hit.getSourceAsMap().componentType == 'TitleInstancePackagePlatform' ? hit.getSourceAsMap().titleType : hit.getSourceAsMap().componentType}</td>
+                        <td>${hit.getSourceAsMap().status?.value ?: 'Unknown'}</td>
+                    </tr>
+                </g:each>
+                </tbody>
+            </table>
+
+            <semui:paginate controller="globalSearch" action="index" params="${params}" max="${max}"
+                            total="${resultsTotal ?: 0}"/>
+
+        </div>
+    </div>
+</g:else>
+
 </body>
 </html>

@@ -15,7 +15,7 @@
           <div class="input-group">
             <dt class="dt-label">Identifier Namespace</dt>
             <dd>
-              <gokb:simpleReferenceTypedown class="form-control" name="id" baseClass="org.gokb.cred.IdentifierNamespace" value="${namespace ? 'org.gokb.cred.IdentifierNamespace:' + namespace.id : ''}" filter1="all"/>
+              <semui:simpleReferenceDropdown class="form-control" name="id" baseClass="org.gokb.cred.IdentifierNamespace" value="${namespace ? 'org.gokb.cred.IdentifierNamespace:' + namespace.id : ''}" filter1="all"/>
             </dd>
             <dt class="dt-label">Conflict type</dt>
             <dd>

@@ -41,16 +41,16 @@
             <input type="hidden" name="__context" value="${d.getClassName()}:${d.id}"/>
             <input type="hidden" name="__property" value="curatoryGroups"/>
               <div class="input-group" style="width:100%;">
-                <gokb:simpleReferenceTypedown class="form-control" name="__relatedObject" baseClass="org.gokb.cred.CuratoryGroup" filter1="Current"/>
+                <semui:simpleReferenceDropdown class="form-control" name="__relatedObject" baseClass="org.gokb.cred.CuratoryGroup" filter1="Current"/>
                 <span class="input-group-btn" style="padding: 0px 10px;vertical-align:top;">
-                  <button type="submit" class="btn btn-default">Link</button>
+                  <button type="submit" class="ui black button">Link</button>
                 </span>
               </div>
-                <g:if test="${CuratoryGroup.isTypeCreatable()}">
+               %{-- <g:if test="${CuratoryGroup.isTypeCreatable()}">
                   <p>
                   <g:link controller="create" params="${["tmpl": "org.gokb.cred.CuratoryGroup"]}">New Curatory Group</g:link>
                   </p>
-                </g:if>
+                </g:if>--}%
           </td>
         </g:form>
       </tr>

@@ -18,7 +18,7 @@
 
         <sec:ifNotLoggedIn>
                 <div style="margin-top:10px;">
-                    <g:link controller="resource" action="show" class="fluid ui button black"
+                    <g:link controller="resource" action="showLogin" class="fluid ui button black"
                             id="${d.uuid}"><i class="edit icon"></i> Edit (Login required)</g:link>
                 </div>
         </sec:ifNotLoggedIn>

@@ -18,13 +18,13 @@
     </semui:tabs>
 
     <semui:tabsItemContent tab="titledetails">
-        <g:link class="display-inline" controller="search" action="index"
+        <g:link class="display-inline" controller="search" action="inlineSearch"
                 params="[qbe: 'g:tipps', qp_plat_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_plat', 'qp_plat_id'], qp_status: org.gokb.cred.RefdataValue.class.name + ':' + RDStore.KBC_STATUS_CURRENT.id]"
                 id="">Titles on this Platform</g:link>
     </semui:tabsItemContent>
 
     <semui:tabsItemContent tab="packages">
-        <g:link class="display-inline" controller="search" action="index"
+        <g:link class="display-inline" controller="search" action="inlineSearch"
                 params="[qbe: 'g:packages', qp_platform_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_platform', 'qp_platform_id']]"
                 id="">Packages on this Platform</g:link>
     </semui:tabsItemContent>
@@ -35,7 +35,7 @@
     </semui:tabsItemContent>
 
     <semui:tabsItemContent tab="statistic" class="active">
-        <div class="content we-inline-lists">
+        <div class="content wekb-inline-lists">
             <dl>
                 <dt class="control-label">
                     Statistics Format

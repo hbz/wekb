@@ -2,22 +2,22 @@
 <dl class="dl-horizontal">
 
   <dt><gokb:annotatedLabel owner="${d}" property="name">Curatory Group Name</gokb:annotatedLabel></dt>
-  <dd><gokb:xEditable  owner="${d}" field="name" /></dd>
+  <dd><semui:xEditable  owner="${d}" field="name" /></dd>
 
 	<dt><gokb:annotatedLabel owner="${d}" property="type">Type</gokb:annotatedLabel></dt>
-	<dd><gokb:xEditableRefData owner="${d}" field="type" config="${RCConstants.CURATORY_GROUP_TYPE}" /></dd>
+	<dd><semui:xEditableRefData owner="${d}" field="type" config="${RCConstants.CURATORY_GROUP_TYPE}" /></dd>
 
   <g:if test="${d.id != null}">
 
 	  <dt><gokb:annotatedLabel owner="${d}" property="status">Status</gokb:annotatedLabel></dt>
-	  <dd><gokb:xEditableRefData owner="${d}" field="status" config="${RCConstants.KBCOMPONENT_STATUS}" /></dd>
+	  <dd><semui:xEditableRefData owner="${d}" field="status" config="${RCConstants.KBCOMPONENT_STATUS}" /></dd>
 
 		<sec:ifAnyGranted roles="ROLE_ADMIN">
 			<dt>
 				<gokb:annotatedLabel owner="${d}" property="owner">Owner</gokb:annotatedLabel>
 			</dt>
 			<dd>
-				<gokb:manyToOneReferenceTypedown owner="${d}" field="owner" baseClass="org.gokb.cred.User">${d.owner?.username}</gokb:manyToOneReferenceTypedown>
+				<semui:xEditableManyToOne owner="${d}" field="owner" baseClass="org.gokb.cred.User">${d.owner?.username}</semui:xEditableManyToOne>
 			</dd>
 		</sec:ifAnyGranted>
 		<g:if test="${ user.isAdmin() || d.owner == user }">

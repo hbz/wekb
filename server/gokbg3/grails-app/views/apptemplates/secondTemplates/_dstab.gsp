@@ -92,7 +92,7 @@
                             <g:each in="${c['notes']}" var="note">
                               <li class="list-group-item">
                                 <g:if test="${!note.isDeleted && note.criterion.user.id == user.id}" >
-                                    <gokb:xEditable owner="${note}" field="note"/>
+                                    <semui:xEditable owner="${note}" field="note"/>
                                 </g:if>
                                 <g:else>
                                     ${note.note}

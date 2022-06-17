@@ -18,7 +18,7 @@
                         ${identifier.namespace.value}
                     </td>
                     <td>
-                            <gokb:xEditable owner="${identifier}" field="value" />
+                            <semui:xEditable owner="${identifier}" field="value" />
                             &nbsp;
                             <g:link controller="resource" action="show" id="${identifier.class.name}:${identifier.id}" title="Jump to resource"><i class="fas fa-eye"></i></g:link>
                     </td>

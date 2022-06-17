@@ -83,34 +83,9 @@ class HomeController {
   def profile() {
     def result = [:]
     User user = springSecurityService.currentUser
-
-    withFormat {
-      html {
-        result.user = user
-        result.curator = [user]
-        result.editable = true
-
-        result
-      }
-      json {
-        def cur_groups = []
-
-        user.curatoryGroups?.each { cg ->
-          cur_groups.add([name: cg.name, id: cg.id, uuid: cg.uuid])
-        }
-
-        result = ['id': user.id, 'username': user.username, 'displayName': user.displayName, 'email': user.email, 'curatoryGroups': cur_groups]
-        render result as JSON
-      }
-    }
-  }
-
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  def preferences() {
-    def result = [:]
-    User user = springSecurityService.currentUser
     result.user = user
     result.editable = true
+    result.curator = [user]
 
     result
   }

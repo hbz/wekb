@@ -3,7 +3,7 @@
 		<gokb:annotatedLabel owner="${d}" property="shortcode"><g:message code="gokb.appname" default="we:kb"/> Shortcode</gokb:annotatedLabel>
 	</dt>
 	<dd>
-		<gokb:xEditable  owner="${d}" field="shortcode" />
+		<semui:xEditable  owner="${d}" field="shortcode" />
 	</dd>
 
 	<g:if test="${ d.ids.size() > 0 }">
@@ -26,7 +26,7 @@
 				${ d.getNiceName() } Name</gokb:annotatedLabel>
 		</dt>
 		<dd>
-			<gokb:xEditable  owner="${d}" field="name" />
+			<semui:xEditable  owner="${d}" field="name" />
 		</dd>
 	</g:if>
 

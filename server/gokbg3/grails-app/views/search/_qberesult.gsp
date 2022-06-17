@@ -198,7 +198,7 @@
                     %{--<g:if test="${request.user?.showQuickView?.value=='Yes'}">
                       <td>
                         <g:link class="btn btn-xs btn-default pull-right desktop-only" controller="search"
-                          action="index" params="${params+['det':counter]}"><i class="fa fa-eye" ></i></g:link>
+                          action="componentSearch" params="${params+['det':counter]}"><i class="fa fa-eye" ></i></g:link>
                       </td>
                     </g:if>--}%
                     </tr>

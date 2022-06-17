@@ -2,7 +2,7 @@
 <dl class="dl-horizontal">
 
   <dt><gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel></dt>
-  <dd><gokb:xEditable  owner="${d}" field="displayName" /></dd>
+  <dd><semui:xEditable  owner="${d}" field="displayName" /></dd>
 
   <g:if test="${d.id != null}">
   <g:set var="userIsOrgAdmin" value="${d.members.find { it.party == request.user && it.role?.value == 'Administrator' && it.status?.value == 'Approved'}}" />
@@ -25,13 +25,13 @@
             <td>${m.party}</td>
             <td>
               <g:if test="${ user.isAdmin() || userIsOrgAdmin }">
-                <gokb:xEditableRefData owner="${m}" field="status" config="${RCConstants.MEMBERSHIP_STATUS}" />
+                <semui:xEditableRefData owner="${m}" field="status" config="${RCConstants.MEMBERSHIP_STATUS}" />
               </g:if>
               <g:else>${m.status?.value}</g:else>
             </td>
             <td>
               <g:if test="${ user.isAdmin() || userIsOrgAdmin }">
-                <gokb:xEditableRefData owner="${m}" field="role" config="${RCConstants.MEMBERSHIP_ROLE}" />
+                <semui:xEditableRefData owner="${m}" field="role" config="${RCConstants.MEMBERSHIP_ROLE}" />
               </g:if>
               <g:else>${m.role?.value}</g:else>
             </td>
@@ -57,18 +57,18 @@
             <input type="hidden" name="__newObjectClass" value="org.gokb.cred.UserOrganisationMembership"/>
             <tr>
               <td>
-                <gokb:simpleReferenceTypedown class="form-control"
+                <semui:simpleReferenceDropdown class="form-control"
                                           name="party"
                                           baseClass="org.gokb.cred.User"/>
               </td>
               <td>
-                <gokb:simpleReferenceTypedown class="form-control"
+                <semui:simpleReferenceDropdown class="form-control"
                                           name="status"
                                           baseClass="org.gokb.cred.RefdataValue"
                                           filter1="${RCConstants.MEMBERSHIP_STATUS}"/>
               </td>
               <td>
-                <gokb:simpleReferenceTypedown class="form-control"
+                <semui:simpleReferenceDropdown class="form-control"
                                           name="role"
                                           baseClass="org.gokb.cred.RefdataValue"
                                           filter1="${RCConstants.MEMBERSHIP_ROLE}"/>

@@ -53,7 +53,7 @@
                 <input type="hidden" name="__addToColl" value="additionalProperties"/>
                 <dt class="dt-label">Additional Property Definition</dt>
                 <dd>
-                <gokb:simpleReferenceTypedown class="form-control" name="propertyDefn"
+                <semui:simpleReferenceDropdown class="form-control" name="propertyDefn"
                                                   baseClass="org.gokb.cred.AdditionalPropertyDefinition"
                                                   editable="${editable}"/>
                 </dd>

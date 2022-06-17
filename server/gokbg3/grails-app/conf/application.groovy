@@ -26,6 +26,9 @@ grails {
 // database migration plugin
 grails.plugin.databasemigration.updateOnStart = true
 
+grails.plugin.springsecurity.successHandler.useReferer = true
+grails.plugin.springsecurity.successHandler.alwaysUseDefault= false
+
 // Added by the Spring Security Core plugin:
 grails.plugin.springsecurity.userLookup.userDomainClassName = 'org.gokb.cred.User'
 grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'org.gokb.cred.UserRole'
@@ -133,7 +136,7 @@ grails.plugin.springsecurity.controllerAnnotations.staticRules = [
 
   [pattern: '/search/**',          access: ['permitAll']],
   [pattern: '/resource/**',        access: ['permitAll']],
-  [pattern: '/globalSearch/**',    access: ['permitAll']]
+  [pattern: '/ajaxJson/**',    access: ['permitAll']]
 ]
 
 

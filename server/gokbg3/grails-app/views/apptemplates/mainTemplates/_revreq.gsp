@@ -16,13 +16,13 @@
           <gokb:annotatedLabel owner="${d}" property="cause">Cause</gokb:annotatedLabel>
         </dt>
         <dd style="max-width:60%">
-          <gokb:xEditable  owner="${d}" field="descriptionOfCause" />
+          <semui:xEditable  owner="${d}" field="descriptionOfCause" />
         </dd>
         <dt>
           <gokb:annotatedLabel owner="${d}" property="reviewRequest">Review Request</gokb:annotatedLabel>
         </dt>
         <dd>
-          <gokb:xEditable  owner="${d}" field="reviewRequest" />
+          <semui:xEditable  owner="${d}" field="reviewRequest" />
         </dd>
      </dl>
 <div id="content">
@@ -36,7 +36,7 @@
           <gokb:annotatedLabel owner="${d}" property="status">Request Status</gokb:annotatedLabel>
         </dt>
         <dd>
-          <gokb:xEditableRefData owner="${d}" field="status"
+          <semui:xEditableRefData owner="${d}" field="status"
             config="${RCConstants.REVIEW_REQUEST_STATUS}" />
         </dd>
 
@@ -45,10 +45,10 @@
         </dt>
 
         <dd>
-          <gokb:manyToOneReferenceTypedown owner="${d}"
+          <semui:xEditableManyToOne owner="${d}"
             field="componentToReview" baseClass="org.gokb.cred.KBComponent">
             ${d.componentToReview?.displayName?:''}
-          </gokb:manyToOneReferenceTypedown>
+          </semui:xEditableManyToOne>
         </dd>
         <g:if test="${d.additional?.otherComponents}">
 

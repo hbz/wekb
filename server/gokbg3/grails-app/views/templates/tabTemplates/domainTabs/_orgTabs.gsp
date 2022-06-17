@@ -24,18 +24,18 @@
     <g:render template="/templates/tabTemplates/variantNamesTab" model="${[d: d, showActions: true]}"/>
 
     <semui:tabsItemContent tab="platforms">
-            <g:link class="display-inline" controller="search" action="index"
+            <g:link class="display-inline" controller="search" action="inlineSearch"
                     params="[qbe: 'g:platforms', refOid: d.getLogEntityId(), inline: true, qp_provider_id: d.id, hide: ['qp_provider', 'qp_provider_id']]"
                     id="">Titles published</g:link>
     </semui:tabsItemContent>
     <semui:tabsItemContent tab="titles">
-            <g:link class="display-inline" controller="search" action="index"
+            <g:link class="display-inline" controller="search" action="inlineSearch"
                     params="[qbe: 'g:tipps', refOid: d.getLogEntityId(), inline: true, qp_provider_id: d.id, hide: ['qp_provider', 'qp_provider_id']]"
                     id="">Titles published</g:link>
     </semui:tabsItemContent>
 
     <semui:tabsItemContent tab="packages">
-            <g:link class="display-inline" controller="search" action="index"
+            <g:link class="display-inline" controller="search" action="inlineSearch"
                     params="[qbe: 'g:packages', refOid: d.getLogEntityId(), inline: true, qp_provider_id: d.id, hide: ['qp_provider', 'qp_provider_id']]"
                     id="">Packages on this Platform</g:link>
     </semui:tabsItemContent>

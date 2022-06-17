@@ -10,7 +10,8 @@
     <meta name="author" content="">
     <link rel="shortcut icon" href="${resource(dir: 'images', file: 'favicon.ico')}" type="image/x-icon">
 
-    <g:javascript> var globalSearchUrl="${g.createLink(controller:'globalSearch', action:'index')}";</g:javascript>
+    <g:javascript> var spotlightSearchUrl="${g.createLink(controller: 'search', action: 'spotlightSearch')}";</g:javascript>
+    <g:javascript> var ajaxLookUp="${g.createLink(controller: 'ajaxJson', action: 'lookup')}";</g:javascript>
 
     <asset:javascript src="wekb.js"/>
     <asset:stylesheet src="wekb.css"/>
@@ -27,7 +28,7 @@
 
 <div class="ui top fixed inverted stackable menu">
     <div class="ui container">
-        <div class="ui category search item inverted" style="flex-grow:1;">
+        <div class="ui category search item inverted" id="spotlightSearch" style="flex-grow:1;">
             <div class="ui inverted icon input">
                 <input class="prompt" type="text" placeholder="Search for Packages, Titles, Providers, Platforms...">
                 <i class="search link icon"></i>
@@ -36,25 +37,34 @@
             <div class="results"></div>
         </div>
 
-        <div class="right menu">
-            <g:if test="${grailsApplication.config.gokb.ygorUrl}">
-                <div class="item">
-                    <a class="ui inverted button" href="${grailsApplication.config.gokb.ygorUrl}"
-                       target="_blank">Ygor</a>
+        <sec:ifLoggedIn>
+            <div class="ui dropdown icon item">
+                <i class="ui icon user"></i>&nbsp; ${springSecurityService.currentUser.displayName ?: springSecurityService.currentUser.username}
+                <i class="dropdown icon"></i>
+                <div class="menu">
+                    <g:link controller="home" action="profile" class="item">My Profile & Preferences</g:link>
                 </div>
-            </g:if>
+            </div>
+
+            <div class="item">
+                <g:link class="ui inverted button" controller="logout"><i class="sign-out icon"></i>Logout</g:link>
+            </div>
+        </sec:ifLoggedIn>
+
+        <div class="right menu">
             <sec:ifNotLoggedIn>
                 <div class="item">
                     <g:link class="ui inverted button" controller="home" action="index"><i
                             class="sign-in icon"></i>Login</g:link>
                 </div>
             </sec:ifNotLoggedIn>
-
-            <sec:ifLoggedIn>
+            <g:if test="${grailsApplication.config.gokb.ygorUrl}">
                 <div class="item">
-                    <g:link class="ui inverted button" controller="logout"><i class="sign-out icon"></i>Logout</g:link>
+                    <a class="ui inverted button" href="${grailsApplication.config.gokb.ygorUrl}"
+                       target="_blank">Ygor</a>
                 </div>
-            </sec:ifLoggedIn>
+            </g:if>
+
         </div>
     </div>
 </div>
@@ -65,21 +75,30 @@
     </g:link>
 
 
+    %{--<div class="item">
+        <g:link controller="public" action="index"><i class="ui icon home"></i> Home</g:link>
+    </div>--}%
+
     <div class="item">
         <div class="header">Search</div>
 
         <div class="menu">
-            <g:link class="item" controller="search" action="index" params="[qbe: 'g:packages']">Packages</g:link>
-            <g:link class="item" controller="search" action="index" params="[qbe: 'g:platforms']">Platforms</g:link>
-            <g:link class="item" controller="search" action="index" params="[qbe: 'g:orgs']">Providers</g:link>
-            <g:link class="item" controller="search" action="index" params="[qbe: 'g:tipps']">Titles</g:link>
+            <g:link class="item" controller="search" action="index">All Components</g:link>
+            <g:link class="item" controller="search" action="componentSearch"
+                    params="[qbe: 'g:packages']">Packages</g:link>
+            <g:link class="item" controller="search" action="componentSearch"
+                    params="[qbe: 'g:platforms']">Platforms</g:link>
+            <g:link class="item" controller="search" action="componentSearch"
+                    params="[qbe: 'g:orgs']">Providers</g:link>
+            <g:link class="item" controller="search" action="componentSearch" params="[qbe: 'g:tipps']">Titles</g:link>
         </div>
 
         <div class="menu">
-            <g:link class="item" controller="search" action="index"
+            <g:link class="item" controller="search" action="componentSearch"
                     params="[qbe: 'g:curatoryGroups']">Curatory Groups</g:link>
-            <g:link class="item" controller="search" action="index" params="[qbe: 'g:sources']">Sources</g:link>
-            <g:link class="item" controller="search" action="index"
+            <g:link class="item" controller="search" action="componentSearch"
+                    params="[qbe: 'g:sources']">Sources</g:link>
+            <g:link class="item" controller="search" action="componentSearch"
                     params="[qbe: 'g:identifiers']">Identifiers</g:link>
 
         </div>
@@ -191,7 +210,8 @@
     <g:layoutBody/>
 
 </main>
-
+<br>
+<br>
 
 <g:render template="/layouts/footer_semui"/>
 

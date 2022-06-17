@@ -11,7 +11,6 @@ class PreferencesInterceptor {
     match(controller: 'file')
     match(controller: 'folderUpload')
     match(controller: 'fwk')
-    match(controller: 'globalSearch')
     match(controller: 'group')
     match(controller: 'home')
     match(controller: 'ingest')
