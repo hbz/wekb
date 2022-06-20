@@ -3,6 +3,7 @@ package org.gokb
 import grails.converters.JSON
 import grails.converters.XML
 import grails.plugin.springsecurity.SpringSecurityService
+import grails.plugin.springsecurity.SpringSecurityUtils
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.client.RequestOptions
@@ -304,7 +305,7 @@ class SearchController {
         def searchResult = [:]
         List allowedSearch = ["g:tipps", "g:platforms", "g:packages", "g:orgs", "g:tippsOfPkg", "g:sources", "g:curatoryGroups", "g:identifiers"]
 
-        if ((params.qbe in allowedSearch) || (springSecurityService.isLoggedIn() && springSecurityService.ifAnyGranted("ROLE_ADMIN"))) {
+        if ((params.qbe in allowedSearch) || (springSecurityService.isLoggedIn() && SpringSecurityUtils.ifAnyGranted("ROLE_ADMIN"))) {
             searchResult = searchService.search(user, searchResult, params, response.format)
 
             log.debug("Search completed after ${System.currentTimeMillis() - start_time}");
@@ -325,7 +326,7 @@ class SearchController {
         def searchResult = [:]
         List allowedSearch = ["g:tipps", "g:platforms", "g:packages", "g:orgs", "g:tippsOfPkg", "g:sources", "g:curatoryGroups", "g:identifiers"]
 
-        if ((params.qbe in allowedSearch) || (springSecurityService.isLoggedIn() && springSecurityService.ifAnyGranted("ROLE_ADMIN"))) {
+        if ((params.qbe in allowedSearch) || (springSecurityService.isLoggedIn() && SpringSecurityUtils.ifAnyGranted("ROLE_ADMIN"))) {
             searchResult = searchService.search(user, searchResult, params, response.format)
 
             log.debug("Search completed after ${System.currentTimeMillis() - start_time}");

@@ -3,6 +3,7 @@ package org.gokb
 import com.k_int.apis.SecurityApi
 import de.wekb.helper.RCConstants
 import grails.converters.JSON
+import grails.plugin.springsecurity.SpringSecurityUtils
 import org.apache.commons.lang.RandomStringUtils
 import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.security.access.annotation.Secured;
@@ -40,37 +41,47 @@ class CreateController {
     def result=[:]
     User user = springSecurityService.currentUser
 
-    // Create a new empty instance of the object to create
-    result.newclassname=params.tmpl
-    if ( params.tmpl ) {
-      def newclass = grailsApplication.getArtefact("Domain",result.newclassname)
-      if ( newclass ) {
-        log.debug("Got new class")
-        try {
-          result.displayobj = newclass.newInstance()
-          log.debug("Got new instance");
-          result.editable = SecurityApi.isTypeCreatable(result.displayobj.getClass())
+    List allowedToCreate = ['org.gokb.cred.Org',
+                              'org.gokb.cred.Package',
+                              'org.gokb.cred.Platform',
+                              'org.gokb.cred.Source',
+                              'org.gokb.cred.TitleInstancePackagePlatform']
 
-          if ( params.tmpl ) {
-            result.displaytemplate = displayTemplateService.getTemplateInfo(params.tmpl)
+    if ((params.tmpl in allowedToCreate) || SpringSecurityUtils.ifAnyGranted("ROLE_ADMIN")) {
 
-            /* Extras needed for the refdata */
-            result.refdata_properties = classExaminationService.getRefdataPropertyNames(result.newclassname)
-            result.displayobjclassname_short = result.displayobj.class.simpleName
-            result.isComponent = (result.displayobj instanceof KBComponent)
+      // Create a new empty instance of the object to create
+      result.newclassname = params.tmpl
+      if (params.tmpl) {
+        def newclass = grailsApplication.getArtefact("Domain", result.newclassname)
+        if (newclass) {
+          log.debug("Got new class")
+          try {
+            result.displayobj = newclass.newInstance()
+            log.debug("Got new instance");
+            result.editable = SecurityApi.isTypeCreatable(result.displayobj.getClass())
+
+            if (params.tmpl) {
+              result.displaytemplate = displayTemplateService.getTemplateInfo(params.tmpl)
+
+              /* Extras needed for the refdata */
+              result.refdata_properties = classExaminationService.getRefdataPropertyNames(result.newclassname)
+              result.displayobjclassname_short = result.displayobj.class.simpleName
+              result.isComponent = (result.displayobj instanceof KBComponent)
+            }
           }
+          catch (Exception e) {
+            log.error("Problem", e);
+          }
+        } else {
+          log.info("No Permission for ${result.newclassname} in CreateControler::index... ${params}");
+          response.sendError(401)
+          return
         }
-        catch ( Exception e ) {
-          log.error("Problem",e);
-        }
-      }else {
-        log.info("No Permission for ${result.newclassname} in CreateControler::index... ${params}");
-        response.sendError(401)
-        return
       }
-    }
 
-    log.debug("index:: return");
+    }else{
+      flash.error = "Your are not allowed to create this component!"
+    }
     result
   }
 

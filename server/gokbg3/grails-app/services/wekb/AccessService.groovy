@@ -17,32 +17,39 @@ class AccessService {
     boolean checkEditableObject(Object o, GrailsParameterMap grailsParameterMap) {
         boolean editable = false
 
+        List allowedToEditable = ['Identifier',
+                                  'Org',
+                                  'Package',
+                                  'Platform',
+                                  'Source',
+                                  'TitleInstancePackagePlatform']
+
         if (!(o.respondsTo('isSystemComponent') && o.isSystemComponent())) {
             def curatedObj = null
             if(o instanceof Identifier){
-                curatedObj = o.reference.respondsTo("getCuratoryGroups") ? o.reference : ( o.reference.hasProperty('pkg') ? o.reference.pkg : false )
+                curatedObj = o.reference.respondsTo("getCuratoryGroups") ? o.reference : ( o.reference.hasProperty('pkg') ? o.reference.pkg : null )
             }else if(o instanceof Contact){
                 curatedObj = o.org
             }
             else {
-                curatedObj = o.respondsTo("getCuratoryGroups") ? o : ( o.hasProperty('pkg') ? o.pkg : false )
+                curatedObj = o.respondsTo("getCuratoryGroups") ? o : ( o.hasProperty('pkg') ? o.pkg : null )
             }
 
             User user = springSecurityService.currentUser
-            if (curatedObj && curatedObj.curatoryGroups && curatedObj.niceName != 'User') {
+            if (curatedObj && curatedObj.curatoryGroups && !(curatedObj instanceof User)) {
 
                 if(user.curatoryGroups?.id.intersect(curatedObj.curatoryGroups?.id).size() > 0)
                 {
-                    editable = SecurityApi.isTypeEditable(o.getClass(), true) ?: (grailsParameterMap.curationOverride == 'true' && user.isAdmin())
+                    editable = true //SecurityApi.isTypeEditable(o.getClass(), true) ?: (grailsParameterMap.curationOverride == 'true' && user.isAdmin())
                 }else {
-                    editable = SpringSecurityUtils.ifAnyGranted('ROLE_SUPERUSER') ?: false
+                    editable = (grailsParameterMap.curationOverride == 'true' && user.isAdmin()) //SpringSecurityUtils.ifAnyGranted('ROLE_SUPERUSER') ?: (grailsParameterMap.curationOverride == 'true' && user.isAdmin())
                 }
             }else {
                 if(o instanceof CuratoryGroup && o.id in user.curatoryGroups?.id){
-                    editable = SecurityApi.isTypeEditable(o.getClass(), true)
+                    editable = SpringSecurityUtils.ifAnyGranted('ROLE_ADMIN')
                 }
                 else{
-                    editable = SpringSecurityUtils.ifAnyGranted('ROLE_SUPERUSER') ?: false
+                    editable = SpringSecurityUtils.ifAnyGranted('ROLE_SUPERUSER')
                 }
             }
         }

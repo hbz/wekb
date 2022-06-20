@@ -2,19 +2,19 @@
 <g:if test="${d}">
 
     <semui:tabs>
-        <semui:tabsItemWithoutLink tab="currentTipps" counts="${currentTitleCount}"
+        <semui:tabsItemWithoutLink tab="currentTipps" counts="${d.getCurrentTippCount()}"
                                    class="${(params.tab == null || params.tab == 'currentTipps') ? 'active' : ''}">
             Current Titles
         </semui:tabsItemWithoutLink>
-        <semui:tabsItemWithoutLink tab="retiredTipps" counts="${retiredTitleCount}"
+        <semui:tabsItemWithoutLink tab="retiredTipps" counts="${d.getRetiredTippCount()}"
                                    class="${params.tab == 'retiredTipps' ? 'active' : ''}">
             Retired Titles
         </semui:tabsItemWithoutLink>
-        <semui:tabsItemWithoutLink tab="expectedTipps" counts="${expectedTitleCount}"
+        <semui:tabsItemWithoutLink tab="expectedTipps" counts="${d.getExpectedTippCount()}"
                                    class="${params.tab == 'expectedTipps' ? 'active' : ''}">
             Expected Titles
         </semui:tabsItemWithoutLink>
-        <semui:tabsItemWithoutLink tab="deletedTipps" counts="${deletedTitleCount}"
+        <semui:tabsItemWithoutLink tab="deletedTipps" counts="${d.getDeletedTippCount()}"
                                    class="${params.tab == 'deletedTipps' ? 'active' : ''}">
             Deleted Titles
         </semui:tabsItemWithoutLink>
@@ -32,66 +32,52 @@
 
     <semui:tabsItemContent tab="currentTipps" class="${(params.tab == null || params.tab == 'currentTipps') ? 'active' : ''}">
 
-        <div class="ui right floated buttons">
-            <g:link controller="search" action="componentSearch" class="ui button black"
-                    params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: RefdataValue.class.name + ':' + RDStore.KBC_STATUS_CURRENT.id]"
-                    id="">Search View</g:link>
+        <div class="content">
+
+            <g:link class="display-inline" controller="search" action="inlineSearch"
+                    params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: RefdataValue.class.name + ':' + RDStore.KBC_STATUS_CURRENT.id]"
+                    id="">Packages on this Source</g:link>
+
         </div>
-
-        <br>
-        <br>
-
-        <g:render template="/templates/tabTemplates/tippsTab"
-                  model="[tippsCount: currentTitleCount, tipps: currentTipps, tab: 'currentTipps']"/>
 
     </semui:tabsItemContent>
 
 
     <semui:tabsItemContent tab="retiredTipps" class="${params.tab == 'retiredTipps' ? 'active' : ''}">
-        <div class="ui right floated buttons">
-            <g:link controller="search" action="componentSearch" class="ui button black"
-                    params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: RefdataValue.class.name + ':' + RDStore.KBC_STATUS_RETIRED.id]"
-                    id="">Search View</g:link>
+
+        <div class="content">
+
+            <g:link class="display-inline" controller="search" action="inlineSearch"
+                    params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: RefdataValue.class.name + ':' + RDStore.KBC_STATUS_RETIRED.id]"
+                    id="">Packages on this Source</g:link>
+
         </div>
-
-        <br>
-        <br>
-
-        <g:render template="/templates/tabTemplates/tippsTab"
-                  model="[tippsCount: retiredTitleCount, tipps: retiredTipps, tab: 'retiredTipps']"/>
 
     </semui:tabsItemContent>
 
 
     <semui:tabsItemContent tab="expectedTipps" class="${params.tab == 'expectedTipps' ? 'active' : ''}">
-        <div class="ui right floated buttons">
-            <g:link controller="search" action="componentSearch" class="ui button black"
-                    params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: RefdataValue.class.name + ':' + RDStore.KBC_STATUS_EXPECTED.id]"
-                    id="">Search View</g:link>
+
+        <div class="content">
+
+            <g:link class="display-inline" controller="search" action="inlineSearch"
+                    params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: RefdataValue.class.name + ':' + RDStore.KBC_STATUS_EXPECTED.id]"
+                    id="">Packages on this Source</g:link>
+
         </div>
-
-        <br>
-        <br>
-
-        <g:render template="/templates/tabTemplates/tippsTab"
-                  model="[tippsCount: expectedTitleCount, tipps: expectedTipps, tab: 'expectedTipps']"/>
 
     </semui:tabsItemContent>
 
 
     <semui:tabsItemContent tab="deletedTipps" class="${params.tab == 'deletedTipps' ? 'active' : ''}">
 
-        <div class="ui right floated buttons">
-            <g:link controller="search" action="componentSearch" class="ui button black"
-                    params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: RefdataValue.class.name + ':' + RDStore.KBC_STATUS_DELETED.id]"
-                    id="">Search View</g:link>
+        <div class="content">
+
+            <g:link class="display-inline" controller="search" action="inlineSearch"
+                    params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: RefdataValue.class.name + ':' + RDStore.KBC_STATUS_DELETED.id]"
+                    id="">Packages on this Source</g:link>
+
         </div>
-
-        <br>
-        <br>
-
-        <g:render template="/templates/tabTemplates/tippsTab"
-                  model="[tippsCount: deletedTitleCount, tipps: deletedTipps, tab: 'deletedTipps']"/>
 
     </semui:tabsItemContent>
 

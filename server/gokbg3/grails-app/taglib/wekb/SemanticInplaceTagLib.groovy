@@ -97,6 +97,9 @@ class SemanticInplaceTagLib {
 
             // Default the format.
 
+            String default_empty = "Edit"
+            String emptyText = attrs.emptytext ? " data-emptytext=\"${attrs.emptytext}\"" : " data-emptytext=\"${default_empty}\""
+
             out << "<span id=\"${id}\" class=\"xEditableValue ${attrs.class ?: ''} ${attrs.type == 'date' ? 'date' : ''}\""
 
             if (attrs.inputclass) {
@@ -110,10 +113,10 @@ class SemanticInplaceTagLib {
         out << " data-tpl=\"${'<textarea wrap=\'off\'></textarea>'.encodeAsHTML()}\""
       }*/
 
-            def data_link = null
+            def update_link = null
             switch (attrs.type) {
                 case 'date':
-                    data_link = createLink(controller: 'ajaxSupport', action: 'editableSetValue', params: [type: 'date'])
+                    update_link = createLink(controller: 'ajaxSupport', action: 'editableSetValue', params: [type: 'date', curationOverride: params.curationOverride])
                     out << " data-type='date' data-inputclass='form-control form-date' data-datepicker='{minYear: 1500, smartDays: true, clearBtn: true}' data-viewformat='yyyy-mm-dd'"
                     def dv = attrs."data-value"
 
@@ -132,25 +135,31 @@ class SemanticInplaceTagLib {
 
                     break;
                 default:
-                    data_link = createLink(controller: 'ajaxSupport', action: 'editableSetValue')
-                    out << " data-type=\"${attrs.type ?: 'textarea'}\""
+                    update_link = createLink(controller: 'ajaxSupport', action: 'editableSetValue', params: [curationOverride: params.curationOverride])
+                    out << " data-type=\"${attrs.type ?: 'text'}\""
                     break;
             }
 
-            out << " data-url=\"${data_link}\""
+            out << " data-url=\"${update_link}\" "
+
+            if (attrs.validation) {
+                out << " data-validation=\"${attrs.validation}\" "
+            }
+            if (attrs.maxlength) {
+                out << " data-maxlength=\"${attrs.maxlength}\" "
+            }
+
             out << ">"
 
             if (body) {
                 out << body()
             } else {
                 String content = (attrs.owner?."${attrs.field}" ? renderObjectValue(attrs.owner."${attrs.field}") : "")
-                out << "<span class='readonly${content ? '' : ' editable-empty'}' title='Read Only' >"
                 if(content){
                     out << content
                 }else {
-                    out << "Empty"
+                    out << ""
                 }
-                out << "</span>"
             }
             out << "</span>"
         } else {
@@ -159,13 +168,11 @@ class SemanticInplaceTagLib {
                 out << body()
             } else {
                 String content = (attrs.owner?."${attrs.field}" ? renderObjectValue(attrs.owner."${attrs.field}") : "")
-                out << "<span class='readonly${content ? '' : ' editable-empty'}' title='Read Only' >"
                 if(content){
                     out << content
                 }else {
                     out << "Empty"
                 }
-                out << "</span>"
             }
             out << '</span>'
         }
@@ -177,7 +184,7 @@ class SemanticInplaceTagLib {
                 out << attrs.owner[attrs.field]
                 out << '" href="'
                 out << url
-                out << '" target="_blank"><i class="share square icon"></i></a>'
+                out << '" target="_blank"><i class="external alternate icon"></i></a>'
             }
         }
     }
@@ -195,12 +202,15 @@ class SemanticInplaceTagLib {
 
             def config = attrs.remove("config")
             def data_link = createLink(controller: 'ajaxSupport', action: 'getRefdata', params: [id: config, format: 'json'])
-            def update_link = createLink(controller: 'ajaxSupport', action: 'genericSetRel')
+            def update_link = createLink(controller: 'ajaxSupport', action: 'genericSetRel', params: [curationOverride: params.curationOverride])
             def oid = owner.id != null ? "${owner.class.name}:${owner.id}" : ''
             def id = attrs.remove("id") ?: "${oid}:${attrs.field}"
             def type = attrs.remove("type") ?: "select"
             def field = attrs.remove("field")
             attrs['class'] = ["xEditableManyToOne"]
+
+            String default_empty = "Edit"
+            String emptyText = attrs.emptytext ? " data-emptytext=\"${attrs.emptytext}\"" : " data-emptytext=\"${default_empty}\""
 
             out << "<span>"
 
@@ -245,7 +255,7 @@ class SemanticInplaceTagLib {
                 out << body()
             } else {
                 def content = (attrs.owner?."${attrs.field}" ? renderObjectValue(attrs.owner."${attrs.field}") : "")
-                out << "<span class='readonly${content ? '' : ' editable-empty'}' title='Read Only' >${content ?: 'Empty'}</span>"
+                out << "${content ?: 'Empty'}"
             }
         }
 
@@ -268,16 +278,20 @@ class SemanticInplaceTagLib {
             def owner = ClassUtils.deproxy(attrs.remove("owner"))
 
             def data_link = createLink(controller: 'ajaxSupport', action: 'getRefdata', params: [id: 'boolean', format: 'json'])
-            def update_link = createLink(controller: 'ajaxSupport', action: 'genericSetRel', params: [type: 'boolean'])
+            def update_link = createLink(controller: 'ajaxSupport', action: 'genericSetRel', params: [type: 'boolean', curationOverride: params.curationOverride])
             def oid = owner.id != null ? "${owner.class.name}:${owner.id}" : ''
             def id = attrs.remove("id") ?: "${oid}:${attrs.field}"
             def field = attrs.remove("field")
             attrs['class'] = ["xEditableManyToOne"]
 
+            String default_empty = "Edit"
+            String emptyText = attrs.emptytext ? " data-emptytext=\"${attrs.emptytext}\"" : " data-emptytext=\"${default_empty}\""
+
             out << "<span>"
 
             // Output an editable link
             out << "<span id=\"${id}\" "
+
             if ((owner != null) && (owner.id != null)) {
                 out << "data-pk=\"${oid}\" "
             }
@@ -374,15 +388,23 @@ class SemanticInplaceTagLib {
 
     def simpleReferenceDropdown = { attrs, body ->
 
-        out << '<div class="ui fluid search selection dropdown simpleReferenceDropdown">'
-        out << "<input type=\"hidden\" value=\"${attrs.value ?: ''}\" name=\"${attrs.name}\" data-domain=\"${attrs.baseClass}\" "
+        out << '<div class="ui fluid search selection dropdown simpleReferenceDropdown '
+
+        if(attrs.class)
+            out << attrs.class
+
+        out << '"'
+
+        if (attrs.style) {
+            out << "style=\"${attrs.style}\" "
+        }
 
         if (attrs.id) {
             out << "id=\"${attrs.id}\" "
         }
-        if (attrs.style) {
-            out << "style=\"${attrs.style}\" "
-        }
+        out << "/>"
+
+        out << "<input type=\"hidden\" value=\"${attrs.value ?: ''}\" name=\"${attrs.name}\" data-domain=\"${attrs.baseClass}\" "
 
         if ((attrs.value != null) && (attrs.value.length() > 0)) {
             def o = genericOIDService.resolveOID2(attrs.value)
@@ -400,11 +422,8 @@ class SemanticInplaceTagLib {
         if (attrs.filter1) {
             out << "data-filter1=\"${attrs.filter1}\" "
         }
-
-        if(attrs.class)
-        out << "class=\" ${attrs.class}\" />"
-
-        out << '<i class="remove icon"></i>'
+        out << "/>"
+        //out << '<i class="remove icon"></i>'
         out << '<i class="dropdown icon"></i>'
         out << '<div class="default text">Search for...</div>'
         out << '<div class="menu"></div>'
@@ -422,7 +441,7 @@ class SemanticInplaceTagLib {
 
             def oid = attrs.owner.id != null ? "${owner.class.name}:${owner.id}" : ''
             def id = attrs.id ?: "${oid ?: owner.class.name}:${attrs.field}"
-            def update_link = createLink(controller: 'ajaxSupport', action: 'genericSetRel')
+            def update_link = createLink(controller: 'ajaxSupport', action: 'genericSetRel', params: [curationOverride: params.curationOverride])
 
             String data_link = createLink(
                     controller:'ajaxJson',
@@ -463,27 +482,25 @@ class SemanticInplaceTagLib {
                     if(content){
                         out << content
                     }else {
-                        out << "Empty"
+                        out << ""
                     }
                 }
                 out << "</a>"
             }
 
           if (follow_link) {
-                out << ' &nbsp; <a href="' + follow_link + '" title="Jump to resource" class="ui icon mini black button"><i class="ui share icon"></i></a>'
+                out << ' &nbsp; <a href="' + follow_link + '" title="Jump to resource"><i class="ui share square icon"></i></a>'
             }
         } else {
             if (body) {
                 out << body()
             } else {
                 String content = (attrs.owner?."${attrs.field}" ? renderObjectValue(attrs.owner."${attrs.field}") : "")
-                out << "<span class='readonly${content ? '' : ' editable-empty'}' title='Read Only' >"
                 if(content){
                     out << g.link(content, controller: 'resource', action: 'show', id: attrs.owner."${attrs.field}".uuid)
                 }else {
                     out << "Empty"
                 }
-                out << "</span>"
             }
         }
     }

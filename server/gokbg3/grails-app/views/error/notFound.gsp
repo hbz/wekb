@@ -3,7 +3,6 @@
 <head>
     <meta name="layout" content="public"/>
     <title>Page Not Found</title>
-    <link rel="stylesheet" href="${resource(dir: 'css', file: 'errors.css')}" type="text/css">
 </head>
 
 <body>
@@ -15,7 +14,7 @@
 
                 <br>
             </div>
-            <button class="btn btn-default btn-primary" onclick="window.history.back()">${message(code: 'default.button.back')}</button>
+            <button class="ui black button" onclick="window.history.back()">${message(code: 'default.button.back')}</button>
         </div>
     </div>
 </div>
