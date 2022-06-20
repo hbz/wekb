@@ -59,7 +59,7 @@
                     Statistics Admin Portal Url
                 </dt>
                 <dd>
-                    <semui:xEditable owner="${d}" field="statisticsAdminPortalUrl" outGoingLink="true"/>
+                    <semui:xEditable owner="${d}" field="statisticsAdminPortalUrl" validation="url" outGoingLink="true"/>
                 </dd>
             </dl>
             <dl>
@@ -83,7 +83,7 @@
                     Counter Registry Url
                 </dt>
                 <dd>
-                    <semui:xEditable owner="${d}" field="counterRegistryUrl" outGoingLink="true"/>
+                    <semui:xEditable owner="${d}" field="counterRegistryUrl" validation="url" outGoingLink="true"/>
                 </dd>
             </dl>
             <dl>
@@ -133,7 +133,7 @@
                     Counter R4 Sushi Server Url
                 </dt>
                 <dd>
-                    <semui:xEditable owner="${d}" field="counterR4SushiServerUrl"/>
+                    <semui:xEditable owner="${d}" field="counterR4SushiServerUrl" validation="url"/>
                 </dd>
             </dl>
             <dl>
@@ -141,7 +141,7 @@
                     Counter R5 Sushi Server Url
                 </dt>
                 <dd>
-                    <semui:xEditable owner="${d}" field="counterR5SushiServerUrl"/>
+                    <semui:xEditable owner="${d}" field="counterR5SushiServerUrl" validation="url"/>
                 </dd>
 
             </dl>

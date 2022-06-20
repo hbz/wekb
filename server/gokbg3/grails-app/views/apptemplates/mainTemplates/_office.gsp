@@ -20,7 +20,7 @@
 		<gokb:annotatedLabel owner="${d}" property="email">Email</gokb:annotatedLabel>
 	</dt>
 	<dd>
-		<semui:xEditable  owner="${d}" field="email" />
+		<semui:xEditable  owner="${d}" field="email" validation="email"/>
 	</dd>
 	<dt>
 		<gokb:annotatedLabel owner="${d}" property="phoneNumber">Phone Number</gokb:annotatedLabel>

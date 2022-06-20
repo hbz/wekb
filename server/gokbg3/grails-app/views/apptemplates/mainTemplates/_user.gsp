@@ -12,7 +12,7 @@
         <dl>
             <dt class="control-label">Email</dt>
             <dd>
-                <semui:xEditable owner="${d}" field="email"/>
+                <semui:xEditable owner="${d}" field="email" validation="email"/>
             </dd>
         </dl>
     </g:if>

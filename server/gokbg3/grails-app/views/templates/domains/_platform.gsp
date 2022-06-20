@@ -35,7 +35,7 @@
         Primary URL
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="primaryUrl" outGoingLink="true"/>
+        <semui:xEditable owner="${d}" field="primaryUrl" validation="url" outGoingLink="true"/>
     </dd>
 </dl>
 <dl>

@@ -1,4 +1,4 @@
-<%@ page import="org.gokb.cred.Org" %>
+<%@ page import="org.gokb.cred.Platform; org.gokb.cred.Org" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,9 +12,9 @@
 
 <g:render template="number-chart-hero"/>
 
-<div class="ui segment">
+%{--<div class="ui segment">
     <h1 class="ui header">Filter</h1>
-    <g:form controller="public" class="ui form" action="index" method="get" params="${params}">
+    <g:form controller="public" class="ui form" action="index" method="post" params="${params}">
 
         <div class="fields">
 
@@ -33,13 +33,12 @@
                             <select name="${facet.key}" class="ui search selection fluid multiple dropdown"
                                     multiple="multiple" placeholder="">
                                 <g:each in="${facet.value?.sort { it.display.toLowerCase() }}" var="v">
-
-                                    <g:if test="${params.list(facet.key).contains('"' + v.term + '"')}">
-                                        <option value="${'"' + v.term + '"'}"
+                                    <g:if test="${params.list(facet.key).contains(v.term)}">
+                                        <option value="${v.term}"
                                                 selected="selected">${v.display} (${v.count})</option>
                                     </g:if>
                                     <g:else>
-                                        <option value="${'"' + v.term + '"'}">${v.display} (${v.count})</option>
+                                        <option value="${v.term}">${v.display} (${v.count})</option>
                                     </g:else>
                                 </g:each>
                             </select>
@@ -58,12 +57,14 @@
         <br>
         <br>
     </g:form>
+</div>--}%
 
-</div>
+<g:render template="/search/qbeform"
+          model="${[formdefn: qbetemplate.qbeConfig?.qbeForm, 'hide': (hide), cfg: qbetemplate.qbeConfig]}"/>
 
 <div class="ui container">
 
-    <div class="ui header">
+    %{--<div class="ui header">
         <h1>Results ${resultsTotal}</h1>
     </div>
 
@@ -88,6 +89,7 @@
             <th>#</th>
             <semui:sortableColumn property="sortname" title="Package Name"/>
             <semui:sortableColumn property="cpname" title="Provider"/>
+            <semui:sortableColumn property="nominalPlatformName" title="Platform"/>
             <th>Curatory Groups</th>
             <semui:sortableColumn property="contentType" title="Content Type"/>
             <semui:sortableColumn property="titleCount" title="Title Count"/>
@@ -109,6 +111,13 @@
                     <g:if test="${hit.getSourceAsMap().providerUuid}">
                         <g:link controller="resource" action="show"
                                 id="${hit.getSourceAsMap().providerUuid}">${Org.findByUuid(hit.getSourceAsMap().providerUuid).name}</g:link>
+                    </g:if>
+
+                </td>
+                <td>
+                    <g:if test="${hit.getSourceAsMap().nominalPlatformUuid}">
+                        <g:link controller="resource" action="show"
+                                id="${hit.getSourceAsMap().nominalPlatformUuid}">${Platform.findByUuid(hit.getSourceAsMap().nominalPlatformUuid).name}</g:link>
                     </g:if>
 
                 </td>
@@ -143,7 +152,24 @@
     <g:if test="${resultsTotal ?: 0 > 0}">
         <semui:paginate controller="public" action="index" params="${params}"
                         max="${max}" total="${resultsTotal}"/>
+    </g:if>--}%
+
+    <g:if test="${(qbetemplate.message != null)}">
+        <semui:message message="${qbetemplate.message}"/>
     </g:if>
+
+    <g:if test="${recset && !init}">
+        <g:render template="/search/qberesult"
+                  model="${[qbeConfig: qbetemplate.qbeConfig, rows: new_recset, offset: offset, jumpToPage: 'jumpToPage', det: det, page: page_current, page_max: page_total, baseClass: qbetemplate.baseclass]}"/>
+    </g:if>
+    <g:elseif test="${!init && !params.inline}">
+        <g:render template="/search/qbeempty"/>
+    </g:elseif>
+    <g:else>
+        <semui:message>
+            <p>No results.</p>
+        </semui:message>
+    </g:else>
 
 </div>
 </body>

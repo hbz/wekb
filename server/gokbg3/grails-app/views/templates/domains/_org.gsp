@@ -41,7 +41,7 @@
         Metadata Downloader URL
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="metadataDownloaderURL" outGoingLink="true"/>
+        <semui:xEditable owner="${d}" field="metadataDownloaderURL" validation="url" outGoingLink="true"/>
     </dd>
 </dl>
 <dl>
@@ -49,7 +49,7 @@
         KBART Downloader URL
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="kbartDownloaderURL" outGoingLink="true"/>
+        <semui:xEditable owner="${d}" field="kbartDownloaderURL" validation="url" outGoingLink="true"/>
     </dd>
 </dl>
 <dl>

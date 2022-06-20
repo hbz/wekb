@@ -35,10 +35,15 @@ $(function () {
         .tab()
     ;
 
+    $('.ui.accordion')
+        .accordion()
+    ;
+
     //Editable
-    $.fn.editable.defaults.mode = 'inline'
+    $.fn.editable.defaults.mode = 'inline';
+    $.fn.editable.defaults.onblur = 'ignore';
     $.fn.editableform.buttons = '<button type="submit" class="ui icon black button editable-submit"><i aria-hidden="true" class="check icon"></i></button>' +
-        '<button type="button" class="ui icon black button editable-cancel"><i aria-hidden="true" class="times icon"></i></button>'
+        '<button type="button" class="ui icon black button editable-cancel"><i aria-hidden="true" class="times icon"></i></button>';
     $.fn.editableform.template =
         '<form class="ui form editableform">' +
         '	<div class="control-group">' +
@@ -52,18 +57,15 @@ $(function () {
         '		<div class="editable-error-block">' +
         '		</div>' +
         '	</div>' +
-        '</form>'
+        '</form>';
     $.fn.editableform.loading =
-        '<div class="ui active inline loader"></div>'
+        '<div class="ui active inline loader"></div>';
 
     $('.xEditableValue').editable({
-
-        highlight: false,
-        language: "en",
         format:   "yyyy-MM-dd",
         validate: function(value) {
             if ($(this).attr('data-format') && value) {
-                if(! (value.match(/^\d{1,2}\.\d{1,2}\.\d{4}$/) || value.match(/^\d{4}-\d{1,2}-\d{1,2}$/)) ) {
+                if(! (value.match(/^\d{4}-\d{1,2}-\d{1,2}$/)) ) {
                     return "Wrong format";
                 }
             }
@@ -96,12 +98,15 @@ $(function () {
                 }
             }
         },
-        success: function(response) {
-            // override newValue with response from backend
-            return {newValue: (response != 'null' ? response : null)}
+        success: function(response, newValue) {
+            if(!response.success) return response.msg;
         },
-        error: function (xhr, status, error) {
-            return xhr.status + ": " + xhr.statusText
+        error: function(response, newValue) {
+            if(response.status === 500) {
+                return 'Service unavailable. Please try later.';
+            } else {
+                return response.responseText;
+            }
         }
     }).on('save', function(e, params){
         if ($(this).attr('data-format')) {
@@ -127,7 +132,7 @@ $(function () {
     $('.xEditableManyToOne').editable({
         tpl: '<select class="ui search selection dropdown"></select>',
         success: function(response, newValue) {
-            if(response.status == 'error') return response.msg; //msg will be shown in editable form
+            if(!response.success) return response.msg; //msg will be shown in editable form
         }
     }).on('shown', function(e, obj) {
 

@@ -36,7 +36,7 @@
         Host Platform URL
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="url" outGoingLink="true"/>
+        <semui:xEditable owner="${d}" field="url" validation="url" outGoingLink="true"/>
     </dd>
 </dl>
 <dl>

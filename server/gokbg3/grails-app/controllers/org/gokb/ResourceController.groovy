@@ -1,5 +1,6 @@
 package org.gokb
 
+import grails.plugin.springsecurity.SpringSecurityUtils
 import org.springframework.security.access.annotation.Secured;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
@@ -60,7 +61,7 @@ class ResourceController {
                                   'Source',
                                   'TitleInstancePackagePlatform']
 
-        if ((displayobj.class.simpleName in allowedPublicShow) || (springSecurityService.isLoggedIn() && springSecurityService.ifAnyGranted("ROLE_ADMIN"))) {
+        if ((displayobj.class.simpleName in allowedPublicShow) || (springSecurityService.isLoggedIn() && SpringSecurityUtils.ifAnyGranted("ROLE_ADMIN"))) {
 
           result.displayobjclassname = displayobj.class.name
           result.__oid = "${result.displayobjclassname}:${displayobj.id}"

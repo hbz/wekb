@@ -9,7 +9,7 @@
 <g:if test="${request.isAjax()}">
 
     <div class="ui header">
-        <h1>Showing records ${offset.toInteger() + 1} to ${lasthit.toInteger() as int} of
+        <h1>Showing results ${offset.toInteger() + 1} to ${lasthit.toInteger() as int} of
             ${reccount.toInteger() as int}</h1>
     </div>
 
@@ -40,13 +40,31 @@
                 <td>${counter}</td>
                 <g:each in="${r.cols}" var="c">
                     <td>
-                        <g:if test="${c.link != null && c.value && c.value != '-Empty-'}">
+                        <g:if test="${c.value instanceof java.util.List}">
+                            <div class="ui bulleted list">
+
+                                <g:each in="${c.value}" var="element">
+                                    <div class="item">
+                                        <g:if test="${c.link}">
+                                            <g:link controller="resource"
+                                                    action="show"
+                                                    id="${element.hasProperty('uuid') ? element.uuid : "${element.class.name}" + ':' + element.id}">
+                                                ${element.name}
+                                            </g:link>
+                                        </g:if><g:else>
+                                            ${element.name}
+                                        </g:else>
+                                    </div>
+                                </g:each>
+                            </div>
+                        </g:if>
+                        <g:elseif test="${c.link != null && c.value && c.value != '-Empty-'}">
                             <g:link controller="resource"
                                     action="show"
                                     id="${c.link}">
                                 ${c.value}
                             </g:link>
-                        </g:if>
+                        </g:elseif>
                         <g:elseif test="${c.outGoingLink != null}">
                             ${c.value}
                             <g:if test="${c.value && c.value != '-Empty-'}">
@@ -82,11 +100,12 @@
         </g:each>
         </tbody>
     </table>
+    <g:render template="/search/pagination" model="${params}"/>
 </g:if>
 <g:else>
 
     <div class="ui header">
-        <h1>Showing records ${offset.toInteger() + 1} to ${lasthit.toInteger() as int} of
+        <h1>Showing results ${offset.toInteger() + 1} to ${lasthit.toInteger() as int} of
             ${reccount.toInteger() as int}</h1>
     </div>
 
@@ -156,14 +175,32 @@
                         </sec:ifLoggedIn>
                         <td>${counter}</td>
                         <g:each in="${r.cols}" var="c">
-                            <td style="vertical-align:middle;">
-                                <g:if test="${c.link != null && c.value && c.value != '-Empty-'}">
+                            <td>
+                                <g:if test="${c.value instanceof java.util.List}">
+                                    <div class="ui bulleted list">
+
+                                        <g:each in="${c.value}" var="element">
+                                            <div class="item">
+                                                <g:if test="${c.link}">
+                                                    <g:link controller="resource"
+                                                            action="show"
+                                                            id="${element.hasProperty('uuid') ? element.uuid : "${element.class.name}" + ':' + element.id}">
+                                                        ${element.name}
+                                                    </g:link>
+                                                </g:if><g:else>
+                                                    ${element.name}
+                                                </g:else>
+                                            </div>
+                                        </g:each>
+                                    </div>
+                                </g:if>
+                                <g:elseif test="${c.link != null && c.value && c.value != '-Empty-'}">
                                     <g:link controller="resource"
                                             action="show"
                                             id="${c.link}">
                                         ${c.value}
                                     </g:link>
-                                </g:if>
+                                </g:elseif>
                                 <g:elseif test="${c.outGoingLink != null}">
                                     ${c.value}
                                     <g:if test="${c.value && c.value != '-Empty-'}">
@@ -212,7 +249,7 @@
             </tbody>
         </table>
     </g:form>
-    <g:render template="/search/pagination" model="${params + [dropup: true]}"/>
+    <g:render template="/search/pagination" model="${params}"/>
 </g:else>
 
 <script language="JavaScript">

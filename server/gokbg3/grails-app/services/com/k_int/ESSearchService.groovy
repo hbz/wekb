@@ -116,7 +116,7 @@ class ESSearchService{
 
   def search(params, field_map){
     log.debug("ESSearchService::search - ${params}")
-
+println(params)
     def result = [:]
 
     RestHighLevelClient esclient = ESWrapperService.getClient()

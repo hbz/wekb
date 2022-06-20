@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta name="layout" content="public"/>
+    <meta name="layout" content="public_semui"/>
     <title>Error</title>
-    <link rel="stylesheet" href="${resource(dir: 'css', file: 'errors.css')}" type="text/css">
   </head>
   <body>
     <div class="container">
@@ -13,7 +12,7 @@
             ${message(code:"default.error.exception")}
           </div>
 
-          <button class="btn btn-default btn-primary" onclick="window.history.back()">${message(code: 'default.button.back')}</button>
+          <button class="class="ui black button"" onclick="window.history.back()">${message(code: 'default.button.back')}</button>
         </div>
       </div>
     </div>
