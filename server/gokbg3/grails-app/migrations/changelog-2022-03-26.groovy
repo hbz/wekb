@@ -46,4 +46,14 @@ databaseChangeLog = {
     }
 
 
+    changeSet(author: "djebeniani (modified)", id: "1648154097625-13") {
+        grailsChange {
+            change {
+
+                sql.execute("drop table if exists identifier;")
+            }
+            rollback {}
+        }
+    }
+
 }
