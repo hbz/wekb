@@ -58,6 +58,7 @@
                     <g:formatDate format="${message(code: 'default.date.format.noZ')}"
                                   date="${t.lastUpdated}"/>
                 </g:if>
+                
             </td>
         </tr>
     </g:each>

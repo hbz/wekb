@@ -80,6 +80,11 @@ class HomeController {
   }
 
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  def dsgvo() {
+
+  }
+
+  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   def profile() {
     def result = [:]
     User user = springSecurityService.currentUser
