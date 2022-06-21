@@ -85,7 +85,7 @@
   </dd>
 
 
-  <g:if test="${org.gokb.cred.Folder.isTypeReadable()}">
+    <sec:ifAnyGranted roles="ROLE_SUPERUSER">
     <dt><gokb:annotatedLabel owner="${d}" property="name">Folders / Collections</gokb:annotatedLabel></dt>
     <dd>
       <table class="table table-bordered table-striped">
@@ -118,7 +118,7 @@
         </tfoot>
       </table>
     </dd>
-  </g:if>
+    </sec:ifAnyGranted>
 
   </g:if>
 

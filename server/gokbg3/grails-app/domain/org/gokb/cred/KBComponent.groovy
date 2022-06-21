@@ -79,6 +79,9 @@ abstract class KBComponent implements Auditable{
   def springSecurityService
 
   @Transient
+  def accessService
+
+  @Transient
   protected grails.core.GrailsApplication grailsApplication
 
   /*@Transient
@@ -1389,9 +1392,9 @@ abstract class KBComponent implements Auditable{
     if (this.respondsTo('availableActions')){
       allActions = this.availableActions()
       allActions.each{ ao ->
-        if (ao.perm == "delete" && !this.isDeletable()){
+        if (ao.perm == "delete" && !accessService.checkDeletable(this.class.name)){
         }
-        else if (ao.perm == "admin" && !this.isAdministerable()){
+        else if (ao.perm == "admin" && !user.hasRole('ROLE_ADMIN')){
         }
         else if (ao.perm == "su" && !user.hasRole('ROLE_SUPERUSER')){
         }

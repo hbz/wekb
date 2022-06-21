@@ -16,18 +16,18 @@
           <td class="group-status" >
             <g:if test="${ status }" >
               <i class="group-member fa fa-check-circle text-success" ></i>
-              <g:if test="${d.class.isTypeEditable()}" >
+              <sec:ifAnyGranted roles="ROLE_SUPERUSER">
                 <g:link class="editable open-inline" controller="security" action="updateRole" params="${ ['id' : (d.class.name + ':' + d.id) ,('role' + role.id) : false ]}" title="Remove from role" >
                   <i class="group-member fa fa-minus-circle text-muted" ></i>
                 </g:link>
-              </g:if>
+              </sec:ifAnyGranted>
             </g:if>
             <g:else>
-              <g:if test="${d.class.isTypeEditable()}" >
+              <sec:ifAnyGranted roles="ROLE_SUPERUSER">
                 <g:link class="editable open-inline" controller="security" action="updateRole" params="${ ['id' : (d.class.name + ':' + d.id) ,('role' + role.id) : true ]}" title="Add to role" >
                   <i class="group-member fa fa-plus-circle text-muted" ></i>
                 </g:link>
-              </g:if>
+              </sec:ifAnyGranted>
               <i class="group-member fa fa-times-circle text-danger" ></i>
             </g:else>
           </td>

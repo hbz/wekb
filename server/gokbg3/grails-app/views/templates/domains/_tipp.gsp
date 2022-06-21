@@ -1,6 +1,4 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
-%{--<g:set var="editable"
-       value="${d.isEditable() && ((request.curator != null ? request.curator.size() > 0 ? true : false : true) || (params.curationOverride == 'true' && request.user.isAdmin()))}"/>--}%
 <dl>
     <dt class="control-label">
         Title

@@ -182,11 +182,6 @@ class User extends Party {
   def beforeUpdate() {
   }
 
-  public boolean isEditable(boolean default_to = true) {
-    // Users can edit themselves.
-    return User.isTypeEditable (default_to)
-  }
-
 //   @Override
 //   public boolean equals(Object obj) {
 //

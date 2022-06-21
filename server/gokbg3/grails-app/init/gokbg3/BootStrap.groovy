@@ -284,7 +284,7 @@ class BootStrap {
             // SO: Changed this to use the APIs 'applicableFor' method that is used to check whether,
             // to add to the class or not. This defaults to "true". Have overriden on the GrailsDomainHelperApi utils
             // and moved the selective code there. This means that *ALL* domain classes will still receive the methods in the
-            // SecurityApi.
+            // apiClasses.
 
             // log.debug("Considering ${c}")
             grailsApplication.config.apiClasses.each { String className ->

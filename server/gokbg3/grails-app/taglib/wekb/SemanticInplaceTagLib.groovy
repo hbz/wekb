@@ -15,7 +15,7 @@ class SemanticInplaceTagLib {
     def genericOIDService
     def springSecurityService
 
-    @Deprecated
+    /*@Deprecated
     private boolean checkEditable(attrs, body, out) {
 
         // See if there is an owner attribute on the request - owner will be the domain object asking to be edited.
@@ -40,9 +40,9 @@ class SemanticInplaceTagLib {
             tl_editable = true
         }
 
-/*    if ( !tl_editable && owner?.class?.name == 'org.gokb.cred.Combo' ) {
+*//*    if ( !tl_editable && owner?.class?.name == 'org.gokb.cred.Combo' ) {
       tl_editable = owner.fromComponent.isEditable()
-    }*/
+    }*//*
 
         if (!tl_editable && attrs.editable) {
             tl_editable = attrs.editable
@@ -63,9 +63,9 @@ class SemanticInplaceTagLib {
         }
 
         tl_editable
-    }
+    }*/
 
-    @Deprecated
+   /* @Deprecated
     private boolean checkViewable(attrs, body, out) {
 
         // See if there is an baseClass attribute on the request - baseClass will be the domain class asking to be searched.
@@ -82,7 +82,7 @@ class SemanticInplaceTagLib {
         }
 
         tl_viewable
-    }
+    }*/
 
     def xEditable = { attrs, body ->
 

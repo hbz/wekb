@@ -282,7 +282,7 @@ class SecurityController {
         result['d'] = user
         
         // Set editable flag. Must be admin user and also prevent editing of own perms.
-        result["editable"] = user.isAdmin() || (user.isEditable() && currentUser != user)
+        result["editable"] = user.isAdmin() || (currentUser == user)
                 
         // Current roles the user is a member of.
         def currentRoles = user.getAuthorities()

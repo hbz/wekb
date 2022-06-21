@@ -1,4 +1,4 @@
-%{--<g:set var="editable" value="${ d.isEditable() || d.isAdministerable() }" />--}%
+
 <g:if test="${d.id != null}">
     <dl>
         <dt class="control-label">User Name</dt>

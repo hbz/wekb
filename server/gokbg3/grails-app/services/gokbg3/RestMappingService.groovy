@@ -20,6 +20,7 @@ class RestMappingService {
   def messageSource
   def messageService
   def dateFormatService
+  def accessService
 
   def defaultIgnore = [
     'bucketHash',
@@ -98,7 +99,7 @@ class RestMappingService {
 
       result.type = obj.niceName
 
-      def href = (obj.isEditable() && is_curator) || user?.isAdmin() ? base + obj.restPath + "/${obj.id}" : null
+      def href = (accessService.checkEditableObject(obj)) || user?.isAdmin() ? base + obj.restPath + "/${obj.id}" : null
       result._links.update = ['href': href]
       result._links.delete = ['href': href]
 
