@@ -110,7 +110,7 @@ class IdentifierNamespace {
     if (this.respondsTo('availableActions')){
       allActions = this.availableActions()
       allActions.each{ ao ->
-        if (ao.perm in ["delete", "admin", "su"]&& !user.hasRole('ROLE_SUPERUSER')) {
+        if (ao.perm in ["delete", "admin", "su"] && !user.hasRole('ROLE_SUPERUSER')) {
         }
         else{
           result.add(ao)
