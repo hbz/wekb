@@ -210,10 +210,6 @@ class TitleInstancePackagePlatform extends KBComponent {
     "${uuid ?: 'wekb:TIPP:' + title?.id + ':' + pkg?.id + ':' + hostPlatform?.id}"
   }
 
-  static isTypeCreatable(boolean defaultValue = false) {
-    return defaultValue;
-  }
-
   static mapping = {
     includes KBComponent.mapping
     coverageDepth column: 'tipp_coverage_depth'

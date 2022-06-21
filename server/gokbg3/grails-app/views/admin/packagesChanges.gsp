@@ -70,7 +70,7 @@
                             <a data-toggle="modal" data-cache="false"
                                title="Show History (with Titles)"
                                data-remote='<g:createLink controller="fwk" action="history"
-                                                          id="${pkg.class.name}:${pkg.id}"
+                                                          id="${pkg.uuid}"
                                                           params="[withCombos: true]"/>'
                                data-target="#infoModal">Show History with Title</a>
 

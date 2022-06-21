@@ -116,7 +116,7 @@ class AjaxSupportController {
 
       GrailsClass dc = grailsApplication.getArtefact("Domain", 'org.gokb.cred.'+ config.domain)
 
-      if (dc?.getClazz()?.isTypeReadable()) {
+      if (dc) {
         def cq = dc.getClazz().executeQuery(config.countQry,query_params);
         def rq = dc.getClazz().executeQuery(config.rowQry,
                                   query_params,
@@ -268,9 +268,9 @@ class AjaxSupportController {
     def errors = []
     GrailsClass domain_class = grailsApplication.getArtefact('Domain',params.__newObjectClass)
 
-    if (domain_class && (domain_class.getClazz().isTypeCreatable() || domain_class.getClazz().isTypeAdministerable())) {
+    if (domain_class) {
       if (contextObj) {
-        def editable = checkEditable(contextObj)
+        def editable = accessService.checkEditableObject(contextObj)//checkEditable(contextObj)
 
         if (editable || contextObj.id == user.id) {
           log.debug("Create a new instance of ${params.__newObjectClass}");
@@ -682,7 +682,7 @@ class AjaxSupportController {
     if ( contextObj ) {
       def editable = checkEditable(contextObj)
 
-      if (editable && contextObj.isDeletable()) {
+      if (editable) {
         if(contextObj.respondsTo('deleteSoft')) {
           contextObj.deleteSoft()
         }

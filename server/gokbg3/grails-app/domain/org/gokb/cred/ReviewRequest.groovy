@@ -192,9 +192,7 @@ class ReviewRequest implements Auditable {
       allActions = this.availableActions()
 
       allActions.each { ao ->
-        if (ao.perm == "delete" && !this.isDeletable()) {
-        }
-        else if (ao.perm == "admin" && !this.isAdministerable()) {
+        if (ao.perm in ["delete", "admin", "su"] && !user.hasRole('ROLE_SUPERUSER')) {
         }
         else {
           result.add(ao)

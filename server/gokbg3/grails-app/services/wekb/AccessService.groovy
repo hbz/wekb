@@ -1,6 +1,6 @@
 package wekb
 
-import com.k_int.apis.SecurityApi
+
 import grails.gorm.transactions.Transactional
 import grails.plugin.springsecurity.SpringSecurityService
 import grails.plugin.springsecurity.SpringSecurityUtils
@@ -75,12 +75,31 @@ class AccessService {
         if(baseclassName in allowedBaseClasses){
             return true
         }else {
-            Class target_class = Class.forName(baseclassName)
-            if(target_class.isTypeReadable()){
-                return true
-            }else {
-                return false
-            }
+            return SpringSecurityUtils.ifAnyGranted('ROLE_SUPERUSER')
+        }
+
+
+    }
+
+    boolean checkDeletable(String baseclassName) {
+
+        List allowedBaseClasses = ['org.gokb.cred.CuratoryGroup',
+                                   'org.gokb.cred.JobResult',
+                                   'org.gokb.cred.IdentifierNamespace',
+                                   'org.gokb.cred.Identifier',
+                                   'org.gokb.cred.Org',
+                                   'org.gokb.cred.Package',
+                                   'org.gokb.cred.Platform',
+                                   'org.gokb.cred.ReviewRequest',
+                                   'org.gokb.cred.Source',
+                                   'org.gokb.cred.TitleInstancePackagePlatform',
+                                   'org.gokb.cred.ComponentWatch']
+
+
+        if(baseclassName in allowedBaseClasses){
+            return true
+        }else {
+            return SpringSecurityUtils.ifAnyGranted('ROLE_SUPERUSER')
         }
 
 

@@ -1,5 +1,6 @@
 <%@ page import="de.wekb.helper.RCConstants"%>
 <g:set var="ctxoid" value="${org.gokb.cred.KBComponent.deproxy(d).class.name}:${d.id}"/>
+<wekb:serviceInjection/>
 
 <table class="table table-striped table-bordered">
   <thead>
@@ -23,7 +24,7 @@
           </td>
         </g:each>
         <td>
-          <g:if test="${d.isEditable() && (d.respondsTo('curatoryGroups') ? (!d.respondsTo('getCuratoryGroups') ? true : cur) : true)}">
+          <g:if test="${accessService.checkEditableObject(d) && (d.respondsTo('curatoryGroups') ? (!d.respondsTo('getCuratoryGroups') ? true : cur) : true)}">
             <g:link controller='ajaxSupport'
                     action='unlinkManyToMany'
                     params="${[__context:ctxoid,__property:property,__itemToRemove:rowoid, propagate:propagateDelete]}">Unlink</g:link>
@@ -34,7 +35,7 @@
   </tbody>
 </table>
 
-<g:if test="${targetClass && d.isEditable() && !noadd}">
+<g:if test="${targetClass && accessService.checkEditableObject(d) && !noadd}">
 
   <g:if test="${params.controller != 'create'}">
     <g:if test="${direction=='in'}">

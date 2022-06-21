@@ -1,5 +1,6 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
 <g:set var="ctxoid" value="${org.gokb.cred.KBComponent.deproxy(d).class.name}:${d.id}"/>
+<wekb:serviceInjection/>
 <!-- pjn created this as I couldn't ever see identifiers anywhere. -->
 <table class="table table-striped table-bordered">
   <thead>
@@ -36,7 +37,7 @@
   </tbody>
 </table>
 
-<g:if test="${targetClass && d.isEditable()}">
+<g:if test="${targetClass && accessService.checkEditableObject(d)}">
 
   <g:if test="${direction=='in'}">
     <g:set var="recip" value="toComponent"/>

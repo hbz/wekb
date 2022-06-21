@@ -52,7 +52,7 @@
           </g:each>
         </tbody>
       </table>
-      <g:if test="${d.isEditable()}">
+      <sec:ifAnyGranted roles="ROLE_ADMIN">
         <hr />
 
         <h4>
@@ -84,7 +84,7 @@
             </dd>
           </g:form>
         </dl>
-      </g:if>
+      </sec:ifAnyGranted>
     </dd>
   </g:if>
   <g:else>

@@ -1253,7 +1253,7 @@ class ESSearchService{
 
     if(params.containsKey('identifiers.namespace')) {
       idQuery.must(QueryBuilders.termQuery('identifiers.namespace', params['identifiers.namespace']))
-      idQuery.must(QueryBuilders.wildcardQuery('identifiers.value', params['identifiers.value']))
+      idQuery.must(QueryBuilders.wildcardQuery('identifiers.value', params['identifiers.value']).caseInsensitive(true))
     }
     else {
       params.each { k, v ->

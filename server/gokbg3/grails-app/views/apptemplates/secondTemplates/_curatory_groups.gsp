@@ -1,8 +1,8 @@
 <%@page import="org.gokb.cred.CuratoryGroup; org.gokb.cred.TitleInstancePackagePlatform;"%>
 <g:set var="curatoryGroups" value="${(d instanceof TitleInstancePackagePlatform && d.pkg) ? d.pkg.curatoryGroups : d.curatoryGroups }" />
 
-<g:set var="cur_editable" value="${ CuratoryGroup.isTypeAdministerable() || ( (editable && d.class.name != 'org.gokb.cred.User' ) && ((curatoryGroups?.size() == 0) || (request.curator?.size() > 0) || (params.curationOverride == "true" && request.user.isAdmin()))) }" />
-<g:set var="editable" value="${d.isAdministerable() || d == user || (editable && ((curatoryGroups ? (request.curator != null && request.curator.size() > 0) : true) || (params.curationOverride == 'true' && request.user.isAdmin())) ) }" />
+<g:set var="cur_editable" value="${ ( (editable && d.class.name != 'org.gokb.cred.User' ) && ((curatoryGroups?.size() == 0) || (request.curator?.size() > 0) || (params.curationOverride == "true" && request.user.isAdmin()))) }" />
+<g:set var="editable" value="${ d == user || (editable && ((curatoryGroups ? (request.curator != null && request.curator.size() > 0) : true) || (params.curationOverride == 'true' && request.user.isAdmin())) ) }" />
 
 <table class="table table-bordered" style="max-width:100%">
   <thead>
@@ -46,11 +46,11 @@
                   <button type="submit" class="ui black button">Link</button>
                 </span>
               </div>
-               %{-- <g:if test="${CuratoryGroup.isTypeCreatable()}">
+               %{-- <sec:ifAnyGranted roles="ROLE_SUPERUSER">
                   <p>
                   <g:link controller="create" params="${["tmpl": "org.gokb.cred.CuratoryGroup"]}">New Curatory Group</g:link>
                   </p>
-                </g:if>--}%
+                </sec:ifAnyGranted>--}%
           </td>
         </g:form>
       </tr>

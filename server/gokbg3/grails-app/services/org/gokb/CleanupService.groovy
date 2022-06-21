@@ -3,6 +3,7 @@ package org.gokb
 import com.k_int.ConcurrencyManagerService.Job
 import com.k_int.ESSearchService
 import de.wekb.helper.RCConstants
+import de.wekb.helper.RDStore
 import gokbg3.DateFormatService
 import grails.converters.JSON
 import grails.gorm.DetachedCriteria
@@ -173,23 +174,6 @@ class CleanupService {
     def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
 
     def delete_candidates = KBComponent.executeQuery('select kbc.id from KBComponent as kbc where kbc.status=:deletedStatus and kbc.duplicateOf IS NULL',[deletedStatus: status_deleted])
-
-    def result = expungeByIds(delete_candidates, j)
-
-    log.debug("Done")
-    j.endTime = new Date()
-
-    return result
-  }
-
-  @Transactional
-  def expungeRejectedComponents(Job j = null) {
-
-    log.debug("Process rejected candidates");
-
-    def status_rejected = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Rejected')
-
-    def delete_candidates = KBComponent.executeQuery('select kbc.id from KBComponent as kbc where kbc.status=:rejectedStatus',[rejectedStatus: status_rejected])
 
     def result = expungeByIds(delete_candidates, j)
 
@@ -588,5 +572,41 @@ class CleanupService {
       return false
     }
     return true
+  }
+
+  @Transactional
+  def cleanupTippIdentifersWithSameNamespace(Job j = null) {
+    log.debug("Cleanup Tipp Identifers with same namespace")
+
+    List<IdentifierNamespace> identifierNamespaces = IdentifierNamespace.findAllByTargetType(RDStore.IDENTIFIER_NAMESPACE_TARGET_TYPE_TIPP)
+
+    String countQuery = "SELECT count(tipp.id) FROM TitleInstancePackagePlatform AS tipp WHERE " +
+            "tipp.id in (select ident.tipp.id FROM Identifier AS ident WHERE ident.namespace.id = :namespace group by ident.tipp having count(ident.tipp) > 1)"
+
+    String idQuery = "SELECT tipp.id FROM TitleInstancePackagePlatform AS tipp WHERE " +
+            "tipp.id in (select ident.tipp.id FROM Identifier AS ident WHERE ident.namespace.id = :namespace group by ident.tipp having count(ident.tipp) > 1)"
+
+
+    Integer count = 0
+    identifierNamespaces.each {IdentifierNamespace identifierNamespace ->
+       Integer tippCount = TitleInstancePackagePlatform.executeQuery(countQuery, [namespace: identifierNamespace.id])[0]
+        count = count + tippCount
+
+      List<Long> tippIds = TitleInstancePackagePlatform.executeQuery(idQuery, [namespace: identifierNamespace.id])
+
+      if(tippIds.size() > 0) {
+        tippIds.each {Long tippId ->
+          println(Identifier.executeQuery("select id from Identifier where tipp.id = :tipp and namespace.id = :namespace order by lastUpdated", [tipp: tippId, namespace: identifierNamespace.id]))
+        }
+
+      }
+      log.debug("${identifierNamespace.value}")
+      log.debug("${count.toString()}")
+      log.debug("${tippCount.toString()}")
+    }
+
+  log.debug("cleanupTippIdentifersWithSameNamespace: count ${count}")
+
+   // j.endTime = new Date();
   }
 }

@@ -1,6 +1,5 @@
 package org.gokb
 
-import com.k_int.apis.SecurityApi
 import de.wekb.helper.RCConstants
 import grails.converters.JSON
 import grails.plugin.springsecurity.SpringSecurityUtils
@@ -58,7 +57,7 @@ class CreateController {
           try {
             result.displayobj = newclass.newInstance()
             log.debug("Got new instance");
-            result.editable = SecurityApi.isTypeCreatable(result.displayobj.getClass())
+            result.editable = true
 
             if (params.tmpl) {
               result.displaytemplate = displayTemplateService.getTemplateInfo(params.tmpl)

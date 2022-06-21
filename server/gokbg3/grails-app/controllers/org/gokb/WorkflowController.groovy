@@ -469,15 +469,7 @@ class WorkflowController{
 
     packages_to_verify.each{ ptv ->
       def pkgObj = Package.get(ptv.id)
-      Boolean curated_pkg = false
-      def is_curator = null
-
-      if (pkgObj.curatoryGroups && pkgObj.curatoryGroups?.size() > 0){
-        is_curator = user.curatoryGroups?.id.intersect(pkgObj.curatoryGroups?.id)
-        curated_pkg = true
-      }
-
-      if (pkgObj?.isEditable() && (is_curator || !curated_pkg || user.authorities.contains(Role.findByAuthority('ROLE_SUPERUSER')))){
+      if (accessService.checkEditableObject(pkgObj)){
         pkgObj.save(flush: true, failOnError: true)
       }
     }
@@ -500,16 +492,10 @@ class WorkflowController{
     else{
       packages_to_update.each{ ptv ->
         def pkgObj = Package.get(ptv.id)
-        Boolean curated_pkg = false
-        def is_curator = null
 
         if (pkgObj && pkgObj.source?.url){
-          if (pkgObj.curatoryGroups && pkgObj.curatoryGroups?.size() > 0){
-            is_curator = user.curatoryGroups?.id.intersect(pkgObj.curatoryGroups?.id)
-            curated_pkg = true
-          }
 
-          if (pkgObj?.isEditable() && (is_curator || !curated_pkg  || user.authorities.contains(Role.findByAuthority('ROLE_SUPERUSER')))) {
+          if (accessService.checkEditableObject(pkgObj)) {
             Map result = autoUpdatePackagesService.updateFromSource(pkgObj, user, allTitles)
 
             if(result.ygorData){

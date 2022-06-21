@@ -43,6 +43,7 @@
                 <i class="dropdown icon"></i>
                 <div class="menu">
                     <g:link controller="home" action="profile" class="item">My Profile & Preferences</g:link>
+                    <g:link controller="home" action="dsgvo" class="item">Privacy Statement</g:link>
                 </div>
             </div>
 
