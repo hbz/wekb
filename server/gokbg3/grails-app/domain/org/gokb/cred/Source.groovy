@@ -243,4 +243,10 @@ class Source extends KBComponent {
     return "Source"
   }
 
+  @Transient
+  public List<Package> getPackages() {
+    def result = Package.findAllBySource(this)
+    result
+  }
+
 }

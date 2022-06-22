@@ -41,6 +41,10 @@ $(function () {
         .accordion()
     ;
 
+    $('.ui.popup').each(function() {
+        $(this).popup()
+    });
+
     //Editable
     $.fn.editable.defaults.mode = 'inline';
     $.fn.editable.defaults.onblur = 'ignore';

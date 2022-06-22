@@ -195,8 +195,8 @@ class GroupController {
             return
         }
 
-        result.s_action = actionName
-        result.s_controller = controllerName
+        //result.s_action = actionName
+        //result.s_controller = controllerName
 
         result
     }

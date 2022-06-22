@@ -1,10 +1,10 @@
 <g:if test="${recset != null}">
-<g:set var="s_action" value="${s_action?:'index'}"/>
-<g:set var="s_controller" value="${s_controller?:'search'}"/>
+%{--<g:set var="s_action" value="${s_action?:'index'}"/>
+<g:set var="s_controller" value="${s_controller?:'search'}"/>--}%
 <g:set var="jumpToPage" value="${jumpToPage?:'jumpToPage'}"/>
 <g:set var="custom_offset" value="${offset_param?:'offset'}"/>
 
-  <semui:paginate controller="${s_controller}" action="${s_action}" params="${params}"
+  <semui:paginate controller="${controllerName}" action="${actionName}" params="${params}"
                   max="${max}" total="${reccount}"/>
 
 %{--  <nav class="navbar navbar-inverse">
