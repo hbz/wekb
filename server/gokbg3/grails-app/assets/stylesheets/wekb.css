@@ -5,8 +5,27 @@
 
  *= require /jquery-editable/css/jquery-editable.css //-- externalLibs
 
+ *= require security-styles
+
 
  */
+
+/* label what server */
+
+.wb-server-label {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    top: 0;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    z-index: 999;
+}
+.wb-server-label span {
+    line-height: 30px;
+}
+
+/*  */
 
 .control-label {
     font-size: 0.8rem;
