@@ -12,6 +12,8 @@
 
 //=require inline-content.js
 
+//=require /combodate.js                                  //-- externalLibs
+
 
 
 console.log('+ wekb.js')

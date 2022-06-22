@@ -11,7 +11,7 @@
   <asset:stylesheet src="gokb/sb-admin-2.css"/>
   <asset:stylesheet src="gokb/application.css"/>
   <s2ui:stylesheet src='spring-security-ui'/>
-  <asset:stylesheet src="gokb/security-styles.css"/>
+  <asset:stylesheet src="../../assets/stylesheets/security-styles.css"/>
   <asset:stylesheet src="gokb/themes/${ grailsApplication.config.gokb.theme }/theme.css"/>
 <g:layoutHead/>
 </head>
