@@ -167,15 +167,15 @@ class CleanupService {
 
 
   @Transactional
-  def expungeDeletedComponents(Job j = null) {
+  def expungeRemoveComponents(Job j = null) {
 
-    log.debug("Process delete candidates");
+    log.debug("Process remove candidates");
 
-    def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
+    def status_removed = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Removed')
 
-    def delete_candidates = KBComponent.executeQuery('select kbc.id from KBComponent as kbc where kbc.status=:deletedStatus and kbc.duplicateOf IS NULL',[deletedStatus: status_deleted])
+    def removed_candidates = KBComponent.executeQuery('select kbc.id from KBComponent as kbc where kbc.status=:removedStatus and kbc.duplicateOf IS NULL',[removedStatus: status_removed])
 
-    def result = expungeByIds(delete_candidates, j)
+    def result = expungeByIds(removed_candidates, j)
 
     log.debug("Done")
     j.endTime = new Date()

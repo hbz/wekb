@@ -175,7 +175,7 @@ class AdminController {
 
   def cleanup() {
     Job j = concurrencyManagerService.createJob { Job j ->
-      cleanupService.expungeDeletedComponents(j)
+      cleanupService.expungeRemoveComponents(j)
     }.startOrQueue()
 
     log.debug "Triggering cleanup task. Started job #${j.uuid}"
