@@ -355,39 +355,6 @@ refine = [
   extensionBuildTarget    : "dist",
 ]
 
-/*// Log directory/created in current working dir if tomcat var not found.
-def logWatchFile
-
-// First lets see if we have a log file present.
-def base = System.getProperty("catalina.base")
-if (base) {
-   logWatchFile = new File ("${base}/logs/catalina.out")
-
-   if (!logWatchFile.exists()) {
-
-     // Need to create one in current context.
-     base = false;
-   }
-}
-
-if (!base) {
-  logWatchFile = new File("logs/gokb.log")
-}
-
-// Log file variable.
-def logFile = logWatchFile.canonicalPath
-
-// Also add it as config value too.
-log_location = logFile*/
-
-grails {
-  fileViewer {
-    locations = ["${logFile}".toString()]
-    linesCount = 250
-    areDoubleDotsAllowedInFilePath = false
-  }
-}
-
 
 validation.regex.issn = "^\\d{4}\\-\\d{3}[\\dX]\$"
 validation.regex.eissn = "^\\d{4}\\-\\d{3}[\\dX]\$"
@@ -483,8 +450,6 @@ searchApi = [
 //     'My-Custom-Header': 'some value'
 
 
-
-fileViewer.grails.views.gsp.codecs.expression = "none"
 
 
 identifiers = [

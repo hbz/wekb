@@ -128,7 +128,6 @@ class ResourceController {
         flash.error = "Unable to find the requested resource."
       }
     }
-    println(result.editable)
         result
     }
 

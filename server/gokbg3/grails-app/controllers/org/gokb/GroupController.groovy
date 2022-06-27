@@ -216,8 +216,6 @@ class GroupController {
 
             searchResult.result
 
-            println(searchResult.result)
-
             String export_date = dateFormatService.formatDate(new Date());
 
             String filename = "wekb_my_packages_${export_date}.tsv"
