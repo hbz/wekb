@@ -3,18 +3,14 @@
 
 //=require /jquery-3.6.0.min                                //-- externalLibs
 
-//= require jquery.poshytip.js                              //-- externalLibs
-//= require /jquery-editable/js/jquery-editable-poshytip.js //-- externalLibs
+//= require /jquery.poshytip.js                              //-- externalLibs
 
-//=require /echarts.min.js                                  //-- externalLibs
+//= require /jquery-editable/js/jquery-editable-poshytip.js //-- externalLibs
+//=require /combodate.js                                  //-- externalLibs
 
 //=require /semantic.min.js                                 //-- semantic
 
 //=require inline-content.js
-
-//=require /combodate.js                                  //-- externalLibs
-
-
 
 console.log('+ wekb.js')
 
