@@ -99,8 +99,6 @@
                     params="[qbe: 'g:curatoryGroups']">Curatory Groups</g:link>
             <g:link class="item" controller="search" action="componentSearch"
                     params="[qbe: 'g:sources']">Sources</g:link>
-            <g:link class="item" controller="search" action="componentSearch"
-                    params="[qbe: 'g:identifiers']">Identifiers</g:link>
 
         </div>
     </div>

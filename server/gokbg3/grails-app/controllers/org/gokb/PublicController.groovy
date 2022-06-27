@@ -140,8 +140,8 @@ class PublicController {
 
     result = searchResult.result
 
-    result.s_action = actionName
-    result.s_controller = controllerName
+    //result.s_action = actionName
+    //result.s_controller = controllerName
 
     def query_params = [forbiddenStatus : RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED)]
 

@@ -472,6 +472,13 @@ class GlobalSearchTemplatesService {
                                         placeholder: 'Name or title of item',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'name', 'wildcard': 'R']
                                 ],
+                                [
+                                        prompt     : 'Identifier',
+                                        qparam     : 'qp_identifier',
+                                        placeholder: 'Identifier Value',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'ids.value'],
+                                        hide       : false
+                                ],
 
                                 [
                                         type       : 'lookup',
@@ -625,6 +632,15 @@ class GlobalSearchTemplatesService {
                                         hide       : false
                                 ],
                                 [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.RefdataValue',
+                                        filter1    : RCConstants.PAA_ARCHIVING_AGENCY,
+                                        prompt     : 'Package Archiving Agency',
+                                        qparam     : 'qp_archivingAgency',
+                                        placeholder: 'Package Archiving Agency',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'paas.archivingAgency']
+                                ],
+                                [
                                         prompt     : 'Platform ID',
                                         qparam     : 'qp_platform_id',
                                         placeholder: 'Platform ID',
@@ -641,6 +657,16 @@ class GlobalSearchTemplatesService {
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'source'],
                                         hide       : false,
                                         notShowInPublic       : true
+                                ],
+
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.RefdataValue',
+                                        filter1    : RCConstants.YN,
+                                        prompt     : 'Source Automatic Updates',
+                                        qparam     : 'qp_source_automaticUpdates',
+                                        placeholder: 'Source Automatic Updates',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'source.automaticUpdates'],
                                 ],
 
                                 [
@@ -1075,6 +1101,17 @@ class GlobalSearchTemplatesService {
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'provider.id', 'type': 'java.lang.Long'],
                                         hide       : true
                                 ],
+
+                                [
+                                        filter1    : 'all',
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.IdentifierNamespace',
+                                        prompt     : 'Title Namespace',
+                                        qparam     : 'qp_titleNamespace',
+                                        placeholder: 'Title Namespace',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'titleNamespace'],
+                                ],
+
                                 [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.RefdataValue',
@@ -1082,7 +1119,7 @@ class GlobalSearchTemplatesService {
                                         prompt     : 'Shibboleth Supported',
                                         qparam     : 'qp_shibbolethAuthentication',
                                         placeholder: 'Shibboleth Supported',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'platform.shibbolethAuthentication'],
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'shibbolethAuthentication'],
                                 ],
                                 [
                                         type       : 'lookup',
@@ -1091,7 +1128,7 @@ class GlobalSearchTemplatesService {
                                         prompt     : 'IP Auth Supported',
                                         qparam     : 'qp_ipAuthentication',
                                         placeholder: 'IP Auth Supported',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'platform.ipAuthentication'],
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'ipAuthentication'],
                                 ],
                                 [
                                         type       : 'lookup',
@@ -1100,7 +1137,7 @@ class GlobalSearchTemplatesService {
                                         prompt     : 'Statistics Format',
                                         qparam     : 'qp_statisticsFormat',
                                         placeholder: 'Statistics Format',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'platform.statisticsFormat'],
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'statisticsFormat'],
                                 ],
                                 [
                                         type       : 'lookup',
@@ -1109,7 +1146,7 @@ class GlobalSearchTemplatesService {
                                         prompt     : 'Counter R3 Supported',
                                         qparam     : 'qp_counterR3Supported',
                                         placeholder: 'Counter R3 Supported',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'platform.counterR3Supported'],
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'counterR3Supported'],
                                 ],
                                 [
                                         type       : 'lookup',
@@ -1118,7 +1155,7 @@ class GlobalSearchTemplatesService {
                                         prompt     : 'Counter R4 Supported',
                                         qparam     : 'qp_counterR4Supported',
                                         placeholder: 'Counter R4 Supported',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'platform.counterR4Supported'],
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'counterR4Supported'],
                                 ],
                                 [
                                         type       : 'lookup',
@@ -1127,7 +1164,7 @@ class GlobalSearchTemplatesService {
                                         prompt     : 'Counter R5 Supported',
                                         qparam     : 'qp_counterR5Supported',
                                         placeholder: 'Counter R5 Supported',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'platform.counterR5Supported'],
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'counterR5Supported'],
                                 ],
                                 [
                                         type       : 'lookup',
@@ -1136,7 +1173,7 @@ class GlobalSearchTemplatesService {
                                         prompt     : 'Counter R4 Sushi Api Supported',
                                         qparam     : 'qp_counterR4SushiApiSupported',
                                         placeholder: 'Counter R4 Sushi Api Supported',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'platform.counterR4SushiApiSupported'],
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'counterR4SushiApiSupported'],
                                 ],
                                 [
                                         type       : 'lookup',
@@ -1145,7 +1182,7 @@ class GlobalSearchTemplatesService {
                                         prompt     : 'Counter R5 Sushi Api Supported',
                                         qparam     : 'qp_counterR5SushiApiSupported',
                                         placeholder: 'Counter R5 Sushi Api Supported',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'platform.counterR5SushiApiSupported'],
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'counterR5SushiApiSupported'],
                                 ],
                         ],
                         qbeGlobals: [
@@ -1319,6 +1356,24 @@ class GlobalSearchTemplatesService {
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'curatoryGroups'],
                                         hide       : false
                                 ],
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.RefdataValue',
+                                        filter1    : RCConstants.YN,
+                                        prompt     : 'Automatic Updates',
+                                        qparam     : 'qp_automaticUpdates',
+                                        placeholder: 'Automatic Updates',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'automaticUpdates'],
+                                ],
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.RefdataValue',
+                                        filter1    : RCConstants.SOURCE_FREQUENCY,
+                                        prompt     : 'Frequency',
+                                        qparam     : 'qp_frequency',
+                                        placeholder: 'Frequencys',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'frequency'],
+                                ],
                         ],
                         qbeGlobals: [
                               /*  ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
@@ -1328,6 +1383,7 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Name/Title', property: 'name', sort: 'name', link: true],
                                 [heading: 'Url', property: 'url', sort: 'url', outGoingLink: true],
                                 [heading: 'automatic Updates', property: 'automaticUpdates'],
+                                [heading: 'Packages', property: 'packages', link: true],
                                 [heading: 'Frequency', property: 'frequency?.value'],
                                 [heading: 'Last Run', property: 'lastRun'],
                                 [heading: 'Last Run', property: 'nextUpdateTimestamp'],

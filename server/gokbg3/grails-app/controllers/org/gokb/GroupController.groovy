@@ -195,8 +195,8 @@ class GroupController {
             return
         }
 
-        result.s_action = actionName
-        result.s_controller = controllerName
+        //result.s_action = actionName
+        //result.s_controller = controllerName
 
         result
     }
@@ -215,8 +215,6 @@ class GroupController {
             searchResult = searchService.search(searchResult.user, searchResult, params, response.format)
 
             searchResult.result
-
-            println(searchResult.result)
 
             String export_date = dateFormatService.formatDate(new Date());
 

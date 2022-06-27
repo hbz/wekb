@@ -1,10 +1,10 @@
-<g:set var="s_action" value="${s_action ?: 'componentSearch'}"/>
-<g:set var="s_controller" value="${s_controller ?: 'search'}"/>
+%{--<g:set var="s_action" value="${s_action ?: 'componentSearch'}"/>
+<g:set var="s_controller" value="${s_controller ?: 'search'}"/>--}%
 
 <g:if test="${hide.contains('SEARCH_FORM')}">
 </g:if>
 <g:elseif test="${params.inline}">
-    <g:form method="get" class="ui form" controller="${s_controller}" action="${s_action}" id="${params.id}">
+    <g:form method="get" class="ui form" controller="${controllerName}" action="${actionName}" id="${params.id}">
         <input type="hidden" name="qbe" value="${params.qbe}"/>
 
         <g:each in="${hide}" var="hidden_var">
@@ -32,7 +32,7 @@
     <% Map advancedSearchMap = [:] %>
     <div class="ui segment">
         <h1 class="ui header">Filter</h1>
-    <g:form method="get" class="ui form" controller="${s_controller}" action="${s_action}" id="${params.id}">
+    <g:form method="get" class="ui form" controller="${controllerName}" action="${actionName}" id="${params.id}">
 
         <input type="hidden" name="qbe" value="${params.qbe}"/>
 
@@ -145,7 +145,7 @@
         </g:if>
         <g:else>
             <div class="ui right floated buttons">
-                <g:link class="ui button" controller="${s_controller}" action="${s_action}"
+                <g:link class="ui button" controller="${controllerName}" action="${actionName}"
                         params="[id: params.id, qbe: params.qbe]">Reset</g:link>
                 <button class="ui button black" type="submit" value="Search"
                         name="searchAction">Search</button>

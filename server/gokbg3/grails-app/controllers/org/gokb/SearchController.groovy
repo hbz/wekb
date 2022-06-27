@@ -165,6 +165,8 @@ class SearchController {
     def spotlightSearch() {
         log.debug("SearchController::spotlightSearch ${params}")
         Map result = [:]
+        result.offset = 0
+        result.max = 10000
 
         RestHighLevelClient esclient = ESWrapperService.getClient()
 
