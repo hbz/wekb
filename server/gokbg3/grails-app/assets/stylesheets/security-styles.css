@@ -58,3 +58,12 @@
 .s2ui_form > form > table > tbody > tr > td {
 	padding: 8px 10px 8px 5px;
 }
+.wekb-local{
+    border-left: 10px solid #5bc0de!important;
+}
+.wekb-dev{
+    border-left: 10px solid #5cb85c!important;
+}
+.wekb-qa{
+    border-left: 10px solid #d9534f!important;
+}
