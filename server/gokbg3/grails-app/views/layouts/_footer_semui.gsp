@@ -16,9 +16,9 @@
 
             <div class="three wide column left aligned">
 
-                <h2>About <g:message code="gokb.appname"/></h2>
+                <h4 class="ui inverted header">About <g:message code="gokb.appname"/></h4>
 
-                <div class="ui inverted link list bulleted">
+                <div class="ui inverted link list">
                     <div class="item">
                         <a target="_blank" class="content"
                            href="https://service-wiki.hbz-nrw.de/display/WEKB/About+we%3Akb">About  <g:message
@@ -32,10 +32,9 @@
                     </div>
                 </div>
 
+                <h4 class="ui inverted header">Technical Details</h4>
 
-                <h2>Technical Details</h2>
-
-                <div class="ui inverted link list bulleted">
+                <div class="ui inverted link list">
                     <%-- App version --%>
                     <div class="item">
                         <a target="_blank" class="content"
@@ -69,9 +68,9 @@
             </div>
 
             <div class="four wide column left aligned">
-                <h2>Contact Us</h2>
+                <h4 class="ui inverted header">Contact Us</h4>
 
-                <div class="ui inverted link list bulleted">
+                <div class="ui inverted link list ">
                     <div class="item"><a class="content" href="mailto:laser@hbz-nrw.de">E-Mail</a></div>
 
                     <div class="item"><a target="_blank" class="content"
@@ -87,9 +86,9 @@
             </div>
 
             <div class="four wide column left aligned">
-                <h2>Accessibility</h2>
+                <h4 class="ui inverted header">Accessibility</h4>
 
-                <div class="ui inverted link list bulleted">
+                <div class="ui inverted link list ">
                     <div class="item"><a target="_blank" class="content"
                                          href="https://www.hbz-nrw.de/barrierefreiheit">Accessibility Statement</a>
                     </div>
