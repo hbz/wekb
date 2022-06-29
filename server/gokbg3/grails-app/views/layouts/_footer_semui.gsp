@@ -16,7 +16,7 @@
 
             <div class="three wide column left aligned">
 
-                <h4 class="ui inverted header">About <g:message code="gokb.appname"/></h4>
+                <h3 class="ui inverted header">About <g:message code="gokb.appname"/></h3>
 
                 <div class="ui inverted link list">
                     <div class="item">
@@ -32,7 +32,7 @@
                     </div>
                 </div>
 
-                <h4 class="ui inverted header">Technical Details</h4>
+                <h3 class="ui inverted header">Technical Details</h3>
 
                 <div class="ui inverted link list">
                     <%-- App version --%>
@@ -68,7 +68,7 @@
             </div>
 
             <div class="four wide column left aligned">
-                <h4 class="ui inverted header">Contact Us</h4>
+                <h3 class="ui inverted header">Contact Us</h3>
 
                 <div class="ui inverted link list ">
                     <div class="item"><a class="content" href="mailto:laser@hbz-nrw.de">E-Mail</a></div>
@@ -86,7 +86,7 @@
             </div>
 
             <div class="four wide column left aligned">
-                <h4 class="ui inverted header">Accessibility</h4>
+                <h3 class="ui inverted header">Accessibility</h3>
 
                 <div class="ui inverted link list ">
                     <div class="item"><a target="_blank" class="content"
