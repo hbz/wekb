@@ -29,7 +29,7 @@ $(function () {
         .dropdown()
     ;
 
-    $('.menu .item')
+    $('.tabular.menu .item')
         .tab()
     ;
 

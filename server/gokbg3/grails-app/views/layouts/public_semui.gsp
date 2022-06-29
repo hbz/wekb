@@ -56,7 +56,7 @@
             <sec:ifNotLoggedIn>
                 <div class="item">
                     <g:link class="ui inverted button" controller="home" action="index"><i
-                            class="sign-in icon"></i>Login</g:link>
+                            class="sign in alternate icon icon"></i>Login</g:link>
                 </div>
             </sec:ifNotLoggedIn>
             <g:if test="${grailsApplication.config.gokb.ygorUrl}">
@@ -70,7 +70,7 @@
     </div>
 </div>
 
-<div class="ui left fixed vertical inverted menu">
+<div class="ui left fixed vertical inverted menu ${serverLabel}">
     <g:link controller="public" action="index" class="header item">
         <img alt="Logo wekb" src="${resource(dir: 'images', file: 'logo.svg')}"/>
     </g:link>
@@ -202,7 +202,7 @@
 
 </div>
 
-<main class="ui main container ${serverLabel}">
+<main class="ui main container">
     <br>
     <br>
     <br>

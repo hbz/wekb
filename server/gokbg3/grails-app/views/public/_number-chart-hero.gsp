@@ -1,14 +1,15 @@
-<div class="ui segment inverted">
-<div class="ui five inverted statistics">
-    <g:each in="${componentsOfStatistic.sort { it }}" var="component">
-        <div class="statistic" style="!important; min-width: 18%;">
-            <div class="value">
-                <g:formatNumber number="${countComponent."${component.toLowerCase()}"}" type="number"
-                                format="###.###"/></div>
-            <div class="label">
-                <g:message code="public.index.component.${component.toLowerCase()}"/>
+<div class="ui segment" style="background-color: #4c7f9029">
+    <div class="ui five small statistics">
+        <g:each in="${componentsOfStatistic.sort { it }}" var="component">
+            <div class="statistic" >
+                <div class="value">
+                    <g:formatNumber number="${countComponent."${component.toLowerCase()}"}" type="number"
+                                    format="###.###"/></div>
+                <div class="label">
+                    <g:message code="public.index.component.${component.toLowerCase()}"/>
+                </div>
             </div>
-        </div>
-    </g:each>
+        </g:each>
+    </div>
 </div>
-</div>
+

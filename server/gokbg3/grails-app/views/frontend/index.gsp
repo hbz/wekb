@@ -37,7 +37,7 @@
 </div>
 
 
-<script>
+%{--<script>
   //AJAX for Tab Panel Widget
   $('#js-tabPanelWidget').on('click','#js-tabList a',function (e) {
     e.preventDefault();
@@ -53,7 +53,7 @@
       $(this).tab('show');
     }
   });
-</script>
+</script>--}%
 
 
 </body>

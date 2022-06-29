@@ -25,7 +25,7 @@
 
         <g:form action='resetPassword' name="forgotPasswordForm" autocomplete='off' class="form" >
           <g:hiddenField name='t' value='${token}'/>
-          <div class="sign-in">
+          <div class="sign in alternate icon">
 
           <br/>
           <h4><g:message code='spring.security.ui.resetPassword.description'/></h4>

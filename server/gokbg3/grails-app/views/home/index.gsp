@@ -27,7 +27,7 @@
                   <li class="hidden active"><a href="#page-body"></a></li>
                    <li><a href="#about" class="page-scroll"><i class="fa fa-newspaper-o fa-fw"></i> About</a></li>
                    <li><g:link controller="register"><i class="fa fa-edit fa-fw"></i> Register</g:link></li>
-                   <li><g:link controller="login"><i class="fa fa-sign-in fa-fw"></i> Sign in</g:link></li>
+                   <li><g:link controller="login"><i class="fa fa-sign in alternate icon fa-fw"></i> Sign in</g:link></li>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
