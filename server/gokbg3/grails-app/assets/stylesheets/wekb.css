@@ -88,5 +88,22 @@
     width: 70%;
     word-wrap: break-word;
 }
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+main {
+    flex:1;
+}
+.wekb-local{
+    border-left: 10px solid #5bc0de!important;
+}
+.wekb-dev{
+    border-left: 10px solid #5cb85c!important;
+}
+.wekb-qa{
+    border-left: 10px solid #d9534f!important;
+}
 
 
