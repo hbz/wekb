@@ -154,7 +154,7 @@
       <sec:ifNotLoggedIn>
         <li class="${controllerName == "public" && actionName == 'public' ? 'active' : ''}"><g:link controller="public"><i class="fa fa-home fa-fw"></i> <g:message code="gokb.appname" default="we:kb"/></g:link></li>
         <li class="${controllerName == "register" ? 'active' : ''}"><g:link controller="register" action="forgotPassword"><i class="fa fa-edit fa-fw"></i> Forgot Password</g:link></li>
-        <li class="${controllerName == "login" ? 'active' : ''}"><g:link controller="login"><i class="fa fa-sign-in fa-fw"></i> Sign in</g:link></li>
+        <li class="${controllerName == "login" ? 'active' : ''}"><g:link controller="login"><i class="fa fa-sign in alternate icon fa-fw"></i> Sign in</g:link></li>
       </sec:ifNotLoggedIn>
 
     </ul>

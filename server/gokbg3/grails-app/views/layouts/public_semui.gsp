@@ -56,7 +56,7 @@
             <sec:ifNotLoggedIn>
                 <div class="item">
                     <g:link class="ui inverted button" controller="home" action="index"><i
-                            class="sign-in icon"></i>Login</g:link>
+                            class="sign in alternate icon icon"></i>Login</g:link>
                 </div>
             </sec:ifNotLoggedIn>
             <g:if test="${grailsApplication.config.gokb.ygorUrl}">
