@@ -39,6 +39,8 @@ class RDStore {
 
 
 
+    public static final YN_YES              = getRefdataValue('Yes', RCConstants.YN)
+    public static final YN_NO               = getRefdataValue('No', RCConstants.YN)
 
 
 

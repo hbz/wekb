@@ -4,7 +4,7 @@
 <g:set var="cur_editable" value="${ ( (editable && d.class.name != 'org.gokb.cred.User' ) && ((curatoryGroups?.size() == 0) || (request.curator?.size() > 0) || (params.curationOverride == "true" && request.user.isAdmin()))) }" />
 <g:set var="editable" value="${ d == user || (editable && ((curatoryGroups ? (request.curator != null && request.curator.size() > 0) : true) || (params.curationOverride == 'true' && request.user.isAdmin())) ) }" />
 
-<table class="table table-bordered" style="max-width:100%">
+<table class="ui selectable striped sortable celled table">
   <thead>
     <tr>
       <th>Curatory Group</th>

@@ -8,7 +8,6 @@ buildscript {
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
-        classpath "gradle.plugin.com.energizedwork.webdriver-binaries:webdriver-binaries-gradle-plugin:1.4"
         classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:1.5.1"
         classpath "gradle.plugin.com.energizedwork:idea-gradle-plugins:1.4"
         classpath "org.grails.plugins:hibernate5:${gormVersion-".RELEASE"}"
@@ -29,7 +28,6 @@ apply plugin:"idea"
 apply plugin:"war"
 apply plugin:"org.grails.grails-web"
 apply plugin:"com.gorylenko.gradle-git-properties"
-apply plugin:"com.energizedwork.webdriver-binaries"
 apply plugin:"com.energizedwork.idea-project-components"
 apply plugin: "com.bertramlabs.asset-pipeline"
 apply plugin:"org.grails.grails-gsp"
@@ -133,6 +131,11 @@ bootRun {
     addResources = true
 }
 
+war {
+    baseName = 'wekb'
+    archiveName = 'wekb.war'
+}
+
 buildProperties.doLast {
     // Find the right file
 
@@ -176,11 +179,6 @@ buildProperties.doLast {
     }
 }
 
-webdriverBinaries {
-    chromedriver '2.46'
-    geckodriver '0.24.0'
-}
-
 sourceSets {
     main {
         resources {
@@ -189,11 +187,6 @@ sourceSets {
     }
 }
 
-tasks.withType(Test) {
-    systemProperty "geb.env", System.getProperty('geb.env')
-    systemProperty "webdriver.chrome.driver", System.getProperty('webdriver.chrome.driver')
-    systemProperty "webdriver.gecko.driver", System.getProperty('webdriver.gecko.driver')
-}
 
 assets {
     minifyJs = true

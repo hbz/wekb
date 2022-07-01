@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="layout" content="sb-admin"/>
+    <meta name="layout" content="public_semui"/>
     <title><g:message code="gokb.appname" default="we:kb"/></title>
 </head>
 
 <body class="">
 <div id="mainarea" class="container well">
-    <table class="table table-bordered security-table">
+    <table class="ui selectable striped sortable celled table">
         <tr>
             <th></th>
             <g:each in="${perms}" var="mask,pMap">

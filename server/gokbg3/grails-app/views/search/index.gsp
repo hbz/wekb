@@ -53,7 +53,14 @@
 <div class="ui segment">
     <g:form action="index" method="get" class="ui form">
         <div class="sixteen wide field">
-            <input type="text" name="q" id="q" value="${params.q}" placeholder="Search for..."/>
+            <input type="text" name="q" id="q" value="${params.q}" placeholder="Search for Packages, Titles, Providers, Platforms..."/>
+        </div>
+
+        <div class="sixteen wide field">
+        <div class="ui toggle checkbox">
+            <input type="checkbox" name="allProperties" ${params.allProperties ? 'checked' : ''}>
+            <label>Additionally search in all properties of Packages, Titles, Providers, Platforms</label>
+        </div>
         </div>
 
         <div class="ui right floated buttons">
@@ -73,17 +80,21 @@
     </semui:message>
 </g:if>
 <g:else>
-    <div class="ui header">Search returned ${resultsTotal}</div>
+    <div class="ui header">
+        <h2>Showing results ${offset + 1} to ${offset + max > resultsTotal ? resultsTotal : ( offset + max )} of
+            ${resultsTotal}</h2>
+    </div>
 
-%{--<p>
-    <g:each in="${['componentType']}" var="facet">
-        <g:each in="${params.list(facet)}" var="fv">
-            <span class="badge alert-info">${facet}:${fv == 'TitleInstancePackagePlatform' ? 'Titles' : fv}&nbsp; <g:link
-                    controller="${controller}" action="${action}" params="${removeFacet(params, facet, fv)}"><i
-                        class="fa fa-times"></i></g:link></span>
+    <div class="ui blue labels">
+
+        <g:each in="${['componentType']}" var="facet">
+            <g:each in="${params.list(facet)}" var="fv">
+                <div class="ui label">Filter: ${fv == 'TitleInstancePackagePlatform' ? 'Titles' : fv}&nbsp; <g:link
+                        controller="${controller}" action="${action}" params="${removeFacet(params, facet, fv)}"><i
+                            class="icon close"></i></g:link></div>
+            </g:each>
         </g:each>
-    </g:each>
-</p>--}%
+    </div>
 
     <div class="ui grid">
         <div class="four wide column">
@@ -115,14 +126,18 @@
             <table class="ui selectable striped sortable celled table">
                 <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th style="width:10%">Status</th>
+                    <th>#</th>
+                    <semui:sortableColumn property="sortname" title="Name" params="${params}"/>
+                    <semui:sortableColumn property="componentType" title="Type" params="${params}"/>
+                    <semui:sortableColumn property="status" title="Status" params="${params}"/>
                 </tr>
                 </thead>
                 <tbody>
-                <g:each in="${hits}" var="hit">
+                <g:each in="${hits}" var="hit" status="i">
                     <tr>
+                        <td>
+                            ${(params.offset? Integer.parseInt(params.offset) : 0)+1+i}
+                        </td>
                         <td>
                             <g:if test="${hit.getSourceAsMap().uuid}">
                                 <g:link controller="resource" action="show" id="${hit.getSourceAsMap().uuid}">
@@ -133,19 +148,21 @@
                                 ${hit.getSourceAsMap().name ?: "- Not Set -"}
                             </g:else>
                         </td>
-                        <td>${hit.getSourceAsMap().componentType == 'TitleInstancePackagePlatform' ? hit.getSourceAsMap().titleType : hit.getSourceAsMap().componentType}</td>
+                        <td>${hit.getSourceAsMap().componentType == 'TitleInstancePackagePlatform' ? hit.getSourceAsMap().titleType : (hit.getSourceAsMap().componentType == 'Org' ? 'Provider' : hit.getSourceAsMap().componentType)}</td>
                         <td>${hit.getSourceAsMap().status?.value ?: 'Unknown'}</td>
                     </tr>
                 </g:each>
                 </tbody>
             </table>
 
-            <semui:paginate controller="globalSearch" action="index" params="${params}" max="${max}"
+            <semui:paginate controller="search" action="index" params="${params}" max="${max}"
                             total="${resultsTotal ?: 0}"/>
 
         </div>
     </div>
 </g:else>
+
+<br>
 
 </body>
 </html>

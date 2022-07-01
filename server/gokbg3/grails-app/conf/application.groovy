@@ -88,7 +88,7 @@ grails.plugin.springsecurity.controllerAnnotations.staticRules = [
   [pattern: '/register/**',             access: ['permitAll']],
   [pattern: '/public/**',               access: ['permitAll']],
   [pattern: '/static/**',               access: ['permitAll']],
-  //[pattern: '/packages/**',             access: ['permitAll']],
+    [pattern: '/packages/**',             access: ['permitAll']],
   [pattern: '/component/identifierConflicts', access: ['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY']],
   [pattern: '/public',                  access: ['permitAll']],
   [pattern: '/error',                   access: ['permitAll']],
@@ -99,17 +99,6 @@ grails.plugin.springsecurity.controllerAnnotations.staticRules = [
   [pattern: '/**/css/**',               access: ['permitAll']],
   [pattern: '/**/images/**',            access: ['permitAll']],
   [pattern: '/**/favicon.ico',          access: ['permitAll']],
-  [pattern: '/api/find',                access: ['permitAll']],
-  [pattern: '/api/scroll',              access: ['permitAll']],
-  [pattern: '/api/sushiSources',        access: ['permitAll']],
-  [pattern: '/api/suggest',             access: ['permitAll']],
-  [pattern: '/api/isUp',                access: ['permitAll']],
-  //[pattern: '/api/userData',            access: ['permitAll']],
-  [pattern: '/api/refdata',             access: ['ROLE_USER']],
-  [pattern: '/api/show',                access: ['ROLE_USER']],
-  [pattern: '/api/namespaces',          access: ['permitAll']],
-  [pattern: '/api/groups',              access: ['permitAll']],
-  [pattern: '/api/elasticsearchTunnel', access: ['permitAll']],
   [pattern: '/integration/**',          access: ['permitAll']],
   [pattern: '/fwk/**',                  access: ['ROLE_USER']],
   [pattern: '/user/**',                 access: ['ROLE_SUPERUSER', 'IS_AUTHENTICATED_FULLY']],
@@ -132,11 +121,23 @@ grails.plugin.springsecurity.controllerAnnotations.staticRules = [
   //[pattern: '/rest/refdata/**',         access: ['permitAll']],
   [pattern: '/rest/**',                 access: ['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY']],
   //[pattern: '/oauth/**',                access: ['permitAll']],
-  //[pattern: '/coreference/**',          access: ['permitAll']]
 
+  //NEW
   [pattern: '/search/**',          access: ['permitAll']],
   [pattern: '/resource/**',        access: ['permitAll']],
-  [pattern: '/ajaxJson/**',    access: ['permitAll']]
+  [pattern: '/ajaxJson/**',    access: ['permitAll']],
+  [pattern: '/api/index',                access: ['permitAll']],
+  [pattern: '/api/find',                access: ['permitAll']],
+  [pattern: '/api/scroll',              access: ['permitAll']],
+  [pattern: '/api/sushiSources',        access: ['permitAll']],
+  [pattern: '/api/suggest',             access: ['permitAll']],
+  [pattern: '/api/isUp',                access: ['permitAll']],
+  //[pattern: '/api/userData',            access: ['permitAll']],
+  //[pattern: '/api/refdata',             access: ['ROLE_USER']],
+  //[pattern: '/api/show',                access: ['ROLE_USER']],
+  [pattern: '/api/namespaces',          access: ['permitAll']],
+  [pattern: '/api/groups',              access: ['permitAll']],
+  //[pattern: '/api/elasticsearchTunnel', access: ['permitAll']],
 ]
 
 

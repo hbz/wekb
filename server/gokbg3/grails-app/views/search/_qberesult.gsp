@@ -252,8 +252,5 @@
     <g:render template="/search/pagination" model="${params}"/>
 </g:else>
 
-<script language="JavaScript">
-    function jumpToPage() {
-        alert("jump to page");
-    }
-</script>
+<br>
+

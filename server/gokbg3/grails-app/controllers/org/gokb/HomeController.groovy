@@ -65,17 +65,6 @@ class HomeController {
     result
   }
 
-  @Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
-  def about() {
-    def result = [:]
-    def dbmQuery = (sessionFactory.currentSession.createSQLQuery(
-            'SELECT filename, id, dateexecuted from databasechangelog order by orderexecuted desc limit 1'
-    )).list()
-    result.dbmVersion = dbmQuery.size() > 0 ? dbmQuery.first() : ['unkown', 'unkown', 'unkown']
-    result
-
-  }
-
   def releaseNotes() {
   }
 

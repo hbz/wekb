@@ -1,6 +1,5 @@
 <g:set var="current_key" value=""/>
-<table class="table table-bordered">
-    <thead>
+<table class="table table-bordered"><table class="ui selectable striped sortable celled table">    <thead>
     <tr>
         <th>Property</th>
         <th>Value</th>

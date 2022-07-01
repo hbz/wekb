@@ -2,12 +2,11 @@
 <html>
 <head>
     <meta name="layout" content="public_semui"/>
-    <title><g:message code="gokb.appname"
-                      default="we:kb"/>: My Platforms of Curatory Groups (${groups.name.join(',')})</title>
+    <title><g:message code="gokb.appname" default="we:kb"/>: My Providers of Curatory Groups ${groups.name.join(',')}</title>
 </head>
 
 <body>
-<h1 class="ui header">My Platforms of Curatory Groups (${groups.name.join(',')})</h1>
+<h1 class="ui header">My Providers of Curatory Groups (${groups.name.join(',')})</h1>
 
 
 

@@ -26,7 +26,7 @@
     </g:form>
     <br/>
 
-    <table class="table table-striped table-bordered">
+    <table class="ui selectable striped sortable celled table">
       <thead>
         <tr>
           <th>Date</th>

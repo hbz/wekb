@@ -6,7 +6,6 @@ class PreferencesInterceptor {
   public PreferencesInterceptor() {
     match(controller: 'admin')
     match(controller: 'component')
-    match(controller: 'coreference')
     match(controller: 'create')
     match(controller: 'file')
     match(controller: 'folderUpload')

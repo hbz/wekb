@@ -1,21 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="layout" content="sb-admin"/>
+    <meta name="layout" content="public_semui"/>
     <title><g:message code="gokb.appname" default="we:kb"/>: About</title>
 </head>
 
 <body>
-<h1 class="page-header">About <g:message code="gokb.appname" default="we:kb"/></h1>
+<h1 class="ui header">About <g:message code="gokb.appname" default="we:kb"/></h1>
 
-<div id="mainarea"
-     class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">
+<div class="segment">
+        <h3 class="ui header">
             Application Info
         </h3>
-    </div>
-    <table class="table table-bordered">
+    <table class="ui selectable striped sortable celled table">
         <tr><th>Git Branch</th><td><g:meta name="build.git.branch"/></td></tr>
         <tr><th>Git Commit</th><td><g:meta name="build.git.revision"/></td></tr>
         <tr><th>App version</th><td><g:meta name="info.app.version"/></td></tr>
@@ -32,14 +29,11 @@
 
 </div>
 
-<div>
-    <div class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">
+<div class="segment">
+    <h3 class="ui header">
             Database
         </h3>
-    </div>
-    <table class="table table-bordered">
+        <table class="ui selectable striped sortable celled table">
         <tbody>
         <tr><td>DBM version</td><td>${dbmVersion[0]} : ${dbmVersion[1]}</td></tr>
         <tr><td>DBM updateOnStart</td><td>${grailsApplication.config.grails.plugin.databasemigration.updateOnStart}</td>

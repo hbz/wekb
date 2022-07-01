@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="layout" content="sb-admin" />
+<meta name="layout" content="public_semui" />
 <title><g:message code="gokb.appname" default="we:kb"/>: Retire TIPPs</title>
 </head>
 <body>
@@ -15,7 +15,7 @@
                         <div class="col-sm-6">
                           <div class="panel-body">
 				<h3>Retire TIPP records and set their access end date</h3>
-				<table class="table table-striped table-bordered no-select-all">
+							  <table class="ui selectable striped sortable celled table">
 					<thead>
 						<tr>
 							<th></th>

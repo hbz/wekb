@@ -2,26 +2,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="layout" content="sb-admin"/>
+    <meta name="layout" content="public_semui"/>
     <title><g:message code="gokb.appname" default="we:kb"/>: Upload Packages</title>
 </head>
 
 <body>
-<h1 class="page-header">
+<h1 class="ui header">
     Upload Packages completed
 
-    <g:link controller="create" action="packageBatch" class="btn btn-default pull-right btn-sm">Back to Upload Packages</g:link>
+    <g:link controller="create" action="packageBatch" class="ui black button">Back to Upload Packages</g:link>
 </h1>
 
-<div class="panel panel-default">
-    <div class="panel-heading clearfix">
-        <h3 class="panel-title">${packages.size()} of ${rowsCount} packages were created/changed</h3>
-    </div>
-
+<div class="ui segment">
+    <h3 class="ui header">${packages.size()} of ${rowsCount} packages were created/changed</h3>
 
     <g:set var="counter" value="${1}" />
-    <div class="panel-body">
-        <table class="celled striped table la-table">
+    <div class="content">
+    <table class="ui selectable striped sortable celled table">
             <thead>
             <tr>
                 <th>#</th>
@@ -85,15 +82,12 @@
     </div>
 </div>
 
-<div class="panel panel-default">
-    <div class="panel-heading clearfix">
-        <h3 class="panel-title">Package not created/changed due to errors</h3>
-    </div>
-
+<div class="ui segment">
+    <h3 class="ui header">Package not created/changed due to errors</h3>
 
     <g:set var="counter" value="${1}" />
-    <div class="panel-body">
-        <table class="celled striped table la-table">
+    <div class="content">
+    <table class="ui selectable striped sortable celled table">
             <thead>
             <tr>
                 <th>#</th>

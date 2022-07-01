@@ -17,7 +17,7 @@
     </div>
 </g:if>
 
-<table class="table table-striped table-bordered">
+<table class="ui selectable striped sortable celled table">
     <thead>
     <tr>
         <g:each in="${cols}" var="ch">

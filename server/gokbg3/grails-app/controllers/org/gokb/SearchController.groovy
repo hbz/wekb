@@ -24,7 +24,7 @@ class SearchController {
     def genericOIDService
     SearchService searchService
 
-    static def reversemap = ['subject':'subjectKw','componentType':'componentType','status':'status']
+    static def reversemap = ['subject':'subjectKw','componentType':'componentType','status':'status','name':'name']
     static def non_analyzed_fields = ['componentType','status']
 
     def ESWrapperService
@@ -37,36 +37,38 @@ class SearchController {
 
         def esclient = ESWrapperService.getClient()
 
+        Map searchParams = [:]
         try {
 
             if ( params.q && params.q.length() > 0) {
 
-                // Comment out replacement of ' by " so we can do exact string searching on identifiers - not sure what the use case
-                // was for this anyway. Pls document in comment and re-add if needed.
-                // params.q = params.q.replace('"',"'")
-                params.q = params.q.replace('[',"(")
-                params.q = params.q.replace(']',")")
-                params.q = params.q.replace(':',"")
+                searchParams.name = params.q.replace('[',"(")
+                searchParams.name = searchParams.name.replace(']',")")
+                searchParams.name = searchParams.name.replace(':',"")
+                if(params.allProperties){
+                    searchParams.q = searchParams.name
+                    searchParams.remove('name')
+                }
 
                 User user = springSecurityService.getCurrentUser()
                 result.max = params.max ? Integer.parseInt(params.max) : (user ? user.defaultPageSizeAsInteger : 50)
-                result.offset = params.offset ? Integer.parseInt(params.offset) : 0;
+                result.offset = params.offset ? Integer.parseInt(params.offset) : 0
 
-                params.sort = params.sort ?: ""
-
-                def query_str = buildQuery(params);
+                def query_str = buildQuery(searchParams);
 
                 log.debug("Searching for ${query_str}");
 
                 def typing_field = grailsApplication.config.globalSearch.typingField ?: 'componentType'
 
-                QueryBuilder esQuery = QueryBuilders.queryStringQuery(query_str)
+                //QueryBuilder esQuery = QueryBuilders.queryStringQuery(query_str)
 
                 log.debug("Using indices ${grailsApplication.config.globalSearch.indices.join(", ")}")
 
                 SearchResponse searchResponse
                 SearchRequest searchRequest = new SearchRequest()
                 SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
+
+                params.sort = params.sort ?: "sortname"
 
                 if (params.sort) {
                     SortOrder order = SortOrder.ASC
@@ -107,7 +109,13 @@ class SearchController {
                                 subEntry.buckets.each { bucket ->
                                     //log.debug("Bucket: ${bucket}")
                                     bucket.each { bi ->
-                                        def displayTerm = (bi.getKey() != 'TitleInstancePackagePlatform' ? bi.getKey() : 'Titles')
+                                        def displayTerm = bi.getKey()
+                                        if (bi.getKey() == 'TitleInstancePackagePlatform') {
+                                            displayTerm = 'Titles'
+                                        }
+                                        if (bi.getKey() == 'Org') {
+                                            displayTerm = 'Provider'
+                                        }
                                         log.debug("Bucket item: ${bi} ${bi.getKey()} ${bi.getDocCount()}");
                                         facet_values.add([term:bi.getKey(),display:displayTerm,count:bi.getDocCount()])
                                     }
@@ -117,7 +125,13 @@ class SearchController {
                             entry.buckets.each { bucket ->
                                 //log.debug("Bucket: ${bucket}")
                                 bucket.each { bi ->
-                                    def displayTerm = (bi.getKey() != 'TitleInstancePackagePlatform' ? bi.getKey() : 'Titles')
+                                    def displayTerm = bi.getKey()
+                                    if (bi.getKey() == 'TitleInstancePackagePlatform') {
+                                        displayTerm = 'Titles'
+                                    }
+                                    if (bi.getKey() == 'Org') {
+                                        displayTerm = 'Provider'
+                                    }
                                     log.debug("Bucket item: ${bi} ${bi.getKey()} ${bi.getDocCount()}");
                                     facet_values.add([term:bi.getKey(),display:displayTerm,count:bi.getDocCount()])
                                 }
@@ -127,7 +141,7 @@ class SearchController {
 
                     }
                 }
-                if ( ( response.format == 'json' ) || ( response.format == 'xml' ) ) {
+                /*if ( ( response.format == 'json' ) || ( response.format == 'xml' ) ) {
                     apiresponse = [:]
                     apiresponse.count = result.resultsTotal
                     apiresponse.max = result.max
@@ -143,7 +157,7 @@ class SearchController {
 
                         apiresponse.records.add(response_record);
                     }
-                }
+                }*/
             }
         }
         finally {
@@ -157,8 +171,8 @@ class SearchController {
 
         withFormat {
             html result
-            json { render apiresponse as JSON }
-            xml { render apiresponse as XML }
+            /*json { render apiresponse as JSON }
+            xml { render apiresponse as XML }*/
         }
     }
 
@@ -169,32 +183,32 @@ class SearchController {
         result.max = 10000
 
         RestHighLevelClient esclient = ESWrapperService.getClient()
-
+        Map searchParams = [:]
         try {
 
             if ( params.q && params.q.length() > 0) {
 
-                params.q = params.q.replace('[',"(")
-                params.q = params.q.replace(']',")")
-                params.q = params.q.replace(':',"")
+                searchParams.name = params.q.replace('[',"(")
+                searchParams.name = searchParams.name.replace(']',")")
+                searchParams.name = searchParams.name.replace(':',"")
 
                 //User user = springSecurityService.getCurrentUser()
                 //result.max = params.max ? Integer.parseInt(params.max) : (user ? user.defaultPageSizeAsInteger : 50)
                 //result.offset = params.offset ? Integer.parseInt(params.offset) : 0
 
-                params.sort = params.sort ?: ""
-
-                def query_str = buildQuery(params)
+                def query_str = buildQuery(searchParams)
 
                 log.debug("Searching for ${query_str}")
 
-                def typing_field = grailsApplication.config.globalSearch.typingField ?: 'componentType'
+                //def typing_field = grailsApplication.config.globalSearch.typingField ?: 'componentType'
 
                 log.debug("Using indices ${grailsApplication.config.globalSearch.indices.join(", ")}")
 
                 SearchResponse searchResponse
                 SearchRequest searchRequest = new SearchRequest()
                 SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
+
+                params.sort = params.sort ?: "sortname"
 
                 if (params.sort) {
                     SortOrder order = SortOrder.ASC
@@ -215,6 +229,7 @@ class SearchController {
                 result.hits = searchResponse.getHits()
 
                 result.resultsTotal = searchResponse.getHits().getTotalHits().value ?: 0
+                result.query = searchParams.name
             }
         }
         finally {
@@ -228,7 +243,7 @@ class SearchController {
         result
     }
 
-    private def buildQuery(params) {
+    private def buildQuery(Map params) {
 
         StringWriter sw = new StringWriter()
 

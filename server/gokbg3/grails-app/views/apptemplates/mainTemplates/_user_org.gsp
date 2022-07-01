@@ -88,7 +88,7 @@
     <sec:ifAnyGranted roles="ROLE_SUPERUSER">
     <dt><gokb:annotatedLabel owner="${d}" property="name">Folders / Collections</gokb:annotatedLabel></dt>
     <dd>
-      <table class="table table-bordered table-striped">
+      <table class="ui selectable striped sortable celled table">
         <thead>
           <tr>
             <td>Name</td>

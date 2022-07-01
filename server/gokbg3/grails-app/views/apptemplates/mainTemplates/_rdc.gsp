@@ -26,7 +26,7 @@
       <gokb:annotatedLabel owner="${d}" property="values">Values</gokb:annotatedLabel>
     </dt>
     <dd>
-      <table class="table table-bordered">
+      <table class="ui selectable striped sortable celled table">
         <thead>
           <tr>
             <td>Value</td>

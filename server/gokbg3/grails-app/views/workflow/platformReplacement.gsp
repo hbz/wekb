@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="layout" content="sb-admin" />
+<meta name="layout" content="public_semui" />
 <title><g:message code="gokb.appname" default="we:kb"/>: Platform Replacement</title>
 </head>
 <body>
@@ -12,7 +12,7 @@
 		<div id="mainarea" class="panel panel-default">
 			<div class="panel-body">
 				<h3>Update TIPP records and replace the following platform(s)</h3>
-				<table class="table table-striped table-bordered no-select-all">
+				<table class="ui selectable striped sortable celled table">
 					<thead>
 						<tr>
 							<th></th>

@@ -12,6 +12,8 @@
 
 //=require inline-content.js
 
+//=require loadEcharts.js
+
 console.log('+ wekb.js')
 
 
@@ -35,6 +37,10 @@ $(function () {
 
     $('.ui.accordion')
         .accordion()
+    ;
+
+    $('.ui.checkbox')
+        .checkbox()
     ;
 
     $('.ui.popup').each(function() {
@@ -158,6 +164,7 @@ $(function () {
         type: 'category',
         minCharacters: 3,
         maxResults: 10,
+        preserveHTML : false,
         apiSettings: {
 
             url: spotlightSearchUrl + "/?q={query}",
@@ -171,8 +178,8 @@ $(function () {
                     ;
                     if(index >= maxResults) {
                         response.action = {
-                            "url": spotlightSearchUrl.replace('spotlightSearch', 'index') + "/?q={query}",
-                                "text": "View all "+maxResults+" results"
+                            "url": spotlightSearchUrl.replace('spotlightSearch', 'index') + "/?q="+item.query,
+                                "text": "View all "+item.hitsCount+" results"
                         }
                         return response;
                     }
@@ -205,6 +212,7 @@ $(function () {
         $(this).dropdown({
             clearable: true,
             forceSelection: false,
+            preserveHTML : false,
             error : {
                 source      : 'Cannot search. No source used, and Semantic API module was not included',
                 noResults   : 'Your search returned no results',
@@ -225,6 +233,11 @@ $(function () {
                 values: 'values', // grouping for all dropdown values
                 name: 'text',   // displayed dropdown text
                 value: 'id'   //
+            },
+            onShow: function () {
+                current = $(this).val();
+                $(this).dropdown('set selected', current);
+
             }
         });
     });

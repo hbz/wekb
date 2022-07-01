@@ -105,7 +105,7 @@
             <input type="hidden" name="sourceName" value="${d.additional.sourceName}"/>
             <input type="hidden" name="sourceId" value="${d.additional.sourceId}"/>
             <input type="hidden" name="prob_seq_count" value="${d.additional.probcount}" />
-            <table class="table table-striped">
+            <table class="ui selectable striped sortable celled table">
               <thead>
                 <tr>
                   <th>Specific Problems</th>

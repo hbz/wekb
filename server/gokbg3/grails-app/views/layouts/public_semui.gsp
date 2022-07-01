@@ -42,13 +42,14 @@
                 <i class="ui icon user"></i>&nbsp; ${springSecurityService.currentUser.displayName ?: springSecurityService.currentUser.username}
                 <i class="dropdown icon"></i>
                 <div class="menu">
+                    <g:link controller="home" action="userdash" class="item">My User Dashboard</g:link>
                     <g:link controller="home" action="profile" class="item">My Profile & Preferences</g:link>
                     <g:link controller="home" action="dsgvo" class="item">Privacy Statement</g:link>
                 </div>
             </div>
 
             <div class="item">
-                <g:link class="ui inverted button" controller="logout"><i class="sign-out icon"></i>Logout</g:link>
+                <g:link class="ui inverted button" controller="logout"><i class="sign out alternate icon"></i>Logout</g:link>
             </div>
         </sec:ifLoggedIn>
 
@@ -103,6 +104,19 @@
         </div>
     </div>
     <sec:ifLoggedIn>
+
+        <div class="item">
+            <div class="header">My Components</div>
+
+            <div class="menu">
+                <g:link class="item" controller="group" action="myPackages">My Packages</g:link>
+                <g:link class="item" controller="group" action="myPlatforms">My Platforms</g:link>
+                <g:link class="item" controller="group" action="myProviders">My Providers</g:link>
+                <g:link class="item" controller="group" action="mySources">My Sources</g:link>
+                <g:link class="item" controller="group" action="myTitles">My Titles</g:link>
+            </div>
+        </div>
+
         <div class="item">
             <div class="header">Statistics</div>
 
@@ -193,7 +207,7 @@
 
                 <div class="menu">
                     <g:link class="item" controller="frontend" action="index">Frontend</g:link>
-                    <g:link class="item" controller="home" action="about">Operating environment</g:link>
+                    <g:link class="item" controller="admin" action="about">Operating environment</g:link>
                 </div>
             </div>
 

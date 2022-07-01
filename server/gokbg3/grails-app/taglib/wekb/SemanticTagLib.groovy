@@ -14,6 +14,60 @@ class SemanticTagLib {
 
     static namespace = 'semui'
 
+    def actionsDropdown = { attrs, body ->
+
+        out << '<div class="ui simple dropdown button">'
+        out << '<div class="text">'
+        out << attrs.text
+        out << '</div>'
+        out <<  '<i class="dropdown icon"></i>'
+        out <<  '<div class="menu" style="left: auto; right: 0">'
+
+        out <<          body()
+
+        out <<  '</div>'
+        out << '</div>'
+    }
+
+    def actionsDropdownItem = { attrs, body ->
+
+        def text = attrs.text
+        String linkBody  = text ?: ''
+        String aClass    = attrs.class ? attrs.class + ' item' : 'item'
+        String href      = attrs.href ? attrs.href : '#'
+
+        if (attrs.tooltip && attrs.tooltip != '') {
+            linkBody = '<div class="" data-content="' + attrs.tooltip +'">' + linkBody + '</div>'
+        }
+        if (this.pageScope.variables?.actionName == attrs.action && !attrs.notActive) {
+            aClass = aClass + ' active'
+        }
+
+        def linkParams = [
+                class: aClass,
+                controller: attrs.controller,
+                action: attrs.action,
+                params: attrs.params
+        ]
+        if (attrs.onclick) {
+            linkParams.onclick = attrs.onclick
+        }
+
+        if (attrs.controller) {
+            out << g.link(linkParams, linkBody)
+        }
+        else {
+            out << '<a href="' + href + '" class="item"'
+            if (attrs.id) { // e.g. binding js events
+                out << ' id="' + attrs.id + '">'
+            }
+            if (attrs.'data-semui') { // e.g. binding modals
+                out << ' data-semui="' + attrs.'data-semui' + '">'
+            }
+            out << linkBody + '</a>'
+        }
+    }
+
     Closure breadcrumbs = { attrs, body ->
 
         out <<   '<div class="ui breadcrumb">'

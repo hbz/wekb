@@ -94,10 +94,21 @@
         </div>
 
         <g:each in="${advancedSearchMap}" var="advancedSearch" status="fieldIndex">
+            <g:set var="filterSetInAccordion" value="${0}"/>
+
+            <g:each in="${params}" var="parameter">
+                <g:if test="${parameter.key in advancedSearch.value.formFields.qparam && (parameter.value != null && parameter.value != "")}">
+                    <g:set var="filterSetInAccordion" value="${filterSetInAccordion+1}"/>
+                </g:if>
+            </g:each>
+
             <div class="ui accordion field">
                 <div class="title">
                     <i class="icon dropdown"></i>
                 ${advancedSearch.value.title}
+                <g:if test="${filterSetInAccordion > 0}">
+                    <b>Filter Set:</b> <div class="ui black circular label">${filterSetInAccordion}</div>
+                </g:if>
             </div>
 
             <div class="content">

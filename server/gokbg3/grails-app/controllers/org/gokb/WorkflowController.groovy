@@ -88,6 +88,11 @@ class WorkflowController{
             }
           }
         }
+      }else if(params.component){
+        def component = genericOIDService.resolveOID2(params.component)
+        if(component){
+          result.objects_to_action.add(component)
+        }
       }
       else{
         log.debug("Assuming standard selection of rows to action")

@@ -498,6 +498,17 @@ class GlobalSearchTemplatesService {
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'curatoryGroups'],
                                         hide       : false
                                 ],
+                                //FOR My Components Area
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.CuratoryGroup',
+                                        prompt     : 'Curatory Group',
+                                        qparam     : 'qp_curgroups',
+                                        placeholder: 'Curatory Group',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'exists', 'prop': 'curatoryGroups'],
+                                        hide       : true
+                                ],
+
                                 [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.RefdataValue',
@@ -666,6 +677,7 @@ class GlobalSearchTemplatesService {
                                         prompt     : 'Source Automatic Updates',
                                         qparam     : 'qp_source_automaticUpdates',
                                         placeholder: 'Source Automatic Updates',
+                                        propType   : 'Boolean',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'source.automaticUpdates'],
                                 ],
 
@@ -674,6 +686,17 @@ class GlobalSearchTemplatesService {
                                         qparam     : 'qp_source_id',
                                         placeholder: 'Source ID',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'source.id', 'type': 'java.lang.Long'],
+                                        hide       : true
+                                ],
+
+                                //FOR My Components Area
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.CuratoryGroup',
+                                        prompt     : 'Curatory Group',
+                                        qparam     : 'qp_curgroups',
+                                        placeholder: 'Curatory Group',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'exists', 'prop': 'curatoryGroups'],
                                         hide       : true
                                 ],
                         ],
@@ -1085,6 +1108,16 @@ class GlobalSearchTemplatesService {
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'curatoryGroups'],
                                         hide       : false
                                 ],
+                                //FOR My Components Area
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.CuratoryGroup',
+                                        prompt     : 'Curatory Group',
+                                        qparam     : 'qp_curgroups',
+                                        placeholder: 'Curatory Group',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'exists', 'prop': 'curatoryGroups'],
+                                        hide       : true
+                                ],
                                 [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.Org',
@@ -1356,6 +1389,16 @@ class GlobalSearchTemplatesService {
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'curatoryGroups'],
                                         hide       : false
                                 ],
+                                //FOR My Components Area
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.CuratoryGroup',
+                                        prompt     : 'Curatory Group',
+                                        qparam     : 'qp_curgroups',
+                                        placeholder: 'Curatory Group',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'exists', 'prop': 'curatoryGroups'],
+                                        hide       : true
+                                ],
                                 [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.RefdataValue',
@@ -1363,6 +1406,7 @@ class GlobalSearchTemplatesService {
                                         prompt     : 'Automatic Updates',
                                         qparam     : 'qp_automaticUpdates',
                                         placeholder: 'Automatic Updates',
+                                        propType   : 'Boolean',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'automaticUpdates'],
                                 ],
                                 [
@@ -1493,6 +1537,16 @@ class GlobalSearchTemplatesService {
                                         placeholder: 'Curatory Group',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'pkg.curatoryGroups'],
                                         hide       : false
+                                ],
+                                //FOR My Components Area
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.CuratoryGroup',
+                                        prompt     : 'Curatory Group',
+                                        qparam     : 'qp_curgroups',
+                                        placeholder: 'Curatory Group',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'exists', 'prop': 'curatoryGroups'],
+                                        hide       : true
                                 ],
                                 [
                                         prompt     : 'Publisher',
@@ -1767,6 +1821,16 @@ class GlobalSearchTemplatesService {
                                         qparam     : 'qp_url',
                                         placeholder: 'URL',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'url'],
+                                ],
+                                //FOR My Components Area
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.CuratoryGroup',
+                                        prompt     : 'Curatory Group',
+                                        qparam     : 'qp_curgroups',
+                                        placeholder: 'Curatory Group',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'exists', 'prop': 'curatoryGroups'],
+                                        hide       : true
                                 ],
 
                         ],

@@ -2,7 +2,7 @@
 <g:set var="ctxoid" value="${org.gokb.cred.KBComponent.deproxy(d).class.name}:${d.id}"/>
 <wekb:serviceInjection/>
 <!-- pjn created this as I couldn't ever see identifiers anywhere. -->
-<table class="table table-striped table-bordered">
+<table class="ui selectable striped sortable celled table">
   <thead>
     <tr>
       <g:each in="${cols}" var="ch">

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="layout" content="sb-admin" />
+<meta name="layout" content="public_semui" />
 <title><g:message code="gokb.appname" default="we:kb"/>::Review Request Transfer</title>
 </head>
 <body>
@@ -15,7 +15,7 @@
 
 					<div class="col-md-6">
 						<h4>Transfer the following Review Requests (${objects_to_action.size()} total):</h4>
-						<table class="table table-bordered table-striped table-condensed">
+						<table class="ui selectable striped sortable celled table">
 							<thead>
 								<tr>
 									<th></th>
