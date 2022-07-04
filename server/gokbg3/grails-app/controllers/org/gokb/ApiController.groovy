@@ -228,7 +228,7 @@ class ApiController {
    * @param offset : Define offset
    * @param from : Define offset
    * @param q : Search term
-   * @param componentType : Restrict search to specific component type (Package, Org, Platform, BookInstance, JournalInstance, TIPP)
+   * @param componentType : Restrict search to specific component type (Package, Org, Platform, TIPP)
    * @param role : Filter by Org role (only in context of componentType=Org)
    * @return JSON Object
   **/

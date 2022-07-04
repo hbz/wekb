@@ -29,7 +29,6 @@ class CuratoryGroup extends KBComponent {
     packages: Package,
     platforms: Platform,
     orgs: Org,
-    offices: Office,
     sources: Source
   ]
 
@@ -37,7 +36,6 @@ class CuratoryGroup extends KBComponent {
     packages: 'curatoryGroups',
     platforms: 'curatoryGroups',
     orgs: 'curatoryGroups',
-    offices: 'curatoryGroups',
     sources: 'curatoryGroups'
   ]
 

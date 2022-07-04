@@ -12,7 +12,6 @@ class UserDetailsInterceptor {
     match(controller: 'component')
     match(controller: 'create')
     match(controller: 'file')
-    match(controller: 'folderUpload')
     match(controller: 'fwk')
     match(controller: 'group')
     match(controller: 'home')

@@ -1,25 +1,25 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
 <dl class="dl-horizontal">
         <dt>
-          <gokb:annotatedLabel owner="${d}" property="id">Internal ID</gokb:annotatedLabel>
+          Internal ID
         </dt>
         <dd>
           ${d.id?:'New record'}&nbsp;
         </dd>
         <dt>
-          <gokb:annotatedLabel owner="${d}" property="type">Type</gokb:annotatedLabel>
+          Type
         </dt>
         <dd>
           ${d.stdDesc ?  d.stdDesc.value : 'None'}
         </dd>
         <dt>
-          <gokb:annotatedLabel owner="${d}" property="cause">Cause</gokb:annotatedLabel>
+          Cause
         </dt>
         <dd style="max-width:60%">
           <semui:xEditable  owner="${d}" field="descriptionOfCause" />
         </dd>
         <dt>
-          <gokb:annotatedLabel owner="${d}" property="reviewRequest">Review Request</gokb:annotatedLabel>
+          Review Request
         </dt>
         <dd>
           <semui:xEditable  owner="${d}" field="reviewRequest" />
@@ -33,7 +33,7 @@
     <div class="tab-pane active" id="rrdets">
       <dl class="dl-horizontal">
         <dt>
-          <gokb:annotatedLabel owner="${d}" property="status">Request Status</gokb:annotatedLabel>
+          Request Status
         </dt>
         <dd>
           <semui:xEditableRefData owner="${d}" field="status"
@@ -41,7 +41,7 @@
         </dd>
 
         <dt>
-          <gokb:annotatedLabel owner="${d}" property="target">Component</gokb:annotatedLabel>
+          Component
         </dt>
 
         <dd>
@@ -53,7 +53,7 @@
         <g:if test="${d.additional?.otherComponents}">
 
           <dt>
-            <gokb:annotatedLabel owner="${d}" property="otherOids">Other Relevant Components</gokb:annotatedLabel>
+            Other Relevant Components
           </dt>
           <dd>
             <ul>
@@ -68,7 +68,7 @@
         <g:if test="${d.additional?.skippedItems}">
 
           <dt>
-            <gokb:annotatedLabel owner="${d}" property="skippedItems">Skipped Items</gokb:annotatedLabel>
+            Skipped Items
           </dt>
           <dd>
             <ul>
@@ -83,7 +83,7 @@
         <sec:ifAnyGranted roles="ROLE_SUPERUSER">
           <g:if test="${d.id != null}">
             <dt>
-              <gokb:annotatedLabel owner="${d}" property="dateCreated">Request Timestamp</gokb:annotatedLabel>
+              Request Timestamp
             </dt>
             <dd>
               ${d.dateCreated}&nbsp;
@@ -92,7 +92,7 @@
         </sec:ifAnyGranted>
 
         <dt>
-          <gokb:annotatedLabel owner="${d}" property="allocatedTo">Allocated Groups</gokb:annotatedLabel>
+          Allocated Groups
         </dt>
         <dd>
           <g:each in="${d.allocatedGroups}" var="ag">

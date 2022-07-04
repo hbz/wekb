@@ -77,7 +77,6 @@ class Platform extends KBComponent {
     hostedPackages: Package,
     hostedTipps   : TitleInstancePackagePlatform,
     linkedTipps   : TitleInstancePackagePlatform,
-    hostedTitles  : TitleInstancePlatform,
     curatoryGroups: CuratoryGroup
   ]
 

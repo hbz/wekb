@@ -215,66 +215,6 @@ class Package extends KBComponent {
     result
   }
 
-  @Deprecated
-  @Transient
-  public getTitles(def onlyCurrent = true, int max = 10, offset = 0) {
-    def all_titles = null
-    log.debug("getTitles :: current ${onlyCurrent} - max ${max} - offset ${offset}")
-
-    if (this.id) {
-      if (onlyCurrent) {
-        def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current');
-
-        all_titles = TitleInstance.executeQuery('''select distinct title
-          from TitleInstance as title,
-            Combo as pkgCombo,
-            Combo as titleCombo,
-            TitleInstancePackagePlatform as tipp
-          where pkgCombo.toComponent=tipp
-            and pkgCombo.fromComponent=?
-            and titleCombo.toComponent=tipp
-            and titleCombo.fromComponent=title
-            and tipp.status = ?
-            and title.status = ?'''
-          , [this, refdata_current, refdata_current], [max: max, offset: offset]);
-      }
-      else {
-        all_titles = TitleInstance.executeQuery('''select distinct title
-          from TitleInstance as title,
-            Combo as pkgCombo,
-            Combo as titleCombo,
-            TitleInstancePackagePlatform as tipp
-          where pkgCombo.toComponent=tipp
-            and pkgCombo.fromComponent=?
-            and titleCombo.toComponent=tipp
-            and titleCombo.fromComponent=title'''
-          , [this], [max: max, offset: offset]);
-      }
-    }
-
-    return all_titles;
-  }
-
-  @Deprecated
-  @Transient
-  public getCurrentTitleCount() {
-    def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current');
-
-    int result = TitleInstance.executeQuery('''select count(distinct title.id)
-      from TitleInstance as title,
-        Combo as pkgCombo,
-        Combo as titleCombo,
-        TitleInstancePackagePlatform as tipp
-      where pkgCombo.toComponent=tipp
-        and pkgCombo.fromComponent=?
-        and titleCombo.toComponent=tipp
-        and titleCombo.fromComponent=title
-        and tipp.status = ?
-        and title.status = ?'''
-      , [this, refdata_current, refdata_current])[0];
-
-    result
-  }
 
   @Transient
   public getCurrentTippCount() {
@@ -335,7 +275,7 @@ class Package extends KBComponent {
     def all_rrs = null
     def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current');
 
-    if (onlyOpen) {
+   /* if (onlyOpen) {
 
       log.debug("Looking for more ReviewRequests connected to ${this}")
 
@@ -403,7 +343,7 @@ class Package extends KBComponent {
             and rr.componentToReview = title'''
           , [this]);
       }
-    }
+    }*/
 
     return all_rrs;
   }
@@ -434,8 +374,7 @@ select tipp.id,
          Combo as hostPlatformCombo,
          Combo as titleCombo,
          Combo as pkgCombo,
-         Platform as plat,
-         TitleInstance as title
+         Platform as plat
     where pkgCombo.toComponent=tipp
       and pkgCombo.fromComponent= ?
       and pkgCombo.type= ?

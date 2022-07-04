@@ -16,10 +16,10 @@
                 <h3>Bootstrap 3.3.7</h3>
                 <!-- Nav tabs -->
                 <div id="js-tabPanelWidget">
-                    <bootStrap:tabs>
+                    <semui:tabs>
                         <li class="active"><a  href="#home" role="tab">Home</a></li>
-                        <bootStrap:tabsItem href="#profile" controller="frontend" action="tabExample" text="Profile" />
-                        <bootStrap:tabsItem href="#messages" controller="frontend" action="tabExample" text="Messages" />
+                        <semui:tabsItem href="#profile" controller="frontend" action="tabExample" text="Profile" />
+                        <semui:tabsItem href="#messages" controller="frontend" action="tabExample" text="Messages" />
                     </bootStrap:tabs>
 
                 <!-- Tab panes -->

@@ -19,7 +19,6 @@ class GlobalSearchTemplatesService {
         globalSearchTemplates.put('jobResults', jobResults())
         globalSearchTemplates.put('namespaces', namespaces())
         globalSearchTemplates.put('notes', notes())
-        globalSearchTemplates.put('offices', offices())
         globalSearchTemplates.put('orgs', orgs())
         globalSearchTemplates.put('packages', packages())
         globalSearchTemplates.put('publicPackages', publicPackages())
@@ -426,34 +425,6 @@ class GlobalSearchTemplatesService {
                         ]
                 ]
         ]
-        result
-    }
-
-    Map offices() {
-        Map result = [
-                baseclass: 'org.gokb.cred.Office',
-                title    : 'Offices',
-                group    : 'Secondary',
-                qbeConfig: [
-                        qbeForm   : [
-                                [
-                                        prompt     : 'Name or Title',
-                                        qparam     : 'qp_name',
-                                        placeholder: 'Name or title of Office',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'name']
-                                ],
-                        ],
-                        qbeGlobals: [
-                               /* ['ctxtp' : 'filter', 'prop': 'status', 'comparator': 'eq', 'value': 'Current', 'negate': false, 'prompt': 'Only Current',
-                                 'qparam': 'qp_onlyCurrent', 'default': 'on', 'cat': RCConstants.KBCOMPONENT_STATUS, 'type': 'java.lang.Object']*/
-                        ],
-                        qbeResults: [
-                                [heading: 'Name/Title', property: 'name', sort: 'name', link: true],
-                                [heading: 'Status', property: 'status?.value', sort: 'status'],
-                        ]
-                ]
-        ]
-
         result
     }
 

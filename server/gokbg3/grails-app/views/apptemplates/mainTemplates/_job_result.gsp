@@ -1,31 +1,30 @@
 <g:set var="json" value="${d.resultJson}" />
 <dl class="dl-horizontal">
   <dt>
-    <gokb:annotatedLabel owner="${d}" property="uuid">Internal ID</gokb:annotatedLabel>
+    Internal ID
   </dt>
   <dd>
     ${d.uuid}
   </dd>
   <dt>
-    <gokb:annotatedLabel owner="${d}" property="description">Description</gokb:annotatedLabel>
+   Description
   </dt>
   <dd>
     ${d.description}
   </dd>
-  <dt>
-    <gokb:annotatedLabel owner="${d}" property="statusText">Status Text</gokb:annotatedLabel>
+  <dt>Status Text
   </dt>
   <dd>
     ${d.statusText}
   </dd>
   <dt>
-    <gokb:annotatedLabel owner="${d}" property="type">Type</gokb:annotatedLabel>
+    Type
   </dt>
   <dd>
     ${d.type?.value}
   </dd>
   <dt>
-    <gokb:annotatedLabel owner="${d}" property="curatoryGroup">Curatory Group</gokb:annotatedLabel>
+    Curatory Group
   </dt>
   <dd>
     <g:set var="curatoryGroup" value="${ d.getCuratoryGroup()}" />
@@ -34,7 +33,7 @@
     </g:if>
   </dd>
   <dt>
-    <gokb:annotatedLabel owner="${d}" property="linkedItemId">Linked Component</gokb:annotatedLabel>
+    Linked Component
   </dt>
   <dd>
     <g:set var="item" value="${ d.getLinkedItem()}" />
@@ -43,25 +42,25 @@
     </g:if>
   </dd>
   <dt>
-    <gokb:annotatedLabel owner="${d}" property="startTime">Start Time</gokb:annotatedLabel>
+    Start Time
   </dt>
   <dd>
     ${d.startTime}
   </dd>
   <dt>
-    <gokb:annotatedLabel owner="${d}" property="endTime">End Time</gokb:annotatedLabel>
+    End Time
   </dt>
   <dd>
     ${d.endTime}
   </dd>
   <dt>
-    <gokb:annotatedLabel owner="${d}" property="resultJson">Result Message</gokb:annotatedLabel>
+    Result Message
   </dt>
   <dd>
     ${json?.message}
   </dd>
   <dt>
-    <gokb:annotatedLabel owner="${d}" property="resultJson">Messages</gokb:annotatedLabel>
+    Messages
   </dt>
   <dd>
     <g:if test="${json?.messages}">
@@ -83,7 +82,7 @@
   </dd>
 
   <dt>
-    <gokb:annotatedLabel owner="${d}" property="resultJson">Errors</gokb:annotatedLabel>
+    Errors
   </dt>
   <dd>
     <g:if test="${json?.errors?.global}">

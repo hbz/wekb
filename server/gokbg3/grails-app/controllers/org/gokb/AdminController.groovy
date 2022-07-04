@@ -26,7 +26,6 @@ import java.util.concurrent.CancellationException
 @Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
 class AdminController {
 
-  def packageService
   def componentStatisticService
 
   ConcurrencyManagerService concurrencyManagerService
@@ -93,19 +92,6 @@ class AdminController {
 
     j.description = "Reset Free Text Indexes"
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'ResetFreeTextIndexes')
-    j.startTime = new Date()
-
-    redirect(controller: 'admin', action: 'jobs');
-  }
-
-  def addPackageTypes() {
-    Job j = concurrencyManagerService.createJob { Job j ->
-      log.debug("Generating missing package content types ..")
-      packageService.generatePackageTypes(j)
-    }.startOrQueue()
-
-    j.description = "Generate Package Types"
-    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'GeneratePackageTypes')
     j.startTime = new Date()
 
     redirect(controller: 'admin', action: 'jobs');

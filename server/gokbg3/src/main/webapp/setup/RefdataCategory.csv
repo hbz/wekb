@@ -56,12 +56,6 @@ Source.Frequency;Source Frequency;Source Frequency
 Tipp.LinkType;Tipp Link Type;Tipp Link Type
 Tipp.StatusReason;Tipp Status Reason;Tipp Status Reason
 TIPPCoverageStatement.CoverageDepth;TIPP CoverageStatement Coverage Depth;TIPP CoverageStatement Coverage Depth
-TitleInstance.ContinuingSeries;Title Instance Continuing Series;Title Instance Continuing Series
-TitleInstance.Medium;Title Instance Medium;Title Instance Medium
-TitleInstance.OAStatus;Title Instance OAStatus;Title Instance OAStatus
-TitleInstance.PureOA;Title Instance PureOA;Title Instance PureOA
-TitleInstance.ReasonRetired;Title Instance Reason Retired;Title Instance Reason Retired
-TitleInstance.Rel;Title Instance Rel;Title Instance Rel
 TitleInstancePackagePlatform.AccessType;TitleInstancePackagePlatform Access Type;TitleInstancePackagePlatform Access Type
 TitleInstancePackagePlatform.CoverageDepth;TitleInstancePackagePlatform Coverage Depth;TitleInstancePackagePlatform Coverage Depth
 TitleInstancePackagePlatform.DelayedOA;TitleInstancePackagePlatform Delayed OA;TitleInstancePackagePlatform Delayed OA

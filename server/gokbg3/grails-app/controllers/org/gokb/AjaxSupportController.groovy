@@ -215,16 +215,6 @@ class AjaxSupportController {
       cols:['value'],
       format:'simple'
     ],
-    'TitleInstance.Medium' : [
-      domain:'RefdataValue',
-      countQry:"select count(rdv) from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
-      rowQry:"select rdv from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
-      required:true,
-      qryParams:[],
-      rdvCat: RCConstants.TITLEINSTANCE_MEDIUM,
-      cols:['value'],
-      format:'simple'
-    ],
     'TitleInstancePackagePlatform.CoverageDepth' : [
       domain:'RefdataValue',
       countQry:"select count(rdv) from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
@@ -1153,49 +1143,6 @@ class AjaxSupportController {
     render result as JSON
   }
 
-  /**
-   *  plusOne : Like or Unlike a component for the current user.
-   * @param object : The OID ([FullyQualifiedClassName]:[PrimaryKey]) of the context object
-   */
-
-  @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  def plusOne() {
-    log.debug("plusOne ${params}");
-    def result       = [:]
-    def user         = springSecurityService.currentUser
-    def oid = params.object
-    if (oid) {
-      def oid_components = oid.split(':');
-
-      log.debug("oid_components:${oid_components}");
-
-       if ( oid_components.length == 2 ) {
-         def existing_like = ComponentLike.executeQuery('select cl from ComponentLike as cl where cl.ownerClass=:oc and cl.ownerId=:oi and cl.user=:u',
-                             [oc:oid_components[0], oi:Long.parseLong(oid_components[1]), u:user]);
-         switch ( existing_like.size() ) {
-           case 0:
-             log.debug("Like");
-             new ComponentLike(ownerClass:oid_components[0], ownerId:Long.parseLong(oid_components[1]), user:user).save(flush:true, failOnError:true)
-             break;
-           case 1:
-             log.debug("UnLike");
-             existing_like.get(0).delete(flush:true, failOnError:true)
-             break;
-           default:
-             break;
-         }
-       }
-
-       result.status = 'OK'
-       result.newcount = ComponentLike.executeQuery('select count(cl) from ComponentLike as cl where cl.ownerClass=:oc and cl.ownerId=:oi',
-                             [oc:oid_components[0], oi:Long.parseLong(oid_components[1])]).get(0)
-
-
-    }
-    log.debug("result: ${result}");
-    render result as JSON
-  }
 
   /**
    *  authorizeVariant : Used to replace the name of a component by one of its existing variant names.

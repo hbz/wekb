@@ -111,9 +111,6 @@
 
             <h3>New Context:</h3>
 
-						<label>New Title:</label>
-						<semui:simpleReferenceDropdown class="form-control" name="newtitle" baseClass="org.gokb.cred.TitleInstance" filter1="Current"/>
-
 						<label>New Platform:</label>
 						<semui:simpleReferenceDropdown class="form-control" name="newplatform" baseClass="org.gokb.cred.Platform" filter1="Current"/>
 

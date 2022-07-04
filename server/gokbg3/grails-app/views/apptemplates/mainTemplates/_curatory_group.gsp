@@ -1,27 +1,27 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
 <dl class="dl-horizontal">
 
-  <dt><gokb:annotatedLabel owner="${d}" property="name">Curatory Group Name</gokb:annotatedLabel></dt>
+  <dt>Curatory Group Name</dt>
   <dd><semui:xEditable  owner="${d}" field="name" /></dd>
 
-	<dt><gokb:annotatedLabel owner="${d}" property="type">Type</gokb:annotatedLabel></dt>
+	<dt>Type</dt>
 	<dd><semui:xEditableRefData owner="${d}" field="type" config="${RCConstants.CURATORY_GROUP_TYPE}" /></dd>
 
   <g:if test="${d.id != null}">
 
-	  <dt><gokb:annotatedLabel owner="${d}" property="status">Status</gokb:annotatedLabel></dt>
+	  <dt>Status</dt>
 	  <dd><semui:xEditableRefData owner="${d}" field="status" config="${RCConstants.KBCOMPONENT_STATUS}" /></dd>
 
 		<sec:ifAnyGranted roles="ROLE_ADMIN">
 			<dt>
-				<gokb:annotatedLabel owner="${d}" property="owner">Owner</gokb:annotatedLabel>
+				Owner
 			</dt>
 			<dd>
 				<semui:xEditableManyToOne owner="${d}" field="owner" baseClass="org.gokb.cred.User">${d.owner?.username}</semui:xEditableManyToOne>
 			</dd>
 		</sec:ifAnyGranted>
 		<g:if test="${ user.isAdmin() || d.owner == user }">
-	  	<dt><gokb:annotatedLabel owner="${d}" property="users">Members</gokb:annotatedLabel></dt>
+	  	<dt>Members</dt>
 			<dd>
 				<g:if test="${ d.users }" >
 					<ul>

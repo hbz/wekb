@@ -1,20 +1,20 @@
 <dl class="dl-horizontal">
   <dt>
-    <gokb:annotatedLabel owner="${d}" property="id">Internal Id</gokb:annotatedLabel>
+    Internal Id
   </dt>
   <dd>
     ${d.id?:'New record'}
   </dd>
 
   <dt>
-    <gokb:annotatedLabel owner="${d}" property="description">Category Name / Description</gokb:annotatedLabel>
+    Category Name / Description
   </dt>
   <dd>
     <semui:xEditable  owner="${d}" field="desc" />
   </dd>
 
   <dt>
-    <gokb:annotatedLabel owner="${d}" property="label">Label</gokb:annotatedLabel>
+    Label
   </dt>
   <dd>
     <semui:xEditable  owner="${d}" field="label" />
@@ -23,7 +23,7 @@
 
   <g:if test="${d.id != null}">
     <dt>
-      <gokb:annotatedLabel owner="${d}" property="values">Values</gokb:annotatedLabel>
+      Values
     </dt>
     <dd>
       <table class="ui selectable striped sortable celled table">
@@ -56,7 +56,7 @@
         <hr />
 
         <h4>
-          <gokb:annotatedLabel owner="${d}" property="addRD">Add refdata value</gokb:annotatedLabel>
+          Add refdata value
         </h4>
         <dl class="dl-horizontal">
           <g:form controller="ajaxSupport" action="addToCollection"

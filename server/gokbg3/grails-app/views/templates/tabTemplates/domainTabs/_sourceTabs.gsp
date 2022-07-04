@@ -24,7 +24,7 @@
         <div class="content wekb-inline-lists">
             <dl>
                 <dt class="control-label">
-                    <gokb:annotatedLabel owner="${d}" property="notes">Notes</gokb:annotatedLabel>
+                    Notes
                 </dt>
                 <dd>
                     <g:link class="display-inline" controller="search" action="inlineSearch"

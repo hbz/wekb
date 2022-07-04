@@ -1,14 +1,14 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
 <dl class="dl-horizontal">
 
-  <dt><gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel></dt>
+  <dt>Name</dt>
   <dd><semui:xEditable  owner="${d}" field="displayName" /></dd>
 
   <g:if test="${d.id != null}">
   <g:set var="userIsOrgAdmin" value="${d.members.find { it.party == request.user && it.role?.value == 'Administrator' && it.status?.value == 'Approved'}}" />
-  <dt><gokb:annotatedLabel owner="${d}" property="owner">Owner</gokb:annotatedLabel></dt>
+  <dt>Owner</dt>
   <dd>${d.owner}</dd>
-  <dt><gokb:annotatedLabel owner="${d}" property="name">Members</gokb:annotatedLabel></dt>
+  <dt>Members</dt>
   <dd>
     <table id="uomembers"class="table table-bordered table-striped">
       <thead>
@@ -83,42 +83,6 @@
       <button id ="applyBtn" class="btn btn-default" onclick="applyForMembership(${d.id})">Apply for Membership</button>
     </g:if>
   </dd>
-
-
-    <sec:ifAnyGranted roles="ROLE_SUPERUSER">
-    <dt><gokb:annotatedLabel owner="${d}" property="name">Folders / Collections</gokb:annotatedLabel></dt>
-    <dd>
-      <table class="ui selectable striped sortable celled table">
-        <thead>
-          <tr>
-            <td>Name</td>
-            <td>Actions</td>
-          </tr>
-        </thead>
-        <tbody>
-          <g:each in="${d.folders}" var="f">
-            <tr>
-              <td><g:link controller="resource" action="show" id="org.gokb.cred.Folder:${f.id}">${f.name}</g:link></td>
-              <td></td>
-            </tr>
-          </g:each>
-        </tbody>
-        <tfoot>
-          <g:form controller="ajaxSupport" action="addToCollection" class="form-inline">
-            <input type="hidden" name="__context" value="org.gokb.cred.UserOrganisation:${d.id}"/>
-            <input type="hidden" name="__recip" value="owner"/>
-            <input type="hidden" name="__newObjectClass" value="org.gokb.cred.Folder"/>
-            <tr>
-              <td>
-                <input type="text" class="form-control" name="name" placeholder="New Folder Name"/>
-              </td>
-              <td><button class="btn btn-success">Add</button></td>
-            </tr>
-          </g:form>
-        </tfoot>
-      </table>
-    </dd>
-    </sec:ifAnyGranted>
 
   </g:if>
 

@@ -189,8 +189,6 @@
                                 onclick="return confirm('Are you sure?')">Add Reviews for wrong Tipp Coverage Dates</g:link>
                         <g:link class="item" controller="admin" action="ensureUuids"
                                 onclick="return confirm('Are you sure?')">Ensure UUIDs</g:link>
-                        <g:link class="item" controller="admin" action="addPackageTypes"
-                                onclick="return confirm('Are you sure?')">Ensure Package Content Types</g:link>
                         <g:link class="item" controller="admin" action="autoUpdatePackages"
                                 onclick="return confirm('Are you sure?')">Auto Update Packages</g:link>
                         <g:link class="item" controller="admin" action="cleanupTippIdentifersWithSameNamespace"

@@ -4,7 +4,7 @@
         <div class="content wekb-inline-lists">
             <dl>
                 <dt class="control-label">
-                    <gokb:annotatedLabel owner="${d}" property="ddcs">Dewey Decimal Classification</gokb:annotatedLabel>
+                    Dewey Decimal Classification
                 </dt>
                 <dd>
                     <ul>

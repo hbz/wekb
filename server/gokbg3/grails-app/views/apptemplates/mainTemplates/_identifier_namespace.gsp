@@ -1,17 +1,17 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
 <dl class="dl-horizontal">
-  <dt> <gokb:annotatedLabel owner="${d}" property="value">Value</gokb:annotatedLabel> </dt>
+  <dt> Value </dt>
   <dd> <semui:xEditable  owner="${d}" field="value" /> </dd>
 
-  <dt> <gokb:annotatedLabel owner="${d}" property="name">Name</gokb:annotatedLabel> </dt>
+  <dt> Name </dt>
   <dd> <semui:xEditable  owner="${d}" field="name" /> </dd>
 
-  <dt> <gokb:annotatedLabel owner="${d}" property="family">Category</gokb:annotatedLabel> </dt>
+  <dt> Category </dt>
   <dd> <semui:xEditable  owner="${d}" field="family" /> </dd>
 
-  <dt> <gokb:annotatedLabel owner="${d}" property="pattern">Pattern</gokb:annotatedLabel> </dt>
+  <dt> Pattern </dt>
   <dd> <semui:xEditable  owner="${d}" field="pattern" /> </dd>
 
-  <dt> <gokb:annotatedLabel owner="${d}" property="targetType">Target Type</gokb:annotatedLabel> </dt>
+  <dt> Target Type </dt>
   <dd> <semui:xEditableRefData owner="${d}" field="targetType" config="${RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE}" /> </dd>
 </dl>

@@ -26,17 +26,12 @@ class AdminService {
 
     def setupDefaultAcl() {
 
-        def basicDomains = ["BookInstance",
-                            "DatabaseInstance",
-                            "JournalInstance",
-                            "Office",
+        def basicDomains = [
                             "Org",
-                            "OtherInstance",
                             "Package",
                             "Platform",
                             "Source",
-                            "TitleInstancePackagePlatform",
-                            "TitleInstancePlatform",]
+                            "TitleInstancePackagePlatform",]
 
         basicDomains.each { dcd ->
 
@@ -157,19 +152,6 @@ class AdminService {
 
         checkAndAdd(dc_rdv, 'ROLE_EDITOR', BasePermission.READ)
 
-
-        def dc_tit = KBDomainInfo.findByDcName("org.gokb.cred.TitleInstance")
-
-        checkAndAdd(dc_tit, 'ROLE_USER', BasePermission.READ)
-
-        checkAndAdd(dc_tit, 'ROLE_CONTRIBUTOR', BasePermission.READ)
-        checkAndAdd(dc_tit, 'ROLE_CONTRIBUTOR', BasePermission.WRITE)
-
-        checkAndAdd(dc_tit, 'ROLE_EDITOR', BasePermission.READ)
-        checkAndAdd(dc_tit, 'ROLE_EDITOR', BasePermission.WRITE)
-        checkAndAdd(dc_tit, 'ROLE_EDITOR', BasePermission.DELETE)
-
-
         def dc_uo = KBDomainInfo.findByDcName('org.gokb.cred.UserOrganisation')
 
         checkAndAdd(dc_uo, 'ROLE_CONTRIBUTOR', BasePermission.READ)
@@ -191,7 +173,7 @@ class AdminService {
 
     private def checkAndAdd(KBDomainInfo domain, String role, BasePermission permission){
 
-        if (domain.dcName.startsWith('org.gokb.cred') || domain.dcName == 'org.gokb.Annotation' || domain.dcName.startsWith('wekb')) {
+        if (domain.dcName.startsWith('org.gokb.cred') || domain.dcName.startsWith('wekb')) {
             def sid = AclSid.findBySid(role)
             AclObjectIdentity aclObjectIdentity = AclObjectIdentity.findByObjectId(domain.id)
 

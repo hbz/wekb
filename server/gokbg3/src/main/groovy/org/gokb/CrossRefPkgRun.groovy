@@ -531,10 +531,7 @@ class CrossRefPkgRun {
         title_changed |= ClassUtils.setDateIfPresent(pubFrom, ti, 'publishedFrom')
         title_changed |= ClassUtils.setDateIfPresent(pubTo, ti, 'publishedTo')
 
-        if (title_class_name == 'org.gokb.cred.BookInstance') {
-          log.debug("Adding Monograph fields for ${ti.class.name}: ${ti}")
-          title_changed |= ti.addMonographFields(titleObj)
-        }
+
 
         if (title_changed) {
           ti.merge(flush: true)

@@ -20,7 +20,6 @@ class WorkflowController{
   def genericOIDService
   def springSecurityService
   def reviewRequestService
-  def packageService
   def dateFormatService
   GlobalSearchTemplatesService globalSearchTemplatesService
   ExportService exportService

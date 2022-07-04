@@ -20,7 +20,6 @@ class UserProfileService {
     if (user_to_delete && del_user) {
 
       log.debug("Replacing links to user with placeholder ..")
-      Folder.executeUpdate("update Folder set owner = :del where owner = :utd", [utd: user_to_delete, del: del_user])
       CuratoryGroup.executeUpdate("update CuratoryGroup set owner = :del where owner = :utd", [utd: user_to_delete, del: del_user])
       Note.executeUpdate("update Note set creator = :del where creator = :utd", [utd: user_to_delete, del: del_user])
       KBComponent.executeUpdate("update KBComponent set lastUpdatedBy = :del where lastUpdatedBy = :utd", [utd: user_to_delete, del: del_user])
@@ -29,8 +28,6 @@ class UserProfileService {
       log.debug("Setting links to null ..")
 
       log.debug("Deleting dependent entities ..")
-      DSAppliedCriterion.executeUpdate("delete from DSAppliedCriterion where user = :utd", [utd: user_to_delete])
-      ComponentLike.executeUpdate("delete from ComponentLike where user = :utd", [utd: user_to_delete])
       UserOrganisationMembership.executeUpdate("delete from UserOrganisationMembership where party = :utd", [utd: user_to_delete])
       SavedSearch.executeUpdate("delete from SavedSearch where owner = :utd", [utd: user_to_delete])
       UserRole.removeAll(user_to_delete)

@@ -941,16 +941,7 @@ class ESSearchService{
 
   private void filterByComponentType(BoolQueryBuilder exactQuery, component_type, params){
     if (params.componentType){
-      if (component_type == "TitleInstance"){
-        QueryBuilder typeQuery = QueryBuilders.boolQuery()
-        typeQuery.should(QueryBuilders.termQuery('componentType', "JournalInstance"))
-        typeQuery.should(QueryBuilders.termQuery('componentType', "DatabaseInstance"))
-        typeQuery.should(QueryBuilders.termQuery('componentType', "BookInstance"))
-        typeQuery.should(QueryBuilders.termQuery('componentType', "OtherInstance"))
-        typeQuery.minimumShouldMatch(1)
-        exactQuery.must(typeQuery)
-      }
-      else if (component_type){
+      if (component_type){
         exactQuery.must(QueryBuilders.termQuery('componentType', component_type))
       }
       log.debug("Using component type ${component_type}")
@@ -1205,19 +1196,9 @@ class ESSearchService{
     def defined_types = [
         "Package",
         "Org",
-        "JournalInstance",
-        "Journal",
-        "BookInstance",
-        "Book",
-        "DatabaseInstance",
-        "Database",
         "Platform",
         "TitleInstancePackagePlatform",
         "TIPP",
-        "TitleInstance",
-        "Title",
-        "OtherInstance",
-        "Other"
     ]
     def final_type = typeString.capitalize()
 
@@ -1226,22 +1207,6 @@ class ESSearchService{
       if (final_type== 'TIPP') {
         final_type = 'TitleInstancePackagePlatform'
       }
-      else if (final_type == 'Book') {
-        final_type = 'BookInstance'
-      }
-      else if (final_type == 'Journal') {
-        final_type = 'JournalInstance'
-      }
-      else if (final_type == 'Database') {
-        final_type = 'DatabaseInstance'
-      }
-      else if (final_type == 'Title') {
-        final_type = 'TitleInstance'
-      }
-      else if (final_type == 'Other') {
-        final_type = 'OtherInstance'
-      }
-
       result = final_type
     }
     result
