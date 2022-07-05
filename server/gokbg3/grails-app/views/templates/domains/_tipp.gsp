@@ -16,10 +16,13 @@
             <semui:xEditableManyToOne owner="${d}" field="pkg" baseClass="org.gokb.cred.Package" required="true"/>
         </g:if>
         <g:else>
-            <g:link controller="resource" action="show"
-                    id="${d.pkg?.class?.name + ':' + d.pkg?.id}">
-                ${(d.pkg?.name) ?: 'Empty'}
-            </g:link>
+            <g:if test="${d.pkg}">
+                <g:link controller="resource" action="show"
+                        id="${d.pkg.uuid}">
+                    ${(d.pkg.name) ?: 'Empty'}
+                </g:link>
+            </g:if>
+            <g:else>Empty</g:else>
         </g:else>
     </dd>
 </dl>
@@ -37,6 +40,7 @@
                 <g:link controller="resource" action="show"
                         id="${d.hostPlatform.uuid}">${d.hostPlatform.name}</g:link>
             </g:if>
+            <g:else>Empty</g:else>
         </g:else>
     </dd>
 </dl>

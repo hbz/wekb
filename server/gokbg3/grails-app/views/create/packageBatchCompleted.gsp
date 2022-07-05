@@ -36,24 +36,24 @@
                 <tr>
                     <td>${counter++}</td>
                     <td>
-                        <g:link controller="resource" action="show" id="${pkg.id}">${pkg.name}</g:link>
+                        <g:link controller="resource" action="show" id="${pkg.uuid}">${pkg.name}</g:link>
                     </td>
 
                     <td>
                         <g:if test="${pkg.provider}">
-                            <g:link controller="resource" action="show" id="${pkg.provider.id}">${pkg.provider.name}</g:link>
+                            <g:link controller="resource" action="show" id="${pkg.provider.uuid}">${pkg.provider.name}</g:link>
                         </g:if>
                     </td>
 
                     <td>
                         <g:if test="${pkg.nominalPlatform}">
-                            <g:link controller="resource" action="show" id="${pkg.nominalPlatform.id}">${pkg.nominalPlatform.name}</g:link>
+                            <g:link controller="resource" action="show" id="${pkg.nominalPlatform.uuid}">${pkg.nominalPlatform.name}</g:link>
                         </g:if>
                     </td>
 
                     <td>
                         <g:if test="${pkg.source}">
-                            <g:link controller="resource" action="show" id="${pkg.source.id}">${pkg.source.name}</g:link>
+                            <g:link controller="resource" action="show" id="${pkg.source.uuid}">${pkg.source.name}</g:link>
                         </g:if>
                     </td>
 
