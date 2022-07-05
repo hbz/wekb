@@ -81,16 +81,17 @@
 
         <g:render template="/templates/componentStatus" model="${[d: d]}"/>
 
-        <g:if test="${actionName == 'packageContent'}">
+        <g:if test="${d instanceof org.gokb.cred.Package}">
             <br>
             &nbsp;
             <br>
 
-            <div style="clear:both;">
+            <div class="ui buttons">
 
                 <g:if test="${d.source && (d.source.lastUpdateUrl || d.source.url)}">
                     <g:link controller="public" action="kbart" class="ui button black"
                             id="${params.id}">KBart File</g:link> &nbsp;
+                    <div class="or"></div>
                 </g:if>
                 <g:link controller="public" action="packageTSVExport" class="ui button black"
                         id="${params.id}"><g:message
