@@ -13,6 +13,7 @@ import org.grails.datastore.mapping.model.PersistentProperty
 import org.grails.datastore.mapping.model.types.Association
 import org.grails.datastore.mapping.model.types.ManyToOne
 import org.grails.datastore.mapping.model.types.OneToOne
+import org.springframework.context.i18n.LocaleContextHolder
 
 import java.time.Instant
 import java.time.LocalDateTime
@@ -31,6 +32,8 @@ class CreateComponentService {
         // II: Defaulting this to true - don't like it much, but we need to be able to create a title without any
         // props being set... not ideal, but issue closing.
         boolean propertyWasSet = true
+
+        Locale locale = LocaleContextHolder.getLocale()
 
         User user = springSecurityService.currentUser
 
@@ -109,14 +112,12 @@ class CreateComponentService {
                      }*/
 
                     if (result.newobj instanceof TitleInstancePackagePlatform && (params.pkg == null || params.hostPlatform == null || params.url == null || params.name == null)) {
-                        result.error="Please fill Package, Platform and Host Platform URL to create the component."
-                        result.urlMap = [controller: 'create', action:'index', params:[tmpl:params.cls]]
+                        result.errors=["Please fill Package, Platform and Host Platform URL to create the component."]
                     }
                     else if (!propertyWasSet) {
                         // Add an error message here if no property was set via data sent through from the form.
                         log.debug("No properties set");
-                        result.error="Please fill in at least one piece of information to create the component."
-                        result.urlMap = [controller: 'create', action:'index', params:[tmpl:params.cls]]
+                        result.errors=["Please fill in at least one piece of information to create the component."]
                     } else {
 
                         log.debug("Saving..");
@@ -126,16 +127,16 @@ class CreateComponentService {
                             result.newobj.errors.allErrors.each { eo ->
 
                                 String[] messageArgs = eo.getArguments()
-                                def errorMessage = null
+                                def errorMessage = [:]
 
                                 log.debug("Found error with args: ${messageArgs}")
 
                                 eo.getCodes().each { ec ->
 
                                     if (!errorMessage) {
-                                        // log.debug("testing code -> ${ec}")
+                                        log.debug("testing code -> ${ec}")
 
-                                        def msg = messageSource.resolveCode(ec, request.locale)?.format(messageArgs)
+                                        def msg = messageSource.resolveCode(ec, locale)?.format(messageArgs)
 
                                         if(msg && msg != ec) {
                                             errorMessage = msg
@@ -157,14 +158,12 @@ class CreateComponentService {
                             }
 
                             if(result.errors.size() > 0){
-                                result.error = result.errors
+                                result.errors = result.errors
                             }
 
                             if ( result.errors.size() == 0 ) {
-                                result.error = "There has been an error creating the component. Please try again."
+                                result.errors = ["There has been an error creating the component. Please try again."]
                             }
-
-                            result.urlMap = [controller: 'create', action:'index', params:[tmpl:params.cls]]
                         } else {
                             result.newobj.save()
 
@@ -202,15 +201,12 @@ class CreateComponentService {
 
                                 result.newobj.save()
                             }
-
-                            result.urlMap = [controller: 'resource', action:'show', id:"${params.cls}:${result.newobj.id}"]
                         }
                     }
                 }
                 catch ( Exception e ) {
                     log.error("Problem",e);
-                    result.error = "Could not create component!"
-                    result.urlMap = [controller: 'create', action:'index', params:[tmpl:params.cls]]
+                    result.errors = ["Could not create component!"]
                 }
             }
         }

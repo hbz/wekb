@@ -430,7 +430,7 @@ select tipp.id,
   @Transient
   def availableActions() {
     [
-      [code: 'method::deleteSoft', label: 'Delete (with associated TIPPs)', perm: 'delete'],
+      [code: 'method::deleteSoft', label: 'Delete Package (with associated TIPPs)', perm: 'delete'],
       [code: 'method::retire', label: 'Retire Package (with associated TIPPs)'],
       /*[code: 'verifyTitleList', label: 'Verify Title List'],*/
       [code: 'packageUrlUpdate', label: 'Trigger Update (Changed Titles)'],

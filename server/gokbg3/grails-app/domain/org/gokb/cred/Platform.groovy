@@ -256,9 +256,9 @@ class Platform extends KBComponent {
 
   def availableActions() {
     [
-      [code: 'platform::replacewith', label: 'Replace platform with...', perm: 'admin'],
+      /*[code: 'platform::replacewith', label: 'Replace platform with...', perm: 'admin'],*/
       [code: 'method::deleteSoft', label: 'Delete Platform', perm: 'delete'],
-      [code: 'method::retire', label: 'Retire Platform (with hosted TIPPs)', perm: 'admin']
+      /*[code: 'method::retire', label: 'Retire Platform (with hosted TIPPs)', perm: 'admin']*/
     ]
   }
 

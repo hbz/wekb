@@ -94,19 +94,22 @@ class CreateController {
 
     result = createComponentService.process(result, params)
 
-    if(result.error)
+    /*if(result.error)
       flash.error = result.error
 
     if(result.message)
-      flash.message = result.message
+      flash.message = result.message*/
 
     log.debug("CreateController::process return ${result}");
 
-    if(result.urlMap) {
+    result = result as JSON
+    render result
+
+    /*if(result.urlMap) {
       redirect(result.urlMap)
     }else {
       redirect(url: request.getHeader('referer'))
-    }
+    }*/
   }
 
   @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])

@@ -275,12 +275,12 @@ class TitleInstancePackagePlatform extends KBComponent {
   public static final String restPath = "/package-titles"
 
   def availableActions() {
-    [[code: 'setStatus::Retired', label: 'Mark Retire'],
+    [[code: 'setStatus::Retired', label: 'Mark Title Retire'],
      /*[code: 'tipp::retire', label: 'Retire (with Date)'],*/
-     [code: 'setStatus::Deleted', label: 'Mark Delete', perm: 'delete'],
-     [code: 'setStatus::Removed', label: 'Remove', perm: 'delete'],
-     [code: 'setStatus::Expected', label: 'Mark Expected'],
-     [code: 'setStatus::Current', label: 'Mark Current'],
+     [code: 'setStatus::Deleted', label: 'Mark Title Delete', perm: 'delete'],
+     [code: 'setStatus::Removed', label: 'Remove Title', perm: 'delete'],
+     [code: 'setStatus::Expected', label: 'Mark Title Expected'],
+     [code: 'setStatus::Current', label: 'Mark Titel Current'],
      /*[code: 'tipp::move', label: 'Move TIPP']*/
     ]
   }

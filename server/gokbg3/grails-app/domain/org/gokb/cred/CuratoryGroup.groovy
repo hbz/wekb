@@ -97,7 +97,7 @@ class CuratoryGroup extends KBComponent {
   @Transient
   def availableActions() {
     [
-            [code: 'method::deleteSoft', label: 'Delete', perm: 'delete'],
+            [code: 'method::deleteSoft', label: 'Delete Curatory Group', perm: 'delete'],
     ]
   }
 

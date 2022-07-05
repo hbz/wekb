@@ -260,7 +260,7 @@ class AjaxSupportController {
 
     if (domain_class) {
       if (contextObj) {
-        def editable = accessService.checkEditableObject(contextObj)//checkEditable(contextObj)
+        def editable = accessService.checkEditableObject(contextObj, params)//checkEditable(contextObj)
 
         if (editable || contextObj.id == user.id) {
           log.debug("Create a new instance of ${params.__newObjectClass}");
@@ -367,7 +367,7 @@ class AjaxSupportController {
                 contextObj.save(flush: true)
               }
               else {
-                errors.addAll(messageService.processValidationErrors(new_obj.errors, request.locale))
+                errors.addAll(messageService.processValidationErrorsToListForFlashError(new_obj.errors, request.locale))
               }
             }
             else if ( params.__addToColl ) {
@@ -379,7 +379,7 @@ class AjaxSupportController {
                 log.debug("New Object Saved OK");
               }
               else {
-                errors.addAll(messageService.processValidationErrors(new_obj.errors, request.locale))
+                errors.addAll(messageService.processValidationErrorsToListForFlashError(new_obj.errors, request.locale))
               }
 
               if ( contextObj.validate() ) {
@@ -387,7 +387,7 @@ class AjaxSupportController {
                 log.debug("Context Object Saved OK");
               }
               else {
-                errors.addAll(messageService.processValidationErrors(contextObj.errors, request.locale))
+                errors.addAll(messageService.processValidationErrorsToListForFlashError(contextObj.errors, request.locale))
               }
             }
             else {
@@ -398,7 +398,7 @@ class AjaxSupportController {
                 log.debug("Saved OK (${new_obj.class.name} ${new_obj.id})");
               }
               else {
-                errors.addAll(messageService.processValidationErrors(new_obj.errors, request.locale))
+                errors.addAll(messageService.processValidationErrorsToListForFlashError(new_obj.errors, request.locale))
               }
             }
 
@@ -417,7 +417,7 @@ class AjaxSupportController {
                 new_obj.save(flush:true, failOnError:true)
               }
               else {
-                errors.addAll(messageService.processValidationErrors(new_obj.errors, request.locale))
+                errors.addAll(messageService.processValidationErrorsToListForFlashError(new_obj.errors, request.locale))
               }
             }
           }
@@ -594,7 +594,7 @@ class AjaxSupportController {
             log.debug("Saved context object ${contextObj.class.name}")
           }
           else {
-            flash.error = messageService.processValidationErrors(contextObj.errors, request.locale)
+            flash.error = messageService.processValidationErrorsToListForFlashError(contextObj.errors, request.locale)
             result.result = 'ERROR'
             result.code = 400
           }
@@ -611,7 +611,7 @@ class AjaxSupportController {
               log.debug("parent removed: "+item_to_remove[params.__otherEnd]);
             }
             if (!item_to_remove.validate()) {
-              flash.error = messageService.processValidationErrors(item_to_remove.errors, request.locale)
+              flash.error = messageService.processValidationErrorsToListForFlashError(item_to_remove.errors, request.locale)
             }
             else {
               item_to_remove.save(flush:true)

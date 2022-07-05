@@ -473,7 +473,7 @@ class WorkflowController{
 
     packages_to_verify.each{ ptv ->
       def pkgObj = Package.get(ptv.id)
-      if (accessService.checkEditableObject(pkgObj)){
+      if (accessService.checkEditableObject(pkgObj, null)){
         pkgObj.save(flush: true, failOnError: true)
       }
     }
@@ -499,7 +499,7 @@ class WorkflowController{
 
         if (pkgObj && pkgObj.source?.url){
 
-          if (accessService.checkEditableObject(pkgObj)) {
+          if (accessService.checkEditableObject(pkgObj, null)) {
             Map result = autoUpdatePackagesService.updateFromSource(pkgObj, user, allTitles)
 
             if(result.ygorData){
