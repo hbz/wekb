@@ -6,7 +6,7 @@
             <g:if test="${editable}">
                 <g:link controller="ajaxSupport"
                         action="deleteLanguage" id="${kbComponentLanguage.id}"
-                        params="[fragment: 'variantNames']">Unlink</g:link>
+                        params="[fragment: 'languages']">Delete</g:link>
             </g:if>
             </div>
         </g:each>
@@ -18,35 +18,20 @@
         <br>
         <br>
 
-        <semui:modal id="languageModal" text="Add Language">
-            <g:form controller="ajaxSupport" action="addToCollection"
-                    class="form-inline">
+        <semui:modal id="languageModal" title="Add Language">
+            <g:form controller="ajaxSupport" action="addToCollection" class="ui form">
                 <input type="hidden" name="__context"
                        value="${d.class.name}:${d.id}"/>
                 <input type="hidden" name="__newObjectClass"
                        value="wekb.KBComponentLanguage"/>
                 <input type="hidden" name="__recip" value="kbcomponent"/>
 
-                <div class="modal-header">
-                    <h3 class="modal-title">Add Language</h3>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                </div>
+                <div class="field">
+                    <label>Language:</label>
 
-                <div class="modal-body">
-
-                    <div class="field">
-                        <label>Language:</label>
-
-                        <semui:xEditableManyToOne class="form-inline" style="display:inline-block;"
-                                                      name="language"
-                                                      baseClass="org.gokb.cred.RefdataValue"
-                                                      filter1="${RCConstants.KBCOMPONENT_LANGUAGE}"/>
-                    </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-default">Add</button>
+                    <semui:simpleReferenceDropdown name="language"
+                                                   baseClass="org.gokb.cred.RefdataValue"
+                                                   filter1="${RCConstants.KBCOMPONENT_LANGUAGE}"/>
                 </div>
             </g:form>
         </semui:modal>

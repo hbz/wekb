@@ -51,24 +51,24 @@
       </tbody>
       <tfoot>
         <g:if test="${user.isAdmin() || d.owner == request.user || userIsOrgAdmin }">
-          <g:form controller="ajaxSupport" action="addToCollection" class="form-inline">
+          <g:form controller="ajaxSupport" action="addToCollection">
             <input type="hidden" name="__context" value="org.gokb.cred.UserOrganisation:${d.id}"/>
             <input type="hidden" name="__recip" value="memberOf"/>
             <input type="hidden" name="__newObjectClass" value="org.gokb.cred.UserOrganisationMembership"/>
             <tr>
               <td>
-                <semui:simpleReferenceDropdown class="form-control"
+                <semui:simpleReferenceDropdown
                                           name="party"
                                           baseClass="org.gokb.cred.User"/>
               </td>
               <td>
-                <semui:simpleReferenceDropdown class="form-control"
+                <semui:simpleReferenceDropdown
                                           name="status"
                                           baseClass="org.gokb.cred.RefdataValue"
                                           filter1="${RCConstants.MEMBERSHIP_STATUS}"/>
               </td>
               <td>
-                <semui:simpleReferenceDropdown class="form-control"
+                <semui:simpleReferenceDropdown
                                           name="role"
                                           baseClass="org.gokb.cred.RefdataValue"
                                           filter1="${RCConstants.MEMBERSHIP_ROLE}"/>

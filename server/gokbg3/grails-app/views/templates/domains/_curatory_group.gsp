@@ -2,11 +2,11 @@
 <dl>
 
     <dt class="control-label">Curatory Group Name</dt>
-    <dd><semui:xEditable owner="${d}" field="name"/></dd>
+    <dd><semui:xEditable owner="${d}" field="name" required="true"/></dd>
 </dl>
 <dl>
     <dt class="control-label">Type</dt>
-    <dd><semui:xEditableRefData owner="${d}" field="type" config="${RCConstants.CURATORY_GROUP_TYPE}"/></dd>
+    <dd><semui:xEditableRefData owner="${d}" field="type" config="${RCConstants.CURATORY_GROUP_TYPE}" required="true"/></dd>
 </dl>
 
 <g:if test="${d.id != null}">

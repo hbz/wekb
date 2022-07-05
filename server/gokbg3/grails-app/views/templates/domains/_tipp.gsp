@@ -4,7 +4,7 @@
         Title
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="name"/>
+        <semui:xEditable owner="${d}" field="name"  required="true"/>
     </dd>
 </dl>
 <dl>
@@ -12,10 +12,15 @@
         Package
     </dt>
     <dd>
-        <g:link controller="resource" action="show"
-                id="${d.pkg?.class?.name + ':' + d.pkg?.id}">
-            ${(d.pkg?.name) ?: 'Empty'}
-        </g:link>
+        <g:if test="${controllerName == 'create'}">
+            <semui:xEditableManyToOne owner="${d}" field="pkg" baseClass="org.gokb.cred.Package" required="true"/>
+        </g:if>
+        <g:else>
+            <g:link controller="resource" action="show"
+                    id="${d.pkg?.class?.name + ':' + d.pkg?.id}">
+                ${(d.pkg?.name) ?: 'Empty'}
+            </g:link>
+        </g:else>
     </dd>
 </dl>
 <dl>
@@ -23,10 +28,16 @@
         Platform
     </dt>
     <dd>
+        <g:if test="${controllerName == 'create'}">
+            <semui:xEditableManyToOne owner="${d}" field="hostPlatform" baseClass="org.gokb.cred.Platform"
+                                      required="true"/>
+        </g:if>
+        <g:else>
             <g:if test="${d.hostPlatform}">
                 <g:link controller="resource" action="show"
                         id="${d.hostPlatform.uuid}">${d.hostPlatform.name}</g:link>
             </g:if>
+        </g:else>
     </dd>
 </dl>
 <dl>
@@ -34,7 +45,7 @@
         Host Platform URL
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="url" validation="url" outGoingLink="true"/>
+        <semui:xEditable owner="${d}" field="url" validation="url" outGoingLink="true" required="true"/>
     </dd>
 </dl>
 <dl>
@@ -159,10 +170,13 @@
         Status
     </dt>
     <dd>
-        <semui:xEditableRefData owner="${d}" field="status"
-                                config="${RCConstants.KBCOMPONENT_STATUS}"/>
+        <sec:ifAnyGranted roles="ROLE_SUPERUSER">
+            <semui:xEditableRefData owner="${d}" field="status" config="${RCConstants.KBCOMPONENT_STATUS}"/>
+        </sec:ifAnyGranted>
+        <sec:ifNotGranted roles="ROLE_SUPERUSER">
+            ${d.status?.value ?: 'Not Set'}
+        </sec:ifNotGranted>
     </dd>
-
 </dl>
 <dl>
     <dt class="control-label">

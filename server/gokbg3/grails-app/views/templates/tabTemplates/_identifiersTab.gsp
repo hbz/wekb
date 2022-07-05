@@ -38,7 +38,31 @@
     </table>
 
             <g:if test="${editable}">
-                <g:render template="/apptemplates/secondTemplates/addIdentifier"
-                          model="${[d: d, hash: '#identifiers']}"/>
+                <g:set var="ctxoid" value="${org.gokb.cred.KBComponent.deproxy(d).class.name}:${d.id}"/>
+                <a class="ui right floated black button" href="#" onclick="$('#identifiersModal').modal('show');">Add Identifier</a>
+                <br>
+                <br>
+                <semui:modal id="identifiersModal" title="Add Identifier">
+
+                    <g:form controller="ajaxSupport" action="addIdentifier" class="ui form">
+                        <input type="hidden" name="hash" value="${hash}"/>
+
+                        <input type="hidden" name="__context" value="${ctxoid}" />
+
+                        <div class="field">
+                            <label>Identifier Namespace</label>
+                            <semui:simpleReferenceDropdown name="identifierNamespace"
+                                                           baseClass="org.gokb.cred.IdentifierNamespace"
+                                                           filter1="${d.class.simpleName}"/>
+                        </div>
+
+                        <div class="field">
+                            <label>Identifier Value</label>
+
+                            <input type="text" name="identifierValue" required/>
+                        </div>
+
+                    </g:form>
+                </semui:modal>
             </g:if>
 </semui:tabsItemContent>

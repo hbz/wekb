@@ -4,7 +4,7 @@
         Name
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="name"/>
+        <semui:xEditable owner="${d}" field="name" required="true"/>
     </dd>
 </dl>
 <dl>
@@ -12,13 +12,12 @@
         Status
     </dt>
     <dd>
-        <g:if test="${editable}">
-            <semui:xEditableRefData owner="${d}" field="status"
-                                    config="${RCConstants.KBCOMPONENT_STATUS}"/>
-        </g:if>
-        <g:else>
-            ${d.status}
-        </g:else>
+        <sec:ifAnyGranted roles="ROLE_SUPERUSER">
+            <semui:xEditableRefData owner="${d}" field="status" config="${RCConstants.KBCOMPONENT_STATUS}"/>
+        </sec:ifAnyGranted>
+        <sec:ifNotGranted roles="ROLE_SUPERUSER">
+            ${d.status?.value ?: 'Not Set'}
+        </sec:ifNotGranted>
     </dd>
 </dl>
 <dl>

@@ -77,51 +77,59 @@
 	<g:if test="${editable}">
 	<semui:modal id="coverageStatementsModal" title="Add Coverage Statement">
 
-		<g:form controller="ajaxSupport" action="addToCollection"
-				class="form-inline" params="[fragment: 'tippcoverage']">
+		<g:form controller="ajaxSupport" action="addToCollection" params="[fragment: 'tippcoverage']" class="ui form">
 			<input type="hidden" name="__context"
 				   value="${d.class.name}:${d.id}"/>
 			<input type="hidden" name="__newObjectClass"
 				   value="org.gokb.cred.TIPPCoverageStatement"/>
 			<input type="hidden" name="__recip" value="owner"/>
-			<dt class="control-label">Start Date</dt>
-			<dd>
-				<input class="form-control" type="date" name="startDate"/>
-			</dd>
-			<dt class="control-label">Start Volume</dt>
-			<dd>
-				<input class="form-control" type="text" name="startVolume"/>
-			</dd>
-			<dt class="control-label">Start Issue</dt>
-			<dd>
-				<input class="form-control" type="text" name="startIssue"/>
-			</dd>
-			<dt class="control-label">End Date</dt>
-			<dd>
-				<input class="form-control" type="date" name="endDate"/>
-			</dd>
-			<dt class="control-label">End Volume</dt>
-			<dd>
-				<input class="form-control" type="text" name="endVolume"/>
-			</dd>
-			<dt class="control-label">End Issue</dt>
-			<dd>
-				<input class="form-control" type="text" name="endIssue"/>
-			</dd>
-			<dt class="control-label">Embargo</dt>
-			<dd>
-				<input class="form-control" type="text" name="embargo"/>
-			</dd>
-			<dt class="control-label">Coverage Depth</dt>
-			<dd>
+			<div class="field">
+                              <label>Start Date</label>
+
+				<input  type="date" name="startDate"/>
+			</div>
+			<div class="field">
+                              <label>Start Volume</label>
+
+				<input  type="text" name="startVolume"/>
+			</div>
+			<div class="field">
+                              <label>Start Issue</label>
+
+				<input  type="text" name="startIssue"/>
+			</div>
+			<div class="field">
+                              <label>End Date</label>
+
+				<input  type="date" name="endDate"/>
+			</div>
+			<div class="field">
+                              <label>End Volume</label>
+
+				<input  type="text" name="endVolume"/>
+			</div>
+			<div class="field">
+                              <label>End Issue</label>
+
+				<input  type="text" name="endIssue"/>
+			</div>
+			<div class="field">
+                              <label>Embargo</label>
+
+				<input  type="text" name="embargo"/>
+			</div>
+			<div class="field">
+                              <label>Coverage Depth</label>
+
 				<semui:simpleReferenceDropdown name="coverageDepth"
 											  baseClass="org.gokb.cred.RefdataValue"
 											  filter1="${RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH}"/>
-			</dd>
-			<dt class="control-label">Coverage Note</dt>
-			<dd>
-				<input class="form-control" type="text" name="coverageNote"/>
-			</dd>
+			</div>
+			<div class="field">
+                              <label>Coverage Note</label>
+
+				<input  type="text" name="coverageNote"/>
+			</div>
 		</g:form>
 	</semui:modal>
 		</g:if>

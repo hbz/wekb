@@ -112,10 +112,10 @@
             <h3>New Context:</h3>
 
 						<label>New Platform:</label>
-						<semui:simpleReferenceDropdown class="form-control" name="newplatform" baseClass="org.gokb.cred.Platform" filter1="Current"/>
+						<semui:simpleReferenceDropdown  name="newplatform" baseClass="org.gokb.cred.Platform" filter1="Current"/>
 
 						<label>New Package:</label>
-						<semui:simpleReferenceDropdown class="form-control" name="newpackage" baseClass="org.gokb.cred.Package" filter1="Current"/>
+						<semui:simpleReferenceDropdown  name="newpackage" baseClass="org.gokb.cred.Package" filter1="Current"/>
 
 						<hr/>
 

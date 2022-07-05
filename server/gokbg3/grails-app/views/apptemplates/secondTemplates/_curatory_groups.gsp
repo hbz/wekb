@@ -20,7 +20,7 @@
           <td><g:link controller="resource" action="show" id="${t.getClassName()}:${t.id}"> ${t.name}</g:link></td>
           <g:if test="${cur_editable && editable && !(d instanceof TitleInstancePackagePlatform)}">
             <td>
-                <g:link controller="ajaxSupport" action="unlinkManyToMany" class="confirm-click" data-confirm-message="Are you sure you wish to unlink ${ t.name }?" params="${ ["__property":"curatoryGroups", "__context":d.getClassName() + ":" + d.id, "__itemToRemove" : t.getClassName() + ":" + t.id, "propagate": "true"] }" >Unlink</g:link>
+                <g:link controller="ajaxSupport" action="unlinkManyToMany" class="confirm-click" data-confirm-message="Are you sure you wish to unlink ${ t.name }?" params="${ ["__property":"curatoryGroups", "__context":d.getClassName() + ":" + d.id, "__itemToRemove" : t.getClassName() + ":" + t.id, "propagate": "true"] }" >Delete</g:link>
             </td>
           </g:if>
         </tr>
@@ -36,12 +36,12 @@
           <th colspan="2">Link a Curatory Group</th>
       </tr>
       <tr>
-        <g:form controller="ajaxSupport" action="addToStdCollection" class="form-inline">
+        <g:form controller="ajaxSupport" action="addToStdCollection">
           <td colspan="2">
             <input type="hidden" name="__context" value="${d.getClassName()}:${d.id}"/>
             <input type="hidden" name="__property" value="curatoryGroups"/>
               <div class="input-group" style="width:100%;">
-                <semui:simpleReferenceDropdown class="form-control" name="__relatedObject" baseClass="org.gokb.cred.CuratoryGroup" filter1="Current"/>
+                <semui:simpleReferenceDropdown  name="__relatedObject" baseClass="org.gokb.cred.CuratoryGroup" filter1="Current"/>
                 <span class="input-group-btn" style="padding: 0px 10px;vertical-align:top;">
                   <button type="submit" class="ui black button">Link</button>
                 </span>

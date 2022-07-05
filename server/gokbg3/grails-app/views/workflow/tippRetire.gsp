@@ -53,7 +53,7 @@
 					<dt>Set access end date:</dt>
 					<dd>
 						<div class="input-group" style="width:45%">
-							<select class="form-control" id="endDateSelect" name="endDateSelect">
+							<select  id="endDateSelect" name="endDateSelect">
                                                           <option value="none" selected>None</option>
                                                           <option value="now">Today</option>
                                                           <option value="select">Selected Date</option>
@@ -65,7 +65,7 @@
 						</div>
 
                                                 <div class="select-date" style="margin-top:20px" hidden>
-                                                  <input class="form-control" style="width:200px;display:inline" name="selectedDate" type="date"></input>
+                                                  <input  style="width:200px;display:inline" name="selectedDate" type="date"></input>
                                                 </div>
 					</dd>
 				</dl>

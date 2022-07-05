@@ -145,6 +145,9 @@ class SemanticInplaceTagLib {
             if (attrs.validation) {
                 out << " data-validation=\"${attrs.validation}\" "
             }
+            if (attrs.required) {
+                out << " data-required=\"${attrs.required}\" "
+            }
             if (attrs.maxlength) {
                 out << " data-maxlength=\"${attrs.maxlength}\" "
             }
@@ -205,9 +208,8 @@ class SemanticInplaceTagLib {
             def update_link = createLink(controller: 'ajaxSupport', action: 'genericSetRel', params: [curationOverride: params.curationOverride])
             def oid = owner.id != null ? "${owner.class.name}:${owner.id}" : ''
             def id = attrs.remove("id") ?: "${oid}:${attrs.field}"
-            def type = attrs.remove("type") ?: "select"
+            //def type = attrs.remove("type") ?: "select"
             def field = attrs.remove("field")
-            attrs['class'] = ["xEditableManyToOne"]
 
             String default_empty = "Edit"
             String emptyText = attrs.emptytext ? " data-emptytext=\"${attrs.emptytext}\"" : " data-emptytext=\"${default_empty}\""
@@ -216,13 +218,21 @@ class SemanticInplaceTagLib {
 
             // Output an editable link
             out << "<span id=\"${id}\" "
+
+            out << 'class="xEditableManyToOne"'
+
             if ((owner != null) && (owner.id != null)) {
                 out << "data-pk=\"${oid}\" "
             }
 
             out << "data-url=\"${update_link}\" "
 
-            def attributes = attrs.collect({ k, v ->
+            if (attrs.required) {
+                out << " data-required=\"${attrs.required}\" "
+            }
+
+            def attributes
+           /* attributes = attrs.collect({ k, v ->
 
                 if (v instanceof Collection) {
                     v = v.collect({ val ->
@@ -230,8 +240,13 @@ class SemanticInplaceTagLib {
                     }).join(" ")
                 }
                 "${k}=\"${v.encodeAsHTML()}\""
-            }).join(" ")
-            out << "data-type=\"${type}\" data-name=\"${field}\" data-source=\"${data_link}\" ${attributes} >"
+            }).join(" ")*/
+            out << "data-type=\"select\" data-name=\"${field}\" data-source=\"${data_link}\" "
+
+            if(attributes)
+            out << " ${attributes} "
+
+            out << ">"
 
             // Here we can register different ways of presenting object references. The most pressing need to be
             // outputting a span containing an icon for refdata fields.
@@ -282,7 +297,7 @@ class SemanticInplaceTagLib {
             def oid = owner.id != null ? "${owner.class.name}:${owner.id}" : ''
             def id = attrs.remove("id") ?: "${oid}:${attrs.field}"
             def field = attrs.remove("field")
-            attrs['class'] = ["xEditableManyToOne"]
+            //attrs['class'] = ["xEditableManyToOne"]
 
             String default_empty = "Edit"
             String emptyText = attrs.emptytext ? " data-emptytext=\"${attrs.emptytext}\"" : " data-emptytext=\"${default_empty}\""
@@ -292,22 +307,35 @@ class SemanticInplaceTagLib {
             // Output an editable link
             out << "<span id=\"${id}\" "
 
+            out << 'class="xEditableManyToOne"'
+
             if ((owner != null) && (owner.id != null)) {
                 out << "data-pk=\"${oid}\" "
             }
 
             out << "data-url=\"${update_link}\" "
 
-            def attributes = attrs.collect({ k, v ->
+            if (attrs.required) {
+                out << " data-required=\"${attrs.required}\" "
+            }
 
+            def attributes
+
+/*            attributes = attrs.collect({ k, v ->
                 if (v instanceof Collection) {
                     v = v.collect({ val ->
                         "${val}"
                     }).join(" ")
                 }
                 "${k}=\"${v.encodeAsHTML()}\""
-            }).join(" ")
-            out << "data-type=\"select\" data-name=\"${field}\" data-source=\"${data_link}\" ${attributes}>"
+            }).join(" ")*/
+
+            out << "data-type=\"select\" data-name=\"${field}\" data-source=\"${data_link}\" "
+
+            if(attributes)
+                out << " ${attributes} "
+
+            out << ">"
 
             // Here we can register different ways of presenting object references. The most pressing need to be
             // outputting a span containing an icon for refdata fields.
@@ -415,9 +443,9 @@ class SemanticInplaceTagLib {
             out << "data-elastic=\"${attrs.elastic}\""
         }
 
-        if (attrs.require) {
+/*        if (attrs.require) {
             out << "data-require=\"true\" "
-        }
+        }*/
 
         if (attrs.filter1) {
             out << "data-filter1=\"${attrs.filter1}\" "
@@ -473,6 +501,10 @@ class SemanticInplaceTagLib {
 
                 if (owner?.id != null)
                     out << "data-pk=\"${oid}\" "
+
+                if (attrs.required) {
+                    out << " data-required=\"${attrs.required}\" "
+                }
 
                 out << "data-type=\"select\" data-name=\"${attrs.field}\" data-source=\"${data_link}\" data-url=\"${update_link}\" ${emptyText}>"
                 if (body) {

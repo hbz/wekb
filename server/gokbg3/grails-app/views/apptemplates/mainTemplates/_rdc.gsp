@@ -59,8 +59,7 @@
           Add refdata value
         </h4>
         <dl class="dl-horizontal">
-          <g:form controller="ajaxSupport" action="addToCollection"
-            class="form-inline">
+          <g:form controller="ajaxSupport" action="addToCollection">
             <input type="hidden" name="__context"
               value="${d.className}:${d.id}" />
             <input type="hidden" name="__newObjectClass"
@@ -68,15 +67,15 @@
             <input type="hidden" name="__recip" value="owner" />
             <dt class="dt-label">Refdata Value</dt>
             <dd>
-              <input type="text" class="form-control" name="value" />
+              <input type="text"  name="value" />
             </dd>
             <dt class="dt-label">Display Class</dt>
             <dd>
-              <input type="text" class="form-control" name="icon" />
+              <input type="text"  name="icon" />
             </dd>
             <dt class="dt-label">Sort Key</dt>
             <dd>
-              <input type="text" class="form-control" name="sortKey" />
+              <input type="text"  name="sortKey" />
             </dd>
             <dt></dt>
             <dd>

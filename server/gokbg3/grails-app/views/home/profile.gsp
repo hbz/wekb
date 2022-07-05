@@ -56,15 +56,15 @@
                 <g:form action="changePass" class="ui form">
                     <dl>
                         <dt class="dt-label">Original Password :</dt>
-                        <dd><input class="form-control" name="origpass" type="password"/></dd>
+                        <dd><input  name="origpass" type="password"/></dd>
                     </dl>
                     <dl>
                         <dt class="dt-label">New Password :</dt>
-                        <dd><input class="form-control" name="newpass" type="password"/></dd>
+                        <dd><input  name="newpass" type="password"/></dd>
                     </dl>
                     <dl>
                         <dt class="dt-label">Repeat New Password :</dt>
-                        <dd><input class="form-control" name="repeatpass" type="password"/></dd>
+                        <dd><input  name="repeatpass" type="password"/></dd>
                     </dl>
 
                     <button type="submit" class="ui black button">Change Password</button>

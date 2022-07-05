@@ -16,7 +16,7 @@ class SemanticTagLib {
 
     def actionsDropdown = { attrs, body ->
 
-        out << '<div class="ui simple dropdown button">'
+        out << '<div class="ui simple dropdown black button">'
         out << '<div class="text">'
         out << attrs.text
         out << '</div>'
@@ -554,10 +554,19 @@ class SemanticTagLib {
 
         if (data instanceof List) {
 
-            data.each {
-                out << '<div class="item">'
-                out << it
-                out << '</div>'
+            data.each { def listItems ->
+                if(listItems instanceof List){
+                    listItems.each {
+                        out << '<div class="item">'
+                        out << it
+                        out << '</div>'
+                    }
+                }else {
+                    out << '<div class="item">'
+                    out << listItems
+                    out << '</div>'
+                }
+
             }
 
         }

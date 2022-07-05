@@ -24,10 +24,10 @@
           </td>
         </g:each>
         <td>
-          <g:if test="${accessService.checkEditableObject(d) && (d.respondsTo('curatoryGroups') ? (!d.respondsTo('getCuratoryGroups') ? true : cur) : true)}">
+          <g:if test="${accessService.checkEditableObject(d, params)&& (d.respondsTo('curatoryGroups') ? (!d.respondsTo('getCuratoryGroups') ? true : cur) : true)}">
             <g:link controller='ajaxSupport'
                     action='unlinkManyToMany'
-                    params="${[__context:ctxoid,__property:property,__itemToRemove:rowoid, propagate:propagateDelete]}">Unlink</g:link>
+                    params="${[__context:ctxoid,__property:property,__itemToRemove:rowoid, propagate:propagateDelete]}">Delete</g:link>
           </g:if>
         </td>
       </tr>
@@ -35,7 +35,7 @@
   </tbody>
 </table>
 
-<g:if test="${targetClass && accessService.checkEditableObject(d) && !noadd}">
+<g:if test="${targetClass && accessService.checkEditableObject(d, params) && !noadd}">
 
   <g:if test="${params.controller != 'create'}">
     <g:if test="${direction=='in'}">
@@ -50,7 +50,7 @@
       Add new Entry
     </h4>
     <dl class="dl-horizontal">
-      <g:form controller="ajaxSupport" action="addToCollection" class="form-inline">
+      <g:form controller="ajaxSupport" action="addToCollection">
         <input type="hidden" name="__context" value="${ctxoid}"/>
         <input type="hidden" name="__newObjectClass" value="org.gokb.cred.Combo"/>
         <input type="hidden" name="__recip" value="${recip}"/>

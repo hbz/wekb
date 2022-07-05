@@ -11,8 +11,9 @@
 
 
     <g:link controller="group" action="exportMyPackages" id="${params.id}"
-            class="ui black button">Export my packages</g:link>
+            class="ui right floated black button">Export my packages</g:link>
 
+    <br>
     <br>
 
     <g:if test="${(qbetemplate.message != null)}">
@@ -40,6 +41,8 @@
     <div class="ui right floated buttons">
         <g:link controller="create" action="packageBatch" class="ui black button right aligned">Upload Packages</g:link>
     </div>
+    <br>
+    <br>
 
 
 

@@ -67,13 +67,27 @@
 </nav>--}%
 <g:if test="${displayobj != null}">
 
+    <g:if test="${displayobj.status == RDStore.KBC_STATUS_REMOVED}">
+        <div class="ui negative icon huge message">
+            <i class="info icon"></i>
+
+            <div class="content">
+                <div class="header">
+                    Removed component
+                </div>
+
+                <p>This component has been set to removed and will soon be permanently removed from this system</p>
+            </div>
+        </div>
+    </g:if>
+
     <g:if test="${displayobj.respondsTo('availableActions') && editable}">
 
         <g:set var="object" value="${displayobj.class.name}:${displayobj.id}"/>
 
         <div class="ui right floated buttons">
         <semui:actionsDropdown text="Available actions">
-                <g:each var="action" in="${displayobj.userAvailableActions()}">
+                <g:each var="action" in="${displayobj.userAvailableActions().sort{it.label}}">
                     <g:if test="${action.code in ["packageUrlUpdate", "packageUrlUpdateAllTitles"]}">
                         <g:if test="${displayobj.source}">
                             <semui:actionsDropdownItem controller="workflow" action="action"
@@ -96,7 +110,7 @@
                    value="true"/>
 
             <div class="input-group">
-                <select id="selectedAction" name="selectedBulkAction" class="form-control">
+                <select id="selectedAction" name="selectedBulkAction" >
                     <option value="">-- Select an action to perform --</option>
                     <g:each var="action" in="${displayobj.userAvailableActions()}">
                         <g:if test="${action.code in ["packageUrlUpdate", "packageUrlUpdateAllTitles"]}">

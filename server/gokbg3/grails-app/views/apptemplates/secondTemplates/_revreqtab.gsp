@@ -38,11 +38,11 @@
                 data-toggle="collapse" data-target="#collapseableAddReview">
             Add new <i class="fas fa-plus"></i></button>
         <dl id="collapseableAddReview" class="dl-horizontal collapse">
-            <g:form controller="workflow" action="newRRLink" class="form-inline">
+            <g:form controller="workflow" action="newRRLink">
                 <input type="hidden" name="id" value="${d.id}"/>
                 <dt class="dt-label">Aspect to review</dt>
                 <dd>
-                    <input class="form-control" type="text" name="request" required/>
+                    <input  type="text" name="request" required/>
                 </dd>
                 <dt class="dt-label"></dt>
                 <dd>

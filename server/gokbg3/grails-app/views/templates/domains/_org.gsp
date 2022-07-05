@@ -4,7 +4,7 @@
         Name
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="name"/>
+        <semui:xEditable owner="${d}" field="name" required="true"/>
     </dd>
 </dl>
 <dl>
@@ -64,7 +64,7 @@
                     <g:if test="${editable}">
                         <g:link controller='ajaxSupport'
                                 action='unlinkManyToMany'
-                                params="${["__context": "${d.class.name}:${d.id}", "__property": "roles", "__itemToRemove": "${t.getClassName()}:${t.id}"]}">Unlink</g:link>
+                                params="${["__context": "${d.class.name}:${d.id}", "__property": "roles", "__itemToRemove": "${t.getClassName()}:${t.id}"]}">Delete</g:link>
                     </g:if>
                 </div>
             </g:each>
@@ -114,7 +114,7 @@
                             <g:if test="${editable}">
                                 <g:link controller='ajaxSupport'
                                         action='delete'
-                                        params="${["__context": "${contact.class.name}:${contact.id}"]}">Unlink</g:link>
+                                        params="${["__context": "${contact.class.name}:${contact.id}"]}">Delete</g:link>
                             </g:if>
                         </td>
                     </tr>
@@ -136,47 +136,48 @@
 <g:if test="${editable}">
     <semui:modal id="contactModal" title="Add Contact">
 
-        <g:form controller="ajaxSupport" action="addToCollection"
-                class="form-inline">
+        <g:form controller="ajaxSupport" action="addToCollection" class="ui form">
             <input type="hidden" name="__context" value="${d.class.name}:${d.id}"/>
             <input type="hidden" name="__newObjectClass" value="wekb.Contact"/>
             <input type="hidden" name="__recip" value="org"/>
             <input type="hidden" name="fragment" value="contact"/>
-            <dt class="control-label">Value</dt>
-            <dd>
-                <input type="text" class="form-control select-m" name="content"/>
-            </dd>
-            <dt class="control-label">Language</dt>
-            <dd>
+            <div class="field">
+                    <label>Value</label>
+
+                <input type="text" name="content"/>
+            </div>>
+            <div class="field">
+                    <label>Language</label>
                 <semui:simpleReferenceDropdown name="language"
                                                baseClass="org.gokb.cred.RefdataValue"
                                                filter1="${RCConstants.KBCOMPONENT_LANGUAGE}"/>
-            </dd>
-            <dt class="control-label">Content Type</dt>
-            <dd>
+            </div>>
+            <div class="field">
+                    <label>Content Type</label>
                 <semui:simpleReferenceDropdown name="contentType"
                                                baseClass="org.gokb.cred.RefdataValue"
                                                filter1="${RCConstants.CONTACT_CONTENT_TYPE}"/>
-            </dd>
+            </div>
 
-            <dt class="control-label">Contact Type</dt>
-            <dd>
+            <div class="field">
+                    <label>Contact Type</label>
                 <semui:simpleReferenceDropdown name="type"
                                                baseClass="org.gokb.cred.RefdataValue"
                                                filter1="${RCConstants.CONTACT_TYPE}"/>
-            </dd>
+            </div>
         </g:form>
     </semui:modal>
 
     <semui:modal id="rolesModal" title="Add Role">
 
-        <g:form controller="ajaxSupport" action="addToStdCollection" class="form-inline">
+        <g:form controller="ajaxSupport" action="addToStdCollection" class="ui form">
             <input type="hidden" name="__context" value="${d.class.name}:${d.id}"/>
             <input type="hidden" name="__property" value="roles"/>
-            Role: <semui:simpleReferenceDropdown class="form-inline" style="display:inline-block;"
-                                                 name="__relatedObject"
+            <div class="field">
+                              <label>Role:</label> <semui:simpleReferenceDropdown name="__relatedObject"
                                                  baseClass="org.gokb.cred.RefdataValue"
                                                  filter1="${RCConstants.ORG_ROLE}"/>
+            </div>
         </g:form>
     </semui:modal>
 </g:if>

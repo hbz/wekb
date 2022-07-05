@@ -6,6 +6,7 @@
 //= require /jquery.poshytip.js                              //-- externalLibs
 
 //= require /jquery-editable/js/jquery-editable-poshytip.js //-- externalLibs
+
 //=require /combodate.js                                  //-- externalLibs
 
 //=require /semantic.min.js                                 //-- semantic
@@ -70,11 +71,16 @@ $(function () {
         '<div class="ui active inline loader"></div>';
 
     $('.xEditableValue').editable({
-        format:   "yyyy-MM-dd",
         validate: function(value) {
             if ($(this).attr('data-format') && value) {
                 if(! (value.match(/^\d{4}-\d{1,2}-\d{1,2}$/)) ) {
                     return "Wrong format";
+                }
+            }
+
+            if ($(this).attr('data-required')) {
+                if($.trim(value) == '') {
+                    return 'This field is required';
                 }
             }
             // custom validate functions via semui:xEditable validation="xy"
@@ -107,7 +113,9 @@ $(function () {
             }
         },
         success: function(response, newValue) {
-            if(!response.success) return response.msg;
+            if(response) {
+                if (!response.success) return response.msg;
+            }
         },
         error: function(response, newValue) {
             if(response.status === 500) {
@@ -140,7 +148,9 @@ $(function () {
     $('.xEditableManyToOne').editable({
         tpl: '<select class="ui search selection dropdown"></select>',
         success: function(response, newValue) {
-            if(!response.success) return response.msg; //msg will be shown in editable form
+            if(response) {
+                if(!response.success) return response.msg; //msg will be shown in editable form
+            }
         }
     }).on('shown', function(e, obj) {
 

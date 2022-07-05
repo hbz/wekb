@@ -90,7 +90,7 @@
                             params="${['id': row.id, 'fragment': fragment, 'propagate': "true"]}"
                             class="confirm-click btn-delete"
                             title="Delete this link"
-                            data-confirm-message="Are you sure you wish to delete this ${row.toComponent.niceName}?">Unlink</g:link>
+                            data-confirm-message="Are you sure you wish to delete this ${row.toComponent.niceName}?">Delete</g:link>
                 </td>
             </g:if>
         </tr>

@@ -1,5 +1,13 @@
 <%@ page import="de.wekb.helper.RCConstants; org.gokb.cred.RefdataCategory;" %>
 <dl>
+    <dt class="control-label">
+        Name
+    </dt>
+    <dd>
+        <semui:xEditable owner="${d}" field="name" required="true"/>
+    </dd>
+</dl>
+<dl>
     <dt class="control-label">Provider</dt>
     <dd><semui:xEditableManyToOne owner="${d}" field="provider" baseClass="org.gokb.cred.Org"/></dd>
 </dl>
@@ -153,7 +161,7 @@
                             <g:if test="${editable}">
                                 <g:link controller='ajaxSupport'
                                         action='delete'
-                                        params="${["__context": "${paa.class.name}:${paa.id}"]}">Unlink</g:link>
+                                        params="${["__context": "${paa.class.name}:${paa.id}"]}">Delete</g:link>
                             </g:if>
                         </td>
                     </tr>
@@ -176,30 +184,29 @@
 <g:if test="${editable}">
     <semui:modal id="paaModal" title="Add Archiving Agency">
 
-        <g:form controller="ajaxSupport" action="addToCollection"
-                class="form-inline">
+        <g:form controller="ajaxSupport" action="addToCollection" class="ui form">
             <input type="hidden" name="__context" value="${d.class.name}:${d.id}"/>
             <input type="hidden" name="__newObjectClass" value="wekb.PackageArchivingAgency"/>
             <input type="hidden" name="__recip" value="pkg"/>
-            <dt class="control-label">Archiving Agency</dt>
-            <dd>
-                <semui:simpleReferenceDropdown class="form-control" name="archivingAgency"
+            <div class="field">
+                              <label>Archiving Agency</label>
+                <semui:simpleReferenceDropdown  name="archivingAgency"
                                               baseClass="org.gokb.cred.RefdataValue"
                                               filter1="${RCConstants.PAA_ARCHIVING_AGENCY}"/>
-            </dd>
-            <dt class="control-label">Open Access</dt>
-            <dd>
-                <semui:simpleReferenceDropdown class="form-control" name="openAccess"
+            </div>
+            <div class="field">
+                              <label>Open Access</label>
+                <semui:simpleReferenceDropdown  name="openAccess"
                                               baseClass="org.gokb.cred.RefdataValue"
                                               filter1="${RCConstants.PAA_OPEN_ACCESS}"/>
-            </dd>
+            </div>
 
-            <dt class="control-label">Post-Cancellation Access (PCA)</dt>
-            <dd>
-                <semui:simpleReferenceDropdown class="form-control" name="postCancellationAccess"
+            <div class="field">
+                              <label>Post-Cancellation Access (PCA)</label>
+                <semui:simpleReferenceDropdown  name="postCancellationAccess"
                                               baseClass="org.gokb.cred.RefdataValue"
                                               filter1="${RCConstants.PAA_POST_CANCELLATION_ACCESS}"/>
-            </dd>
+            </div>
         </g:form>
     </semui:modal>
 </g:if>

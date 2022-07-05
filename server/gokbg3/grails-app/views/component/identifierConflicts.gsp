@@ -15,14 +15,14 @@
         <div class="input-group">
             <dt class="dt-label">Identifier Namespace</dt>
             <dd>
-                <semui:simpleReferenceDropdown class="form-control" name="id"
+                <semui:simpleReferenceDropdown  name="id"
                                                baseClass="org.gokb.cred.IdentifierNamespace"
                                                value="${namespace ? 'org.gokb.cred.IdentifierNamespace:' + namespace.id : ''}"
                                                filter1="all"/>
             </dd>
             <dt class="dt-label">Conflict type</dt>
             <dd>
-                <select class="form-control" id="ctype" name="ctype">
+                <select  id="ctype" name="ctype">
                     <option value="st" ${ctype == 'st' ? 'selected' : ''}>Multiple occurrences of one namespace on one title</option>
                     <option value="di" ${ctype == 'di' ? 'selected' : ''}>Identifers connected to multiple components</option>
                 </select>
