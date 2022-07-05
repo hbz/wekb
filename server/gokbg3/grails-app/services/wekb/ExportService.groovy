@@ -546,8 +546,8 @@ class ExportService {
                 " tipp.firstAuthor, " +
                 " tipp.firstEditor, " +
                 " tipp.publisherName, " +
-                " (select value from RefdataValue where tipp.id = tipp.publicationType), " +
-                " (select value from RefdataValue where tipp.id = tipp.medium), " +
+                " (select value from RefdataValue where id = tipp.publicationType), " +
+                " (select value from RefdataValue where id = tipp.medium), " +
                 " tipp.url, " +
                 " 'printIdentifier', " +
                 " 'onlineIdentifier', " +
