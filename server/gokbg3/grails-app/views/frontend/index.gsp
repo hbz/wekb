@@ -20,7 +20,7 @@
                         <li class="active"><a  href="#home" role="tab">Home</a></li>
                         <semui:tabsItem href="#profile" controller="frontend" action="tabExample" text="Profile" />
                         <semui:tabsItem href="#messages" controller="frontend" action="tabExample" text="Messages" />
-                    </bootStrap:tabs>
+                    </semui:tabs>
 
                 <!-- Tab panes -->
                     <div class="tab-content">
