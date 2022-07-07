@@ -506,6 +506,11 @@ class SemanticInplaceTagLib {
                     out << " data-required=\"${attrs.required}\" "
                 }
 
+                if ((attrs.value != null) && (attrs.value instanceof String && attrs.value.length() > 0)) {
+                    def o = genericOIDService.resolveOID2(attrs.value)
+                    out << "data-value=\"${o.id.toString()}\" "
+                }
+
                 out << "data-type=\"select\" data-name=\"${attrs.field}\" data-source=\"${data_link}\" data-url=\"${update_link}\" ${emptyText}>"
                 if (body) {
                     out << body()
