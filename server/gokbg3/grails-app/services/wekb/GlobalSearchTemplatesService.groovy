@@ -1516,7 +1516,7 @@ class GlobalSearchTemplatesService {
                                         prompt     : 'Curatory Group',
                                         qparam     : 'qp_curgroups',
                                         placeholder: 'Curatory Group',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'exists', 'prop': 'curatoryGroups'],
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'exists', 'prop': 'pkg.curatoryGroups'],
                                         hide       : true
                                 ],
                                 [
@@ -1788,7 +1788,7 @@ class GlobalSearchTemplatesService {
                                         prompt     : 'Curatory Group',
                                         qparam     : 'qp_curgroups',
                                         placeholder: 'Curatory Group',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'exists', 'prop': 'curatoryGroups'],
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'exists', 'prop': 'pkg.curatoryGroups'],
                                         hide       : true
                                 ],
 
