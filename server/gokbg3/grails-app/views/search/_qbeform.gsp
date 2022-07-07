@@ -4,7 +4,7 @@
 <g:if test="${hide.contains('SEARCH_FORM')}">
 </g:if>
 <g:elseif test="${params.inline}">
-    <g:form method="get" class="ui form" controller="${controllerName}" action="${actionName}" id="${params.id}">
+    <g:form method="get" class="ui form" controller="search" action="componentSearch" id="${params.id}">
         <input type="hidden" name="qbe" value="${params.qbe}"/>
 
         <g:each in="${hide}" var="hidden_var">
@@ -84,7 +84,7 @@
 
                 </div>
 
-                <g:if test="${(frmidx + 1) % 2 == 0}">
+                <g:if test="${((frmidx) % 2) == 0}">
                     </div>
                     <div class="two fields">
                 </g:if>
