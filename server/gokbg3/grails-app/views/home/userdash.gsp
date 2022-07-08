@@ -40,7 +40,7 @@
     </div>
 </div>
 
-<div class="ui segment">
+%{--<div class="ui segment">
     <h3 class="ui header">Finished Upload Jobs</h3>
 
     <div class="content">
@@ -48,7 +48,7 @@
                 params="[qbe: 'g:userJobs', inline: true]"
                 id="">Finished Upload Jobs</g:link>
     </div>
-</div>
+</div>--}%
 
 </body>
 </html>

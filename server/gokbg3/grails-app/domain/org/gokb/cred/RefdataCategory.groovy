@@ -4,6 +4,8 @@ import de.wekb.base.AbstractI10n
 import groovy.util.logging.*
 import org.apache.commons.logging.LogFactory
 
+import javax.persistence.Transient
+
 @Slf4j
 class RefdataCategory extends AbstractI10n {
 
@@ -249,6 +251,29 @@ class RefdataCategory extends AbstractI10n {
 
   Integer getValuesCount(){
     return values.size()
+  }
+
+  @Transient
+  public String getDomainName() {
+    return "Refdata Category"
+  }
+
+  static def refdataFind(params) {
+    def result = [];
+    def ql = null;
+
+    def query = "from RefdataCategory as rc where (lower(rc.desc) like :value OR lower(rc.desc_de) like :value OR lower(rc.desc_en) like :value)"
+    Map query_params = [value: "%${params.q.toLowerCase()}%"]
+
+    ql = RefdataCategory.findAll(query, query_params, params)
+
+    if ( ql ) {
+      ql.sort {it.getI10n('desc')}.each { RefdataCategory refdataCategory ->
+        result.add([id:"${refdataCategory.class.name}:${refdataCategory.id}", text:"${refdataCategory.getI10n('desc')}"])
+      }
+    }
+
+    result
   }
 
 }

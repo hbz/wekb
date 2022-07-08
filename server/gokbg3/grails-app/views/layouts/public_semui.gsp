@@ -66,6 +66,11 @@
                        target="_blank">Ygor</a>
                 </div>
             </g:if>
+            <sec:ifAnyGranted roles="ROLE_ADMIN">
+                        <div class="item">
+                        ${adminService.getNumberOfActiveUsers()} User online
+                        </div>
+            </sec:ifAnyGranted>
 
         </div>
     </div>
@@ -158,22 +163,47 @@
                     </div>
 
 
-                    <g:if test="${session.menus?.admin?.search}">
-                        <div class="ui dropdown item"><i class="dropdown icon"></i> Admin Search <div class="menu">
-                            <g:each in="${session.menus.admin.search.sort { it.text }}" var="item">
-                                ${g.link(item.link + item.attr) { " ${item.text}" }}
-                            </g:each>
-                        </div>
-                        </div>
-                    </g:if>
-                    <g:if test="${session.menus?.admin?.create}">
-                        <div class="ui dropdown item"><i class="dropdown icon"></i> Admin Create <div class="menu">
-                            <g:each in="${session.menus.admin.create.sort { it.text }}" var="item">
-                                ${g.link(item.link + item.attr) { " ${item.text}" }}
-                            </g:each>
-                        </div>
-                        </div>
-                    </g:if>
+                    <div class="ui dropdown item"><i class="dropdown icon"></i> Admin Search <div class="menu">
+                        <g:link class="item" controller="search" action="componentSearch"
+                                params="[qbe: 'g:identifiers']">Identifiers</g:link>
+                        <g:link class="item" controller="search" action="componentSearch"
+                                params="[qbe: 'g:namespaces']">Identifier Namespaces</g:link>
+                        <g:link class="item" controller="search" action="componentSearch"
+                                params="[qbe: 'g:jobResults']">Job Infos</g:link>
+                        <g:link class="item" controller="search" action="componentSearch"
+                                params="[qbe: 'g:notes']">Notes</g:link>
+                        <g:link class="item" controller="search" action="componentSearch"
+                                params="[qbe: 'g:refdataCategories']">Refdata Categories</g:link>
+                        <g:link class="item" controller="search" action="componentSearch"
+                                params="[qbe: 'g:refdataValues']">Refdata Values</g:link>
+                        <g:link class="item" controller="search" action="componentSearch"
+                                params="[qbe: 'g:reviewRequests']">Review Requests</g:link>
+                        <g:link class="item" controller="search" action="componentSearch"
+                                params="[qbe: 'g:userOrganisation']">User Organisation</g:link>
+                        <g:link class="item" controller="search" action="componentSearch"
+                                params="[qbe: 'g:users']">Users</g:link>
+                        <g:link class="item" controller="search" action="componentSearch"
+                                params="[qbe: 'g:userJobs']">User Jobs</g:link>
+                        <g:link class="item" controller="search" action="componentSearch"
+                                params="[qbe: 'g:userWatchedComponents']">User Watched Components</g:link>
+                    </div>
+                    </div>
+
+                    <div class="ui dropdown item"><i class="dropdown icon"></i> Admin Create <div class="menu">
+                        <g:link class="item" controller="create" action="index"
+                                params="[tmpl: 'org.gokb.cred.IdentifierNamespace']">Identifier Namespace</g:link>
+                        <g:link class="item" controller="create" action="index"
+                                params="[tmpl: 'org.gokb.cred.RefdataCategory']">Refdata Category</g:link>
+                        <g:link class="item" controller="create" action="index"
+                                params="[tmpl: 'org.gokb.cred.RefdataValue']">Refdata Value</g:link>
+                        <g:link class="item" controller="create" action="index"
+                                params="[tmpl: 'org.gokb.cred.ReviewRequest']">Review Request</g:link>
+                       %{-- <g:link class="item" controller="create" action="index"
+                                params="[tmpl: 'org.gokb.cred.User']">User</g:link>
+                        <g:link class="item" controller="create" action="index"
+                                params="[tmpl: 'org.gokb.cred.UserOrganisation']">User Organisation</g:link>--}%
+                    </div>
+                    </div>
 
                     <div class="ui dropdown item"><i class="dropdown icon"></i> Admin Jobs <div class="menu">
                         <g:link class="item" controller="admin" action="updateTextIndexes"

@@ -5,6 +5,7 @@
 
 <div class="ui right rail">
     <div class="ui segment">
+        <g:if test="${d instanceof org.gokb.cred.KBComponent}">
         <h2 class="ui header">Curated By</h2>
 
         <div class="ui bulleted list">
@@ -36,10 +37,11 @@
             </g:if>
         </div>
 
+        </g:if>
         <sec:ifNotLoggedIn>
             <div style="margin-top:10px;">
                 <g:link controller="resource" action="showLogin" class="fluid ui button black"
-                        id="${d.uuid}"><i class="edit icon"></i> Edit (Login required)</g:link>
+                        id="${d instanceof org.gokb.cred.KBComponent ? d.uuid : d.class.name + ':' + d.id}"><i class="edit icon"></i> Edit (Login required)</g:link>
             </div>
         </sec:ifNotLoggedIn>
         <sec:ifLoggedIn>

@@ -179,14 +179,14 @@ class SearchService {
             result.qbetemplate.qbeConfig.qbeResults.each { rh ->
                 def ppath = rh.property.split(/\./)
                 def cobj = r
-                def final_oid = cobj.hasProperty('uuid') ? cobj.uuid : cobj.class.name + ':' + cobj.id
+                def final_oid = cobj instanceof org.gokb.cred.KBComponent ? cobj.uuid : cobj.class.name + ':' + cobj.id
 
                 if (!params.hide || (params.hide instanceof String ? (params.hide != rh.qpEquiv) : !params.hide.contains(rh.qpEquiv))) {
 
                     ppath.eachWithIndex { prop, idx ->
                         def sp = prop.minus('?')
 
-                        if( cobj?.class?.name == 'org.gokb.cred.RefdataValue' ) {
+                        if(result.qbetemplate.baseclass != 'org.gokb.cred.RefdataValue' && cobj?.class?.name == 'org.gokb.cred.RefdataValue' ) {
                             cobj = cobj.value
                         }
                         else {
@@ -201,7 +201,7 @@ class SearchService {
 
                                 if (ppath.size() > 1 && idx == ppath.size()-2) {
                                     if (cobj && sp != 'class') {
-                                        final_oid = cobj.hasProperty('uuid') ? cobj.uuid : cobj.class.name + ':' + cobj.id
+                                        final_oid = cobj instanceof org.gokb.cred.KBComponent ? cobj.uuid : cobj.class.name + ':' + cobj.id
                                     }
                                     else {
                                         final_oid = null

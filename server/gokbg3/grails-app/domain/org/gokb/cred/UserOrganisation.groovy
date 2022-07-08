@@ -43,4 +43,9 @@ class UserOrganisation extends Party {
     def user = springSecurityService?.currentUser
     this.owner = user
   }
+
+  @Transient
+  public String getDomainName() {
+    return "User Organisation"
+  }
 }

@@ -486,7 +486,7 @@ class SemanticInplaceTagLib {
 
             if (viewable && owner != null && owner[attrs.field] != null) {
                 String urlWithClassAndID = null
-                if(!(owner[attrs.field].hasProperty('uuid')))
+                if(!(owner[attrs.field] instanceof org.gokb.cred.KBComponent))
                     urlWithClassAndID = "${ClassUtils.deproxy(owner[attrs.field]).class.name}" + ':' + owner[attrs.field].id
 
                 follow_link = createLink(controller: 'resource', action: 'show', id: urlWithClassAndID ?: owner[attrs.field].uuid)

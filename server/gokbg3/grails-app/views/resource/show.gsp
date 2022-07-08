@@ -135,7 +135,7 @@
         </g:form>--}%
     </g:if>
 
-    <h1 class="ui header">${displayobj.getDomainName()}: ${displayobj.name}</h1>
+    <h1 class="ui header">${displayobj.getDomainName()}: ${displayobj.hasProperty('name') ? displayobj.name : ''}</h1>
 
     <div class="ui segment">
         <g:render template="rightBox" model="${[d: displayobj]}"/>

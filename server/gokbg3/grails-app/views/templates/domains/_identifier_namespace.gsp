@@ -1,17 +1,25 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
-<dl class="dl-horizontal">
-  <dt> Value </dt>
+<dl>
+  <dt class="control-label"> Value </dt>
   <dd> <semui:xEditable  owner="${d}" field="value" /> </dd>
 
-  <dt> Name </dt>
+</dl>
+<dl>
+  <dt class="control-label"> Name </dt>
   <dd> <semui:xEditable  owner="${d}" field="name" /> </dd>
 
-  <dt> Category </dt>
+</dl>
+<dl>
+  <dt class="control-label"> Category </dt>
   <dd> <semui:xEditable  owner="${d}" field="family" /> </dd>
 
-  <dt> Pattern </dt>
+</dl>
+<dl>
+  <dt class="control-label"> Pattern </dt>
   <dd> <semui:xEditable  owner="${d}" field="pattern" /> </dd>
 
-  <dt> Target Type </dt>
+</dl>
+<dl>
+  <dt class="control-label"> Target Type </dt>
   <dd> <semui:xEditableRefData owner="${d}" field="targetType" config="${RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE}" /> </dd>
 </dl>

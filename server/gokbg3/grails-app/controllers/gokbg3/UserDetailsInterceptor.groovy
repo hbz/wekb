@@ -11,7 +11,6 @@ class UserDetailsInterceptor {
     match(controller: 'admin')
     match(controller: 'component')
     match(controller: 'create')
-    match(controller: 'file')
     match(controller: 'fwk')
     match(controller: 'group')
     match(controller: 'home')
@@ -19,8 +18,6 @@ class UserDetailsInterceptor {
     match(controller: 'resource')
     match(controller: 'savedItems')
     match(controller: 'search')
-    match(controller: 'security')
-    match(controller: 'upload')
     match(controller: 'user')
     match(controller: 'workflow')
   }
@@ -40,79 +37,6 @@ class UserDetailsInterceptor {
       if (user) {
         log.debug("User details filter... User present");
         request.user = user
-        boolean userIsAdmin = user.isAdmin()
-
-        if(userIsAdmin) {
-
-          if (!session.menus) {
-
-            // Map to hold the menus.
-            final Map<String, LinkedHashMap<String, Map>> menus = new HashMap<String, LinkedHashMap<String, Map>>().withDefault {
-              new LinkedHashMap<String, Map>().withDefault {
-                new ArrayList()
-              }
-            }
-
-            // Add to the session.
-            session.menus = menus
-
-            /* def default_dcs = ["org.gokb.cred.Package", "org.gokb.cred.Platform", "org.gokb.cred.TitleInstancePackagePlatform", "org.gokb.cred.Org", "org.gokb.cred.Source"]
-*/
-            // Step 1 : List all domains available to this user order by type, grouped into type
-            def domains = KBDomainInfo.createCriteria().list {
-
-              if (userIsAdmin) {
-                ilike('dcName', 'org.gokb%')
-              }/*else{
-              inList('dcName', default_dcs)
-            }*/
-
-              createAlias("type", "menueType")
-
-              /*order ('menueType.sortKey','asc')
-            order ('menueType.value','asc')
-            order ('dcSortOrder','asc')*/
-              order('displayName', 'asc')
-            }
-
-            domains.each { d ->
-
-              // Get the target class.
-              Class tc = Class.forName(d.dcName)
-
-              if (tc) {
-
-                  // Find any searches for that domain that the user has access to and add them to the menu section
-                  def searches_for_this_domain = globalSearchTemplatesService.findAllByBaseClass(d.dcName)
-
-                  searches_for_this_domain.each { key, val ->
-
-                    // Add a menu item.
-                    if (userIsAdmin) {
-                      menus["admin"]["search"] << [
-                              text: val.title,
-                              link: ['controller': 'search', 'action': 'index', 'params': [qbe: 'g:' + key], 'class': 'item'],
-                              attr: ['title': "Search ${val.title}"]
-                      ]
-                    }
-
-                  }
-                  def display_template = displayTemplateService.getTemplateInfo(d.dcName)
-
-                  if (display_template && !display_template.noCreate) {
-
-                    if (userIsAdmin) {
-                      menus["admin"]["create"] << [
-                              text: d.displayName,
-                              link: ['controller': 'create', 'action': 'index', 'params': [tmpl: d.dcName], 'class': 'item'],
-                              attr: ['title': "New ${d.displayName}"]
-                      ]
-                    }
-                  }
-              }
-            }
-          }
-        }
 
         // Get user curatorial groups
         if ( ! session.curatorialGroups ) {

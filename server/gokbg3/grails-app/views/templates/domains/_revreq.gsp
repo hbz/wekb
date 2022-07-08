@@ -1,30 +1,35 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
-<dl class="dl-horizontal">
-        <dt>
+<dl>
+  <dt class="control-label">
           Internal ID
         </dt>
         <dd>
           ${d.id?:'New record'}&nbsp;
         </dd>
-        <dt>
+<dl>
+    <dt class="control-label">
           Type
         </dt>
         <dd>
           ${d.stdDesc ?  d.stdDesc.value : 'None'}
-        </dd>
-        <dt>
+        </dd
+</dl>
+<dl>
+    <dt class="control-label">
           Cause
         </dt>
         <dd style="max-width:60%">
           <semui:xEditable  owner="${d}" field="descriptionOfCause" />
         </dd>
-        <dt>
+<dl>
+    <dt class="control-label">
           Review Request
         </dt>
         <dd>
           <semui:xEditable  owner="${d}" field="reviewRequest" />
         </dd>
      </dl>
+</dl>
 <div id="content">
   <ul id="tabs" class="nav nav-tabs">
     <li class="active"><a href="#rrdets" data-toggle="tab">Review Request Details</a></li>
@@ -153,3 +158,4 @@
     </div>
   </div>
 </div>
+</dl>
