@@ -1516,7 +1516,7 @@ class GlobalSearchTemplatesService {
                                         prompt     : 'Curatory Group',
                                         qparam     : 'qp_curgroups',
                                         placeholder: 'Curatory Group',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'exists', 'prop': 'curatoryGroups'],
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'exists', 'prop': 'pkg.curatoryGroups'],
                                         hide       : true
                                 ],
                                 [
@@ -1607,12 +1607,6 @@ class GlobalSearchTemplatesService {
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'status'],
                                         // II: Default not yet implemented
                                         default    : [type: 'query', query: 'select r from RefdataValue where r.value=:v and r.owner.description=:o', params: ['Current', RCConstants.KBCOMPONENT_STATUS]]
-                                ],
-                                [
-                                        prompt     : 'URL',
-                                        qparam     : 'qp_url',
-                                        placeholder: 'URL',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'url'],
                                 ],
                         ],
                        /* qbeGlobals: [
@@ -1787,12 +1781,6 @@ class GlobalSearchTemplatesService {
                                         // II: Default not yet implemented
                                         default    : [type: 'query', query: 'select r from RefdataValue where r.value=:v and r.owner.description=:o', params: ['Current', RCConstants.KBCOMPONENT_STATUS]]
                                 ],
-                                [
-                                        prompt     : 'URL',
-                                        qparam     : 'qp_url',
-                                        placeholder: 'URL',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'url'],
-                                ],
                                 //FOR My Components Area
                                 [
                                         type       : 'lookup',
@@ -1800,7 +1788,7 @@ class GlobalSearchTemplatesService {
                                         prompt     : 'Curatory Group',
                                         qparam     : 'qp_curgroups',
                                         placeholder: 'Curatory Group',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'exists', 'prop': 'curatoryGroups'],
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'exists', 'prop': 'pkg.curatoryGroups'],
                                         hide       : true
                                 ],
 
