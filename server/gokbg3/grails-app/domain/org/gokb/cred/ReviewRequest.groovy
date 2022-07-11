@@ -201,4 +201,9 @@ class ReviewRequest implements Auditable {
     }
     result
   }
+
+  @Transient
+  public String getDomainName() {
+    return "Review Request"
+  }
 }

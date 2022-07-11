@@ -6,6 +6,8 @@ import org.apache.commons.logging.LogFactory
 import org.hibernate.proxy.HibernateProxy
 import grails.plugins.orm.auditable.Auditable
 
+import javax.persistence.Transient
+
 class RefdataValue  extends AbstractI10n implements Auditable {
 
   static Log static_logger = LogFactory.getLog(RefdataValue)
@@ -157,6 +159,11 @@ class RefdataValue  extends AbstractI10n implements Auditable {
 
   static RefdataValue getByValueAndCategory(String value, String category) {
     RefdataValue.findByValueIlikeAndOwner(value, RefdataCategory.findByDescIlike(category))
+  }
+
+  @Transient
+  public String getDomainName() {
+    return "Refdata Value"
   }
 
 }

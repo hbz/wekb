@@ -16,7 +16,7 @@
     <div class="column wide eight">
         <semui:card text="My Details" class="fluid">
             <div class="content wekb-inline-lists">
-                <g:render template="/apptemplates/mainTemplates/user" model="${[d: user]}"></g:render>
+                <g:render template="/templates/domains/user" model="${[d: user]}"></g:render>
             </div>
         </semui:card>
 

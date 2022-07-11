@@ -119,4 +119,9 @@ class IdentifierNamespace {
     }
     result
   }
+
+  @Transient
+  public String getDomainName() {
+    return "Identifier Namespace"
+  }
 }

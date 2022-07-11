@@ -67,7 +67,7 @@
 </nav>--}%
 <g:if test="${displayobj != null}">
 
-    <g:if test="${displayobj.status == RDStore.KBC_STATUS_REMOVED}">
+    <g:if test="${displayobj.hasProperty('status') && displayobj.status == RDStore.KBC_STATUS_REMOVED}">
         <div class="ui negative icon huge message">
             <i class="info icon"></i>
 
@@ -135,7 +135,7 @@
         </g:form>--}%
     </g:if>
 
-    <h1 class="ui header">${displayobj.getDomainName()}: ${displayobj.name}</h1>
+    <h1 class="ui header">${displayobj.getDomainName()}: ${displayobj.hasProperty('name') ? displayobj.name : ''}</h1>
 
     <div class="ui segment">
         <g:render template="rightBox" model="${[d: displayobj]}"/>

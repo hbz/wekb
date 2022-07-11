@@ -6,76 +6,23 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta http-equiv="x-ua-compatible" content="ie=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-  <asset:script> var contextPath="${grailsApplication.config.server.contextPath ?: '/gokb'}"; </asset:script>
-  <asset:javascript src="base.js" />
-  <asset:stylesheet src="gokb/sb-admin-2.css"/>
-  <asset:stylesheet src="gokb/application.css"/>
   <s2ui:stylesheet src='spring-security-ui'/>
-  <asset:stylesheet src="../../assets/stylesheets/security-styles.css"/>
-  <asset:stylesheet src="gokb/themes/${ grailsApplication.config.gokb.theme }/theme.css"/>
+  <asset:stylesheet src="security-styles.css"/>
 <g:layoutHead/>
 </head>
-
-<wekb:serviceInjection />
-<g:set var="currentServer" scope="page" value="${ServerUtils.getCurrentServer()}"/>
-<g:set var="currentUser" scope="page" value="${springSecurityService.getCurrentUser()}"/>
-
-<body class="theme-${ grailsApplication.config.gokb.theme }">
-
-
+<body>
   <div id="wrapper">
-
-    <!-- Navigation -->
-    <nav class="navbar navbar-default navbar-static-top" role="navigation"
-    style="margin-bottom: 0">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse"
-        data-target=".navbar-collapse">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span  class="icon-bar"></span>
-        </button>
-        <g:link uri="/" class="navbar-brand" style="font-weight:bold;">
-          <g:message code="gokb.appname" default="we:kb"/> v<g:meta name="info.app.version" />
-        </g:link>
-      </div>
-    <!-- /.navbar-header -->
-
-      <sec:ifLoggedIn>
-        <ul class="nav navbar-nav navbar-right">
-          <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="font-weight:bold;">
-              <i class="fa fa-user fa-fw"></i>
-              ${currentUser.displayName ?: currentUser.username}
-              <i class="fa fa-caret-down fa-fw"></i>
-            </a>
-            <ul class="dropdown-menu dropdown-user">
-              <li class="divider"></li>
-              <li><g:link controller="home" action="profile"><i class="fa fa-user fa-fw"></i>  My Profile</g:link></li>
-              <li><g:link controller="home" action="preferences"><i class="fa fa-cog fa-fw"></i>  My Preferences</g:link></li>
-              <li class="divider"></li>
-              <li><g:link controller="logoff"><i class="fa fa-sign-out fa-fw"></i> Logout</g:link></li>
-              <li class="divider"></li>
-            </ul> <!-- /.dropdown-user -->
-          </li>
-        <!-- /.dropdown -->
-          <li>
-            <span style="width:20px;"></span>
-          </li>
-        </ul>
-            <!-- /.navbar-top-links -->
-      </sec:ifLoggedIn>
-
-      <g:render template="/navigation/sidebar" />
-    </nav>
-
-                <!-- Page Content -->
+    <!-- Page Content -->
     <div id="page-wrapper" class="${ params.controller ?: 'default' }-display" >
       <div class="row" >
         <div id="page-content" class="col-lg-12">
           <div>
-            <h1 class="page-header" style="font-size:39px;">Admin Console</h1>
+            <h1 class="page-header" style="font-size:39px;">wekb User Management Console</h1>
+
+            <g:link controller="public" action="index" class="ui-button ui-widget ui-state-default">Back to normal wekb View</g:link>
+
+            <br>
+            <br>
             <div id="mainarea" class="panel panel-default">
               <ul class="jd_menu jd_menu_slate">
                 <sec:ifAllGranted roles='ROLE_SUPERUSER'>

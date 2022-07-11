@@ -8,12 +8,9 @@ public class DisplayTemplateService {
   def init() {
     globalDisplayTemplates.put('org.gokb.cred.AdditionalPropertyDefinition',[ type:'staticgsp', rendername:'addpropdef' ]);
     globalDisplayTemplates.put('org.gokb.cred.CuratoryGroup',[ type:'staticgsp', rendername:'curatory_group' ]);
-    globalDisplayTemplates.put('org.gokb.cred.DSCategory',[ type:'staticgsp', rendername:'ds_category' ]);
-    globalDisplayTemplates.put('org.gokb.cred.DSCriterion',[ type:'staticgsp', rendername:'ds_criterion' ]);
     globalDisplayTemplates.put('org.gokb.cred.Identifier',[ type:'staticgsp', rendername:'identifier', noCreate:true ]);
     globalDisplayTemplates.put('org.gokb.cred.IdentifierNamespace',[ type:'staticgsp', rendername:'identifier_namespace' ]);
     globalDisplayTemplates.put('org.gokb.cred.JobResult',[ type:'staticgsp', rendername:'job_result', noCreate:true ]);
-    globalDisplayTemplates.put('org.gokb.cred.KBDomainInfo',[ type:'staticgsp', rendername:'domainInfo', noCreate:true ]);
     globalDisplayTemplates.put('org.gokb.cred.Org',[ type:'staticgsp', rendername:'org' ]);
     globalDisplayTemplates.put('org.gokb.cred.Package',[ type:'staticgsp', rendername:'package' ]);
     globalDisplayTemplates.put('org.gokb.cred.Platform',[ type:'staticgsp', rendername:'platform' ]);

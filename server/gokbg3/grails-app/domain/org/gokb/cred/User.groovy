@@ -339,4 +339,9 @@ class User extends Party {
     return value.intValue()
   }
 
+  @Transient
+  public String getDomainName() {
+    return "User"
+  }
+
 }

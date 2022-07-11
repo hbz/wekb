@@ -14,7 +14,6 @@ class GlobalSearchTemplatesService {
         globalSearchTemplates.put('allocatedReviewGroups', allocatedReviewGroups())
         globalSearchTemplates.put('components', components())
         globalSearchTemplates.put('curatoryGroups', curatoryGroups())
-        globalSearchTemplates.put('domains', domains())
         globalSearchTemplates.put('identifiers', identifiers())
         globalSearchTemplates.put('jobResults', jobResults())
         globalSearchTemplates.put('namespaces', namespaces())
@@ -242,32 +241,6 @@ class GlobalSearchTemplatesService {
         result
     }
 
-    Map domains() {
-        Map result = [
-                baseclass: 'org.gokb.cred.KBDomainInfo',
-                title    : 'Domains',
-                qbeConfig: [
-                        qbeForm   : [
-                                [
-                                        prompt     : 'Name',
-                                        qparam     : 'qp_name',
-                                        placeholder: 'Name',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'dcName', 'wildcard': 'B']
-                                ],
-                        ],
-                        qbeGlobals: [
-                        ],
-                        qbeResults: [
-                                [heading: 'Name', property: 'dcName', link: true],
-                                [heading: 'Display Name', property: 'displayName'],
-                                [heading: 'Sort Key', property: 'dcSortOrder'],
-                                [heading: 'Type', property: 'type?.value'],
-                        ]
-                ]
-        ]
-        result
-    }
-
     Map identifiers() {
         Map result = [
                 baseclass: 'org.gokb.cred.Identifier',
@@ -419,6 +392,7 @@ class GlobalSearchTemplatesService {
                         qbeGlobals: [
                         ],
                         qbeResults: [
+                                [heading: 'Note', property: 'note'],
                                 [heading: 'Note', property: 'note'],
                                 [heading: 'Date Created', property: 'dateCreated'],
                                 [heading: 'Last Updated', property: 'lastUpdated'],
@@ -1221,9 +1195,16 @@ class GlobalSearchTemplatesService {
                                         placeholder: 'Category Description',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'desc']
                                 ],
+
+                                [
+                                        prompt     : 'Description EN',
+                                        qparam     : 'qp_desc_en',
+                                        placeholder: 'Category Description En',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'desc_en']
+                                ],
                         ],
                         qbeGlobals: [
-                                ['ctxtp': 'filter', 'prop': 'desc', 'comparator': 'ilike', 'value': 'Combo.%', 'negate': true]
+                               /* ['ctxtp': 'filter', 'prop': 'desc', 'comparator': 'ilike', 'value': 'Combo.%', 'negate': true]*/
                         ],
                         qbeResults: [
                                 [heading: 'Description', sort: 'desc', property: 'desc', link: true],
@@ -1245,7 +1226,7 @@ class GlobalSearchTemplatesService {
                 baseclass: 'org.gokb.cred.RefdataValue',
                 title    : 'Refdata Values ',
                 group    : 'Secondary',
-                defaultSort : 'owner',
+                defaultSort : 'value',
                 defaultOrder: 'asc',
                 qbeConfig: [
                         qbeForm   : [
@@ -1262,18 +1243,27 @@ class GlobalSearchTemplatesService {
                                         placeholder: 'Value',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'value']
                                 ],
+
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.RefdataCategory',
+                                        prompt     : 'Refdata Category',
+                                        qparam     : 'qp_owner',
+                                        placeholder: 'Refdata Category',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'owner.desc.id']
+                                ],
                         ],
                         qbeGlobals: [
                         ],
                         qbeResults: [
-                                [heading: 'Description', sort: 'desc', property: 'desc', link: true],
-                                [heading: 'Value', sort: 'value', property: 'value'],
-                                /*[heading: 'Value EN', sort: 'value_en', property: 'value_en'],
+                                [heading: 'Value', sort: 'value', property: 'value', link: true],
+                                [heading: 'Value EN', sort: 'value_en', property: 'value_en'],
                                 [heading: 'Value DE', sort: 'value_de', property: 'value_de'],
                                 [heading: 'Hard Data', sort: 'isHardData', property: 'isHardData'],
+                                [heading: 'Description', sort: 'desc', property: 'desc'],
                                 [heading: 'Date Created', property: 'dateCreated', sort: 'dateCreated'],
                                 [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
-                                [heading: 'Refdata Category', sort: 'owner', property: 'owner'],*/
+                                [heading: 'Refdata Category', sort: 'owner', property: 'owner.desc'],
                         ]
                 ]
         ]
@@ -1516,7 +1506,7 @@ class GlobalSearchTemplatesService {
                                         prompt     : 'Curatory Group',
                                         qparam     : 'qp_curgroups',
                                         placeholder: 'Curatory Group',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'exists', 'prop': 'curatoryGroups'],
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'exists', 'prop': 'pkg.curatoryGroups'],
                                         hide       : true
                                 ],
                                 [
@@ -1607,12 +1597,6 @@ class GlobalSearchTemplatesService {
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'status'],
                                         // II: Default not yet implemented
                                         default    : [type: 'query', query: 'select r from RefdataValue where r.value=:v and r.owner.description=:o', params: ['Current', RCConstants.KBCOMPONENT_STATUS]]
-                                ],
-                                [
-                                        prompt     : 'URL',
-                                        qparam     : 'qp_url',
-                                        placeholder: 'URL',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'url'],
                                 ],
                         ],
                        /* qbeGlobals: [
@@ -1787,12 +1771,6 @@ class GlobalSearchTemplatesService {
                                         // II: Default not yet implemented
                                         default    : [type: 'query', query: 'select r from RefdataValue where r.value=:v and r.owner.description=:o', params: ['Current', RCConstants.KBCOMPONENT_STATUS]]
                                 ],
-                                [
-                                        prompt     : 'URL',
-                                        qparam     : 'qp_url',
-                                        placeholder: 'URL',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'url'],
-                                ],
                                 //FOR My Components Area
                                 [
                                         type       : 'lookup',
@@ -1800,7 +1778,7 @@ class GlobalSearchTemplatesService {
                                         prompt     : 'Curatory Group',
                                         qparam     : 'qp_curgroups',
                                         placeholder: 'Curatory Group',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'exists', 'prop': 'curatoryGroups'],
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'exists', 'prop': 'pkg.curatoryGroups'],
                                         hide       : true
                                 ],
 

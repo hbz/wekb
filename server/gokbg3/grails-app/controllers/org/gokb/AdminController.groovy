@@ -201,14 +201,6 @@ class AdminController {
   }
 
   @Secured(['ROLE_SUPERUSER'])
-  def setupAcl() {
-
-    adminService.setupDefaultAcl()
-
-    redirect(controller: 'admin', action: 'jobs');
-  }
-
-  @Secured(['ROLE_SUPERUSER'])
   def autoUpdatePackages() {
       log.debug("Beginning scheduled auto update packages job.")
     Job j = concurrencyManagerService.createJob {

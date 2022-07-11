@@ -49,19 +49,9 @@
 
 <g:javascript>
        $('#save-btn').click(function() {
-           $('span.editable').not('.editable-empty').each (function(){
-          var editable = $(this);
-          // Add the parameter to the params object.
-          var eVal = editable.editable('getValue', true);
-           $('#formCreateProcess').append('<input type="hidden" name="'+editable.attr('data-name')+'" value="'+(eVal ? eVal : editable.text())+'"/>');
-        });
 
-        $('a.editable').not('.editable-empty').each (function(){
-            var editable = $(this);
-            $('#formCreateProcess').append('<input type="hidden" name="'+editable.attr('data-name')+'" value="'+editable.attr('target-id')+'"/>');
-        });
 
-        $('.xEditableValue').editable('submit', {
+        $('.xEditableValue, .xEditableManyToOne').editable('submit', {
                url: "${g.createLink(controller: 'create', action: 'process', params: [cls: params.tmpl])}",
                ajaxOptions: {
                    dataType: 'json' //assuming json response

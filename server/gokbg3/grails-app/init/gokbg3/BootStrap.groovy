@@ -37,10 +37,6 @@ class BootStrap {
         log.info("Create manually with create index norm_id_value_idx on kbcomponent(kbc_normname(64),id_namespace_fk,class)");
 
 
-        KBComponent.withTransaction() {
-            cleanUpMissingDomains()
-        }
-
         // Add our custom metaclass methods for all KBComponents.
         alterDefaultMetaclass()
 
@@ -122,11 +118,7 @@ class BootStrap {
             }*/
         }
 
-
-
         refdataCats()
-
-        registerDomainClasses()
 
         //migrateDiskFilesToDatabase()
 
@@ -258,23 +250,6 @@ class BootStrap {
         log.info("------------------------------------Init End--------------------------------------------")
     }
 
-    def cleanUpMissingDomains() {
-
-        log.info("cleanUpMissingDomains()")
-        def domains = KBDomainInfo.createCriteria().list { ilike('dcName', 'org.gokb%') }.each { d ->
-            try {
-
-                // Just try reading the class.
-                Class c = Class.forName(d.dcName)
-                // log.debug ("Looking for ${d.dcName} found class ${c}.")
-
-            } catch (ClassNotFoundException e) {
-                d.delete(flush: true)
-                log.info("Deleted domain object for ${d.dcName} as the Class could not be found.")
-            }
-        }
-    }
-
 
     private void addCustomApis() {
 
@@ -291,38 +266,6 @@ class BootStrap {
                 // log.debug("Adding methods to ${c.name} from ${className}");
                 // Add the api methods.
                 A_Api.addMethods(c, Class.forName(className))
-            }
-        }
-    }
-
-    def registerDomainClasses() {
-
-        log.info("registerDomainClasses()")
-
-        AclClass aclClass = AclClass.findByClassName('org.gokb.cred.KBDomainInfo') ?: new AclClass(className: 'org.gokb.cred.KBDomainInfo').save(flush: true)
-
-        AclSid sidAdmin = AclSid.findBySid('ROLE_ADMIN') ?: new AclSid(sid: 'ROLE_ADMIN', principal: false).save(flush: true)
-        AclSid sidSuperUser = AclSid.findBySid('ROLE_SUPERUSER') ?: new AclSid(sid: 'ROLE_SUPERUSER', principal: false).save(flush: true)
-        AclSid sidUser = AclSid.findBySid('ROLE_USER') ?: new AclSid(sid: 'ROLE_USER', principal: false).save(flush: true)
-        AclSid sidContributor = AclSid.findBySid('ROLE_CONTRIBUTOR') ?: new AclSid(sid: 'ROLE_CONTRIBUTOR', principal: false).save(flush: true)
-        AclSid sidEditor = AclSid.findBySid('ROLE_EDITOR') ?: new AclSid(sid: 'ROLE_EDITOR', principal: false).save(flush: true)
-        AclSid sidApi = AclSid.findBySid('ROLE_API') ?: new AclSid(sid: 'ROLE_API', principal: false).save(flush: true)
-
-        RefdataValue std_domain_type = RefdataCategory.lookupOrCreate(RCConstants.DC_TYPE, 'Standard').save(flush: true, failOnError: true)
-        grailsApplication.domainClasses.each { dc ->
-            // log.debug("Ensure ${dc.name} has entry in KBDomainInfo table");
-            KBDomainInfo dcinfo = KBDomainInfo.findByDcName(dc.clazz.name)
-            if (dcinfo == null) {
-                dcinfo = new KBDomainInfo(dcName: dc.clazz.name, displayName: dc.name, type: std_domain_type);
-                dcinfo.save(flush: true);
-            }
-
-            if (dcinfo.dcName.startsWith('org.gokb.cred') || dcinfo.dcName.startsWith('wekb')) {
-                AclObjectIdentity oid
-
-                if (!AclObjectIdentity.findByObjectId(dcinfo.id)) {
-                    oid = new AclObjectIdentity(objectId: dcinfo.id, aclClass: aclClass, owner: sidAdmin, entriesInheriting: false).save(flush: true)
-                }
             }
         }
     }
@@ -348,25 +291,6 @@ class BootStrap {
         }
 
     }
-
-    /*def defaultSortKeys() {
-        def vals = RefdataValue.executeQuery("select o from RefdataValue o where o.sortKey is null or trim(o.sortKey) = ''")
-
-        // Default the sort key to 0.
-        vals.each {
-            it.sortKey = "0"
-            it.save(flush: true, failOnError: true)
-        }
-
-        // Now we should also do the same for the Domain objects.
-        vals = KBDomainInfo.executeQuery("select o from KBDomainInfo o where o.dcSortOrder is null or trim(o.dcSortOrder) = ''")
-
-        // Default the sort key to 0.
-        vals.each {
-            it.dcSortOrder = "0"
-            it.save(flush: true, failOnError: true)
-        }
-    }*/
 
     def destroy = {
     }

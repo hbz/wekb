@@ -12,6 +12,6 @@
 	</dd>
 	<dt class="control-label">UUID</dt>
 	<dd>
-          ${d.uuid}
+          ${d.hasProperty('uuid') ? d.uuid : ''}
 	</dd>
 </dl>

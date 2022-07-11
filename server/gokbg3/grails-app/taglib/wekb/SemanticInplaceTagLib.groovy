@@ -486,7 +486,7 @@ class SemanticInplaceTagLib {
 
             if (viewable && owner != null && owner[attrs.field] != null) {
                 String urlWithClassAndID = null
-                if(!(owner[attrs.field].hasProperty('uuid')))
+                if(!(owner[attrs.field] instanceof org.gokb.cred.KBComponent))
                     urlWithClassAndID = "${ClassUtils.deproxy(owner[attrs.field]).class.name}" + ':' + owner[attrs.field].id
 
                 follow_link = createLink(controller: 'resource', action: 'show', id: urlWithClassAndID ?: owner[attrs.field].uuid)
@@ -504,6 +504,11 @@ class SemanticInplaceTagLib {
 
                 if (attrs.required) {
                     out << " data-required=\"${attrs.required}\" "
+                }
+
+                if ((attrs.value != null) && (attrs.value instanceof String && attrs.value.length() > 0)) {
+                    def o = genericOIDService.resolveOID2(attrs.value)
+                    out << "data-value=\"${o.id.toString()}\" "
                 }
 
                 out << "data-type=\"select\" data-name=\"${attrs.field}\" data-source=\"${data_link}\" data-url=\"${update_link}\" ${emptyText}>"
