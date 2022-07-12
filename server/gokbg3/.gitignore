@@ -15,4 +15,4 @@ out/
 .asscache
 .vscode
 bin
-
+/grails-app/assets/semantic/components/
