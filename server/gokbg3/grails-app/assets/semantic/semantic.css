@@ -65581,7 +65581,7 @@ body.pushable > .pusher {
   display: none;
 }
 
-@media only screen and (max-width: 700px) {
+@media only screen and (max-width: 992px) {
   #sidebar-menu-button {
     display: -webkit-box !important;
     display: -ms-flexbox !important;
@@ -65590,7 +65590,15 @@ body.pushable > .pusher {
 }
 
 .wekb-content {
-  margin-top: 50px;
+  margin-top: 80px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  min-height: 100vh;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
 }
 
 .shrink {
