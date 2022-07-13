@@ -5849,6 +5849,10 @@ body .ui.inverted:not(.dimmer)::-webkit-scrollbar-thumb:hover {
 /*******************************
          Theme Overrides
 *******************************/
+
+.ui.fluid.container {
+  padding: 0 2em;
+}
 /*!
  * # Fomantic-UI 2.8.8 - Divider
  * http://github.com/fomantic/Fomantic-UI/
