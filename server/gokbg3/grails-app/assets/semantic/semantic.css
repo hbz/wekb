@@ -65576,6 +65576,26 @@ body.pushable > .pusher {
 /*******************************
          Theme Overrides
 *******************************/
+
+#sidebar-menu-button {
+  display: none;
+}
+
+@media only screen and (max-width: 700px) {
+  #sidebar-menu-button {
+    display: -webkit-box !important;
+    display: -ms-flexbox !important;
+    display: flex !important;
+  }
+}
+
+.wekb-content {
+  margin-top: 50px;
+}
+
+.shrink {
+  padding-right: 260px!important;
+}
 /*!
  * # Fomantic-UI 2.8.8 - Sticky
  * http://github.com/fomantic/Fomantic-UI/
