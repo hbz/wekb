@@ -15,10 +15,14 @@
 
 //=require loadEcharts.js
 
+//=require modules/verticalNavi.js
+
 console.log('+ wekb.js')
 
 
 $(function () {
+
+    verticalNavi.go();
 
     $('.ui.sticky')
         .sticky({

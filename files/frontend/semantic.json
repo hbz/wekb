@@ -4,14 +4,14 @@
     "source": {
       "config": "src/theme.config",
       "definitions": "src/definitions/",
-      "site": "src/site/",
+      "site": "src\\site\\",
       "themes": "src/themes/"
     },
     "output": {
-      "packaged": "..\\..\\..\\grails-app\\assets\\semantic\\",
-      "uncompressed": "..\\..\\..\\grails-app\\assets\\semantic\\components\\",
-      "compressed": "..\\..\\..\\grails-app\\assets\\semantic\\components\\",
-      "themes": "..\\..\\..\\grails-app\\assets\\semantic\\themes\\"
+      "packaged": "..\\..\\..\\server\\gokbg3\\grails-app\\assets\\semantic\\",
+      "uncompressed": "..\\..\\..\\server\\gokbg3\\grails-app\\assets\\semantic\\components\\",
+      "compressed": "..\\..\\..\\server\\gokbg3\\grails-app\\assets\\semantic\\components\\",
+      "themes": "../../../server/gokbg3/grails-app/assets/semantic/themes/"
     },
     "clean": "dist/"
   },
