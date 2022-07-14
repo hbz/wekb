@@ -1,0 +1,6 @@
+/*******************************
+         Theme Overrides
+*******************************/
+.ui.segment.footer.wekb-footer {
+  padding: 40px;
+}

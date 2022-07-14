@@ -39958,6 +39958,14 @@ ol.ui.suffixed.list li:before,
 /*******************************
          Theme Overrides
 *******************************/
+
+/*******************************
+         Theme Overrides
+*******************************/
+
+.ui.segment.footer.wekb-footer {
+  padding: 40px;
+}
 /*!
  * # Fomantic-UI 2.8.8 - Step
  * http://github.com/fomantic/Fomantic-UI/

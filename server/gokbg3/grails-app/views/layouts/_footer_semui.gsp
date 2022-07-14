@@ -1,4 +1,4 @@
-<footer class="ui fixed inverted vertical footer segment wekb-footer">
+<footer class="ui fixed inverted  grey footer segment wekb-footer">
     <div class="ui center aligned container">
 
         <div class="ui stackable inverted divided equal height stackable grid center aligned">
