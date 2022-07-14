@@ -682,7 +682,7 @@ body .ui.inverted:not(.dimmer)::-webkit-scrollbar-thumb:hover {
 
 @font-face {
   font-family: 'Lato';
-  src: url('./themes/wekb/assets/fonts/fonts/LatoLatin-BoldItalic.woff') format('woff');
+  src: url('./themes/wekb/assets/fonts/LatoLatin-BoldItalic.woff') format('woff');
   font-style: italic;
   font-weight: 700;
 }
@@ -5849,6 +5849,10 @@ body .ui.inverted:not(.dimmer)::-webkit-scrollbar-thumb:hover {
 /*******************************
          Theme Overrides
 *******************************/
+
+.ui.fluid.container {
+  padding: 0 2em;
+}
 /*!
  * # Fomantic-UI 2.8.8 - Divider
  * http://github.com/fomantic/Fomantic-UI/
@@ -65576,6 +65580,34 @@ body.pushable > .pusher {
 /*******************************
          Theme Overrides
 *******************************/
+
+#sidebar-menu-button {
+  display: none;
+}
+
+@media only screen and (max-width: 992px) {
+  #sidebar-menu-button {
+    display: -webkit-box !important;
+    display: -ms-flexbox !important;
+    display: flex !important;
+  }
+}
+
+.wekb-content {
+  margin-top: 80px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  min-height: 100vh;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.shrink {
+  padding-right: 260px!important;
+}
 /*!
  * # Fomantic-UI 2.8.8 - Sticky
  * http://github.com/fomantic/Fomantic-UI/
