@@ -39965,6 +39965,13 @@ ol.ui.suffixed.list li:before,
 
 .ui.segment.footer.wekb-footer {
   padding: 40px;
+  background-color: rgba(76, 127, 144, 0.16);
+}
+
+.ui.segment.footer.wekb-footer .ui.link.list .item,
+.ui.segment.footer.wekb-footer .ui.link.list .item a:not(.ui),
+.ui.segment.footer.wekb-footer .ui.link.list a.item {
+  color: rgba(0, 0, 0, 0.71);
 }
 /*!
  * # Fomantic-UI 2.8.8 - Step

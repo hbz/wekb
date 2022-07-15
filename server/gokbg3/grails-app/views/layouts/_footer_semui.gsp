@@ -1,10 +1,10 @@
-<footer class="ui fixed inverted  grey footer segment wekb-footer">
+<footer class="ui fixed footer segment wekb-footer">
     <div class="ui center aligned container">
 
-        <div class="ui stackable inverted divided equal height stackable grid center aligned">
+        <div class="ui stackable  divided equal height stackable grid center aligned">
 
             <div class="five wide column left aligned">
-                <img height="30" alt="Logo wekb" src="${resource(dir: 'images', file: 'logo.svg')}"/>
+                <img height="30" alt="Logo wekb" src="${resource(dir: 'images', file: 'wekb-logo.svg')}"/>
 
                 <p>©${new Date().format('yyyy')} Hochschulbibliothekszentrum des Landes Nordrhein-Westfalen (hbz) <br> ‧ Jülicher Straße 6 ‧ 50674 Köln<br>  ‧ +49 221 400 75-0
                 </p>
@@ -16,9 +16,9 @@
 
             <div class="three wide column left aligned">
 
-                <h3 class="ui inverted header">About <g:message code="gokb.appname"/></h3>
+                <h3 class="ui  header">About <g:message code="gokb.appname"/></h3>
 
-                <div class="ui inverted link list">
+                <div class="ui  link list">
                     <div class="item">
                         <a target="_blank" class="content"
                            href="https://service-wiki.hbz-nrw.de/display/WEKB/About+we%3Akb">About  <g:message
@@ -32,9 +32,9 @@
                     </div>
                 </div>
 
-                <h3 class="ui inverted header">Technical Details</h3>
+                <h3 class="ui  header">Technical Details</h3>
 
-                <div class="ui inverted link list">
+                <div class="ui  link list">
                     <%-- App version --%>
                     <div class="item">
                         <a target="_blank" class="content"
@@ -68,9 +68,9 @@
             </div>
 
             <div class="four wide column left aligned">
-                <h3 class="ui inverted header">Contact Us</h3>
+                <h3 class="ui  header">Contact Us</h3>
 
-                <div class="ui inverted link list ">
+                <div class="ui  link list ">
                     <div class="item"><a class="content" href="mailto:laser@hbz-nrw.de">E-Mail</a></div>
 
                     <div class="item"><a target="_blank" class="content"
@@ -86,9 +86,9 @@
             </div>
 
             <div class="four wide column left aligned">
-                <h3 class="ui inverted header">Accessibility</h3>
+                <h3 class="ui  header">Accessibility</h3>
 
-                <div class="ui inverted link list ">
+                <div class="ui  link list ">
                     <div class="item"><a target="_blank" class="content"
                                          href="https://www.hbz-nrw.de/barrierefreiheit">Accessibility Statement</a>
                     </div>
