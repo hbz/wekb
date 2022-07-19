@@ -2,7 +2,6 @@
     <g:if test="${(qbetemplate.message != null)}">
         <semui:message message="${qbetemplate.message}"/>
     </g:if>
-
     <g:render template="qbeform"
               model="${[formdefn: qbetemplate.qbeConfig?.qbeForm, 'hide': (hide), cfg: qbetemplate.qbeConfig]}"/>
 

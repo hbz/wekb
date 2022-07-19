@@ -490,7 +490,10 @@ class WorkflowController{
     def pars = [:]
     def denied = false
 
-    if (packages_to_update.size() > 1){
+    def pkgObj = Package.get(packages_to_update[0].id)
+    autoUpdatePackagesService.startAutoPackageUpdate(pkgObj)
+
+    /*if (packages_to_update.size() > 1){
       flash.error = "Please select a single Package to update!"
     }
     else{
@@ -527,7 +530,7 @@ class WorkflowController{
           flash.error = "Please check the Package Source for validity!"
         }
       }
-    }
+    }*/
     log.debug('triggerSourceUpdate() done - redirecting')
     redirect(url: request.getHeader('referer'))
   }

@@ -3,8 +3,8 @@
 <wekb:serviceInjection/>
 
 <g:set var="counter" value="${offset}"/>
-%{--<g:set var="s_action" value="${s_action ?: 'index'}"/>
-<g:set var="s_controller" value="${s_controller ?: 'search'}"/>--}%
+<g:set var="s_action" value="${s_action?:actionName}"/>
+<g:set var="s_controller" value="${s_controller?:controllerName}"/>
 
 <g:if test="${request.isAjax()}">
 

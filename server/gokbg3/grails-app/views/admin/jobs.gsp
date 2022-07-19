@@ -19,7 +19,7 @@
     <h2 class="ui header">Finished Upload Jobs</h2>
 
     <g:link class="display-inline" controller="search" action="inlineSearch"
-            params="[qbe: 'g:jobResults', inline: true]"
+            params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, qbe: 'g:jobResults', inline: true]"
             id="">Finished Upload Jobs</g:link>
 </div>
 
