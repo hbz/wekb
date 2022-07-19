@@ -352,7 +352,12 @@ class SearchController {
             searchResult.result = [:]
             flash.error = "This search is not allowed!"
         }
+        searchResult.result.s_action = params.s_actionName
+        searchResult.result.s_controller = params.s_controllerName
         searchResult.result
+        params.id = params.objectUUID
+
+        render template: "/search/inlineSearch", model: searchResult.result
     }
 
 }

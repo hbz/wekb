@@ -35,7 +35,7 @@
 
     <div class="content">
         <g:link class="display-inline" controller="search" action="inlineSearch"
-                params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset,  qbe: 'g:userWatchedComponents', inline: true]"
+                params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:userWatchedComponents', inline: true]"
                 id="">User Watched Components</g:link>
     </div>
 </div>
@@ -45,7 +45,7 @@
 
     <div class="content">
         <g:link class="display-inline" controller="search" action="inlineSearch"
-                params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, qbe: 'g:userJobs', inline: true]"
+                params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:userJobs', inline: true]"
                 id="">Finished Upload Jobs</g:link>
     </div>
 </div>--}%

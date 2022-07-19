@@ -22,7 +22,7 @@
             <g:each in="${qbeConfig.qbeResults}" var="c">
                 <g:if test="${!params.hide || !params.hide.contains(c.qpEquiv)}">
                     <g:if test="${c.sort}">
-                        <semui:sortableColumn property="${c.sort}" title="${colmsg == colcode ? c.heading : colmsg}"
+                        <semui:sortableColumn controller="${s_controller}" action="${s_action}" id="${params.id}" property="${c.sort}" title="${colmsg == colcode ? c.heading : colmsg}"
                                               params="${params}"/>
                     </g:if>
                     <g:else>

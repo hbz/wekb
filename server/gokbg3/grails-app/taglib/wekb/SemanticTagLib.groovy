@@ -415,6 +415,7 @@ class SemanticTagLib {
 
         def property = attrs.remove("property")
         def action = attrs.action ? attrs.remove("action") : (actionName ?: "list")
+        def controller = attrs.controller ? attrs.remove("controller") : (controllerName ?: "")
         def namespace = attrs.namespace ? attrs.remove("namespace") : ""
 
         def defaultOrder = attrs.remove("defaultOrder")
@@ -479,6 +480,7 @@ class SemanticTagLib {
         }
 
         linkAttrs.action = action
+        linkAttrs.controller = controller
         linkAttrs.namespace = namespace
 
         writer << callLink((Map)linkAttrs) {
