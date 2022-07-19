@@ -62,7 +62,7 @@
 <g:render template="/search/qbeform"
           model="${[formdefn: qbetemplate.qbeConfig?.qbeForm, 'hide': (hide), cfg: qbetemplate.qbeConfig]}"/>
 
-<div class="ui container">
+<div class="container">
 
     %{--<div class="ui header">
         <h1>Results ${resultsTotal}</h1>

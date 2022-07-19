@@ -12,7 +12,7 @@
 <h1 class="ui header">Packages with Tipp Duplicates (${totalCount})</h1>
 
 
-<div class="ui container">
+<div class="container">
 
     <table class="ui selectable striped sortable celled table">
         <thead>
