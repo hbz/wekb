@@ -449,7 +449,7 @@ class SemanticTagLib {
             }
         }
         else {
-            linkParams.order = defaultOrder
+            linkParams.order = property == 'lastUpdated' ? "desc" : defaultOrder
         }
 
         // determine column title
