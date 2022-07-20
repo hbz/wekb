@@ -7,8 +7,6 @@ import org.gokb.cred.RefdataValue
 
 class AutoUpdatePackageInfo {
 
-    Package pkg
-
     String uuid
 
     String description
@@ -18,6 +16,13 @@ class AutoUpdatePackageInfo {
 
     Date dateCreated
     Date lastUpdated
+
+    int countKbartRows = 0
+    int countProcessedKbartRows = 0
+    int countInValidTipps = 0
+    int countChangedTipps = 0
+    int countRemovedTipps = 0
+    int countNewTipps = 0
 
     @RefdataAnnotation(cat = RCConstants.AUTO_UPDATE_STATUS)
     RefdataValue status
@@ -41,14 +46,45 @@ class AutoUpdatePackageInfo {
         autoUpdateTippInfo column: 'aupi_auti_fk'
 
         status column: 'aupi_status_fk'
+
+        countKbartRows column: 'aupi_count_kbart_rows'
+        countProcessedKbartRows column: 'aupi_count_processed_kbart_rows'
+        countInValidTipps column: 'aupi_count_invalid_tipps'
+        countChangedTipps column: 'aupi_count_changed_tipps'
+        countRemovedTipps column: 'aupi_count_removed_tipps'
+        countNewTipps column: 'aupi_count_new_tipps'
     }
 
     static constraints = {
         endTime     (nullable:true)
 
+        countKbartRows (nullable:true)
+        countProcessedKbartRows (nullable:true)
+        countInValidTipps (nullable:true)
+        countChangedTipps (nullable:true)
+        countRemovedTipps (nullable:true)
+        countNewTipps (nullable:true)
+
     }
 
     static hasMany = [autoUpdateTippInfo: AutoUpdateTippInfo]
+
+    static belongsTo = [pkg: Package]
+
+    def beforeInsert(){
+        generateUuid()
+    }
+
+    protected def generateUuid(){
+        if (!uuid){
+            uuid = UUID.randomUUID().toString()
+        }
+    }
+
+
+    public String getNiceName() {
+        return "Auto Update Info";
+    }
 
 
 }

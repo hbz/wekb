@@ -10,6 +10,10 @@ import javax.persistence.Transient
 //@CompileStatic
 class RDStore {
 
+    public static final AUTO_UPDATE_STATUS_SUCCESSFUL    = getRefdataValue('Successful', RCConstants.AUTO_UPDATE_STATUS)
+    public static final AUTO_UPDATE_STATUS_FAILED    = getRefdataValue('Failed', RCConstants.AUTO_UPDATE_STATUS)
+    public static final AUTO_UPDATE_STATUS_WARNING    = getRefdataValue('Warning', RCConstants.AUTO_UPDATE_STATUS)
+
     public static final KBC_STATUS_DELETED    = getRefdataValue('Deleted', RCConstants.KBCOMPONENT_STATUS)
     public static final KBC_STATUS_CURRENT    = getRefdataValue('Current', RCConstants.KBCOMPONENT_STATUS)
     public static final KBC_STATUS_EXPECTED    = getRefdataValue('Expected', RCConstants.KBCOMPONENT_STATUS)

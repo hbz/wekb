@@ -12,6 +12,8 @@ class GlobalSearchTemplatesService {
     def init() {
         globalSearchTemplates.put('additionalPropertyDefinitions', additionalPropertyDefinitions())
         globalSearchTemplates.put('allocatedReviewGroups', allocatedReviewGroups())
+        globalSearchTemplates.put('autoUpdatePackageInfos', autoUpdatePackageInfos())
+        globalSearchTemplates.put('autoUpdateTippInfos', autoUpdateTippInfos())
         globalSearchTemplates.put('components', components())
         globalSearchTemplates.put('curatoryGroups', curatoryGroups())
         globalSearchTemplates.put('identifiers', identifiers())
@@ -127,6 +129,99 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Status', property: 'review.status?.value'],
                                 [heading: 'Type', property: 'review.type?.value'],
                                 [heading: 'Timestamp', property: 'review.dateCreated', sort: 'review.dateCreated'],
+                        ]
+                ]
+        ]
+        result
+    }
+
+    Map autoUpdatePackageInfos() {
+        Map result = [
+                baseclass: 'wekb.AutoUpdatePackageInfo',
+                title    : 'Auto Update Infos',
+                group    : 'Secondary',
+                qbeConfig: [
+                        qbeForm   : [
+                                [
+                                        prompt     : 'Package ID',
+                                        qparam     : 'qp_pkg_id',
+                                        placeholder: 'Package ID',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'pkg.id', 'type': 'java.lang.Long'],
+                                        hide       : true
+                                ],
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.RefdataValue',
+                                        filter1    : RCConstants.AUTO_UPDATE_TYPE,
+                                        prompt     : 'Type',
+                                        qparam     : 'qp_type',
+                                        placeholder: 'Type',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'type'],
+                                ],
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.RefdataValue',
+                                        filter1    : RCConstants.AUTO_UPDATE_STATUS,
+                                        prompt     : 'Status',
+                                        qparam     : 'qp_status',
+                                        placeholder: 'Type',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'status'],
+                                ],
+                        ],
+                        qbeGlobals: [
+                        ],
+                        qbeResults: [
+                                [heading: 'Description', property: 'description', link: true],
+                                [heading: 'Status', property: 'status', sort: 'status'],
+                                [heading: 'Start Time', property: 'startTime', sort: 'startTime'],
+                                [heading: 'End Time', property: 'endTime', sort: 'endTime'],
+                        ]
+                ]
+        ]
+        result
+    }
+
+    Map autoUpdateTippInfos() {
+        Map result = [
+                baseclass: 'wekb.AutoUpdateTippInfo',
+                title    : 'Auto Update Title Infos',
+                group    : 'Secondary',
+                qbeConfig: [
+                        qbeForm   : [
+                                [
+                                        prompt     : 'Tipp ID',
+                                        qparam     : 'qp_tipp_id',
+                                        placeholder: 'Tipp ID',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'tipp.id', 'type': 'java.lang.Long'],
+                                        hide       : true
+                                ],
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.RefdataValue',
+                                        filter1    : RCConstants.AUTO_UPDATE_TYPE,
+                                        prompt     : 'Type',
+                                        qparam     : 'qp_type',
+                                        placeholder: 'Type',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'type'],
+                                ],
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.RefdataValue',
+                                        filter1    : RCConstants.AUTO_UPDATE_STATUS,
+                                        prompt     : 'Status',
+                                        qparam     : 'qp_status',
+                                        placeholder: 'Type',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'status'],
+                                ],
+                        ],
+                        qbeGlobals: [
+                        ],
+                        qbeResults: [
+                                [heading: 'Description', property: 'description', link: true],
+                                [heading: 'Status', property: 'status', sort: 'status'],
+                                [heading: 'Type', property: 'type', sort: 'status'],
+                                [heading: 'Start Time', property: 'startTime', sort: 'startTime'],
+                                [heading: 'End Time', property: 'endTime', sort: 'endTime'],
                         ]
                 ]
         ]

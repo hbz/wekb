@@ -27,6 +27,10 @@
         <semui:tabsItemWithoutLink tab="ddcs" counts="${d.ddcs.size()}">
             DDCs
         </semui:tabsItemWithoutLink>
+
+        <semui:tabsItemWithoutLink tab="autoUpdatePackageInfos" counts="${d.autoUpdatePackageInfo.size()}">
+            Auto Update Infos
+        </semui:tabsItemWithoutLink>
     </semui:tabs>
 
 
@@ -85,5 +89,17 @@
     <g:render template="/templates/tabTemplates/ddcsTab" model="${[d: d]}"/>
 
     <g:render template="/templates/tabTemplates/identifiersTab" model="${[d: d]}"/>
+
+    <semui:tabsItemContent tab="autoUpdatePackageInfos">
+
+        <div class="content">
+
+            <g:link class="display-inline" controller="search" action="inlineSearch"
+                    params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:autoUpdatePackageInfos', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId()]"
+                    id="">Auto Update Package Info on this Source</g:link>
+
+        </div>
+
+    </semui:tabsItemContent>
 
 </g:if>

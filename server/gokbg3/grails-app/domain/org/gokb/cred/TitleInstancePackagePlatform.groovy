@@ -7,6 +7,7 @@ import de.wekb.helper.RCConstants
 import org.gokb.ComponentLookupService
 import org.grails.web.json.JSONArray
 import org.grails.web.json.JSONObject
+import wekb.AutoUpdateTippInfo
 import wekb.KBComponentLanguage
 
 import javax.persistence.Transient
@@ -197,7 +198,8 @@ class TitleInstancePackagePlatform extends KBComponent {
   static hasMany = [
     coverageStatements: TIPPCoverageStatement,
     ddcs: RefdataValue,
-    ids: Identifier
+    ids: Identifier,
+    autoUpdateTippInfo: AutoUpdateTippInfo
 
   ]
 

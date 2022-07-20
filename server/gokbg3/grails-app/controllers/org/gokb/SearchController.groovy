@@ -341,7 +341,7 @@ class SearchController {
         log.debug("inlineSearch:componentSearch ${params}")
 
         def searchResult = [:]
-        List allowedSearch = ["g:tipps", "g:platforms", "g:packages", "g:orgs", "g:tippsOfPkg", "g:sources", "g:curatoryGroups", "g:identifiers"]
+        List allowedSearch = ["g:autoUpdatePackageInfos", "g:autoUpdateTippInfos", "g:tipps", "g:platforms", "g:packages", "g:orgs", "g:tippsOfPkg", "g:sources", "g:curatoryGroups", "g:identifiers"]
 
         if ((params.qbe in allowedSearch) || (springSecurityService.isLoggedIn() && SpringSecurityUtils.ifAnyGranted("ROLE_ADMIN"))) {
             searchResult = searchService.search(user, searchResult, params, response.format)
