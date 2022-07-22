@@ -21,6 +21,8 @@
             <th>#</th>
             <g:each in="${qbeConfig.qbeResults}" var="c">
                 <g:if test="${!params.hide || !params.hide.contains(c.qpEquiv)}">
+                    <g:set var="colcode" value="${baseClass + '.' + c.heading}"/>
+                    <g:set var="colmsg" value="${message(code: colcode, default: c.heading)}"/>
                     <g:if test="${c.sort}">
                         <semui:sortableColumn controller="${s_controller}" action="${s_action}" id="${params.id}" property="${c.sort}" title="${colmsg == colcode ? c.heading : colmsg}"
                                               params="${params}"/>

@@ -16,7 +16,7 @@
         <g:if test="${!curatoryGroups}">
             <div class="item">There are currently no linked Curatory Groups</div>
 
-            <g:if test="${!(d instanceof TitleInstancePackagePlatform) && springSecurityService.isLoggedIn() && SpringSecurityUtils.ifAnyGranted("ROLE_ADMIN")}">
+            <g:if test="${!(d instanceof CuratoryGroup) && !(d instanceof TitleInstancePackagePlatform) && springSecurityService.isLoggedIn() && SpringSecurityUtils.ifAnyGranted("ROLE_ADMIN")}">
                 <div class="ui segment">
                     <g:form controller="ajaxSupport" action="addToStdCollection" class="ui form">
                         <input type="hidden" name="__context" value="${d.getClassName()}:${d.id}"/>
@@ -45,7 +45,7 @@
         </div>
     </sec:ifNotLoggedIn>
     <sec:ifLoggedIn>
-        <g:if test="${!((request.curator != null ? request.curator.size() > 0 : true))}">
+        <g:if test="${(d.respondsTo("getCuratoryGroups") || d instanceof org.gokb.cred.KBComponent) && !((request.curator != null ? request.curator.size() > 0 : true))}">
             <div class="ui segment">
                 <h4 class="ui header">Info</h4>
 
@@ -62,7 +62,7 @@
                         <g:link class="ui button green"
                                 controller="${params.controller}"
                                 action="${params.action}"
-                                id="${displayobj.className}:${displayobj.id}"
+                                id="${displayobj.class.name}:${displayobj.id}"
                                 params="${(request.param ?: [:])}">
                             Disable admin override
                         </g:link>
@@ -71,7 +71,7 @@
                         <g:link class="ui button red"
                                 controller="${params.controller}"
                                 action="${params.action}"
-                                id="${displayobj.className}:${displayobj.id}"
+                                id="${displayobj.class.name}:${displayobj.id}"
                                 params="${(request.param ?: [:]) + ["curationOverride": true]}">
                             Enable admin override
                         </g:link>
