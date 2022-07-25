@@ -105,8 +105,8 @@ abstract class KBComponent implements Auditable{
       try{
         def saveParams = [failOnError: true]
 
-        obj.lastSeen = stamp.getTime()
-        obj.save(saveParams)
+        //obj.lastSeen = stamp.getTime()
+        //obj.save(saveParams)
 
       }
       catch (Throwable t){

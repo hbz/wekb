@@ -15,6 +15,10 @@ class AccessService {
     SpringSecurityService springSecurityService
 
     boolean checkEditableObject(Object o, GrailsParameterMap grailsParameterMap) {
+        checkEditableObject(o, (grailsParameterMap && grailsParameterMap.curationOverride == 'true'))
+    }
+
+    boolean checkEditableObject(Object o, boolean curationOverride = false) {
         boolean editable = false
 
         List allowedToEditable = ['Identifier',
@@ -42,7 +46,7 @@ class AccessService {
                 {
                     editable = true //SecurityApi.isTypeEditable(o.getClass(), true) ?: (grailsParameterMap.curationOverride == 'true' && user.isAdmin())
                 }else {
-                    editable = (grailsParameterMap && user && grailsParameterMap.curationOverride == 'true' && user.isAdmin()) //SpringSecurityUtils.ifAnyGranted('ROLE_SUPERUSER') ?: (grailsParameterMap.curationOverride == 'true' && user.isAdmin())
+                    editable = (curationOverride && user.isAdmin()) //SpringSecurityUtils.ifAnyGranted('ROLE_SUPERUSER') ?: (grailsParameterMap.curationOverride == 'true' && user.isAdmin())
                 }
             }else {
                 if(o instanceof CuratoryGroup && user && o.id in user.curatoryGroups?.id){

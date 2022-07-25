@@ -140,6 +140,8 @@ class GlobalSearchTemplatesService {
                 baseclass: 'wekb.AutoUpdatePackageInfo',
                 title    : 'Auto Update Infos',
                 group    : 'Secondary',
+                defaultSort : 'startTime',
+                defaultOrder: 'desc',
                 qbeConfig: [
                         qbeForm   : [
                                 [
@@ -148,15 +150,6 @@ class GlobalSearchTemplatesService {
                                         placeholder: 'Package ID',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'pkg.id', 'type': 'java.lang.Long'],
                                         hide       : true
-                                ],
-                                [
-                                        type       : 'lookup',
-                                        baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : RCConstants.AUTO_UPDATE_TYPE,
-                                        prompt     : 'Type',
-                                        qparam     : 'qp_type',
-                                        placeholder: 'Type',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'type'],
                                 ],
                                 [
                                         type       : 'lookup',
@@ -172,7 +165,7 @@ class GlobalSearchTemplatesService {
                         ],
                         qbeResults: [
                                 [heading: 'Description', property: 'description', link: true],
-                                [heading: 'Status', property: 'status', sort: 'status'],
+                                [heading: 'Status', property: 'status', sort: 'status.value'],
                                 [heading: 'Start Time', property: 'startTime', sort: 'startTime'],
                                 [heading: 'End Time', property: 'endTime', sort: 'endTime'],
                         ]
@@ -189,11 +182,32 @@ class GlobalSearchTemplatesService {
                 qbeConfig: [
                         qbeForm   : [
                                 [
-                                        prompt     : 'Tipp ID',
+                                        qparam     : 'qp_aup_id',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'autoUpdatePackageInfo.id', 'type': 'java.lang.Long'],
+                                        hide       : true
+                                ],
+                                [
                                         qparam     : 'qp_tipp_id',
-                                        placeholder: 'Tipp ID',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'tipp.id', 'type': 'java.lang.Long'],
                                         hide       : true
+                                ],
+                                [
+                                        prompt     : 'Kbart Property',
+                                        qparam     : 'qp_kbartProperty',
+                                        placeholder: 'Kbart Property',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'kbartProperty']
+                                ],
+                                [
+                                        prompt     : 'Old Value',
+                                        qparam     : 'qp_oldValue',
+                                        placeholder: 'Old Value',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'oldValue']
+                                ],
+                                [
+                                        prompt     : 'New Value',
+                                        qparam     : 'qp_newValue',
+                                        placeholder: 'New Value',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'newValue']
                                 ],
                                 [
                                         type       : 'lookup',
@@ -218,8 +232,12 @@ class GlobalSearchTemplatesService {
                         ],
                         qbeResults: [
                                 [heading: 'Description', property: 'description', link: true],
-                                [heading: 'Status', property: 'status', sort: 'status'],
-                                [heading: 'Type', property: 'type', sort: 'status'],
+                                [heading: 'Title', property: 'tipp.name', link: true],
+                                [heading: 'Status', property: 'status', sort: 'status.value'],
+                                [heading: 'Type', property: 'type', sort: 'type.value'],
+                                [heading: 'Kbart Field', property: 'kbartProperty', sort: 'kbartProperty'],
+                                [heading: 'New Value', property: 'newValue'],
+                                [heading: 'Old Value', property: 'oldValue'],
                                 [heading: 'Start Time', property: 'startTime', sort: 'startTime'],
                                 [heading: 'End Time', property: 'endTime', sort: 'endTime'],
                         ]
@@ -1485,8 +1503,8 @@ class GlobalSearchTemplatesService {
                                 [heading: 'automatic Updates', property: 'automaticUpdates'],
                                 [heading: 'Packages', property: 'packages', link: true],
                                 [heading: 'Frequency', property: 'frequency?.value'],
-                                [heading: 'Last Run', property: 'lastRun'],
-                                [heading: 'Last Run', property: 'nextUpdateTimestamp'],
+                                [heading: 'Last Run', property: 'lastRun', sort: 'lastRun'],
+                                [heading: 'Next Run', property: 'nextUpdateTimestamp'],
                                 [heading: 'Identifier Namespace', property: 'targetNamespace?.value'],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
                         ]

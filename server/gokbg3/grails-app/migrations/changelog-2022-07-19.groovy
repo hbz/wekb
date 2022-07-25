@@ -1,6 +1,6 @@
 databaseChangeLog = {
 
-    changeSet(author: "djebeniani (generated)", id: "1658307474978-1") {
+    changeSet(author: "djebeniani (generated)", id: "1658750304330-1") {
         createTable(tableName: "auto_update_package_info") {
             column(autoIncrement: "true", name: "aupi_id", type: "BIGINT") {
                 constraints(primaryKey: "true", primaryKeyName: "auto_update_package_infoPK")
@@ -22,6 +22,8 @@ databaseChangeLog = {
 
             column(name: "aupi_pkg_fk", type: "BIGINT")
 
+            column(name: "aupi_only_rows_with_last_changed", type: "BOOLEAN")
+
             column(name: "aupi_count_removed_tipps", type: "INT")
 
             column(name: "aupi_count_processed_kbart_rows", type: "INT")
@@ -38,7 +40,7 @@ databaseChangeLog = {
         }
     }
 
-    changeSet(author: "djebeniani (generated)", id: "1658307474978-2") {
+    changeSet(author: "djebeniani (generated)", id: "1658750304330-2") {
         createTable(tableName: "auto_update_tipp_info") {
             column(autoIncrement: "true", name: "auti_id", type: "BIGINT") {
                 constraints(primaryKey: "true", primaryKeyName: "auto_update_tipp_infoPK")
@@ -76,27 +78,27 @@ databaseChangeLog = {
         }
     }
 
-    changeSet(author: "djebeniani (generated)", id: "1658307474978-3") {
+    changeSet(author: "djebeniani (generated)", id: "1658750304330-3") {
         addForeignKeyConstraint(baseColumnNames: "aupi_status_fk", baseTableName: "auto_update_package_info", constraintName: "FK5r58teu4rnq1i6kx4e7ukf6ur", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "rdv_id", referencedTableName: "refdata_value")
     }
 
-    changeSet(author: "djebeniani (generated)", id: "1658307474978-4") {
+    changeSet(author: "djebeniani (generated)", id: "1658750304330-4") {
         addForeignKeyConstraint(baseColumnNames: "auti_aupi_fk", baseTableName: "auto_update_tipp_info", constraintName: "FK7qtbw6agcpnwo4du60pdyc0oe", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "aupi_id", referencedTableName: "auto_update_package_info")
     }
 
-    changeSet(author: "djebeniani (generated)", id: "1658307474978-5") {
+    changeSet(author: "djebeniani (generated)", id: "1658750304330-5") {
         addForeignKeyConstraint(baseColumnNames: "auti_tipp_fk", baseTableName: "auto_update_tipp_info", constraintName: "FKee41takhwcs9h8dtyv63p846l", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "kbc_id", referencedTableName: "title_instance_package_platform")
     }
 
-    changeSet(author: "djebeniani (generated)", id: "1658307474978-6") {
+    changeSet(author: "djebeniani (generated)", id: "1658750304330-6") {
         addForeignKeyConstraint(baseColumnNames: "aupi_pkg_fk", baseTableName: "auto_update_package_info", constraintName: "FKip6fdxpwvteqwglh1dqkq5i8n", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "kbc_id", referencedTableName: "package")
     }
 
-    changeSet(author: "djebeniani (generated)", id: "1658307474978-7") {
+    changeSet(author: "djebeniani (generated)", id: "1658750304330-7") {
         addForeignKeyConstraint(baseColumnNames: "auti_status_fk", baseTableName: "auto_update_tipp_info", constraintName: "FKmftinjtqsn9bqrjg1uhro84ga", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "rdv_id", referencedTableName: "refdata_value")
     }
 
-    changeSet(author: "djebeniani (generated)", id: "1658307474978-8") {
+    changeSet(author: "djebeniani (generated)", id: "1658750304330-8") {
         addForeignKeyConstraint(baseColumnNames: "auti_type_fk", baseTableName: "auto_update_tipp_info", constraintName: "FKmugs843gd2os8jiboi3xmb6da", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "rdv_id", referencedTableName: "refdata_value")
     }
 }

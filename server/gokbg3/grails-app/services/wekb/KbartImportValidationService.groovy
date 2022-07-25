@@ -21,7 +21,7 @@ class KbartImportValidationService {
     MessageService messageService
     KbartImportService kbartImportService
 
-    def identifierValidateDTOs(JSONArray identifierDTOs, Locale locale) {
+    def identifierValidateDTOs(JSONArray identifierDTOs, Locale locale = null) {
         def id_errors = [:]
         def to_remove = []
         identifierDTOs.each { idobj ->
@@ -42,7 +42,7 @@ class KbartImportValidationService {
                 }
 
                 if (!ns_obj) {
-                    id_errors.put('namespace', [message: messageService.resolveCode('default.not.found.message', ["Namespace", id_ns], locale), baddata: id_ns])
+                    id_errors.put('namespace', [message: "Namespace not found", baddata: id_ns])
                     to_remove.add(idobj)
                 }
                 else {
@@ -251,7 +251,7 @@ class KbartImportValidationService {
 
         //publicationType
         if (tipp_dto.type) {
-            RefdataValue publicationType = kbartImportService.determinePublicationType(tipp_dto)
+            RefdataValue publicationType = kbartImportService.determinePublicationType(tipp_dto.type)
             if (!publicationType) {
                 result.valid = false
                 errors.title = [[message: "Unknown publicationType", baddata: tipp_dto.type, code: 404]]
@@ -406,6 +406,213 @@ class KbartImportValidationService {
         if (errors.size() > 0) {
             result.errors = errors
         }
+        return result
+    }
+
+    def tippValidateForAutoUpdate(tippMap) {
+        log.info("Begin tippValidateForAutoUpdate")
+        log.debug("tippMap: ${tippMap}")
+        def pkgLink = tippMap.pkg
+        def pltLink = tippMap.nominalPlatform
+        def result = ['valid': true]
+        def errors = [:]
+
+        if (!pkgLink) {
+            result.valid = false
+            errors.pkg = [[message: "Missing package link!", baddata: pkgLink]]
+        } else {
+            def pkg = null
+
+            if (pkgLink instanceof Package) {
+                pkg = pkgLink
+            }
+
+            if (!pkg) {
+                result.valid = false
+                errors.pkg = [[message: "Could not resolve package id!", baddata: pkgLink, code: 404]]
+            }
+        }
+
+        if (!pltLink) {
+            result.valid = false
+            errors.hostPlatform = [[message: "Missing platform link!", baddata: pltLink]]
+        } else {
+            def plt = null
+
+            if (pltLink instanceof Platform) {
+                plt = pltLink
+            }
+            if (!plt) {
+                result.valid = false
+                errors.hostPlatform = [[message: "Could not resolve platform id!", baddata: pltLink, code: 404]]
+            }
+        }
+
+        if (!tippMap.publication_title) {
+            result.valid = false
+            errors.title = [[message: "Missing title name!", baddata: tippMap, code: 404]]
+        }
+
+        //publicationType
+        if (tippMap.publication_type) {
+            RefdataValue publicationType = kbartImportService.determinePublicationType(tippMap.publication_type)
+            if (!publicationType) {
+                result.valid = false
+                errors.title = [[message: "Unknown publicationType", baddata: tippMap.type, code: 404]]
+            }
+        }else {
+            result.valid = false
+            errors.title = [[message: "No publication type set", baddata: tippMap, code: 404]]
+        }
+
+        /*String idJsonKey = 'ids'
+        def ids_list = tippMap[idJsonKey]
+        if (!ids_list) {
+            idJsonKey = 'identifiers'
+            ids_list = tippMap[idJsonKey]
+        }
+        if (ids_list) {
+            def id_errors = identifierValidateDTOs(ids_list, locale)
+            if (id_errors.size() > 0) {
+                errors.put(idJsonKey, id_errors)
+            }
+        }
+
+        if (tippMap.coverageStatements && !tippMap.coverage) {
+            tippMap.coverage = tippMap.coverageStatements
+        }
+
+        for (def coverage : tippMap.coverage) {
+            LocalDateTime parsedStart = GOKbTextUtils.completeDateString(coverage.startDate)
+            LocalDateTime parsedEnd = GOKbTextUtils.completeDateString(coverage.endDate, false)
+
+            if (coverage.startDate && !parsedStart) {
+                if (!errors.startDate) {
+                    errors.startDate = []
+                }
+
+                //result.valid = false
+                errors.startDate << [message: "Unable to parse coverage start date ${coverage.startDate}!", baddata: coverage.startDate]
+            }
+
+            if (coverage.endDate && !parsedEnd) {
+                if (!errors.endDate) {
+                    errors.endDate = []
+                }
+
+                //result.valid = false
+                errors.endDate << [message: "Unable to parse coverage end date ${coverage.endDate}!", baddata: coverage.endDate]
+            }
+
+            if (!coverage.coverageDepth) {
+                if (tippMap.type != "other" && !errors.coverageDepth) {
+                    errors.coverageDepth = []
+                }
+                *//* coverage.coverageDepth = "fulltext"
+                 errors.coverageDepth << [message: "Missing value for coverage depth: set to fulltext", baddata: coverage.coverageDepth]*//*
+            } else {
+                if (coverage.coverageDepth instanceof String && !['fulltext', 'full text', 'selected articles', 'abstracts'].contains(coverage.coverageDepth?.toLowerCase())) {
+                    if (!errors.coverageDepth) {
+                        errors.coverageDepth = []
+                    }
+
+                    //result.valid = false
+                    errors.coverageDepth << [message: "Unrecognized value '${coverage.coverageDepth}' for coverage depth", baddata: coverage.coverageDepth]
+                } else if (coverage.coverageDepth instanceof Integer) {
+                    try {
+                        def candidate = RefdataValue.get(coverage.coverageDepth)
+
+                        if (!candidate && candidate.owner.label == RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH) {
+                            if (!errors.coverageDepth) {
+                                errors.coverageDepth = []
+                            }
+
+                            //result.valid = false
+                            errors.coverageDepth << [message: "Illegal value '${coverage.coverageDepth}' for coverage depth", baddata: coverage.coverageDepth]
+                        }
+                    } catch (Exception e) {
+                        log.error("Exception $e caught in TIPP.validateDTO while coverageDepth instanceof Integer")
+                    }
+                } else if (coverage.coverageDepth instanceof Map) {
+                    if (coverage.coverageDepth.id) {
+                        try {
+                            def candidate = RefdataValue.get(coverage.coverageDepth.id)
+
+                            if (!candidate && candidate.owner.label == RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH) {
+                                if (!errors.coverageDepth) {
+                                    errors.coverageDepth = []
+                                }
+
+                                //result.valid = false
+                                errors.coverageDepth << [message: "Illegal ID value '${coverage.coverageDepth.id}' for coverage depth", baddata: coverage.coverageDepth]
+                            }
+                        } catch (Exception e) {
+                            log.error("Exception $e caught in TIPP.validateDTO while coverageDepth instanceof Map")
+                        }
+                    } else if (coverage.coverageDepth.value || coverage.coverageDepth.name) {
+                        if (!['fulltext', 'selected articles', 'abstracts'].contains(coverage.coverageDepth?.toLowerCase())) {
+                            if (!errors.coverageDepth) {
+                                errors.coverageDepth = []
+                            }
+
+                            //result.valid = false
+                            errors.coverageDepth << [message: "Unrecognized value '${coverage.coverageDepth}' for coverage depth", baddata: coverage.coverageDepth]
+                        }
+                    }
+                }
+            }
+
+            if (parsedStart && parsedEnd && (parsedEnd < parsedStart)) {
+                result.valid = false
+                errors.endDate = [[message: "Coverage end date must not be prior to its start date!", baddata: coverage.endDate]]
+            }
+        }
+*/
+        if (tippMap.date_monograph_published_print) {
+            LocalDateTime dfip = GOKbTextUtils.completeDateString(tippMap.date_monograph_published_print, false)
+            if (!dfip) {
+                errors.put('date_monograph_published_print', [message: "Unable to parse date", baddata: tippMap.remove('date_monograph_published_print')])
+            }
+        }
+
+        if (tippMap.date_monograph_published_online) {
+            LocalDateTime dfo = GOKbTextUtils.completeDateString(tippMap.date_monograph_published_online, false)
+            if (!dfo) {
+                errors.put('date_monograph_published_online', [message: "Unable to parse date", baddata: tippMap.remove('date_monograph_published_online')])
+            }
+        }
+
+        if (tippMap.last_changed) {
+            LocalDateTime lce = GOKbTextUtils.completeDateString(tippMap.last_changed, false)
+            if (!lce) {
+                errors.put('last_changed', [message: "Unable to parse date", baddata: tippMap.remove('last_changed')])
+            }
+        }
+
+        if (tippMap.access_start_date) {
+            LocalDateTime dfo = GOKbTextUtils.completeDateString(tippMap.access_start_date, false)
+            if (!dfo) {
+                errors.put('access_start_date', [message: "Unable to parse date", baddata: tippMap.remove('access_start_date')])
+            }
+        }
+
+        if (tippMap.access_end_date) {
+            LocalDateTime dfo = GOKbTextUtils.completeDateString(tippMap.access_end_date, false)
+            if (!dfo) {
+                errors.put('access_end_date', [message: "Unable to parse date", baddata: tippMap.remove('access_end_date')])
+            }
+        }
+
+        if (!result.valid) {
+            log.warn("Tipp failed validation: ${tippMap} - pkg:${pkgLink} plat:${pltLink} -- Errors: ${errors}")
+        }
+
+        if (errors.size() > 0) {
+            result.errors = errors
+        }
+
+        log.info("End tippValidateForAutoUpdate")
+
         return result
     }
 

@@ -522,7 +522,7 @@ class SemanticTagLib {
         out << '<div class="item' + (attrs.class ? (' ' + attrs.class) : '') +'" data-tab="' + attrs.tab + '">'
         out << body()
 
-        if (attrs.counts) {
+        if (attrs.counts != null) {
             out << '<div class="ui floating black circular label">'+attrs.counts+'</div>'
         }
         out << '</div>'

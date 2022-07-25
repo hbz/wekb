@@ -91,7 +91,7 @@ class Package extends KBComponent {
           ddcs : RefdataValue,
           paas : PackageArchivingAgency,
           ids: Identifier,
-          autoUpdatePackageInfo: AutoUpdatePackageInfo
+          autoUpdatePackageInfos: AutoUpdatePackageInfo
   ]
 
   static mapping = {

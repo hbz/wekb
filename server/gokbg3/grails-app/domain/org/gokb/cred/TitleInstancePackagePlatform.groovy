@@ -199,7 +199,7 @@ class TitleInstancePackagePlatform extends KBComponent {
     coverageStatements: TIPPCoverageStatement,
     ddcs: RefdataValue,
     ids: Identifier,
-    autoUpdateTippInfo: AutoUpdateTippInfo
+    autoUpdateTippInfos: AutoUpdateTippInfo
 
   ]
 

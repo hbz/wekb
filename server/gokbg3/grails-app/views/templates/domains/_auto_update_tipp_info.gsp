@@ -1,6 +1,20 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
 <dl>
     <dt class="control-label">
+        Title
+    </dt>
+    <dd>
+        <g:if test="${d.tipp}">
+            <g:link controller="resource" action="show"
+                    id="${d.tipp.uuid}">
+                ${(d.tipp.name) ?: 'Empty'}
+            </g:link>
+        </g:if>
+        <g:else>Empty</g:else>
+    </dd>
+</dl>
+<dl>
+    <dt class="control-label">
         Description
     </dt>
     <dd>

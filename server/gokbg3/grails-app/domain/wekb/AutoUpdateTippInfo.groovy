@@ -5,6 +5,8 @@ import de.wekb.helper.RCConstants
 import org.gokb.cred.RefdataValue
 import org.gokb.cred.TitleInstancePackagePlatform
 
+import javax.persistence.Transient
+
 class AutoUpdateTippInfo {
 
     String uuid
@@ -69,8 +71,22 @@ class AutoUpdateTippInfo {
     static belongsTo = [autoUpdatePackageInfo: AutoUpdatePackageInfo,
                         tipp: TitleInstancePackagePlatform]
 
+    def beforeInsert(){
+        generateUuid()
+    }
+
+    protected def generateUuid(){
+        if (!uuid){
+            uuid = UUID.randomUUID().toString()
+        }
+    }
 
     public String getNiceName() {
-        return "Auto Update Info";
+        return "Auto Update Title Info";
+    }
+
+    @Transient
+    public String getDomainName() {
+        return "Auto Update Title Info"
     }
 }
