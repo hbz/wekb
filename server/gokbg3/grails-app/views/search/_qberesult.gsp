@@ -3,8 +3,8 @@
 <wekb:serviceInjection/>
 
 <g:set var="counter" value="${offset}"/>
-%{--<g:set var="s_action" value="${s_action ?: 'index'}"/>
-<g:set var="s_controller" value="${s_controller ?: 'search'}"/>--}%
+<g:set var="s_action" value="${s_action?:actionName}"/>
+<g:set var="s_controller" value="${s_controller?:controllerName}"/>
 
 <g:if test="${request.isAjax()}">
 
@@ -21,8 +21,10 @@
             <th>#</th>
             <g:each in="${qbeConfig.qbeResults}" var="c">
                 <g:if test="${!params.hide || !params.hide.contains(c.qpEquiv)}">
+                    <g:set var="colcode" value="${baseClass + '.' + c.heading}"/>
+                    <g:set var="colmsg" value="${message(code: colcode, default: c.heading)}"/>
                     <g:if test="${c.sort}">
-                        <semui:sortableColumn property="${c.sort}" title="${colmsg == colcode ? c.heading : colmsg}"
+                        <semui:sortableColumn controller="${s_controller}" action="${s_action}" id="${params.id}" property="${c.sort}" title="${colmsg == colcode ? c.heading : colmsg}"
                                               params="${params}"/>
                     </g:if>
                     <g:else>
@@ -90,6 +92,12 @@
                             <g:else>
                                 0
                             </g:else>
+                        </g:elseif>
+                        <g:elseif test="${c.value instanceof java.util.Date}">
+                            <g:if test="${c.value}">
+                                <g:formatDate format="${message(code: 'default.date.format.noZWihoutSS')}"
+                                              date="${c.value}"/>
+                            </g:if>
                         </g:elseif>
                         <g:else>
                             ${c.value}
@@ -226,6 +234,12 @@
                                     <g:else>
                                         0
                                     </g:else>
+                                </g:elseif>
+                                <g:elseif test="${c.value instanceof java.util.Date}">
+                                    <g:if test="${c.value}">
+                                        <g:formatDate format="${message(code: 'default.date.format.noZWihoutSS')}"
+                                                      date="${c.value}"/>
+                                    </g:if>
                                 </g:elseif>
                                 <g:else>
                                     ${c.value}

@@ -27,15 +27,20 @@
         <semui:tabsItemWithoutLink tab="ddcs" counts="${d.ddcs.size()}">
             DDCs
         </semui:tabsItemWithoutLink>
+
+        <g:if test="${d.source && d.source.url}">
+            <semui:tabsItemWithoutLink tab="autoUpdatePackageInfos" counts="${d.autoUpdatePackageInfos.size()}">
+                Auto Update Infos
+            </semui:tabsItemWithoutLink>
+        </g:if>
     </semui:tabs>
 
 
     <semui:tabsItemContent tab="currentTipps" class="${(params.tab == null || params.tab == 'currentTipps') ? 'active' : ''}">
 
         <div class="content">
-
             <g:link class="display-inline" controller="search" action="inlineSearch"
-                    params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: RefdataValue.class.name + ':' + RDStore.KBC_STATUS_CURRENT.id]"
+                    params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: RefdataValue.class.name + ':' + RDStore.KBC_STATUS_CURRENT.id]"
                     id="">Packages on this Source</g:link>
 
         </div>
@@ -48,7 +53,7 @@
         <div class="content">
 
             <g:link class="display-inline" controller="search" action="inlineSearch"
-                    params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: RefdataValue.class.name + ':' + RDStore.KBC_STATUS_RETIRED.id]"
+                    params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: RefdataValue.class.name + ':' + RDStore.KBC_STATUS_RETIRED.id]"
                     id="">Packages on this Source</g:link>
 
         </div>
@@ -61,7 +66,7 @@
         <div class="content">
 
             <g:link class="display-inline" controller="search" action="inlineSearch"
-                    params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: RefdataValue.class.name + ':' + RDStore.KBC_STATUS_EXPECTED.id]"
+                    params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: RefdataValue.class.name + ':' + RDStore.KBC_STATUS_EXPECTED.id]"
                     id="">Packages on this Source</g:link>
 
         </div>
@@ -74,7 +79,7 @@
         <div class="content">
 
             <g:link class="display-inline" controller="search" action="inlineSearch"
-                    params="[qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: RefdataValue.class.name + ':' + RDStore.KBC_STATUS_DELETED.id]"
+                    params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:tippsOfPkg', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], qp_status: RefdataValue.class.name + ':' + RDStore.KBC_STATUS_DELETED.id]"
                     id="">Packages on this Source</g:link>
 
         </div>
@@ -86,5 +91,19 @@
     <g:render template="/templates/tabTemplates/ddcsTab" model="${[d: d]}"/>
 
     <g:render template="/templates/tabTemplates/identifiersTab" model="${[d: d]}"/>
+
+    <g:if test="${d.source && d.source.url}">
+        <semui:tabsItemContent tab="autoUpdatePackageInfos">
+
+            <div class="content">
+
+                <g:link class="display-inline" controller="search" action="inlineSearch"
+                        params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:autoUpdatePackageInfos', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId()]"
+                        id="">Auto Update Package Info on this Source</g:link>
+
+            </div>
+
+        </semui:tabsItemContent>
+    </g:if>
 
 </g:if>

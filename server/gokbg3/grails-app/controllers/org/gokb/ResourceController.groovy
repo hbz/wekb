@@ -53,15 +53,7 @@ class ResourceController {
 
       if ( displayobj ) {
 
-        List allowedPublicShow = ['CuratoryGroup',
-                                  'Identifier',
-                                  'Org',
-                                  'Package',
-                                  'Platform',
-                                  'Source',
-                                  'TitleInstancePackagePlatform']
-
-        if ((displayobj.class.simpleName in allowedPublicShow) || (springSecurityService.isLoggedIn() && SpringSecurityUtils.ifAnyGranted("ROLE_ADMIN"))) {
+        if ((displayobj.class.simpleName in accessService.allowedPublicShow) || (springSecurityService.isLoggedIn() && SpringSecurityUtils.ifAnyGranted("ROLE_ADMIN"))) {
 
           result.displayobjclassname = displayobj.class.name
           result.__oid = "${result.displayobjclassname}:${displayobj.id}"

@@ -36,7 +36,7 @@ class ClassUtils {
    */
   static boolean setDateIfPresent(def value, obj, prop, boolean acceptNullValue = false) {
     LocalDateTime ldt = null
-    if(acceptNullValue && (value == null || value == "")){
+    if(acceptNullValue && (value == null || value == "") && (obj[prop] != null && obj[prop] != "")){
       obj[prop] = null
       return true
     }

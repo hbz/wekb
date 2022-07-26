@@ -14,7 +14,7 @@
         <div class="content">
 
                     <g:link class="display-inline" controller="search" action="inlineSearch"
-                            params="[qbe: 'g:packages', qp_source_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_source', 'qp_source_id']]"
+                            params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:packages', qp_source_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_source', 'qp_source_id']]"
                             id="">Packages on this Source</g:link>
 
         </div>
@@ -28,7 +28,7 @@
                 </dt>
                 <dd>
                     <g:link class="display-inline" controller="search" action="inlineSearch"
-                            params="[qbe: 'g:notes', qp_ownerClassID: d.id, inline: true, qp_ownerClass: d.getClass().name]"
+                            params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:notes', qp_ownerClassID: d.id, inline: true, qp_ownerClass: d.getClass().name]"
                             id="">Notes on this Source</g:link>
                 </dd>
             </dl>

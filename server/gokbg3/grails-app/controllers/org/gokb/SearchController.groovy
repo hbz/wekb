@@ -17,12 +17,14 @@ import org.elasticsearch.search.sort.SortOrder
 import org.springframework.security.access.annotation.Secured;
 
 import org.gokb.cred.*
+import wekb.AccessService
 import wekb.SearchService
 
 class SearchController {
 
     def genericOIDService
     SearchService searchService
+    AccessService accessService
 
     static def reversemap = ['subject':'subjectKw','componentType':'componentType','status':'status','name':'name']
     static def non_analyzed_fields = ['componentType','status']
@@ -320,9 +322,8 @@ class SearchController {
         log.debug("SearchController:componentSearch ${params}")
 
         def searchResult = [:]
-        List allowedSearch = ["g:tipps", "g:platforms", "g:packages", "g:orgs", "g:tippsOfPkg", "g:sources", "g:curatoryGroups", "g:identifiers"]
 
-        if ((params.qbe in allowedSearch) || (springSecurityService.isLoggedIn() && SpringSecurityUtils.ifAnyGranted("ROLE_ADMIN"))) {
+        if ((params.qbe in accessService.allowedComponentSearch) || (springSecurityService.isLoggedIn() && SpringSecurityUtils.ifAnyGranted("ROLE_ADMIN"))) {
             searchResult = searchService.search(user, searchResult, params, response.format)
 
             log.debug("Search completed after ${System.currentTimeMillis() - start_time}");
@@ -341,18 +342,24 @@ class SearchController {
         log.debug("inlineSearch:componentSearch ${params}")
 
         def searchResult = [:]
-        List allowedSearch = ["g:tipps", "g:platforms", "g:packages", "g:orgs", "g:tippsOfPkg", "g:sources", "g:curatoryGroups", "g:identifiers"]
 
-        if ((params.qbe in allowedSearch) || (springSecurityService.isLoggedIn() && SpringSecurityUtils.ifAnyGranted("ROLE_ADMIN"))) {
+        if ((params.qbe in accessService.allowedInlineSearch) || (springSecurityService.isLoggedIn() && SpringSecurityUtils.ifAnyGranted("ROLE_ADMIN"))) {
             searchResult = searchService.search(user, searchResult, params, response.format)
 
             log.debug("Search completed after ${System.currentTimeMillis() - start_time}");
+            if(searchResult.result) {
+                searchResult.result.s_action = params.s_actionName
+                searchResult.result.s_controller = params.s_controllerName
+                searchResult.result
+                params.id = params.objectUUID
+            }
 
         } else {
             searchResult.result = [:]
             flash.error = "This search is not allowed!"
         }
-        searchResult.result
+
+        render template: "/search/inlineSearch", model: searchResult.result
     }
 
 }

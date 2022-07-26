@@ -12,6 +12,8 @@ class GlobalSearchTemplatesService {
     def init() {
         globalSearchTemplates.put('additionalPropertyDefinitions', additionalPropertyDefinitions())
         globalSearchTemplates.put('allocatedReviewGroups', allocatedReviewGroups())
+        globalSearchTemplates.put('autoUpdatePackageInfos', autoUpdatePackageInfos())
+        globalSearchTemplates.put('autoUpdateTippInfos', autoUpdateTippInfos())
         globalSearchTemplates.put('components', components())
         globalSearchTemplates.put('curatoryGroups', curatoryGroups())
         globalSearchTemplates.put('identifiers', identifiers())
@@ -127,6 +129,125 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Status', property: 'review.status?.value'],
                                 [heading: 'Type', property: 'review.type?.value'],
                                 [heading: 'Timestamp', property: 'review.dateCreated', sort: 'review.dateCreated'],
+                        ]
+                ]
+        ]
+        result
+    }
+
+    Map autoUpdatePackageInfos() {
+        Map result = [
+                baseclass: 'wekb.AutoUpdatePackageInfo',
+                title    : 'Auto Update Infos',
+                group    : 'Secondary',
+                defaultSort : 'startTime',
+                defaultOrder: 'desc',
+                qbeConfig: [
+                        qbeForm   : [
+                                [
+                                        prompt     : 'Package ID',
+                                        qparam     : 'qp_pkg_id',
+                                        placeholder: 'Package ID',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'pkg.id', 'type': 'java.lang.Long'],
+                                        hide       : true
+                                ],
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.RefdataValue',
+                                        filter1    : RCConstants.AUTO_UPDATE_STATUS,
+                                        prompt     : 'Status',
+                                        qparam     : 'qp_status',
+                                        placeholder: 'Type',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'status'],
+                                ],
+                        ],
+                        qbeGlobals: [
+                        ],
+                        qbeResults: [
+                                [heading: 'Description', property: 'description', link: true],
+                                [heading: 'Status', property: 'status', sort: 'status.value'],
+                                [heading: 'Start Time', property: 'startTime', sort: 'startTime'],
+                                [heading: 'End Time', property: 'endTime', sort: 'endTime'],
+                                [heading: 'Only Last Changed Update', property: 'onlyRowsWithLastChanged', sort: 'onlyRowsWithLastChanged'],
+                                [heading: 'Rows in KBART-File', property: 'countKbartRows', sort: 'countKbartRows'],
+                                [heading: 'Processed KBART Rows', property: 'countProcessedKbartRows', sort: 'countProcessedKbartRows'],
+                                [heading: 'Changed Titles ', property: 'countChangedTipps', sort: 'countChangedTipps'],
+                                [heading: 'Removed Titles ', property: 'countRemovedTipps', sort: 'countRemovedTipps'],
+                                [heading: 'New Titles', property: 'countNewTipps', sort: 'countNewTipps'],
+                                [heading: 'In valid Titles', property: 'countInValidTipps', sort: 'countInValidTipps'],
+
+                        ]
+                ]
+        ]
+        result
+    }
+
+    Map autoUpdateTippInfos() {
+        Map result = [
+                baseclass: 'wekb.AutoUpdateTippInfo',
+                title    : 'Auto Update Title Infos',
+                group    : 'Secondary',
+                qbeConfig: [
+                        qbeForm   : [
+                                [
+                                        qparam     : 'qp_aup_id',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'autoUpdatePackageInfo.id', 'type': 'java.lang.Long'],
+                                        hide       : true
+                                ],
+                                [
+                                        qparam     : 'qp_tipp_id',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'tipp.id', 'type': 'java.lang.Long'],
+                                        hide       : true
+                                ],
+                                [
+                                        prompt     : 'KBART Field',
+                                        qparam     : 'qp_kbartProperty',
+                                        placeholder: 'Kbart Field',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'kbartProperty']
+                                ],
+                                [
+                                        prompt     : 'Old Value',
+                                        qparam     : 'qp_oldValue',
+                                        placeholder: 'Old Value',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'oldValue']
+                                ],
+                                [
+                                        prompt     : 'New Value',
+                                        qparam     : 'qp_newValue',
+                                        placeholder: 'New Value',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'newValue']
+                                ],
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.RefdataValue',
+                                        filter1    : RCConstants.AUTO_UPDATE_TYPE,
+                                        prompt     : 'Type',
+                                        qparam     : 'qp_type',
+                                        placeholder: 'Type',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'type'],
+                                ],
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.RefdataValue',
+                                        filter1    : RCConstants.AUTO_UPDATE_STATUS,
+                                        prompt     : 'Status',
+                                        qparam     : 'qp_status',
+                                        placeholder: 'Type',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'status'],
+                                ],
+                        ],
+                        qbeGlobals: [
+                        ],
+                        qbeResults: [
+                                [heading: 'Description', property: 'description', link: true],
+                                [heading: 'Title', property: 'tipp.name', link: true],
+                                [heading: 'Status', property: 'status', sort: 'status.value'],
+                                [heading: 'Type', property: 'type', sort: 'type.value'],
+                                [heading: 'KBART Field', property: 'kbartProperty', sort: 'kbartProperty'],
+                                [heading: 'New Value', property: 'newValue'],
+                                [heading: 'Old Value', property: 'oldValue'],
+                                [heading: 'Start Time', property: 'startTime', sort: 'startTime'],
+                                [heading: 'End Time', property: 'endTime', sort: 'endTime'],
                         ]
                 ]
         ]
@@ -1390,8 +1511,8 @@ class GlobalSearchTemplatesService {
                                 [heading: 'automatic Updates', property: 'automaticUpdates'],
                                 [heading: 'Packages', property: 'packages', link: true],
                                 [heading: 'Frequency', property: 'frequency?.value'],
-                                [heading: 'Last Run', property: 'lastRun'],
-                                [heading: 'Last Run', property: 'nextUpdateTimestamp'],
+                                [heading: 'Last Run', property: 'lastRun', sort: 'lastRun'],
+                                [heading: 'Next Run', property: 'nextUpdateTimestamp'],
                                 [heading: 'Identifier Namespace', property: 'targetNamespace?.value'],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
                         ]

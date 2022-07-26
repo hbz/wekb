@@ -35,7 +35,7 @@ import org.gokb.cred.*
 
 import com.k_int.ClassUtils
 
-@Log4j
+@Slf4j
 class DomainClassExtender {
 
   private static RefdataValue getComboStatusActive = null;

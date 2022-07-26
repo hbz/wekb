@@ -169,7 +169,9 @@
                             <g:link class="item" controller="admin" action="ensureUuids"
                                     onclick="return confirm('Are you sure?')">Ensure UUIDs</g:link>
                             <g:link class="item" controller="admin" action="autoUpdatePackages"
-                                    onclick="return confirm('Are you sure?')">Auto Update Packages</g:link>
+                                    onclick="return confirm('Are you sure?')">Auto Update All Packages (Last Changed)</g:link>
+                            <g:link class="item" controller="admin" action="autoUpdatePackagesAllTitles"
+                                    onclick="return confirm('Are you sure?')">Auto Update All Packages</g:link>
                             <g:link class="item" controller="admin" action="cleanupTippIdentifersWithSameNamespace"
                                     onclick="return confirm('Are you sure?')">Cleanup Tipp Identifers with same Namespace</g:link>
                             <g:link class="item" controller="admin" action="setTippsWithoutUrlToDeleted"

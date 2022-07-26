@@ -415,6 +415,7 @@ class SemanticTagLib {
 
         def property = attrs.remove("property")
         def action = attrs.action ? attrs.remove("action") : (actionName ?: "list")
+        def controller = attrs.controller ? attrs.remove("controller") : (controllerName ?: "")
         def namespace = attrs.namespace ? attrs.remove("namespace") : ""
 
         def defaultOrder = attrs.remove("defaultOrder")
@@ -448,7 +449,7 @@ class SemanticTagLib {
             }
         }
         else {
-            linkParams.order = defaultOrder
+            linkParams.order = property == 'lastUpdated' ? "desc" : defaultOrder
         }
 
         // determine column title
@@ -479,6 +480,7 @@ class SemanticTagLib {
         }
 
         linkAttrs.action = action
+        linkAttrs.controller = controller
         linkAttrs.namespace = namespace
 
         writer << callLink((Map)linkAttrs) {
@@ -520,7 +522,7 @@ class SemanticTagLib {
         out << '<div class="item' + (attrs.class ? (' ' + attrs.class) : '') +'" data-tab="' + attrs.tab + '">'
         out << body()
 
-        if (attrs.counts) {
+        if (attrs.counts != null) {
             out << '<div class="ui floating black circular label">'+attrs.counts+'</div>'
         }
         out << '</div>'

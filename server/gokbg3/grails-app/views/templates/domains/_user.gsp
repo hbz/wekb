@@ -21,7 +21,7 @@
         <dl>
             <dt class="control-label">Curatory Groups</dt>
             <dd>
-                <g:render template="/apptemplates/secondTemplates/curatory_groups" model="${[d: d]}"/>
+                <g:render template="/apptemplates/secondTemplates/curatory_groups" model="${[d: d, linkToCur: true]}"/>
             </dd>
         </dl>
     </g:if>

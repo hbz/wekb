@@ -91,12 +91,12 @@
                     <g:if test="${action.code in ["packageUrlUpdate", "packageUrlUpdateAllTitles"]}">
                         <g:if test="${displayobj.source}">
                             <semui:actionsDropdownItem controller="workflow" action="action"
-                                                       params="[component: object, selectedBulkAction: action.code]" text="${action.label}"/>
+                                                       params="[component: object, selectedBulkAction: action.code, curationOverride: params.curationOverride]" text="${action.label}"/>
                         </g:if>
                     </g:if>
                     <g:else>
                         <semui:actionsDropdownItem controller="workflow" action="action"
-                                                   params="[component: object, selectedBulkAction: action.code]" text="${action.label}"/>
+                                                   params="[component: object, selectedBulkAction: action.code, curationOverride: params.curationOverride]" text="${action.label}"/>
                     </g:else>
 
                 </g:each>

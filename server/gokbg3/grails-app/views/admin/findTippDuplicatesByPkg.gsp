@@ -15,7 +15,7 @@
 
 <h1 class="ui header">Tipp Duplicates</h1>
 
-<div class="ui container">
+<div class="container">
 
     <ul id="tabs" class="nav nav-tabs">
         <li role="presentation" class="${!params.papaginateByUrl && !params.papaginateByTitleID ? 'active' : ''}"><a

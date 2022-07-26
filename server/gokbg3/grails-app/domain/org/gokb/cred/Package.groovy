@@ -4,6 +4,7 @@ package org.gokb.cred
 import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
 import de.wekb.helper.RDStore
+import wekb.AutoUpdatePackageInfo
 import wekb.PackageArchivingAgency
 import org.gokb.GOKbTextUtils
 
@@ -89,7 +90,8 @@ class Package extends KBComponent {
           regionalRanges : RefdataValue,
           ddcs : RefdataValue,
           paas : PackageArchivingAgency,
-          ids: Identifier
+          ids: Identifier,
+          autoUpdatePackageInfos: AutoUpdatePackageInfo
   ]
 
   static mapping = {

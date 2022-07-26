@@ -36,7 +36,7 @@ if (Environment.isDevelopmentMode() || Environment.current == Environment.TEST) 
   logger('org.gokb.ComponentLookupService', INFO)
   logger('org.gokb.ComponentStatisticService', INFO)
   logger('org.gokb.ComponentUpdateService', DEBUG)
-  logger('org.gokb.SearchController', INFO)
+
   logger('org.gokb.ResourceController', ERROR)
   logger('org.gokb.AutoUpdatePackagesJob', DEBUG)
   logger('org.gokb.FTUpdateService', ERROR)
