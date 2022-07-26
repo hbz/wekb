@@ -42,13 +42,7 @@ class CreateController {
     def result=[:]
     User user = springSecurityService.currentUser
 
-    List allowedToCreate = ['org.gokb.cred.Org',
-                              'org.gokb.cred.Package',
-                              'org.gokb.cred.Platform',
-                              'org.gokb.cred.Source',
-                              'org.gokb.cred.TitleInstancePackagePlatform']
-
-    if ((params.tmpl in allowedToCreate) || SpringSecurityUtils.ifAnyGranted("ROLE_ADMIN")) {
+    if ((params.tmpl in accessService.allowedToCreate) || SpringSecurityUtils.ifAnyGranted("ROLE_ADMIN")) {
 
       // Create a new empty instance of the object to create
       result.newclassname = params.tmpl

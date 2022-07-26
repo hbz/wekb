@@ -14,19 +14,63 @@ class AccessService {
 
     SpringSecurityService springSecurityService
 
+    List allowedBaseClasses = ['org.gokb.cred.ComponentWatch',
+                               'org.gokb.cred.CuratoryGroup',
+                               'org.gokb.cred.JobResult',
+                               'org.gokb.cred.IdentifierNamespace',
+                               'org.gokb.cred.Identifier',
+                               'org.gokb.cred.Org',
+                               'org.gokb.cred.Package',
+                               'org.gokb.cred.Platform',
+                               'org.gokb.cred.ReviewRequest',
+                               'org.gokb.cred.TitleInstancePackagePlatform',
+                               'org.gokb.cred.Source',
+                               'wekb.AutoUpdatePackageInfo',
+                               'wekb.AutoUpdateTippInfo']
+
+    List allowedToCreate = ['org.gokb.cred.Org',
+                            'org.gokb.cred.Package',
+                            'org.gokb.cred.Platform',
+                            'org.gokb.cred.TitleInstancePackagePlatform',
+                            'org.gokb.cred.Source',]
+
+    List allowedPublicShow = ['AutoUpdatePackageInfo',
+                              'AutoUpdateTippInfo',
+                              'CuratoryGroup',
+                              'Identifier',
+                              'Org',
+                              'Package',
+                              'Platform',
+                              'Source',
+                              'TitleInstancePackagePlatform']
+
+    List allowedComponentSearch = ["g:autoUpdatePackageInfos",
+                                   "g:autoUpdateTippInfos",
+                                   "g:orgs",
+                                   "g:packages",
+                                   "g:platforms",
+                                   "g:tipps",
+                                   "g:tippsOfPkg",
+                                   "g:sources"]
+
+    List allowedInlineSearch = ["g:autoUpdatePackageInfos",
+                                "g:autoUpdateTippInfos",
+                                "g:curatoryGroups",
+                                "g:identifiers",
+                                "g:orgs",
+                                "g:packages",
+                                "g:platforms",
+                                "g:tipps",
+                                "g:tippsOfPkg",
+                                "g:sources"]
+
+
     boolean checkEditableObject(Object o, GrailsParameterMap grailsParameterMap) {
         checkEditableObject(o, (grailsParameterMap && grailsParameterMap.curationOverride == 'true'))
     }
 
     boolean checkEditableObject(Object o, boolean curationOverride = false) {
         boolean editable = false
-
-        List allowedToEditable = ['Identifier',
-                                  'Org',
-                                  'Package',
-                                  'Platform',
-                                  'Source',
-                                  'TitleInstancePackagePlatform']
 
         if (!(o.respondsTo('isSystemComponent') && o.isSystemComponent())) {
             def curatedObj = null
@@ -63,19 +107,6 @@ class AccessService {
     }
     boolean checkReadable(String baseclassName) {
 
-        List allowedBaseClasses = ['org.gokb.cred.CuratoryGroup',
-                                   'org.gokb.cred.JobResult',
-                                   'org.gokb.cred.IdentifierNamespace',
-                                   'org.gokb.cred.Identifier',
-                                   'org.gokb.cred.Org',
-                                   'org.gokb.cred.Package',
-                                   'org.gokb.cred.Platform',
-                                   'org.gokb.cred.ReviewRequest',
-                                   'org.gokb.cred.Source',
-                                   'org.gokb.cred.TitleInstancePackagePlatform',
-                                   'org.gokb.cred.ComponentWatch']
-
-
         if(baseclassName in allowedBaseClasses){
             return true
         }else {
@@ -86,19 +117,6 @@ class AccessService {
     }
 
     boolean checkDeletable(String baseclassName) {
-
-        List allowedBaseClasses = ['org.gokb.cred.CuratoryGroup',
-                                   'org.gokb.cred.JobResult',
-                                   'org.gokb.cred.IdentifierNamespace',
-                                   'org.gokb.cred.Identifier',
-                                   'org.gokb.cred.Org',
-                                   'org.gokb.cred.Package',
-                                   'org.gokb.cred.Platform',
-                                   'org.gokb.cred.ReviewRequest',
-                                   'org.gokb.cred.Source',
-                                   'org.gokb.cred.TitleInstancePackagePlatform',
-                                   'org.gokb.cred.ComponentWatch']
-
 
         if(baseclassName in allowedBaseClasses){
             return true
