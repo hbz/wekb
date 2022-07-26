@@ -67,15 +67,16 @@ class CleanupService {
         log.error("problem",t);
         j?.message("Problem expunging component with id ${component_id}".toString())
       }
-      finally {
-        try {
-          esclient.close()
-        }
-        catch ( Exception e ) {
-          log.error("Problem by Close ES Client",e)
-        }
-      }
+
     }
+
+    try {
+      esclient.close()
+    }
+    catch (Exception e) {
+      log.error("Problem by Close ES Client", e)
+    }
+
     j?.message("Finished deleting ${idx} components.")
     return result
   }

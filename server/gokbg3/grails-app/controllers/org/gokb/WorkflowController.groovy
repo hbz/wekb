@@ -521,7 +521,7 @@ class WorkflowController{
               executorService.execute({
                 Package aPackage = Package.get(pkgObj.id)
                 Thread.currentThread().setName('triggerSourceUpdate_' + pkgObj.id)
-                autoUpdatePackagesService.startAutoPackageUpdate(aPackage, allTitles)
+                autoUpdatePackagesService.startAutoPackageUpdate(aPackage, !allTitles)
               })
 
               flash.success = "The package update was started. This runs in the background. When the update has gone through, you will see this on the Auto Update Info tab."
