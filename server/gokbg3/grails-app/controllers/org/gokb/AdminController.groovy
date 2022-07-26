@@ -240,8 +240,6 @@ class AdminController {
     result.ftUpdateService = [:]
     result.editable = true
 
-    RefdataValue status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
-
     /*Client esclient = ESWrapperService.getClient()
 
     result.indices = []
@@ -286,7 +284,8 @@ class AdminController {
 
       String query = "select count(id) from ${typePerIndex.get(indice.value)}"
       indexInfo.countDB = FTControl.executeQuery(query)[0]
-      indexInfo.countDeletedInDB = FTControl.executeQuery(query+ " where status = :status", [status: status_deleted]) ? FTControl.executeQuery(query+ " where status = :status", [status: status_deleted])[0] : 0
+      indexInfo.countDeletedInDB = FTControl.executeQuery(query+ " where status = :status", [status: RDStore.KBC_STATUS_DELETED])[0]
+      indexInfo.countRemovedInDB = FTControl.executeQuery(query+ " where status = :status", [status: RDStore.KBC_STATUS_REMOVED])[0]
       result.indices << indexInfo
     }
 
