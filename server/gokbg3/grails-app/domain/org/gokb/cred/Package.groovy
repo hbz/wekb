@@ -787,8 +787,8 @@ select tipp.id,
   }
 
   @Transient
-  public List getAnbieterProduktIDs() {
-    return ids.findAll{it.namespace.value == 'Anbieter_Produkt_ID' && it.value != 'Unknown'}.value
+  public String getAnbieterProduktIDs() {
+    return ids.findAll{it.namespace.value == 'Anbieter_Produkt_ID' && it.value != 'Unknown'}.value.join(', ')
   }
 
 }
