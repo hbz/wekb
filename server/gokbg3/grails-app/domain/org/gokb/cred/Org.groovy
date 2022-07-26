@@ -24,7 +24,8 @@ class Org extends KBComponent {
       [code: 'org::deprecateDelete', label: 'Remove Publisher name from title records...'],*/
       [code: 'method::deleteSoft', label: 'Delete Provider', perm: 'delete'],
       [code: 'method::retire', label: 'Retire Provider', perm: 'admin'],
-      [code: 'method::setActive', label: 'Set Provider Current']
+      [code: 'method::setActive', label: 'Set Provider Current'],
+      [code: 'setStatus::Removed', label: 'Remove Provider', perm: 'delete'],
     ]
   }
 

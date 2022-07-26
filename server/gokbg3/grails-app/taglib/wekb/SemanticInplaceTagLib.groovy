@@ -476,6 +476,7 @@ class SemanticInplaceTagLib {
                     action: 'lookup',
                     params: [baseClass: attrs.baseClass,
                             q: '',
+                            filter1: attrs.filter1,
                             preparForEditable: 'true']
             ).encodeAsHTML()
 

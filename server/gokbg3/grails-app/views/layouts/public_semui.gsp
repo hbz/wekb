@@ -160,20 +160,20 @@
                             %{--              <g:link class="item" controller="admin" action="resetTextIndexes" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Reset Free Text Indexes</g:link>--}%
                             <g:link class="item" controller="admin" action="recalculateStats"
                                     onclick="return confirm('Are you sure?')">Recalculate Statistics</g:link>
-                            <g:link class="item" controller="admin" action="cleanup"
-                                    onclick="return confirm('Are you sure?')">Expunge Deleted Records</g:link>
+                            <g:link class="item" controller="admin" action="expungeRemovedComponents"
+                                    onclick="return confirm('Are you sure?')">Expunge Removed Component</g:link>
                             <g:link class="item" controller="admin" action="cleanupPlatforms"
                                     onclick="return confirm('Are you sure?')">Deprecate Platforms Without URLs</g:link>
-                            <g:link class="item" controller="admin" action="reviewDatesOfTippCoverage"
-                                    onclick="return confirm('Are you sure?')">Add Reviews for wrong Tipp Coverage Dates</g:link>
+                            %{--<g:link class="item" controller="admin" action="reviewDatesOfTippCoverage"
+                                    onclick="return confirm('Are you sure?')">Add Reviews for wrong Tipp Coverage Dates</g:link>--}%
                             <g:link class="item" controller="admin" action="ensureUuids"
                                     onclick="return confirm('Are you sure?')">Ensure UUIDs</g:link>
                             <g:link class="item" controller="admin" action="autoUpdatePackages"
                                     onclick="return confirm('Are you sure?')">Auto Update All Packages (Last Changed)</g:link>
                             <g:link class="item" controller="admin" action="autoUpdatePackagesAllTitles"
                                     onclick="return confirm('Are you sure?')">Auto Update All Packages</g:link>
-                            <g:link class="item" controller="admin" action="cleanupTippIdentifersWithSameNamespace"
-                                    onclick="return confirm('Are you sure?')">Cleanup Tipp Identifers with same Namespace</g:link>
+                           %{-- <g:link class="item" controller="admin" action="cleanupTippIdentifersWithSameNamespace"
+                                    onclick="return confirm('Are you sure?')">Cleanup Tipp Identifers with same Namespace</g:link>--}%
                             <g:link class="item" controller="admin" action="setTippsWithoutUrlToDeleted"
                                     onclick="return confirm('Are you sure?')">Set Tipps without Url to deleted</g:link>
                         </div>

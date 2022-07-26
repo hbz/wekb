@@ -428,12 +428,32 @@ select tipp.id,
     }
   }
 
+  public void removeWithTipps(context) {
+    log.debug("package::removeWithTipps");
+    log.debug("Updating package status to removed");
+    def removedStatus = RDStore.KBC_STATUS_REMOVED
+    this.status = removedStatus
+    this.save()
+
+    log.debug("removed tipps")
+
+    def tipps = getTipps()
+    Date now = new Date()
+
+    if (tipps?.size() > 0) {
+      def tipp_ids = tipps?.collect { it.id }
+
+      TitleInstancePackagePlatform.executeUpdate("update TitleInstancePackagePlatform as t set t.status = :ret, t.lastUpdateComment = 'Removed via Package action removeWithTipps', t.lastUpdated = :now where t.id IN (:ttd)", [ret: removedStatus, ttd: tipp_ids, now: now])
+    }
+  }
+
 
   @Transient
   def availableActions() {
     [
-      [code: 'method::deleteSoft', label: 'Delete Package (with associated TIPPs)', perm: 'delete'],
-      [code: 'method::retire', label: 'Retire Package (with associated TIPPs)'],
+      [code: 'method::deleteSoft', label: 'Delete Package (with associated Titles)', perm: 'delete'],
+      [code: 'method::retire', label: 'Retire Package (with associated Titles)'],
+      [code: 'method::removeWithTipps', label: 'Remove Package (with associated Titles)', perm: 'delete'],
       /*[code: 'verifyTitleList', label: 'Verify Title List'],*/
       [code: 'packageUrlUpdate', label: 'Trigger Update (Changed Titles)'],
       [code: 'packageUrlUpdateAllTitles', label: 'Trigger Update (all Titles)']
@@ -764,6 +784,11 @@ select tipp.id,
   @Transient
   public String getDomainName() {
    return "Package"
+  }
+
+  @Transient
+  public String getAnbieterProduktIDs() {
+    return ids.findAll{it.namespace.value == 'Anbieter_Produkt_ID' && it.value != 'Unknown'}.value.join(', ')
   }
 
 }

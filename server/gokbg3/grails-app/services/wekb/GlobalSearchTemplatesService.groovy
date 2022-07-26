@@ -780,6 +780,7 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
                                 [heading: 'Titles', property: 'currentTippCount'],
                                //[heading: 'T', property: 'tippDuplicatesByURLCount'],
+                                [heading: 'Product IDs', property: 'anbieterProduktIDs'],
                                 [heading: 'Source', property: 'source?.name', link: true, sort: 'source.name'],
                                 [heading: 'Automatic Updates', property: 'source?.automaticUpdates']
                         ],
@@ -1122,6 +1123,7 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Nominal Platform', property: 'nominalPlatform?.name', link: true],
                                 [heading: 'Curatory Groups', property: 'curatoryGroups', link: true],
                                 [heading: 'Content Type', property: 'contentType?.value', sort: 'contentType'],
+                                [heading: 'Product IDs', property: 'anbieterProduktIDs'],
                                 [heading: 'Titles', property: 'currentTippCount'],
                                 [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
                         ],
