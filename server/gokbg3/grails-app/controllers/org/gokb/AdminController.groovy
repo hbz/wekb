@@ -202,7 +202,7 @@ class AdminController {
 
   @Secured(['ROLE_SUPERUSER'])
   def autoUpdatePackages() {
-      log.debug("Beginning scheduled auto update packages job.")
+      log.debug("autoUpdatePackages: Beginning scheduled auto update packages job.")
     Job j = concurrencyManagerService.createJob {
       autoUpdatePackagesService.findPackageToUpdateAndUpdate(true)
     }.startOrQueue()
@@ -211,14 +211,14 @@ class AdminController {
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'AutoUpdatePackagesJob')
     j.startTime = new Date()
 
-    log.info("auto update packages job completed.")
+    log.info("autoUpdatePackages: auto update packages job completed.")
 
     redirect(controller: 'admin', action: 'jobs')
   }
 
   @Secured(['ROLE_SUPERUSER'])
   def autoUpdatePackagesAllTitles() {
-    log.debug("Beginning scheduled auto update packages job.")
+    log.debug("autoUpdatePackagesAllTitles: Beginning scheduled auto update packages job.")
     Job j = concurrencyManagerService.createJob {
       autoUpdatePackagesService.findPackageToUpdateAndUpdate(false)
     }.startOrQueue()
@@ -227,7 +227,7 @@ class AdminController {
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'AutoUpdatePackagesJob')
     j.startTime = new Date()
 
-    log.info("auto update packages job completed.")
+    log.info("autoUpdatePackagesAllTitles: auto update packages job completed.")
 
     redirect(controller: 'admin', action: 'jobs')
   }

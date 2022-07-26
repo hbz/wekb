@@ -1960,7 +1960,7 @@ class KbartImportService {
         ).save()
     }
 
-    void createAutoUpdateTippInfoByTippChangeFail(TitleInstancePackagePlatform tipp, AutoUpdatePackageInfo autoUpdatePackageInfo, String kbartProperty, String tippProperty, String oldValue, String newValue, RefdataValue status, String description){
+    void createAutoUpdateTippInfoByTippChangeFail(TitleInstancePackagePlatform tipp, AutoUpdatePackageInfo autoUpdatePackageInfo, String kbartProperty, String tippProperty, String oldValue, String newValue, String description){
         AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
                 description: description,
                 tipp: tipp,

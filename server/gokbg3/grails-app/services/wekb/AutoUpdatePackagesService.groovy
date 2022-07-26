@@ -55,7 +55,7 @@ class AutoUpdatePackagesService {
     CleanupService cleanupService
     MessageService messageService
 
-    Map findPackageToUpdateAndUpdate(boolean onlyRowsWithLastChanged = false) {
+    void findPackageToUpdateAndUpdate(boolean onlyRowsWithLastChanged = false) {
         List packageNeedsUpdate = []
         def updPacks = Package.executeQuery(
                 "from Package p " +
@@ -69,12 +69,9 @@ class AutoUpdatePackagesService {
         }
         log.debug("findPackageToUpdateAndUpdate: Package with Source and lastRun < currentDate (${packageNeedsUpdate.size()})")
         if(packageNeedsUpdate.size() > 0){
-
-            GParsPool.withPool(THREAD_POOL_SIZE) { pool ->
-                packageNeedsUpdate.eachWithIndexParallel { Package aPackage ->
+                packageNeedsUpdate.each { Package aPackage ->
                     startAutoPackageUpdate(aPackage, onlyRowsWithLastChanged)
                 }
-            }
         }
 
     }
