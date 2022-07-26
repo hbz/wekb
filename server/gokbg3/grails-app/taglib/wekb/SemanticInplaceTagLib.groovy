@@ -101,7 +101,7 @@ class SemanticInplaceTagLib {
             String emptyText = attrs.emptytext ? " data-emptytext=\"${attrs.emptytext}\"" : " data-emptytext=\"${default_empty}\""
 
             out << "<span id=\"${id}\" class=\"xEditableValue ${attrs.class ?: ''} ${attrs.type == 'date' ? 'date' : ''}\""
-
+            out << " data-format=\"YYYY-MM-DD\""
             if (attrs.inputclass) {
                 out << " data-inputclass=\"${attrs.inputclass}\""
             }
