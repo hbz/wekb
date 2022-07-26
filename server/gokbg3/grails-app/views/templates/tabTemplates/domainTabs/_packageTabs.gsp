@@ -18,7 +18,7 @@
                                    class="${params.tab == 'deletedTipps' ? 'active' : ''}">
             Deleted Titles
         </semui:tabsItemWithoutLink>
-        <semui:tabsItemWithoutLink tab="identifiers" counts="${d.ids.size()}">
+        <semui:tabsItemWithoutLink tab="identifiers" counts="${d.ids.findAll{it.value != 'Unknown'}.size()}">
             Identifiers
         </semui:tabsItemWithoutLink>
         <semui:tabsItemWithoutLink tab="variantNames" counts="${d.variantNames.size()}">
