@@ -3,11 +3,12 @@
 
 //=require /jquery-3.6.0.min                                //-- externalLibs
 
+//=require /jquery-ui.min.js                  //jquery-ui datepicker
+
 //= require /jquery.poshytip.js                              //-- externalLibs
 
-//= require /jquery-editable/js/jquery-editable-poshytip.js //-- externalLibs
+//= require /jquery-editable-poshytip.js                     //-- externalLibs
 
-//=require /combodate.js                                  //-- externalLibs
 
 //=require /semantic.min.js                                 //-- semantic
 
@@ -54,9 +55,10 @@ $(function () {
 
     //Editable
     $.fn.editable.defaults.mode = 'inline';
-    $.fn.editable.defaults.onblur = 'ignore';
+    //$.fn.editable.defaults.onblur = 'ignore';
     $.fn.editableform.buttons = '<button type="submit" class="ui icon black button editable-submit"><i aria-hidden="true" class="check icon"></i></button>' +
         '<button type="button" class="ui icon black button editable-cancel"><i aria-hidden="true" class="times icon"></i></button>';
+    $.fn.editableform.buttonImage = "images/ui-bg_glass_95_fef1ec_1x400.png";
     $.fn.editableform.template =
         '<form class="ui form editableform">' +
         '	<div class="control-group">' +
@@ -73,7 +75,6 @@ $(function () {
         '</form>';
     $.fn.editableform.loading =
         '<div class="ui active inline loader"></div>';
-
     $('.xEditableValue').editable({
         validate: function(value) {
             if ($(this).attr('data-format') && value) {
@@ -146,7 +147,7 @@ $(function () {
                 });
             }
         }
-        $(".table").trigger('reflow')
+
     });
 
     $('.xEditableManyToOne').editable({
@@ -157,12 +158,8 @@ $(function () {
             }
         }
     }).on('shown', function(e, obj) {
-
-        $('.table').trigger('reflow');
         obj.input.$input.dropdown({clearable: true}) // reference to current dropdown
     });
-
-
 
     $('#spotlightSearch').search({
         error : {
