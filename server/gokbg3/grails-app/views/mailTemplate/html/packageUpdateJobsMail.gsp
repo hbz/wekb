@@ -65,7 +65,7 @@
     </table>
 </g:if>
 <g:else>
-    No Auto Updat with Fail found. All is right.
+    No Auto Update with Fail found. Everything is right.
 </g:else>
 <br>
 <br>
