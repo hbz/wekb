@@ -75,15 +75,79 @@ $(function () {
         '</form>';
     $.fn.editableform.loading =
         '<div class="ui active inline loader"></div>';
-    $('.xEditableValue').editable();
-    $('.xEditableValue.date').editable({
-        datepicker: {
-            showOn: "button",
-            buttonImage: "images/ui-bg_glass_95_fef1ec_1x400.png",
-            buttonImageOnly: false,
-            buttonText: "Select date"
+    $('.xEditableValue').editable({
+        validate: function(value) {
+            if ($(this).attr('data-format') && value) {
+                if(! (value.match(/^\d{4}-\d{1,2}-\d{1,2}$/)) ) {
+                    return "Wrong format";
+                }
+            }
+
+            if ($(this).attr('data-required')) {
+                if($.trim(value) == '') {
+                    return 'This field is required';
+                }
+            }
+            // custom validate functions via semui:xEditable validation="xy"
+            var dVal = $(this).attr('data-validation')
+            if (dVal) {
+                if (dVal.includes('notEmpty')) {
+                    if($.trim(value) == '') {
+                        return "This field is not allowed to be empty";
+                    }
+                }
+                if (dVal.includes('url')) {
+                    var regex = /^(https?|ftp):\/\/(.)*/;
+                    var test = regex.test($.trim(value)) || $.trim(value) == ''
+                    if (! test) {
+                        return "The url must beginn with 'http://' or 'https://' or 'ftp://'."
+                    }
+                }
+                if (dVal.includes('email')) {
+                    let regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+$/
+                    let test = regex.test($.trim(value)) || $.trim(value) === ''
+                    if(!test) {
+                        return "Please check your mail-addres!"
+                    }
+                }
+                if (dVal.includes('maxlength')) {
+                    if(value.length > $(this).attr("data-maxlength")) {
+                        return "The value is to long!";
+                    }
+                }
+            }
         },
-        tpl: '<input/><i class="calendar icon"></i>',
+        success: function(response, newValue) {
+            if(response) {
+                if (!response.success) return response.msg;
+            }
+        },
+        error: function(response, newValue) {
+            if(response.status === 500) {
+                return 'Service unavailable. Please try later.';
+            } else {
+                return response.responseText;
+            }
+        }
+    }).on('save', function(e, params){
+        if ($(this).attr('data-format')) {
+            console.log(params)
+        }
+    }).on('shown', function() {
+        if ($(this).attr('data-format')) {
+        }else {
+            var dType = $(this).attr('data-type')
+            if (dType == "text" && $(this).attr('data-validation') && $(this).attr('data-validation').includes("maxlength")) {
+                var maxLength = 255;
+                $('input').keyup(function () {
+                    if($(this).attr('type') == 'text') {
+                        var textlen = maxLength - $(this).val().length;
+                        $('#characters-count').text(textlen + '/' + maxLength);
+                    }
+                });
+            }
+        }
+
     });
     $( ".datepicker" ).datepicker( "option", "showOtherMonths", true );
 
