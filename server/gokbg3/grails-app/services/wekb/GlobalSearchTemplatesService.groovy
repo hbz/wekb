@@ -168,6 +168,14 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Status', property: 'status', sort: 'status.value'],
                                 [heading: 'Start Time', property: 'startTime', sort: 'startTime'],
                                 [heading: 'End Time', property: 'endTime', sort: 'endTime'],
+                                [heading: 'Only Last Changed Update', property: 'onlyRowsWithLastChanged', sort: 'onlyRowsWithLastChanged'],
+                                [heading: 'Rows in KBART-File', property: 'countKbartRows', sort: 'countKbartRows'],
+                                [heading: 'Processed KBART Rows', property: 'countProcessedKbartRows', sort: 'countProcessedKbartRows'],
+                                [heading: 'Changed Titles ', property: 'countChangedTipps', sort: 'countChangedTipps'],
+                                [heading: 'Removed Titles ', property: 'countRemovedTipps', sort: 'countRemovedTipps'],
+                                [heading: 'New Titles', property: 'countNewTipps', sort: 'countNewTipps'],
+                                [heading: 'In valid Titles', property: 'countInValidTipps', sort: 'countInValidTipps'],
+
                         ]
                 ]
         ]
@@ -192,9 +200,9 @@ class GlobalSearchTemplatesService {
                                         hide       : true
                                 ],
                                 [
-                                        prompt     : 'Kbart Property',
+                                        prompt     : 'KBART Field',
                                         qparam     : 'qp_kbartProperty',
-                                        placeholder: 'Kbart Property',
+                                        placeholder: 'Kbart Field',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'kbartProperty']
                                 ],
                                 [
@@ -235,7 +243,7 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Title', property: 'tipp.name', link: true],
                                 [heading: 'Status', property: 'status', sort: 'status.value'],
                                 [heading: 'Type', property: 'type', sort: 'type.value'],
-                                [heading: 'Kbart Field', property: 'kbartProperty', sort: 'kbartProperty'],
+                                [heading: 'KBART Field', property: 'kbartProperty', sort: 'kbartProperty'],
                                 [heading: 'New Value', property: 'newValue'],
                                 [heading: 'Old Value', property: 'oldValue'],
                                 [heading: 'Start Time', property: 'startTime', sort: 'startTime'],

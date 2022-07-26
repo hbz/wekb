@@ -416,7 +416,7 @@ class AutoUpdatePackagesService {
         String lastUpdateURL =""
         Date startTime = new Date()
         if(pkg.status in [RDStore.KBC_STATUS_REMOVED, RDStore.KBC_STATUS_DELETED]){
-            AutoUpdatePackageInfo autoUpdatePackageInfo = new AutoUpdatePackageInfo(pkg: pkg, startTime: startTime, endTime: new Date(), status: RDStore.AUTO_UPDATE_STATUS_SUCCESSFUL, description: "Package status is ${pkg.status.value}. Auto update for this package is not starting.").save()
+            AutoUpdatePackageInfo autoUpdatePackageInfo = new AutoUpdatePackageInfo(pkg: pkg, startTime: startTime, endTime: new Date(), status: RDStore.AUTO_UPDATE_STATUS_SUCCESSFUL, description: "Package status is ${pkg.status.value}. Auto update for this package is not starting.", onlyRowsWithLastChanged: onlyRowsWithLastChanged).save()
         }else {
             AutoUpdatePackageInfo autoUpdatePackageInfo = new AutoUpdatePackageInfo(pkg: pkg, startTime: startTime, status: RDStore.AUTO_UPDATE_STATUS_SUCCESSFUL, description: "Starting auto update package.", onlyRowsWithLastChanged: onlyRowsWithLastChanged).save()
             try {
@@ -457,11 +457,12 @@ class AutoUpdatePackagesService {
                         } else {
                             AutoUpdatePackageInfo.withTransaction {
                                 AutoUpdatePackageInfo autoUpdatePackageFail = new AutoUpdatePackageInfo()
-                                autoUpdatePackageFail.description = "No Kbart File found by URL: ${lastUpdateURL}!"
+                                autoUpdatePackageFail.description = "No KBART File found by URL: ${lastUpdateURL}!"
                                 autoUpdatePackageFail.status = RDStore.AUTO_UPDATE_STATUS_FAILED
                                 autoUpdatePackageFail.startTime = startTime
                                 autoUpdatePackageFail.endTime = new Date()
                                 autoUpdatePackageFail.pkg = pkg
+                                autoUpdatePackageFail.onlyRowsWithLastChanged = onlyRowsWithLastChanged
                                 autoUpdatePackageFail.save()
                             }
                         }
@@ -482,6 +483,7 @@ class AutoUpdatePackagesService {
                     autoUpdatePackageFail.startTime = startTime
                     autoUpdatePackageFail.endTime = new Date()
                     autoUpdatePackageFail.pkg = pkg
+                    autoUpdatePackageFail.onlyRowsWithLastChanged = onlyRowsWithLastChanged
                     autoUpdatePackageFail.save()
                 }
             }
@@ -621,11 +623,18 @@ class AutoUpdatePackagesService {
 
                         }
                         catch (grails.validation.ValidationException ve) {
+                            if(!invalidTipps.contains(kbartRow)) {
+                                invalidTipps << kbartRow
+                            }
+
                             log.error("ValidationException attempting to cross reference TIPP", ve)
                             updateTipp?.discard()
                             tippErrorMap.putAll(messageService.processValidationErrors(ve.errors))
                         }
                         catch (Exception ge) {
+                            if(!invalidTipps.contains(kbartRow)) {
+                                invalidTipps << kbartRow
+                            }
                             log.error("Exception attempting to cross reference TIPP:", ge)
                             def tipp_error = [
                                     message: messageService.resolveCode('crossRef.package.tipps.error', [kbartRow.publication_title], Locale.ENGLISH),
@@ -683,11 +692,11 @@ class AutoUpdatePackagesService {
 
             }
 
-            if (invalidTipps.size() > 0) {
+/*            if (invalidTipps.size() > 0) {
                 String msg = messageService.resolveCode('crossRef.package.tipps.ignored', [invalidTipps.size()], Locale.ENGLISH)
                 log.warn(msg)
                 errors.global.add([message: msg, baddata: pkg.name])
-            }
+            }*/
 
             if (kbartRows.size() > 0 && kbartRows.size() > invalidTipps.size()) {
             } else {
@@ -727,7 +736,7 @@ class AutoUpdatePackagesService {
           Package.withNewTransaction {
               if (pkg.status != status_deleted) {
                   pkg = pkg.refresh()
-                  pkg.lastUpdateComment = "Updated package with ${kbartRowsCount} Title. (Titles in we:kb previously: ${existing_tipp_ids.size()}, Titles in we:kb now: ${existingTippsAfterImport}, Removed/Deleted Titles: ${removedTipps}, New Titles in we:kb: ${newTipps})"
+                  pkg.lastUpdateComment = "Updated package with ${kbartRowsCount} Title. (Titles in we:kb previously: ${existing_tipp_ids.size()}, Titles in we:kb now: ${existingTippsAfterImport}, Removed Titles: ${removedTipps}, New Titles in we:kb: ${newTipps})"
                   pkg.save()
               }
 
@@ -744,11 +753,11 @@ class AutoUpdatePackagesService {
               autoUpdatePackageInfo.countChangedTipps = changedTipps
               autoUpdatePackageInfo.countNewTipps = newTipps
               autoUpdatePackageInfo.countRemovedTipps = removedTipps
-              autoUpdatePackageInfo.countInValidTipps = 0
+              autoUpdatePackageInfo.countInValidTipps = invalidTipps.size()
               autoUpdatePackageInfo.countProcessedKbartRows = idx
               autoUpdatePackageInfo.endTime = new Date()
               autoUpdatePackageInfo.description = "Package Update: (KbartLines: ${kbartRowsCount}, " +
-                      "Processed Titles in this run: ${idx}, Titles in we:kb previously: ${existing_tipp_ids.size()}, Titles in we:kb now: ${existingTippsAfterImport}, Removed/Deleted Titles: ${removedTipps}, New Titles in we:kb: ${newTipps}, Changed Titles in we:kb: ${changedTipps})"
+                      "Processed Titles in this run: ${idx}, Titles in we:kb previously: ${existing_tipp_ids.size()}, Titles in we:kb now: ${existingTippsAfterImport}, Removed Titles: ${removedTipps}, New Titles in we:kb: ${newTipps}, Changed Titles in we:kb: ${changedTipps})"
               //autoUpdatePackageInfo.save(failOnError:true)
               autoUpdatePackageInfo.save()
           }
@@ -762,6 +771,7 @@ class AutoUpdatePackagesService {
                 autoUpdatePackageInfo.endTime = new Date()
                 autoUpdatePackageInfo.description = "An error occurred while processing the kbart file. More information can be seen in the system log. File from URL: ${lastUpdateURL}"
                 autoUpdatePackageInfo.status = RDStore.AUTO_UPDATE_STATUS_FAILED
+                autoUpdatePackageInfo.onlyRowsWithLastChanged = onlyRowsWithLastChanged
                 autoUpdatePackageInfo.save()
             }
         }
@@ -928,8 +938,8 @@ class AutoUpdatePackagesService {
                 }
 
                 if (minimumKbartStandard.size() != countMinimumKbartStandard) {
-                    log.info("Kbart file has in header not the minimumKbartStandard: ${minimumKbartStandard}")
-                        autoUpdatePackageInfo.description = "Kbart file has in header not minimum of this headers: ${minimumKbartStandard.join(', ')}. File from URL: ${lastUpdateURL}"
+                    log.info("KBART file has in header not the minimumKbartStandard: ${minimumKbartStandard}")
+                        autoUpdatePackageInfo.description = "KBART file has in header not minimum of this headers: ${minimumKbartStandard.join(', ')}. File from URL: ${lastUpdateURL}"
                         autoUpdatePackageInfo.status = RDStore.AUTO_UPDATE_STATUS_FAILED
                         autoUpdatePackageInfo.endTime = new Date()
                         autoUpdatePackageInfo.save(flush: true)

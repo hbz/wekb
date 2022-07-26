@@ -1035,11 +1035,7 @@ class KbartImportService {
                 //Kbart Fields to Ygor and then to wekb (siehe Wiki)
 
                 // KBART -> status -> status -> status
-                if (tipp.status != RDStore.KBC_STATUS_DELETED && tippMap.status == "Deleted") {
-                    com.k_int.ClassUtils.setRefdataIfDifferent(tippMap.status, tipp, 'status', RCConstants.KBCOMPONENT_STATUS, false)
-                    result.removedTipp = true
-                }
-                else if (tipp.status != RDStore.KBC_STATUS_REMOVED && tippMap.status == "Removed") {
+                if (tipp.status != RDStore.KBC_STATUS_REMOVED && tippMap.status == "Removed") {
                     com.k_int.ClassUtils.setRefdataIfDifferent(tippMap.status, tipp, 'status', RCConstants.KBCOMPONENT_STATUS, false)
                     result.removedTipp = true
 

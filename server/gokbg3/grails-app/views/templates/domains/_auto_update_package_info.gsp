@@ -49,7 +49,7 @@
 </dl>
 <dl>
     <dt class="control-label">
-        Rows in Kbart-File by Update
+        Rows in KBART-File by Update
     </dt>
     <dd>
         <semui:xEditable owner="${d}" field="countKbartRows" overwriteEditable="false"/>
@@ -57,7 +57,7 @@
 </dl>
 <dl>
     <dt class="control-label">
-        Processed Kbart Rows by Update
+        Processed KBART Rows by Update
     </dt>
     <dd>
         <semui:xEditable owner="${d}" field="countProcessedKbartRows" overwriteEditable="false"/>
@@ -65,15 +65,7 @@
 </dl>
 <dl>
     <dt class="control-label">
-        In valid Title by Update
-    </dt>
-    <dd>
-        <semui:xEditable owner="${d}" field="countInValidTipps" overwriteEditable="false"/>
-    </dd>
-</dl>
-<dl>
-    <dt class="control-label">
-        Titles changed by Update
+        Changed Titles by Update
     </dt>
     <dd>
         <semui:xEditable owner="${d}" field="countChangedTipps" overwriteEditable="false"/>
@@ -81,7 +73,7 @@
 </dl>
 <dl>
     <dt class="control-label">
-        Titles Removed by Update
+        Removed Titles by Update
     </dt>
     <dd>
         <semui:xEditable owner="${d}" field="countRemovedTipps" overwriteEditable="false"/>
@@ -95,10 +87,17 @@
         <semui:xEditable owner="${d}" field="countNewTipps" overwriteEditable="false"/>
     </dd>
 </dl>
-
 <dl>
     <dt class="control-label">
-        Only kbart rows which last changed after last update run
+        In valid Titles by Update
+    </dt>
+    <dd>
+        <semui:xEditable owner="${d}" field="countInValidTipps" overwriteEditable="false"/>
+    </dd>
+</dl>
+<dl>
+    <dt class="control-label">
+        Only KBART rows which last changed after last update run
     </dt>
     <dd>
         <semui:xEditable owner="${d}" field="onlyRowsWithLastChanged" overwriteEditable="false"/>

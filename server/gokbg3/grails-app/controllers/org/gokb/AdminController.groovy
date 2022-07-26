@@ -207,7 +207,7 @@ class AdminController {
       autoUpdatePackagesService.findPackageToUpdateAndUpdate(true)
     }.startOrQueue()
 
-    j.description = "Start Manuel Auto Update Packages only Title with last changed"
+    j.description = "Start Auto Update Packages only Title with last changed"
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'AutoUpdatePackagesJob')
     j.startTime = new Date()
 
@@ -223,7 +223,7 @@ class AdminController {
       autoUpdatePackagesService.findPackageToUpdateAndUpdate(false)
     }.startOrQueue()
 
-    j.description = "Start Manuel Auto Update Packages with all Titles"
+    j.description = "Start Auto Update Packages with all Titles"
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'AutoUpdatePackagesJob')
     j.startTime = new Date()
 

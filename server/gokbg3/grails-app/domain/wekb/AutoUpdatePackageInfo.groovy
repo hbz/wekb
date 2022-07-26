@@ -96,5 +96,10 @@ class AutoUpdatePackageInfo {
         return "Auto Update Package Info"
     }
 
+    @Transient
+    public int getCountAutoUpdateTipps() {
+        return autoUpdateTippInfos.size()
+    }
+
 
 }
