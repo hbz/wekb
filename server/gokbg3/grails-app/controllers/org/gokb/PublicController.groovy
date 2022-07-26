@@ -194,6 +194,7 @@ class PublicController {
       def out = response.outputStream
 
       exportService.exportOriginalKBART(out, pkg)
+      return
 
     }
     catch ( Exception e ) {
@@ -232,6 +233,7 @@ class PublicController {
       }
       out.flush()
       out.close()
+      return
 
     }
     catch ( Exception e ) {
