@@ -149,7 +149,6 @@ $(function () {
         }
 
     });
-    $( ".datepicker" ).datepicker( "option", "showOtherMonths", true );
 
     $('.xEditableManyToOne').editable({
         tpl: '<select class="ui search selection dropdown"></select>',
