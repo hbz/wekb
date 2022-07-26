@@ -40,6 +40,7 @@ class WorkflowController{
       'tipp::retire'           : [actionType: 'workflow', view: 'tippRetire'],
       'tipp::move'             : [actionType: 'workflow', view: 'tippMove'],
       'method::retire'         : [actionType: 'simple'],
+      'method::removeWithTipps'         : [actionType: 'simple'],
       'method::setActive'      : [actionType: 'simple'],
       'method::setExpected'    : [actionType: 'simple'],
       'setStatus::Retired'     : [actionType: 'simple'],

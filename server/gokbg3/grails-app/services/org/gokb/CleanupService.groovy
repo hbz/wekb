@@ -82,7 +82,7 @@ class CleanupService {
 
 
   @Transactional
-  def expungeRemoveComponents(Job j = null) {
+  def expungeRemovedComponents(Job j = null) {
 
     log.debug("Process remove candidates");
 
@@ -439,7 +439,7 @@ class CleanupService {
     idx_record.uuid = deletedKBComponent.uuid
     idx_record.name = deletedKBComponent.name
     idx_record.componentType = deletedKBComponent.componentType
-    idx_record.status = deletedKBComponent.status
+    idx_record.status = deletedKBComponent.status.value
     idx_record.dateCreated = deletedKBComponent.dateCreated ? dateFormatService.formatIsoTimestamp(deletedKBComponent.dateCreated) : null
     idx_record.lastUpdated = deletedKBComponent.lastUpdated ? dateFormatService.formatIsoTimestamp(deletedKBComponent.lastUpdated) : null
     idx_record.oldDateCreated = deletedKBComponent.oldDateCreated ? dateFormatService.formatIsoTimestamp(deletedKBComponent.oldDateCreated) : null

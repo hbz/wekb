@@ -4,9 +4,9 @@
         <semui:tabsItemWithoutLink tab="packages" class="active">
             Packages
         </semui:tabsItemWithoutLink>
-        <semui:tabsItemWithoutLink tab="notes">
+      %{--  <semui:tabsItemWithoutLink tab="notes">
             Notes
-        </semui:tabsItemWithoutLink>
+        </semui:tabsItemWithoutLink>--}%
 
     </semui:tabs>
 
@@ -20,7 +20,7 @@
         </div>
     </semui:tabsItemContent>
 
-    <semui:tabsItemContent tab="notes">
+   %{-- <semui:tabsItemContent tab="notes">
         <div class="content wekb-inline-lists">
             <dl>
                 <dt class="control-label">
@@ -33,6 +33,6 @@
                 </dd>
             </dl>
         </div>
-    </semui:tabsItemContent>
+    </semui:tabsItemContent>--}%
 
 </g:if>

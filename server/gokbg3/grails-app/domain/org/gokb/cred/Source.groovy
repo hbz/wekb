@@ -204,6 +204,7 @@ class Source extends KBComponent {
   def availableActions() {
     [
             [code: 'method::deleteSoft', label: 'Delete Source', perm: 'delete'],
+            [code: 'setStatus::Removed', label: 'Remove Source', perm: 'delete'],
     ]
   }
 

@@ -159,15 +159,15 @@ class AdminController {
   }
 
 
-  def cleanup() {
+  def expungeRemovedComponents() {
     Job j = concurrencyManagerService.createJob { Job j ->
-      cleanupService.expungeRemoveComponents(j)
+      cleanupService.expungeRemovedComponents(j)
     }.startOrQueue()
 
     log.debug "Triggering cleanup task. Started job #${j.uuid}"
 
-    j.description = "Cleanup Deleted Components"
-    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'CleanupDeletedComponents')
+    j.description = "Cleanup Removed Components"
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'CleanupRemovedComponents')
     j.startTime = new Date()
 
     redirect(controller: 'admin', action: 'jobs');

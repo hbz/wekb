@@ -428,7 +428,7 @@ select tipp.id,
     }
   }
 
-  public void removeWithTipps() {
+  public void removeWithTipps(context) {
     log.debug("package::removeWithTipps");
     log.debug("Updating package status to removed");
     def removedStatus = RDStore.KBC_STATUS_REMOVED
