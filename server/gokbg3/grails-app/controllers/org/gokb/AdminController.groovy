@@ -34,6 +34,7 @@ class AdminController {
   AutoUpdatePackagesService autoUpdatePackagesService
   def ESWrapperService
   SpringSecurityService springSecurityService
+  FTUpdateService ftUpdateService
 
   static Map typePerIndex = [
           "wekbtipps": "TitleInstancePackagePlatform",
@@ -74,7 +75,7 @@ class AdminController {
     log.debug("Call to update indexe");
 
     Job j = concurrencyManagerService.createJob {
-      FTUpdateService.updateFTIndexes();
+      ftUpdateService.updateFTIndexes();
     }.startOrQueue()
 
     j.description = "Update Free Text Indexes"
@@ -87,7 +88,7 @@ class AdminController {
   def resetTextIndexes() {
     log.debug("Call to update indexe")
     Job j = concurrencyManagerService.createJob {
-      FTUpdateService.clearDownAndInitES()
+      ftUpdateService.clearDownAndInitES()
     }.startOrQueue()
 
     j.description = "Reset Free Text Indexes"
