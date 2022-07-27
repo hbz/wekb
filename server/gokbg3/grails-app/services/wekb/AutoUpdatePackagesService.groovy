@@ -67,7 +67,7 @@ class AutoUpdatePackagesService {
                 packageNeedsUpdate << p
             }
         }
-        log.debug("findPackageToUpdateAndUpdate: Package with Source and lastRun < currentDate (${packageNeedsUpdate.size()})")
+        log.info("findPackageToUpdateAndUpdate: Package with Source and lastRun < currentDate (${packageNeedsUpdate.size()})")
         if(packageNeedsUpdate.size() > 0){
                 packageNeedsUpdate.each { Package aPackage ->
                     startAutoPackageUpdate(aPackage, onlyRowsWithLastChanged)
@@ -682,7 +682,7 @@ class AutoUpdatePackagesService {
             }
 
             if(tippDuplicates.size() > 0){
-                log.debug("remove tippDuplicates -> ${tippDuplicates.size()}: ${tippDuplicates}")
+                log.info("remove tippDuplicates -> ${tippDuplicates.size()}: ${tippDuplicates}")
 
                 tippDuplicates.each {
                     if(!(it in tippsFound)){
