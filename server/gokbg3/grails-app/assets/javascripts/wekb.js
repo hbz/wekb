@@ -147,6 +147,9 @@ $(function () {
                     }
                 }
             });
+            $('.editable-clear-x').click(function() {
+                $('.calendar').calendar('clear');
+            });
         }else {
             var dType = $(this).attr('data-type')
             if (dType == "text" && $(this).attr('data-validation') && $(this).attr('data-validation').includes("maxlength")) {
