@@ -60,6 +60,7 @@ public class HQLBuilder {
 
     // Step 1 : Walk through all the properties defined in the template and build a list of criteria
     def criteria = []
+
     qbetemplate.qbeConfig.qbeForm.each { query_prop_def ->
       if ( ( params[query_prop_def.qparam] != null ) && ( params[query_prop_def.qparam] instanceof String && params[query_prop_def.qparam].length() > 0 ) ) {
         criteria.add([defn:query_prop_def, value:params[query_prop_def.qparam]]);
@@ -69,6 +70,13 @@ public class HQLBuilder {
           if( ( it != null ) )
           criteria.add([defn:query_prop_def, value:it])
         }
+      }
+    }
+
+    List availableSortFields = []
+    qbetemplate.qbeConfig.qbeResults.each { qbeResult ->
+      if(qbeResult.sort){
+        availableSortFields << qbeResult.sort
       }
     }
 
@@ -105,8 +113,20 @@ public class HQLBuilder {
     hql_builder_context.query_clauses = []
     hql_builder_context.bindvars = new java.util.HashMap();
     hql_builder_context.genericOIDService = genericOIDService;
-    hql_builder_context.sort = params.sort ?: ( qbetemplate.containsKey('defaultSort') ? qbetemplate.defaultSort : null )
-    hql_builder_context.order = params.order ?: ( qbetemplate.containsKey('defaultOrder') ? qbetemplate.defaultOrder : null )
+
+    if(params.sort && params.sort in availableSortFields){
+      hql_builder_context.sort = params.sort
+    }else {
+      hql_builder_context.sort = ( qbetemplate.containsKey('defaultSort') ? qbetemplate.defaultSort : null )
+    }
+
+    if(params.order && params.order in ['desc', 'asc']){
+      hql_builder_context.order = params.order
+    }else {
+      hql_builder_context.order = ( qbetemplate.containsKey('defaultOrder') ? qbetemplate.defaultOrder : null )
+    }
+
+
 
     def baseclass = target_class.getClazz()
     criteria.each { crit ->

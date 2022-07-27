@@ -55,7 +55,7 @@ $(function () {
 
     //Editable
     $.fn.editable.defaults.mode = 'inline';
-    //$.fn.editable.defaults.onblur = 'ignore';
+    $.fn.editable.defaults.onblur = 'ignore';
     $.fn.editableform.buttons = '<button type="submit" class="ui icon black button editable-submit"><i aria-hidden="true" class="check icon"></i></button>' +
         '<button type="button" class="ui icon black button editable-cancel"><i aria-hidden="true" class="times icon"></i></button>';
     $.fn.editableform.buttonImage = "images/ui-bg_glass_95_fef1ec_1x400.png";
@@ -77,11 +77,11 @@ $(function () {
         '<div class="ui active inline loader"></div>';
     $('.xEditableValue').editable({
         validate: function(value) {
-            if ($(this).attr('data-format') && value) {
+/*            if ($(this).attr('data-format') && value) {
                 if(! (value.match(/^\d{4}-\d{1,2}-\d{1,2}$/)) ) {
                     return "Wrong format";
                 }
-            }
+            }*/
 
             if ($(this).attr('data-required')) {
                 if($.trim(value) == '') {
@@ -135,6 +135,21 @@ $(function () {
         }
     }).on('shown', function() {
         if ($(this).attr('data-format')) {
+            $('.xEditable-datepicker').calendar({
+                type: 'date',
+                formatter: {
+                    date: function (date, settings) {
+                        if (!date) return '';
+                        var day = date.getDate();
+                        var month = date.getMonth() + 1;
+                        var year = date.getFullYear();
+                        return year + '-' + month + '-' + day   ;
+                    }
+                }
+            });
+            $('.editable-clear-x').click(function() {
+                $('.calendar').calendar('clear');
+            });
         }else {
             var dType = $(this).attr('data-type')
             if (dType == "text" && $(this).attr('data-validation') && $(this).attr('data-validation').includes("maxlength")) {
@@ -252,8 +267,6 @@ $(function () {
             }
         });
     });
-
-
 
 });
 
