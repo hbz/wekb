@@ -4,6 +4,7 @@ package org.gokb.cred
 import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
 import de.wekb.helper.RDStore
+import wekb.AutoUpdatePackageInfo
 import wekb.PackageArchivingAgency
 import org.gokb.GOKbTextUtils
 
@@ -89,7 +90,8 @@ class Package extends KBComponent {
           regionalRanges : RefdataValue,
           ddcs : RefdataValue,
           paas : PackageArchivingAgency,
-          ids: Identifier
+          ids: Identifier,
+          autoUpdatePackageInfos: AutoUpdatePackageInfo
   ]
 
   static mapping = {
@@ -215,66 +217,6 @@ class Package extends KBComponent {
     result
   }
 
-  @Deprecated
-  @Transient
-  public getTitles(def onlyCurrent = true, int max = 10, offset = 0) {
-    def all_titles = null
-    log.debug("getTitles :: current ${onlyCurrent} - max ${max} - offset ${offset}")
-
-    if (this.id) {
-      if (onlyCurrent) {
-        def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current');
-
-        all_titles = TitleInstance.executeQuery('''select distinct title
-          from TitleInstance as title,
-            Combo as pkgCombo,
-            Combo as titleCombo,
-            TitleInstancePackagePlatform as tipp
-          where pkgCombo.toComponent=tipp
-            and pkgCombo.fromComponent=?
-            and titleCombo.toComponent=tipp
-            and titleCombo.fromComponent=title
-            and tipp.status = ?
-            and title.status = ?'''
-          , [this, refdata_current, refdata_current], [max: max, offset: offset]);
-      }
-      else {
-        all_titles = TitleInstance.executeQuery('''select distinct title
-          from TitleInstance as title,
-            Combo as pkgCombo,
-            Combo as titleCombo,
-            TitleInstancePackagePlatform as tipp
-          where pkgCombo.toComponent=tipp
-            and pkgCombo.fromComponent=?
-            and titleCombo.toComponent=tipp
-            and titleCombo.fromComponent=title'''
-          , [this], [max: max, offset: offset]);
-      }
-    }
-
-    return all_titles;
-  }
-
-  @Deprecated
-  @Transient
-  public getCurrentTitleCount() {
-    def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current');
-
-    int result = TitleInstance.executeQuery('''select count(distinct title.id)
-      from TitleInstance as title,
-        Combo as pkgCombo,
-        Combo as titleCombo,
-        TitleInstancePackagePlatform as tipp
-      where pkgCombo.toComponent=tipp
-        and pkgCombo.fromComponent=?
-        and titleCombo.toComponent=tipp
-        and titleCombo.fromComponent=title
-        and tipp.status = ?
-        and title.status = ?'''
-      , [this, refdata_current, refdata_current])[0];
-
-    result
-  }
 
   @Transient
   public getCurrentTippCount() {
@@ -335,7 +277,7 @@ class Package extends KBComponent {
     def all_rrs = null
     def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current');
 
-    if (onlyOpen) {
+   /* if (onlyOpen) {
 
       log.debug("Looking for more ReviewRequests connected to ${this}")
 
@@ -403,7 +345,7 @@ class Package extends KBComponent {
             and rr.componentToReview = title'''
           , [this]);
       }
-    }
+    }*/
 
     return all_rrs;
   }
@@ -434,8 +376,7 @@ select tipp.id,
          Combo as hostPlatformCombo,
          Combo as titleCombo,
          Combo as pkgCombo,
-         Platform as plat,
-         TitleInstance as title
+         Platform as plat
     where pkgCombo.toComponent=tipp
       and pkgCombo.fromComponent= ?
       and pkgCombo.type= ?
@@ -487,12 +428,32 @@ select tipp.id,
     }
   }
 
+  public void removeWithTipps(context) {
+    log.debug("package::removeWithTipps");
+    log.debug("Updating package status to removed");
+    def removedStatus = RDStore.KBC_STATUS_REMOVED
+    this.status = removedStatus
+    this.save()
+
+    log.debug("removed tipps")
+
+    def tipps = getTipps()
+    Date now = new Date()
+
+    if (tipps?.size() > 0) {
+      def tipp_ids = tipps?.collect { it.id }
+
+      TitleInstancePackagePlatform.executeUpdate("update TitleInstancePackagePlatform as t set t.status = :ret, t.lastUpdateComment = 'Removed via Package action removeWithTipps', t.lastUpdated = :now where t.id IN (:ttd)", [ret: removedStatus, ttd: tipp_ids, now: now])
+    }
+  }
+
 
   @Transient
   def availableActions() {
     [
-      [code: 'method::deleteSoft', label: 'Delete (with associated TIPPs)', perm: 'delete'],
-      [code: 'method::retire', label: 'Retire Package (with associated TIPPs)'],
+      [code: 'method::deleteSoft', label: 'Delete Package (with associated Titles)', perm: 'delete'],
+      [code: 'method::retire', label: 'Retire Package (with associated Titles)'],
+      [code: 'method::removeWithTipps', label: 'Remove Package (with associated Titles)', perm: 'delete'],
       /*[code: 'verifyTitleList', label: 'Verify Title List'],*/
       [code: 'packageUrlUpdate', label: 'Trigger Update (Changed Titles)'],
       [code: 'packageUrlUpdateAllTitles', label: 'Trigger Update (all Titles)']
@@ -736,7 +697,7 @@ select tipp.id,
       RefdataCategory refdataCategory = RefdataCategory.findByDesc(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE)
 
       IdentifierNamespace namespace = IdentifierNamespace.findByValueIlikeAndTargetType(ns, RefdataValue.findByValueAndOwner('Package', refdataCategory))
-      Identifier identifier = new Identifier(namespace: namespace, value: value, pkg: this).save(flush:true, failOnError:true)
+      Identifier identifier = new Identifier(namespace: namespace, value: value, pkg: this).save()
 
     }
   }
@@ -823,6 +784,11 @@ select tipp.id,
   @Transient
   public String getDomainName() {
    return "Package"
+  }
+
+  @Transient
+  public String getAnbieterProduktIDs() {
+    return ids.findAll{it.namespace.value == 'Anbieter_Produkt_ID' && it.value != 'Unknown'}.value.join(', ')
   }
 
 }

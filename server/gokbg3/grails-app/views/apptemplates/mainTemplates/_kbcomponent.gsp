@@ -1,14 +1,14 @@
 <dl class="dl-horizontal">
 	<dt>
-		<gokb:annotatedLabel owner="${d}" property="shortcode"><g:message code="gokb.appname" default="we:kb"/> Shortcode</gokb:annotatedLabel>
+		Shortcode
 	</dt>
 	<dd>
-		<gokb:xEditable  owner="${d}" field="shortcode" />
+		<semui:xEditable  owner="${d}" field="shortcode" />
 	</dd>
 
 	<g:if test="${ d.ids.size() > 0 }">
 		<dt>
-			<gokb:annotatedLabel owner="${d}" property="identifiers">Identifiers</gokb:annotatedLabel>
+			Identifiers
 		</dt>
 		<dd>
 			<ul>
@@ -22,11 +22,10 @@
 	</g:if>
 	<g:if test="${!d.id || (d.id && d.name)}">
 		<dt>
-			<gokb:annotatedLabel owner="${d}" property="name">
-				${ d.getNiceName() } Name</gokb:annotatedLabel>
+				${ d.getNiceName() } Name
 		</dt>
 		<dd>
-			<gokb:xEditable  owner="${d}" field="name" />
+			<semui:xEditable  owner="${d}" field="name" />
 		</dd>
 	</g:if>
 

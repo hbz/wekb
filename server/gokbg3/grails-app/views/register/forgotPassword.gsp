@@ -1,18 +1,13 @@
 <html>
 <head>
-    <meta name='layout' content='public_semui'/>
+    <meta name="layout" content="public_semui"/>
     <title><g:message code="gokb.appname" default="we:kb"/>: <g:message
             code='spring.security.ui.forgotPassword.title'/></title>
 </head>
 
 <body>
-<g:if test="${flash.error}">
-    <semui:flashMessage data="${flash}"/>
-</g:if>
 
-<g:if test="${flash.message}">
-    <semui:flashMessage data="${flash}"/>
-</g:if>
+<semui:flashMessage data="${flash}"/>
 
 <g:if test='${emailSent}'>
     <semui:message code='spring.security.ui.forgotPassword.sent'/>

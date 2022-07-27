@@ -203,7 +203,8 @@ class Source extends KBComponent {
   @Transient
   def availableActions() {
     [
-            [code: 'method::deleteSoft', label: 'Delete', perm: 'delete'],
+            [code: 'method::deleteSoft', label: 'Delete Source', perm: 'delete'],
+            [code: 'setStatus::Removed', label: 'Remove Source', perm: 'delete'],
     ]
   }
 
@@ -241,6 +242,12 @@ class Source extends KBComponent {
   @Transient
   public String getDomainName() {
     return "Source"
+  }
+
+  @Transient
+  public List<Package> getPackages() {
+    def result = Package.findAllBySource(this)
+    result
   }
 
 }

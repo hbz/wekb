@@ -1,5 +1,13 @@
 <%@ page import="de.wekb.helper.RCConstants; org.gokb.cred.RefdataCategory;" %>
 <dl>
+    <dt class="control-label">
+        Name
+    </dt>
+    <dd>
+        <semui:xEditable owner="${d}" field="name" required="true"/>
+    </dd>
+</dl>
+<dl>
     <dt class="control-label">Provider</dt>
     <dd><semui:xEditableManyToOne owner="${d}" field="provider" baseClass="org.gokb.cred.Org"/></dd>
 </dl>
@@ -30,17 +38,12 @@
 </dl>
 <dl>
     <dt class="control-label">Description</dt>
-    <dd><semui:xEditable owner="${d}" field="description"/></dd>
+    <dd><semui:xEditable owner="${d}" type="textarea" field="description"/></dd>
 
 </dl>
 <dl>
     <dt class="control-label">Description URL</dt>
-    <dd><semui:xEditable owner="${d}" field="descriptionURL"/>
-        <g:if test="${d.descriptionURL}">
-            &nbsp;<a aria-label="${d.descriptionURL}"
-                     href="${d.descriptionURL.startsWith('http') ? d.descriptionURL : 'http://' + d.descriptionURL}"
-                     target="new"><i class="fas fa-external-link-alt"></i></a>
-        </g:if>
+    <dd><semui:xEditable owner="${d}" field="descriptionURL" validation="url" outGoingLink="true"/>
     </dd>
 </dl>
 
@@ -58,7 +61,7 @@
         Breakable
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="breakable" config="${RCConstants.PACKAGE_BREAKABLE}"/>
+        <semui:xEditableRefData owner="${d}" field="breakable" config="${RCConstants.PACKAGE_BREAKABLE}"/>
     </dd>
 </dl>
 <dl>
@@ -66,7 +69,7 @@
         Content Type
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="contentType"
+        <semui:xEditableRefData owner="${d}" field="contentType"
                          config="${RCConstants.PACKAGE_CONTENT_TYPE}"/>
     </dd>
 </dl>
@@ -75,7 +78,7 @@
         File
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="file" config="${RCConstants.PACKAGE_FILE}"/>
+        <semui:xEditableRefData owner="${d}" field="file" config="${RCConstants.PACKAGE_FILE}"/>
     </dd>
 </dl>
 <dl>
@@ -83,7 +86,7 @@
         Open Access
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="openAccess" config="${RCConstants.PACKAGE_OPEN_ACCESS}"/>
+        <semui:xEditableRefData owner="${d}" field="openAccess" config="${RCConstants.PACKAGE_OPEN_ACCESS}"/>
     </dd>
 </dl>
 <dl>
@@ -91,7 +94,7 @@
         Payment Type
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="paymentType"
+        <semui:xEditableRefData owner="${d}" field="paymentType"
                          config="${RCConstants.PACKAGE_PAYMENT_TYPE}"/>
     </dd>
 </dl>
@@ -100,7 +103,7 @@
         Scope
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="scope" config="${RCConstants.PACKAGE_SCOPE}"/>
+        <semui:xEditableRefData owner="${d}" field="scope" config="${RCConstants.PACKAGE_SCOPE}"/>
     </dd>
 </dl>
 
@@ -145,20 +148,20 @@
                 <g:each in="${d.paas?.sort { it.archivingAgency?.value }}" var="paa" status="i">
                     <tr>
                         <td>${i + 1}</td>
-                        <td><semui:xEditable owner="${paa}" field="archivingAgency"
+                        <td><semui:xEditableRefData owner="${paa}" field="archivingAgency"
                                              config="${RCConstants.PAA_ARCHIVING_AGENCY}"/>
-                        <td><semui:xEditable owner="${paa}" field="openAccess"
+                        <td><semui:xEditableRefData owner="${paa}" field="openAccess"
                                              config="${RCConstants.PAA_OPEN_ACCESS}"/>
                         </td>
                         <td>
-                            <semui:xEditable owner="${paa}" field="postCancellationAccess"
+                            <semui:xEditableRefData owner="${paa}" field="postCancellationAccess"
                                              config="${RCConstants.PAA_POST_CANCELLATION_ACCESS}"/>
                         </td>
                         <td>
                             <g:if test="${editable}">
                                 <g:link controller='ajaxSupport'
                                         action='delete'
-                                        params="${["__context": "${paa.class.name}:${paa.id}"]}">Unlink</g:link>
+                                        params="${["__context": "${paa.class.name}:${paa.id}"]}">Delete</g:link>
                             </g:if>
                         </td>
                     </tr>
@@ -181,30 +184,29 @@
 <g:if test="${editable}">
     <semui:modal id="paaModal" title="Add Archiving Agency">
 
-        <g:form controller="ajaxSupport" action="addToCollection"
-                class="form-inline">
+        <g:form controller="ajaxSupport" action="addToCollection" class="ui form">
             <input type="hidden" name="__context" value="${d.class.name}:${d.id}"/>
             <input type="hidden" name="__newObjectClass" value="wekb.PackageArchivingAgency"/>
             <input type="hidden" name="__recip" value="pkg"/>
-            <dt class="control-label">Archiving Agency</dt>
-            <dd>
-                <gokb:simpleReferenceTypedown class="form-control" name="archivingAgency"
+            <div class="field">
+                              <label>Archiving Agency</label>
+                <semui:simpleReferenceDropdown  name="archivingAgency"
                                               baseClass="org.gokb.cred.RefdataValue"
                                               filter1="${RCConstants.PAA_ARCHIVING_AGENCY}"/>
-            </dd>
-            <dt class="control-label">Open Access</dt>
-            <dd>
-                <gokb:simpleReferenceTypedown class="form-control" name="openAccess"
+            </div>
+            <div class="field">
+                              <label>Open Access</label>
+                <semui:simpleReferenceDropdown  name="openAccess"
                                               baseClass="org.gokb.cred.RefdataValue"
                                               filter1="${RCConstants.PAA_OPEN_ACCESS}"/>
-            </dd>
+            </div>
 
-            <dt class="control-label">Post-Cancellation Access (PCA)</dt>
-            <dd>
-                <gokb:simpleReferenceTypedown class="form-control" name="postCancellationAccess"
+            <div class="field">
+                              <label>Post-Cancellation Access (PCA)</label>
+                <semui:simpleReferenceDropdown  name="postCancellationAccess"
                                               baseClass="org.gokb.cred.RefdataValue"
                                               filter1="${RCConstants.PAA_POST_CANCELLATION_ACCESS}"/>
-            </dd>
+            </div>
         </g:form>
     </semui:modal>
 </g:if>

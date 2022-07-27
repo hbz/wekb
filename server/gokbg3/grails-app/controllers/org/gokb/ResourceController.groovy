@@ -1,5 +1,6 @@
 package org.gokb
 
+import grails.plugin.springsecurity.SpringSecurityUtils
 import org.springframework.security.access.annotation.Secured;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
@@ -52,14 +53,7 @@ class ResourceController {
 
       if ( displayobj ) {
 
-        List allowedPublicShow = ['CuratoryGroup',
-                            'Org',
-                            'Package',
-                            'Platform',
-                            'Source',
-                            'TitleInstancePackagePlatform']
-
-        if ((displayobj.class.simpleName in allowedPublicShow) || (sec.ifLoggedIn() && sec.ifAnyGranted("ROLE_ADMIN"))) {
+        if ((displayobj.class.simpleName in accessService.allowedPublicShow) || (springSecurityService.isLoggedIn() && SpringSecurityUtils.ifAnyGranted("ROLE_ADMIN"))) {
 
           result.displayobjclassname = displayobj.class.name
           result.__oid = "${result.displayobjclassname}:${displayobj.id}"
@@ -76,7 +70,7 @@ class ResourceController {
 
           result.displayobj = displayobj
 
-          if(sec.ifLoggedIn()) {
+          if(springSecurityService.isLoggedIn()) {
             read_perm = accessService.checkReadable(displayobj.class.name)
 
             if (read_perm) {
@@ -128,4 +122,10 @@ class ResourceController {
     }
         result
     }
+
+  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  def showLogin() {
+
+    redirect(action: 'show', params: params)
   }
+}

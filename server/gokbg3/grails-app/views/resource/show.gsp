@@ -66,12 +66,81 @@
     </div>
 </nav>--}%
 <g:if test="${displayobj != null}">
-    <h1 class="ui header">${displayobj.getDomainName()}: ${displayobj.name}</h1>
+
+    <g:if test="${displayobj.hasProperty('status') && displayobj.status == RDStore.KBC_STATUS_REMOVED}">
+        <div class="ui negative icon huge message">
+            <i class="info icon"></i>
+
+            <div class="content">
+                <div class="header">
+                    Removed component
+                </div>
+
+                <p>This component has been set to removed and will soon be permanently removed from this system</p>
+            </div>
+        </div>
+    </g:if>
+
+    <g:if test="${displayobj.respondsTo('availableActions') && editable}">
+
+        <g:set var="object" value="${displayobj.class.name}:${displayobj.id}"/>
+
+        <div class="ui right floated buttons">
+        <semui:actionsDropdown text="Available actions">
+                <g:each var="action" in="${displayobj.userAvailableActions().sort{it.label}}">
+                    <g:if test="${action.code in ["packageUrlUpdate", "packageUrlUpdateAllTitles"]}">
+                        <g:if test="${displayobj.source}">
+                            <semui:actionsDropdownItem controller="workflow" action="action"
+                                                       params="[component: object, selectedBulkAction: action.code, curationOverride: params.curationOverride]" text="${action.label}"/>
+                        </g:if>
+                    </g:if>
+                    <g:else>
+                        <semui:actionsDropdownItem controller="workflow" action="action"
+                                                   params="[component: object, selectedBulkAction: action.code, curationOverride: params.curationOverride]" text="${action.label}"/>
+                    </g:else>
+
+                </g:each>
+        </semui:actionsDropdown>
+        </div>
+
+        %{--<g:form controller="workflow" action="action" method="post" class='action-form'>
+            <h4>Available actions</h4>
+            <input type="hidden"
+                   name="bulk:${displayobj.class.name}:${displayobj.id}"
+                   value="true"/>
+
+            <div class="input-group">
+                <select id="selectedAction" name="selectedBulkAction" >
+                    <option value="">-- Select an action to perform --</option>
+                    <g:each var="action" in="${displayobj.userAvailableActions()}">
+                        <g:if test="${action.code in ["packageUrlUpdate", "packageUrlUpdateAllTitles"]}">
+                            <g:if test="${displayobj.source}">
+                                <option value="${action.code}">
+                                    ${action.label}
+                                </option>
+                            </g:if>
+                        </g:if>
+                        <g:else>
+                            <option value="${action.code}">
+                                ${action.label}
+                            </option>
+                        </g:else>
+
+                    </g:each>
+                </select>
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-default">Go</button>
+                </span>
+            </div>
+        </g:form>--}%
+    </g:if>
+
+    <h1 class="ui header">${displayobj.getDomainName()}: ${displayobj.hasProperty('name') ? displayobj.name : ''}</h1>
 
     <div class="ui segment">
         <g:render template="rightBox" model="${[d: displayobj]}"/>
 
-        <div class="content we-inline-lists">
+        <div class="content wekb-inline-lists">
             <g:if test="${displaytemplate != null}">
                 <!-- Using display template ${displaytemplate.rendername} -->
                 <g:if test="${displaytemplate.type == 'staticgsp'}">
@@ -85,64 +154,11 @@
     <br>
     <br>
     <g:if test="${displaytemplate != null}">
-        <g:if test="${displaytemplate.type == 'staticgsp'}">
+        <g:if test="${displaytemplate.type == 'staticgsp' && displaytemplate.rendername in ["org", "package", "platform", "source", "tipp"]}">
             <g:render template="/templates/tabTemplates/domainTabs/${displaytemplate.rendername}Tabs"
                       model="${[d: displayobj]}"/>
         </g:if>
     </g:if>
-
-
-
-%{--         <div class="col-xs-3 pull-right well" style="min-width:320px;">
-
-
-             <g:if test="${displayobj.respondsTo('availableActions') && editable}">
-
-                 <g:form controller="workflow" action="action" method="post" class='action-form'>
-                     <h4>Available actions</h4>
-                     <input type="hidden"
-                            name="bulk:${displayobj.class.name}:${displayobj.id}"
-                            value="true"/>
-
-                     <div class="input-group">
-                         <select id="selectedAction" name="selectedBulkAction" class="form-control">
-                             <option value="">-- Select an action to perform --</option>
-                             <g:each var="action" in="${displayobj.userAvailableActions()}">
-                                 <g:if test="${action.code in ["packageUrlUpdate", "packageUrlUpdateAllTitles"]}">
-                                     <g:if test="${displayobj.source}">
-                                         <option value="${action.code}">
-                                             ${action.label}
-                                         </option>
-                                     </g:if>
-                                 </g:if>
-                                 <g:else>
-                                     <option value="${action.code}">
-                                         ${action.label}
-                                     </option>
-                                 </g:else>
-
-                             </g:each>
-                         </select>
-                         <span class="input-group-btn">
-                             <button type="submit" class="btn btn-default">Go</button>
-                         </span>
-                     </div>
-                 </g:form>
-             </g:if>
-
-
-             <g:if test="${displayobj.respondsTo('getCuratoryGroups') || displayobj instanceof TitleInstancePackagePlatform}">
-                 <div>
-                     <h4>Curatory Groups</h4>
-
-                     <div style="background-color:#ffffff">
-                         <g:render template="/apptemplates/secondTemplates/curatory_groups"
-                                   model="${[d: displayobj]}"/>
-                     </div>
-                 </div>
-             </g:if>
-
-         </div>--}%
 </g:if>
 <g:else>
     <semui:message class="negative">

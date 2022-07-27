@@ -4,7 +4,7 @@
         Name
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="name"/>
+        <semui:xEditable owner="${d}" field="name" required="true"/>
     </dd>
 </dl>
 <dl>
@@ -12,13 +12,12 @@
         Status
     </dt>
     <dd>
-        <g:if test="${editable}">
-            <semui:xEditableRefData owner="${d}" field="status"
-                                    config="${RCConstants.KBCOMPONENT_STATUS}"/>
-        </g:if>
-        <g:else>
-            ${d.status}
-        </g:else>
+        <sec:ifAnyGranted roles="ROLE_SUPERUSER">
+            <semui:xEditableRefData owner="${d}" field="status" config="${RCConstants.KBCOMPONENT_STATUS}"/>
+        </sec:ifAnyGranted>
+        <sec:ifNotGranted roles="ROLE_SUPERUSER">
+            ${d.status?.value ?: 'Not Set'}
+        </sec:ifNotGranted>
     </dd>
 </dl>
 <dl>
@@ -27,7 +26,7 @@
     </dt>
     <dd>
         <semui:xEditableManyToOne owner="${d}" field="provider"
-                                  baseClass="org.gokb.cred.Org">${d.provider?.name}</semui:xEditableManyToOne>
+                                  baseClass="org.gokb.cred.Org"/>
     </dd>
 </dl>
 <dl>
@@ -35,12 +34,7 @@
         Primary URL
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="primaryUrl">${d.primaryUrl}</semui:xEditable>
-        <g:if test="${d.primaryUrl}">
-            &nbsp; <a aria-label="${d.primaryUrl}"
-                      href="${d.primaryUrl.startsWith('http') ? d.primaryUrl : 'http://' + d.primaryUrl}"
-                      target="new"><i class="fas fa-external-link-alt"></i></a>
-        </g:if>
+        <semui:xEditable owner="${d}" field="primaryUrl" validation="url" outGoingLink="true"/>
     </dd>
 </dl>
 <dl>

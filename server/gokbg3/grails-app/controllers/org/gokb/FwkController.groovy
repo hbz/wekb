@@ -154,18 +154,6 @@ class FwkController {
                   }
                   isNull('oldValue')
                 }
-                or {
-                  not {
-                    like('newValue', "[id:org.gokb.cred.BookInstance%")
-                  }
-                  isNull('newValue')
-                }
-                or {
-                  not {
-                    like('newValue', "[id:org.gokb.cred.JournalInstance%")
-                  }
-                  isNull('newValue')
-                }
               }
             }
           }

@@ -3,13 +3,13 @@
 <wekb:serviceInjection/>
 
 <g:set var="counter" value="${offset}"/>
-<g:set var="s_action" value="${s_action ?: 'index'}"/>
-<g:set var="s_controller" value="${s_controller ?: 'search'}"/>
+<g:set var="s_action" value="${s_action?:actionName}"/>
+<g:set var="s_controller" value="${s_controller?:controllerName}"/>
 
 <g:if test="${request.isAjax()}">
 
     <div class="ui header">
-        <h1>Showing records ${offset.toInteger() + 1} to ${lasthit.toInteger() as int} of
+        <h1>Showing results ${offset.toInteger() + 1} to ${lasthit.toInteger() as int} of
             ${reccount.toInteger() as int}</h1>
     </div>
 
@@ -21,8 +21,10 @@
             <th>#</th>
             <g:each in="${qbeConfig.qbeResults}" var="c">
                 <g:if test="${!params.hide || !params.hide.contains(c.qpEquiv)}">
+                    <g:set var="colcode" value="${baseClass + '.' + c.heading}"/>
+                    <g:set var="colmsg" value="${message(code: colcode, default: c.heading)}"/>
                     <g:if test="${c.sort}">
-                        <semui:sortableColumn property="${c.sort}" title="${colmsg == colcode ? c.heading : colmsg}"
+                        <semui:sortableColumn controller="${s_controller}" action="${s_action}" id="${params.id}" property="${c.sort}" title="${colmsg == colcode ? c.heading : colmsg}"
                                               params="${params}"/>
                     </g:if>
                     <g:else>
@@ -40,19 +42,37 @@
                 <td>${counter}</td>
                 <g:each in="${r.cols}" var="c">
                     <td>
-                        <g:if test="${c.link != null}">
+                        <g:if test="${c.value instanceof java.util.List}">
+                            <div class="ui bulleted list">
+
+                                <g:each in="${c.value}" var="element">
+                                    <div class="item">
+                                        <g:if test="${c.link}">
+                                            <g:link controller="resource"
+                                                    action="show"
+                                                    id="${element instanceof org.gokb.cred.KBComponent ? element.uuid : element.class.name + ':' + element.id}">
+                                                ${element.name}
+                                            </g:link>
+                                        </g:if><g:else>
+                                            ${element.name}
+                                        </g:else>
+                                    </div>
+                                </g:each>
+                            </div>
+                        </g:if>
+                        <g:elseif test="${c.link != null && c.value && c.value != '-Empty-'}">
                             <g:link controller="resource"
                                     action="show"
                                     id="${c.link}">
                                 ${c.value}
                             </g:link>
-                        </g:if>
+                        </g:elseif>
                         <g:elseif test="${c.outGoingLink != null}">
                             ${c.value}
                             <g:if test="${c.value && c.value != '-Empty-'}">
                                 &nbsp;<a aria-label="${c.value}"
                                          href="${c.value.startsWith('http') ? c.value : 'http://' + c.value}"
-                                         target="new"><i class="share square icon"></i></a>
+                                         target="_blank"><i class="share square icon"></i></a>
                             </g:if>
                         </g:elseif>
                         <g:elseif test="${c.value instanceof Boolean}">
@@ -73,6 +93,12 @@
                                 0
                             </g:else>
                         </g:elseif>
+                        <g:elseif test="${c.value instanceof java.util.Date}">
+                            <g:if test="${c.value}">
+                                <g:formatDate format="${message(code: 'default.date.format.noZWihoutSS')}"
+                                              date="${c.value}"/>
+                            </g:if>
+                        </g:elseif>
                         <g:else>
                             ${c.value}
                         </g:else>
@@ -82,11 +108,12 @@
         </g:each>
         </tbody>
     </table>
+    <g:render template="/search/pagination" model="${params}"/>
 </g:if>
 <g:else>
 
     <div class="ui header">
-        <h1>Showing records ${offset.toInteger() + 1} to ${lasthit.toInteger() as int} of
+        <h1>Showing results ${offset.toInteger() + 1} to ${lasthit.toInteger() as int} of
             ${reccount.toInteger() as int}</h1>
     </div>
 
@@ -156,20 +183,38 @@
                         </sec:ifLoggedIn>
                         <td>${counter}</td>
                         <g:each in="${r.cols}" var="c">
-                            <td style="vertical-align:middle;">
-                                <g:if test="${c.link != null}">
+                            <td>
+                                <g:if test="${c.value instanceof java.util.List}">
+                                    <div class="ui bulleted list">
+
+                                        <g:each in="${c.value}" var="element">
+                                            <div class="item">
+                                                <g:if test="${c.link}">
+                                                    <g:link controller="resource"
+                                                            action="show"
+                                                            id="${element instanceof org.gokb.cred.KBComponent ? element.uuid : element.class.name + ':' + element.id}">
+                                                        ${element.name}
+                                                    </g:link>
+                                                </g:if><g:else>
+                                                    ${element.name}
+                                                </g:else>
+                                            </div>
+                                        </g:each>
+                                    </div>
+                                </g:if>
+                                <g:elseif test="${c.link != null && c.value && c.value != '-Empty-'}">
                                     <g:link controller="resource"
                                             action="show"
                                             id="${c.link}">
                                         ${c.value}
                                     </g:link>
-                                </g:if>
+                                </g:elseif>
                                 <g:elseif test="${c.outGoingLink != null}">
                                     ${c.value}
                                     <g:if test="${c.value && c.value != '-Empty-'}">
                                         &nbsp;<a aria-label="${c.value}"
                                                  href="${c.value.startsWith('http') ? c.value : 'http://' + c.value}"
-                                                 target="new"><i class="share square icon"></i></a>
+                                                 target="_blank"><i class="share square icon"></i></a>
                                     </g:if>
                                 </g:elseif>
                                 <g:elseif test="${c.value instanceof Boolean}">
@@ -190,6 +235,12 @@
                                         0
                                     </g:else>
                                 </g:elseif>
+                                <g:elseif test="${c.value instanceof java.util.Date}">
+                                    <g:if test="${c.value}">
+                                        <g:formatDate format="${message(code: 'default.date.format.noZWihoutSS')}"
+                                                      date="${c.value}"/>
+                                    </g:if>
+                                </g:elseif>
                                 <g:else>
                                     ${c.value}
                                 </g:else>
@@ -198,7 +249,7 @@
                     %{--<g:if test="${request.user?.showQuickView?.value=='Yes'}">
                       <td>
                         <g:link class="btn btn-xs btn-default pull-right desktop-only" controller="search"
-                          action="index" params="${params+['det':counter]}"><i class="fa fa-eye" ></i></g:link>
+                          action="componentSearch" params="${params+['det':counter]}"><i class="fa fa-eye" ></i></g:link>
                       </td>
                     </g:if>--}%
                     </tr>
@@ -212,11 +263,8 @@
             </tbody>
         </table>
     </g:form>
-    <g:render template="/search/pagination" model="${params + [dropup: true]}"/>
+    <g:render template="/search/pagination" model="${params}"/>
 </g:else>
 
-<script language="JavaScript">
-    function jumpToPage() {
-        alert("jump to page");
-    }
-</script>
+<br>
+

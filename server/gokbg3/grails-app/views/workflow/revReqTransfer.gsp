@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="layout" content="sb-admin" />
+<meta name="layout" content="public_semui" />
 <title><g:message code="gokb.appname" default="we:kb"/>::Review Request Transfer</title>
 </head>
 <body>
@@ -15,7 +15,7 @@
 
 					<div class="col-md-6">
 						<h4>Transfer the following Review Requests (${objects_to_action.size()} total):</h4>
-						<table class="table table-bordered table-striped table-condensed">
+						<table class="ui selectable striped sortable celled table">
 							<thead>
 								<tr>
 									<th></th>
@@ -44,7 +44,7 @@
 							<div class="form-group">
 								<label for="allocUser" class="col-sm-2 control-label">To User</label>
 								<div class="col-sm-8">
-									<gokb:simpleReferenceTypedown class="form-control" id="allocUser" name="allocToUser" baseClass="org.gokb.cred.User" />
+									<semui:simpleReferenceDropdown  id="allocUser" name="allocToUser" baseClass="org.gokb.cred.User" />
 								</div>
 							</div>
 							<div class="form-group">

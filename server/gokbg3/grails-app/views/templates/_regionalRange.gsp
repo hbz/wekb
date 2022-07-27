@@ -6,7 +6,7 @@
             <g:if test="${editable}">
                 <g:link controller='ajaxSupport'
                         action='unlinkManyToMany'
-                        params="${["__context": "${d.class.name}:${d.id}", "__property": "regionalRanges", "__itemToRemove": "${regionalRange.getClassName()}:${regionalRange.id}"]}">Unlink</g:link>
+                        params="${["__context": "${d.class.name}:${d.id}", "__property": "regionalRanges", "__itemToRemove": "${regionalRange.getClassName()}:${regionalRange.id}"]}">Delete</g:link>
             </g:if>
             </div>
         </g:each>
@@ -18,31 +18,17 @@
         <br>
         <br>
 
-        <semui:modal id="regionalRangesModal" text="Add Regional Range">
-            <g:form controller="ajaxSupport" action="addToStdCollection" class="form-inline">
+        <semui:modal id="regionalRangesModal" title="Add Regional Range">
+            <g:form controller="ajaxSupport" action="addToStdCollection" class="ui form">
                 <input type="hidden" name="__context" value="${d.class.name}:${d.id}"/>
                 <input type="hidden" name="__property" value="regionalRanges"/>
 
-                <div class="modal-header">
-                    <h3 class="modal-title">Add Regional Range</h3>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                </div>
+                <div class="field">
+                    <label>Regional Range:</label>
 
-                <div class="modal-body">
-
-                    <div class="field">
-                        <label>Regional Range:</label>
-
-                        <semui:xEditableManyToOne class="form-inline" style="display:inline-block;"
-                                                      name="__relatedObject"
-                                                      baseClass="org.gokb.cred.RefdataValue"
-                                                      filter1="${RCConstants.PACKAGE_REGIONAL_RANGE}"/>
-                    </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-default">Add</button>
+                    <semui:simpleReferenceDropdown name="__relatedObject"
+                                                   baseClass="org.gokb.cred.RefdataValue"
+                                                   filter1="${RCConstants.PACKAGE_REGIONAL_RANGE}"/>
                 </div>
             </g:form>
         </semui:modal>

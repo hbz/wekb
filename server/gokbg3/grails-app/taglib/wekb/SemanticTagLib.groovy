@@ -14,6 +14,60 @@ class SemanticTagLib {
 
     static namespace = 'semui'
 
+    def actionsDropdown = { attrs, body ->
+
+        out << '<div class="ui simple dropdown black button">'
+        out << '<div class="text">'
+        out << attrs.text
+        out << '</div>'
+        out <<  '<i class="dropdown icon"></i>'
+        out <<  '<div class="menu" style="left: auto; right: 0">'
+
+        out <<          body()
+
+        out <<  '</div>'
+        out << '</div>'
+    }
+
+    def actionsDropdownItem = { attrs, body ->
+
+        def text = attrs.text
+        String linkBody  = text ?: ''
+        String aClass    = attrs.class ? attrs.class + ' item' : 'item'
+        String href      = attrs.href ? attrs.href : '#'
+
+        if (attrs.tooltip && attrs.tooltip != '') {
+            linkBody = '<div class="" data-content="' + attrs.tooltip +'">' + linkBody + '</div>'
+        }
+        if (this.pageScope.variables?.actionName == attrs.action && !attrs.notActive) {
+            aClass = aClass + ' active'
+        }
+
+        def linkParams = [
+                class: aClass,
+                controller: attrs.controller,
+                action: attrs.action,
+                params: attrs.params
+        ]
+        if (attrs.onclick) {
+            linkParams.onclick = attrs.onclick
+        }
+
+        if (attrs.controller) {
+            out << g.link(linkParams, linkBody)
+        }
+        else {
+            out << '<a href="' + href + '" class="item"'
+            if (attrs.id) { // e.g. binding js events
+                out << ' id="' + attrs.id + '">'
+            }
+            if (attrs.'data-semui') { // e.g. binding modals
+                out << ' data-semui="' + attrs.'data-semui' + '">'
+            }
+            out << linkBody + '</a>'
+        }
+    }
+
     Closure breadcrumbs = { attrs, body ->
 
         out <<   '<div class="ui breadcrumb">'
@@ -139,7 +193,6 @@ class SemanticTagLib {
             }else{
                 out << body()
             }
-            out <<
             out << '</p>'
             out << '</div>'
         }
@@ -362,6 +415,7 @@ class SemanticTagLib {
 
         def property = attrs.remove("property")
         def action = attrs.action ? attrs.remove("action") : (actionName ?: "list")
+        def controller = attrs.controller ? attrs.remove("controller") : (controllerName ?: "")
         def namespace = attrs.namespace ? attrs.remove("namespace") : ""
 
         def defaultOrder = attrs.remove("defaultOrder")
@@ -395,7 +449,7 @@ class SemanticTagLib {
             }
         }
         else {
-            linkParams.order = defaultOrder
+            linkParams.order = property == 'lastUpdated' ? "desc" : defaultOrder
         }
 
         // determine column title
@@ -426,6 +480,7 @@ class SemanticTagLib {
         }
 
         linkAttrs.action = action
+        linkAttrs.controller = controller
         linkAttrs.namespace = namespace
 
         writer << callLink((Map)linkAttrs) {
@@ -467,7 +522,7 @@ class SemanticTagLib {
         out << '<div class="item' + (attrs.class ? (' ' + attrs.class) : '') +'" data-tab="' + attrs.tab + '">'
         out << body()
 
-        if (attrs.counts) {
+        if (attrs.counts != null) {
             out << '<div class="ui floating black circular label">'+attrs.counts+'</div>'
         }
         out << '</div>'
@@ -501,10 +556,19 @@ class SemanticTagLib {
 
         if (data instanceof List) {
 
-            data.each {
-                out << '<div class="item">'
-                out << it
-                out << '</div>'
+            data.each { def listItems ->
+                if(listItems instanceof List){
+                    listItems.each {
+                        out << '<div class="item">'
+                        out << it
+                        out << '</div>'
+                    }
+                }else {
+                    out << '<div class="item">'
+                    out << listItems
+                    out << '</div>'
+                }
+
             }
 
         }

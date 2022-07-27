@@ -26,6 +26,9 @@ grails {
 // database migration plugin
 grails.plugin.databasemigration.updateOnStart = true
 
+grails.plugin.springsecurity.successHandler.useReferer = true
+grails.plugin.springsecurity.successHandler.alwaysUseDefault= false
+
 // Added by the Spring Security Core plugin:
 grails.plugin.springsecurity.userLookup.userDomainClassName = 'org.gokb.cred.User'
 grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'org.gokb.cred.UserRole'
@@ -84,30 +87,18 @@ grails.plugin.springsecurity.controllerAnnotations.staticRules = [
   [pattern: '/index.gsp',               access: ['permitAll']],
   [pattern: '/register/**',             access: ['permitAll']],
   [pattern: '/public/**',               access: ['permitAll']],
-  //[pattern: '/package/**',              access: ['permitAll']],
-  //[pattern: '/packages/**',             access: ['permitAll']],
+  [pattern: '/static/**',               access: ['permitAll']],
+    [pattern: '/packages/**',             access: ['permitAll']],
   [pattern: '/component/identifierConflicts', access: ['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY']],
   [pattern: '/public',                  access: ['permitAll']],
   [pattern: '/error',                   access: ['permitAll']],
   [pattern: '/error/**',                access: ['permitAll']],
-  [pattern: '/globalSearch/**',         access: ['ROLE_USER']],
   [pattern: '/home/**',                 access: ['ROLE_USER']],
   [pattern: '/assets/**',               access: ['permitAll']],
   [pattern: '/**/js/**',                access: ['permitAll']],
   [pattern: '/**/css/**',               access: ['permitAll']],
   [pattern: '/**/images/**',            access: ['permitAll']],
   [pattern: '/**/favicon.ico',          access: ['permitAll']],
-  [pattern: '/api/find',                access: ['permitAll']],
-  [pattern: '/api/scroll',              access: ['permitAll']],
-  [pattern: '/api/sushiSources',        access: ['permitAll']],
-  [pattern: '/api/suggest',             access: ['permitAll']],
-  [pattern: '/api/isUp',                access: ['permitAll']],
-  //[pattern: '/api/userData',            access: ['permitAll']],
-  [pattern: '/api/refdata',             access: ['ROLE_USER']],
-  [pattern: '/api/show',                access: ['ROLE_USER']],
-  [pattern: '/api/namespaces',          access: ['permitAll']],
-  [pattern: '/api/groups',              access: ['permitAll']],
-  [pattern: '/api/elasticsearchTunnel', access: ['permitAll']],
   [pattern: '/integration/**',          access: ['permitAll']],
   [pattern: '/fwk/**',                  access: ['ROLE_USER']],
   [pattern: '/user/**',                 access: ['ROLE_SUPERUSER', 'IS_AUTHENTICATED_FULLY']],
@@ -130,10 +121,23 @@ grails.plugin.springsecurity.controllerAnnotations.staticRules = [
   //[pattern: '/rest/refdata/**',         access: ['permitAll']],
   [pattern: '/rest/**',                 access: ['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY']],
   //[pattern: '/oauth/**',                access: ['permitAll']],
-  //[pattern: '/coreference/**',          access: ['permitAll']]
 
+  //NEW
   [pattern: '/search/**',          access: ['permitAll']],
-  [pattern: '/resource/**',          access: ['permitAll']]
+  [pattern: '/resource/**',        access: ['permitAll']],
+  [pattern: '/ajaxJson/**',    access: ['permitAll']],
+  [pattern: '/api/index',                access: ['permitAll']],
+  [pattern: '/api/find',                access: ['permitAll']],
+  [pattern: '/api/scroll',              access: ['permitAll']],
+  [pattern: '/api/sushiSources',        access: ['permitAll']],
+  [pattern: '/api/suggest',             access: ['permitAll']],
+  [pattern: '/api/isUp',                access: ['permitAll']],
+  //[pattern: '/api/userData',            access: ['permitAll']],
+  //[pattern: '/api/refdata',             access: ['ROLE_USER']],
+  //[pattern: '/api/show',                access: ['ROLE_USER']],
+  [pattern: '/api/namespaces',          access: ['permitAll']],
+  [pattern: '/api/groups',              access: ['permitAll']],
+  //[pattern: '/api/elasticsearchTunnel', access: ['permitAll']],
 ]
 
 
@@ -164,15 +168,6 @@ grails.web.disable.multipart=false
 
 grails.converters.json.circular.reference.behaviour = 'INSERT_NULL'
 
-/** Less config **/
-/** Config duplicated here and in build.groovy for alternate run paths */
-grails.assets.less.compiler = 'less4j'
-grails.assets.excludes = [ '**/_*.less', 'gokb/themes/*.less', 'gokb/themes/**/*.less', 'bootstrap/*.less', 'bootstrap/**/*.less' ]
-grails.assets.includes = [ 'webfonts/*', 'gokb/themes/*/theme.less', 'bootstrap/bootstrap.less' ]
-grails.assets.plugin."twitter-bootstrap".excludes = ["**/*.less"]
-grails.assets.plugin."font-awesome-resources".excludes = ["**/*.less"]
-grails.assets.plugin."jquery".excludes = ["**", "*.*"]
-grails.assets.minifyJs = false
 
 
 

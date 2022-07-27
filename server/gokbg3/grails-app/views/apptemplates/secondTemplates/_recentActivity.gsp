@@ -1,4 +1,4 @@
-<table class="table table-bordered table-striped">
+<table class="ui selectable striped sortable celled table">
   <thead>
   <tr>
     <th>#</th>

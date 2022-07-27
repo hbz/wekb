@@ -1,7 +1,8 @@
 <%@ page import="de.wekb.helper.RCConstants"%>
 <g:set var="ctxoid" value="${org.gokb.cred.KBComponent.deproxy(d).class.name}:${d.id}"/>
+<wekb:serviceInjection/>
 
-<table class="table table-striped table-bordered">
+<table class="ui selectable striped sortable celled table">
   <thead>
     <tr>
       <g:each in="${cols}" var="ch">
@@ -23,10 +24,10 @@
           </td>
         </g:each>
         <td>
-          <g:if test="${d.isEditable() && (d.respondsTo('curatoryGroups') ? (!d.respondsTo('getCuratoryGroups') ? true : cur) : true)}">
+          <g:if test="${accessService.checkEditableObject(d, params)&& (d.respondsTo('curatoryGroups') ? (!d.respondsTo('getCuratoryGroups') ? true : cur) : true)}">
             <g:link controller='ajaxSupport'
                     action='unlinkManyToMany'
-                    params="${[__context:ctxoid,__property:property,__itemToRemove:rowoid, propagate:propagateDelete]}">Unlink</g:link>
+                    params="${[__context:ctxoid,__property:property,__itemToRemove:rowoid, propagate:propagateDelete]}">Delete</g:link>
           </g:if>
         </td>
       </tr>
@@ -34,7 +35,7 @@
   </tbody>
 </table>
 
-<g:if test="${targetClass && d.isEditable() && !noadd}">
+<g:if test="${targetClass && accessService.checkEditableObject(d, params) && !noadd}">
 
   <g:if test="${params.controller != 'create'}">
     <g:if test="${direction=='in'}">
@@ -46,17 +47,17 @@
       <g:set var="comboprop" value="toComponent"/>
     </g:else>
     <h4>
-      <gokb:annotatedLabel owner="${d}" property="${property}">Add new Entry</gokb:annotatedLabel>
+      Add new Entry
     </h4>
     <dl class="dl-horizontal">
-      <g:form controller="ajaxSupport" action="addToCollection" class="form-inline">
+      <g:form controller="ajaxSupport" action="addToCollection">
         <input type="hidden" name="__context" value="${ctxoid}"/>
         <input type="hidden" name="__newObjectClass" value="org.gokb.cred.Combo"/>
         <input type="hidden" name="__recip" value="${recip}"/>
         <input type="hidden" name="type" value="${org.gokb.cred.RefdataCategory.getOID(RCConstants.COMBO_TYPE,d.getComboTypeValue(property))}"/>
         <dt class="dt-label">Add To List: </dt>
         <dd>
-          <gokb:simpleReferenceTypedown class="form-inline select-ml" style="display:inline-block;" name="${comboprop}" baseClass="${targetClass}"/>
+          <semui:simpleReferenceDropdown class="form-inline select-ml" style="display:inline-block;" name="${comboprop}" baseClass="${targetClass}"/>
           <button type="submit" class="btn btn-default btn-primary">Add</button>
         </dd>
       </g:form>

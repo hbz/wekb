@@ -22,9 +22,10 @@ class Org extends KBComponent {
     [
      /* [code: 'org::deprecateReplace', label: 'Replace Publisher With...'],
       [code: 'org::deprecateDelete', label: 'Remove Publisher name from title records...'],*/
-      [code: 'method::deleteSoft', label: 'Delete Org', perm: 'delete'],
-      [code: 'method::retire', label: 'Retire Org', perm: 'admin'],
-      [code: 'method::setActive', label: 'Set Current']
+      [code: 'method::deleteSoft', label: 'Delete Provider', perm: 'delete'],
+      [code: 'method::retire', label: 'Retire Provider', perm: 'admin'],
+      [code: 'method::setActive', label: 'Set Provider Current'],
+      [code: 'setStatus::Removed', label: 'Remove Provider', perm: 'delete'],
     ]
   }
 
@@ -34,13 +35,10 @@ class Org extends KBComponent {
     children         : Org,
     'previous'       : Org,
     curatoryGroups   : CuratoryGroup,
-    publishedTitles  : TitleInstance,
-    issuedTitles     : TitleInstance,
     providedPlatforms: Platform,
     brokeredPackages : Package,
     licensedPackages : Package,
     vendedPackages   : Package,
-    offices          : Office,
     //  ids      : Identifier
   ]
 
@@ -59,7 +57,6 @@ class Org extends KBComponent {
     brokeredPackages : 'broker',
     licensedPackages : 'licensor',
     vendedPackages   : 'vendor',
-    offices          : 'org',
   ]
 
   //  static mappedBy = [
@@ -73,7 +70,6 @@ class Org extends KBComponent {
   ]
 
   static mapping = {
-    // From TitleInstance
     includes KBComponent.mapping
     mission column: 'org_mission_fk_rv'
     homepage column: 'org_homepage'
@@ -211,7 +207,6 @@ class Org extends KBComponent {
     def issues = getIssuedTitles()
     def provides = getProvidedPackages()
     def platforms = getProvidedPlatforms()
-    def offices = getOffices()
     def identifiers = getIds()
 
     builder.'gokb'(attr) {
@@ -235,36 +230,6 @@ class Org extends KBComponent {
           curatoryGroups.each { cg ->
             builder.'group' {
               builder.'name'(cg.name)
-            }
-          }
-        }
-
-        if (offices) {
-          builder.'offices' {
-            offices.each { office ->
-              builder.'name'(office.name)
-              builder.'website'(office.website)
-              builder.'phoneNumber'(office.phoneNumber)
-              builder.'otherDetails'(office.otherDetails)
-              builder.'addressLine1'(office.addressLine1)
-              builder.'addressLine2'(office.addressLine2)
-              builder.'city'(office.city)
-              builder.'zipPostcode'(office.zipPostcode)
-              builder.'region'(office.region)
-              builder.'state'(office.state)
-
-              if (office.country) {
-                builder.'country'(office.country.value)
-              }
-
-              builder.curatoryGroups {
-                office.curatoryGroups.each { ocg ->
-                  builder.group {
-                    builder.owner(ocg.owner.username)
-                    builder.name(ocg.name)
-                  }
-                }
-              }
             }
           }
         }

@@ -2,50 +2,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name='layout' content='public'/>
+    <meta name="layout" content="public_semui"/>
     <title><g:message code="gokb.appname" default="we:kb"/>: Accessibility Feedback Form</title>
 </head>
 
 <body>
 
-<div class="container">
-        <h1 class="mb-4">Accessibility Feedback Form</h1>
+<h1 class="ui header">Accessibility Feedback Form</h1>
 
-        <g:form action="sendFeedbackForm" controller="public" method="get" class="ui small form">
-        <div class="form-group row">
-            <label for="name" class="col-sm-2 col-form-label">Name</label>
-            <div class="col-sm-10">
-                <input class="form-control" type="text" id="name" name="name" placeholder="Name" value=""/>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="eMail" class="col-sm-2 col-form-label">E-Mail</label>
-            <div class="col-sm-10">
-                <input class="form-control" type="text" name="eMail" id="eMail" placeholder="E-Mail" value=""/>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="url" class="col-sm-2 col-form-label">URL of the page you are commenting on</label>
-            <div class="col-sm-10">
-                <input class="form-control" type="text" name="url" id="url" placeholder="url" value=""/>
+<div class="ui segment">
+
+    <g:form action="sendFeedbackForm" controller="public" method="get" class="ui small form">
+        <div class="field">
+            <label for="name">Name</label>
+
+            <div>
+                <input type="text" id="name" name="name" placeholder="Name" value=""/>
             </div>
         </div>
 
-        <div class="form-group row">
-            <label for="comment" class="col-sm-2 col-form-label">Comment</label>
-            <div class="col-sm-10">
-                <g:textArea  class="form-control"  name="comment"  id="comment" rows="5" cols="40"/>
+        <div class="field">
+            <label for="eMail">E-Mail</label>
+
+            <div>
+                <input type="text" name="eMail" id="eMail" placeholder="E-Mail" value=""/>
             </div>
         </div>
-        <div class="form-group row justify-content-end">
-            <div class="col-4">
-                <div class="float-right">
-                    <a href="${request.forwardURI}" class="btn btn-dark">Reset</a>
-                    <input type="submit" class="btn btn-primary " value="Send">
-                </div>
+
+        <div class="field">
+            <label for="url">URL of the page you are commenting on</label>
+
+            <div>
+                <input type="text" name="url" id="url" placeholder="url" value=""/>
             </div>
         </div>
-        </g:form>
+
+        <div class="field">
+            <label for="comment">Comment</label>
+
+            <div>
+                <g:textArea name="comment" id="comment" rows="5" cols="40"/>
+            </div>
+        </div>
+
+        <div class="ui right floated buttons">
+            <a href="${request.forwardURI}" class="ui button">Reset</a>
+            <input type="submit" class="ui black button " value="Send">
+        </div>
+
+        <br>
+        <br>
+    </g:form>
 
 </div>
 </body>

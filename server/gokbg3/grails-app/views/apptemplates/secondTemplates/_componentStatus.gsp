@@ -1,14 +1,14 @@
 <g:if test="${d.id}">
     <dl class="dl-horizontal">
-        <dt><gokb:annotatedLabel owner="${d}" property="dateCreated">Date Created</gokb:annotatedLabel></dt>
+        <dt>Date Created</dt>
         <dd>
             ${d.dateCreated ?: ''}
         </dd>
-        <dt><gokb:annotatedLabel owner="${d}" property="lastUpdated">Last Updated</gokb:annotatedLabel></dt>
+        <dt>Last Updated</dt>
         <dd>
             ${d.lastUpdated ?: ''}
         </dd>
-        <dt><gokb:annotatedLabel owner="${d}" property="uuid">UUID</gokb:annotatedLabel></dt>
+        <dt>UUID</dt>
         <dd>
             ${d.uuid ?: ''}
         </dd>

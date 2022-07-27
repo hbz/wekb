@@ -29,7 +29,6 @@ class CuratoryGroup extends KBComponent {
     packages: Package,
     platforms: Platform,
     orgs: Org,
-    offices: Office,
     sources: Source
   ]
 
@@ -37,7 +36,6 @@ class CuratoryGroup extends KBComponent {
     packages: 'curatoryGroups',
     platforms: 'curatoryGroups',
     orgs: 'curatoryGroups',
-    offices: 'curatoryGroups',
     sources: 'curatoryGroups'
   ]
 
@@ -79,9 +77,7 @@ class CuratoryGroup extends KBComponent {
     ql = CuratoryGroup.findAllByNameIlikeAndStatusNotEqual("${params.q}%", status_deleted ,params)
 
     ql.each { t ->
-      if( !params.filter1 || t.status?.value == params.filter1 ){
         result.add([id:"${t.class.name}:${t.id}", text:"${t.name}", status:"${t.status?.value}"])
-      }
     }
 
     result
@@ -101,7 +97,7 @@ class CuratoryGroup extends KBComponent {
   @Transient
   def availableActions() {
     [
-            [code: 'method::deleteSoft', label: 'Delete', perm: 'delete'],
+            [code: 'method::deleteSoft', label: 'Delete Curatory Group', perm: 'delete'],
     ]
   }
 

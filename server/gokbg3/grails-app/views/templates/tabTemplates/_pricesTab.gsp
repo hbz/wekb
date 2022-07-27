@@ -43,30 +43,32 @@
 
                         <semui:modal id="pricesModal" title="Add Price">
 
-                            <g:form controller="ajaxSupport" action="addToCollection" params="[fragment: 'prices']"
-                                    class="form-inline">
+                            <g:form controller="ajaxSupport" action="addToCollection" params="[fragment: 'prices']" class="ui form">
                                 <input type="hidden" name="__context"
                                        value="${d.class.name}:${d.id}"/>
                                 <input type="hidden" name="__newObjectClass"
                                        value="org.gokb.cred.ComponentPrice"/>
                                 <input type="hidden" name="__recip" value="owner"/>
-                                <dt class="control-label">Price Type</dt>
-                                <dd>
-                                    <semui:simpleReferenceTypedown class="form-control"
-                                                                  name="priceType"
-                                                                  baseClass="org.gokb.cred.RefdataValue"
-                                                                  filter1="${RCConstants.PRICE_TYPE}"/>
-                                </dd>
-                                <dt class="control-label">Price</dt>
-                                <dd>
-                                    <input type="number" class="form-control select-m" name="price" step="0.01"/>
-                                </dd>
-                                <dt class="control-label">Currency</dt>
-                                <dd>
-                                    <semui:simpleReferenceTypedown class="form-control" name="currency"
-                                                                  baseClass="org.gokb.cred.RefdataValue"
-                                                                  filter1="${RCConstants.CURRENCY}"/>
-                                </dd>
+
+                                <div class="field">
+                                    <label>Price Type</label>
+                                    <semui:simpleReferenceDropdown
+                                            name="priceType"
+                                            baseClass="org.gokb.cred.RefdataValue"
+                                            filter1="${RCConstants.PRICE_TYPE}"/>
+                                </div>
+                                <div class="field">
+                                    <label>Price</label>
+
+                                    <input type="number" name="price" step="0.01"/>
+                                </div>
+
+                                <div class="field">
+                                    <label>Currency</label>
+                                    <semui:simpleReferenceDropdown name="currency"
+                                                                   baseClass="org.gokb.cred.RefdataValue"
+                                                                   filter1="${RCConstants.CURRENCY}"/>
+                                </div>
                             </g:form>
                         </semui:modal>
                 </g:if>

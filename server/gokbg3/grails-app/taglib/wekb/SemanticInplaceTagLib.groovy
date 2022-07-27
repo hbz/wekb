@@ -15,6 +15,7 @@ class SemanticInplaceTagLib {
     def genericOIDService
     def springSecurityService
 
+    /*@Deprecated
     private boolean checkEditable(attrs, body, out) {
 
         // See if there is an owner attribute on the request - owner will be the domain object asking to be edited.
@@ -39,9 +40,9 @@ class SemanticInplaceTagLib {
             tl_editable = true
         }
 
-/*    if ( !tl_editable && owner?.class?.name == 'org.gokb.cred.Combo' ) {
+*//*    if ( !tl_editable && owner?.class?.name == 'org.gokb.cred.Combo' ) {
       tl_editable = owner.fromComponent.isEditable()
-    }*/
+    }*//*
 
         if (!tl_editable && attrs.editable) {
             tl_editable = attrs.editable
@@ -62,8 +63,9 @@ class SemanticInplaceTagLib {
         }
 
         tl_editable
-    }
+    }*/
 
+   /* @Deprecated
     private boolean checkViewable(attrs, body, out) {
 
         // See if there is an baseClass attribute on the request - baseClass will be the domain class asking to be searched.
@@ -80,20 +82,23 @@ class SemanticInplaceTagLib {
         }
 
         tl_viewable
-    }
+    }*/
 
     def xEditable = { attrs, body ->
 
         boolean editable = isEditable(request.getAttribute('editable'), attrs.overwriteEditable)
 
         if (editable) {
-            def owner = ClassUtils.deproxy(attrs.owner);
+            def owner = ClassUtils.deproxy(attrs.owner)
 
             def oid = owner.id != null ? "${owner.class.name}:${owner.id}" : ''
             def id = attrs.id ?: "${oid}:${attrs.field}"
             def dformat = attrs."data-format" ?: 'yyyy-mm-dd'
 
             // Default the format.
+
+            String default_empty = "Edit"
+            String emptyText = attrs.emptytext ? " data-emptytext=\"${attrs.emptytext}\"" : " data-emptytext=\"${default_empty}\""
 
             out << "<span id=\"${id}\" class=\"xEditableValue ${attrs.class ?: ''} ${attrs.type == 'date' ? 'date' : ''}\""
 
@@ -108,10 +113,10 @@ class SemanticInplaceTagLib {
         out << " data-tpl=\"${'<textarea wrap=\'off\'></textarea>'.encodeAsHTML()}\""
       }*/
 
-            def data_link = null
+            def update_link = null
             switch (attrs.type) {
                 case 'date':
-                    data_link = createLink(controller: 'ajaxSupport', action: 'editableSetValue', params: [type: 'date'])
+                    update_link = createLink(controller: 'ajaxSupport', action: 'editableSetValue', params: [type: 'date', curationOverride: params.curationOverride])
                     out << " data-type='date' data-inputclass='form-control form-date' data-datepicker='{minYear: 1500, smartDays: true, clearBtn: true}' data-viewformat='yyyy-mm-dd'"
                     def dv = attrs."data-value"
 
@@ -130,22 +135,33 @@ class SemanticInplaceTagLib {
 
                     break;
                 default:
-                    data_link = createLink(controller: 'ajaxSupport', action: 'editableSetValue')
-                    out << " data-type=\"${attrs.type ?: 'textarea'}\""
+                    update_link = createLink(controller: 'ajaxSupport', action: 'editableSetValue', params: [curationOverride: params.curationOverride])
+                    out << " data-type=\"${attrs.type ?: 'text'}\""
                     break;
             }
 
-            out << " data-url=\"${data_link}\""
+            out << " data-url=\"${update_link}\" "
+
+            if (attrs.validation) {
+                out << " data-validation=\"${attrs.validation}\" "
+            }
+            if (attrs.required) {
+                out << " data-required=\"${attrs.required}\" "
+            }
+            if (attrs.maxlength) {
+                out << " data-maxlength=\"${attrs.maxlength}\" "
+            }
+
             out << ">"
 
             if (body) {
                 out << body()
             } else {
-                if (attrs.type != 'date') {
-                    out << owner[attrs.field]
-                } else if (owner[attrs.field]) {
-                    def sdf = new java.text.SimpleDateFormat(attrs."data-format" ?: 'yyyy-MM-dd')
-                    out << sdf.format(owner[attrs.field])
+                String content = (attrs.owner?."${attrs.field}" ? renderObjectValue(attrs.owner."${attrs.field}") : "")
+                if(content){
+                    out << content
+                }else {
+                    out << ""
                 }
             }
             out << "</span>"
@@ -154,20 +170,25 @@ class SemanticInplaceTagLib {
             if (body) {
                 out << body()
             } else {
-                if (attrs.owner[attrs.field] && attrs.type == 'date') {
-                    SimpleDateFormat sdf = new SimpleDateFormat(attrs.format ?: message(code: 'default.date.format'))
-                    out << sdf.format(attrs.owner[attrs.field])
-                } else {
-                    if ((attrs.owner[attrs.field] == null) || (attrs.owner[attrs.field].toString().length() == 0)) {
-                        //out << "<span class='readonly editable-empty' title='Read Only' >Empty</span>"
-                    } else if (attrs.field == 'decValue') {
-                        out << NumberFormat.getInstance(LocaleContextHolder.getLocale()).format(attrs.owner[attrs.field])
-                    } else {
-                        out << attrs.owner[attrs.field]
-                    }
+                String content = (attrs.owner?."${attrs.field}" ? renderObjectValue(attrs.owner."${attrs.field}") : "")
+                if(content){
+                    out << content
+                }else {
+                    out << "Empty"
                 }
             }
             out << '</span>'
+        }
+
+        if (attrs.outGoingLink && attrs.field && attrs.owner[attrs.field]) {
+            String url = attrs.owner[attrs.field] ? (attrs.owner[attrs.field].startsWith('http') ? attrs.owner[attrs.field] : ('http://' + attrs.owner[attrs.field])) : ""
+            if(url) {
+                out << '&nbsp;<a aria-label="'
+                out << attrs.owner[attrs.field]
+                out << '" href="'
+                out << url
+                out << '" target="_blank"><i class="external alternate icon"></i></a>'
+            }
         }
     }
 
@@ -184,24 +205,34 @@ class SemanticInplaceTagLib {
 
             def config = attrs.remove("config")
             def data_link = createLink(controller: 'ajaxSupport', action: 'getRefdata', params: [id: config, format: 'json'])
-            def update_link = createLink(controller: 'ajaxSupport', action: 'genericSetRel')
+            def update_link = createLink(controller: 'ajaxSupport', action: 'genericSetRel', params: [curationOverride: params.curationOverride])
             def oid = owner.id != null ? "${owner.class.name}:${owner.id}" : ''
             def id = attrs.remove("id") ?: "${oid}:${attrs.field}"
-            def type = attrs.remove("type") ?: "select"
+            //def type = attrs.remove("type") ?: "select"
             def field = attrs.remove("field")
-            attrs['class'] = ["xEditableManyToOne"]
+
+            String default_empty = "Edit"
+            String emptyText = attrs.emptytext ? " data-emptytext=\"${attrs.emptytext}\"" : " data-emptytext=\"${default_empty}\""
 
             out << "<span>"
 
             // Output an editable link
             out << "<span id=\"${id}\" "
+
+            out << 'class="xEditableManyToOne"'
+
             if ((owner != null) && (owner.id != null)) {
                 out << "data-pk=\"${oid}\" "
             }
 
             out << "data-url=\"${update_link}\" "
 
-            def attributes = attrs.collect({ k, v ->
+            if (attrs.required) {
+                out << " data-required=\"${attrs.required}\" "
+            }
+
+            def attributes
+           /* attributes = attrs.collect({ k, v ->
 
                 if (v instanceof Collection) {
                     v = v.collect({ val ->
@@ -209,8 +240,13 @@ class SemanticInplaceTagLib {
                     }).join(" ")
                 }
                 "${k}=\"${v.encodeAsHTML()}\""
-            }).join(" ")
-            out << "data-type=\"${type}\" data-name=\"${field}\" data-source=\"${data_link}\" ${attributes} >"
+            }).join(" ")*/
+            out << "data-type=\"select\" data-name=\"${field}\" data-source=\"${data_link}\" "
+
+            if(attributes)
+            out << " ${attributes} "
+
+            out << ">"
 
             // Here we can register different ways of presenting object references. The most pressing need to be
             // outputting a span containing an icon for refdata fields.
@@ -224,7 +260,7 @@ class SemanticInplaceTagLib {
             if (isAdmin) {
                 RefdataCategory rdc = RefdataCategory.findByDesc(config)
                 if (rdc) {
-                    out << '&nbsp;<a href="' + createLink(controller: 'resource', action: 'show', id: 'org.gokb.cred.RefdataCategory:' + rdc.id) + '"title="Jump to RefdataCategory"><i class="fas fa-eye"></i></a><br/>'
+                    out << '&nbsp;&nbsp;<a href="' + createLink(controller: 'resource', action: 'show', id: 'org.gokb.cred.RefdataCategory:' + rdc.id) + '"title="Jump to RefdataCategory"><i class="ui icon eye"></i></a><br/>'
                 }
             }
 
@@ -234,7 +270,7 @@ class SemanticInplaceTagLib {
                 out << body()
             } else {
                 def content = (attrs.owner?."${attrs.field}" ? renderObjectValue(attrs.owner."${attrs.field}") : "")
-                out << "<span class='readonly${content ? '' : ' editable-empty'}' title='Read Only' >${content ?: 'Empty'}</span>"
+                out << "${content ?: 'Empty'}"
             }
         }
 
@@ -248,7 +284,7 @@ class SemanticInplaceTagLib {
      */
         // The check editable should output the read only version so we should just exit
         // if read only.
-        //if (!checkEditable(attrs, body, out)) return;
+        //if (!checkEditable(attrs, body, out)) return
 
         boolean editable = isEditable(request.getAttribute('editable'), attrs.overwriteEditable)
 
@@ -256,34 +292,50 @@ class SemanticInplaceTagLib {
 
             def owner = ClassUtils.deproxy(attrs.remove("owner"))
 
-            // out << "editable many to one: <div id=\"${attrs.id}\" class=\"xEditableManyToOne\" data-type=\"select2\" data-config=\"${attrs.config}\" />"
             def data_link = createLink(controller: 'ajaxSupport', action: 'getRefdata', params: [id: 'boolean', format: 'json'])
-            def update_link = createLink(controller: 'ajaxSupport', action: 'genericSetRel', params: [type: 'boolean'])
+            def update_link = createLink(controller: 'ajaxSupport', action: 'genericSetRel', params: [type: 'boolean', curationOverride: params.curationOverride])
             def oid = owner.id != null ? "${owner.class.name}:${owner.id}" : ''
             def id = attrs.remove("id") ?: "${oid}:${attrs.field}"
             def field = attrs.remove("field")
-            attrs['class'] = ["xEditableManyToOne"]
+            //attrs['class'] = ["xEditableManyToOne"]
+
+            String default_empty = "Edit"
+            String emptyText = attrs.emptytext ? " data-emptytext=\"${attrs.emptytext}\"" : " data-emptytext=\"${default_empty}\""
 
             out << "<span>"
 
             // Output an editable link
             out << "<span id=\"${id}\" "
+
+            out << 'class="xEditableManyToOne"'
+
             if ((owner != null) && (owner.id != null)) {
                 out << "data-pk=\"${oid}\" "
             }
 
             out << "data-url=\"${update_link}\" "
 
-            def attributes = attrs.collect({ k, v ->
+            if (attrs.required) {
+                out << " data-required=\"${attrs.required}\" "
+            }
 
+            def attributes
+
+/*            attributes = attrs.collect({ k, v ->
                 if (v instanceof Collection) {
                     v = v.collect({ val ->
                         "${val}"
                     }).join(" ")
                 }
                 "${k}=\"${v.encodeAsHTML()}\""
-            }).join(" ")
-            out << "data-type=\"select\" data-name=\"${field}\" data-source=\"${data_link}\" ${attributes}>"
+            }).join(" ")*/
+
+            out << "data-type=\"select\" data-name=\"${field}\" data-source=\"${data_link}\" "
+
+            if(attributes)
+                out << " ${attributes} "
+
+            out << ">"
 
             // Here we can register different ways of presenting object references. The most pressing need to be
             // outputting a span containing an icon for refdata fields.
@@ -301,42 +353,38 @@ class SemanticInplaceTagLib {
 
     }
 
-    /**
-     * ToDo: This function is a duplicate of the one found in AjaxController, both should be moved to a shared static utility
-     */
     def renderObjectValue(value) {
         def result = ''
         if (value != null) {
-            log.debug("${value.class}")
             switch (value.class) {
                 case org.gokb.cred.RefdataValue.class:
-                    if (value.icon != null) {
-                        result = "<span class=\"select-icon ${value.icon}\"></span>${value.getI10n('value')}"
-                    } else {
-                        result = value.getI10n('value')
-                    }
+                    result = value.getI10n('value')
                     break;
                 case Boolean.class:
                     result = (value == true ? 'Yes' : 'No')
                     break;
+                case Date.class:
+                    def sdf = new java.text.SimpleDateFormat('yyyy-MM-dd')
+                    result = sdf.format(value)
+                    break
                 default:
                     result = value.toString();
             }
         }
-        result;
+        result
     }
 
 
 
-    /**
+/*    *//**
      * simpleReferenceTypedown - create a hidden input control that has the value fully.qualified.class:primary_key and which is editable with the
      * user typing into the box. Takes advantage of refdataFind and refdataCreate methods on the domain class.
-     */
+     *//*
     def simpleReferenceTypedown = { attrs, body ->
 
         // The check editable should output the read only version so we should just exit
         // if read only.
-        //if (!checkEditable(attrs, body, out)) return;
+        //if (!checkEditable(attrs, body, out)) return
 
         out << "<input type=\"hidden\" value=\"${attrs.value ?: ''}\" name=\"${attrs.name}\" data-domain=\"${attrs.baseClass}\" "
         if (attrs.id) {
@@ -348,7 +396,7 @@ class SemanticInplaceTagLib {
 
         if ((attrs.value != null) && (attrs.value.length() > 0)) {
             def o = genericOIDService.resolveOID2(attrs.value)
-            out << "data-displayValue=\"${o.toString()}\" ";
+            out << "data-displayValue=\"${o.toString()}\" "
         }
 
         if (attrs.elastic) {
@@ -364,6 +412,51 @@ class SemanticInplaceTagLib {
         }
 
         out << "class=\"simpleReferenceTypedown ${attrs.class}\" />"
+    }*/
+
+    def simpleReferenceDropdown = { attrs, body ->
+
+        out << '<div class="ui fluid search selection dropdown simpleReferenceDropdown '
+
+        if(attrs.class)
+            out << attrs.class
+
+        out << '"'
+
+        if (attrs.style) {
+            out << "style=\"${attrs.style}\" "
+        }
+
+        if (attrs.id) {
+            out << "id=\"${attrs.id}\" "
+        }
+        out << "/>"
+
+        out << "<input type=\"hidden\" value=\"${attrs.value ?: ''}\" name=\"${attrs.name}\" data-domain=\"${attrs.baseClass}\" "
+
+        if ((attrs.value != null) && (attrs.value instanceof String && attrs.value.length() > 0)) {
+            def o = genericOIDService.resolveOID2(attrs.value)
+            out << "data-displayValue=\"${o.toString()}\" "
+        }
+
+        if (attrs.elastic) {
+            out << "data-elastic=\"${attrs.elastic}\""
+        }
+
+/*        if (attrs.require) {
+            out << "data-require=\"true\" "
+        }*/
+
+        if (attrs.filter1) {
+            out << "data-filter1=\"${attrs.filter1}\" "
+        }
+        out << "/>"
+        out << '<i class="remove icon"></i>'
+        out << '<i class="dropdown icon"></i>'
+        out << '<div class="default text">Search for...</div>'
+        out << '<div class="menu"></div>'
+        out << '</div>'
+
     }
 
     def xEditableManyToOne = { attrs, body ->
@@ -376,19 +469,32 @@ class SemanticInplaceTagLib {
 
             def oid = attrs.owner.id != null ? "${owner.class.name}:${owner.id}" : ''
             def id = attrs.id ?: "${oid ?: owner.class.name}:${attrs.field}"
-            def update_link = createLink(controller: 'ajaxSupport', action: 'genericSetRel')
+            def update_link = createLink(controller: 'ajaxSupport', action: 'genericSetRel', params: [curationOverride: params.curationOverride])
 
-            def follow_link = null;
+            String data_link = createLink(
+                    controller:'ajaxJson',
+                    action: 'lookup',
+                    params: [baseClass: attrs.baseClass,
+                            q: '',
+                            filter1: attrs.filter1,
+                            preparForEditable: 'true']
+            ).encodeAsHTML()
+
+            String default_empty = "Edit"
+            String emptyText = attrs.emptytext ? " data-emptytext=\"${attrs.emptytext}\"" : " data-emptytext=\"${default_empty}\""
+
+            def follow_link = null
 
             if (viewable && owner != null && owner[attrs.field] != null) {
-                def field_class = "${ClassUtils.deproxy(owner[attrs.field]).class.name}"
+                String urlWithClassAndID = null
+                if(!(owner[attrs.field] instanceof org.gokb.cred.KBComponent))
+                    urlWithClassAndID = "${ClassUtils.deproxy(owner[attrs.field]).class.name}" + ':' + owner[attrs.field].id
 
-                follow_link = createLink(controller: 'resource', action: 'show')
-                follow_link = follow_link + '/' + field_class + ':' + owner[attrs.field].id;
+                follow_link = createLink(controller: 'resource', action: 'show', id: urlWithClassAndID ?: owner[attrs.field].uuid)
             }
 
             if (viewable && editable) {
-                out << "<a href=\"#\" data-domain=\"${attrs.baseClass}\" id=\"${id}\" class=\"xEditableManyToOneS2\" "
+                out << "<a href=\"#\" data-domain=\"${attrs.baseClass}\" id=\"${id}\" class=\"xEditableManyToOne\" "
 
                 if ((attrs.filter1 != null) && (attrs.filter1.length() > 0)) {
                     out << "data-filter1=\"${attrs.filter1}\" "
@@ -397,26 +503,42 @@ class SemanticInplaceTagLib {
                 if (owner?.id != null)
                     out << "data-pk=\"${oid}\" "
 
-                out << "data-type=\"select2\" data-name=\"${attrs.field}\" data-url=\"${update_link}\" >"
-                out << body()
-                out << "</a>";
+                if (attrs.required) {
+                    out << " data-required=\"${attrs.required}\" "
+                }
+
+                if ((attrs.value != null) && (attrs.value instanceof String && attrs.value.length() > 0)) {
+                    def o = genericOIDService.resolveOID2(attrs.value)
+                    out << "data-value=\"${o.id.toString()}\" "
+                }
+
+                out << "data-type=\"select\" data-name=\"${attrs.field}\" data-source=\"${data_link}\" data-url=\"${update_link}\" ${emptyText}>"
+                if (body) {
+                    out << body()
+                } else {
+                    String content = (attrs.owner?."${attrs.field}" ? renderObjectValue(attrs.owner."${attrs.field}") : "")
+                    if(content){
+                        out << content
+                    }else {
+                        out << ""
+                    }
+                }
+                out << "</a>"
             }
 
-            if (follow_link) {
-                out << ' &nbsp; <a href="' + follow_link + '" title="Jump to resource"><i class="fas fa-eye"></i></a>'
+          if (follow_link) {
+                out << ' &nbsp; <a href="' + follow_link + '" title="Jump to resource"><i class="ui share square icon"></i></a>'
             }
         } else {
             if (body) {
                 out << body()
             } else {
                 String content = (attrs.owner?."${attrs.field}" ? renderObjectValue(attrs.owner."${attrs.field}") : "")
-                out << "<span class='readonly${content ? '' : ' editable-empty'}' title='Read Only' >"
                 if(content){
                     out << g.link(content, controller: 'resource', action: 'show', id: attrs.owner."${attrs.field}".uuid)
                 }else {
                     out << "Empty"
                 }
-                out << "</span>"
             }
         }
     }

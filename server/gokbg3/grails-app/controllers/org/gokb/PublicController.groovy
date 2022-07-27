@@ -3,6 +3,7 @@ package org.gokb
 import de.wekb.helper.RCConstants
 import de.wekb.helper.RDStore
 import grails.core.GrailsApplication
+import grails.plugin.springsecurity.SpringSecurityUtils
 import grails.plugins.mail.MailService
 import org.gokb.cred.*
 import org.hibernate.ScrollMode
@@ -91,7 +92,7 @@ class PublicController {
     log.debug("PublicController::index ${params}");
     def result = [:]
 
-    def mutableParams = new HashMap(params)
+    /*def mutableParams = new HashMap(params)
 
     if (mutableParams.newMax) {
       session.setAttribute("newMax", mutableParams.newMax)
@@ -131,7 +132,16 @@ class PublicController {
     }
 
     result =  ESSearchService.search(mutableParams)
+*/
+    def searchResult = [:]
 
+    params.qbe = 'g:publicPackages'
+    searchResult = searchService.search(null, searchResult, params, response.format)
+
+    result = searchResult.result
+
+    //result.s_action = actionName
+    //result.s_controller = controllerName
 
     def query_params = [forbiddenStatus : RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED)]
 
@@ -150,13 +160,12 @@ class PublicController {
         result.countComponent."${component.toLowerCase()}" = KBComponent.executeQuery(fetch_all.toString(), query_params, [readOnly: true])[0]
       }
 
-
     }
 
-    params.max = mutableParams.max
+   /* params.max = mutableParams.max
     params.offset = mutableParams.offset
     params.remove('newMax')
-    params.remove('search')
+    params.remove('search')*/
 
     result
   }
@@ -185,6 +194,7 @@ class PublicController {
       def out = response.outputStream
 
       exportService.exportOriginalKBART(out, pkg)
+      return
 
     }
     catch ( Exception e ) {
@@ -223,6 +233,7 @@ class PublicController {
       }
       out.flush()
       out.close()
+      return
 
     }
     catch ( Exception e ) {

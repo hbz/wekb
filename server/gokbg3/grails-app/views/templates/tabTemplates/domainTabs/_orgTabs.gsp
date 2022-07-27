@@ -24,46 +24,20 @@
     <g:render template="/templates/tabTemplates/variantNamesTab" model="${[d: d, showActions: true]}"/>
 
     <semui:tabsItemContent tab="platforms">
-
-        <g:if test="${controllerName == 'public'}">
-            <g:link class="display-inline" controller="public" action="search"
-                    params="[qbe: 'g:platforms', refOid: d.getLogEntityId(), inline: true, qp_provider_id: d.id, hide: ['qp_provider', 'qp_provider_id']]"
-                    id="">Packages on this Platform</g:link>
-        </g:if>
-        <g:else>
-            <g:link class="display-inline" controller="search" action="index"
-                    params="[qbe: 'g:platforms', refOid: d.getLogEntityId(), inline: true, qp_provider_id: d.id, hide: ['qp_provider', 'qp_provider_id']]"
+            <g:link class="display-inline" controller="search" action="inlineSearch"
+                    params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:platforms', refOid: d.getLogEntityId(), inline: true, qp_provider_id: d.id, hide: ['qp_provider', 'qp_provider_id']]"
                     id="">Titles published</g:link>
-        </g:else>
     </semui:tabsItemContent>
     <semui:tabsItemContent tab="titles">
-
-        <g:if test="${controllerName == 'public'}">
-            <g:link class="display-inline" controller="public" action="search"
-                    params="[qbe: 'g:tipps', refOid: d.getLogEntityId(), inline: true, qp_provider_id: d.id, hide: ['qp_provider', 'qp_provider_id']]"
-                    id="">Packages on this Platform</g:link>
-        </g:if>
-        <g:else>
-            <g:link class="display-inline" controller="search" action="index"
-                    params="[qbe: 'g:tipps', refOid: d.getLogEntityId(), inline: true, qp_provider_id: d.id, hide: ['qp_provider', 'qp_provider_id']]"
+            <g:link class="display-inline" controller="search" action="inlineSearch"
+                    params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:tipps', refOid: d.getLogEntityId(), inline: true, qp_provider_id: d.id, hide: ['qp_provider', 'qp_provider_id']]"
                     id="">Titles published</g:link>
-        </g:else>
-
     </semui:tabsItemContent>
 
     <semui:tabsItemContent tab="packages">
-
-        <g:if test="${controllerName == 'public'}">
-            <g:link class="display-inline" controller="public" action="search"
-                    params="[qbe: 'g:packages', refOid: d.getLogEntityId(), inline: true, qp_provider_id: d.id, hide: ['qp_provider', 'qp_provider_id']]"
+            <g:link class="display-inline" controller="search" action="inlineSearch"
+                    params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:packages', refOid: d.getLogEntityId(), inline: true, qp_provider_id: d.id, hide: ['qp_provider', 'qp_provider_id']]"
                     id="">Packages on this Platform</g:link>
-        </g:if>
-        <g:else>
-            <g:link class="display-inline" controller="search" action="index"
-                    params="[qbe: 'g:packages', refOid: d.getLogEntityId(), inline: true, qp_provider_id: d.id, hide: ['qp_provider', 'qp_provider_id']]"
-                    id="">Packages on this Platform</g:link>
-        </g:else>
-
     </semui:tabsItemContent>
 
 </g:if>

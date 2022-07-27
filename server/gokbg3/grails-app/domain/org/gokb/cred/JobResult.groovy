@@ -2,6 +2,8 @@ package org.gokb.cred
 
 import grails.converters.JSON
 
+import javax.persistence.Transient
+
 class JobResult {
 
   public static final String STATUS_OK        = 'OK'
@@ -75,5 +77,10 @@ class JobResult {
     }
 
     return kbComponent
+  }
+
+  @Transient
+  public String getDomainName() {
+    return "Job Info"
   }
 }

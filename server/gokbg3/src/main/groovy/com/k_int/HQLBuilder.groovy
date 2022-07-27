@@ -1,6 +1,7 @@
 package com.k_int
 
 import de.wekb.helper.RCConstants
+import de.wekb.helper.RDStore
 import groovy.util.logging.*
 import org.gokb.cred.*;
 import grails.util.GrailsClassUtils
@@ -60,8 +61,14 @@ public class HQLBuilder {
     // Step 1 : Walk through all the properties defined in the template and build a list of criteria
     def criteria = []
     qbetemplate.qbeConfig.qbeForm.each { query_prop_def ->
-      if ( ( params[query_prop_def.qparam] != null ) && ( params[query_prop_def.qparam].length() > 0 ) ) {
+      if ( ( params[query_prop_def.qparam] != null ) && ( params[query_prop_def.qparam] instanceof String && params[query_prop_def.qparam].length() > 0 ) ) {
         criteria.add([defn:query_prop_def, value:params[query_prop_def.qparam]]);
+      }
+      if ( ( params[query_prop_def.qparam] != null ) && ( params[query_prop_def.qparam] instanceof ArrayList && params[query_prop_def.qparam].size() > 0 ) ) {
+        params[query_prop_def.qparam].each {
+          if( ( it != null ) )
+          criteria.add([defn:query_prop_def, value:it])
+        }
       }
     }
 
@@ -103,7 +110,7 @@ public class HQLBuilder {
 
     def baseclass = target_class.getClazz()
     criteria.each { crit ->
-      // log.debug("Processing crit: ${crit}");
+      log.debug("Processing crit: ${crit}");
       processProperty(hql_builder_context,crit,baseclass)
       // List props = crit.def..split("\\.")
     }
@@ -292,7 +299,9 @@ public class HQLBuilder {
       case 'eq':
         hql_builder_context.query_clauses.add("${crit.defn.contextTree.negate?'not ':''}${scoped_property} = :${crit.defn.qparam}");
         if ( crit.defn.type=='lookup' ) {
-          hql_builder_context.bindvars[crit.defn.qparam] = hql_builder_context.genericOIDService.resolveOID2(crit.value)
+          def value = hql_builder_context.genericOIDService.resolveOID2(crit.value)
+          value = (crit.defn.propType == 'Boolean') ? (value == RDStore.YN_YES ? true : false) : value
+          hql_builder_context.bindvars[crit.defn.qparam] = value
         }
         else {
           switch ( crit.defn.contextTree.type ) {
@@ -310,7 +319,7 @@ public class HQLBuilder {
         break;
 
       case 'ilike':
-        hql_builder_context.query_clauses.add("${crit.defn.contextTree.negate?'not ':''}lower(${scoped_property}) like :${crit.defn.qparam}");
+        hql_builder_context.query_clauses.add("${crit.defn.contextTree.negate?'not ':''} lower(${scoped_property}) like :${crit.defn.qparam}");
         def base_value = crit.value.toLowerCase().trim()
         if ( crit.defn.contextTree.normalise == true ) {
           base_value = org.gokb.GOKbTextUtils.norm2(base_value)
@@ -333,10 +342,20 @@ public class HQLBuilder {
 
       case 'exists':
         if ( crit.defn.type=='lookup') {
-          def value = hql_builder_context.genericOIDService.resolveOID2(crit.value)
-          if(value && value.class.getSimpleName() == 'RefdataValue') {
-            hql_builder_context.query_clauses.add("${crit.defn.contextTree.negate ? 'not ' : ''} exists (select ${crit.defn.qparam} from ${scoped_property} as ${crit.defn.qparam} where ${crit.defn.qparam} = :${crit.defn.qparam} ) ");
-            hql_builder_context.bindvars[crit.defn.qparam] = value
+
+          if(crit.defn.baseClass == 'org.gokb.cred.RefdataValue') {
+            def value = hql_builder_context.genericOIDService.resolveOID2(crit.value)
+            if(value && value.class.getSimpleName() == 'RefdataValue') {
+              hql_builder_context.query_clauses.add("${crit.defn.contextTree.negate ? 'not ' : ''} exists (select ${crit.defn.qparam} from ${scoped_property} as ${crit.defn.qparam} where ${crit.defn.qparam} = :${crit.defn.qparam} ) ");
+              hql_builder_context.bindvars[crit.defn.qparam] = value
+            }
+          }
+          if(crit.defn.baseClass == 'org.gokb.cred.CuratoryGroup') {
+            def value = CuratoryGroup.get(crit.value)
+            if(value) {
+              hql_builder_context.query_clauses.add("${crit.defn.contextTree.negate ? 'not ' : ''} exists (select ${crit.defn.qparam} from CuratoryGroup as ${crit.defn.qparam} where ${crit.defn.qparam} = ${scoped_property} and ${crit.defn.qparam} = :${crit.defn.qparam} ) ");
+              hql_builder_context.bindvars[crit.defn.qparam] = value
+            }
           }
         }
         break;

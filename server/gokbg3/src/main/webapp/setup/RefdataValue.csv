@@ -5,6 +5,12 @@ Activity.Status;Complete;Complete;Complete
 Activity.Type;TitleTransfer;TitleTransfer;TitleTransfer
 AllocatedReviewGroup.Status;Claimed;Claimed;Claimed
 AllocatedReviewGroup.Status;In Progress;In Progress;In Progress
+AutoUpdate.Status;Successful;Successful;Successful
+AutoUpdate.Status;Failed;Failed;Failed
+AutoUpdate.Status;Warning;Warning;Warning
+AutoUpdate.Type;New Title;New Title;New Title
+AutoUpdate.Type;Changed Title;Changed Title;Changed Title
+AutoUpdate.Type;Removed Title;Removed Title;Removed Title
 Combo.Status;Active;Active;Active
 Combo.Status;Deleted;Deleted;Deleted
 Combo.Status;Expired;Expired;Expired
@@ -29,15 +35,6 @@ Combo.Type;Platform.HostedTipps;Platform.HostedTipps;Platform.HostedTipps
 Combo.Type;Platform.HostedTitles;Platform.HostedTitles;Platform.HostedTitles
 Combo.Type;Platform.Provider;Platform.Provider;Platform.Provider
 Combo.Type;Source.CuratoryGroups;Source.CuratoryGroups;Source.CuratoryGroups
-Combo.Type;TitleInstance.AbsorbedBy;TitleInstance.AbsorbedBy;TitleInstance.AbsorbedBy
-Combo.Type;TitleInstance.Issuer;TitleInstance.Issuer;TitleInstance.Issuer
-Combo.Type;TitleInstance.MergedWith;TitleInstance.MergedWith;TitleInstance.MergedWith
-Combo.Type;TitleInstance.Publisher;TitleInstance.Publisher;TitleInstance.Publisher
-Combo.Type;TitleInstance.RenamedTo;TitleInstance.RenamedTo;TitleInstance.RenamedTo
-Combo.Type;TitleInstance.SplitFrom;TitleInstance.SplitFrom;TitleInstance.SplitFrom
-Combo.Type;TitleInstance.Tipls;TitleInstance.Tipls;TitleInstance.Tipls
-Combo.Type;TitleInstance.Tipps;TitleInstance.Tipps;TitleInstance.Tipps
-Combo.Type;TitleInstance.TranslatedFrom;TitleInstance.TranslatedFrom;TitleInstance.TranslatedFrom
 Combo.Type;TitleInstancePackagePlatform.DerivedFrom;TitleInstancePackagePlatform.DerivedFrom;TitleInstancePackagePlatform.DerivedFrom
 Combo.Type;TitleInstancePackagePlatform.MasterTipp;TitleInstancePackagePlatform.MasterTipp;TitleInstancePackagePlatform.MasterTipp
 Contact.Content.Type;E-Mail;E-Mail;E-Mail
@@ -323,6 +320,7 @@ Job.Type;AutoUpdatePackagesJob;AutoUpdatePackagesJob;AutoUpdatePackagesJob
 Job.Type;ManuellUpdatePackageJob;ManuellUpdatePackageJob;ManuellUpdatePackageJob
 Job.Type;BootstrapIdentifierCleanup;BootstrapIdentifierCleanup;BootstrapIdentifierCleanup
 Job.Type;CleanupDeletedComponents;CleanupDeletedComponents;CleanupDeletedComponents
+Job.Type;CleanupRemovedComponents;CleanupRemovedComponents;CleanupRemovedComponents
 Job.Type;CleanupRejectedComponents;CleanupRejectedComponents;CleanupRejectedComponents
 Job.Type;DeleteTIWithoutHistory;DeleteTIWithoutHistory;DeleteTIWithoutHistory
 Job.Type;EnrichmentService;EnrichmentService;EnrichmentService
@@ -525,46 +523,6 @@ Tipp.StatusReason;Xfer Out;Xfer Out;Xfer Out
 TIPPCoverageStatement.CoverageDepth;Abstracts;Abstracts;Abstracts
 TIPPCoverageStatement.CoverageDepth;Fulltext;Fulltext;Fulltext
 TIPPCoverageStatement.CoverageDepth;Selected Articles;Selected Articles;Selected Articles
-TitleInstance.ContinuingSeries;No;No;No
-TitleInstance.ContinuingSeries;Unknown;Unknown;Unknown
-TitleInstance.ContinuingSeries;Yes;Yes;Yes
-TitleInstance.Medium;A & I Database;A & I Database;A & I Database
-TitleInstance.Medium;Article;Article;Article
-TitleInstance.Medium;Audio;Audio;Audio
-TitleInstance.Medium;Biography;Biography;Biography
-TitleInstance.Medium;Book;Book;Book
-TitleInstance.Medium;Cartography;Cartography;Cartography
-TitleInstance.Medium;Database;Database;Database
-TitleInstance.Medium;Dataset;Dataset;Dataset
-TitleInstance.Medium;Film;Film;Film
-TitleInstance.Medium;Image;Image;Image
-TitleInstance.Medium;Journal;Journal;Journal
-TitleInstance.Medium;Legal Text;Legal Text;Legal Text
-TitleInstance.Medium;Market Data;Market Data;Market Data
-TitleInstance.Medium;Miscellaneous;Miscellaneous;Miscellaneous
-TitleInstance.Medium;Other;Other;Other
-TitleInstance.Medium;Published Score;Published Score;Published Score
-TitleInstance.Medium;Software;Software;Software
-TitleInstance.Medium;Standards;Standards;Standards
-TitleInstance.Medium;Statistics;Statistics;Statistics
-TitleInstance.OAStatus;Full OA;Full OA;Full OA
-TitleInstance.OAStatus;Hybrid OA;Hybrid OA;Hybrid OA
-TitleInstance.OAStatus;No OA;No OA;No OA
-TitleInstance.OAStatus;Unknown;Unknown;Unknown
-TitleInstance.PureOA;No;No;No
-TitleInstance.PureOA;Unknown;Unknown;Unknown
-TitleInstance.PureOA;Yes;Yes;Yes
-TitleInstance.ReasonRetired;Ceased;Ceased;Ceased
-TitleInstance.ReasonRetired;Paused;Paused;Paused
-TitleInstance.Rel;Absorbed;Absorbed;Absorbed
-TitleInstance.Rel;In Series;In Series;In Series
-TitleInstance.Rel;Merged;Merged;Merged
-TitleInstance.Rel;Renamed;Renamed;Renamed
-TitleInstance.Rel;Split;Split;Split
-TitleInstance.Rel;Supplement;Supplement;Supplement
-TitleInstance.Rel;Transferred;Transferred;Transferred
-TitleInstance.Rel;Translated;Translated;Translated
-TitleInstance.Rel;Unknown;Unknown;Unknown
 TitleInstancePackagePlatform.AccessType;Free;Free;Free
 TitleInstancePackagePlatform.AccessType;Paid;Paid;Paid
 TitleInstancePackagePlatform.CoverageDepth;Abstracts;Abstracts;Abstracts

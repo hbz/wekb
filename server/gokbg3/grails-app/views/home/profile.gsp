@@ -1,49 +1,81 @@
+<%@ page import="de.wekb.helper.RCConstants" %>
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta name="layout" content="sb-admin"/>
-    <title><g:message code="gokb.appname" default="we:kb"/>: My Profile</title>
-  </head>
-  <body>  
-  <g:if test="${flash.message}">
-    <br/>
-    <div class="well message" role="status" style="font-size: medium;color: green;">${flash.message}</div>
-  </g:if>
-  <h1 class="page-header">My Profile</h1>
-  <div id="mainarea" class="panel panel-default">
+<head>
+    <meta name="layout" content="public_semui"/>
+    <title><g:message code="gokb.appname" default="we:kb"/>: My Profile & Preferences</title>
+</head>
 
-      <div class="panel-heading">
-        <h3 class="panel-title">
-          My Details
-        </h3>
-      </div>
+<body>
+<semui:flashMessage data="${flash}"/>
 
-      <div class="panel-body" >
-        <g:render template="/apptemplates/mainTemplates/user" model="${[d: user]}"></g:render>
-      </div>
+<h1 class="ui header">My Profile & Preferences</h1>
 
-      <div class="panel-heading">
-        <h3 class="panel-title">
-          Change Password
-        </h3>
-      </div>
+<div class="ui two column grid">
 
-      <div class="panel-body" >
-	      <g:form action="changePass">
-		      <dl class="dl-horizontal">
-		        <dt class="dt-label">Original Password :</dt>
-		        <dd><input class="form-control" name="origpass" type="password"/>
-		        <dt class="dt-label">New Password :</dt>
-		        <dd><input class="form-control" name="newpass" type="password"/>
-		        <dt class="dt-label">Repeat New Password :</dt>
-		        <dd><input class="form-control" name="repeatpass" type="password"/>
-		        <dt></dt><dd><button type="submit" class="btn btn-sm">Change Password</button></dd>
-		      </dl>
-		      <g:if test='${flash.message}'>
-		        <div class='well'>${flash.message}</div>
-		      </g:if>
-	      </g:form>
-      </div>
-  </div>
+    <div class="column wide eight">
+        <semui:card text="My Details" class="fluid">
+            <div class="content wekb-inline-lists">
+                <g:render template="/templates/domains/user" model="${[d: user]}"></g:render>
+            </div>
+        </semui:card>
+
+        <semui:card text="My Preferences" class="fluid">
+            <div class="content wekb-inline-lists">
+                %{-- <dl>
+                     <dt class="control-label">Show Info Icon :</dt>
+                     <dd>
+                         <semui:xEditableRefData owner="${user}" field="showInfoIcon"
+                                                 config="${RCConstants.YN}"/>
+                     </dd>
+                 </dl>
+                 <dl>
+                     <dt class="control-label">Show Quick View :</dt>
+                     <dd>
+                         <semui:xEditableRefData owner="${user}" field="showQuickView" config="${RCConstants.YN}"/>
+                     </dd>
+                 </dl>--}%
+                <dl>
+                    <dt class="control-label">Default Page Size :</dt>
+                    <dd><semui:xEditable owner="${user}" field="defaultPageSize"/></dd>
+                </dl>
+                %{-- <dl>
+                     <dt class="control-label">Send Alert Emails :</dt>
+                     <dd><semui:xEditableRefData owner="${user}" field="send_alert_emails"
+                                                 config="${RCConstants.YN}"/></dd>
+                 </dl>--}%
+            </div>
+        </semui:card>
+
+    </div>
+
+    <div class="column wide eight">
+
+        <semui:card text="Change Password" class="fluid">
+            <div class="content wekb-inline-lists">
+                <g:form action="changePass" class="ui form">
+                    <dl>
+                        <dt class="dt-label">Original Password :</dt>
+                        <dd><input  name="origpass" type="password"/></dd>
+                    </dl>
+                    <dl>
+                        <dt class="dt-label">New Password :</dt>
+                        <dd><input  name="newpass" type="password"/></dd>
+                    </dl>
+                    <dl>
+                        <dt class="dt-label">Repeat New Password :</dt>
+                        <dd><input  name="repeatpass" type="password"/></dd>
+                    </dl>
+
+                    <button type="submit" class="ui black button">Change Password</button>
+                </g:form>
+            </div>
+        </semui:card>
+
+
+    </div>
+
+</div>
+
 </body>
 </html>

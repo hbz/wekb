@@ -48,4 +48,8 @@ class WekbTagLib {
         asset.script(map, body())
     }
 
+    def javascript = {final attrs ->
+        out << asset.javascript(attrs).toString().replace(' type="text/javascript" ', ' data-type="external" ')
+    }
+
 }

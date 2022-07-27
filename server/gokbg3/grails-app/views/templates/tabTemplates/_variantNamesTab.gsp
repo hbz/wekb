@@ -42,30 +42,30 @@
 
             <semui:modal id="variantnamesModal" title="Add Variant Name">
 
-              <g:form controller="ajaxSupport" action="addToCollection"
-                      class="form-inline">
+              <g:form controller="ajaxSupport" action="addToCollection" class="ui form">
                 <input type="hidden" name="__context"
                        value="${d.class.name}:${d.id}" />
                 <input type="hidden" name="__newObjectClass"
                        value="org.gokb.cred.KBComponentVariantName" />
                 <input type="hidden" name="__recip" value="owner" />
                 <input type="hidden" name="fragment" value="variantNames" />
-                <dt class="control-label">Variant Name</dt>
-                <dd>
-                  <input type="text" class="form-control select-m" name="variantName" />
-                </dd>
-                <dt class="control-label">Locale</dt>
-                <dd>
-                  <gokb:simpleReferenceTypedown class="form-control" name="locale"
+                  <div class="field">
+                              <label>Variant Name</label>
+
+                    <input type="text" name="variantName" />
+                  </div>
+                  <div class="field">
+                              <label>Locale</label>
+                  <semui:simpleReferenceDropdown  name="locale"
                                                 baseClass="org.gokb.cred.RefdataValue"
                                                 filter1="${RCConstants.KBCOMPONENT_VARIANTNAME_LOCAL}" />
-                </dd>
-                <dt class="control-label">Variant Type</dt>
-                <dd>
-                  <gokb:simpleReferenceTypedown class="form-control" name="variantType"
+                  </div>
+                  <div class="field">
+                                <label>Variant Type</label>
+                  <semui:simpleReferenceDropdown  name="variantType"
                                                 baseClass="org.gokb.cred.RefdataValue"
                                                 filter1="${RCConstants.KBCOMPONENT_VARIANTNAME_VARIANT_TYPE}" />
-                </dd>
+                  </div>
               </g:form>
             </semui:modal>
         </g:if>

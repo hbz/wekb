@@ -3,6 +3,7 @@ package org.gokb
 import com.k_int.ConcurrencyManagerService.Job
 import com.k_int.ESSearchService
 import de.wekb.helper.RCConstants
+import de.wekb.helper.RDStore
 import gokbg3.DateFormatService
 import grails.converters.JSON
 import grails.gorm.DetachedCriteria
@@ -22,91 +23,6 @@ class CleanupService {
   def ESWrapperService
   def grailsApplication
   DateFormatService dateFormatService
-
-  def tidyMissnamedPublishers () {
-
-    try {
-
-      log.debug("Tidy the missnamed publishers")
-      def matches = Org.executeQuery('from Org as o where o.name LIKE :pattern', [pattern: '%::{Org:%}'])
-      final def toDelete = []
-
-      for (Org original : matches) {
-
-        Org.withNewTransaction {
-          String name = original.name
-          log.debug("Considering ${name}")
-
-          // Strip the formatting noise.
-          String idStr = name.replaceAll(/.*\:\:\{Org\:(\d+)\}/, '$1')
-          Long theId = (idStr.isLong() ? idStr.toLong() : null )
-
-          if (theId) {
-            if (theId != original.id) {
-
-              Org newTarget = Org.read(theId)
-
-              log.debug("Move the publisher entries to ${newTarget}")
-
-              // Unsaved components can't have combo relations
-              final RefdataValue type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, Org.getComboTypeValueFor(TitleInstance, "publisher"))
-              final String direction = Org.isComboReverseFor(TitleInstance, 'publisher') ? 'from' : 'to'
-              final String opp_dir = direction == 'to' ? 'from' : 'to'
-              String hql_query = "from Combo where type=:type and ${direction}Component=:original"
-
-              def hql_params = ['type': type, 'original': original]
-              def allCombos = Combo.executeQuery(hql_query,hql_params)
-
-              // In most cases we don't want to update the target of the combo, but instead reinstate the previous entry and completely remove this
-              // entry.
-              for (Combo c : allCombos) {
-                // Lets see if there is a combo already existing that points to the intended target that was mistakenly replace during ingest.
-                Date start = c.startDate.clearTime()
-
-                // Query for the combo that was replaced.
-                hql_query = "from Combo where type=:type and ${opp_dir}Component=:linkComp and ${direction}Component=:newTarget and endDate >= :dayStart AND endDate < :nextDay"
-                hql_params = ['type': type, 'linkComp': c."${opp_dir}Component", 'newTarget': newTarget, 'dayStart': start, 'nextDay': (start + 1)]
-                def toReinstate = Combo.executeQuery(hql_query,hql_params)
-
-                if (toReinstate) {
-                  // Just reinstate the first.
-                  toReinstate[0].endDate = null
-                  toReinstate[0].save( failOnError:true )
-
-                  // This combo should be removed by the expunge process later on.
-      //            c.delete( flush: true, failOnError:true )
-                } else {
-                  // This combo didn't replace an existing one but still points to the wrong component.
-                  c."${direction}Component" = newTarget
-                  c.save(  flush: true, failOnError:true )
-                }
-              }
-
-              // Remove the duplicate publisher.
-              toDelete << original.id
-
-            } else {
-              // Publisher was a brand new one. Just rename the publisher.
-              log.debug("Correct component with incorrect title. Leave the relationship in place but rename the org.")
-              String theName = name.replaceAll(/(.*)\:\:\{Org\:\d+\}/, '$1')
-
-              // Strange things happening when attempting to rename "original" reload from the id.
-              Org rnm = Org.get(original.id)
-              rnm.name = theName
-              rnm.save( flush: true, failOnError:true )
-            }
-          } else {
-            log.debug("'${name}' does not contain an identifier, so we are ignoring this match." )
-          }
-        }
-      }
-
-      expungeByIds(toDelete)
-
-    } catch (Throwable t) {
-      log.error("Error tidying duplicated (missnamed) orgs. ${t}")
-    }
-  }
 
   private def expungeByIds ( ids, Job j = null ) {
 
@@ -151,47 +67,31 @@ class CleanupService {
         log.error("problem",t);
         j?.message("Problem expunging component with id ${component_id}".toString())
       }
-      finally {
-        try {
-          esclient.close()
-        }
-        catch ( Exception e ) {
-          log.error("Problem by Close ES Client",e)
-        }
-      }
+
     }
+
+    try {
+      esclient.close()
+    }
+    catch (Exception e) {
+      log.error("Problem by Close ES Client", e)
+    }
+
     j?.message("Finished deleting ${idx} components.")
     return result
   }
 
 
   @Transactional
-  def expungeDeletedComponents(Job j = null) {
+  def expungeRemovedComponents(Job j = null) {
 
-    log.debug("Process delete candidates");
+    log.debug("Process remove candidates");
 
-    def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
+    def status_removed = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Removed')
 
-    def delete_candidates = KBComponent.executeQuery('select kbc.id from KBComponent as kbc where kbc.status=:deletedStatus and kbc.duplicateOf IS NULL',[deletedStatus: status_deleted])
+    def removed_candidates = KBComponent.executeQuery('select kbc.id from KBComponent as kbc where kbc.status=:removedStatus and kbc.duplicateOf IS NULL',[removedStatus: status_removed])
 
-    def result = expungeByIds(delete_candidates, j)
-
-    log.debug("Done")
-    j.endTime = new Date()
-
-    return result
-  }
-
-  @Transactional
-  def expungeRejectedComponents(Job j = null) {
-
-    log.debug("Process rejected candidates");
-
-    def status_rejected = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Rejected')
-
-    def delete_candidates = KBComponent.executeQuery('select kbc.id from KBComponent as kbc where kbc.status=:rejectedStatus',[rejectedStatus: status_rejected])
-
-    def result = expungeByIds(delete_candidates, j)
+    def result = expungeByIds(removed_candidates, j)
 
     log.debug("Done")
     j.endTime = new Date()
@@ -442,26 +342,6 @@ class CleanupService {
           log.debug("Could not get KBComponent for ${tcs}!")
         }
       }
-
-      def titleDates = TitleInstance.executeQuery("from TitleInstance where publishedTo < publishedFrom",[readOnly: true])
-
-      log.debug("Found ${titleDates.size()} offending publishing dates")
-      j.message("Found ${titleDates.size()} offending publishing dates".toString())
-
-      titleDates.each { tcs ->
-        if (tcs){
-          log.debug("Adding RR to title ${tcs}")
-          def new_rr = ReviewRequest.raise(
-            tcs,
-            "Please review the publishing dates.",
-            "Found an end date earlier than the start date!."
-          ).save(flush:true)
-          log.debug("Created RR: ${new_rr}")
-        }
-        else {
-          log.debug("Could not get KBComponent for ${tcs}!")
-        }
-      }
     }
     log.debug("Done");
     j.endTime = new Date()
@@ -560,7 +440,7 @@ class CleanupService {
     idx_record.uuid = deletedKBComponent.uuid
     idx_record.name = deletedKBComponent.name
     idx_record.componentType = deletedKBComponent.componentType
-    idx_record.status = deletedKBComponent.status
+    idx_record.status = deletedKBComponent.status.value
     idx_record.dateCreated = deletedKBComponent.dateCreated ? dateFormatService.formatIsoTimestamp(deletedKBComponent.dateCreated) : null
     idx_record.lastUpdated = deletedKBComponent.lastUpdated ? dateFormatService.formatIsoTimestamp(deletedKBComponent.lastUpdated) : null
     idx_record.oldDateCreated = deletedKBComponent.oldDateCreated ? dateFormatService.formatIsoTimestamp(deletedKBComponent.oldDateCreated) : null
@@ -588,5 +468,41 @@ class CleanupService {
       return false
     }
     return true
+  }
+
+  @Transactional
+  def cleanupTippIdentifersWithSameNamespace(Job j = null) {
+    log.debug("Cleanup Tipp Identifers with same namespace")
+
+    List<IdentifierNamespace> identifierNamespaces = IdentifierNamespace.findAllByTargetType(RDStore.IDENTIFIER_NAMESPACE_TARGET_TYPE_TIPP)
+
+    String countQuery = "SELECT count(tipp.id) FROM TitleInstancePackagePlatform AS tipp WHERE " +
+            "tipp.id in (select ident.tipp.id FROM Identifier AS ident WHERE ident.namespace.id = :namespace group by ident.tipp having count(ident.tipp) > 1)"
+
+    String idQuery = "SELECT tipp.id FROM TitleInstancePackagePlatform AS tipp WHERE " +
+            "tipp.id in (select ident.tipp.id FROM Identifier AS ident WHERE ident.namespace.id = :namespace group by ident.tipp having count(ident.tipp) > 1)"
+
+
+    Integer count = 0
+    identifierNamespaces.each {IdentifierNamespace identifierNamespace ->
+       Integer tippCount = TitleInstancePackagePlatform.executeQuery(countQuery, [namespace: identifierNamespace.id])[0]
+        count = count + tippCount
+
+      List<Long> tippIds = TitleInstancePackagePlatform.executeQuery(idQuery, [namespace: identifierNamespace.id])
+
+      if(tippIds.size() > 0) {
+        tippIds.each {Long tippId ->
+          println(Identifier.executeQuery("select id from Identifier where tipp.id = :tipp and namespace.id = :namespace order by lastUpdated", [tipp: tippId, namespace: identifierNamespace.id]))
+        }
+
+      }
+      log.debug("${identifierNamespace.value}")
+      log.debug("${count.toString()}")
+      log.debug("${tippCount.toString()}")
+    }
+
+  log.debug("cleanupTippIdentifersWithSameNamespace: count ${count}")
+
+   // j.endTime = new Date();
   }
 }

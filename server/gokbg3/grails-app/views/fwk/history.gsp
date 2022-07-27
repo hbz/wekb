@@ -3,7 +3,7 @@
 	<h3 class="modal-title">Recent History for <i><b>${name}</b></i></h3>
 </div>
 <div class="modal-body">
-    <table class="table table-striped table-bordered">
+  <table class="ui selectable striped sortable celled table">
     <thead>
       <tr>
         <th>Event ID</th>

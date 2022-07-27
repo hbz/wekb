@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="layout" content="sb-admin" />
+<meta name="layout" content="public_semui" />
 <title><g:message code="gokb.appname" default="we:kb"/>: Retire TIPPs</title>
 </head>
 <body>
@@ -15,7 +15,7 @@
                         <div class="col-sm-6">
                           <div class="panel-body">
 				<h3>Retire TIPP records and set their access end date</h3>
-				<table class="table table-striped table-bordered no-select-all">
+							  <table class="ui selectable striped sortable celled table">
 					<thead>
 						<tr>
 							<th></th>
@@ -53,7 +53,7 @@
 					<dt>Set access end date:</dt>
 					<dd>
 						<div class="input-group" style="width:45%">
-							<select class="form-control" id="endDateSelect" name="endDateSelect">
+							<select  id="endDateSelect" name="endDateSelect">
                                                           <option value="none" selected>None</option>
                                                           <option value="now">Today</option>
                                                           <option value="select">Selected Date</option>
@@ -65,7 +65,7 @@
 						</div>
 
                                                 <div class="select-date" style="margin-top:20px" hidden>
-                                                  <input class="form-control" style="width:200px;display:inline" name="selectedDate" type="date"></input>
+                                                  <input  style="width:200px;display:inline" name="selectedDate" type="date"></input>
                                                 </div>
 					</dd>
 				</dl>

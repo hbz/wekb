@@ -1,13 +1,10 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
-%{--<g:set var="editable"
-       value="${d.isEditable() && ((request.curator != null ? request.curator.size() > 0 ? true : false : true) || (params.curationOverride == 'true' && request.user.isAdmin()))}"/>--}%
-</dl>
 <dl>
     <dt class="control-label">
         Title
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="name"/>
+        <semui:xEditable owner="${d}" field="name"  required="true"/>
     </dd>
 </dl>
 <dl>
@@ -15,10 +12,18 @@
         Package
     </dt>
     <dd>
-        <g:link controller="resource" action="show"
-                id="${d.pkg?.class?.name + ':' + d.pkg?.id}">
-            ${(d.pkg?.name) ?: 'Empty'}
-        </g:link>
+        <g:if test="${controllerName == 'create'}">
+            <semui:xEditableManyToOne owner="${d}" field="pkg" baseClass="org.gokb.cred.Package" required="true"/>
+        </g:if>
+        <g:else>
+            <g:if test="${d.pkg}">
+                <g:link controller="resource" action="show"
+                        id="${d.pkg.uuid}">
+                    ${(d.pkg.name) ?: 'Empty'}
+                </g:link>
+            </g:if>
+            <g:else>Empty</g:else>
+        </g:else>
     </dd>
 </dl>
 <dl>
@@ -26,17 +31,16 @@
         Platform
     </dt>
     <dd>
-        <g:if test="${controllerName != 'public'}">
-            <g:link controller="resource" action="show"
-                    id="${d.hostPlatform?.class?.name + ':' + d.hostPlatform?.id}">
-                ${(d.hostPlatform?.name) ?: 'Empty'}
-            </g:link>
+        <g:if test="${controllerName == 'create'}">
+            <semui:xEditableManyToOne owner="${d}" field="hostPlatform" baseClass="org.gokb.cred.Platform"
+                                      required="true"/>
         </g:if>
         <g:else>
             <g:if test="${d.hostPlatform}">
                 <g:link controller="resource" action="show"
                         id="${d.hostPlatform.uuid}">${d.hostPlatform.name}</g:link>
             </g:if>
+            <g:else>Empty</g:else>
         </g:else>
     </dd>
 </dl>
@@ -45,12 +49,7 @@
         Host Platform URL
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="url"/>
-        <g:if test="${d.url}">
-            &nbsp;<a aria-label="${d.url}" href="${d.url.startsWith('http') ? d.url : 'http://' + d.url}"
-                     target="new"><i class="fas fa-external-link-alt"></i></a>
-        </g:if>
-
+        <semui:xEditable owner="${d}" field="url" validation="url" outGoingLink="true" required="true"/>
     </dd>
 </dl>
 <dl>
@@ -175,17 +174,20 @@
         Status
     </dt>
     <dd>
-        <semui:xEditableRefData owner="${d}" field="status"
-                                config="${RCConstants.KBCOMPONENT_STATUS}"/>
+        <sec:ifAnyGranted roles="ROLE_SUPERUSER">
+            <semui:xEditableRefData owner="${d}" field="status" config="${RCConstants.KBCOMPONENT_STATUS}"/>
+        </sec:ifAnyGranted>
+        <sec:ifNotGranted roles="ROLE_SUPERUSER">
+            ${d.status?.value ?: 'Not Set'}
+        </sec:ifNotGranted>
     </dd>
-
 </dl>
 <dl>
     <dt class="control-label">
         Last Changed
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="lastChangedExternal" type='date'/>
+        <semui:xEditable owner="${d}" field="lastChangedExternal" type="date"/>
     </dd>
 
 </dl>

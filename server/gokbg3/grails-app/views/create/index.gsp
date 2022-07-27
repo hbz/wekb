@@ -1,65 +1,82 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="layout" content="sb-admin" />
-<title><g:message code="gokb.appname" default="we:kb"/>: Create New ${displayobj?.getNiceName() ?: 'Component'}</title>
+    <meta name="layout" content="public_semui"/>
+    <title><g:message code="gokb.appname"
+                      default="we:kb"/>: Create New ${displayobj?.getNiceName() ?: 'Component'}</title>
 </head>
+
 <body>
-  <h1 class="page-header">
-          Create New ${displayobj?.getNiceName() ?: 'Component'}
+
+<div id="msg" class="ui hidden error message">
+</div>
+
+<h1 class="ui header">
+    Create new ${displayobj?.getNiceName() ?: 'Component'}
 
     <g:if test="${displayobj instanceof org.gokb.cred.Package}">
-      <g:link controller="create" action="packageBatch" class="btn btn-default pull-right btn-sm">Upload Packages</g:link>
+        <div class="ui right floated buttons">
+            <g:link controller="create" action="packageBatch" class="ui black button">Upload Packages</g:link>
+        </div>
     </g:if>
-  </h1>
-  <div id="mainarea" class="panel panel-default">
-    <div class="panel-body">
-      <g:if test="${displaytemplate != null}">
-        <g:if test="${displaytemplate.type=='staticgsp'}">
-          <g:if test="${displaytemplate.noCreate}">
-            <div id="content">
-              <div style="padding:20px">
-                <span class="alert alert-danger" style="font-weight:bold;">Components of this type cannot be created in a standalone context.</span>
-              </div>
-            </div>
-          </g:if>
-          <g:else>
-            <g:form name="formCreateProcess" controller="create" action="process" params="[cls:params.tmpl]">
-              <semui:flashMessage data="${flash}"/>
-                <g:render template="/apptemplates/mainTemplates/${displaytemplate.rendername}"
-                          model="${[d: displayobj, rd: refdata_properties, dtype: displayobjclassname_short]}"/>
-                <button id="save-btn" class="btn btn-default pull-right btn-sm">Create and Edit &gt;&gt;</button>
-            </g:form>
-          </g:else>
+</h1>
+
+<div class="ui segment">
+    <div class="content wekb-inline-lists">
+        <g:if test="${displaytemplate != null}">
+            <!-- Using display template ${displaytemplate.rendername} -->
+            <g:if test="${displaytemplate.type == 'staticgsp'}">
+                <g:if test="${displaytemplate.noCreate}">
+                    <div id="content">
+                        <div style="padding:20px">
+                            <span class="alert alert-danger"
+                                  style="font-weight:bold;">Components of this type cannot be created in a standalone context.</span>
+                        </div>
+                    </div>
+                </g:if>
+                <g:else>
+                    <div id="formCreateProcess">
+                        <g:render template="/templates/domains/${displaytemplate.rendername}"
+                                  model="${[d: displayobj, rd: refdata_properties, dtype: displayobjclassname_short]}"/>
+
+                        <button id="save-btn" class="ui black button" type="button">Create and Edit </button>
+                    </div>
+                </g:else>
+            </g:if>
         </g:if>
-      </g:if>
     </div>
-  </div>
+</div>
 
-  <asset:script type="text/javascript">
+<g:javascript>
+       $('#save-btn').click(function() {
 
-      $('#save-btn').click(function() {
-        $('span.editable').not('.editable-empty').each (function(){
-            var editable = $(this);
 
-            // Add the parameter to the params object.
-            var eVal = editable.editable('getValue', true);
+        $('.xEditableValue, .xEditableManyToOne').editable('submit', {
+               url: "${g.createLink(controller: 'create', action: 'process', params: [cls: params.tmpl])}",
+               ajaxOptions: {
+                   dataType: 'json' //assuming json response
+               },
+               success: function(data, config) {
+                   if(data && data.newobj && data.newobj.id) {
+                      window.location.href = "${g.createLink(controller: 'resource', action: 'show')}/"+data.newobj.uuid;
+                   } else if(data && data.errors){
+                       config.error.call(this, data.errors);
+                   }
+               },
+               error: function(errors) {
+                   var msg = '<i class="close icon"></i><div class="header">Creation failed</div><ul class="list">';
+                   if(errors && errors.responseText) {
+                        msg = errors.responseText;
+                   } else {
+                        $.each(errors, function(k, v) { msg += "<li>"+v+"</li><br>"; });
+                        msg += '</ul>';
+                   }
+                    $('#msg').removeClass('hidden').addClass('visible').html(msg).show();
+           }
+       });
+   });
 
-             $('form[name="formCreateProcess"]').append('<input type="hidden" name="'+editable.attr('data-name')+'" value="'+(eVal ? eVal : editable.text())+'" />');
-
-        });
-
-        $('a.editable').not('.editable-empty').each (function(){
-            var editable = $(this);
-
-            $('form[name="formCreateProcess"]').append('<input type="hidden" name="'+editable.attr('data-name')+'" value="'+editable.attr('target-id')+'" />');
-
-        })
-
-      	$('form[name="formCreateProcess"]').submit();
-      });
-
-      var hash = window.location.hash;
+/*      var hash = window.location.hash;
       hash && $('ul.nav a[href="' + hash + '"]').tab('show');
 
       $('.nav-tabs > li > a').not('.disabled').click(function (e) {
@@ -68,8 +85,8 @@
         console.log("scrollTop");
         window.location.hash = this.hash;
         $('html,body').scrollTop(scrollmem);
-      });
+      });*/
 
-    </asset:script>
+</g:javascript>
 </body>
 </html>

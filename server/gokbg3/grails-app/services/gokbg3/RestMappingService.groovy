@@ -20,6 +20,7 @@ class RestMappingService {
   def messageSource
   def messageService
   def dateFormatService
+  def accessService
 
   def defaultIgnore = [
     'bucketHash',
@@ -98,7 +99,7 @@ class RestMappingService {
 
       result.type = obj.niceName
 
-      def href = (obj.isEditable() && is_curator) || user?.isAdmin() ? base + obj.restPath + "/${obj.id}" : null
+      def href = (accessService.checkEditableObject(obj, null)) || user?.isAdmin() ? base + obj.restPath + "/${obj.id}" : null
       result._links.update = ['href': href]
       result._links.delete = ['href': href]
 
@@ -228,7 +229,7 @@ class RestMappingService {
             }
           }
 
-          if (include_list?.contains('publisher') && TitleInstance.isAssignableFrom(obj.class)) {
+          if (include_list?.contains('publisher')) {
             def pub = obj.currentPublisher
 
             result.publisher = pub ? getEmbeddedJson(pub, user) : null
@@ -814,66 +815,6 @@ class RestMappingService {
     obj
   }
 
-  @Transactional
-  public def updatePublisher(obj, new_pubs, boolean remove = true) {
-    def errors = []
-    def publisher_combos = obj.getCombosByPropertyName('publisher')
-    def combo_type = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'TitleInstance.Publisher')
-
-    String propName = obj.isComboReverse('publisher') ? 'fromComponent' : 'toComponent'
-    String tiPropName = obj.isComboReverse('publisher') ? 'toComponent' : 'fromComponent'
-    def pubs_to_add = []
-
-    if (new_pubs instanceof Collection) {
-      new_pubs.each { pub ->
-        if (!pubs_to_add.collect { it.id == pub}) {
-          pubs_to_add << Org.get(pub)
-        }
-        else {
-          log.warn("Duplicate for incoming publisher ${pub}!")
-        }
-      }
-    }
-    else {
-      if (!pubs_to_add.collect { it.id == new_pubs}) {
-        pubs_to_add << Org.get(new_pubs)
-      }
-      else {
-        log.warn("Duplicate for incoming publisher ${new_pubs}!")
-      }
-    }
-
-    pubs_to_add.each { publisher ->
-      boolean found = false
-      for ( int i=0; !found && i<publisher_combos.size(); i++) {
-        Combo pc = publisher_combos[i]
-        def idMatch = pc."${propName}".id == publisher.id
-
-        if (idMatch) {
-          found = true
-        }
-      }
-
-      if (!found) {
-        def new_combo = new Combo(fromComponent: obj, toComponent: publisher, type: combo_type).save(flush: true)
-      } else {
-        log.debug "Publisher ${publisher.name} already set against '${obj.name}'"
-      }
-    }
-
-    if (remove) {
-      Iterator items = publisher_combos.iterator();
-      Object element;
-      while (items.hasNext()) {
-        element = items.next();
-        if (!pubs_to_add.contains(element.toComponent) && !pubs_to_add.contains(element.fromComponent)) {
-          // Remove.
-          element.delete()
-        }
-      }
-    }
-    errors
-  }
 
   public def updateLongField(obj, prop, val) {
     log.debug("Set simple prop ${prop} = ${val} (as Long)");

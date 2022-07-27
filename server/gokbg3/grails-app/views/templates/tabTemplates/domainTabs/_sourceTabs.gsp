@@ -4,36 +4,35 @@
         <semui:tabsItemWithoutLink tab="packages" class="active">
             Packages
         </semui:tabsItemWithoutLink>
-        <semui:tabsItemWithoutLink tab="notes">
+      %{--  <semui:tabsItemWithoutLink tab="notes">
             Notes
-        </semui:tabsItemWithoutLink>
+        </semui:tabsItemWithoutLink>--}%
 
     </semui:tabs>
 
     <semui:tabsItemContent tab="packages" class="active">
-        <dl>
-            <dt class="control-label">
-                <gokb:annotatedLabel owner="${d}" property="packages">Packages</gokb:annotatedLabel>
-            </dt>
-            <dd>
-                <g:link class="display-inline" controller="search" action="index"
-                        params="[qbe: 'g:packages', qp_source_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_source', 'qp_source_id']]"
-                        id="">Packages on this Source</g:link>
-            </dd>
-        </dl>
+        <div class="content">
+
+                    <g:link class="display-inline" controller="search" action="inlineSearch"
+                            params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:packages', qp_source_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_source', 'qp_source_id']]"
+                            id="">Packages on this Source</g:link>
+
+        </div>
     </semui:tabsItemContent>
 
-    <semui:tabsItemContent tab="notes">
-        <dl>
-            <dt class="control-label">
-                <gokb:annotatedLabel owner="${d}" property="notes">Notes</gokb:annotatedLabel>
-            </dt>
-            <dd>
-                <g:link class="display-inline" controller="search" action="index"
-                        params="[qbe: 'g:notes', qp_ownerClassID: d.id, inline: true, qp_ownerClass: d.getClass().name]"
-                        id="">Notes on this Source</g:link>
-            </dd>
-        </dl>
-    </semui:tabsItemContent>
+   %{-- <semui:tabsItemContent tab="notes">
+        <div class="content wekb-inline-lists">
+            <dl>
+                <dt class="control-label">
+                    Notes
+                </dt>
+                <dd>
+                    <g:link class="display-inline" controller="search" action="inlineSearch"
+                            params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:notes', qp_ownerClassID: d.id, inline: true, qp_ownerClass: d.getClass().name]"
+                            id="">Notes on this Source</g:link>
+                </dd>
+            </dl>
+        </div>
+    </semui:tabsItemContent>--}%
 
 </g:if>

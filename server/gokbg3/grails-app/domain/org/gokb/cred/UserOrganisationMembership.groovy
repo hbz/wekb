@@ -47,6 +47,11 @@ class UserOrganisationMembership {
     return "UserOrganisation";
   }
 
+  @Transient
+  public String getDomainName() {
+    return "User Organisation Membership"
+  }
+
 
 
 }

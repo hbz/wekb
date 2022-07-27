@@ -16,14 +16,14 @@ class AutoUpdatePackagesJob {
   }
 
   def execute() {
-    if (grailsApplication.config.gokb.packageUpdate.enabled && grailsApplication.config.gokb.ygorUrl) {
+    if (grailsApplication.config.gokb.packageUpdate.enabled) {
       log.debug("Beginning scheduled auto update packages job.")
 
-      autoUpdatePackagesService.findPackageToUpdateAndUpdate()
+      autoUpdatePackagesService.findPackageToUpdateAndUpdate(true)
 
       log.info("auto update packages job completed.")
     } else {
-      log.debug("automatic package update is not enabled - set config.gokb.packageUpdate_enabled = true and config.gokb.ygorUrl in config to enable");
+      log.debug("automatic package update is not enabled - set config.gokb.packageUpdate_enabled = true");
     }
   }
 }

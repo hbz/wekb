@@ -94,6 +94,12 @@ class ComponentPrice {
     true
   }
 
+  def beforeValidate (){
+    log.debug("beforeValidate for ${this}")
+    this.startDate = new Date()
+
+  }
+
   def afterInsert (){
     log.debug("afterSave for ${this}")
     cascadingUpdateService.update(this, dateCreated)

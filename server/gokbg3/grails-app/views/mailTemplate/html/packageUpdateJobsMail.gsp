@@ -11,65 +11,61 @@
 <body>
 <g:set var="grailsApplication" bean="grailsApplication"/>
 
-<h1>Jobs with Error/Fail</h1>
+<h1>Auto Updates Fail</h1>
 
-<g:if test="${jobResultList}">
+<g:if test="${autoUpdates.size() > 0}">
     <table>
         <thead>
         <tr>
             <th></th>
-            <th>Process</th>
+            <th>Description</th>
             <th>Package</th>
             <th>Provider</th>
-            <th>Type</th>
-            <th>Status</th>
+            <th>Curatory Group</th>
             <th>Start Time</th>
             <th>End Time</th>
-            <th>Curatory Group</th>
+
         </tr>
         </thead>
-        <g:each in="${jobResultList}" var="job" status="i">
+        <g:each in="${autoUpdates}" var="autoUpdate" status="i">
             <tr>
                 <td>
                     ${i + 1}
                 </td>
                 <td>
-                    ${job.description}
+                    ${autoUpdate.description}
                     <br>
                     <br>
-                    <g:set var="linkToJob" value="${grailsApplication.config.serverUrl + "/resource/show/${job.class.name}:${job.id}"}"/>
-                    ${linkToJob}
+                    <g:set var="linkToAutoUpdateInfo" value="${grailsApplication.config.serverUrl + "/resource/show/${autoUpdate.uuid}"}"/>
+                    ${linkToAutoUpdateInfo}
                 </td>
                 <td>
-                    ${job.linkedItem}
+                    ${autoUpdate.pkg.name}
+                    <br>
+                    <br>
+                    <g:set var="linkToPkg" value="${grailsApplication.config.serverUrl + "/resource/show/${autoUpdate.pkg.uuid}"}"/>
+                    ${linkToPkg}
                 </td>
                 <td>
-                    <g:set var="pkg" value="${org.gokb.cred.Package.get(job.linkedItemId)}"/>
-                    <g:if test="${pkg}">
-                        ${pkg.provider?.name}
-                    </g:if>
+                    ${autoUpdate.pkg.provider?.name}
                 </td>
                 <td>
-                    ${job.type?.value}
+                     <g:each in="${autoUpdate.pkg.curatoryGroups}" var="cg">
+                        ${cg.name}
+                    </g:each>
                 </td>
                 <td>
-                    ${job.statusText}
+                    ${autoUpdate.startTime}
                 </td>
                 <td>
-                    ${job.startTime}
-                </td>
-                <td>
-                    ${job.endTime}
-                </td>
-                <td>
-                    ${job.curatoryGroup}
+                    ${autoUpdate.endTime}
                 </td>
             </tr>
         </g:each>
     </table>
 </g:if>
 <g:else>
-    No Jobs with Error/Fail found. All is right.
+    No Auto Update with Fail found. Everything is right.
 </g:else>
 <br>
 <br>

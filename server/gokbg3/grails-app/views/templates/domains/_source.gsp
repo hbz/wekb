@@ -4,7 +4,20 @@
         Source Name
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="name"/>
+        <semui:xEditable owner="${d}" field="name" required="true"/>
+    </dd>
+</dl>
+<dl>
+    <dt class="control-label">
+        Status
+    </dt>
+    <dd>
+        <sec:ifAnyGranted roles="ROLE_SUPERUSER">
+            <semui:xEditableRefData owner="${d}" field="status" config="${RCConstants.KBCOMPONENT_STATUS}"/>
+        </sec:ifAnyGranted>
+        <sec:ifNotGranted roles="ROLE_SUPERUSER">
+            ${d.status?.value ?: 'Not Set'}
+        </sec:ifNotGranted>
     </dd>
 </dl>
 <dl>
@@ -12,11 +25,7 @@
         URL
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="url"/>
-        <g:if test="${d.url}">
-            &nbsp;<a href="${d.url.startsWith('http') ? d.url : 'http://' + d.url}" target="new"><i
-                class="fas fa-external-link-alt"></i></a>
-        </g:if>
+        <semui:xEditable owner="${d}" field="url" validation="url" outGoingLink="true"/>
     </dd>
 </dl>
 <dl>
@@ -103,11 +112,7 @@
         Last Update Url
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="lastUpdateUrl" overwriteEditable="${false}"/>
-        <g:if test="${d.lastUpdateUrl}">
-            &nbsp;<a href="${d.lastUpdateUrl.startsWith('http') ? d.lastUpdateUrl : 'http://' + d.lastUpdateUrl}"
-                     target="new"><i class="fas fa-external-link-alt"></i></a>
-        </g:if>
+        <semui:xEditable owner="${d}" field="lastUpdateUrl" overwriteEditable="${false}" outGoingLink="true"/>
     </dd>
 </dl>
 <dl>

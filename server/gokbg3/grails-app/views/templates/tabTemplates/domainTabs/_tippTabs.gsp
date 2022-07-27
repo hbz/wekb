@@ -13,7 +13,7 @@
         <semui:tabsItemWithoutLink tab="subjectArea">
             Subject Area
         </semui:tabsItemWithoutLink>
-        <semui:tabsItemWithoutLink tab="ddcs">
+        <semui:tabsItemWithoutLink tab="ddcs" counts="${d.ddcs.size()}">
             DDCs
         </semui:tabsItemWithoutLink>
         <semui:tabsItemWithoutLink tab="series">
@@ -22,9 +22,15 @@
         <semui:tabsItemWithoutLink tab="openAccess">
             Open Access
         </semui:tabsItemWithoutLink>
-        <semui:tabsItemWithoutLink tab="prices">
+        <semui:tabsItemWithoutLink tab="prices" counts="${d.prices.size()}">
             Prices
         </semui:tabsItemWithoutLink>
+
+        <g:if test="${d.pkg.source && d.pkg.source.url}">
+            <semui:tabsItemWithoutLink tab="autoUpdatePackageInfos" counts="${d.autoUpdateTippInfos.size()}">
+                Auto Update Infos
+            </semui:tabsItemWithoutLink>
+        </g:if>
     </semui:tabs>
 
 
@@ -44,5 +50,19 @@
     <g:render template="/templates/tabTemplates/openAccessTab" model="${[d: d]}"/>
 
     <g:render template="/templates/tabTemplates/pricesTab" model="${[d: d]}"/>
+
+    <g:if test="${d.pkg.source && d.pkg.source.url}">
+        <semui:tabsItemContent tab="autoUpdatePackageInfos">
+
+            <div class="content">
+
+                <g:link class="display-inline" controller="search" action="inlineSearch"
+                        params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:autoUpdateTippInfos', qp_tipp_id: d.id, inline: true, refOid: d.getLogEntityId()]"
+                        id="">Auto Update Package Info on this Source</g:link>
+
+            </div>
+
+        </semui:tabsItemContent>
+    </g:if>
 
 </g:if>
