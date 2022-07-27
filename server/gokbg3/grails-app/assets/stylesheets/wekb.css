@@ -10,7 +10,7 @@
 
  */
 
-/* label what server */
+
 
 .editable-clear-x {
     background: none;
@@ -36,7 +36,7 @@
 .editable-clear-x:before {
     content: "\f2ed";
 }
-
+/* label what server */
 .wb-server-label {
     position: fixed;
     bottom: 0;
