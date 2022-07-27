@@ -426,21 +426,21 @@ class ESSearchService{
         labelQuery.should(QueryBuilders.termQuery('uuid', qpars.q).boost(10))
       }
 
-      labelQuery.should(QueryBuilders.matchQuery('name', qpars.label).boost(2))
-      labelQuery.should(QueryBuilders.matchQuery('altname', qpars.label).boost(1.3))
-      labelQuery.should(QueryBuilders.matchQuery('suggest', qpars.label).boost(0.6))
+      labelQuery.should(QueryBuilders.wildcardQuery('name', "*${qpars.label}*").boost(2))
+      labelQuery.should(QueryBuilders.wildcardQuery('altname', "*${qpars.label}*").boost(1.3))
+      labelQuery.should(QueryBuilders.wildcardQuery('suggest', "*${qpars.label}*").boost(0.6))
       labelQuery.minimumShouldMatch(1)
 
       query.must(labelQuery)
     }
     else if (qpars.name) {
-      query.must(QueryBuilders.matchQuery('name', qpars.name))
+      query.must(QueryBuilders.wildcardQuery('name', "*${qpars.name}*"))
     }
     else if (qpars.altname) {
-      query.must(QueryBuilders.matchQuery('altname', qpars.altname))
+      query.must(QueryBuilders.wildcardQuery('altname', "*${qpars.altname}*"))
     }
     else if (qpars.suggest) {
-      query.must(QueryBuilders.matchQuery('suggest', qpars.suggest).boost(0.6))
+      query.must(QueryBuilders.wildcardQuery('suggest', "*${qpars.suggest}*").boost(0.6))
     }
   }
 
@@ -512,13 +512,14 @@ class ESSearchService{
     }
     catch (java.lang.NumberFormatException nfe) {
     }
-
-    log.debug("processLinkedField: ${field} -> ${finalVal}")
+    if(finalVal instanceof String)
+        finalVal = finalVal.replaceAll('ampersand', '&')
+    println "processLinkedField: ${field} -> ${finalVal}"
 
     linkedFieldQuery.should(QueryBuilders.termQuery(field, finalVal))
-    linkedFieldQuery.should(QueryBuilders.termQuery("${field}Uuid".toString(), val))
+    linkedFieldQuery.should(QueryBuilders.termQuery("${field}Uuid".toString(), finalVal))
     //linkedFieldQuery.should(QueryBuilders.termQuery("${field}Name".toString(), val))
-    linkedFieldQuery.should(QueryBuilders.wildcardQuery("${field}Name".toString(), "*${val}*")) //check if it does not cause side effects! May be subject of further precision!
+    linkedFieldQuery.should(QueryBuilders.wildcardQuery("${field}Name".toString(), "*${finalVal}*")) //check if it does not cause side effects! May be subject of further precision!
     linkedFieldQuery.minimumShouldMatch(1)
 
     query.must(linkedFieldQuery)
@@ -727,7 +728,7 @@ class ESSearchService{
       processGenericFields(exactQuery, errors, params)
       if(params.name && ["ids","identifier","identifiers"].any { String identifierKey -> params.keySet().contains(identifierKey) }) {
         QueryBuilder nameIdentifierQuery = QueryBuilders.boolQuery()
-        nameIdentifierQuery.should(QueryBuilders.matchQuery('name', params.name))
+        nameIdentifierQuery.should(QueryBuilders.wildcardQuery('name', "*${params.name}*"))
         addIdentifierQuery(nameIdentifierQuery, errors, params, true)
         exactQuery.must(nameIdentifierQuery).boost(2)
       }
@@ -897,7 +898,7 @@ class ESSearchService{
         exactQuery.must(QueryBuilders.matchQuery(k, final_val))
       }
       else if (requestMapping.simpleMap?.containsKey(k)){
-        exactQuery.must(QueryBuilders.matchQuery(requestMapping.simpleMap[k], v))
+        exactQuery.must(QueryBuilders.matchQuery(requestMapping.simpleMap[k], v.replaceAll('ampersand', '&')))
       }
       else if (requestMapping.linked?.containsKey(k)){
         processLinkedField(exactQuery, requestMapping.linked[k], v)
