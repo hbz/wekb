@@ -25,7 +25,7 @@
 
 <body id="page-body" class="pushable">
     <wekb:serverlabel server="${currentServer}"/>
-    <div class="ui left vertical  inverted visible menu sidebar ${serverLabel}" id="toc">
+    <div class="ui left vertical inverted visible menu sidebar ${serverLabel}" id="toc">
         <g:link controller="public" action="index" class="header item">
             <img alt="Logo wekb" src="${resource(dir: 'images', file: 'logo.svg')}"/>
         </g:link>
@@ -109,6 +109,8 @@
                                         action="manageFTControl">Manage FT Control</g:link>
                                 <g:link class="item" controller="admin"
                                         action="packagesChanges">Packages Changes</g:link>
+                                <g:link class="item" controller="admin"
+                                        action="findPackagesNeedAutoUpdate">Packages needs Auto Updates</g:link>
                                 <g:link class="item" controller="admin"
                                         action="findPackagesWithTippDuplicates">Packages with Tipp Duplicates</g:link>
                                 <g:link class="item" controller="admin"
