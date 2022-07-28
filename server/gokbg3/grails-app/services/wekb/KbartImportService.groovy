@@ -728,7 +728,7 @@ class KbartImportService {
                     }
 
                     tipp.save()
-                    tipp.refresh()
+                    //tipp.refresh()
                 }
 
                 // KBART -> access_type -> accessType -> accessType
@@ -1131,7 +1131,7 @@ class KbartImportService {
                     }
 
                     tipp.save()
-                    tipp.refresh()
+                    //tipp.refresh()
                 }
 
                 // KBART -> access_type -> accessType
@@ -2030,7 +2030,7 @@ class KbartImportService {
                         ComponentPrice.executeUpdate("delete from ComponentPrice id = :id", [id: it])
                     }
 
-                    tipp.refresh()
+                    tipp = tipp.refresh()
                     cp = new ComponentPrice(
                             owner: this,
                             priceType: priceType,
