@@ -95,14 +95,9 @@
                 </div>
             </sec:ifAnyGranted>
             <sec:ifAnyGranted roles="ROLE_ADMIN">
-                <div class="item">
-                    <div class="header">Admin</div>
-                    <div class="ui inverted vertical menu">
                         <div class="item">
-                            <div class="title">
-                                <i class="dropdown icon"></i> Admin Views
-                            </div>
-                            <div class="content menu">
+                            <div class="header">Admin Views</div>
+                            <div class="menu">
                                 <g:link class="item" controller="user" action="search">User Management Console</g:link>
                                 <g:link class="item" controller="admin" action="jobs">Manage Jobs</g:link>
                                 <g:link class="item" controller="admin"
@@ -118,10 +113,8 @@
                             </div>
                         </div>
                         <div class="item">
-                            <div class="title">
-                                <i class="dropdown icon"></i> Admin Search
-                            </div>
-                            <div class="content menu">
+                            <div class="header"> Admin Search</div>
+                            <div class="menu">
                                 <g:link class="item" controller="search" action="componentSearch"
                                         params="[qbe: 'g:identifiers']">Identifiers</g:link>
                                 <g:link class="item" controller="search" action="componentSearch"
@@ -147,10 +140,9 @@
                             </div>
                         </div>
                         <div class="item">
-                            <div class="title">
-                                <i class="dropdown icon"></i> Admin Create
+                            <div class="header"> Admin Create
                             </div>
-                            <div class="content menu">
+                            <div class="menu">
                                 <g:link class="item" controller="create" action="index"
                                         params="[tmpl: 'org.gokb.cred.IdentifierNamespace']">Identifier Namespace</g:link>
                                 <g:link class="item" controller="create" action="index"
@@ -166,10 +158,8 @@
                             </div>
                         </div>
                         <div class="item">
-                            <div class="title">
-                                <i class="dropdown icon"></i> Admin Jobs
-                            </div>
-                            <div class="content menu">
+                            <div class="header"> Admin Jobs</div>
+                            <div class="menu">
                                 <g:link class="item" controller="admin" action="updateTextIndexes"
                                         onclick="return confirm('Are you sure?')">Update Free Text Indexes</g:link>
                                 %{--              <g:link class="item" controller="admin" action="resetTextIndexes" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Reset Free Text Indexes</g:link>--}%
@@ -193,8 +183,6 @@
                                         onclick="return confirm('Are you sure?')">Set Tipps without Url to deleted</g:link>
                             </div>
                         </div>
-                    </div>
-                </div>
 
                 <div class="item">
                     <div class="header">Infos</div>

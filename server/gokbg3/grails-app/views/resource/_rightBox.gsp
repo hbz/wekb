@@ -29,7 +29,7 @@
                                                            filter1="Current"/>
                         </div>
 
-                        <button type="submit" class="ui inverted button">Link</button>
+                        <button type="submit" class="ui black button">Link</button>
                     </g:form>
                 </div>
 
