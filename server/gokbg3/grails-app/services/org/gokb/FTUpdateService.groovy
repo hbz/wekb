@@ -545,7 +545,7 @@ class FTUpdateService {
           break
         }
         Object r = domain.get(r_id)
-        if(ESSearchService.indicesPerType.get(r.class.simpleName)) {
+        if(indicesPerType.get(r.class.simpleName)) {
           log.debug("${r.id} ${domain.name} -- (rects)${r.lastUpdated} > (from)${from}")
           def idx_record = recgen_closure(r)
           def es_index = indicesPerType.get(idx_record['componentType'])

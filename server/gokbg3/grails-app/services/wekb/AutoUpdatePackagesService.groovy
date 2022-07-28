@@ -67,7 +67,7 @@ class AutoUpdatePackagesService {
                 packageNeedsUpdate << p
             }
         }
-        log.debug("findPackageToUpdateAndUpdate: Package with Source and lastRun < currentDate (${packageNeedsUpdate.size()})")
+        log.info("findPackageToUpdateAndUpdate: Package with Source and lastRun < currentDate (${packageNeedsUpdate.size()})")
         if(packageNeedsUpdate.size() > 0){
                 packageNeedsUpdate.each { Package aPackage ->
                     startAutoPackageUpdate(aPackage, onlyRowsWithLastChanged)
@@ -418,7 +418,7 @@ class AutoUpdatePackagesService {
         if(pkg.status in [RDStore.KBC_STATUS_REMOVED, RDStore.KBC_STATUS_DELETED]){
             AutoUpdatePackageInfo autoUpdatePackageInfo = new AutoUpdatePackageInfo(pkg: pkg, startTime: startTime, endTime: new Date(), status: RDStore.AUTO_UPDATE_STATUS_SUCCESSFUL, description: "Package status is ${pkg.status.value}. Auto update for this package is not starting.", onlyRowsWithLastChanged: onlyRowsWithLastChanged).save()
         }else {
-            AutoUpdatePackageInfo autoUpdatePackageInfo = new AutoUpdatePackageInfo(pkg: pkg, startTime: startTime, status: RDStore.AUTO_UPDATE_STATUS_SUCCESSFUL, description: "Starting auto update package.", onlyRowsWithLastChanged: onlyRowsWithLastChanged).save()
+            AutoUpdatePackageInfo autoUpdatePackageInfo = new AutoUpdatePackageInfo(pkg: pkg, startTime: startTime, status: RDStore.AUTO_UPDATE_STATUS_SUCCESSFUL, description: "Starting auto update package.", onlyRowsWithLastChanged: onlyRowsWithLastChanged)
             try {
                 if (pkg.source) {
                     List<URL> updateUrls
@@ -455,15 +455,11 @@ class AutoUpdatePackagesService {
                         if (file) {
                             kbartRows = kbartProcess(file, lastUpdateURL, autoUpdatePackageInfo)
                         } else {
-                            AutoUpdatePackageInfo.withTransaction {
-                                AutoUpdatePackageInfo autoUpdatePackageFail = new AutoUpdatePackageInfo()
-                                autoUpdatePackageFail.description = "No KBART File found by URL: ${lastUpdateURL}!"
-                                autoUpdatePackageFail.status = RDStore.AUTO_UPDATE_STATUS_FAILED
-                                autoUpdatePackageFail.startTime = startTime
-                                autoUpdatePackageFail.endTime = new Date()
-                                autoUpdatePackageFail.pkg = pkg
-                                autoUpdatePackageFail.onlyRowsWithLastChanged = onlyRowsWithLastChanged
-                                autoUpdatePackageFail.save()
+                            AutoUpdatePackageInfo.withNewTransaction {
+                                autoUpdatePackageInfo.description = "No KBART File found by URL: ${lastUpdateURL}!"
+                                autoUpdatePackageInfo.status = RDStore.AUTO_UPDATE_STATUS_FAILED
+                                autoUpdatePackageInfo.endTime = new Date()
+                                autoUpdatePackageInfo.save()
                             }
                         }
 
@@ -497,14 +493,16 @@ class AutoUpdatePackagesService {
         int total = 0
         boolean addOnly = false //Thing about it where to set or to change
 
+        AutoUpdatePackageInfo.withNewTransaction {
+            autoUpdatePackageInfo.save()
+        }
+
         RefdataValue status_current = RDStore.KBC_STATUS_CURRENT
         RefdataValue status_deleted = RDStore.KBC_STATUS_DELETED
         RefdataValue status_retired = RDStore.KBC_STATUS_RETIRED
         RefdataValue status_expected = RDStore.KBC_STATUS_EXPECTED
 
-        List listStatus = []
-
-        listStatus = [status_current, status_expected, status_deleted, status_retired]
+        List listStatus = [status_current]
 
         Map headerOfKbart = kbartRows[0]
 
@@ -514,7 +512,7 @@ class AutoUpdatePackagesService {
 
         //Needed if kbart not wekb standard
         boolean setAllTippsNotInKbartToDeleted = true
-        listStatus = [status_current]
+
 
         if(kbartRows.size() > 0){
             if(headerOfKbart.containsKey("status")){
@@ -682,11 +680,28 @@ class AutoUpdatePackagesService {
             }
 
             if(tippDuplicates.size() > 0){
-                log.debug("remove tippDuplicates -> ${tippDuplicates.size()}: ${tippDuplicates}")
+                log.info("remove tippDuplicates -> ${tippDuplicates.size()}: ${tippDuplicates}")
 
                 tippDuplicates.each {
                     if(!(it in tippsFound)){
                         KBComponent.executeUpdate("update KBComponent set status = :removed where id = (:tippId)", [removed: RDStore.KBC_STATUS_REMOVED, tippId: it])
+
+                        AutoUpdateTippInfo.withTransaction {
+                            autoUpdatePackageInfo.refresh()
+                            TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.get(it)
+                            AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
+                                    description: "Remove Title '${tipp.name}' because is a duplicate in wekb!",
+                                    tipp: tipp,
+                                    startTime: new Date(),
+                                    endTime: new Date(),
+                                    status: RDStore.AUTO_UPDATE_STATUS_SUCCESSFUL,
+                                    type: RDStore.AUTO_UPDATE_TYPE_REMOVED_TITLE,
+                                    oldValue: tipp.status.value,
+                                    newValue: 'Removed',
+                                    tippProperty: 'status',
+                                    autoUpdatePackageInfo: autoUpdatePackageInfo
+                            ).save()
+                        }
                     }
                 }
 
@@ -714,6 +729,25 @@ class AutoUpdatePackagesService {
 
                 Integer tippsToDeleted = tippsIds ? KBComponent.executeUpdate("update KBComponent set status = :deleted where id in (:tippIds)", [deleted: status_deleted, tippIds: tippsIds]) : 0
 
+                tippsIds.each {
+                    AutoUpdateTippInfo.withTransaction {
+                        autoUpdatePackageInfo.refresh()
+                        TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.get(it)
+                        AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
+                                description: "Delete Title '${tipp.name}' because is not in KBART!",
+                                tipp: tipp,
+                                startTime: new Date(),
+                                endTime: new Date(),
+                                status: RDStore.AUTO_UPDATE_STATUS_SUCCESSFUL,
+                                type: RDStore.AUTO_UPDATE_TYPE_CHANGED_TITLE,
+                                oldValue: tipp.status.value,
+                                newValue: 'Deleted',
+                                tippProperty: 'status',
+                                autoUpdatePackageInfo: autoUpdatePackageInfo
+                        ).save()
+                    }
+                }
+
                 log.info("kbart is not wekb standard. set title to deleted. Found tipps: ${tippsIds.size()}, Set tipps to deleted: ${tippsToDeleted}")
             }
 
@@ -727,39 +761,80 @@ class AutoUpdatePackagesService {
 
             }
 
-            int existingTippsAfterImport = TitleInstancePackagePlatform.executeQuery(
+            int countExistingTippsAfterImport = TitleInstancePackagePlatform.executeQuery(
                     "select count(tipp.id) from TitleInstancePackagePlatform tipp, Combo combo where " +
                             "tipp.status in :status and " +
                             "combo.toComponent = tipp and " +
                             "combo.fromComponent = :package",
                     [package: pkg, status: listStatus])[0]
-          Package.withNewTransaction {
-              if (pkg.status != status_deleted) {
-                  pkg = pkg.refresh()
-                  pkg.lastUpdateComment = "Updated package with ${kbartRowsCount} Title. (Titles in we:kb previously: ${existing_tipp_ids.size()}, Titles in we:kb now: ${existingTippsAfterImport}, Removed Titles: ${removedTipps}, New Titles in we:kb: ${newTipps})"
-                  pkg.save()
-              }
 
-              if (pkg.source) {
 
-                  Source src = Source.get(pkg.source.id)
-                  src.lastRun = new Date()
-                  src.lastUpdateUrl = lastUpdateURL
-                  src.save()
-              }
+            if(countExistingTippsAfterImport > kbartRowsCount){
 
-              autoUpdatePackageInfo.refresh()
-              autoUpdatePackageInfo.countKbartRows = kbartRowsCount
-              autoUpdatePackageInfo.countChangedTipps = changedTipps
-              autoUpdatePackageInfo.countNewTipps = newTipps
-              autoUpdatePackageInfo.countRemovedTipps = removedTipps
-              autoUpdatePackageInfo.countInValidTipps = invalidTipps.size()
-              autoUpdatePackageInfo.countProcessedKbartRows = idx
-              autoUpdatePackageInfo.endTime = new Date()
-              autoUpdatePackageInfo.description = "Package Update: (KbartLines: ${kbartRowsCount}, " +
-                      "Processed Titles in this run: ${idx}, Titles in we:kb previously: ${existing_tipp_ids.size()}, Titles in we:kb now: ${existingTippsAfterImport}, Removed Titles: ${removedTipps}, New Titles in we:kb: ${newTipps}, Changed Titles in we:kb: ${changedTipps})"
-              //autoUpdatePackageInfo.save(failOnError:true)
-              autoUpdatePackageInfo.save()
+                List<Long> existingTippsAfterImport = TitleInstancePackagePlatform.executeQuery(
+                        "select tipp.id from TitleInstancePackagePlatform tipp, Combo combo where " +
+                                "tipp.status in :status and " +
+                                "combo.toComponent = tipp and " +
+                                "combo.fromComponent = :package",
+                        [package: pkg, status: listStatus])
+
+                List<Long> removeTippsFromWekb = existingTippsAfterImport - tippsFound
+
+                if(removeTippsFromWekb.size()){
+                    Integer tippsToRemoved = KBComponent.executeUpdate("update KBComponent set status = :removed where id in (:tippIds)", [removed: RDStore.KBC_STATUS_REMOVED, tippIds: removeTippsFromWekb])
+
+                    removeTippsFromWekb.each {
+                        AutoUpdateTippInfo.withTransaction {
+                            autoUpdatePackageInfo.refresh()
+                            TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.get(it)
+                            AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
+                                    description: "Remove Title '${tipp.name}' because is not in KBART!",
+                                    tipp: tipp,
+                                    startTime: new Date(),
+                                    endTime: new Date(),
+                                    status: RDStore.AUTO_UPDATE_STATUS_SUCCESSFUL,
+                                    type: RDStore.AUTO_UPDATE_TYPE_REMOVED_TITLE,
+                                    oldValue: tipp.status.value,
+                                    newValue: 'Removed',
+                                    tippProperty: 'status',
+                                    autoUpdatePackageInfo: autoUpdatePackageInfo
+                            ).save()
+                        }
+                    }
+
+                    log.info("Rows in KBART is not same with titles in wekb. RemoveTippsFromWekb: ${removeTippsFromWekb.size()}, Set tipps to removed: ${tippsToRemoved}")
+                }
+
+            }
+
+
+            AutoUpdatePackageInfo.withNewTransaction {
+                autoUpdatePackageInfo.refresh()
+                autoUpdatePackageInfo.countKbartRows = kbartRowsCount
+                autoUpdatePackageInfo.countChangedTipps = changedTipps
+                autoUpdatePackageInfo.countNewTipps = newTipps
+                autoUpdatePackageInfo.countRemovedTipps = removedTipps
+                autoUpdatePackageInfo.countInValidTipps = invalidTipps.size()
+                autoUpdatePackageInfo.countProcessedKbartRows = idx
+                autoUpdatePackageInfo.endTime = new Date()
+                autoUpdatePackageInfo.description = "Package Update: (KbartLines: ${kbartRowsCount}, " +
+                        "Processed Titles in this run: ${idx}, Titles in we:kb previously: ${existing_tipp_ids.size()}, Titles in we:kb now: ${countExistingTippsAfterImport}, Removed Titles: ${removedTipps}, New Titles in we:kb: ${newTipps}, Changed Titles in we:kb: ${changedTipps})"
+                //autoUpdatePackageInfo.save(failOnError:true)
+                autoUpdatePackageInfo.save()
+
+                Package aPackage = Package.get(autoUpdatePackageInfo.pkg.id)
+                if (aPackage.status != status_deleted) {
+                    aPackage.lastUpdateComment = "Updated package with ${kbartRowsCount} Title. (Titles in we:kb previously: ${existing_tipp_ids.size()}, Titles in we:kb now: ${countExistingTippsAfterImport}, Removed Titles: ${removedTipps}, New Titles in we:kb: ${newTipps})"
+                    aPackage.save()
+                }
+
+                if (aPackage.source) {
+
+                    Source src = Source.get(aPackage.source.id)
+                    src.lastRun = new Date()
+                    src.lastUpdateUrl = lastUpdateURL
+                    src.save()
+                }
           }
            /* log.debug("final flush");
             cleanupService.cleanUpGorm()*/
@@ -790,19 +865,14 @@ class AutoUpdatePackagesService {
         if(encoding != "UTF-8") {
             log.error("Encoding of file is wrong. File encoding is: ${encoding}")
             AutoUpdatePackageInfo.withNewTransaction {
-                AutoUpdatePackageInfo autoUpdatePackageFail = new AutoUpdatePackageInfo()
-                autoUpdatePackageFail.description = "Encoding of kbart file is wrong. File encoding was: ${encoding}. File from URL: ${lastUpdateURL}"
-                autoUpdatePackageFail.status = RDStore.AUTO_UPDATE_STATUS_FAILED
-                autoUpdatePackageFail.endTime = new Date()
-                autoUpdatePackageFail.startTime = autoUpdatePackageInfo.startTime
-                autoUpdatePackageFail.pkg = autoUpdatePackageInfo.pkg
-                autoUpdatePackageFail.save()
+                autoUpdatePackageInfo.description = "Encoding of kbart file is wrong. File encoding was: ${encoding}. File from URL: ${lastUpdateURL}"
+                autoUpdatePackageInfo.status = RDStore.AUTO_UPDATE_STATUS_FAILED
+                autoUpdatePackageInfo.endTime = new Date()
+                autoUpdatePackageInfo.save()
             }
 
         }else {
             List minimumKbartStandard = ['publication_title',
-                                         'print_identifier',
-                                         'online_identifier',
                                          'title_url',
                                          'title_id',
                                          'publication_type']
@@ -820,10 +890,8 @@ class AutoUpdatePackagesService {
                             countMinimumKbartStandard++
                             break
                         case "print_identifier": colMap.print_identifier = c
-                            countMinimumKbartStandard++
                             break
                         case "online_identifier": colMap.online_identifier = c
-                            countMinimumKbartStandard++
                             break
                         case "date_first_issue_online": colMap.date_first_issue_online = c
                             break
@@ -939,10 +1007,12 @@ class AutoUpdatePackagesService {
 
                 if (minimumKbartStandard.size() != countMinimumKbartStandard) {
                     log.info("KBART file has in header not the minimumKbartStandard: ${minimumKbartStandard}")
+                    AutoUpdatePackageInfo.withNewTransaction {
                         autoUpdatePackageInfo.description = "KBART file has in header not minimum of this headers: ${minimumKbartStandard.join(', ')}. File from URL: ${lastUpdateURL}"
                         autoUpdatePackageInfo.status = RDStore.AUTO_UPDATE_STATUS_FAILED
                         autoUpdatePackageInfo.endTime = new Date()
-                        autoUpdatePackageInfo.save(flush: true)
+                        autoUpdatePackageInfo.save()
+                    }
 
 
                 } else {

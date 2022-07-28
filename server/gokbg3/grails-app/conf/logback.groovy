@@ -63,6 +63,7 @@ else {
   logger('org.gokb', INFO)
   logger('gokbg3', INFO)
   logger('de.wekb', INFO)
+  logger('wekb', INFO)
   logger('com.k_int.HQLBuilder', INFO)
 
   //For Database Migration

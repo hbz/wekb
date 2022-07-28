@@ -226,7 +226,7 @@ class SemanticTagLib {
         if (attrs.showDeleteButton) {
 
             out << '<input type="submit" class="ui negative button" name="delete" value="' + msgDelete + '" onclick="'
-            out << "return confirm('${g.message(code:'default.button.delete.confirmDeletion.message')}')?"
+            out << "return confirm('Do you really want to delete this?')?"
             out << '$(\'#' + attrs.id + '\').find(\'#' + attrs.deleteFormID + '\').submit():null'
             out << '"/>'
         }
@@ -402,6 +402,18 @@ class SemanticTagLib {
         out << '</nav>'
         out << '</div><!--.pagination-->'
     }
+    Closure showOutGoingLink = { Map attrs ->
+        if (attrs.outGoingLink) {
+            String url = attrs.outGoingLink.startsWith('http') ? attrs.outGoingLink : ('http://' + attrs.outGoingLink)
+            if (url) {
+                out << '&nbsp;<a aria-label="'
+                out << attrs.text
+                out << '" href="'
+                out << url
+                out << '" target="_blank"><i class="external alternate icon"></i></a>'
+            }
+        }
+    }
 
     Closure sortableColumn = { Map attrs ->
         def writer = out
@@ -533,7 +545,7 @@ class SemanticTagLib {
         out << '<div class="ui bottom attached'+ (attrs.class ? (' ' + attrs.class) : '') +' tab segment"' +'" data-tab="' + attrs.tab + '">'
         out << body()
         out << '</div>'
-}
+    }
 
     private callLink(Map attrs, Object body) {
         TagOutput.captureTagOutput(tagLibraryLookup, 'g', 'link', attrs, body, OutputContextLookupHelper.lookupOutputContext())

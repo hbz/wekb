@@ -615,4 +615,25 @@ class AdminController {
 
   }
 
+  def findPackagesNeedAutoUpdate() {
+    log.debug("findPackagesWithTippDuplicates::${params}")
+    def result = [:]
+
+    List pkgs = []
+
+    Package.executeQuery(
+            "from Package p " +
+                    "where p.source is not null and " +
+                    "p.source.automaticUpdates = true " +
+                    "and (p.source.lastRun is null or p.source.lastRun < current_date) order by p.name").each { Package p ->
+      if (p.source.needsUpdate()) {
+        pkgs << p
+      }
+    }
+
+    result.pkgs = pkgs
+
+    result
+  }
+
 }

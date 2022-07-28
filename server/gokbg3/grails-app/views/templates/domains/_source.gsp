@@ -104,7 +104,7 @@
         Last Run
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" type="date" field="lastRun">${d.lastRun}</semui:xEditable>
+        <semui:xEditable owner="${d}" type="date" field="lastRun" overwriteEditable="false">${d.lastRun}</semui:xEditable>
     </dd>
 </dl>
 <dl>

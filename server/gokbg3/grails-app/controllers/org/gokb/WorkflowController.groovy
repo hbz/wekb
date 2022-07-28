@@ -524,7 +524,7 @@ class WorkflowController{
                 autoUpdatePackagesService.startAutoPackageUpdate(aPackage, !allTitles)
               })
 
-              flash.success = "The package update was started. This runs in the background. When the update has gone through, you will see this on the Auto Update Info tab."
+              flash.success = "The package update for Package '${pkgObj.name}' was started. This runs in the background. When the update has gone through, you will see this on the Auto Update Info of the package tab."
             }
 
           }
