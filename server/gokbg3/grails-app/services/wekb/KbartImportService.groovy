@@ -1019,6 +1019,7 @@ class KbartImportService {
                     log.error("TIPP creation failed!")
                 }else {
                     result.newTipp = true
+                    autoUpdatePackageInfo.refresh()
                     AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
                             description: "New Title '${tippMap.publication_title}'",
                             tipp: tipp,
@@ -1039,6 +1040,7 @@ class KbartImportService {
                     com.k_int.ClassUtils.setRefdataIfDifferent(tippMap.status, tipp, 'status', RCConstants.KBCOMPONENT_STATUS, false)
                     result.removedTipp = true
 
+                    autoUpdatePackageInfo.refresh()
                     AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
                             description: "Removed Title '${tippMap.publication_title}'",
                             tipp: tipp,
@@ -1046,6 +1048,10 @@ class KbartImportService {
                             endTime: new Date(),
                             status: RDStore.AUTO_UPDATE_STATUS_SUCCESSFUL,
                             type: RDStore.AUTO_UPDATE_TYPE_REMOVED_TITLE,
+                            kbartProperty: 'status',
+                            oldValue: tipp.status.value,
+                            newValue: 'Removed',
+                            tippProperty: 'status',
                             autoUpdatePackageInfo: autoUpdatePackageInfo
                     ).save()
                 }else {
@@ -1585,6 +1591,7 @@ class KbartImportService {
                 break
         }
         if(identifier && identifierChanged && !result.newTipp){
+            autoUpdatePackageInfo.refresh()
             AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
                     description: "Changes in Title '${tipp.name}'",
                     tipp: tipp,
@@ -1856,20 +1863,22 @@ class KbartImportService {
 
                 if (tippMap[kbartProperty] && tippMap[kbartProperty].toString().trim()) {
                     String oldValue = renderObjectValue(tipp[tippProperty])
+                    String newValue = tippMap[kbartProperty]
                     try {
-                        ldt = LocalDateTime.parse(tippMap[kbartProperty], datetimeformatter)
+                        if ( newValue.trim() ) {
+                            if (newValue.length() == 4) {
+                                ldt = LocalDate.parse(newValue + "-01-01", dateformatter).atStartOfDay()
+                            } else if (newValue.length() == 7) {
+                                ldt = LocalDate.parse(newValue + "-01", dateformatter).atStartOfDay()
+                            } else if (newValue.length() == 10) {
+                                ldt = LocalDate.parse(newValue, dateformatter).atStartOfDay()
+                            } else {
+                                ldt = LocalDateTime.parse(newValue, datetimeformatter)
+                            }
+                        }
                     }
                     catch (Exception e) {
-                        log.error("First parse date fail. Do next parse date: " + e.toString())
-                    }
-
-                    if (!ldt) {
-                        try {
-                            ldt = LocalDate.parse(tippMap[kbartProperty], dateformatter).atStartOfDay()
-                        }
-                        catch (Exception e) {
-                            log.error("Secound parse date fail: " + e.toString())
-                        }
+                        log.error("Parse date fail. Date to parse was -> ${newValue}:" + e.toString())
                     }
 
                     if (ldt) {
@@ -1941,6 +1950,7 @@ class KbartImportService {
     }
 
     void createAutoUpdateTippInfoByTippChange(TitleInstancePackagePlatform tipp, AutoUpdatePackageInfo autoUpdatePackageInfo, String kbartProperty, String tippProperty, String oldValue, String newValue){
+        autoUpdatePackageInfo.refresh()
         AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
                 description: "Changes in Title '${tipp.name}'",
                 tipp: tipp,
@@ -1957,6 +1967,7 @@ class KbartImportService {
     }
 
     void createAutoUpdateTippInfoByTippChangeFail(TitleInstancePackagePlatform tipp, AutoUpdatePackageInfo autoUpdatePackageInfo, String kbartProperty, String tippProperty, String oldValue, String newValue, String description){
+        autoUpdatePackageInfo.refresh()
         AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
                 description: description,
                 tipp: tipp,
@@ -2040,6 +2051,7 @@ class KbartImportService {
                     priceChanged = true
                 }
             }else {
+                autoUpdatePackageInfo.refresh()
                 AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
                         description: "The value '${newValue}' can not parse to a price",
                         tipp: tipp,
@@ -2056,6 +2068,7 @@ class KbartImportService {
             }
         }
         if(cp && priceChanged && !result.newTipp){
+            autoUpdatePackageInfo.refresh()
             AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
                     description: "Changes in Title '${tipp.name}'",
                     tipp: tipp,
@@ -2090,19 +2103,20 @@ class KbartImportService {
                 if (newValue && newValue.toString().trim()) {
                     String oldValue = renderObjectValue(tipp[tippProperty])
                     try {
-                        ldt = LocalDateTime.parse(newValue, datetimeformatter)
+                        if ( newValue ) {
+                            if (newValue.length() == 4) {
+                                ldt = LocalDate.parse(newValue + "-01-01", dateformatter).atStartOfDay()
+                            } else if (newValue.length() == 7) {
+                                ldt = LocalDate.parse(newValue + "-01", dateformatter).atStartOfDay()
+                            } else if (newValue.length() == 10) {
+                                ldt = LocalDate.parse(newValue, dateformatter).atStartOfDay()
+                            } else {
+                                ldt = LocalDateTime.parse(newValue, datetimeformatter)
+                            }
+                        }
                     }
                     catch (Exception e) {
-                        log.error("First parse date fail. Do next parse date: " + e.toString())
-                    }
-
-                    if (!ldt) {
-                        try {
-                            ldt = LocalDate.parse(newValue, dateformatter).atStartOfDay()
-                        }
-                        catch (Exception e) {
-                            log.error("Secound parse date fail: " + e.toString())
-                        }
+                        log.error("Parse date fail. Date to parse was -> ${newValue}:" + e.toString())
                     }
 
                     if (ldt) {

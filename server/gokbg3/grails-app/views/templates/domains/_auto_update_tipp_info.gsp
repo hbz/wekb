@@ -55,6 +55,33 @@
                          field="endTime" overwriteEditable="false"/>
     </dd>
 </dl>
+<dl>
+    <dt class="control-label">
+        KBART Field
+    </dt>
+    <dd>
+        <semui:xEditable owner="${d}"
+                         field="kbartProperty" overwriteEditable="false"/>
+    </dd>
+</dl>
+<dl>
+    <dt class="control-label">
+        Old Value
+    </dt>
+    <dd>
+        <semui:xEditable owner="${d}"
+                         field="oldValue" overwriteEditable="false"/>
+    </dd>
+</dl>
+<dl>
+    <dt class="control-label">
+        New value
+    </dt>
+    <dd>
+        <semui:xEditable owner="${d}"
+                         field="newValue" overwriteEditable="false"/>
+    </dd>
+</dl>
 
 
 
