@@ -25,7 +25,7 @@
 
 <body id="page-body" class="pushable">
     <wekb:serverlabel server="${currentServer}"/>
-    <div class="ui left vertical inverted visible menu sidebar ${serverLabel}" id="toc">
+    <div class="ui left vertical  inverted visible menu sidebar ${serverLabel}" id="toc">
         <g:link controller="public" action="index" class="header item">
             <img alt="Logo wekb" src="${resource(dir: 'images', file: 'logo.svg')}"/>
         </g:link>
@@ -97,86 +97,99 @@
             <sec:ifAnyGranted roles="ROLE_ADMIN">
                 <div class="item">
                     <div class="header">Admin</div>
-
-                    <div class="menu">
-                        <div class="ui dropdown item"><i class="dropdown icon"></i> Admin Views <div class="menu">
-                            <g:link class="item" controller="user" action="search">User Management Console</g:link>
-                            <g:link class="item" controller="admin" action="jobs">Manage Jobs</g:link>
-                            <g:link class="item" controller="admin" action="manageFTControl">Manage FT Control</g:link>
-                            <g:link class="item" controller="admin" action="packagesChanges">Packages Changes</g:link>
-                            <g:link class="item" controller="admin"
-                                    action="findPackagesWithTippDuplicates">Packages with Tipp Duplicates</g:link>
-                            <g:link class="item" controller="admin"
-                                    action="tippIdentifiersWithSameNameSpace">Title Identifiers with same Identifier Namespace</g:link>
+                    <div class="ui inverted accordion vertical menu">
+                        <div class="item">
+                            <div class="title">
+                                <i class="dropdown icon"></i> Admin Views
+                            </div>
+                            <div class="content menu">
+                                <g:link class="item" controller="user" action="search">User Management Console</g:link>
+                                <g:link class="item" controller="admin" action="jobs">Manage Jobs</g:link>
+                                <g:link class="item" controller="admin"
+                                        action="manageFTControl">Manage FT Control</g:link>
+                                <g:link class="item" controller="admin"
+                                        action="packagesChanges">Packages Changes</g:link>
+                                <g:link class="item" controller="admin"
+                                        action="findPackagesWithTippDuplicates">Packages with Tipp Duplicates</g:link>
+                                <g:link class="item" controller="admin"
+                                        action="tippIdentifiersWithSameNameSpace">Title Identifiers with same Identifier Namespace</g:link>
+                            </div>
                         </div>
+                        <div class="item">
+                            <div class="title">
+                                <i class="dropdown icon"></i> Admin Search
+                            </div>
+                            <div class="content menu">
+                                <g:link class="item" controller="search" action="componentSearch"
+                                        params="[qbe: 'g:identifiers']">Identifiers</g:link>
+                                <g:link class="item" controller="search" action="componentSearch"
+                                        params="[qbe: 'g:namespaces']">Identifier Namespaces</g:link>
+                                <g:link class="item" controller="search" action="componentSearch"
+                                        params="[qbe: 'g:jobResults']">Job Infos</g:link>
+                                <g:link class="item" controller="search" action="componentSearch"
+                                        params="[qbe: 'g:notes']">Notes</g:link>
+                                <g:link class="item" controller="search" action="componentSearch"
+                                        params="[qbe: 'g:refdataCategories']">Refdata Categories</g:link>
+                                <g:link class="item" controller="search" action="componentSearch"
+                                        params="[qbe: 'g:refdataValues']">Refdata Values</g:link>
+                                <g:link class="item" controller="search" action="componentSearch"
+                                        params="[qbe: 'g:reviewRequests']">Review Requests</g:link>
+                                <g:link class="item" controller="search" action="componentSearch"
+                                        params="[qbe: 'g:userOrganisation']">User Organisation</g:link>
+                                <g:link class="item" controller="search" action="componentSearch"
+                                        params="[qbe: 'g:users']">Users</g:link>
+                                <g:link class="item" controller="search" action="componentSearch"
+                                        params="[qbe: 'g:userJobs']">User Jobs</g:link>
+                                <g:link class="item" controller="search" action="componentSearch"
+                                        params="[qbe: 'g:userWatchedComponents']">User Watched Components</g:link>
+                            </div>
                         </div>
-
-
-                        <div class="ui dropdown item"><i class="dropdown icon"></i> Admin Search <div class="menu">
-                            <g:link class="item" controller="search" action="componentSearch"
-                                    params="[qbe: 'g:identifiers']">Identifiers</g:link>
-                            <g:link class="item" controller="search" action="componentSearch"
-                                    params="[qbe: 'g:namespaces']">Identifier Namespaces</g:link>
-                            <g:link class="item" controller="search" action="componentSearch"
-                                    params="[qbe: 'g:jobResults']">Job Infos</g:link>
-                            <g:link class="item" controller="search" action="componentSearch"
-                                    params="[qbe: 'g:notes']">Notes</g:link>
-                            <g:link class="item" controller="search" action="componentSearch"
-                                    params="[qbe: 'g:refdataCategories']">Refdata Categories</g:link>
-                            <g:link class="item" controller="search" action="componentSearch"
-                                    params="[qbe: 'g:refdataValues']">Refdata Values</g:link>
-                            <g:link class="item" controller="search" action="componentSearch"
-                                    params="[qbe: 'g:reviewRequests']">Review Requests</g:link>
-                            <g:link class="item" controller="search" action="componentSearch"
-                                    params="[qbe: 'g:userOrganisation']">User Organisation</g:link>
-                            <g:link class="item" controller="search" action="componentSearch"
-                                    params="[qbe: 'g:users']">Users</g:link>
-                            <g:link class="item" controller="search" action="componentSearch"
-                                    params="[qbe: 'g:userJobs']">User Jobs</g:link>
-                            <g:link class="item" controller="search" action="componentSearch"
-                                    params="[qbe: 'g:userWatchedComponents']">User Watched Components</g:link>
+                        <div class="item">
+                            <div class="title">
+                                <i class="dropdown icon"></i> Admin Create
+                            </div>
+                            <div class="content menu">
+                                <g:link class="item" controller="create" action="index"
+                                        params="[tmpl: 'org.gokb.cred.IdentifierNamespace']">Identifier Namespace</g:link>
+                                <g:link class="item" controller="create" action="index"
+                                        params="[tmpl: 'org.gokb.cred.RefdataCategory']">Refdata Category</g:link>
+                                <g:link class="item" controller="create" action="index"
+                                        params="[tmpl: 'org.gokb.cred.RefdataValue']">Refdata Value</g:link>
+                                <g:link class="item" controller="create" action="index"
+                                        params="[tmpl: 'org.gokb.cred.ReviewRequest']">Review Request</g:link>
+                                %{-- <g:link class="item" controller="create" action="index"
+                                         params="[tmpl: 'org.gokb.cred.User']">User</g:link>
+                                 <g:link class="item" controller="create" action="index"
+                                         params="[tmpl: 'org.gokb.cred.UserOrganisation']">User Organisation</g:link>--}%
+                            </div>
                         </div>
-                        </div>
-
-                        <div class="ui dropdown item"><i class="dropdown icon"></i> Admin Create <div class="menu">
-                            <g:link class="item" controller="create" action="index"
-                                    params="[tmpl: 'org.gokb.cred.IdentifierNamespace']">Identifier Namespace</g:link>
-                            <g:link class="item" controller="create" action="index"
-                                    params="[tmpl: 'org.gokb.cred.RefdataCategory']">Refdata Category</g:link>
-                            <g:link class="item" controller="create" action="index"
-                                    params="[tmpl: 'org.gokb.cred.RefdataValue']">Refdata Value</g:link>
-                            <g:link class="item" controller="create" action="index"
-                                    params="[tmpl: 'org.gokb.cred.ReviewRequest']">Review Request</g:link>
-                            %{-- <g:link class="item" controller="create" action="index"
-                                     params="[tmpl: 'org.gokb.cred.User']">User</g:link>
-                             <g:link class="item" controller="create" action="index"
-                                     params="[tmpl: 'org.gokb.cred.UserOrganisation']">User Organisation</g:link>--}%
-                        </div>
-                        </div>
-
-                        <div class="ui dropdown item"><i class="dropdown icon"></i> Admin Jobs <div class="menu">
-                            <g:link class="item" controller="admin" action="updateTextIndexes"
-                                    onclick="return confirm('Are you sure?')">Update Free Text Indexes</g:link>
-                            %{--              <g:link class="item" controller="admin" action="resetTextIndexes" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Reset Free Text Indexes</g:link>--}%
-                            <g:link class="item" controller="admin" action="recalculateStats"
-                                    onclick="return confirm('Are you sure?')">Recalculate Statistics</g:link>
-                            <g:link class="item" controller="admin" action="expungeRemovedComponents"
-                                    onclick="return confirm('Are you sure?')">Expunge Removed Component</g:link>
-                            <g:link class="item" controller="admin" action="cleanupPlatforms"
-                                    onclick="return confirm('Are you sure?')">Deprecate Platforms Without URLs</g:link>
-                            %{--<g:link class="item" controller="admin" action="reviewDatesOfTippCoverage"
-                                    onclick="return confirm('Are you sure?')">Add Reviews for wrong Tipp Coverage Dates</g:link>--}%
-                            <g:link class="item" controller="admin" action="ensureUuids"
-                                    onclick="return confirm('Are you sure?')">Ensure UUIDs</g:link>
-                            <g:link class="item" controller="admin" action="autoUpdatePackages"
-                                    onclick="return confirm('Are you sure?')">Auto Update All Packages (Last Changed)</g:link>
-                            <g:link class="item" controller="admin" action="autoUpdatePackagesAllTitles"
-                                    onclick="return confirm('Are you sure?')">Auto Update All Packages</g:link>
-                           %{-- <g:link class="item" controller="admin" action="cleanupTippIdentifersWithSameNamespace"
-                                    onclick="return confirm('Are you sure?')">Cleanup Tipp Identifers with same Namespace</g:link>--}%
-                            <g:link class="item" controller="admin" action="setTippsWithoutUrlToDeleted"
-                                    onclick="return confirm('Are you sure?')">Set Tipps without Url to deleted</g:link>
-                        </div>
+                        <div class="item">
+                            <div class="title">
+                                <i class="dropdown icon"></i> Admin Jobs
+                            </div>
+                            <div class="content menu">
+                                <g:link class="item" controller="admin" action="updateTextIndexes"
+                                        onclick="return confirm('Are you sure?')">Update Free Text Indexes</g:link>
+                                %{--              <g:link class="item" controller="admin" action="resetTextIndexes" onclick="return confirm('Are you sure?')"><i class="fa fa-angle-double-right fa-fw"></i> Reset Free Text Indexes</g:link>--}%
+                                <g:link class="item" controller="admin" action="recalculateStats"
+                                        onclick="return confirm('Are you sure?')">Recalculate Statistics</g:link>
+                                <g:link class="item" controller="admin" action="expungeRemovedComponents"
+                                        onclick="return confirm('Are you sure?')">Expunge Removed Component</g:link>
+                                <g:link class="item" controller="admin" action="cleanupPlatforms"
+                                        onclick="return confirm('Are you sure?')">Deprecate Platforms Without URLs</g:link>
+                                %{--<g:link class="item" controller="admin" action="reviewDatesOfTippCoverage"
+                                        onclick="return confirm('Are you sure?')">Add Reviews for wrong Tipp Coverage Dates</g:link>--}%
+                                <g:link class="item" controller="admin" action="ensureUuids"
+                                        onclick="return confirm('Are you sure?')">Ensure UUIDs</g:link>
+                                <g:link class="item" controller="admin" action="autoUpdatePackages"
+                                        onclick="return confirm('Are you sure?')">Auto Update All Packages (Last Changed)</g:link>
+                                <g:link class="item" controller="admin" action="autoUpdatePackagesAllTitles"
+                                        onclick="return confirm('Are you sure?')">Auto Update All Packages</g:link>
+                                %{-- <g:link class="item" controller="admin" action="cleanupTippIdentifersWithSameNamespace"
+                                         onclick="return confirm('Are you sure?')">Cleanup Tipp Identifers with same Namespace</g:link>--}%
+                                <g:link class="item" controller="admin" action="setTippsWithoutUrlToDeleted"
+                                        onclick="return confirm('Are you sure?')">Set Tipps without Url to deleted</g:link>
+                            </div>
                         </div>
                     </div>
                 </div>

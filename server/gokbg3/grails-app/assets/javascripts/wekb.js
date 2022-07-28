@@ -77,11 +77,11 @@ $(function () {
         '<div class="ui active inline loader"></div>';
     $('.xEditableValue').editable({
         validate: function(value) {
-/*            if ($(this).attr('data-format') && value) {
+            if ($(this).attr('data-format') && value) {
                 if(! (value.match(/^\d{4}-\d{1,2}-\d{1,2}$/)) ) {
                     return "Wrong format";
                 }
-            }*/
+            }
 
             if ($(this).attr('data-required')) {
                 if($.trim(value) == '') {
@@ -140,8 +140,8 @@ $(function () {
                 formatter: {
                     date: function (date, settings) {
                         if (!date) return '';
-                        var day = date.getDate();
-                        var month = date.getMonth() + 1;
+                        var day = ('0' + date.getDate()).slice(-2);
+                        var month = ('0' + (date.getMonth() + 1)).slice(-2);
                         var year = date.getFullYear();
                         return year + '-' + month + '-' + day   ;
                     }

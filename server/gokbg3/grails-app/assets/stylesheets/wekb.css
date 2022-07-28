@@ -3,12 +3,6 @@
  *
  *= require /semantic.min.css         //-- semantic
 
- *= require /jquery-ui.min.css
-
- *= require / jquery-ui.structure.min.css
-
- *= require / jquery-ui.theme.min.css
-
  *= require /jquery-editable.css //-- externalLibs
 
  *= require security-styles
@@ -16,7 +10,7 @@
 
  */
 
-/* label what server */
+
 
 .editable-clear-x {
     background: none;
@@ -42,7 +36,7 @@
 .editable-clear-x:before {
     content: "\f2ed";
 }
-
+/* label what server */
 .wb-server-label {
     position: fixed;
     bottom: 0;
