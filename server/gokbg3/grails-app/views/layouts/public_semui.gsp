@@ -97,7 +97,7 @@
             <sec:ifAnyGranted roles="ROLE_ADMIN">
                 <div class="item">
                     <div class="header">Admin</div>
-                    <div class="ui inverted accordion vertical menu">
+                    <div class="ui inverted vertical menu">
                         <div class="item">
                             <div class="title">
                                 <i class="dropdown icon"></i> Admin Views
