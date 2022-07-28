@@ -45908,7 +45908,7 @@ Floated Menu / Item
 .ui.vertical.menu .menu .item {
   background: none;
   padding: 0.5em 1.33333333em;
-  font-size: 0.85714286em;
+  font-size: 1em;
   color: rgba(0, 0, 0, 0.5);
 }
 
@@ -47779,6 +47779,10 @@ Floated Menu / Item
 
 .ui.vertical.inverted.menu .item .menu a.item:hover {
   text-decoration: underline;
+}
+
+.ui.vertical.menu .menu .item {
+  margin-left: 5px;
 }
 /*!
  * # Fomantic-UI 2.8.8 - Message
@@ -55227,7 +55231,7 @@ a.inverted.ui.card:hover,
   ---------------*/
 
 .ui.inverted.accordion .title:not(.ui) {
-  color: rgba(255, 255, 255, 0.9);
+  color: #b5b5b5;
 }
 
 /*******************************
@@ -55258,6 +55262,10 @@ a.inverted.ui.card:hover,
 .ui.accordion .accordion .title .dropdown.icon:before {
   content: '\f0da' ;
 }
+
+/*******************************
+         Theme Overrides
+*******************************/
 /*!
  * # Fomantic-UI 2.8.8 - Calendar
  * http://github.com/fomantic/Fomantic-UI/
