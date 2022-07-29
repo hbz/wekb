@@ -615,7 +615,7 @@ class AdminController {
 
   }
 
-  def findPackagesNeedAutoUpdate() {
+  def findPackagesNeedsAutoUpdates() {
     log.debug("findPackagesWithTippDuplicates::${params}")
     def result = [:]
 

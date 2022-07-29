@@ -438,11 +438,16 @@ class AutoUpdatePackagesService {
 
                     File file
                     if (updateUrls.size() > 0) {
+                        LocalTime kbartFromUrlStartTime = LocalTime.now()
                         while (urlsIterator.hasPrevious()) {
                             URL url = urlsIterator.previous()
                             lastUpdateURL = url.toString()
                             try {
                                 file = exportService.kbartFromUrl(lastUpdateURL)
+
+                                if (kbartFromUrlStartTime < LocalTime.now().minus(45, ChronoUnit.MINUTES)){
+                                    break
+                                }
 
                             }
                             catch (Exception e) {

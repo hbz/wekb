@@ -98,7 +98,7 @@
             <div class="content">
 
                 <g:link class="display-inline" controller="search" action="inlineSearch"
-                        params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:autoUpdatePackageInfos', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId()]"
+                        params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:autoUpdatePackageInfos', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg']]"
                         id="">Auto Update Package Info on this Source</g:link>
 
             </div>
