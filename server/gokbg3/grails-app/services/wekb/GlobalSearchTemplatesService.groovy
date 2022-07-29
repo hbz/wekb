@@ -207,6 +207,8 @@ class GlobalSearchTemplatesService {
                 baseclass: 'wekb.AutoUpdateTippInfo',
                 title    : 'Auto Update Title Infos',
                 group    : 'Secondary',
+                defaultSort : 'startTime',
+                defaultOrder: 'desc',
                 qbeConfig: [
                         qbeForm   : [
                                 [

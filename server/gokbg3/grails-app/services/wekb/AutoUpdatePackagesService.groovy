@@ -652,18 +652,7 @@ class AutoUpdatePackagesService {
                             updateTipp?.discard()
                             tippErrorMap = tipp_error
                         }
-                        if (updateTipp) {
-
-                            if (updateTipp.status != RDStore.KBC_STATUS_CURRENT && (!kbartRow.status || kbartRow.status == "Current")) {
-                                updateTipp.status = status_current
-                            }
-
-                            updateTipp.save(flush: true)
-
-                            if (updateTipp.isCurrent() && updateTipp.hostPlatform?.status != status_current) {
-                            }
-                        }
-                        else {
+                        if (!updateTipp) {
                             log.debug("Could not reference TIPP")
                             invalidTipps << kbartRow
                             def tipp_error = [
@@ -818,19 +807,12 @@ class AutoUpdatePackagesService {
             }
 
 
+            String description = "Package Update: (KbartLines: ${kbartRowsCount}, " +
+                    "Processed Titles in this run: ${idx}, Titles in we:kb previously: ${existing_tipp_ids.size()}, Titles in we:kb now: ${countExistingTippsAfterImport}, Removed Titles: ${removedTipps}, New Titles in we:kb: ${newTipps}, Changed Titles in we:kb: ${changedTipps})"
+
+            AutoUpdatePackageInfo.executeUpdate("update AutoUpdatePackageInfo set countKbartRows = ${kbartRowsCount}, countChangedTipps = ${changedTipps}, countNewTipps = ${newTipps}, countRemovedTipps = ${removedTipps}, countInValidTipps = ${invalidTipps.size()}, countProcessedKbartRows = ${idx}, endTime = ${new Date()}, description = ${description} where id = ${autoUpdatePackageInfo.id}")
+
             AutoUpdatePackageInfo.withNewTransaction {
-                autoUpdatePackageInfo.refresh()
-                autoUpdatePackageInfo.countKbartRows = kbartRowsCount
-                autoUpdatePackageInfo.countChangedTipps = changedTipps
-                autoUpdatePackageInfo.countNewTipps = newTipps
-                autoUpdatePackageInfo.countRemovedTipps = removedTipps
-                autoUpdatePackageInfo.countInValidTipps = invalidTipps.size()
-                autoUpdatePackageInfo.countProcessedKbartRows = idx
-                autoUpdatePackageInfo.endTime = new Date()
-                autoUpdatePackageInfo.description = "Package Update: (KbartLines: ${kbartRowsCount}, " +
-                        "Processed Titles in this run: ${idx}, Titles in we:kb previously: ${existing_tipp_ids.size()}, Titles in we:kb now: ${countExistingTippsAfterImport}, Removed Titles: ${removedTipps}, New Titles in we:kb: ${newTipps}, Changed Titles in we:kb: ${changedTipps})"
-                //autoUpdatePackageInfo.save(failOnError:true)
-                autoUpdatePackageInfo.save()
 
                 Package aPackage = Package.get(autoUpdatePackageInfo.pkg.id)
                 if (aPackage.status != status_deleted) {
@@ -861,6 +843,9 @@ class AutoUpdatePackagesService {
             }
         }
 
+        if(errors.global.size() > 0 || errors.tipps.size() > 0){
+            log.error("Error map by kbartImportProcess: "+errors)
+        }
         log.info("End kbartImportProcess Package ($pkg.name)")
         return autoUpdatePackageInfo
     }

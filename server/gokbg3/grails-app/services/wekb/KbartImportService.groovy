@@ -1019,7 +1019,7 @@ class KbartImportService {
                     log.error("TIPP creation failed!")
                 }else {
                     result.newTipp = true
-                    autoUpdatePackageInfo.refresh()
+                    autoUpdatePackageInfo = autoUpdatePackageInfo.refresh()
                     AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
                             description: "New Title '${tippMap.publication_title}'",
                             tipp: tipp,
@@ -1040,7 +1040,7 @@ class KbartImportService {
                     com.k_int.ClassUtils.setRefdataIfDifferent(tippMap.status, tipp, 'status', RCConstants.KBCOMPONENT_STATUS, false)
                     result.removedTipp = true
 
-                    autoUpdatePackageInfo.refresh()
+                    autoUpdatePackageInfo = autoUpdatePackageInfo.refresh()
                     AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
                             description: "Removed Title '${tippMap.publication_title}'",
                             tipp: tipp,
@@ -1086,54 +1086,6 @@ class KbartImportService {
                 // KBART -> subject_area -> subjectArea
                 result.changedTipp = checkAndSetByChangedValue(result, tipp, 'String', autoUpdatePackageInfo, tippMap, "subject_area", "subjectArea")
 
-                // KBART -> ddc -> ddcs
-                if(tippMap.ddc != "") {
-                    if (tipp.ddcs) {
-                        def ddcsIDs = tipp.ddcs.id.clone()
-                        ddcsIDs.each {
-                            tipp.removeFromDdcs(RefdataValue.get(it))
-                        }
-                        tipp.save()
-                    }
-                }
-                // KBART -> ddc -> ddcs
-                if (tippMap.ddc) {
-                    List ddcs = tippMap.ddc.split(',')
-
-                    ddcs.each{ String ddc ->
-                                RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.DDC, ddc)
-                                if(refdataValue && !(refdataValue in tipp.ddcs)){
-                                    tipp.addToDdcs(refdataValue)
-                                }
-                    }
-                }
-
-                // KBART -> language -> language -> languages
-                if (tippMap.language) {
-                    if (tipp.languages) {
-                        def langIDs = tipp.languages.id.clone()
-                        langIDs.each {
-                            tipp.removeFromLanguages(KBComponentLanguage.get(it))
-                            KBComponentLanguage.get(it).delete()
-                        }
-                        tipp.save()
-                        //KBComponentLanguage.executeUpdate("delete from KBComponentLanguage where kbcomponent = :tipp", [tipp: tipp])
-                    }
-                    List languages = tippMap.language.split(',')
-                    languages.each{ String lan ->
-                        RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.KBCOMPONENT_LANGUAGE, lan)
-                        if(refdataValue){
-                            if(!KBComponentLanguage.findByKbcomponentAndLanguage(tipp, refdataValue)){
-                                KBComponentLanguage kbComponentLanguage = new KBComponentLanguage(kbcomponent: tipp, language: refdataValue)
-                                kbComponentLanguage.save()
-                            }
-                        }
-                    }
-
-                    tipp.save()
-                    //tipp.refresh()
-                }
-
                 // KBART -> access_type -> accessType
                 if (tippMap.access_type && tippMap.access_type.length() > 0) {
                     if (tippMap.access_type == 'P') {
@@ -1153,22 +1105,6 @@ class KbartImportService {
 
                 // KBART -> last_changed -> lastChangedExternal
                 result.changedTipp = checkAndSetByChangedValue(result, tipp, 'Date', autoUpdatePackageInfo, tippMap, "last_changed", "lastChangedExternal")
-
-
-                // KBART -> listprice_eur -> prices
-                if (tippMap.listprice_eur) {
-                    result.changedTipp = createOrUpdatePrice(result, tipp, RDStore.PRICE_TYPE_LIST, RDStore.CURRENCY_EUR, tippMap.listprice_eur, 'listprice_eur', autoUpdatePackageInfo)
-                }
-
-                // KBART -> listprice_usd -> prices
-                if (tippMap.listprice_usd) {
-                    result.changedTipp = createOrUpdatePrice(result, tipp, RDStore.PRICE_TYPE_LIST, RDStore.CURRENCY_USD, tippMap.listprice_usd, 'listprice_usd', autoUpdatePackageInfo)
-                }
-
-                // KBART -> listprice_gbp -> prices
-                if (tippMap.listprice_gbp) {
-                    result.changedTipp = createOrUpdatePrice(result, tipp, RDStore.PRICE_TYPE_LIST, RDStore.CURRENCY_GBP, tippMap.listprice_gbp, 'listprice_gbp', autoUpdatePackageInfo)
-                }
 
                 // KBART -> notes -> note
                 result.changedTipp = checkAndSetByChangedValue(result, tipp, 'String', autoUpdatePackageInfo, tippMap, "notes", "note")
@@ -1193,22 +1129,6 @@ class KbartImportService {
 
                 // KBART -> oa_type -> openAccess
                 result.changedTipp = checkAndSetByChangedValue(result, tipp, 'RefDataValue', autoUpdatePackageInfo, tippMap, "oa_type", "openAccess", true, RCConstants.TIPP_OPEN_ACCESS)
-
-                // KBART -> oa_apc_eur -> prices
-                if (tippMap.oa_apc_eur) {
-                    result.changedTipp = createOrUpdatePrice(result, tipp, RDStore.PRICE_TYPE_OA_APC, RDStore.CURRENCY_EUR, tippMap.oa_apc_eur, 'oa_apc_eur', autoUpdatePackageInfo)
-                }
-
-                // KBART -> oa_apc_usd -> prices
-                if (tippMap.oa_apc_usd) {
-                    result.changedTipp = createOrUpdatePrice(result, tipp, RDStore.PRICE_TYPE_OA_APC, RDStore.CURRENCY_USD, tippMap.oa_apc_usd, 'oa_apc_usd', autoUpdatePackageInfo)
-                    tipp.setPrice(RDStore.PRICE_TYPE_OA_APC.value, tippMap.oa_apc_usd, RDStore.CURRENCY_USD.value, null, null)
-                }
-
-                // KBART -> oa_apc_gbp -> prices
-                if (tippMap.oa_apc_gbp) {
-                    result.changedTipp = createOrUpdatePrice(result, tipp, RDStore.PRICE_TYPE_OA_APC, RDStore.CURRENCY_GBP, tippMap.oa_apc_gbp, 'oa_apc_gbp', autoUpdatePackageInfo)
-                }
 
                 // KBART -> package_isil -> identifiers['package_isil']
                 if (tippMap.package_isil) {
@@ -1344,6 +1264,85 @@ class KbartImportService {
 
                 deleteIdentifiers.each{
                     Identifier.executeUpdate("delete from Identifier where id_id = :id", [id: it])
+                }
+
+                // KBART -> ddc -> ddcs
+                if(tippMap.ddc != "") {
+                    if (tipp.ddcs) {
+                        def ddcsIDs = tipp.ddcs.id.clone()
+                        ddcsIDs.each {
+                            tipp.removeFromDdcs(RefdataValue.get(it))
+                        }
+                        tipp.save()
+                    }
+                }
+                // KBART -> ddc -> ddcs
+                if (tippMap.ddc) {
+                    List ddcs = tippMap.ddc.split(',')
+
+                    ddcs.each{ String ddc ->
+                        RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.DDC, ddc)
+                        if(refdataValue && !(refdataValue in tipp.ddcs)){
+                            tipp.addToDdcs(refdataValue)
+                        }
+                    }
+                }
+
+                // KBART -> language -> language -> languages
+                if (tippMap.language) {
+                    if (tipp.languages) {
+                        def langIDs = tipp.languages.id.clone()
+                        langIDs.each {
+                            tipp.removeFromLanguages(KBComponentLanguage.get(it))
+                            KBComponentLanguage.get(it).delete()
+                        }
+                        tipp.save()
+                        //KBComponentLanguage.executeUpdate("delete from KBComponentLanguage where kbcomponent = :tipp", [tipp: tipp])
+                    }
+                    List languages = tippMap.language.split(',')
+                    languages.each{ String lan ->
+                        RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.KBCOMPONENT_LANGUAGE, lan)
+                        if(refdataValue){
+                            if(!KBComponentLanguage.findByKbcomponentAndLanguage(tipp, refdataValue)){
+                                KBComponentLanguage kbComponentLanguage = new KBComponentLanguage(kbcomponent: tipp, language: refdataValue)
+                                kbComponentLanguage.save()
+                            }
+                        }
+                    }
+
+                    tipp.save()
+                    //tipp.refresh()
+                }
+
+                // KBART -> listprice_eur -> prices
+                if (tippMap.listprice_eur) {
+                    result.changedTipp = createOrUpdatePrice(result, tipp, RDStore.PRICE_TYPE_LIST, RDStore.CURRENCY_EUR, tippMap.listprice_eur, 'listprice_eur', autoUpdatePackageInfo)
+                }
+
+                // KBART -> listprice_usd -> prices
+                if (tippMap.listprice_usd) {
+                    result.changedTipp = createOrUpdatePrice(result, tipp, RDStore.PRICE_TYPE_LIST, RDStore.CURRENCY_USD, tippMap.listprice_usd, 'listprice_usd', autoUpdatePackageInfo)
+                }
+
+                // KBART -> listprice_gbp -> prices
+                if (tippMap.listprice_gbp) {
+                    result.changedTipp = createOrUpdatePrice(result, tipp, RDStore.PRICE_TYPE_LIST, RDStore.CURRENCY_GBP, tippMap.listprice_gbp, 'listprice_gbp', autoUpdatePackageInfo)
+                }
+
+                // KBART -> oa_apc_eur -> prices
+                if (tippMap.oa_apc_eur) {
+                    result.changedTipp = createOrUpdatePrice(result, tipp, RDStore.PRICE_TYPE_OA_APC, RDStore.CURRENCY_EUR, tippMap.oa_apc_eur, 'oa_apc_eur', autoUpdatePackageInfo)
+                }
+
+                // KBART -> oa_apc_usd -> prices
+                if (tippMap.oa_apc_usd) {
+                    result.changedTipp = createOrUpdatePrice(result, tipp, RDStore.PRICE_TYPE_OA_APC, RDStore.CURRENCY_USD, tippMap.oa_apc_usd, 'oa_apc_usd', autoUpdatePackageInfo)
+                    tipp.setPrice(RDStore.PRICE_TYPE_OA_APC.value, tippMap.oa_apc_usd, RDStore.CURRENCY_USD.value, null, null)
+                }
+
+                // KBART -> oa_apc_gbp -> prices
+                if (tippMap.oa_apc_gbp) {
+                    result.changedTipp = createOrUpdatePrice(result, tipp, RDStore.PRICE_TYPE_OA_APC, RDStore.CURRENCY_GBP, tippMap.oa_apc_gbp, 'oa_apc_gbp', autoUpdatePackageInfo)
                 }
 
                 tipp.save(failOnError: true)
@@ -1594,7 +1593,7 @@ class KbartImportService {
                 break
         }
         if(identifier && identifierChanged && !result.newTipp){
-            autoUpdatePackageInfo.refresh()
+            //autoUpdatePackageInfo = autoUpdatePackageInfo.refresh()
             AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
                     description: "Changes in Title '${tipp.name}'",
                     tipp: tipp,
@@ -1953,7 +1952,7 @@ class KbartImportService {
     }
 
     void createAutoUpdateTippInfoByTippChange(TitleInstancePackagePlatform tipp, AutoUpdatePackageInfo autoUpdatePackageInfo, String kbartProperty, String tippProperty, String oldValue, String newValue){
-        autoUpdatePackageInfo.refresh()
+        //autoUpdatePackageInfo = autoUpdatePackageInfo.refresh()
         AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
                 description: "Changes in Title '${tipp.name}'",
                 tipp: tipp,
@@ -1970,7 +1969,7 @@ class KbartImportService {
     }
 
     void createAutoUpdateTippInfoByTippChangeFail(TitleInstancePackagePlatform tipp, AutoUpdatePackageInfo autoUpdatePackageInfo, String kbartProperty, String tippProperty, String oldValue, String newValue, String description){
-        autoUpdatePackageInfo.refresh()
+        //autoUpdatePackageInfo = autoUpdatePackageInfo.refresh()
         AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
                 description: description,
                 tipp: tipp,
@@ -2015,7 +2014,7 @@ class KbartImportService {
         ComponentPrice cp = null
         if (price && priceType && currency){
             f = Float.parseFloat(price)
-            if(f) {
+            if(!f.isNaN()) {
                 List<ComponentPrice> existPrices = ComponentPrice.findAllByOwnerAndPriceTypeAndCurrency(tipp, priceType, currency, [sort: 'lastUpdated', order: 'ASC'])
                 if (existPrices.size() == 1) {
                     ComponentPrice existPrice = existPrices[0]
@@ -2028,11 +2027,12 @@ class KbartImportService {
                     }
 
                 } else if (existPrices.size() > 1) {
-                    def pricesIDs = existPrices.id
+                    def pricesIDs = existPrices.id.clone()
                     pricesIDs.each {
-                        ComponentPrice.executeUpdate("delete from ComponentPrice id = :id", [id: it])
+                        tipp.removeFromPrices(ComponentPrice.get(it))
+                        //ComponentPrice.executeUpdate("delete from ComponentPrice id = ${it}")
                     }
-
+                    tipp.save()
                     tipp = tipp.refresh()
                     cp = new ComponentPrice(
                             owner: this,
@@ -2054,7 +2054,7 @@ class KbartImportService {
                     priceChanged = true
                 }
             }else {
-                autoUpdatePackageInfo.refresh()
+                //autoUpdatePackageInfo = autoUpdatePackageInfo.refresh()
                 AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
                         description: "The value '${newValue}' can not parse to a price",
                         tipp: tipp,
@@ -2071,7 +2071,7 @@ class KbartImportService {
             }
         }
         if(cp && priceChanged && !result.newTipp){
-            autoUpdatePackageInfo.refresh()
+            //autoUpdatePackageInfo = autoUpdatePackageInfo.refresh()
             AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
                     description: "Changes in Title '${tipp.name}'",
                     tipp: tipp,
