@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="layout" content="public_semui"/>
-    <title><g:message code="gokb.appname" default="we:kb"/>: Packages needs Auto Updates</title>
+    <title><g:message code="gokb.appname" default="we:kb"/>: Packages due to automatic update</title>
 </head>
 
 <body>
@@ -12,7 +12,7 @@
 
 <semui:flashMessage data="${flash}"/>
 
-<h1 class="ui header">Packages needs Auto Updates (${pkgs.size()})</h1>
+<h1 class="ui header">Packages due to automatic update (${pkgs.size()})</h1>
 
 
 <div class="container">

@@ -10,7 +10,7 @@
 <h1 class="ui header">My Packages of Curatory Groups (${groups.name.join(',')})</h1>
 
     <g:link controller="group" action="myPackagesNeedsAutoUpdates"
-        class="ui right floated black button">My Packages Needs Updates</g:link>
+        class="ui right floated black button">My Packages due to automatic update</g:link>
     <br>
     <br>
 

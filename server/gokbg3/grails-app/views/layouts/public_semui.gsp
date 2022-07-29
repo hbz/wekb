@@ -111,7 +111,7 @@
                                 <g:link class="item" controller="admin"
                                         action="packagesChanges">Packages Changes</g:link>
                                 <g:link class="item" controller="admin"
-                                        action="findPackagesNeedsAutoUpdates">Packages needs Auto Updates</g:link>
+                                        action="findPackagesNeedsAutoUpdates">Packages due to automatic update</g:link>
                                 <g:link class="item" controller="admin"
                                         action="findPackagesWithTippDuplicates">Packages with Tipp Duplicates</g:link>
                                 <g:link class="item" controller="admin"

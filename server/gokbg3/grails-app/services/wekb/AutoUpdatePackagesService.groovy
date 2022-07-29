@@ -616,6 +616,11 @@ class AutoUpdatePackagesService {
                                 changedTipps++
                             }
 
+                            if(autoUpdateResultTipp.autoUpdatePackageInfo)
+                            {
+                                autoUpdatePackageInfo = autoUpdateResultTipp.autoUpdatePackageInfo
+                            }
+
                             if(setAllTippsNotInKbartToDeleted && updateTipp && updateTipp.status !=  RDStore.KBC_STATUS_CURRENT){
                                 updateTipp.status = RDStore.KBC_STATUS_CURRENT
                                 setTippsNotToDeleted << updateTipp.id
