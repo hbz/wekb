@@ -12,7 +12,7 @@
 
 <semui:flashMessage data="${flash}"/>
 
-<h1 class="ui header">${pkgs.size()} Packages needs Auto Updates of Curatory Groups (${groups.name.join(',')})</h1>
+<h1 class="ui header">${pkgs.size()} packages needing auto updates of Curatory Groups (${groups.name.join(',')})</h1>
 
 
 <div class="container">
