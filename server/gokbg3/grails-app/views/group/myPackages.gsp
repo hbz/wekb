@@ -9,6 +9,10 @@
 <body>
 <h1 class="ui header">My Packages of Curatory Groups (${groups.name.join(',')})</h1>
 
+    <g:link controller="group" action="myPackagesNeedsAutoUpdates"
+        class="ui right floated black button">My Packages due to automatic update</g:link>
+    <br>
+    <br>
 
     <g:link controller="group" action="exportMyPackages" id="${params.id}"
             class="ui right floated black button">Export my packages</g:link>

@@ -890,7 +890,7 @@ class KbartImportService {
     }
 
     Map tippImportForAutoUpdate(tippMap, LinkedHashMap tippsWithCoverage, List<Long> tippDuplicates = [], AutoUpdatePackageInfo autoUpdatePackageInfo) {
-        def result = [newTipp: false, removedTipp: false, tippObject: null]
+        def result = [newTipp: false, removedTipp: false, tippObject: null, autoUpdatePackageInfo: autoUpdatePackageInfo]
         log.info("Begin tippImportForAutoUpdate")
         Package pkg = tippMap.pkg
         Platform plt = tippMap.nominalPlatform
@@ -1355,6 +1355,9 @@ class KbartImportService {
         }
 
         log.info("End tippImportForAutoUpdate: TIPP UUID -> ${result.tippObject?.uuid}")
+
+        result.autoUpdatePackageInfo = autoUpdatePackageInfo
+
         result
     }
     

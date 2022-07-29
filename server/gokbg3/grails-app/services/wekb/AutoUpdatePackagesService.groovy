@@ -438,11 +438,16 @@ class AutoUpdatePackagesService {
 
                     File file
                     if (updateUrls.size() > 0) {
+                        LocalTime kbartFromUrlStartTime = LocalTime.now()
                         while (urlsIterator.hasPrevious()) {
                             URL url = urlsIterator.previous()
                             lastUpdateURL = url.toString()
                             try {
                                 file = exportService.kbartFromUrl(lastUpdateURL)
+
+                                if (kbartFromUrlStartTime < LocalTime.now().minus(45, ChronoUnit.MINUTES)){
+                                    break
+                                }
 
                             }
                             catch (Exception e) {
@@ -609,6 +614,11 @@ class AutoUpdatePackagesService {
 
                             if(autoUpdateResultTipp.changedTipp){
                                 changedTipps++
+                            }
+
+                            if(autoUpdateResultTipp.autoUpdatePackageInfo)
+                            {
+                                autoUpdatePackageInfo = autoUpdateResultTipp.autoUpdatePackageInfo
                             }
 
                             if(setAllTippsNotInKbartToDeleted && updateTipp && updateTipp.status !=  RDStore.KBC_STATUS_CURRENT){

@@ -69,6 +69,12 @@
                     <g:link class="item" controller="group" action="mySources">My Sources</g:link>
                     <g:link class="item" controller="group" action="myTitles">My Titles</g:link>
                 </div>
+
+                <div class="menu">
+                    <g:link class="item" controller="search" action="componentSearch"
+                            params="[qbe: 'g:autoUpdatePackageInfos', qp_curgroups: springSecurityService.currentUser.curatoryGroups]">My Auto Update Infos</g:link>
+
+                </div>
             </div>
 
             <div class="item">
@@ -105,7 +111,7 @@
                                 <g:link class="item" controller="admin"
                                         action="packagesChanges">Packages Changes</g:link>
                                 <g:link class="item" controller="admin"
-                                        action="findPackagesNeedAutoUpdate">Packages needs Auto Updates</g:link>
+                                        action="findPackagesNeedsAutoUpdates">Packages due to automatic update</g:link>
                                 <g:link class="item" controller="admin"
                                         action="findPackagesWithTippDuplicates">Packages with Tipp Duplicates</g:link>
                                 <g:link class="item" controller="admin"
@@ -115,6 +121,10 @@
                         <div class="item">
                             <div class="header"> Admin Search</div>
                             <div class="menu">
+                                <g:link class="item" controller="search" action="componentSearch"
+                                        params="[qbe: 'g:autoUpdatePackageInfos']">Auto Update Package Infos</g:link>
+                                <g:link class="item" controller="search" action="componentSearch"
+                                params="[qbe: 'g:autoUpdateTippInfos']">Auto Update Title Infos</g:link>
                                 <g:link class="item" controller="search" action="componentSearch"
                                         params="[qbe: 'g:identifiers']">Identifiers</g:link>
                                 <g:link class="item" controller="search" action="componentSearch"
@@ -129,14 +139,14 @@
                                         params="[qbe: 'g:refdataValues']">Refdata Values</g:link>
                                 <g:link class="item" controller="search" action="componentSearch"
                                         params="[qbe: 'g:reviewRequests']">Review Requests</g:link>
-                                <g:link class="item" controller="search" action="componentSearch"
-                                        params="[qbe: 'g:userOrganisation']">User Organisation</g:link>
+                               %{-- <g:link class="item" controller="search" action="componentSearch"
+                                        params="[qbe: 'g:userOrganisation']">User Organisation</g:link>--}%
                                 <g:link class="item" controller="search" action="componentSearch"
                                         params="[qbe: 'g:users']">Users</g:link>
-                                <g:link class="item" controller="search" action="componentSearch"
+                                %{--<g:link class="item" controller="search" action="componentSearch"
                                         params="[qbe: 'g:userJobs']">User Jobs</g:link>
                                 <g:link class="item" controller="search" action="componentSearch"
-                                        params="[qbe: 'g:userWatchedComponents']">User Watched Components</g:link>
+                                        params="[qbe: 'g:userWatchedComponents']">User Watched Components</g:link>--}%
                             </div>
                         </div>
                         <div class="item">
