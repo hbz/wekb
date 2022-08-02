@@ -1240,8 +1240,11 @@ class KbartImportService {
 
                 // KBART -> title_id  -> identifiers
                 if (tippMap.title_id) {
-                    IdentifierNamespace identifierNamespace = pkg.source.targetNamespace ?: (plt.titleNamespace ?: null)
-                    if (identifierNamespace){
+                    List<IdentifierNamespace> idnsCheck = IdentifierNamespace.executeQuery('select so.targetNamespace from Package pkg join pkg.source so where pkg = :pkg', [pkg: pkg])
+                    if(!idnsCheck)
+                        idnsCheck = IdentifierNamespace.executeQuery('select plat.titleNamespace from Platform plat where plat = :plat', [plat: plt])
+                    if (idnsCheck && idnsCheck.size() == 1){
+                        IdentifierNamespace identifierNamespace = idnsCheck[0]
                         result.changedTipp = createOrUpdateIdentifierForTipp(result, tipp, identifierNamespace.value, tippMap.title_id, 'title_id', autoUpdatePackageInfo)
                         identifierNameSpacesExistOnTipp << identifierNamespace.value
                     }
