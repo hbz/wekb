@@ -34,10 +34,11 @@ class TIPPCoverageStatement {
   ]
 
   static mapping = {
-    startDate column:'tipp_start_date'
+    owner column: 'owner_id', index: 'tipp_owner_idx' //TODO adapt to naming convention
+    startDate column:'tipp_start_date', index: 'tipp_start_date_idx'
     startVolume column:'tipp_start_volume'
     startIssue column:'tipp_start_issue'
-    endDate column:'tipp_end_date'
+    endDate column:'tipp_end_date', index: 'tipp_end_date_idx'
     endVolume column:'tipp_end_volume'
     endIssue column:'tipp_end_issue'
     embargo column:'tipp_embargo'

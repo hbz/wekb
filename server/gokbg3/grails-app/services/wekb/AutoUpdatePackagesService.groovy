@@ -626,7 +626,7 @@ class AutoUpdatePackagesService {
                                 setTippsNotToDeleted << updateTipp.id
                             }
 
-                            updateTipp.save(flush: true)
+                            updateTipp.save()
                             tippsFound << updateTipp.id
 
                         }
