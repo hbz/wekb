@@ -161,9 +161,9 @@
                                         params="[tmpl: 'org.gokb.cred.RefdataValue']">Refdata Value</g:link>
                                 <g:link class="item" controller="create" action="index"
                                         params="[tmpl: 'org.gokb.cred.ReviewRequest']">Review Request</g:link>
-                                %{-- <g:link class="item" controller="create" action="index"
-                                         params="[tmpl: 'org.gokb.cred.User']">User</g:link>
-                                 <g:link class="item" controller="create" action="index"
+                                <g:link class="item" controller="create" action="index"
+                                         params="[tmpl: 'org.gokb.cred.CuratoryGroup']">Curatory Group</g:link>
+                                 %{-- <g:link class="item" controller="create" action="index"
                                          params="[tmpl: 'org.gokb.cred.UserOrganisation']">User Organisation</g:link>--}%
                             </div>
                         </div>

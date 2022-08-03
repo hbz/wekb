@@ -10,30 +10,36 @@
 
     <div class="ui bulleted list">
         <g:each in="${curatoryGroups}" var="cg">
-            <div class="item">${cg.name}</div>
+            <div class="item">${cg.name}
+                <g:if test="${params.curationOverride == 'true' && springSecurityService.isLoggedIn() && SpringSecurityUtils.ifAnyGranted("ROLE_ADMIN")}">
+                    <g:link controller="ajaxSupport" action="unlinkManyToMany" class="ui negative button"
+                    params="['curationOverride': params.curationOverride, '__property':'curatoryGroups', '__context':d.getClassName() + ':' + d.id, '__itemToRemove' : cg.getClassName() + ':' + cg.id]">Unlink Curatory Group</g:link>
+                </g:if>
+            </div>
         </g:each>
 
         <g:if test="${!curatoryGroups}">
             <div class="item">There are currently no linked Curatory Groups</div>
+        </g:if>
 
-            <g:if test="${!(d instanceof CuratoryGroup) && !(d instanceof TitleInstancePackagePlatform) && springSecurityService.isLoggedIn() && SpringSecurityUtils.ifAnyGranted("ROLE_ADMIN")}">
-                <div class="ui segment">
-                    <g:form controller="ajaxSupport" action="addToStdCollection" class="ui form">
-                        <input type="hidden" name="__context" value="${d.getClassName()}:${d.id}"/>
-                        <input type="hidden" name="__property" value="curatoryGroups"/>
+        <g:if test="${params.curationOverride == 'true' && !(d instanceof CuratoryGroup) && !(d instanceof TitleInstancePackagePlatform) && springSecurityService.isLoggedIn() && SpringSecurityUtils.ifAnyGranted("ROLE_ADMIN")}">
+            <div class="ui segment">
+                <g:form controller="ajaxSupport" action="addToStdCollection" class="ui form">
+                    <input type="hidden" name="__context" value="${d.getClassName()}:${d.id}"/>
+                    <input type="hidden" name="__property" value="curatoryGroups"/>
+                    <input type="hidden" name="curationOverride" value="${params.curationOverride}"/>
 
-                        <div class="field">
-                            <label>Select on Curatory Group to link with this component</label>
-                            <semui:simpleReferenceDropdown name="__relatedObject"
-                                                           baseClass="org.gokb.cred.CuratoryGroup"
-                                                           filter1="Current"/>
-                        </div>
+                    <div class="field">
+                        <label>Select a Curatory Group to link with this component</label>
+                        <semui:simpleReferenceDropdown name="__relatedObject"
+                                                       baseClass="org.gokb.cred.CuratoryGroup"
+                                                       filter1="Current"/>
+                    </div>
 
-                        <button type="submit" class="ui black button">Link</button>
-                    </g:form>
-                </div>
+                    <button type="submit" class="ui black button">Link</button>
+                </g:form>
+            </div>
 
-            </g:if>
         </g:if>
     </div>
 

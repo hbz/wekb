@@ -1559,58 +1559,60 @@ class KbartImportService {
 
     boolean createOrUpdateIdentifierForTipp(Map result, TitleInstancePackagePlatform tipp, String namespace_val, String identifierValue, String kbartProperty, AutoUpdatePackageInfo autoUpdatePackageInfo){
         boolean identifierChanged = false
-        String newValue = identifierValue
+        String newValue = identifierValue.trim()
         String oldValue = ''
         Identifier identifier
         IdentifierNamespace ns = IdentifierNamespace.findByValueAndTargetType(namespace_val, RDStore.IDENTIFIER_NAMESPACE_TARGET_TYPE_TIPP)
 
         //tipp = tipp.refresh()
+        if(ns) {
+            LinkedHashSet<Identifier> identifiersWithSameNamespace = tipp.ids.findAll{it.namespace.value == namespace_val}
 
-        LinkedHashSet<Identifier> identifiersWithSameNamespace = tipp.ids.findAll{it.namespace.value == namespace_val}
-
-        switch (identifiersWithSameNamespace.size()) {
-            case 0:
-                identifier = new Identifier(namespace: ns, value: identifierValue, tipp: tipp).save(flush: true, failOnError: true)
-                identifierChanged = true
-                break
-            case 1:
-                if(identifiersWithSameNamespace[0].value != identifierValue) {
+            switch (identifiersWithSameNamespace.size()) {
+                case 0:
+                    identifier = new Identifier(namespace: ns, value: identifierValue, tipp: tipp).save(flush: true, failOnError: true)
                     identifierChanged = true
-                    oldValue = identifiersWithSameNamespace[0].value
-                    identifiersWithSameNamespace[0].value = identifierValue
-                    identifiersWithSameNamespace[0].save(flush: true, failOnError: true)
-                    identifier = identifiersWithSameNamespace[0]
-                }
-                break
-            default:
-                List toDeletedIdentifier = []
-                identifiersWithSameNamespace.each{Identifier tippIdentifier ->
-                    toDeletedIdentifier << tippIdentifier.id
-                }
+                    break
+                case 1:
+                    if(identifiersWithSameNamespace[0].value != identifierValue) {
+                        identifierChanged = true
+                        oldValue = identifiersWithSameNamespace[0].value
+                        identifiersWithSameNamespace[0].value = identifierValue
+                        identifiersWithSameNamespace[0].save(flush: true, failOnError: true)
+                        identifier = identifiersWithSameNamespace[0]
+                    }
+                    break
+                default:
+                    List toDeletedIdentifier = []
+                    identifiersWithSameNamespace.each{Identifier tippIdentifier ->
+                        toDeletedIdentifier << tippIdentifier.id
+                    }
 
-                toDeletedIdentifier.each{
-                    Identifier.executeUpdate("delete from Identifier where id_id = :id", [id: it])
-                }
-                identifierChanged = true
-                identifier = new Identifier(namespace: ns, value: identifierValue, tipp: tipp).save(flush: true, failOnError: true)
-                break
+                    toDeletedIdentifier.each{
+                        Identifier.executeUpdate("delete from Identifier where id_id = :id", [id: it])
+                    }
+                    identifierChanged = true
+                    identifier = new Identifier(namespace: ns, value: identifierValue, tipp: tipp).save(flush: true, failOnError: true)
+                    break
+            }
+            if(identifier && identifierChanged && !result.newTipp){
+                //autoUpdatePackageInfo = autoUpdatePackageInfo.refresh()
+                AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
+                        description: "Changes in Title '${tipp.name}'",
+                        tipp: tipp,
+                        startTime: new Date(),
+                        endTime: new Date(),
+                        status: RDStore.AUTO_UPDATE_STATUS_SUCCESSFUL,
+                        type: RDStore.AUTO_UPDATE_TYPE_CHANGED_TITLE,
+                        autoUpdatePackageInfo: autoUpdatePackageInfo,
+                        kbartProperty: kbartProperty,
+                        tippProperty: "identifiers[${namespace_val}]",
+                        oldValue: oldValue,
+                        newValue: newValue
+                ).save()
+            }
         }
-        if(identifier && identifierChanged && !result.newTipp){
-            //autoUpdatePackageInfo = autoUpdatePackageInfo.refresh()
-            AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
-                    description: "Changes in Title '${tipp.name}'",
-                    tipp: tipp,
-                    startTime: new Date(),
-                    endTime: new Date(),
-                    status: RDStore.AUTO_UPDATE_STATUS_SUCCESSFUL,
-                    type: RDStore.AUTO_UPDATE_TYPE_CHANGED_TITLE,
-                    autoUpdatePackageInfo: autoUpdatePackageInfo,
-                    kbartProperty: kbartProperty,
-                    tippProperty: "identifiers[${namespace_val}]",
-                    oldValue: oldValue,
-                    newValue: newValue
-            ).save()
-        }
+
 
         return result.changedTipp ?: identifierChanged
     }
@@ -1650,7 +1652,7 @@ class KbartImportService {
 
     void createOrUpdateCoverageForTipp(TitleInstancePackagePlatform tipp, def coverage){
 
-        tipp = tipp.refresh()
+        //tipp = tipp.refresh()
 
         Integer countNewCoverages = coverage.size()
         Integer countTippCoverages = tipp.coverageStatements.size()

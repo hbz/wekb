@@ -31,6 +31,7 @@ import org.grails.web.json.JSONObject
 import org.mozilla.universalchardet.UniversalDetector
 import org.springframework.web.multipart.MultipartFile
 
+import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.text.ParseException
 import java.time.LocalDate
@@ -445,9 +446,9 @@ class AutoUpdatePackagesService {
                             try {
                                 file = exportService.kbartFromUrl(lastUpdateURL)
 
-                                if (kbartFromUrlStartTime < LocalTime.now().minus(45, ChronoUnit.MINUTES)){
+                                //if (kbartFromUrlStartTime < LocalTime.now().minus(45, ChronoUnit.MINUTES)){ sense???
                                     break
-                                }
+                                //}
 
                             }
                             catch (Exception e) {
@@ -851,13 +852,19 @@ class AutoUpdatePackagesService {
     }
 
    List kbartProcess(File tsvFile, String lastUpdateURL, AutoUpdatePackageInfo autoUpdatePackageInfo) {
-       log.info("Begin KbartProcess")
-
+       log.info("Begin KbartProcess, transmitted: ${tsvFile.length()}")
+       boolean encodingPass
        int countRows = 0
        List result = []
-
-       String encoding = UniversalDetector.detectCharset(tsvFile.newInputStream())
-        if(encoding != "UTF-8") {
+       String encoding
+       if(StandardCharsets.US_ASCII.newEncoder().canEncode(tsvFile.newInputStream().text)) {
+           encodingPass = true
+       }
+       else {
+           encoding = UniversalDetector.detectCharset(tsvFile)
+           encodingPass = encoding == "UTF-8"
+       }
+        if(!encodingPass) {
             log.error("Encoding of file is wrong. File encoding is: ${encoding}")
             AutoUpdatePackageInfo.withNewTransaction {
                 autoUpdatePackageInfo.description = "Encoding of kbart file is wrong. File encoding was: ${encoding}. File from URL: ${lastUpdateURL}"
@@ -865,8 +872,8 @@ class AutoUpdatePackagesService {
                 autoUpdatePackageInfo.endTime = new Date()
                 autoUpdatePackageInfo.save()
             }
-
-        }else {
+        }
+        else {
             List minimumKbartStandard = ['publication_title',
                                          'title_url',
                                          'title_id',
