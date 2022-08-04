@@ -22,7 +22,7 @@
             <div class="item">There are currently no linked Curatory Groups</div>
         </g:if>
 
-        <g:if test="${params.curationOverride == 'true' && !(d instanceof CuratoryGroup) && !(d instanceof TitleInstancePackagePlatform) && springSecurityService.isLoggedIn() && SpringSecurityUtils.ifAnyGranted("ROLE_ADMIN")}">
+        <g:if test="${(params.curationOverride == 'true' || !curatoryGroups) && !(d instanceof CuratoryGroup) && !(d instanceof TitleInstancePackagePlatform) && springSecurityService.isLoggedIn() && SpringSecurityUtils.ifAnyGranted("ROLE_ADMIN")}">
             <div class="ui segment">
                 <g:form controller="ajaxSupport" action="addToStdCollection" class="ui form">
                     <input type="hidden" name="__context" value="${d.getClassName()}:${d.id}"/>
