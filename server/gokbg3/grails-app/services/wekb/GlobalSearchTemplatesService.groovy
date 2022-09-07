@@ -362,15 +362,6 @@ class GlobalSearchTemplatesService {
                                         placeholder: 'Component Status',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'status'],
                                 ],
-                                [
-                                        type       : 'lookup',
-                                        baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : RCConstants.CURATORY_GROUP_TYPE,
-                                        prompt     : 'Type',
-                                        qparam     : 'qp_type',
-                                        placeholder: 'Type',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'type'],
-                                ],
                         ],
                         qbeGlobals: [
                         ],
