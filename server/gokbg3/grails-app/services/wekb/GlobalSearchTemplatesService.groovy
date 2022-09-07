@@ -866,6 +866,16 @@ class GlobalSearchTemplatesService {
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'provider'],
                                         hide       : false
                                 ],
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.RefdataValue',
+                                        filter1    : RCConstants.YN,
+                                        prompt     : 'Source Automatic Updates',
+                                        qparam     : 'qp_source_automaticUpdates',
+                                        placeholder: 'Source Automatic Updates',
+                                        propType   : 'Boolean',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'source.automaticUpdates'],
+                                ],
                                 //Package Filter
                                 [
                                         type       : 'lookup',
@@ -1139,6 +1149,7 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Product IDs', property: 'anbieterProduktIDs'],
                                 [heading: 'Titles', property: 'currentTippCount'],
                                 [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
+                                [heading: 'Automatic Updates', property: 'source?.automaticUpdates']
                         ],
                         actions   : [
                         ]
