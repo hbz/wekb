@@ -1008,9 +1008,9 @@ class AutoUpdatePackagesService {
                 }
 
                 if (minimumKbartStandard.size() != countMinimumKbartStandard) {
-                    log.info("KBART file has in header not the minimumKbartStandard: ${minimumKbartStandard}")
+                    log.info("KBART file does not have one or any of the headers: ${minimumKbartStandard}")
                     AutoUpdatePackageInfo.withNewTransaction {
-                        autoUpdatePackageInfo.description = "KBART file has in header not minimum of this headers: ${minimumKbartStandard.join(', ')}. File from URL: ${lastUpdateURL}"
+                        autoUpdatePackageInfo.description = "KBART file does not have one or any of the headers: ${minimumKbartStandard.join(', ')}. File from URL: ${lastUpdateURL}"
                         autoUpdatePackageInfo.status = RDStore.AUTO_UPDATE_STATUS_FAILED
                         autoUpdatePackageInfo.endTime = new Date()
                         autoUpdatePackageInfo.save()
