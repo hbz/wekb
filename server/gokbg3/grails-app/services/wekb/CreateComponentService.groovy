@@ -511,8 +511,8 @@ class CreateComponentService {
                             }
                         }
 
-                        if (pkg.save()) {
 
+                        if (pkg.save() || pkg.isAttached()) {
                             if (colMap.archiving_agency != null) {
                                 String value = cols[colMap.archiving_agency].trim()
                                 if (value) {
