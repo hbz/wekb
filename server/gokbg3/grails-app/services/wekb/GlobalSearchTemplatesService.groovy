@@ -194,7 +194,7 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Changed Titles ', property: 'countChangedTipps', sort: 'countChangedTipps'],
                                 [heading: 'Removed Titles ', property: 'countRemovedTipps', sort: 'countRemovedTipps'],
                                 [heading: 'New Titles', property: 'countNewTipps', sort: 'countNewTipps'],
-                                [heading: 'In valid Titles', property: 'countInValidTipps', sort: 'countInValidTipps'],
+                                [heading: 'Invalid Titles', property: 'countInValidTipps', sort: 'countInValidTipps'],
 
                         ]
                 ]
@@ -1338,6 +1338,7 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Primary URL', property: 'primaryUrl', sort: 'primaryUrl', outGoingLink: true],
                                 [heading: 'Provider', property: 'provider.name', link: true],
                                 [heading: 'Current Titles', property: 'currentTippCount'],
+                                [heading: 'Current Packages', property: 'packagesCount'],
                                 [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
                         ]
