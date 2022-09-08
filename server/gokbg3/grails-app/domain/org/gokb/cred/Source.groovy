@@ -29,6 +29,8 @@ class Source extends KBComponent {
   Boolean ezbMatch = false
   Org responsibleParty
 
+  Boolean kbartHasWekbFields = false
+
   static manyByCombo = [
     curatoryGroups: CuratoryGroup
   ]
@@ -38,6 +40,7 @@ class Source extends KBComponent {
     url column:'source_url'
     ruleset column:'source_ruleset', type:'text'
     lastUpdateUrl column: 'source_last_update_url'
+    kbartHasWekbFields column: 'source_kbart_wekb_fields'
   }
 
   static constraints = {
@@ -56,6 +59,7 @@ class Source extends KBComponent {
     zdbMatch(nullable:true,default: false)
     automaticUpdates(nullable: true,default: false)
     lastUpdateUrl(nullable:true, blank:true)
+    kbartHasWekbFields (nullable: true,default: false)
     name(validator: { val, obj ->
       if (obj.hasChanged('name')) {
         if (val && val.trim()) {

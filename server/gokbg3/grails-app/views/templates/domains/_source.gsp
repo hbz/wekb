@@ -54,7 +54,7 @@
                                 config="${RCConstants.SOURCE_DATA_FORMAT}"/>
     </dd>
 </dl>
-<dl>
+%{--<dl>
     <dt class="control-label">
         Responsible Party
     </dt>
@@ -64,7 +64,7 @@
             ${d.responsibleParty?.name ?: ''}
         </semui:xEditableManyToOne>
     </dd>
-</dl>
+</dl>--}%
 <dl>
     <dt class="control-label">
         Automated Updates
@@ -85,6 +85,14 @@
 </dl>
 <dl>
     <dt class="control-label">
+        Kbart has additional fields for we:kb
+    </dt>
+    <dd>
+        <semui:xEditableBoolean owner="${d}" field="kbartHasWekbFields" overwriteEditable="false"/>
+    </dd>
+</dl>
+%{--<dl>
+    <dt class="control-label">
         EZB Matching Enabled
     </dt>
     <dd>
@@ -98,7 +106,7 @@
     <dd>
         <semui:xEditableBoolean owner="${d}" field="zdbMatch"/>
     </dd>
-</dl>
+</dl>--}%
 <dl>
     <dt class="control-label">
         Last Run
