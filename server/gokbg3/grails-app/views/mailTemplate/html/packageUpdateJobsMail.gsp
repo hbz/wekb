@@ -36,14 +36,14 @@
                     ${autoUpdate.description}
                     <br>
                     <br>
-                    <g:set var="linkToAutoUpdateInfo" value="${grailsApplication.config.serverUrl + "/resource/show/${autoUpdate.uuid}"}"/>
+                    <g:set var="linkToAutoUpdateInfo" value="${grailsApplication.config.serverUrl + "resource/show/${autoUpdate.class.name}:${autoUpdate.uuid}"}"/>
                     ${linkToAutoUpdateInfo}
                 </td>
                 <td>
                     ${autoUpdate.pkg.name}
                     <br>
                     <br>
-                    <g:set var="linkToPkg" value="${grailsApplication.config.serverUrl + "/resource/show/${autoUpdate.pkg.uuid}"}"/>
+                    <g:set var="linkToPkg" value="${grailsApplication.config.serverUrl + "resource/show/${autoUpdate.pkg.uuid}"}"/>
                     ${linkToPkg}
                 </td>
                 <td>

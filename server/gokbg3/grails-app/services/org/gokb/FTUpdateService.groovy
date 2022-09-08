@@ -275,6 +275,8 @@ class FTUpdateService {
 
         result.shibbolethAuthentication = kbc.shibbolethAuthentication?.value
 
+        result.openAthens = kbc.openAthens?.value
+
         result.passwordAuthentication = kbc.passwordAuthentication?.value
 
         result.statisticsFormat = kbc.statisticsFormat?.value

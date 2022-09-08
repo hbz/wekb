@@ -1565,14 +1565,14 @@ class KbartImportService {
 
     boolean createOrUpdateIdentifierForTipp(Map result, TitleInstancePackagePlatform tipp, String namespace_val, String identifierValue, String kbartProperty, AutoUpdatePackageInfo autoUpdatePackageInfo){
         boolean identifierChanged = false
-        String newValue = identifierValue
+        String newValue = identifierValue.trim()
         String oldValue = ''
         Identifier identifier
         IdentifierNamespace ns = IdentifierNamespace.findByValueAndTargetType(namespace_val, RDStore.IDENTIFIER_NAMESPACE_TARGET_TYPE_TIPP)
 
         //tipp = tipp.refresh()
-
-        LinkedHashSet<Identifier> identifiersWithSameNamespace = tipp.ids.findAll{it.namespace.value == namespace_val}
+        if(ns) {
+            LinkedHashSet<Identifier> identifiersWithSameNamespace = tipp.ids.findAll{it.namespace.value == namespace_val}
 
         switch (identifiersWithSameNamespace.size()) {
             case 0:
@@ -1616,7 +1616,9 @@ class KbartImportService {
                     oldValue: oldValue,
                     newValue: newValue
             ).save()
+            }
         }
+
 
         return result.changedTipp ?: identifierChanged
     }
@@ -1656,7 +1658,7 @@ class KbartImportService {
 
     void createOrUpdateCoverageForTipp(TitleInstancePackagePlatform tipp, def coverage){
 
-        tipp = tipp.refresh()
+        //tipp = tipp.refresh()
 
         Integer countNewCoverages = coverage.size()
         Integer countTippCoverages = tipp.coverageStatements.size()

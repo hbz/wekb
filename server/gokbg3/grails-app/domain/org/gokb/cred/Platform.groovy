@@ -25,6 +25,9 @@ class Platform extends KBComponent {
   @RefdataAnnotation(cat = RCConstants.YN)
   RefdataValue passwordAuthentication
 
+  @RefdataAnnotation(cat = RCConstants.YN)
+  RefdataValue openAthens
+
   @RefdataAnnotation(cat = RCConstants.PLATFORM_STATISTICS_FORMAT)
   RefdataValue statisticsFormat
 
@@ -90,6 +93,7 @@ class Platform extends KBComponent {
     authentication column: 'plat_authentication_fk_rv'
     ipAuthentication column: 'plat_auth_by_ip_fk_rv'
     shibbolethAuthentication column: 'plat_auth_by_shib_fk_rv'
+    openAthens column: 'plat_open_athens_fk_rv'
     passwordAuthentication column: 'plat_auth_by_pass_fk_rv'
     statisticsFormat column: 'plat_statistics_format_fk_rv'
     counterR3Supported column: 'plat_counter_r3_supported_fk_rv'
@@ -114,6 +118,7 @@ class Platform extends KBComponent {
     authentication(nullable: true, blank: false)
     ipAuthentication(nullable: true, blank: false)
     shibbolethAuthentication(nullable: true, blank: false)
+    openAthens (nullable: true, blank: false)
     passwordAuthentication(nullable: true, blank: false)
     name(validator: { val, obj ->
       if (obj.hasChanged('name')) {

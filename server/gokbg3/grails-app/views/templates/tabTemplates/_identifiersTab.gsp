@@ -26,7 +26,7 @@
                         <td>
                             <g:link controller='ajaxSupport'
                                     action='delete'
-                                    params="${["__context": "${identifier.class.name}:${identifier.id}", 'fragment': fragment]}"
+                                    params="${["__context": "${identifier.class.name}:${identifier.id}", 'fragment': fragment, curationOverride: params.curationOverride]}"
                                     class="confirm-click btn-delete"
                                     title="Delete this link"
                                     data-confirm-message="Are you sure you wish to delete this Identifier (${identifier.namespace.value}: ${identifier.value})?">Delete</g:link>

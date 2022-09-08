@@ -102,7 +102,7 @@ class CreateComponentService {
                                 if ( pprop.getType().name == 'java.lang.String' ) {
                                     result.newobj[p.key] = p.value?.trim() ?: null
                                 }
-                                else if ( pprop.getType().name == 'java.util.Date' ) {
+                                else if ( pprop.getType().name == 'java.util.Date' && p.value) {
                                     def sdf = new java.text.SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss z", Locale.ENGLISH);
                                     def incoming = p.value.substring(0,31) + ":" + p.value.substring(31, 33)
                                     Instant instant = sdf.parse(incoming).toInstant()
