@@ -531,7 +531,16 @@ class SemanticTagLib {
 
     Closure tabsItemWithoutLink = { attrs, body ->
 
-        out << '<div class="item' + (attrs.class ? (' ' + attrs.class) : '') +'" data-tab="' + attrs.tab + '">'
+        out << '<div class="item '
+
+        if(attrs.defaultTab && attrs.tab == attrs.defaultTab && !attrs.activeTab){
+            out << 'active '
+        }
+        else if(attrs.activeTab && attrs.tab == attrs.activeTab){
+            out << 'active '
+        }
+
+        out << (attrs.class ? (' ' + attrs.class) : '') +'" data-tab="' + attrs.tab + '">'
         out << body()
 
         if (attrs.counts != null) {
@@ -542,7 +551,16 @@ class SemanticTagLib {
 
     Closure tabsItemContent = { attrs, body ->
 
-        out << '<div class="ui bottom attached'+ (attrs.class ? (' ' + attrs.class) : '') +' tab segment"' +'" data-tab="' + attrs.tab + '">'
+        out << '<div class="ui bottom attached '
+
+        if(attrs.defaultTab && attrs.tab == attrs.defaultTab && !attrs.activeTab){
+            out << 'active '
+        }
+        else if(attrs.activeTab && attrs.tab == attrs.activeTab){
+            out << 'active '
+        }
+
+        out << (attrs.class ? (' ' + attrs.class) : '') +' tab segment"' +'" data-tab="' + attrs.tab + '">'
         out << body()
         out << '</div>'
     }

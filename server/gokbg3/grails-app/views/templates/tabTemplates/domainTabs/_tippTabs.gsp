@@ -27,7 +27,7 @@
         </semui:tabsItemWithoutLink>
 
         <g:if test="${d.pkg && d.pkg.source && d.pkg.source.url}">
-            <semui:tabsItemWithoutLink tab="autoUpdatePackageInfos" counts="${d.autoUpdateTippInfos.size()}">
+            <semui:tabsItemWithoutLink tab="autoUpdatePackageInfos" activeTab="${params.activeTab}" counts="${d.autoUpdateTippInfos.size()}">
                 Auto Update Infos
             </semui:tabsItemWithoutLink>
         </g:if>
@@ -52,7 +52,7 @@
     <g:render template="/templates/tabTemplates/pricesTab" model="${[d: d]}"/>
 
     <g:if test="${d.pkg && d.pkg.source && d.pkg.source.url}">
-        <semui:tabsItemContent tab="autoUpdatePackageInfos">
+        <semui:tabsItemContent tab="autoUpdatePackageInfos" activeTab="${params.activeTab}">
 
             <div class="content">
 

@@ -1,5 +1,5 @@
 <%@ page import="de.wekb.helper.RDStore; org.gokb.cred.TitleInstancePackagePlatform; org.gokb.cred.Combo;" %>
-<semui:tabsItemContent tab="identifiers" class="${activeTab ? 'active' : ''}" counts="${d.ids.size()}">
+<semui:tabsItemContent tab="identifiers" class="${activeTab ? 'active' : ''}" defaultTab="${defaultTab}" activeTab="${params.activeTab}" counts="${d.ids.size()}">
 
     <table class="ui selectable striped sortable celled table">
         <thead>
