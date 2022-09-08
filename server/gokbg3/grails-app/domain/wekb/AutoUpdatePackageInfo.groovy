@@ -28,6 +28,8 @@ class AutoUpdatePackageInfo {
 
     boolean onlyRowsWithLastChanged = false
 
+    boolean kbartHasWekbFields = false
+
     @RefdataAnnotation(cat = RCConstants.AUTO_UPDATE_STATUS)
     RefdataValue status
 
@@ -57,6 +59,8 @@ class AutoUpdatePackageInfo {
         countNewTipps column: 'aupi_count_new_tipps'
 
         onlyRowsWithLastChanged column: 'aupi_only_rows_with_last_changed'
+
+        kbartHasWekbFields column: 'aupi_kbart_has_wekb_fields'
     }
 
     static constraints = {
@@ -69,6 +73,7 @@ class AutoUpdatePackageInfo {
         countRemovedTipps (nullable:true)
         countNewTipps (nullable:true)
         onlyRowsWithLastChanged  (nullable:true)
+        kbartHasWekbFields (nullable: true,default: false)
 
     }
 

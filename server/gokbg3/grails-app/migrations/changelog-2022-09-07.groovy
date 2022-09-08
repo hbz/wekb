@@ -15,4 +15,10 @@ databaseChangeLog = {
             column(name: "source_kbart_wekb_fields", type: "boolean")
         }
     }
+
+    changeSet(author: "djebeniani (generated)", id: "1662579394414-4") {
+        addColumn(tableName: "auto_update_package_info") {
+            column(name: "aupi_kbart_has_wekb_fields", type: "boolean")
+        }
+    }
 }
