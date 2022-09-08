@@ -35,19 +35,19 @@ class AutoUpdatePackageInfo {
         id          column:'aupi_id'
         version     column:'aupi_version'
 
-        pkg         column: 'aupi_pkg_fk'
+        pkg         column: 'aupi_pkg_fk', index: 'aupi_pkg_idx'
 
-        startTime         column: 'aupi_start_time'
-        endTime         column: 'aupi_end_time'
+        startTime         column: 'aupi_start_time', index: 'aupi_start_time_idx'
+        endTime         column: 'aupi_end_time', index: 'aupi_start_time_idx'
 
-        uuid column: 'aupi_uuid'
+        uuid column: 'aupi_uuid', index: 'aupi_uuid_idx'
         description column: 'aupi_description', type: 'text'
 
 
         dateCreated column: 'aupi_date_created'
         lastUpdated column: 'aupi_last_updated'
 
-        status column: 'aupi_status_fk'
+        status column: 'aupi_status_fk', index: 'aupi_status_idx'
 
         countKbartRows column: 'aupi_count_kbart_rows'
         countProcessedKbartRows column: 'aupi_count_processed_kbart_rows'
