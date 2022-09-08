@@ -362,15 +362,6 @@ class GlobalSearchTemplatesService {
                                         placeholder: 'Component Status',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'status'],
                                 ],
-                                [
-                                        type       : 'lookup',
-                                        baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : RCConstants.CURATORY_GROUP_TYPE,
-                                        prompt     : 'Type',
-                                        qparam     : 'qp_type',
-                                        placeholder: 'Type',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'type'],
-                                ],
                         ],
                         qbeGlobals: [
                         ],
@@ -875,6 +866,16 @@ class GlobalSearchTemplatesService {
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'provider'],
                                         hide       : false
                                 ],
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.RefdataValue',
+                                        filter1    : RCConstants.YN,
+                                        prompt     : 'Source Automatic Updates',
+                                        qparam     : 'qp_source_automaticUpdates',
+                                        placeholder: 'Source Automatic Updates',
+                                        propType   : 'Boolean',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'source.automaticUpdates'],
+                                ],
                                 //Package Filter
                                 [
                                         type       : 'lookup',
@@ -1066,6 +1067,16 @@ class GlobalSearchTemplatesService {
                                 [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.RefdataValue',
+                                        filter1    : RCConstants.YN,
+                                        prompt     : 'Open Athens Supported',
+                                        qparam     : 'qp_openAthens_platform',
+                                        placeholder: 'Open Athens Supported',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'nominalPlatform.openAthens'],
+                                        advancedSearch: [title: "Search Platform by ...", category: 'Platform']
+                                ],
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.RefdataValue',
                                         filter1    : RCConstants.PLATFORM_IP_AUTH,
                                         prompt     : 'IP Auth Supported',
                                         qparam     : 'qp_ipAuthentication_platform',
@@ -1148,6 +1159,7 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Product IDs', property: 'anbieterProduktIDs'],
                                 [heading: 'Titles', property: 'currentTippCount'],
                                 [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
+                                [heading: 'Automatic Updates', property: 'source?.automaticUpdates']
                         ],
                         actions   : [
                         ]
@@ -1243,6 +1255,15 @@ class GlobalSearchTemplatesService {
                                         qparam     : 'qp_shibbolethAuthentication',
                                         placeholder: 'Shibboleth Supported',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'shibbolethAuthentication'],
+                                ],
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.RefdataValue',
+                                        filter1    : RCConstants.YN,
+                                        prompt     : 'Open Athens Supported',
+                                        qparam     : 'qp_openAthens',
+                                        placeholder: 'Open Athens Supported',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'openAthens']
                                 ],
                                 [
                                         type       : 'lookup',

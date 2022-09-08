@@ -46,6 +46,8 @@ class AccessService {
 
     List allowedComponentSearch = ["g:autoUpdatePackageInfos",
                                    "g:autoUpdateTippInfos",
+                                   "g:curatoryGroups",
+                                   "g:identifiers",
                                    "g:orgs",
                                    "g:packages",
                                    "g:platforms",
