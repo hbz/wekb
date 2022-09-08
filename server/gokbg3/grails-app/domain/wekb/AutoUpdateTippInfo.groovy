@@ -34,26 +34,26 @@ class AutoUpdateTippInfo {
         id          column:'auti_id'
         version     column:'auti_version'
 
-        tipp         column: 'auti_tipp_fk'
+        tipp         column: 'auti_tipp_fk', index: 'auti_tipp_idx'
 
-        startTime         column: 'auti_start_time'
-        endTime         column: 'auti_end_time'
+        startTime         column: 'auti_start_time', index: 'auti_start_time_idx'
+        endTime         column: 'auti_end_time', index: 'auti_end_time_idx'
 
-        uuid column: 'auti_uuid'
+        uuid column: 'auti_uuid', index: 'auti_uuid_idx'
         description column: 'auti_description', type: 'text'
 
         dateCreated column: 'auti_date_created'
         lastUpdated column: 'auti_last_updated'
 
-        autoUpdatePackageInfo column: 'auti_aupi_fk'
-        tipp column: 'auti_tipp_fk'
+        autoUpdatePackageInfo column: 'auti_aupi_fk', index: 'auti_aupi_idx'
+        //tipp column: 'auti_tipp_fk'
 
-        status column: 'auti_status_fk'
+        status column: 'auti_status_fk', index: 'auti_status_idx'
 
-        type column: 'auti_type_fk'
+        type column: 'auti_type_fk', index: 'auti_type_idx'
 
-        tippProperty column: 'auti_tipp_property'
-        kbartProperty column: 'auti_kbart_property'
+        tippProperty column: 'auti_tipp_property', index: 'auti_tipp_property_idx'
+        kbartProperty column: 'auti_kbart_property', index: 'auti_kbart_property_idx'
         newValue column: 'auti_new_value', type: 'text'
         oldValue column: 'auti_old_value', type: 'text'
     }

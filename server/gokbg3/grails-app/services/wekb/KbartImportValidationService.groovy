@@ -455,7 +455,9 @@ class KbartImportValidationService {
 
         //publicationType
         if (tippMap.publication_type) {
+            log.debug("before publication type determination")
             RefdataValue publicationType = kbartImportService.determinePublicationType(tippMap.publication_type)
+            log.debug("after determination")
             if (!publicationType) {
                 result.valid = false
                 errors.title = [[message: "Unknown publicationType", baddata: tippMap.type, code: 404]]
