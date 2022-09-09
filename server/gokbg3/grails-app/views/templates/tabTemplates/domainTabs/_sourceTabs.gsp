@@ -1,7 +1,7 @@
 <g:if test="${d.id}">
     <semui:tabs>
 
-        <semui:tabsItemWithoutLink tab="packages" class="active">
+        <semui:tabsItemWithoutLink tab="packages" defaultTab="packages" activeTab="${params.activeTab}">
             Packages
         </semui:tabsItemWithoutLink>
       %{--  <semui:tabsItemWithoutLink tab="notes">
@@ -10,7 +10,7 @@
 
     </semui:tabs>
 
-    <semui:tabsItemContent tab="packages" class="active">
+    <semui:tabsItemContent tab="packages" defaultTab="packages" activeTab="${params.activeTab}">
         <div class="content">
 
                     <g:link class="display-inline" controller="search" action="inlineSearch"

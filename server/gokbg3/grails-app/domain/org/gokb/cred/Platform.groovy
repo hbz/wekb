@@ -310,6 +310,17 @@ class Platform extends KBComponent {
   }
 
   @Transient
+  public getPackagesCount() {
+    def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current');
+    def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.NominalPlatform')
+
+    int result = Combo.executeQuery("select count(c.id) from Combo as c where c.toComponent = :to and c.type = :type and c.toComponent.status = :status"
+            , [to: this, type: combo_tipps, status: refdata_current])[0]
+
+    result
+  }
+
+  @Transient
   String getIdentifierValue(idtype){
     // This will return only the first match and stop looking afterwards.
     // Null returned if no match.

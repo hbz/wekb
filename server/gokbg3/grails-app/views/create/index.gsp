@@ -58,7 +58,8 @@
                },
                success: function(data, config) {
                    if(data && data.newobj && data.newobj.id) {
-                      window.location.href = "${g.createLink(controller: 'resource', action: 'show')}/"+data.newobj.uuid;
+                       var urlID = data.newobj.uuid ? data.newobj.uuid : data.objectClassName+':'+data.newobj.id;
+                       window.location.href = "${g.createLink(controller: 'resource', action: 'show')}/"+urlID;
                    } else if(data && data.errors){
                        config.error.call(this, data.errors);
                    }

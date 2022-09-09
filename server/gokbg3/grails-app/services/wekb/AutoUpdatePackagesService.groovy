@@ -428,7 +428,7 @@ class AutoUpdatePackagesService {
                         updateUrls.add(new URL(pkg.source.url))
                     } else {
                         // this package had already been filled with data
-                        if (pkg.source.lastUpdateUrl) {
+                        if ((UrlToolkit.containsDateStamp(pkg.source.url) || UrlToolkit.containsDateStampPlaceholder(pkg.source.url)) && pkg.source.lastUpdateUrl) {
                             updateUrls = getUpdateUrls(pkg.source.lastUpdateUrl, pkg.source.lastRun.toString(), pkg.dateCreated.toString())
                         } else {
                             updateUrls = getUpdateUrls(pkg.source.url, pkg.source.lastRun.toString(), pkg.dateCreated.toString())
@@ -499,10 +499,6 @@ class AutoUpdatePackagesService {
         int total = 0
         boolean addOnly = false //Thing about it where to set or to change
 
-        AutoUpdatePackageInfo.withNewTransaction {
-            autoUpdatePackageInfo.save()
-        }
-
         RefdataValue status_current = RDStore.KBC_STATUS_CURRENT
         RefdataValue status_deleted = RDStore.KBC_STATUS_DELETED
         RefdataValue status_retired = RDStore.KBC_STATUS_RETIRED
@@ -521,11 +517,23 @@ class AutoUpdatePackagesService {
 
 
         if(kbartRows.size() > 0){
+            Source source = pkg.source
             if(headerOfKbart.containsKey("status")){
                 log.info("kbart has status field and is wekb standard")
                 setAllTippsNotInKbartToDeleted = false
                 listStatus = [status_current, status_expected, status_deleted, status_retired]
+                source.kbartHasWekbFields = true
+            }else {
+                source.kbartHasWekbFields = false
             }
+            source.save()
+        }
+
+        AutoUpdatePackageInfo.withNewTransaction {
+            if(!setAllTippsNotInKbartToDeleted){
+                autoUpdatePackageInfo.kbartHasWekbFields = true
+            }
+            autoUpdatePackageInfo.save()
         }
 
         if(addOnly){

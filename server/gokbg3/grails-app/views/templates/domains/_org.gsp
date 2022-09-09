@@ -52,6 +52,7 @@
         <semui:xEditable owner="${d}" field="kbartDownloaderURL" validation="url" outGoingLink="true"/>
     </dd>
 </dl>
+<g:if test="${d.id != null}">
 <dl>
     <dt class="control-label">
         Roles
@@ -83,7 +84,7 @@
         Contacts
     </dt>
     <dd>
-        <g:if test="${d.id != null}">
+
 
             <table class="ui small selectable striped celled table">
                 <thead>
@@ -129,10 +130,10 @@
                 <br>
                 <br>
             </g:if>
-        </g:if>
+
     </dd>
 </dl>
-
+</g:if>
 <g:if test="${editable}">
     <semui:modal id="contactModal" title="Add Contact">
 

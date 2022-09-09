@@ -1,5 +1,5 @@
 <%@ page import="de.wekb.helper.RCConstants; org.gokb.cred.RefdataCategory" %>
-<semui:tabsItemContent tab="ddcs">
+<semui:tabsItemContent tab="ddcs" activeTab="${params.activeTab}">
     <g:if test="${d.id != null}">
         <table class="ui selectable striped sortable celled table">
             <thead>

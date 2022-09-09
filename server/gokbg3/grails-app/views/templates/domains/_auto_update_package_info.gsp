@@ -104,6 +104,15 @@
     </dd>
 </dl>
 
+<dl>
+    <dt class="control-label">
+        Kbart has additional fields for we:kb
+    </dt>
+    <dd>
+        <semui:xEditableBoolean owner="${d}" field="kbartHasWekbFields" overwriteEditable="false"/>
+    </dd>
+</dl>
+
 <semui:tabs>
     <semui:tabsItemWithoutLink tab="autoUpdateTippInfos" counts="${d.autoUpdateTippInfos.size()}" class="active">
         Auto Update Title Infos

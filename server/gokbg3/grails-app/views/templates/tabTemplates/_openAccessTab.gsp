@@ -1,5 +1,5 @@
 <%@ page import="de.wekb.helper.RCConstants;" %>
-<semui:tabsItemContent tab="openAccess">
+<semui:tabsItemContent tab="openAccess" activeTab="${params.activeTab}">
     <g:if test="${d.id != null}">
         <div class="content wekb-inline-lists">
             <dl>

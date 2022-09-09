@@ -1,6 +1,6 @@
 <%@ page import="de.wekb.helper.RCConstants;" %>
 <g:if test="${d.publicationType?.value == 'Serial'}">
-	<semui:tabsItemContent tab="tippcoverage">
+	<semui:tabsItemContent tab="tippcoverage" activeTab="${params.activeTab}">
 		<div class="content wekb-inline-lists">
 			<dl>
 				<dt class="control-label">

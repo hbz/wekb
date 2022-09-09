@@ -1,5 +1,5 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
-<semui:tabsItemContent tab="variantNames">
+<semui:tabsItemContent tab="variantNames" activeTab="${params.activeTab}">
   <g:if test="${d.id != null}">
         <table class="ui selectable striped sortable celled table">
           <thead>

@@ -2047,7 +2047,7 @@ class KbartImportService {
                     tipp.save()
                     tipp = tipp.refresh()
                     cp = new ComponentPrice(
-                            owner: this,
+                            owner: tipp,
                             priceType: priceType,
                             currency: currency,
                             price: f)
@@ -2057,7 +2057,7 @@ class KbartImportService {
 
                 } else {
                     cp = new ComponentPrice(
-                            owner: this,
+                            owner: tipp,
                             priceType: priceType,
                             currency: currency,
                             price: f)
