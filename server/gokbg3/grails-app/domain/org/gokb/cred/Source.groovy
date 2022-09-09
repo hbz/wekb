@@ -59,7 +59,6 @@ class Source extends KBComponent {
     zdbMatch(nullable:true,default: false)
     automaticUpdates(nullable: true,default: false)
     lastUpdateUrl(nullable:true, blank:true)
-    kbartHasWekbFields (nullable: true,default: false)
     name(validator: { val, obj ->
       if (obj.hasChanged('name')) {
         if (val && val.trim()) {
