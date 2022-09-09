@@ -1,3 +1,6 @@
+import de.wekb.helper.RCConstants
+import org.gokb.cred.RefdataCategory
+
 databaseChangeLog = {
 
     changeSet(author: "djebeniani (generated)", id: "1662579394414-1") {
@@ -19,6 +22,28 @@ databaseChangeLog = {
     changeSet(author: "djebeniani (generated)", id: "1662579394414-4") {
         addColumn(tableName: "auto_update_package_info") {
             column(name: "aupi_kbart_has_wekb_fields", type: "boolean")
+        }
+    }
+
+    changeSet(author: "djebeniani (modified)", id: "1662579394414-5") {
+        grailsChange {
+            change {
+
+                sql.executeUpdate('update source set source_kbart_wekb_fields = false where source_kbart_wekb_fields is null')
+
+            }
+            rollback {}
+        }
+    }
+
+    changeSet(author: "djebeniani (modified)", id: "1662579394414-6") {
+        grailsChange {
+            change {
+
+                sql.executeUpdate('update auto_update_package_info set aupi_kbart_has_wekb_fields = false where aupi_kbart_has_wekb_fields is null')
+
+            }
+            rollback {}
         }
     }
 }
