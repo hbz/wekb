@@ -72,9 +72,7 @@ class AutoUpdatePackageInfo {
         countChangedTipps (nullable:true)
         countRemovedTipps (nullable:true)
         countNewTipps (nullable:true)
-        onlyRowsWithLastChanged  (nullable:true)
-        kbartHasWekbFields (nullable: true,default: false)
-
+        onlyRowsWithLastChanged  (nullable:true)      
     }
 
     static hasMany = [autoUpdateTippInfos: AutoUpdateTippInfo]
