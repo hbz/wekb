@@ -428,7 +428,7 @@ class AutoUpdatePackagesService {
                         updateUrls.add(new URL(pkg.source.url))
                     } else {
                         // this package had already been filled with data
-                        if (pkg.source.lastUpdateUrl) {
+                        if ((UrlToolkit.containsDateStamp(pkg.source.url) || UrlToolkit.containsDateStampPlaceholder(pkg.source.url)) && pkg.source.lastUpdateUrl) {
                             updateUrls = getUpdateUrls(pkg.source.lastUpdateUrl, pkg.source.lastRun.toString(), pkg.dateCreated.toString())
                         } else {
                             updateUrls = getUpdateUrls(pkg.source.url, pkg.source.lastRun.toString(), pkg.dateCreated.toString())
