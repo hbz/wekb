@@ -550,7 +550,7 @@ class FTUpdateService {
         if(indicesPerType.get(r.class.simpleName)) {
           log.debug("${r.id} ${domain.name} -- (rects)${r.lastUpdated} > (from)${from}")
           def idx_record = recgen_closure(r)
-          def es_index = indicesPerType.get(idx_record['componentType'])
+          def es_index = indicesPerType.get(r.class.simpleName)
           if (idx_record != null) {
             def recid = idx_record['_id'].toString()
             idx_record.remove('_id')
