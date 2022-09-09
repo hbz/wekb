@@ -214,6 +214,8 @@ class CreateComponentService {
 
                                 result.newobj.save()
                             }
+
+                            result.objectClassName = result.newobj.class.name
                         }
                     }
                 }

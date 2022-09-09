@@ -10,8 +10,10 @@
 		<g:formatDate format="${message(code: 'default.date.format.noZ')}"
 					  date="${d.lastUpdated}"/>
 	</dd>
-	<dt class="control-label">UUID</dt>
-	<dd>
-          ${d.hasProperty('uuid') ? d.uuid : ''}
-	</dd>
+	<g:if test="${d.hasProperty('uuid')}">
+		<dt class="control-label">UUID</dt>
+		<dd>
+			  ${d.uuid}
+		</dd>
+	</g:if>
 </dl>
