@@ -49,6 +49,7 @@
                        value="org.gokb.cred.KBComponentVariantName" />
                 <input type="hidden" name="__recip" value="owner" />
                 <input type="hidden" name="fragment" value="variantNames" />
+                  <input type="hidden" name="curationOverride" value="${params.curationOverride}"/>
                   <div class="field">
                               <label>Variant Name</label>
 

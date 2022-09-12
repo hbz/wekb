@@ -142,6 +142,7 @@
             <input type="hidden" name="__newObjectClass" value="wekb.Contact"/>
             <input type="hidden" name="__recip" value="org"/>
             <input type="hidden" name="fragment" value="contact"/>
+            <input type="hidden" name="curationOverride" value="${params.curationOverride}"/>
             <div class="field">
                     <label>Value</label>
 
@@ -174,6 +175,7 @@
         <g:form controller="ajaxSupport" action="addToStdCollection" class="ui form">
             <input type="hidden" name="__context" value="${d.class.name}:${d.id}"/>
             <input type="hidden" name="__property" value="roles"/>
+            <input type="hidden" name="curationOverride" value="${params.curationOverride}"/>
             <div class="field">
                               <label>Role:</label> <semui:simpleReferenceDropdown name="__relatedObject"
                                                  baseClass="org.gokb.cred.RefdataValue"

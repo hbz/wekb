@@ -26,7 +26,7 @@
                             <td>
                                     <g:link controller="ajaxSupport" class="confirm-click"
                                             data-confirm-message="Are you sure you wish to delete this Price?"
-                                            action="deletePrice" params="[id: somePrice.id, fragment: 'prices']">Delete</g:link>
+                                            action="deletePrice" params="[id: somePrice.id, fragment: 'prices', curationOverride: params.curationOverride]">Delete</g:link>
 
                             </td>
                         </g:if>
@@ -49,6 +49,7 @@
                                 <input type="hidden" name="__newObjectClass"
                                        value="org.gokb.cred.ComponentPrice"/>
                                 <input type="hidden" name="__recip" value="owner"/>
+                                <input type="hidden" name="curationOverride" value="${params.curationOverride}"/>
 
                                 <div class="field">
                                     <label>Price Type</label>

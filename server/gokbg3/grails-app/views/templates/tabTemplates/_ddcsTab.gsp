@@ -41,6 +41,7 @@
                                 <input type="hidden" name="__context" value="${d.class.name}:${d.id}"/>
                                 <input type="hidden" name="__property" value="ddcs"/>
                                 <input type="hidden" name="object" value="${d.getClassName()}:${d.id}"/>
+                                <input type="hidden" name="curationOverride" value="${params.curationOverride}"/>
 
                                 <div class="field">
                                     <label>Dewey Decimal Classification:</label>

@@ -46,6 +46,7 @@
 
                     <g:form controller="ajaxSupport" action="addIdentifier" class="ui form">
                         <input type="hidden" name="hash" value="${hash}"/>
+                        <input type="hidden" name="curationOverride" value="${params.curationOverride}"/>
 
                         <input type="hidden" name="__context" value="${ctxoid}" />
 
