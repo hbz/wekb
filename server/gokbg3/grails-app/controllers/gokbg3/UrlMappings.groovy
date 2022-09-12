@@ -11,6 +11,7 @@ class UrlMappings {
     // "/$controller/$action?/$id?(.$format)?"{
     "/resource/show/$type/$id"(controller: 'resource', action: 'show')
     "/package"(controller: 'packages')
+    "/robots.txt"(controller: 'public', action: 'robots')
 
     group "/rest", {
       "/packages/$id/$action"(controller: 'package', namespace: 'rest')

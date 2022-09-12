@@ -117,7 +117,7 @@ class SemanticInplaceTagLib {
             switch (attrs.type) {
                 case 'date':
                     update_link = createLink(controller: 'ajaxSupport', action: 'editableSetValue', params: [type: 'date', curationOverride: params.curationOverride])
-                    out << " data-type='date' data-inputclass='form-control form-date' data-datepicker='{minYear: 1500, smartDays: true, clearBtn: true}' data-viewformat='yyyy-mm-dd'"
+                    out << " data-type='text' data-format='YYYY-MM-DD' data-inputclass='form-control form-date'  data-viewformat='yyyy-mm-dd'"
                     def dv = attrs."data-value"
 
                     if (!dv) {
@@ -476,6 +476,7 @@ class SemanticInplaceTagLib {
                     action: 'lookup',
                     params: [baseClass: attrs.baseClass,
                             q: '',
+                            filter1: attrs.filter1,
                             preparForEditable: 'true']
             ).encodeAsHTML()
 

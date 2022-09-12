@@ -220,7 +220,7 @@ class SearchService {
                     else {
                         response_record.cols.add([
                                 link: (rh.link ? (final_oid ?: response_record.oid ) : null),
-                                value: (cobj != null ? (cobj ?: false) : '-Empty-'),
+                                value: (cobj != null ? (cobj) : '-Empty-'),
                                 outGoingLink: rh.outGoingLink ?: null])
                     }
                 }

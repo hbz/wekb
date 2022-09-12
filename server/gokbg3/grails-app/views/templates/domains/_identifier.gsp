@@ -62,7 +62,7 @@
                     <td>
                         <g:link controller='ajaxSupport'
                                 action='delete'
-                                params="${["__context": "${identifierOfComponent.class.name}:${identifierOfComponent.id}", 'fragment': 'identifiers']}"
+                                params="${["__context": "${identifierOfComponent.class.name}:${identifierOfComponent.id}", 'fragment': 'identifiers', curationOverride: params.curationOverride]}"
                                 class="confirm-click btn-delete"
                                 title="Delete this link"
                                 data-confirm-message="Are you sure you wish to delete this Identifier from the title ${component}?">Delete</g:link>
@@ -97,7 +97,7 @@
                     <td>
                         <g:link controller='ajaxSupport'
                                 action='delete'
-                                params="${["__context": "${identifierOfComponent.class.name}:${identifierOfComponent.id}", 'fragment': 'identifiers']}"
+                                params="${["__context": "${identifierOfComponent.class.name}:${identifierOfComponent.id}", 'fragment': 'identifiers', curationOverride: params.curationOverride]}"
                                 class="confirm-click btn-delete"
                                 title="Delete this link"
                                 data-confirm-message="Are you sure you wish to delete this Identifier from the title ${component}?">Delete</g:link>
@@ -139,7 +139,7 @@
                     <td>
                         <g:link controller='ajaxSupport'
                                 action='delete'
-                                params="${["__context": "${identifierOfComponent.class.name}:${identifierOfComponent.id}", 'fragment': 'identifiers']}"
+                                params="${["__context": "${identifierOfComponent.class.name}:${identifierOfComponent.id}", 'fragment': 'identifiers', curationOverride: params.curationOverride]}"
                                 class="confirm-click btn-delete"
                                 title="Delete this link"
                                 data-confirm-message="Are you sure you wish to delete this Identifier from the title ${component}?">Delete</g:link>

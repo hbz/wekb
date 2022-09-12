@@ -275,6 +275,8 @@ class FTUpdateService {
 
         result.shibbolethAuthentication = kbc.shibbolethAuthentication?.value
 
+        result.openAthens = kbc.openAthens?.value
+
         result.passwordAuthentication = kbc.passwordAuthentication?.value
 
         result.statisticsFormat = kbc.statisticsFormat?.value
@@ -545,10 +547,10 @@ class FTUpdateService {
           break
         }
         Object r = domain.get(r_id)
-        if(ESSearchService.indicesPerType.get(r.class.simpleName)) {
+        if(indicesPerType.get(r.class.simpleName)) {
           log.debug("${r.id} ${domain.name} -- (rects)${r.lastUpdated} > (from)${from}")
           def idx_record = recgen_closure(r)
-          def es_index = indicesPerType.get(idx_record['componentType'])
+          def es_index = indicesPerType.get(r.class.simpleName)
           if (idx_record != null) {
             def recid = idx_record['_id'].toString()
             idx_record.remove('_id')

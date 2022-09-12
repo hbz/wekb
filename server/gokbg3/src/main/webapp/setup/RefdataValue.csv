@@ -5,6 +5,12 @@ Activity.Status;Complete;Complete;Complete
 Activity.Type;TitleTransfer;TitleTransfer;TitleTransfer
 AllocatedReviewGroup.Status;Claimed;Claimed;Claimed
 AllocatedReviewGroup.Status;In Progress;In Progress;In Progress
+AutoUpdate.Status;Successful;Successful;Successful
+AutoUpdate.Status;Failed;Failed;Failed
+AutoUpdate.Status;Warning;Warning;Warning
+AutoUpdate.Type;New Title;New Title;New Title
+AutoUpdate.Type;Changed Title;Changed Title;Changed Title
+AutoUpdate.Type;Removed Title;Removed Title;Removed Title
 Combo.Status;Active;Active;Active
 Combo.Status;Deleted;Deleted;Deleted
 Combo.Status;Expired;Expired;Expired
@@ -314,6 +320,7 @@ Job.Type;AutoUpdatePackagesJob;AutoUpdatePackagesJob;AutoUpdatePackagesJob
 Job.Type;ManuellUpdatePackageJob;ManuellUpdatePackageJob;ManuellUpdatePackageJob
 Job.Type;BootstrapIdentifierCleanup;BootstrapIdentifierCleanup;BootstrapIdentifierCleanup
 Job.Type;CleanupDeletedComponents;CleanupDeletedComponents;CleanupDeletedComponents
+Job.Type;CleanupRemovedComponents;CleanupRemovedComponents;CleanupRemovedComponents
 Job.Type;CleanupRejectedComponents;CleanupRejectedComponents;CleanupRejectedComponents
 Job.Type;DeleteTIWithoutHistory;DeleteTIWithoutHistory;DeleteTIWithoutHistory
 Job.Type;EnrichmentService;EnrichmentService;EnrichmentService

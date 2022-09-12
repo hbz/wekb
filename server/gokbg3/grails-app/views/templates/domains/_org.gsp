@@ -52,6 +52,7 @@
         <semui:xEditable owner="${d}" field="kbartDownloaderURL" validation="url" outGoingLink="true"/>
     </dd>
 </dl>
+<g:if test="${d.id != null}">
 <dl>
     <dt class="control-label">
         Roles
@@ -83,7 +84,7 @@
         Contacts
     </dt>
     <dd>
-        <g:if test="${d.id != null}">
+
 
             <table class="ui small selectable striped celled table">
                 <thead>
@@ -91,7 +92,7 @@
                     <th>#</th>
                     <th>Value</th>
                     <th>Content Type</th>
-                    <th>Contact Typ</th>
+                    <th>Contact Type</th>
                     <th>Language</th>
                     <th></th>
                 </tr>
@@ -114,7 +115,7 @@
                             <g:if test="${editable}">
                                 <g:link controller='ajaxSupport'
                                         action='delete'
-                                        params="${["__context": "${contact.class.name}:${contact.id}"]}">Delete</g:link>
+                                        params="${["__context": "${contact.class.name}:${contact.id}", curationOverride: params.curationOverride]}">Delete</g:link>
                             </g:if>
                         </td>
                     </tr>
@@ -129,10 +130,10 @@
                 <br>
                 <br>
             </g:if>
-        </g:if>
+
     </dd>
 </dl>
-
+</g:if>
 <g:if test="${editable}">
     <semui:modal id="contactModal" title="Add Contact">
 
@@ -145,13 +146,13 @@
                     <label>Value</label>
 
                 <input type="text" name="content"/>
-            </div>>
+            </div>
             <div class="field">
                     <label>Language</label>
                 <semui:simpleReferenceDropdown name="language"
                                                baseClass="org.gokb.cred.RefdataValue"
                                                filter1="${RCConstants.KBCOMPONENT_LANGUAGE}"/>
-            </div>>
+            </div>
             <div class="field">
                     <label>Content Type</label>
                 <semui:simpleReferenceDropdown name="contentType"

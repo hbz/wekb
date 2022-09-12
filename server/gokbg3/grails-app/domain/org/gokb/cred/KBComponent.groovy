@@ -94,52 +94,6 @@ abstract class KBComponent implements Auditable{
     this.grailsApplication = ga
   }
 
-  @Transient
-  protected void touchAllDependants(){
-
-    //TODO: SO - This really needs to be reviewed. There must be an easy way to do this without hibernate freaking out. Commenting out for now.
-    log.debug("Update dependent objects for ${this}..")
-
-    // The update closure.
-    def doUpdate = { obj, Date stamp ->
-      try{
-        def saveParams = [failOnError: true]
-
-        obj.lastSeen = stamp.getTime()
-        obj.save(saveParams)
-
-      }
-      catch (Throwable t){
-        // Suppress but log.
-        log.error("${t}")
-      }
-    }
-
-    //Replaced with CascadingUpdateService
-/*    if (hasProperty("touchOnUpdate")){
-      // We should also update the object(s).
-      this.touchOnUpdate.each{ dep_name ->
-        // Get the dependant.
-        def deps = this.getProperty(dep_name)
-        log.debug("Got ${dep_name}: ${deps}")
-        if (deps){
-          if (deps instanceof Map){
-            deps.each{ k, obj ->
-              doUpdate(obj, this.lastUpdated)
-            }
-          }
-          else if (deps instanceof Iterable){
-            deps.each{ obj ->
-              doUpdate(obj, this.lastUpdated)
-            }
-          }
-          else if (grailsApplication.isDomainClass(deps.class)){
-            doUpdate(deps, this.lastUpdated)
-          }
-        }
-      }
-    }*/
-  }
 
 
   @Transient
@@ -546,7 +500,7 @@ abstract class KBComponent implements Auditable{
     // Generate any necessary values.
     generateShortcode()
     generateNormname()
-    generateComponentHash()
+    //generateComponentHash()
     generateUuid()
     // Ensure any defaults defined get set.
     ensureDefaults()
@@ -554,21 +508,15 @@ abstract class KBComponent implements Auditable{
 
 
   def afterInsert(){
-    // Alter the timestamps of any dependants.
-    touchAllDependants()
+
   }
 
 
   def afterUpdate(){
-    // Alter the timestamps of any dependants.
-    touchAllDependants()
   }
 
 
   def afterDelete(){
-
-    // Alter the timestamps of any dependants.
-    touchAllDependants()
   }
 
 
@@ -579,7 +527,7 @@ abstract class KBComponent implements Auditable{
         this.shortcode = generateShortcode(name)
       }
       generateNormname()
-      generateComponentHash()
+      //generateComponentHash()
     }
     if (!uuid){
       generateUuid()

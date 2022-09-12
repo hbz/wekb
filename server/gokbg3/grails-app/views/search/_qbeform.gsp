@@ -159,7 +159,7 @@
                 <g:link class="ui button" controller="${controllerName}" action="${actionName}"
                         params="[id: params.id, qbe: params.qbe]">Reset</g:link>
                 <button class="ui button black" type="submit" value="Search"
-                        name="searchAction">Search</button>
+                        name="searchAction">Filter</button>
 
                 <sec:ifLoggedIn>
                     <div class="ui icon dropdown button">

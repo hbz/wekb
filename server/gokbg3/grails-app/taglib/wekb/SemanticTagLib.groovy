@@ -226,7 +226,7 @@ class SemanticTagLib {
         if (attrs.showDeleteButton) {
 
             out << '<input type="submit" class="ui negative button" name="delete" value="' + msgDelete + '" onclick="'
-            out << "return confirm('${g.message(code:'default.button.delete.confirmDeletion.message')}')?"
+            out << "return confirm('Do you really want to delete this?')?"
             out << '$(\'#' + attrs.id + '\').find(\'#' + attrs.deleteFormID + '\').submit():null'
             out << '"/>'
         }
@@ -402,6 +402,18 @@ class SemanticTagLib {
         out << '</nav>'
         out << '</div><!--.pagination-->'
     }
+    Closure showOutGoingLink = { Map attrs ->
+        if (attrs.outGoingLink) {
+            String url = attrs.outGoingLink.startsWith('http') ? attrs.outGoingLink : ('http://' + attrs.outGoingLink)
+            if (url) {
+                out << '&nbsp;<a aria-label="'
+                out << attrs.text
+                out << '" href="'
+                out << url
+                out << '" target="_blank"><i class="external alternate icon"></i></a>'
+            }
+        }
+    }
 
     Closure sortableColumn = { Map attrs ->
         def writer = out
@@ -415,6 +427,7 @@ class SemanticTagLib {
 
         def property = attrs.remove("property")
         def action = attrs.action ? attrs.remove("action") : (actionName ?: "list")
+        def controller = attrs.controller ? attrs.remove("controller") : (controllerName ?: "")
         def namespace = attrs.namespace ? attrs.remove("namespace") : ""
 
         def defaultOrder = attrs.remove("defaultOrder")
@@ -448,7 +461,7 @@ class SemanticTagLib {
             }
         }
         else {
-            linkParams.order = defaultOrder
+            linkParams.order = property == 'lastUpdated' ? "desc" : defaultOrder
         }
 
         // determine column title
@@ -479,6 +492,7 @@ class SemanticTagLib {
         }
 
         linkAttrs.action = action
+        linkAttrs.controller = controller
         linkAttrs.namespace = namespace
 
         writer << callLink((Map)linkAttrs) {
@@ -517,10 +531,19 @@ class SemanticTagLib {
 
     Closure tabsItemWithoutLink = { attrs, body ->
 
-        out << '<div class="item' + (attrs.class ? (' ' + attrs.class) : '') +'" data-tab="' + attrs.tab + '">'
+        out << '<div class="item '
+
+        if(attrs.defaultTab && attrs.tab == attrs.defaultTab && !attrs.activeTab){
+            out << 'active '
+        }
+        else if(attrs.activeTab && attrs.tab == attrs.activeTab){
+            out << 'active '
+        }
+
+        out << (attrs.class ? (' ' + attrs.class) : '') +'" data-tab="' + attrs.tab + '">'
         out << body()
 
-        if (attrs.counts) {
+        if (attrs.counts != null) {
             out << '<div class="ui floating black circular label">'+attrs.counts+'</div>'
         }
         out << '</div>'
@@ -528,10 +551,19 @@ class SemanticTagLib {
 
     Closure tabsItemContent = { attrs, body ->
 
-        out << '<div class="ui bottom attached'+ (attrs.class ? (' ' + attrs.class) : '') +' tab segment"' +'" data-tab="' + attrs.tab + '">'
+        out << '<div class="ui bottom attached '
+
+        if(attrs.defaultTab && attrs.tab == attrs.defaultTab && !attrs.activeTab){
+            out << 'active '
+        }
+        else if(attrs.activeTab && attrs.tab == attrs.activeTab){
+            out << 'active '
+        }
+
+        out << (attrs.class ? (' ' + attrs.class) : '') +' tab segment"' +'" data-tab="' + attrs.tab + '">'
         out << body()
         out << '</div>'
-}
+    }
 
     private callLink(Map attrs, Object body) {
         TagOutput.captureTagOutput(tagLibraryLookup, 'g', 'link', attrs, body, OutputContextLookupHelper.lookupOutputContext())

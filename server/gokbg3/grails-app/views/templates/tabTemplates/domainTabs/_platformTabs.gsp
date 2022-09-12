@@ -3,29 +3,29 @@
 <g:if test="${d}">
     <semui:tabs>
 
-        <semui:tabsItemWithoutLink tab="statistic" class="active">
+        <semui:tabsItemWithoutLink tab="statistic" defaultTab="statistic" activeTab="${params.activeTab}">
             Statistic
         </semui:tabsItemWithoutLink>
-        <semui:tabsItemWithoutLink tab="titledetails" counts="${d.currentTippCount}">
+        <semui:tabsItemWithoutLink tab="titledetails" activeTab="${params.activeTab}" counts="${d.currentTippCount}">
             Hosted Titles
         </semui:tabsItemWithoutLink>
-        <semui:tabsItemWithoutLink tab="packages" counts="${d.hostedPackages.size()}">
+        <semui:tabsItemWithoutLink tab="packages" activeTab="${params.activeTab}" counts="${d.hostedPackages.size()}">
             Packages
         </semui:tabsItemWithoutLink>
-        <semui:tabsItemWithoutLink tab="variantNames" counts="${d.variantNames.size()}">
+        <semui:tabsItemWithoutLink tab="variantNames" activeTab="${params.activeTab}" counts="${d.variantNames.size()}">
             Alternate Names
         </semui:tabsItemWithoutLink>
     </semui:tabs>
 
-    <semui:tabsItemContent tab="titledetails">
+    <semui:tabsItemContent tab="titledetails" activeTab="${params.activeTab}">
         <g:link class="display-inline" controller="search" action="inlineSearch"
-                params="[qbe: 'g:tipps', qp_plat_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_plat', 'qp_plat_id'], qp_status: org.gokb.cred.RefdataValue.class.name + ':' + RDStore.KBC_STATUS_CURRENT.id]"
+                params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:tipps', qp_plat_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_plat', 'qp_plat_id'], qp_status: org.gokb.cred.RefdataValue.class.name + ':' + RDStore.KBC_STATUS_CURRENT.id, activeTab: 'titledetails']"
                 id="">Titles on this Platform</g:link>
     </semui:tabsItemContent>
 
-    <semui:tabsItemContent tab="packages">
+    <semui:tabsItemContent tab="packages" activeTab="${params.activeTab}">
         <g:link class="display-inline" controller="search" action="inlineSearch"
-                params="[qbe: 'g:packages', qp_platform_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_platform', 'qp_platform_id']]"
+                params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:packages', qp_platform_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_platform', 'qp_platform_id'], activeTab: 'packages']"
                 id="">Packages on this Platform</g:link>
     </semui:tabsItemContent>
 
@@ -34,7 +34,7 @@
                   model="${[d: d, showActions: true]}"/>
     </semui:tabsItemContent>
 
-    <semui:tabsItemContent tab="statistic" class="active">
+    <semui:tabsItemContent tab="statistic" defaultTab="statistic" activeTab="${params.activeTab}">
         <div class="content wekb-inline-lists">
             <dl>
                 <dt class="control-label">

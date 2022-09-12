@@ -324,7 +324,7 @@ class ExportService {
     public void exportOriginalKBART(def outputStream, Package pkg) {
 
         if((pkg.source.lastUpdateUrl || pkg.source.url)){
-            if(pkg.source.lastUpdateUrl){
+            if((UrlToolkit.containsDateStamp(pkg.source.url) || UrlToolkit.containsDateStampPlaceholder(pkg.source.url)) && pkg.source.lastUpdateUrl){
                 File file = kbartFromUrl(pkg.source.lastUpdateUrl)
                 outputStream << file.bytes
             }else{

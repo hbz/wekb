@@ -34,6 +34,7 @@ class AdminController {
   AutoUpdatePackagesService autoUpdatePackagesService
   def ESWrapperService
   SpringSecurityService springSecurityService
+  FTUpdateService ftUpdateService
 
   static Map typePerIndex = [
           "wekbtipps": "TitleInstancePackagePlatform",
@@ -74,7 +75,7 @@ class AdminController {
     log.debug("Call to update indexe");
 
     Job j = concurrencyManagerService.createJob {
-      FTUpdateService.updateFTIndexes();
+      ftUpdateService.updateFTIndexes();
     }.startOrQueue()
 
     j.description = "Update Free Text Indexes"
@@ -87,7 +88,7 @@ class AdminController {
   def resetTextIndexes() {
     log.debug("Call to update indexe")
     Job j = concurrencyManagerService.createJob {
-      FTUpdateService.clearDownAndInitES()
+      ftUpdateService.clearDownAndInitES()
     }.startOrQueue()
 
     j.description = "Reset Free Text Indexes"
@@ -159,15 +160,15 @@ class AdminController {
   }
 
 
-  def cleanup() {
+  def expungeRemovedComponents() {
     Job j = concurrencyManagerService.createJob { Job j ->
-      cleanupService.expungeRemoveComponents(j)
+      cleanupService.expungeRemovedComponents(j)
     }.startOrQueue()
 
     log.debug "Triggering cleanup task. Started job #${j.uuid}"
 
-    j.description = "Cleanup Deleted Components"
-    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'CleanupDeletedComponents')
+    j.description = "Cleanup Removed Components"
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'CleanupRemovedComponents')
     j.startTime = new Date()
 
     redirect(controller: 'admin', action: 'jobs');
@@ -202,16 +203,32 @@ class AdminController {
 
   @Secured(['ROLE_SUPERUSER'])
   def autoUpdatePackages() {
-      log.debug("Beginning scheduled auto update packages job.")
+      log.debug("autoUpdatePackages: Beginning scheduled auto update packages job.")
     Job j = concurrencyManagerService.createJob {
-      autoUpdatePackagesService.findPackageToUpdateAndUpdate()
+      autoUpdatePackagesService.findPackageToUpdateAndUpdate(true)
     }.startOrQueue()
 
-    j.description = "Start Manuel Auto Update Packages"
+    j.description = "Start Auto Update Packages only Title with last changed"
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'AutoUpdatePackagesJob')
     j.startTime = new Date()
 
-    log.info("auto update packages job completed.")
+    log.info("autoUpdatePackages: auto update packages job completed.")
+
+    redirect(controller: 'admin', action: 'jobs')
+  }
+
+  @Secured(['ROLE_SUPERUSER'])
+  def autoUpdatePackagesAllTitles() {
+    log.debug("autoUpdatePackagesAllTitles: Beginning scheduled auto update packages job.")
+    Job j = concurrencyManagerService.createJob {
+      autoUpdatePackagesService.findPackageToUpdateAndUpdate(false)
+    }.startOrQueue()
+
+    j.description = "Start Auto Update Packages with all Titles"
+    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'AutoUpdatePackagesJob')
+    j.startTime = new Date()
+
+    log.info("autoUpdatePackagesAllTitles: auto update packages job completed.")
 
     redirect(controller: 'admin', action: 'jobs')
   }
@@ -223,8 +240,6 @@ class AdminController {
     result.ftControls = FTControl.list()
     result.ftUpdateService = [:]
     result.editable = true
-
-    RefdataValue status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
 
     /*Client esclient = ESWrapperService.getClient()
 
@@ -270,7 +285,8 @@ class AdminController {
 
       String query = "select count(id) from ${typePerIndex.get(indice.value)}"
       indexInfo.countDB = FTControl.executeQuery(query)[0]
-      indexInfo.countDeletedInDB = FTControl.executeQuery(query+ " where status = :status", [status: status_deleted]) ? FTControl.executeQuery(query+ " where status = :status", [status: status_deleted])[0] : 0
+      indexInfo.countDeletedInDB = FTControl.executeQuery(query+ " where status = :status", [status: RDStore.KBC_STATUS_DELETED])[0]
+      indexInfo.countRemovedInDB = FTControl.executeQuery(query+ " where status = :status", [status: RDStore.KBC_STATUS_REMOVED])[0]
       result.indices << indexInfo
     }
 
@@ -597,6 +613,27 @@ class AdminController {
     result.dbmVersion = dbmQuery.size() > 0 ? dbmQuery.first() : ['unkown', 'unkown', 'unkown']
     result
 
+  }
+
+  def findPackagesNeedsAutoUpdates() {
+    log.debug("findPackagesWithTippDuplicates::${params}")
+    def result = [:]
+
+    List pkgs = []
+
+    Package.executeQuery(
+            "from Package p " +
+                    "where p.source is not null and " +
+                    "p.source.automaticUpdates = true " +
+                    "and (p.source.lastRun is null or p.source.lastRun < current_date) order by p.name").each { Package p ->
+      if (p.source.needsUpdate()) {
+        pkgs << p
+      }
+    }
+
+    result.pkgs = pkgs
+
+    result
   }
 
 }

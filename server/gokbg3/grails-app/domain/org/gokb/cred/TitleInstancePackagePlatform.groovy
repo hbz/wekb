@@ -7,6 +7,7 @@ import de.wekb.helper.RCConstants
 import org.gokb.ComponentLookupService
 import org.grails.web.json.JSONArray
 import org.grails.web.json.JSONObject
+import wekb.AutoUpdateTippInfo
 import wekb.KBComponentLanguage
 
 import javax.persistence.Transient
@@ -170,10 +171,6 @@ class TitleInstancePackagePlatform extends KBComponent {
     ]
   ]
 
-  static touchOnUpdate = [
-    "pkg"
-  ]
-
   static hasByCombo = [
     pkg         : Package,
     hostPlatform: Platform,
@@ -197,7 +194,8 @@ class TitleInstancePackagePlatform extends KBComponent {
   static hasMany = [
     coverageStatements: TIPPCoverageStatement,
     ddcs: RefdataValue,
-    ids: Identifier
+    ids: Identifier,
+    autoUpdateTippInfos: AutoUpdateTippInfo
 
   ]
 
@@ -219,22 +217,22 @@ class TitleInstancePackagePlatform extends KBComponent {
     hybridOAUrl column: 'tipp_hybrid_oa_url'
     primary column: 'tipp_primary'
     accessType column: 'tipp_access_type'
-    accessStartDate column: 'tipp_access_start_date'
-    accessEndDate column: 'tipp_access_end_date'
-    firstAuthor column: 'tipp_first_author', type: 'text'
-    publicationType column: 'tipp_publication_type_rv_fk'
+    accessStartDate column: 'tipp_access_start_date', index: 'tipp_access_start_date_idx'
+    accessEndDate column: 'tipp_access_end_date', index: 'tipp_access_end_date_idx'
+    firstAuthor column: 'tipp_first_author', type: 'text', index: 'tipp_first_author_idx'
+    publicationType column: 'tipp_publication_type_rv_fk', index: 'tipp_publication_type_idx'
     volumeNumber column: 'tipp_volume_number'
     editionStatement column: 'tipp_edition_statement'
     firstEditor column: 'tipp_first_editor', type: 'text'
-    parentPublicationTitleId column: 'tipp_parent_publication_id'
-    precedingPublicationTitleId column: 'tipp_preceding_publication_id'
-    supersedingPublicationTitleId column: 'tipp_superseding_publication_title_id'
-    lastChangedExternal column: 'tipp_last_change_ext'
-    medium column: 'tipp_medium_rv_fk'
+    parentPublicationTitleId column: 'tipp_parent_publication_id', index: 'tipp_parent_publication_type_idx'
+    precedingPublicationTitleId column: 'tipp_preceding_publication_id', index: 'tipp_preceding_publication_type_idx'
+    supersedingPublicationTitleId column: 'tipp_superseding_publication_title_id', index: 'tipp_superseding_publication_type_idx'
+    lastChangedExternal column: 'tipp_last_change_ext', index: 'tipp_last_changed_ext_idx'
+    medium column: 'tipp_medium_rv_fk', index: 'tipp_medium_idx'
     series column: 'series', type: 'text'
     url column: 'url', type: 'text'
-    subjectArea column: 'subject_area', type: 'text'
-    openAccess column: 'tipp_open_access_rv_fk'
+    subjectArea column: 'subject_area', type: 'text', index: 'tipp_subject_area_idx'
+    openAccess column: 'tipp_open_access_rv_fk', index: 'tipp_open_access_idx'
 
     ddcs             joinTable: [
             name:   'tipp_dewey_decimal_classification',

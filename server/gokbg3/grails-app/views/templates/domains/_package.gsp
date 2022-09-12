@@ -161,7 +161,7 @@
                             <g:if test="${editable}">
                                 <g:link controller='ajaxSupport'
                                         action='delete'
-                                        params="${["__context": "${paa.class.name}:${paa.id}"]}">Delete</g:link>
+                                        params="${["__context": "${paa.class.name}:${paa.id}", curationOverride: params.curationOverride]}">Delete</g:link>
                             </g:if>
                         </td>
                     </tr>

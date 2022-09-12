@@ -1,6 +1,6 @@
 package de.hbznrw.ygor.normalizers
 
-import groovy.util.logging.Log4j
+import groovy.util.logging.Slf4j
 import org.apache.commons.lang.StringUtils
 
 import java.text.ParseException
@@ -13,7 +13,7 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 
-@Log4j
+@Slf4j
 class DateNormalizer {
 
     static String START_DATE = "StartDate"

@@ -29,6 +29,8 @@ class Source extends KBComponent {
   Boolean ezbMatch = false
   Org responsibleParty
 
+  Boolean kbartHasWekbFields = false
+
   static manyByCombo = [
     curatoryGroups: CuratoryGroup
   ]
@@ -38,6 +40,7 @@ class Source extends KBComponent {
     url column:'source_url'
     ruleset column:'source_ruleset', type:'text'
     lastUpdateUrl column: 'source_last_update_url'
+    kbartHasWekbFields column: 'source_kbart_wekb_fields'
   }
 
   static constraints = {
@@ -204,6 +207,7 @@ class Source extends KBComponent {
   def availableActions() {
     [
             [code: 'method::deleteSoft', label: 'Delete Source', perm: 'delete'],
+            [code: 'setStatus::Removed', label: 'Remove Source', perm: 'delete'],
     ]
   }
 

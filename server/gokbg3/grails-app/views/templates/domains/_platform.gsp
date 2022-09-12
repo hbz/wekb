@@ -52,6 +52,11 @@
                                 config="${RCConstants.PLATFORM_IP_AUTH}"/></dd>
 </dl>
 <dl>
+    <dt class="control-label">Open Athens Supported</dt>
+    <dd><semui:xEditableRefData owner="${d}" field="openAthens"
+                                config="${RCConstants.YN}"/></dd>
+</dl>
+<dl>
     <dt class="control-label">Shibboleth Supported</dt>
     <dd><semui:xEditableRefData owner="${d}" field="shibbolethAuthentication"
                                 config="${RCConstants.YN}"/></dd>

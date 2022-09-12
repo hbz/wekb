@@ -2,6 +2,7 @@ package org.gokb
 
 import de.wekb.helper.RCConstants
 import de.wekb.helper.RDStore
+import de.wekb.helper.ServerUtils
 import grails.core.GrailsApplication
 import grails.plugin.springsecurity.SpringSecurityUtils
 import grails.plugins.mail.MailService
@@ -24,6 +25,15 @@ class PublicController {
   SearchService searchService
 
   public static String TIPPS_QRY = 'from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=? and c.toComponent=tipp and c.type = ? and tipp.status = ?';
+
+  def robots() {
+    if(ServerUtils.getCurrentServer() != ServerUtils.SERVER_PROD) {
+      def text = "User-agent: *\n"+
+              "Disallow: / \n"
+      render(text: text, contentType: "text/plain", encoding: "UTF-8")
+    }
+    else render (status: 404, text: 'Failed to load robots.txt')
+  }
 
   def wcagPlainEnglish() {
     log.debug("wcagPlainEnglish::${params}")
@@ -194,6 +204,7 @@ class PublicController {
       def out = response.outputStream
 
       exportService.exportOriginalKBART(out, pkg)
+      return
 
     }
     catch ( Exception e ) {
@@ -232,6 +243,7 @@ class PublicController {
       }
       out.flush()
       out.close()
+      return
 
     }
     catch ( Exception e ) {

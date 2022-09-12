@@ -14,6 +14,8 @@ import wekb.ExportService
 import wekb.GlobalSearchTemplatesService
 import wekb.KbartImportService
 
+import java.util.concurrent.ExecutorService
+
 @Secured(['IS_AUTHENTICATED_FULLY'])
 class WorkflowController{
 
@@ -25,7 +27,8 @@ class WorkflowController{
   ExportService exportService
   AutoUpdatePackagesService autoUpdatePackagesService
   AccessService accessService
-  KbartImportService kBartImportService
+  KbartImportService kbartImportService
+  ExecutorService executorService
 
   def actionConfig = [
       'method::deleteSoft'     : [actionType: 'simple'],
@@ -37,6 +40,7 @@ class WorkflowController{
       'tipp::retire'           : [actionType: 'workflow', view: 'tippRetire'],
       'tipp::move'             : [actionType: 'workflow', view: 'tippMove'],
       'method::retire'         : [actionType: 'simple'],
+      'method::removeWithTipps'         : [actionType: 'simple'],
       'method::setActive'      : [actionType: 'simple'],
       'method::setExpected'    : [actionType: 'simple'],
       'setStatus::Retired'     : [actionType: 'simple'],
@@ -470,10 +474,10 @@ class WorkflowController{
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   private def verifyTitleList(packages_to_verify){
     def user = springSecurityService.currentUser
-
+    boolean userAdmin = user.isAdmin()
     packages_to_verify.each{ ptv ->
       def pkgObj = Package.get(ptv.id)
-      if (accessService.checkEditableObject(pkgObj, null)){
+      if (accessService.checkEditableObject(pkgObj, userAdmin)){
         pkgObj.save(flush: true, failOnError: true)
       }
     }
@@ -490,6 +494,8 @@ class WorkflowController{
     def pars = [:]
     def denied = false
 
+    boolean userAdmin = user.isAdmin()
+
     if (packages_to_update.size() > 1){
       flash.error = "Please select a single Package to update!"
     }
@@ -499,25 +505,31 @@ class WorkflowController{
 
         if (pkgObj && pkgObj.source?.url){
 
-          if (accessService.checkEditableObject(pkgObj, null)) {
-            Map result = autoUpdatePackagesService.updateFromSource(pkgObj, user, allTitles)
-
-            if(result.ygorData){
-              autoUpdatePackagesService.importJsonFromUpdateSource(result.ygorData)
+          if (accessService.checkEditableObject(pkgObj, userAdmin)) {
+            Set<Thread> threadSet = Thread.getAllStackTraces().keySet()
+            Thread[] threadArray = threadSet.toArray(new Thread[threadSet.size()])
+            boolean processRunning = false
+            threadArray.each { Thread thread ->
+              if (thread.name == 'triggerSourceUpdate' + pkgObj.id) {
+                processRunning = true
+              }
             }
 
-            if (result.result == JobResult.STATUS_SUCCESS){
-              flash.success = result.message
+            if(processRunning){
+              flash.error = 'A package update is already in progress. Please wait this has finished.'
+            }else {
+              executorService.execute({
+                Package aPackage = Package.get(pkgObj.id)
+                Thread.currentThread().setName('triggerSourceUpdate_' + pkgObj.id)
+                autoUpdatePackagesService.startAutoPackageUpdate(aPackage, !allTitles)
+              })
+
+              flash.success = "The package update for Package '${pkgObj.name}' was started. This runs in the background. When the update has gone through, you will see this on the Auto Update Info of the package tab."
             }
-            else if (result.result == JobResult.STATUS_FAIL){
-              flash.error = result.message
-            }
-            else{
-              flash.error = "There have been errors running the job. Please check Source info & Package info."
-            }
+
           }
           else{
-            flash.error = "Insufficient permissions to update this Package!"
+            flash.error = "No permissions to update this Package!"
           }
         }
         else if (!pkgObj){

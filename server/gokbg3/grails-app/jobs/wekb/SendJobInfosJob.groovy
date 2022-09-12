@@ -1,6 +1,7 @@
 package wekb
 
 import de.wekb.helper.RCConstants
+import de.wekb.helper.RDStore
 import de.wekb.helper.ServerUtils
 import grails.plugins.mail.MailService
 import org.gokb.cred.JobResult
@@ -27,7 +28,7 @@ class SendJobInfosJob {
 
   private sendPackageUpdateInfosJob(){
 
-    List<JobResult> jobResultList = JobResult.executeQuery("select jr from JobResult as jr where jr.statusText in (:status) and jr.dateCreated > (CURRENT_DATE-1) and jr.type in (:types) order by jr.dateCreated desc", [status: ["ERROR", "FAIL"], types: [RefdataCategory.lookup(RCConstants.JOB_TYPE, 'ManuellUpdatePackageJob'), RefdataCategory.lookup(RCConstants.JOB_TYPE, 'AutoUpdatePackagesJob'), RefdataCategory.lookup(RCConstants.JOB_TYPE, 'PackageCrossRef Auto')]])
+    List<AutoUpdatePackageInfo> autoUpdates = AutoUpdatePackageInfo.executeQuery("from AutoUpdatePackageInfo where status = :status and dateCreated > (CURRENT_DATE-1) order by dateCreated desc", [status: RDStore.AUTO_UPDATE_STATUS_FAILED])
 
       String currentServer = ServerUtils.getCurrentServer()
       String subjectSystemPraefix = (currentServer == ServerUtils.SERVER_PROD)? "" : (ServerUtils.getCurrentServerSystemId() + " - ")
@@ -39,7 +40,7 @@ class SendJobInfosJob {
           to "laser@hbz-nrw.de", "moetez.djebeniani@hbz-nrw.de"
           from "wekb Server <wekb-managePackageUpdateJobs@wekbServer>"
           subject mailSubject
-          html (view: "/mailTemplate/html/packageUpdateJobsMail", model: [jobResultList: jobResultList])
+          html (view: "/mailTemplate/html/packageUpdateJobsMail", model: [autoUpdates: autoUpdates])
         }
       } catch (Exception e) {
         String eMsg = e.message

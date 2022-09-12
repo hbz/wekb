@@ -45,9 +45,10 @@
         <tr>
             <th>index</th>
             <th>type</th>
-            <th>countIndex</th>
-            <th>countDB</th>
-            <th>countStatusDeletedInDB</th>
+            <th>count index</th>
+            <th>count DB</th>
+            <th>count status deleted in DB</th>
+            <th>count status removed in DB</th>
             <th>Action</th>
         </tr>
         </thead>
@@ -59,6 +60,7 @@
                 <td>${indexInfo.countIndex}</td>
                 <td>${indexInfo.countDB}</td>
                 <td>${indexInfo.countDeletedInDB}</td>
+                <td>${indexInfo.countRemovedInDB}</td>
                 <td><g:link action="deleteIndex" params="[name: indexInfo.name]">Delete and refill Index</g:link></td>
             </tr>
         </g:each>
