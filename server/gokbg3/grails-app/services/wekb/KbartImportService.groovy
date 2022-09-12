@@ -896,6 +896,7 @@ class KbartImportService {
     Map tippImportForAutoUpdate(tippMap, LinkedHashMap tippsWithCoverage, List<Long> tippDuplicates = [], AutoUpdatePackageInfo autoUpdatePackageInfo) {
         def result = [newTipp: false, removedTipp: false, tippObject: null, autoUpdatePackageInfo: autoUpdatePackageInfo]
         log.info("Begin tippImportForAutoUpdate")
+        long start = System.currentTimeMillis()
         Package pkg = tippMap.pkg
         Platform plt = tippMap.nominalPlatform
 
@@ -947,7 +948,7 @@ class KbartImportService {
                             } else {
 
                                 //if url changed find tipp over title id
-                                List<TitleInstancePackagePlatform> tippsMatchedByTitleID = tippsMatchingByTitleID(tippMap.identifiers, pkg, plt)
+                                List<TitleInstancePackagePlatform> tippsMatchedByTitleID = tippsMatchingByTitleIDAutoUpdate(tippMap.title_id, pkg, plt)
 
                                 tippsMatchedByTitleID.each{ TitleInstancePackagePlatform tippByTitleID ->
                                     if (tippByTitleID.id == tipps[0].id) {
@@ -974,7 +975,7 @@ class KbartImportService {
                             if (tipps.size() == 1) {
                                 tipp = tipps[0]
                             } else {
-                                List<TitleInstancePackagePlatform> tippsMatchedByTitleID = tippsMatchingByTitleID(tippMap.identifiers, pkg, plt)
+                                List<TitleInstancePackagePlatform> tippsMatchedByTitleID = tippsMatchingByTitleIDAutoUpdate(tippMap.title_id, pkg, plt)
 
                                 if(tippsMatchedByTitleID.size() > 0){
                                     List<TitleInstancePackagePlatform> tippsByUrlAndTitleID = tipps.findAll { it.id in tippsMatchedByTitleID.id }.sort { it.lastUpdated }
@@ -993,7 +994,7 @@ class KbartImportService {
                                     } else if (tippsByUrlAndTitleID.size() == 1) {
                                         tipp = tippsByUrlAndTitleID[0]
                                     }else {
-                                        log.debug("not found Tipp after tipps and tippMatchingByTitleID: [pkg: ${pkg}, platform: ${plt}, tiDtoName: ${tippMap.publication_title}, url: ${trimmed_url}, ids: ${tippMap.identifiers}]")
+                                        log.debug("not found Tipp after tipps and tippMatchingByTitleID: [pkg: ${pkg}, platform: ${plt}, tiDtoName: ${tippMap.publication_title}, url: ${trimmed_url}, title_id: ${tippMap.title_id}]")
                                     }
                                 }
                             }
@@ -1066,35 +1067,35 @@ class KbartImportService {
                 log.debug("after save")
                 // KBART -> publication_title -> name
                 result.changedTipp = checkAndSetByChangedValue(result, tipp, 'String', autoUpdatePackageInfo, tippMap, "publication_title", "name")
-                log.debug("1")
+                //log.debug("1")
                 // KBART -> first_author -> firstAuthor
                 result.changedTipp = checkAndSetByChangedValue(result, tipp, 'String', autoUpdatePackageInfo, tippMap, "first_author", "firstAuthor")
-                log.debug("2")
+                //log.debug("2")
                 // KBART -> first_editor -> firstEditor
                 result.changedTipp = checkAndSetByChangedValue(result, tipp, 'String', autoUpdatePackageInfo, tippMap, "first_editor", "firstEditor")
-                log.debug("3")
+                //log.debug("3")
                 // KBART -> publisher_name -> publisherName
                 result.changedTipp = checkAndSetByChangedValue(result, tipp, 'String', autoUpdatePackageInfo, tippMap, "publisher_name", "publisherName")
-                log.debug("4")
+                //log.debug("4")
                 // KBART -> publication_type -> publicationType
                 if (tippMap.publication_type) {
                         result.changedTipp = checkAndSetByChangedValue(result, tipp, 'RefDataValue', autoUpdatePackageInfo, tippMap, "publication_type", "publicationType", false, RCConstants.TIPP_PUBLICATION_TYPE)
                 }
-                log.debug("5")
+                //log.debug("5")
                 // KBART -> medium -> medium
                 if (tippMap.medium) {
                         result.changedTipp = checkAndSetByChangedValue(result, tipp, 'RefDataValue', autoUpdatePackageInfo, tippMap, "medium", "medium", false, RCConstants.TIPP_MEDIUM)
                 }
-                log.debug("6")
+                //log.debug("6")
                 // KBART -> title_url -> url
                 result.changedTipp = checkAndSetByChangedValue(result, tipp, 'String', autoUpdatePackageInfo, tippMap, "title_url", "url")
-                log.debug("7")
+                //log.debug("7")
                 // KBART -> subject_area -> subjectArea
                 result.changedTipp = checkAndSetByChangedValue(result, tipp, 'String', autoUpdatePackageInfo, tippMap, "subject_area", "subjectArea")
-                log.debug("8")
+                //log.debug("8")
                 // KBART -> access_type -> accessType
                 if (tippMap.access_type && tippMap.access_type.length() > 0) {
-                    log.debug("8a")
+                    //log.debug("8a")
                     if (tippMap.access_type == 'P') {
                         tippMap.access_type = 'Paid'
                     } else if (tippMap.access_type == 'F') {
@@ -1102,40 +1103,40 @@ class KbartImportService {
                     }
                     result.changedTipp = checkAndSetByChangedValue(result, tipp, 'RefDataValue', autoUpdatePackageInfo, tippMap, "access_type", "accessType", true, RCConstants.TIPP_ACCESS_TYPE)
                 }
-                log.debug("9")
+                //log.debug("9")
                 // KBART -> access_start_date -> accessStartDate
                 result.changedTipp = checkAndSetByChangedValue(result, tipp, 'Date', autoUpdatePackageInfo, tippMap, "access_start_date", "accessStartDate")
-                log.debug("10")
+                //log.debug("10")
                 // KBART -> access_end_date -> accessEndDate
                 result.changedTipp = checkAndSetByChangedValue(result, tipp, 'Date', autoUpdatePackageInfo, tippMap, "access_end_date", "accessEndDate")
-                log.debug("11")
+                //log.debug("11")
                 // KBART -> last_changed -> lastChangedExternal
                 result.changedTipp = checkAndSetByChangedValue(result, tipp, 'Date', autoUpdatePackageInfo, tippMap, "last_changed", "lastChangedExternal")
-                log.debug("12")
+                //log.debug("12")
                 // KBART -> notes -> note
                 result.changedTipp = checkAndSetByChangedValue(result, tipp, 'String', autoUpdatePackageInfo, tippMap, "notes", "note")
-                log.debug("13")
+                //log.debug("13")
                 // KBART -> date_monograph_published_print -> dateFirstInPrint
                 result.changedTipp = checkAndSetByChangedValue(result, tipp, 'Date', autoUpdatePackageInfo, tippMap, "date_monograph_published_print", "dateFirstInPrint")
-                log.debug("14")
+                //log.debug("14")
                 // KBART -> date_monograph_published_online -> dateFirstOnline
                 result.changedTipp = checkAndSetByChangedValue(result, tipp, 'Date', autoUpdatePackageInfo, tippMap, "date_monograph_published_online", "dateFirstOnline")
-                log.debug("15")
+                //log.debug("15")
                 // KBART -> monograph_volume -> volumeNumber
                 result.changedTipp = checkAndSetByChangedValue(result, tipp, 'String', autoUpdatePackageInfo, tippMap, "monograph_volume", "volumeNumber")
-                log.debug("16")
+                //log.debug("16")
                 // KBART -> monograph_edition -> editionStatement
                 result.changedTipp = checkAndSetByChangedValue(result, tipp, 'String', autoUpdatePackageInfo, tippMap, "monograph_edition", "editionStatement")
-                log.debug("17")
+                //log.debug("17")
                 // KBART -> monograph_parent_collection_title -> series
                 result.changedTipp = checkAndSetByChangedValue(result, tipp, 'String', autoUpdatePackageInfo, tippMap, "monograph_parent_collection_title", "series")
-                log.debug("18")
+                //log.debug("18")
                 // KBART -> parent_publication_title_id -> parentPublicationTitleId
                 result.changedTipp = checkAndSetByChangedValue(result, tipp, 'String', autoUpdatePackageInfo, tippMap, "parent_publication_title_id", "parentPublicationTitleId")
-                log.debug("19")
+                //log.debug("19")
                 // KBART -> oa_type -> openAccess
                 result.changedTipp = checkAndSetByChangedValue(result, tipp, 'RefDataValue', autoUpdatePackageInfo, tippMap, "oa_type", "openAccess", true, RCConstants.TIPP_OPEN_ACCESS)
-                log.debug("before package_isil")
+                //log.debug("before package_isil")
                 // KBART -> package_isil -> identifiers['package_isil']
                 if (tippMap.package_isil) {
                     result.changedTipp = createOrUpdateIdentifierForTipp(result, tipp, "package_isil", tippMap.package_isil, 'package_isil', autoUpdatePackageInfo)
@@ -1161,7 +1162,7 @@ class KbartImportService {
                 // KBART -> superseding_publication_title_id -> supersedingPublicationTitleId
                 result.changedTipp = checkAndSetByChangedValue(result, tipp, 'String', autoUpdatePackageInfo, tippMap, "superseding_publication_title_id", "supersedingPublicationTitleId")
 
-                log.debug("before coverages")
+                //log.debug("before coverages")
                 // KBART -> date_first_issue_online, date_last_issue_online,
                 // num_first_vol_online, num_first_issue_online,
                 // num_last_vol_online, num_last_issue_online
@@ -1187,9 +1188,9 @@ class KbartImportService {
                     }
 
                 }
-                log.debug("before coverages II")
+                //log.debug("before coverages II")
                 if (tipp.publicationType != RDStore.TIPP_PUBLIC_TYPE_SERIAL && TIPPCoverageStatement.findByOwner(tipp)) {
-                    log.debug("in coverage statements block")
+                    //log.debug("in coverage statements block")
                     com.k_int.ClassUtils.setStringIfDifferent(tipp, 'note', tipp.coverageStatements[0].coverageNote)
                     if(tipp.coverageStatements.size() > 0){
                         def cStsIDs = tipp.coverageStatements.id.clone()
@@ -1199,7 +1200,7 @@ class KbartImportService {
                         tipp.save()
                     }
                 }
-                log.debug("before creating identifiers")
+                //log.debug("before creating identifiers")
                 // KBART -> package_ezb_anchor -> identifiers['package_ezb_anchor']
                 if (tippMap.package_ezb_anchor) {
                     result.changedTipp = createOrUpdateIdentifierForTipp(result, tipp, "package_ezb_anchor", tippMap.package_ezb_anchor, 'package_ezb_anchor', autoUpdatePackageInfo)
@@ -1323,7 +1324,7 @@ class KbartImportService {
                     tipp.save()
                     //tipp.refresh()
                 }
-                log.debug("before price section")
+                //log.debug("before price section")
                 // KBART -> listprice_eur -> prices
                 if (tippMap.listprice_eur) {
                     result.changedTipp = createOrUpdatePrice(result, tipp, RDStore.PRICE_TYPE_LIST, RDStore.CURRENCY_EUR, tippMap.listprice_eur, 'listprice_eur', autoUpdatePackageInfo)
@@ -1354,7 +1355,7 @@ class KbartImportService {
                 if (tippMap.oa_apc_gbp) {
                     result.changedTipp = createOrUpdatePrice(result, tipp, RDStore.PRICE_TYPE_OA_APC, RDStore.CURRENCY_GBP, tippMap.oa_apc_gbp, 'oa_apc_gbp', autoUpdatePackageInfo)
                 }
-                log.debug("after price section")
+                //log.debug("after price section")
                 tipp.save(failOnError: true)
             }
 
@@ -1363,6 +1364,7 @@ class KbartImportService {
             log.debug("Not able to reference TIPP: ${tippMap}")
         }
 
+        log.debug("processed tippImportForAutoUpdate at: ${System.currentTimeMillis()-start} msecs")
         log.info("End tippImportForAutoUpdate: TIPP UUID -> ${result.tippObject?.uuid}")
 
         result.autoUpdatePackageInfo = autoUpdatePackageInfo
@@ -1424,6 +1426,24 @@ class KbartImportService {
 
     }
 
+    List<TitleInstancePackagePlatform> tippsMatchingByTitleIDAutoUpdate(String titleID, Package aPackage, Platform platform) {
+        List<TitleInstancePackagePlatform> tippList
+        List<IdentifierNamespace> idnsCheck = IdentifierNamespace.executeQuery('select so.targetNamespace from Package pkg join pkg.source so where pkg = :pkg', [pkg: aPackage])
+        if(!idnsCheck)
+            idnsCheck = IdentifierNamespace.executeQuery('select plat.titleNamespace from Platform plat where plat = :plat', [plat: platform])
+        if (idnsCheck && idnsCheck.size() == 1 && titleID && titleID != ""){
+            IdentifierNamespace identifierNamespace = idnsCheck[0]
+            tippList = Identifier.executeQuery('select i.tipp from Identifier as i where i.namespace = :namespaceValue and i.value = :value and i.tipp is not null', [namespaceValue: identifierNamespace, value: titleID])
+
+            tippList = tippList.findAll {it.pkg == aPackage && it.status != RDStore.KBC_STATUS_REMOVED}
+
+            if(tippList.size() > 0){
+                log.debug("tippsMatchingByTitleID provider internal identifier matching by "+tippList.size() + ": "+ tippList.id)
+                return tippList
+            }
+        }
+    }
+
     /**
      * Create a new TIPP
      */
@@ -1439,7 +1459,7 @@ class KbartImportService {
         if (tipp_fields.type) {
             tipp_publicationType = determinePublicationType(tipp_fields.type)
         }
-
+        long start = System.currentTimeMillis()
         TitleInstancePackagePlatform result = new TitleInstancePackagePlatform(
                 uuid: tipp_fields.uuid ?: UUID.randomUUID().toString(),
                 status: tipp_status,
@@ -1449,15 +1469,16 @@ class KbartImportService {
                 url: tipp_fields.url)
         if (result) {
 
-            def pkg_combo_type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Package.Tipps')
+            def pkg_combo_type = RDStore.COMBO_TYPE_PKG_TIPPS
             new Combo(toComponent: result, fromComponent: tipp_fields.pkg, type: pkg_combo_type).save()
 
-            def plt_combo_type = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Platform.HostedTipps')
+            def plt_combo_type = RDStore.COMBO_TYPE_PLT_HOSTEDTIPPS
             new Combo(toComponent: result, fromComponent: tipp_fields.hostPlatform, type: plt_combo_type).save()
 
         } else {
             log.error("TIPP creation failed!")
         }
+        log.debug("processed at: ${System.currentTimeMillis()-start} msecs")
 
         result.save()
 

@@ -28,6 +28,7 @@ import org.gokb.cred.TitleInstancePackagePlatform
 import org.gokb.cred.UpdateToken
 import org.gokb.cred.User
 import org.grails.web.json.JSONObject
+import org.hibernate.Session
 import org.mozilla.universalchardet.UniversalDetector
 import org.springframework.web.multipart.MultipartFile
 
@@ -452,7 +453,7 @@ class AutoUpdatePackagesService {
 
                             }
                             catch (Exception e) {
-                                log.error("get kbartFromUrl: ${e.message}")
+                                log.error("get kbartFromUrl: ${e}")
                                 continue
                             }
 
@@ -587,103 +588,108 @@ class AutoUpdatePackagesService {
 
                 }
             }
+            int max = 500
+            TitleInstancePackagePlatform.withSession { Session sess ->
+                for (int offset = 0; offset < kbartRows.size(); offset += max) {
 
-            for (def kbartRow : kbartRows) {
-                idx++
-                def currentTippError = [index: idx]
-                log.info("kbartImportProcess (#$idx of $kbartRowsCount): title ${kbartRow.publication_title}")
-                if (!invalidTipps.contains(kbartRow)) {
+                    List kbartRowsToProcess = kbartRows.drop(offset).take(max)
+                    for (def kbartRow : kbartRowsToProcess) {
+                        idx++
+                        def currentTippError = [index: idx]
+                        log.info("kbartImportProcess (#$idx of $kbartRowsCount): title ${kbartRow.publication_title}")
+                        if (!invalidTipps.contains(kbartRow)) {
 
-                    kbartRow.pkg = pkg
-                    kbartRow.nominalPlatform = pkg.nominalPlatform
+                            kbartRow.pkg = pkg
+                            kbartRow.nominalPlatform = pkg.nominalPlatform
 
-                    Map tippErrorMap = [:]
-                    def validation_result = kbartImportValidationService.tippValidateForAutoUpdate(kbartRow)
-                    if (!validation_result.valid) {
-                        invalidTipps << kbartRow
-                        log.debug("TIPP Validation failed on ${kbartRow.publication_title}")
-                        tippErrorMap = validation_result.errors
-                    }
-                    else {
-                        if (validation_result.errors?.size() > 0) {
-                            tippErrorMap.putAll(validation_result.errors)
-                        }
-                        TitleInstancePackagePlatform updateTipp = null
-                        try {
-                            Map autoUpdateResultTipp = kbartImportService.tippImportForAutoUpdate(kbartRow, tippsWithCoverage, tippDuplicates, autoUpdatePackageInfo)
-                            updateTipp = autoUpdateResultTipp.tippObject
-
-                            if(autoUpdateResultTipp.newTipp){
-                                newTipps++
-                            }
-
-                            if(autoUpdateResultTipp.removedTipp){
-                                removedTipps++
-                            }
-
-                            if(autoUpdateResultTipp.changedTipp){
-                                changedTipps++
-                            }
-
-                            if(autoUpdateResultTipp.autoUpdatePackageInfo)
-                            {
-                                autoUpdatePackageInfo = autoUpdateResultTipp.autoUpdatePackageInfo
-                            }
-
-                            if(setAllTippsNotInKbartToDeleted && updateTipp && updateTipp.status !=  RDStore.KBC_STATUS_CURRENT){
-                                updateTipp.status = RDStore.KBC_STATUS_CURRENT
-                                setTippsNotToDeleted << updateTipp.id
-                            }
-
-                            updateTipp.save()
-                            tippsFound << updateTipp.id
-
-                        }
-                        catch (grails.validation.ValidationException ve) {
-                            if(!invalidTipps.contains(kbartRow)) {
+                            Map tippErrorMap = [:]
+                            def validation_result = kbartImportValidationService.tippValidateForAutoUpdate(kbartRow)
+                            if (!validation_result.valid) {
                                 invalidTipps << kbartRow
+                                log.debug("TIPP Validation failed on ${kbartRow.publication_title}")
+                                tippErrorMap = validation_result.errors
+                            } else {
+                                if (validation_result.errors?.size() > 0) {
+                                    tippErrorMap.putAll(validation_result.errors)
+                                }
+                                TitleInstancePackagePlatform updateTipp = null
+                                try {
+                                    Map autoUpdateResultTipp = kbartImportService.tippImportForAutoUpdate(kbartRow, tippsWithCoverage, tippDuplicates, autoUpdatePackageInfo)
+                                    updateTipp = autoUpdateResultTipp.tippObject
+
+                                    if (autoUpdateResultTipp.newTipp) {
+                                        newTipps++
+                                    }
+
+                                    if (autoUpdateResultTipp.removedTipp) {
+                                        removedTipps++
+                                    }
+
+                                    if (autoUpdateResultTipp.changedTipp) {
+                                        changedTipps++
+                                    }
+
+                                    if (autoUpdateResultTipp.autoUpdatePackageInfo) {
+                                        autoUpdatePackageInfo = autoUpdateResultTipp.autoUpdatePackageInfo
+                                    }
+
+                                    if (setAllTippsNotInKbartToDeleted && updateTipp && updateTipp.status != RDStore.KBC_STATUS_CURRENT) {
+                                        updateTipp.status = RDStore.KBC_STATUS_CURRENT
+                                        setTippsNotToDeleted << updateTipp.id
+                                    }
+
+                                    updateTipp.save()
+                                    tippsFound << updateTipp.id
+
+                                }
+                                catch (grails.validation.ValidationException ve) {
+                                    if (!invalidTipps.contains(kbartRow)) {
+                                        invalidTipps << kbartRow
+                                    }
+
+                                    log.error("ValidationException attempting to cross reference TIPP", ve)
+                                    updateTipp?.discard()
+                                    tippErrorMap.putAll(messageService.processValidationErrors(ve.errors))
+                                }
+                                catch (Exception ge) {
+                                    if (!invalidTipps.contains(kbartRow)) {
+                                        invalidTipps << kbartRow
+                                    }
+                                    log.error("Exception attempting to cross reference TIPP:", ge)
+                                    def tipp_error = [
+                                            message: messageService.resolveCode('crossRef.package.tipps.error', [kbartRow.publication_title], Locale.ENGLISH),
+                                            baddata: kbartRow,
+                                            errors : [message: ge.toString()]
+                                    ]
+                                    updateTipp?.discard()
+                                    tippErrorMap = tipp_error
+                                }
+                                if (!updateTipp) {
+                                    log.debug("Could not reference TIPP")
+                                    invalidTipps << kbartRow
+                                    def tipp_error = [
+                                            message: messageService.resolveCode('crossRef.package.tipps.error', [kbartRow.publication_title], Locale.ENGLISH),
+                                            baddata: kbartRow
+                                    ]
+                                    tippErrorMap = tipp_error
+                                }
                             }
 
-                            log.error("ValidationException attempting to cross reference TIPP", ve)
-                            updateTipp?.discard()
-                            tippErrorMap.putAll(messageService.processValidationErrors(ve.errors))
-                        }
-                        catch (Exception ge) {
-                            if(!invalidTipps.contains(kbartRow)) {
-                                invalidTipps << kbartRow
+                            if (tippErrorMap.size() > 0) {
+                                currentTippError.put('tipp', tippErrorMap)
                             }
-                            log.error("Exception attempting to cross reference TIPP:", ge)
-                            def tipp_error = [
-                                    message: messageService.resolveCode('crossRef.package.tipps.error', [kbartRow.publication_title], Locale.ENGLISH),
-                                    baddata: kbartRow,
-                                    errors : [message: ge.toString()]
-                            ]
-                            updateTipp?.discard()
-                            tippErrorMap = tipp_error
                         }
-                        if (!updateTipp) {
-                            log.debug("Could not reference TIPP")
-                            invalidTipps << kbartRow
-                            def tipp_error = [
-                                    message: messageService.resolveCode('crossRef.package.tipps.error', [kbartRow.publication_title], Locale.ENGLISH),
-                                    baddata: kbartRow
-                            ]
-                            tippErrorMap = tipp_error
+
+                        if (currentTippError.size() > 1) {
+                            errors.tipps.add(currentTippError)
+                        }
+
+                        if (idx % 250 == 0) {
+                            log.info("Clean up");
+                            cleanupService.cleanUpGorm()
                         }
                     }
-
-                    if (tippErrorMap.size() > 0) {
-                        currentTippError.put('tipp', tippErrorMap)
-                    }
-                }
-
-                if (currentTippError.size() > 1) {
-                    errors.tipps.add(currentTippError)
-                }
-
-                if (idx % 10 == 0) {
-                    log.info("Clean up");
-                    cleanupService.cleanUpGorm()
+                    sess.flush()
                 }
             }
 
