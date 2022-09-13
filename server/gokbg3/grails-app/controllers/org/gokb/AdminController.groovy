@@ -15,10 +15,12 @@ import org.elasticsearch.client.core.CountResponse
 import org.elasticsearch.client.indices.GetIndexRequest
 
 import org.gokb.cred.*
+import org.hibernate.SessionFactory
 import org.hibernate.criterion.CriteriaSpecification
 
 import org.springframework.security.access.annotation.Secured
 import wekb.AdminService
+import wekb.AutoUpdatePackageInfo
 import wekb.AutoUpdatePackagesService
 
 import java.util.concurrent.CancellationException
@@ -34,7 +36,8 @@ class AdminController {
   AutoUpdatePackagesService autoUpdatePackagesService
   def ESWrapperService
   SpringSecurityService springSecurityService
-  FTUpdateService ftUpdateService
+  FTUpdateService FTUpdateService
+  SessionFactory sessionFactory
 
   static Map typePerIndex = [
           "wekbtipps": "TitleInstancePackagePlatform",
@@ -74,28 +77,17 @@ class AdminController {
   def updateTextIndexes() {
     log.debug("Call to update indexe");
 
-    Job j = concurrencyManagerService.createJob {
-      ftUpdateService.updateFTIndexes();
-    }.startOrQueue()
+    FTUpdateService.updateFTIndexes();
 
-    j.description = "Update Free Text Indexes"
-    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'UpdateFreeTextIndexes')
-    j.startTime = new Date()
-
-    redirect(controller: 'admin', action: 'jobs');
+    redirect(controller: 'admin', action: 'manageFTControl');
   }
 
   def resetTextIndexes() {
     log.debug("Call to update indexe")
-    Job j = concurrencyManagerService.createJob {
-      ftUpdateService.clearDownAndInitES()
-    }.startOrQueue()
 
-    j.description = "Reset Free Text Indexes"
-    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'ResetFreeTextIndexes')
-    j.startTime = new Date()
+    FTUpdateService.clearDownAndInitES()
 
-    redirect(controller: 'admin', action: 'jobs');
+    redirect(controller: 'admin', action: 'manageFTControl');
   }
 
   def jobs() {
@@ -308,6 +300,15 @@ class AdminController {
     if (indexName) {
       ESWrapperService.deleteIndex(indexName)
       ESWrapperService.createIndex(indexName)
+
+      FTControl.withTransaction {
+        String domainClassName = typePerIndex.get(indexName)
+        if(indexName == 'wekbdeletedcomponents'){
+          domainClassName = 'wekb.DeletedKBComponent'
+        }
+        def res = FTControl.executeUpdate("delete FTControl c where c.domainClassName = ${domainClassName}")
+        log.info("Result: ${res}")
+      }
      /* if (typePerIndex.get(indexName) == DeletedKBComponent.class.simpleName) {
 
         DeletedKBComponent.getAll().each { DeletedKBComponent deletedKBComponent ->
@@ -621,17 +622,35 @@ class AdminController {
 
     List pkgs = []
 
+    CuratoryGroup curatoryGroupFilter = params.curatoryGroup ?: null
+
     Package.executeQuery(
             "from Package p " +
                     "where p.source is not null and " +
                     "p.source.automaticUpdates = true " +
                     "and (p.source.lastRun is null or p.source.lastRun < current_date) order by p.name").each { Package p ->
       if (p.source.needsUpdate()) {
-        pkgs << p
+        if(curatoryGroupFilter){
+         if(curatoryGroupFilter in p.curatoryGroups)
+           pkgs << p
+        }else {
+          pkgs << p
+        }
       }
     }
 
     result.pkgs = pkgs
+
+    result
+  }
+
+  def autoUpdatesFails() {
+    log.debug("autoUpdatesFails::${params}")
+    def result = [:]
+
+    List<AutoUpdatePackageInfo> autoUpdates = AutoUpdatePackageInfo.executeQuery("from AutoUpdatePackageInfo where status = :status and dateCreated > (CURRENT_DATE-1) order by dateCreated desc", [status: RDStore.AUTO_UPDATE_STATUS_FAILED])
+
+    result.autoUpdates = autoUpdates
 
     result
   }
