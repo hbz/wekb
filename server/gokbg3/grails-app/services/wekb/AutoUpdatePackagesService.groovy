@@ -605,7 +605,22 @@ class AutoUpdatePackagesService {
                             Map tippErrorMap = [:]
                             def validation_result = kbartImportValidationService.tippValidateForAutoUpdate(kbartRow)
                             if (!validation_result.valid) {
-                                invalidTipps << kbartRow
+                                if (!invalidTipps.contains(kbartRow)) {
+                                    invalidTipps << kbartRow
+
+                                    AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
+                                            description: validation_result.errorMessage,
+                                            tipp: null,
+                                            startTime: new Date(),
+                                            endTime: new Date(),
+                                            status: RDStore.AUTO_UPDATE_STATUS_FAILED,
+                                            type: RDStore.AUTO_UPDATE_TYPE_FAILED_TITLE,
+                                            oldValue: '',
+                                            newValue: '',
+                                            tippProperty: '',
+                                            autoUpdatePackageInfo: autoUpdatePackageInfo
+                                    ).save()
+                                }
                                 log.debug("TIPP Validation failed on ${kbartRow.publication_title}")
                                 tippErrorMap = validation_result.errors
                             } else {
@@ -644,16 +659,50 @@ class AutoUpdatePackagesService {
                                 }
                                 catch (grails.validation.ValidationException ve) {
                                     if (!invalidTipps.contains(kbartRow)) {
-                                        invalidTipps << kbartRow
+                                        if (updateTipp) {
+                                            invalidTipps << kbartRow
+                                            AutoUpdateTippInfo.withTransaction {
+                                                autoUpdatePackageInfo.refresh()
+                                                AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
+                                                        description: "An error occurred while processing this title. More information can be seen in the system log",
+                                                        tipp: updateTipp,
+                                                        startTime: new Date(),
+                                                        endTime: new Date(),
+                                                        status: RDStore.AUTO_UPDATE_STATUS_FAILED,
+                                                        type: RDStore.AUTO_UPDATE_TYPE_FAILED_TITLE,
+                                                        oldValue: '',
+                                                        newValue: '',
+                                                        tippProperty: '',
+                                                        autoUpdatePackageInfo: autoUpdatePackageInfo
+                                                ).save()
+                                            }
+                                            updateTipp.discard()
+                                        }
                                     }
-
                                     log.error("ValidationException attempting to cross reference TIPP", ve)
-                                    updateTipp?.discard()
                                     tippErrorMap.putAll(messageService.processValidationErrors(ve.errors))
                                 }
                                 catch (Exception ge) {
                                     if (!invalidTipps.contains(kbartRow)) {
-                                        invalidTipps << kbartRow
+                                        if (updateTipp) {
+                                            invalidTipps << kbartRow
+                                            AutoUpdateTippInfo.withTransaction {
+                                                autoUpdatePackageInfo.refresh()
+                                                AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
+                                                        description: "An error occurred while processing this title. More information can be seen in the system log",
+                                                        tipp: updateTipp,
+                                                        startTime: new Date(),
+                                                        endTime: new Date(),
+                                                        status: RDStore.AUTO_UPDATE_STATUS_FAILED,
+                                                        type: RDStore.AUTO_UPDATE_TYPE_FAILED_TITLE,
+                                                        oldValue: '',
+                                                        newValue: '',
+                                                        tippProperty: '',
+                                                        autoUpdatePackageInfo: autoUpdatePackageInfo
+                                                ).save()
+                                            }
+                                            updateTipp.discard()
+                                        }
                                     }
                                     log.error("Exception attempting to cross reference TIPP:", ge)
                                     def tipp_error = [
@@ -661,12 +710,13 @@ class AutoUpdatePackagesService {
                                             baddata: kbartRow,
                                             errors : [message: ge.toString()]
                                     ]
-                                    updateTipp?.discard()
                                     tippErrorMap = tipp_error
                                 }
                                 if (!updateTipp) {
-                                    log.debug("Could not reference TIPP")
-                                    invalidTipps << kbartRow
+                                    log.error("Could not reference TIPP with kbartRow: $kbartRow")
+                                    /*if (!invalidTipps.contains(kbartRow)) {
+                                        invalidTipps << kbartRow
+                                    }*/
                                     def tipp_error = [
                                             message: messageService.resolveCode('crossRef.package.tipps.error', [kbartRow.publication_title], Locale.ENGLISH),
                                             baddata: kbartRow
@@ -713,6 +763,7 @@ class AutoUpdatePackagesService {
                                     oldValue: tipp.status.value,
                                     newValue: 'Removed',
                                     tippProperty: 'status',
+                                    kbartProperty: 'status',
                                     autoUpdatePackageInfo: autoUpdatePackageInfo
                             ).save()
                         }
@@ -757,6 +808,7 @@ class AutoUpdatePackagesService {
                                 oldValue: tipp.status.value,
                                 newValue: 'Deleted',
                                 tippProperty: 'status',
+                                kbartProperty: 'status',
                                 autoUpdatePackageInfo: autoUpdatePackageInfo
                         ).save()
                     }
@@ -811,6 +863,7 @@ class AutoUpdatePackagesService {
                                     oldValue: tipp.status.value,
                                     newValue: 'Removed',
                                     tippProperty: 'status',
+                                    kbartProperty: 'status',
                                     autoUpdatePackageInfo: autoUpdatePackageInfo
                             ).save()
                         }
@@ -859,7 +912,7 @@ class AutoUpdatePackagesService {
         }
 
         if(errors.global.size() > 0 || errors.tipps.size() > 0){
-            log.error("Error map by kbartImportProcess: "+errors)
+            log.error("Error map by kbartImportProcess: ")
         }
         log.info("End kbartImportProcess Package ($pkg.name)")
         return autoUpdatePackageInfo

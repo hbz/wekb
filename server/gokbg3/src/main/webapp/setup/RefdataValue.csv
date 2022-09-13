@@ -11,6 +11,7 @@ AutoUpdate.Status;Warning;Warning;Warning
 AutoUpdate.Type;New Title;New Title;New Title
 AutoUpdate.Type;Changed Title;Changed Title;Changed Title
 AutoUpdate.Type;Removed Title;Removed Title;Removed Title
+AutoUpdate.Type;Failed Title;Failed Title;Failed Title
 Combo.Status;Active;Active;Active
 Combo.Status;Deleted;Deleted;Deleted
 Combo.Status;Expired;Expired;Expired

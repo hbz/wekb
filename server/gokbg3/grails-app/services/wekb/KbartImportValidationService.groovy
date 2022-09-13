@@ -415,9 +415,10 @@ class KbartImportValidationService {
         def pkgLink = tippMap.pkg
         def pltLink = tippMap.nominalPlatform
         def result = ['valid': true]
-        def errors = [:]
+        //def errors = [:]
+        String errorMessage = ""
 
-        if (!pkgLink) {
+        /*if (!pkgLink) {
             result.valid = false
             errors.pkg = [[message: "Missing package link!", baddata: pkgLink]]
         } else {
@@ -446,25 +447,31 @@ class KbartImportValidationService {
                 result.valid = false
                 errors.hostPlatform = [[message: "Could not resolve platform id!", baddata: pltLink, code: 404]]
             }
-        }
+        }*/
 
         if (!tippMap.publication_title) {
             result.valid = false
-            errors.title = [[message: "Missing title name!", baddata: tippMap, code: 404]]
+            errorMessage = "Missing publication title!"
+
         }
 
-        //publicationType
         if (tippMap.publication_type) {
             log.debug("before publication type determination")
             RefdataValue publicationType = kbartImportService.determinePublicationType(tippMap.publication_type)
             log.debug("after determination")
             if (!publicationType) {
                 result.valid = false
-                errors.title = [[message: "Unknown publicationType", baddata: tippMap.type, code: 404]]
+                errorMessage = "Unknown publication type by title: $tippMap.publication_title"
             }
         }else {
             result.valid = false
-            errors.title = [[message: "No publication type set", baddata: tippMap, code: 404]]
+            errorMessage = "No publication type set by title: $tippMap.publication_title"
+        }
+
+        if (!tippMap.title_url) {
+            result.valid = false
+            errorMessage = "Missing title url by title: $tippMap.publication_title!"
+
         }
 
         /*String idJsonKey = 'ids'
@@ -570,7 +577,7 @@ class KbartImportValidationService {
             }
         }
 */
-        if (tippMap.date_monograph_published_print) {
+       /* if (tippMap.date_monograph_published_print) {
             LocalDateTime dfip = GOKbTextUtils.completeDateString(tippMap.date_monograph_published_print, false)
             if (!dfip) {
                 errors.put('date_monograph_published_print', [message: "Unable to parse date", baddata: tippMap.remove('date_monograph_published_print')])
@@ -603,15 +610,19 @@ class KbartImportValidationService {
             if (!dfo) {
                 errors.put('access_end_date', [message: "Unable to parse date", baddata: tippMap.remove('access_end_date')])
             }
-        }
+        }*/
 
         if (!result.valid) {
-            log.warn("Tipp failed validation: ${tippMap} - pkg:${pkgLink} plat:${pltLink} -- Errors: ${errors}")
+            log.warn("Tipp failed validation: ${tippMap} - pkg:${pkgLink} plat:${pltLink} -- errorMessage: ${errorMessage}")
         }
 
-        if (errors.size() > 0) {
+/*        if (errors.size() > 0) {
             result.errors = errors
+        }*/
+        if (errorMessage) {
+            result.errorMessage = errorMessage
         }
+
 
         log.info("End tippValidateForAutoUpdate")
 

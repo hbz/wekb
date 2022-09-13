@@ -1980,7 +1980,7 @@ class KbartImportService {
             }
         }
 
-        if(result.changedTipp){
+        if(valueChanged){
             tipp.save()
         }
 
@@ -2195,7 +2195,7 @@ class KbartImportService {
                             tipp[tippProperty] = v
                         }
                     }else {
-                        createAutoUpdateTippInfoByTippChangeFail(tipp, autoUpdatePackageInfo, kbartProperty, tippProperty, oldValue, newValue, "The value ${newValue} not found in RefdatValues.")
+                        createAutoUpdateTippInfoByTippChangeFail(tipp, autoUpdatePackageInfo, kbartProperty, tippProperty, oldValue, newValue, "The value ${newValue} not found in Refdata values.")
                     }
                 }
             } else if (dataType == 'String') {

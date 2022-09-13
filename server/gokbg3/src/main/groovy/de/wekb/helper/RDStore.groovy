@@ -17,6 +17,7 @@ class RDStore {
     public static final AUTO_UPDATE_TYPE_NEW_TITLE    = getRefdataValue('New Title', RCConstants.AUTO_UPDATE_TYPE)
     public static final AUTO_UPDATE_TYPE_CHANGED_TITLE    = getRefdataValue('Changed Title', RCConstants.AUTO_UPDATE_TYPE)
     public static final AUTO_UPDATE_TYPE_REMOVED_TITLE    = getRefdataValue('Removed Title', RCConstants.AUTO_UPDATE_TYPE)
+    public static final AUTO_UPDATE_TYPE_FAILED_TITLE    = getRefdataValue('Failed Title', RCConstants.AUTO_UPDATE_TYPE)
 
     public static final KBC_STATUS_DELETED    = getRefdataValue('Deleted', RCConstants.KBCOMPONENT_STATUS)
     public static final KBC_STATUS_CURRENT    = getRefdataValue('Current', RCConstants.KBCOMPONENT_STATUS)
