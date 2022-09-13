@@ -579,7 +579,7 @@ class FTUpdateService {
 
               IndexRequest request = new IndexRequest(es_index)
               request.id(recid)
-              //String jsonString = idx_record as JSON
+              String jsonString = idx_record as JSON
               //String jsonString = JsonOutput.toJson(idx_record)
               //println(jsonString)
               request.source(jsonString, XContentType.JSON)
