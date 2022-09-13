@@ -166,7 +166,3 @@ isxn_formatter = { issn_string ->
     return result;
 }
 
-
-appDefaultPrefs {
-    globalDateFormat='yyyy-MM-dd'
-}
