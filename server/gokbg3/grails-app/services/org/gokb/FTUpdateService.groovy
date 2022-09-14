@@ -538,7 +538,7 @@ class FTUpdateService {
         if (!latest_ft_record) {
           latest_ft_record =
                   new FTControl(domainClassName: domain.name, activity: 'ESIndex', lastTimestamp: 0, lastId: 0)
-                          .save(flush: true, failOnError: true)
+                          .save()
           log.debug("Create new FT control record, as none available for ${domain.name}")
         } else {
           highest_timestamp = latest_ft_record.lastTimestamp
@@ -613,7 +613,7 @@ class FTUpdateService {
               if (latest_ft_record) {
                 latest_ft_record.lastTimestamp = highest_timestamp
                 latest_ft_record.lastId = highest_id
-                latest_ft_record.save(flush: true, failOnError: true)
+                latest_ft_record.save()
               } else {
                 log.error("Unable to locate free text control record with ID ${id}. Possibe parallel FT update")
               }
@@ -642,7 +642,7 @@ class FTUpdateService {
           latest_ft_record = FTControl.get(latest_ft_record.id)
           latest_ft_record.lastTimestamp = highest_timestamp
           latest_ft_record.lastId = highest_id
-          latest_ft_record.save(flush: true, failOnError: true)
+          latest_ft_record.save()
         }
         session.flush()
         session.clear()
