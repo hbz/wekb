@@ -554,7 +554,7 @@ class AutoUpdatePackagesService {
         Map errors = [global: [], tipps: []]
 
         List<Long> tippsFound = []
-        def invalidTipps = []
+        List invalidKbartRowsForTipps = []
         int removedTipps = 0
         int newTipps = 0
         int changedTipps = 0
@@ -563,7 +563,7 @@ class AutoUpdatePackagesService {
 
         try {
 
-            log.info("Matched package has ${pkg.tipps.size()} TIPPs")
+            log.info("Matched package has ${existing_tipp_ids.size()} TIPPs")
 
             int idx = 0
 
@@ -597,7 +597,7 @@ class AutoUpdatePackagesService {
                         idx++
                         def currentTippError = [index: idx]
                         log.info("kbartImportProcess (#$idx of $kbartRowsCount): title ${kbartRow.publication_title}")
-                        if (!invalidTipps.contains(kbartRow)) {
+                        if (!invalidKbartRowsForTipps.contains(kbartRow.rowIndex)) {
 
                             kbartRow.pkg = pkg
                             kbartRow.nominalPlatform = pkg.nominalPlatform
@@ -605,8 +605,8 @@ class AutoUpdatePackagesService {
                             Map tippErrorMap = [:]
                             def validation_result = kbartImportValidationService.tippValidateForAutoUpdate(kbartRow)
                             if (!validation_result.valid) {
-                                if (!invalidTipps.contains(kbartRow)) {
-                                    invalidTipps << kbartRow
+                                if (!invalidKbartRowsForTipps.contains(kbartRow.rowIndex)) {
+                                    invalidKbartRowsForTipps << kbartRow.rowIndex
 
                                     AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
                                             description: validation_result.errorMessage,
@@ -622,11 +622,15 @@ class AutoUpdatePackagesService {
                                     ).save()
                                 }
                                 log.debug("TIPP Validation failed on ${kbartRow.publication_title}")
-                                tippErrorMap = validation_result.errors
+                                def tipp_error = [
+                                        message: validation_result.errorMessage,
+                                        baddata: kbartRow
+                                ]
+                                tippErrorMap = tipp_error
                             } else {
-                                if (validation_result.errors?.size() > 0) {
+                                /*if (validation_result.errors?.size() > 0) {
                                     tippErrorMap.putAll(validation_result.errors)
-                                }
+                                }*/
                                 TitleInstancePackagePlatform updateTipp = null
                                 try {
                                     Map autoUpdateResultTipp = kbartImportService.tippImportForAutoUpdate(kbartRow, tippsWithCoverage, tippDuplicates, autoUpdatePackageInfo)
@@ -658,9 +662,9 @@ class AutoUpdatePackagesService {
 
                                 }
                                 catch (grails.validation.ValidationException ve) {
-                                    if (!invalidTipps.contains(kbartRow)) {
+                                    if (!invalidKbartRowsForTipps.contains(kbartRow.rowIndex)) {
                                         if (updateTipp) {
-                                            invalidTipps << kbartRow
+                                            invalidKbartRowsForTipps << kbartRow.rowIndex
                                             AutoUpdateTippInfo.withTransaction {
                                                 autoUpdatePackageInfo.refresh()
                                                 AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
@@ -683,9 +687,9 @@ class AutoUpdatePackagesService {
                                     tippErrorMap.putAll(messageService.processValidationErrors(ve.errors))
                                 }
                                 catch (Exception ge) {
-                                    if (!invalidTipps.contains(kbartRow)) {
+                                    if (!invalidKbartRowsForTipps.contains(kbartRow.rowIndex)) {
                                         if (updateTipp) {
-                                            invalidTipps << kbartRow
+                                            invalidKbartRowsForTipps << kbartRow.rowIndex
                                             AutoUpdateTippInfo.withTransaction {
                                                 autoUpdatePackageInfo.refresh()
                                                 AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
@@ -714,8 +718,8 @@ class AutoUpdatePackagesService {
                                 }
                                 if (!updateTipp) {
                                     log.error("Could not reference TIPP with kbartRow: $kbartRow")
-                                    /*if (!invalidTipps.contains(kbartRow)) {
-                                        invalidTipps << kbartRow
+                                    /*if (!invalidKbartRowsForTipps.contains(kbartRow.rowIndex)) {
+                                        invalidKbartRowsForTipps << kbartRow.rowIndex
                                     }*/
                                     def tipp_error = [
                                             message: messageService.resolveCode('crossRef.package.tipps.error', [kbartRow.publication_title], Locale.ENGLISH),
@@ -734,7 +738,7 @@ class AutoUpdatePackagesService {
                             errors.tipps.add(currentTippError)
                         }
 
-                        if (idx % 250 == 0) {
+                        if (idx % 100 == 0) {
                             log.info("Clean up");
                             cleanupService.cleanUpGorm()
                         }
@@ -772,13 +776,13 @@ class AutoUpdatePackagesService {
 
             }
 
-/*            if (invalidTipps.size() > 0) {
-                String msg = messageService.resolveCode('crossRef.package.tipps.ignored', [invalidTipps.size()], Locale.ENGLISH)
+/*            if (invalidKbartRowsForTipps.size() > 0) {
+                String msg = messageService.resolveCode('crossRef.package.tipps.ignored', [invalidKbartRowsForTipps.size()], Locale.ENGLISH)
                 log.warn(msg)
                 errors.global.add([message: msg, baddata: pkg.name])
             }*/
 
-            if (kbartRows.size() > 0 && kbartRows.size() > invalidTipps.size()) {
+            if (kbartRows.size() > 0 && kbartRows.size() > invalidKbartRowsForTipps.size()) {
             } else {
                 log.info("imported Package $pkg.name contains no valid TIPPs")
             }
@@ -878,7 +882,7 @@ class AutoUpdatePackagesService {
             String description = "Package Update: (KbartLines: ${kbartRowsCount}, " +
                     "Processed Titles in this run: ${idx}, Titles in we:kb previously: ${existing_tipp_ids.size()}, Titles in we:kb now: ${countExistingTippsAfterImport}, Removed Titles: ${removedTipps}, New Titles in we:kb: ${newTipps}, Changed Titles in we:kb: ${changedTipps})"
 
-            AutoUpdatePackageInfo.executeUpdate("update AutoUpdatePackageInfo set countKbartRows = ${kbartRowsCount}, countChangedTipps = ${changedTipps}, countNewTipps = ${newTipps}, countRemovedTipps = ${removedTipps}, countInValidTipps = ${invalidTipps.size()}, countProcessedKbartRows = ${idx}, endTime = ${new Date()}, description = ${description} where id = ${autoUpdatePackageInfo.id}")
+            AutoUpdatePackageInfo.executeUpdate("update AutoUpdatePackageInfo set countKbartRows = ${kbartRowsCount}, countChangedTipps = ${changedTipps}, countNewTipps = ${newTipps}, countRemovedTipps = ${removedTipps}, countInValidTipps = ${invalidKbartRowsForTipps.size()}, countProcessedKbartRows = ${idx}, endTime = ${new Date()}, description = ${description} where id = ${autoUpdatePackageInfo.id}")
 
             AutoUpdatePackageInfo.withNewTransaction {
 
@@ -1088,18 +1092,20 @@ class AutoUpdatePackagesService {
                     //Don't delete the header
                     //rows.remove(0)
                     countRows = rows.size()-1
+                    log.debug("Begin kbart processing rows ${countRows}")
                     rows.eachWithIndex { row, Integer r ->
-                        log.debug("now processing entry ${row}")
+                        //log.debug("now processing entry ${row}")
                         List<String> cols = row.split('\t')
                         Map rowMap = [:]
                         colMap.eachWithIndex { def entry, int i ->
                             if (cols[entry.value] && !cols[entry.value].isEmpty())
                                 rowMap."${entry.key}" = cols[entry.value].replace("\r", "")
-                                rowMap."${entry.key}" = rowMap."${entry.key}" ? rowMap."${entry.key}".replaceAll(/\"/,"") : rowMap."${entry.key}"
+                            rowMap."${entry.key}" = rowMap."${entry.key}" ? rowMap."${entry.key}".replaceAll(/\"/,"") : rowMap."${entry.key}"
                         }
-
+                        rowMap.rowIndex = r
                         result << rowMap
                     }
+                    log.debug("End kbart processing rows ${countRows}")
                 }
             } catch (Exception e) {
                 log.error("${e}")
