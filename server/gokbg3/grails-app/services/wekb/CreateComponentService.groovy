@@ -647,7 +647,7 @@ class CreateComponentService {
                 def dupes = Source.findAllByNameIlikeAndStatusNotEqual(aPackage.name, status_deleted)
                 String sourceName = aPackage.name
                 if (dupes && dupes.size() > 0) {
-                    sourceName = "${sourceName} ${dupes.size()}"
+                    sourceName = "${sourceName} ${dupes.size()+1}"
                 }
 
                 source = new Source(name: sourceName)
@@ -675,7 +675,7 @@ class CreateComponentService {
                 source.targetNamespace = IdentifierNamespace.get(map.targetNamespace)
             }
 
-            if (source.save(flush: true)) {
+            if (source.save()) {
                 user.curatoryGroups.each { CuratoryGroup cg ->
                     if (!(cg in source.curatoryGroups)) {
                         def combo_type = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Source.CuratoryGroups')
@@ -684,8 +684,9 @@ class CreateComponentService {
                     }
                 }
                 if (source != aPackage.source) {
+                    aPackage = aPackage.refresh()
                     aPackage.source = source
-                    aPackage.save(flush: true)
+                    aPackage.save()
                 }
             }
         }
