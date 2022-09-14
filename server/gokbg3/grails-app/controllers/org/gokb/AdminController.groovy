@@ -38,6 +38,7 @@ class AdminController {
   SpringSecurityService springSecurityService
   FTUpdateService FTUpdateService
   SessionFactory sessionFactory
+  GenericOIDService genericOIDService
 
   static Map typePerIndex = [
           "wekbtipps": "TitleInstancePackagePlatform",
@@ -622,7 +623,7 @@ class AdminController {
 
     List pkgs = []
 
-    CuratoryGroup curatoryGroupFilter = params.curatoryGroup ?: null
+    CuratoryGroup curatoryGroupFilter = params.curatoryGroup ? genericOIDService.resolveOID(params.curatoryGroup) : null
 
     Package.executeQuery(
             "from Package p " +
@@ -631,8 +632,9 @@ class AdminController {
                     "and (p.source.lastRun is null or p.source.lastRun < current_date) order by p.name").each { Package p ->
       if (p.source.needsUpdate()) {
         if(curatoryGroupFilter){
-         if(curatoryGroupFilter in p.curatoryGroups)
+         if(curatoryGroupFilter in p.curatoryGroups) {
            pkgs << p
+         }
         }else {
           pkgs << p
         }

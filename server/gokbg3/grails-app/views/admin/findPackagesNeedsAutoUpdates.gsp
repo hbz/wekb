@@ -23,10 +23,16 @@
                 <label>Filter by Curatory Group</label>
                 <semui:simpleReferenceDropdown name="curatoryGroup"
                                                baseClass="org.gokb.cred.CuratoryGroup"
-                                               filter1="Current"/>
+                                               filter1="Current" value="${params.curatoryGroup}"/>
             </div>
 
-            <button type="submit" class="ui black button">Filter</button>
+            <div class="ui right floated buttons">
+                <button type="submit" class="ui black button">Filter</button>
+                <g:link class="ui button" action="findPackagesNeedsAutoUpdates">Reset</g:link>
+            </div>
+
+            <br>
+            <br>
         </g:form>
     </div>
 

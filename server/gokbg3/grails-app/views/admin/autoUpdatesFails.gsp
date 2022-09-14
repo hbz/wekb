@@ -14,6 +14,9 @@
 
 <h1 class="ui header">Automatic Update Fails (${autoUpdates.size()})</h1>
 
+<h3>Only fails automatic update from <g:formatDate date="${new java.util.Date()-1}" format="${message(code: 'default.date.format.noZ')}"/>
+until <g:formatDate date="${new java.util.Date()}" format="${message(code: 'default.date.format.noZ')}"/></h3>
+
 
 <div class="container">
     <g:if test="${autoUpdates.size() > 0}">
@@ -36,18 +39,14 @@
                         ${i + 1}
                     </td>
                     <td>
+                        <g:link controller="resource" action="show" id="${autoUpdate.class.name}:${autoUpdate.uuid}">
                         ${autoUpdate.description}
-                        <br>
-                        <br>
-                        <g:set var="linkToAutoUpdateInfo" value="${grailsApplication.config.serverUrl + "resource/show/${autoUpdate.class.name}:${autoUpdate.uuid}"}"/>
-                        ${linkToAutoUpdateInfo}
+                        </g:link>
                     </td>
                     <td>
+                        <g:link controller="resource" action="show" id="${autoUpdate.pkg.uuid}">
                         ${autoUpdate.pkg.name}
-                        <br>
-                        <br>
-                        <g:set var="linkToPkg" value="${grailsApplication.config.serverUrl + "resource/show/${autoUpdate.pkg.uuid}"}"/>
-                        ${linkToPkg}
+                        </g:link>
                     </td>
                     <td>
                         ${autoUpdate.pkg.provider?.name}
@@ -58,17 +57,19 @@
                         </g:each>
                     </td>
                     <td>
-                        ${autoUpdate.startTime}
+                        <g:formatDate date="${autoUpdate.startTime}"
+                                      format="${message(code: 'default.date.format.noZ')}"/>
                     </td>
                     <td>
-                        ${autoUpdate.endTime}
+                        <g:formatDate date="${autoUpdate.endTime}"
+                                      format="${message(code: 'default.date.format.noZ')}"/>
                     </td>
                 </tr>
             </g:each>
         </table>
     </g:if>
     <g:else>
-        No Auto Update with Fail found. Everything is right.
+        <b>No Auto Update with Fail found. Everything is right.</b>
     </g:else>
 </div>
 
