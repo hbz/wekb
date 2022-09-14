@@ -47,7 +47,7 @@
 										<td>
 											<g:link controller="ajaxSupport"
 													action="deleteCoverageStatement"
-													params="[id: cs.id, fragment: 'tippcoverage']">Delete</g:link>
+													params="[id: cs.id, fragment: 'tippcoverage', curationOverride: params.curationOverride]">Delete</g:link>
 										</td>
 									</g:if>
 								</tr>

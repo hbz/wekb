@@ -11,6 +11,7 @@ AutoUpdate.Status;Warning;Warning;Warning
 AutoUpdate.Type;New Title;New Title;New Title
 AutoUpdate.Type;Changed Title;Changed Title;Changed Title
 AutoUpdate.Type;Removed Title;Removed Title;Removed Title
+AutoUpdate.Type;Failed Title;Failed Title;Failed Title
 Combo.Status;Active;Active;Active
 Combo.Status;Deleted;Deleted;Deleted
 Combo.Status;Expired;Expired;Expired
@@ -304,13 +305,8 @@ DCType;Admin;Admin;Admin
 DCType;Standard;Standard;Standard
 DCType;Support;Support;Support
 DeletedKBComponent.Status;Permanently Deleted;Permanently Deleted;Permanently Deleted
-IdentifierNamespace.TargetType;Book;Book;Book
-IdentifierNamespace.TargetType;Database;Database;Database
-IdentifierNamespace.TargetType;Journal;Journal;Journal
 IdentifierNamespace.TargetType;Org;Org;Org
-IdentifierNamespace.TargetType;Other;Other;Other
 IdentifierNamespace.TargetType;Package;Package;Package
-IdentifierNamespace.TargetType;Title;Title;Title
 IdentifierNamespace.TargetType;TitleInstancePackagePlatform;TitleInstancePackagePlatform;TitleInstancePackagePlatform
 ingest.filetype;cufts;cufts;cufts
 ingest.filetype;ingram;ingram;ingram

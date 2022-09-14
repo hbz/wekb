@@ -28,7 +28,7 @@ if (Environment.isDevelopmentMode() || Environment.current == Environment.TEST) 
   logger('gokbg3', DEBUG)
 
   logger('org.gokb.DomainClassExtender', WARN)
-  logger('org.gokb.ClassExaminationService', WARN)
+  /*logger('org.gokb.ClassExaminationService', WARN)
   logger('org.gokb.IntegrationController', WARN)
   logger('org.gokb.CrossReferenceService', ERROR)
   logger('org.gokb.CrossRefPkgRun', DEBUG)
@@ -46,7 +46,8 @@ if (Environment.isDevelopmentMode() || Environment.current == Environment.TEST) 
   logger('gokbg3.RestMappingService', ERROR)
   logger('gokbg3.UserDetailsInterceptor', ERROR)
   logger('gokbg3.PreferencesInterceptor', ERROR)
-  logger('gokbg3.RestMappingService', ERROR)
+  logger('gokbg3.RestMappingService', ERROR)*/
+
   logger('de.wekb', DEBUG)
   logger('wekb', DEBUG)
   logger('com.k_int.HQLBuilder', INFO)

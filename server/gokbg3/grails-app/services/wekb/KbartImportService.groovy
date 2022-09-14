@@ -1428,20 +1428,23 @@ class KbartImportService {
 
     List<TitleInstancePackagePlatform> tippsMatchingByTitleIDAutoUpdate(String titleID, Package aPackage, Platform platform) {
         List<TitleInstancePackagePlatform> tippList
-        List<IdentifierNamespace> idnsCheck = IdentifierNamespace.executeQuery('select so.targetNamespace from Package pkg join pkg.source so where pkg = :pkg', [pkg: aPackage])
-        if(!idnsCheck)
-            idnsCheck = IdentifierNamespace.executeQuery('select plat.titleNamespace from Platform plat where plat = :plat', [plat: platform])
-        if (idnsCheck && idnsCheck.size() == 1 && titleID && titleID != ""){
-            IdentifierNamespace identifierNamespace = idnsCheck[0]
-            tippList = Identifier.executeQuery('select i.tipp from Identifier as i where i.namespace = :namespaceValue and i.value = :value and i.tipp is not null', [namespaceValue: identifierNamespace, value: titleID])
+        if(titleID) {
+            List<IdentifierNamespace> idnsCheck = IdentifierNamespace.executeQuery('select so.targetNamespace from Package pkg join pkg.source so where pkg = :pkg', [pkg: aPackage])
+            if (!idnsCheck)
+                idnsCheck = IdentifierNamespace.executeQuery('select plat.titleNamespace from Platform plat where plat = :plat', [plat: platform])
+            if (idnsCheck && idnsCheck.size() == 1 && titleID && titleID != "") {
+                IdentifierNamespace identifierNamespace = idnsCheck[0]
+                tippList = Identifier.executeQuery('select i.tipp from Identifier as i where i.namespace = :namespaceValue and i.value = :value and i.tipp is not null', [namespaceValue: identifierNamespace, value: titleID])
 
-            tippList = tippList.findAll {it.pkg == aPackage && it.status != RDStore.KBC_STATUS_REMOVED}
+                tippList = tippList.findAll { it.pkg == aPackage && it.status != RDStore.KBC_STATUS_REMOVED }
 
-            if(tippList.size() > 0){
-                log.debug("tippsMatchingByTitleID provider internal identifier matching by "+tippList.size() + ": "+ tippList.id)
-                return tippList
+                if (tippList.size() > 0) {
+                    log.debug("tippsMatchingByTitleID provider internal identifier matching by " + tippList.size() + ": " + tippList.id)
+                    return tippList
+                }
             }
         }
+        return tippList
     }
 
     /**
@@ -1977,7 +1980,7 @@ class KbartImportService {
             }
         }
 
-        if(result.changedTipp){
+        if(valueChanged){
             tipp.save()
         }
 
@@ -2046,7 +2049,9 @@ class KbartImportService {
         String oldValue = ''
         ComponentPrice cp = null
         if (price && priceType && currency){
-            f = Float.parseFloat(price)
+            String uniformedThousandSeparator = price.replaceAll("[,.](\\d{3})",'$1')
+            uniformedThousandSeparator = uniformedThousandSeparator.replaceAll(",",".")
+            f = Float.parseFloat(uniformedThousandSeparator)
             if(!f.isNaN()) {
                 List<ComponentPrice> existPrices = ComponentPrice.findAllByOwnerAndPriceTypeAndCurrency(tipp, priceType, currency, [sort: 'lastUpdated', order: 'ASC'])
                 if (existPrices.size() == 1) {
@@ -2190,7 +2195,7 @@ class KbartImportService {
                             tipp[tippProperty] = v
                         }
                     }else {
-                        createAutoUpdateTippInfoByTippChangeFail(tipp, autoUpdatePackageInfo, kbartProperty, tippProperty, oldValue, newValue, "The value ${newValue} not found in RefdatValues.")
+                        createAutoUpdateTippInfoByTippChangeFail(tipp, autoUpdatePackageInfo, kbartProperty, tippProperty, oldValue, newValue, "The value ${newValue} not found in Refdata values.")
                     }
                 }
             } else if (dataType == 'String') {

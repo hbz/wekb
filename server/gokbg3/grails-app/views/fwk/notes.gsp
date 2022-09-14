@@ -16,6 +16,7 @@
       <input type="hidden" name="ownerClass" value="${ownerClass}"/>
       <input type="hidden" name="ownerId" value="${ownerId}"/>
       <input type="hidden" name="creator" value="org.gokb.cred.User:${user.id}"/>
+      <input type="hidden" name="curationOverride" value="${params.curationOverride}"/>
       <div class="field">
         <textarea class="form-control text-complete" style="resize:none;" rows="5" name="note"></textarea>
       </div>
