@@ -5,6 +5,8 @@ import de.wekb.helper.RCConstants
 import de.wekb.helper.RDStore
 import gokbg3.DateFormatService
 import grails.gorm.transactions.Transactional
+import grails.util.Holders
+import groovy.sql.Sql
 import org.gokb.CleanupService
 import org.gokb.ComponentLookupService
 import org.gokb.GOKbTextUtils
@@ -25,6 +27,7 @@ import org.hibernate.Session
 import org.hibernate.SessionFactory
 import org.hibernate.Transaction
 
+import java.sql.Timestamp
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -2269,57 +2272,73 @@ class KbartImportService {
 
         int counterNewTippsToProcess = tippMaps.size()
 
+        def dataSource = Holders.grailsApplication.mainContext.getBean('dataSource')
+        Sql sql = new Sql(dataSource)
+
         tippMaps.eachWithIndex { Map tippMap, int counter ->
-            RefdataValue tipp_status = tippMap.status ? RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, tippMap.status) : null
-
-            RefdataValue tipp_medium = null
-            if (tippMap.medium) {
-                tipp_medium = determineMediumRef(tippMap.medium)
-            }
-            RefdataValue tipp_publicationType = null
-            if (tippMap.type) {
-                tipp_publicationType = determinePublicationType(tippMap.type)
-            }
             long start = System.currentTimeMillis()
-            TitleInstancePackagePlatform tipp = new TitleInstancePackagePlatform(
-                    uuid: tippMap.uuid ?: UUID.randomUUID().toString(),
-                    status: tipp_status,
-                    name: tippMap.name,
-                    medium: tipp_medium,
-                    publicationType: tipp_publicationType,
-                    url: tippMap.url)
-            if (tipp) {
-                tipp.save()
-            } else {
-                log.error("TIPP creation failed!")
+
+            try {
+
+                RefdataValue tipp_status = tippMap.status ? RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, tippMap.status) : null
+
+                RefdataValue tipp_medium = null
+                if (tippMap.medium) {
+                    tipp_medium = determineMediumRef(tippMap.medium)
+                }
+                RefdataValue tipp_publicationType = null
+                if (tippMap.type) {
+                    tipp_publicationType = determinePublicationType(tippMap.type)
+                }
+                TitleInstancePackagePlatform tipp = new TitleInstancePackagePlatform(
+                        uuid: tippMap.uuid ?: UUID.randomUUID().toString(),
+                        status: tipp_status,
+                        name: tippMap.name,
+                        medium: tipp_medium,
+                        publicationType: tipp_publicationType,
+                        url: tippMap.url)
+                if (tipp) {
+                    tipp.save(flush: true)
+                } else {
+                    log.error("TIPP creation failed!")
+                }
+                if (!tipp) {
+                    log.error("TIPP creation failed!")
+                } else {
+                    def pkg_combo_type = RDStore.COMBO_TYPE_PKG_TIPPS
+                    //Combo pkg_tipp = new Combo(toComponent: tipp, fromComponent: tippMap.pkg, type: pkg_combo_type, status: RDStore.COMBO_STATUS_ACTIVE).save()
+
+                    def plt_combo_type = RDStore.COMBO_TYPE_PLT_HOSTEDTIPPS
+                    //Combo plt_tipp = new Combo(toComponent: tipp, fromComponent: tippMap.hostPlatform, type: plt_combo_type, status: RDStore.COMBO_STATUS_ACTIVE).save()
+
+                    sql.withTransaction {
+                        sql.executeInsert("""insert into combo (combo_id, combo_version, combo_from_fk, combo_to_fk, combo_type_rv_fk, combo_status_rv_fk) values ((select nextval('hibernate_sequence')), 0, ${tippMap.pkg.id}, ${tipp.id}, ${pkg_combo_type.id}, ${RDStore.COMBO_STATUS_ACTIVE.id})""")
+
+                        sql.executeInsert("""insert into combo (combo_id, combo_version, combo_from_fk, combo_to_fk, combo_type_rv_fk, combo_status_rv_fk) values ((select nextval('hibernate_sequence')), 0, ${tippMap.hostPlatform.id}, ${tipp.id}, ${plt_combo_type.id}, ${RDStore.COMBO_STATUS_ACTIVE.id})""")
+                    }
+
+
+                    // autoUpdatePackageInfo = autoUpdatePackageInfo.refresh()
+                    AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
+                            description: "New Title '${tippMap.name}'",
+                            tipp: tipp,
+                            startTime: new Date(),
+                            endTime: new Date(),
+                            status: RDStore.AUTO_UPDATE_STATUS_SUCCESSFUL,
+                            type: RDStore.AUTO_UPDATE_TYPE_NEW_TITLE,
+                            autoUpdatePackageInfo: autoUpdatePackageInfo
+                    ).save()
+
+                    newTippList << [tippID: tipp.id, kbartRowMap: tippMap.kbartRowMap, autoUpdatePackageInfo: autoUpdatePackageInfo]
+                }
+
+                log.info("createTippBatch (${counter + 1} of $counterNewTippsToProcess) processed at: ${System.currentTimeMillis() - start} msecs")
+
+            }catch (Exception e) {
+                log.error("createTippBatch: -> ${tippMap.kbartRowMap}:" + e.toString())
             }
-            log.debug("createTippBatch (${counter+1} of $counterNewTippsToProcess) processed at: ${System.currentTimeMillis()-start} msecs")
 
-            if (!tipp) {
-                log.error("TIPP creation failed!")
-            }else {
-                def pkg_combo_type = RDStore.COMBO_TYPE_PKG_TIPPS
-                Combo pkg_tipp = new Combo(toComponent: tipp, fromComponent: tippMap.pkg, type: pkg_combo_type, status: RDStore.COMBO_STATUS_ACTIVE).save()
-
-                def plt_combo_type = RDStore.COMBO_TYPE_PLT_HOSTEDTIPPS
-                Combo plt_tipp = new Combo(toComponent: tipp, fromComponent: tippMap.hostPlatform, type: plt_combo_type, status: RDStore.COMBO_STATUS_ACTIVE).save()
-
-                //
-                // ,
-                // autoUpdatePackageInfo = autoUpdatePackageInfo.refresh()
-                AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
-                        description: "New Title '${tippMap.name}'",
-                        tipp: tipp,
-                        startTime: new Date(),
-                        endTime: new Date(),
-                        status: RDStore.AUTO_UPDATE_STATUS_SUCCESSFUL,
-                        type: RDStore.AUTO_UPDATE_TYPE_NEW_TITLE,
-                        autoUpdatePackageInfo: autoUpdatePackageInfo
-                ).save()
-
-                newTippList << [tippID: tipp.id, kbartRowMap: tippMap.kbartRowMap, autoUpdatePackageInfo: autoUpdatePackageInfo]
-            }
-            if (counter.mod(100) == 0) {
+            if (counter.mod(250) == 0) {
                 cleanupService.cleanUpGorm()
             }
         }

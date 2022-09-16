@@ -759,7 +759,7 @@ class AutoUpdatePackagesService {
             if(kbartRowsToCreateTipps.size() > 0){
                 List newTippList = kbartImportService.createTippBatch(kbartRowsToCreateTipps, autoUpdatePackageInfo)
                 newTipps = newTippList.size()
-                log.debug("kbartRowsToCreateTipps: TippIds -> "+newTippList.id)
+                log.debug("kbartRowsToCreateTipps: TippIds -> "+newTippList.tippID)
 
                 Package pkgTipp = pkg
                 Platform platformTipp = plt
@@ -767,11 +767,23 @@ class AutoUpdatePackagesService {
                 newTippList.eachWithIndex{ Map newTippMap, int i ->
                     TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.get(newTippMap.tippID)
                     if(tipp){
-                        log.debug("kbartRowsToCreateTipps: update tipp $i")
-                        LinkedHashMap result = [newTipp: true]
-                        result = kbartImportService.updateTippWithKbart(result, tipp, newTippMap.kbartRowMap, newTippMap.autoUpdatePackageInfo, tippsWithCoverage, pkgTipp, platformTipp)
-                        tippsWithCoverage = result.tippsWithCoverage
-                        autoUpdatePackageInfo = result.autoUpdatePackageInfo
+                        long start = System.currentTimeMillis()
+                        log.info("kbartRowsToCreateTipps: update tipp ${i+1} of ${newTipps}")
+                        try {
+                            LinkedHashMap result = [newTipp: true]
+                            result = kbartImportService.updateTippWithKbart(result, tipp, newTippMap.kbartRowMap, newTippMap.autoUpdatePackageInfo, tippsWithCoverage, pkgTipp, platformTipp)
+                            tippsWithCoverage = result.tippsWithCoverage
+                            autoUpdatePackageInfo = result.autoUpdatePackageInfo
+
+                        }catch (Exception e) {
+                            log.error("kbartRowsToCreateTipps: -> ${newTippMap.kbartRowMap}:" + e.toString())
+                        }
+
+                        log.debug("kbartRowsToCreateTipps processed at: ${System.currentTimeMillis()-start} msecs")
+                        if (i % 100 == 0) {
+                            log.info("Clean up")
+                            cleanupService.cleanUpGorm()
+                        }
                     }
                 }
 
