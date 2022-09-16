@@ -411,7 +411,7 @@ class KbartImportValidationService {
 
     def tippValidateForAutoUpdate(tippMap) {
         log.info("Begin tippValidateForAutoUpdate")
-        log.debug("tippMap: ${tippMap}")
+        //log.debug("tippMap: ${tippMap}")
         def pkgLink = tippMap.pkg
         def pltLink = tippMap.nominalPlatform
         def result = ['valid': true]
@@ -456,9 +456,9 @@ class KbartImportValidationService {
         }
 
         if (tippMap.publication_type) {
-            log.debug("before publication type determination")
+            //log.debug("before publication type determination")
             RefdataValue publicationType = kbartImportService.determinePublicationType(tippMap.publication_type)
-            log.debug("after determination")
+            //log.debug("after determination")
             if (!publicationType) {
                 result.valid = false
                 errorMessage = "Unknown publication type by title: $tippMap.publication_title"
@@ -470,7 +470,7 @@ class KbartImportValidationService {
 
         if (!tippMap.title_url) {
             result.valid = false
-            errorMessage = "Missing title url by title: $tippMap.publication_title!"
+            errorMessage = "Missing title url by title: $tippMap.publication_title"
 
         }
 

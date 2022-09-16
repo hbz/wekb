@@ -307,6 +307,9 @@ class AdminController {
         if(indexName == 'wekbdeletedcomponents'){
           domainClassName = 'wekb.DeletedKBComponent'
         }
+        else {
+          domainClassName = "org.gokb.cred.${domainClassName}"
+        }
         def res = FTControl.executeUpdate("delete FTControl c where c.domainClassName = ${domainClassName}")
         log.info("Result: ${res}")
       }
