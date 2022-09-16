@@ -470,7 +470,7 @@ class KbartImportValidationService {
 
         if (!tippMap.title_url) {
             result.valid = false
-            errorMessage = "Missing title url by title: $tippMap.publication_title!"
+            errorMessage = "Missing title url by title: $tippMap.publication_title"
 
         }
 
