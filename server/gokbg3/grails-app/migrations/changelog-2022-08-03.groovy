@@ -177,7 +177,7 @@ databaseChangeLog = {
     }
 
     changeSet(author: "djebeniani (generated)", id: "1659505824422-30") {
-        createIndex(indexName: "tipp_url_type_idx", tableName: "title_instance_package_platform") {
+        createIndex(indexName: "tipp_url_idx", tableName: "title_instance_package_platform") {
             column(name: "url")
         }
     }
