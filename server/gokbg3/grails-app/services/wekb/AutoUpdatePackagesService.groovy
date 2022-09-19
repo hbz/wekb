@@ -796,9 +796,9 @@ class AutoUpdatePackagesService {
                     if(!(it in tippsFound)){
                         KBComponent.executeUpdate("update KBComponent set status = :removed where id = (:tippId)", [removed: RDStore.KBC_STATUS_REMOVED, tippId: it])
 
+                        TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.get(it)
                         AutoUpdateTippInfo.withTransaction {
                             autoUpdatePackageInfo.refresh()
-                            TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.get(it)
                             AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
                                     description: "Remove Title '${tipp.name}' because is a duplicate in wekb!",
                                     tipp: tipp,
@@ -812,6 +812,7 @@ class AutoUpdatePackagesService {
                                     kbartProperty: 'status',
                                     autoUpdatePackageInfo: autoUpdatePackageInfo
                             ).save()
+                            removedTipps++
                         }
                     }
                 }
@@ -824,7 +825,9 @@ class AutoUpdatePackagesService {
                 errors.global.add([message: msg, baddata: pkg.name])
             }*/
 
-            if (kbartRows.size() > 0 && kbartRows.size() > invalidKbartRowsForTipps.size()) {
+            int countInvalidKbartRowsForTipps = invalidKbartRowsForTipps.size()
+
+            if (kbartRows.size() > 0 && kbartRows.size() > countInvalidKbartRowsForTipps) {
             } else {
                 log.info("imported Package $pkg.name contains no valid TIPPs")
             }
@@ -841,9 +844,9 @@ class AutoUpdatePackagesService {
                 Integer tippsToDeleted = tippsIds ? KBComponent.executeUpdate("update KBComponent set status = :deleted where id in (:tippIds)", [deleted: status_deleted, tippIds: tippsIds]) : 0
 
                 tippsIds.each {
+                    TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.get(it)
                     AutoUpdateTippInfo.withTransaction {
                         autoUpdatePackageInfo.refresh()
-                        TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.get(it)
                         AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
                                 description: "Delete Title '${tipp.name}' because is not in KBART!",
                                 tipp: tipp,
@@ -857,6 +860,7 @@ class AutoUpdatePackagesService {
                                 kbartProperty: 'status',
                                 autoUpdatePackageInfo: autoUpdatePackageInfo
                         ).save()
+                        changedTipps++
                     }
                 }
 
@@ -881,7 +885,7 @@ class AutoUpdatePackagesService {
                     [package: pkg, status: listStatus])[0]
 
 
-            if(countExistingTippsAfterImport > kbartRowsCount){
+            if(countExistingTippsAfterImport > (kbartRowsCount-countInvalidKbartRowsForTipps)){
 
                 List<Long> existingTippsAfterImport = TitleInstancePackagePlatform.executeQuery(
                         "select tipp.id from TitleInstancePackagePlatform tipp, Combo combo where " +
@@ -890,15 +894,16 @@ class AutoUpdatePackagesService {
                                 "combo.fromComponent = :package",
                         [package: pkg, status: listStatus])
 
+
                 List<Long> removeTippsFromWekb = existingTippsAfterImport - tippsFound
 
                 if(removeTippsFromWekb.size() > 0){
                     Integer tippsToRemoved = KBComponent.executeUpdate("update KBComponent set status = :removed where id in (:tippIds)", [removed: RDStore.KBC_STATUS_REMOVED, tippIds: removeTippsFromWekb])
 
                     removeTippsFromWekb.each {
+                        TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.get(it)
                         AutoUpdateTippInfo.withTransaction {
                             autoUpdatePackageInfo.refresh()
-                            TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.get(it)
                             AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
                                     description: "Remove Title '${tipp.name}' because is not in KBART!",
                                     tipp: tipp,
@@ -912,6 +917,7 @@ class AutoUpdatePackagesService {
                                     kbartProperty: 'status',
                                     autoUpdatePackageInfo: autoUpdatePackageInfo
                             ).save()
+                            removedTipps++
                         }
                     }
 
@@ -924,7 +930,7 @@ class AutoUpdatePackagesService {
             String description = "Package Update: (KbartLines: ${kbartRowsCount}, " +
                     "Processed Titles in this run: ${idx}, Titles in we:kb previously: ${existing_tipp_ids.size()}, Titles in we:kb now: ${countExistingTippsAfterImport}, Removed Titles: ${removedTipps}, New Titles in we:kb: ${newTipps}, Changed Titles in we:kb: ${changedTipps})"
 
-            AutoUpdatePackageInfo.executeUpdate("update AutoUpdatePackageInfo set countKbartRows = ${kbartRowsCount}, countChangedTipps = ${changedTipps}, countNewTipps = ${newTipps}, countRemovedTipps = ${removedTipps}, countInValidTipps = ${invalidKbartRowsForTipps.size()}, countProcessedKbartRows = ${idx}, endTime = ${new Date()}, description = ${description} where id = ${autoUpdatePackageInfo.id}")
+            AutoUpdatePackageInfo.executeUpdate("update AutoUpdatePackageInfo set countKbartRows = ${kbartRowsCount}, countChangedTipps = ${changedTipps}, countNewTipps = ${newTipps}, countRemovedTipps = ${removedTipps}, countInValidTipps = ${countInvalidKbartRowsForTipps}, countProcessedKbartRows = ${idx}, endTime = ${new Date()}, description = ${description} where id = ${autoUpdatePackageInfo.id}")
 
             AutoUpdatePackageInfo.withNewTransaction {
 
@@ -994,9 +1000,15 @@ class AutoUpdatePackagesService {
             int countMinimumKbartStandard = 0
 
             try {
+
+
+
                 List<String> rows = tsvFile.newInputStream().text.split('\n')
                 Map<String, Integer> colMap = [:]
-                rows[0].split('\t').eachWithIndex { String headerCol, int c ->
+
+                String delimiter = getDelimiter(rows[0])
+
+                rows[0].split(delimiter).eachWithIndex { String headerCol, int c ->
                     if (headerCol.startsWith("\uFEFF"))
                         headerCol = headerCol.substring(1)
                     //println("headerCol: ${headerCol}")
@@ -1137,7 +1149,7 @@ class AutoUpdatePackagesService {
                     log.debug("Begin kbart processing rows ${countRows}")
                     rows.eachWithIndex { row, Integer r ->
                         //log.debug("now processing entry ${row}")
-                        List<String> cols = row.split('\t')
+                        List<String> cols = row.split(delimiter)
                         Map rowMap = [:]
                         colMap.eachWithIndex { def entry, int i ->
                             if (cols[entry.value] && !cols[entry.value].isEmpty())
@@ -1171,5 +1183,39 @@ class AutoUpdatePackagesService {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
     }
+
+    private String getDelimiter(String line) {
+        log.debug("Getting delimiter for line: ${line}")
+        int maxCount = 0
+        String delimiter
+        if (line) {
+
+            if (line.startsWith("\uFEFF")) {
+                line = line.substring(1)
+            }
+
+            for (String prop : ['comma', 'semicolon', 'tab']) {
+                int num = line.count(resolver.get(prop).toString())
+                if (maxCount < num) {
+                    maxCount = num
+                    delimiter = prop
+                }
+            }
+
+        }
+        log.debug("delimiter is: ${delimiter}")
+
+        if(delimiter){
+            delimiter = resolver.get(delimiter)
+        }
+
+        return delimiter
+    }
+
+    static def resolver = [
+            'comma'      : ',',
+            'semicolon'  : ';',
+            'tab'        : '\t',
+    ]
 
 }
