@@ -643,50 +643,48 @@ class CreateComponentService {
             Source source
             Package aPackage = Package.get(map.pkgID)
 
-            if (aPackage.source == null) {
-                def dupes = Source.findAllByNameIlikeAndStatusNotEqual(aPackage.name, status_deleted)
-                String sourceName = aPackage.name
-                if (dupes && dupes.size() > 0) {
-                    sourceName = "${sourceName} ${dupes.size()+1}"
-                }
-
-                source = new Source(name: sourceName)
-            } else {
-                source = aPackage.source
-            }
-
-            if(map.url)
-            {
-                source.url = map.url
-            }
-
-            if(map.frequency)
-            {
-                source.frequency = RefdataValue.get(map.frequency)
-            }
-
-            if(map.automaticUpdates)
-            {
-                source.automaticUpdates = map.automaticUpdates
-            }
-
-            if(map.targetNamespace)
-            {
-                source.targetNamespace = IdentifierNamespace.get(map.targetNamespace)
-            }
-
-            if (source.save()) {
-                user.curatoryGroups.each { CuratoryGroup cg ->
-                    if (!(cg in source.curatoryGroups)) {
-                        def combo_type = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Source.CuratoryGroups')
-
-                        def new_combo = new Combo(fromComponent: source, toComponent: cg, type: combo_type).save()
+            if(aPackage) {
+                if (aPackage.source == null) {
+                    def dupes = Source.findAllByNameIlikeAndStatusNotEqual(aPackage.name, status_deleted)
+                    String sourceName = aPackage.name
+                    if (dupes && dupes.size() > 0) {
+                        sourceName = "${sourceName} ${dupes.size() + 1}"
                     }
+
+                    source = new Source(name: sourceName)
+                } else {
+                    source = aPackage.source
                 }
-                if (source != aPackage.source) {
-                    aPackage = aPackage.refresh()
-                    aPackage.source = source
-                    aPackage.save()
+
+                if (map.url) {
+                    source.url = map.url
+                }
+
+                if (map.frequency) {
+                    source.frequency = RefdataValue.get(map.frequency)
+                }
+
+                if (map.automaticUpdates) {
+                    source.automaticUpdates = map.automaticUpdates
+                }
+
+                if (map.targetNamespace) {
+                    source.targetNamespace = IdentifierNamespace.get(map.targetNamespace)
+                }
+
+                if (source.save()) {
+                    user.curatoryGroups.each { CuratoryGroup cg ->
+                        if (!(cg in source.curatoryGroups)) {
+                            def combo_type = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Source.CuratoryGroups')
+
+                            def new_combo = new Combo(fromComponent: source, toComponent: cg, type: combo_type).save()
+                        }
+                    }
+                    if (source != aPackage.source) {
+                        aPackage = aPackage.refresh()
+                        aPackage.source = source
+                        aPackage.save()
+                    }
                 }
             }
         }
