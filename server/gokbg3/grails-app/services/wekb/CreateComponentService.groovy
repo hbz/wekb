@@ -380,11 +380,11 @@ class CreateComponentService {
 
                         }
 
-                        if (colMap.description != null) {
+                        if (colMap.description != null && colMap.description != "") {
                             pkg.description = cols[colMap.description].trim()
                         }
 
-                        if (colMap.url != null) {
+                        if (colMap.url != null && colMap.url != "") {
                             pkg.descriptionURL = cols[colMap.url].trim()
                         }
 
