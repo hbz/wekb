@@ -349,7 +349,7 @@ abstract class KBComponent implements Auditable{
     uuid(nullable: true, unique: true, blank: false, maxSize: 2048)
     name(nullable: true, blank: false, maxSize: 2048)
     shortcode(nullable: true, blank: false, maxSize: 128)
-    description(nullable: true, blank: false)
+    description(nullable: true, blank: true)
     duplicateOf(nullable: true, blank: false)
     normname(nullable: true, blank: false, maxSize: 2048)
     status(nullable: true, blank: false)
