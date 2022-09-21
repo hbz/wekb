@@ -218,10 +218,17 @@ class SearchService {
                         api_record["${rh.heading}"] = cobj ?: null
                     }
                     else {
+
+                        String jumpToLink = null
+                        if(rh.jumpToLink) {
+                            jumpToLink = rh.jumpToLink.replace("objectID", "${r.id}")
+                        }
+
                         response_record.cols.add([
                                 link: (rh.link ? (final_oid ?: response_record.oid ) : null),
                                 value: (cobj != null ? (cobj) : '-Empty-'),
-                                outGoingLink: rh.outGoingLink ?: null])
+                                outGoingLink: rh.outGoingLink ?: null,
+                                jumpToLink: jumpToLink ?: null])
                     }
                 }
             }
