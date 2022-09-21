@@ -41,12 +41,14 @@ import java.time.LocalTime
 import java.time.Year
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
+import java.util.concurrent.ExecutorService
 
 import static groovyx.net.http.Method.GET
 
 import groovyx.gpars.GParsPool
+import java.util.concurrent.Future
 
-
+@Transactional
 class AutoUpdatePackagesService {
 
     static final THREAD_POOL_SIZE = 5
@@ -57,6 +59,8 @@ class AutoUpdatePackagesService {
     KbartImportService kbartImportService
     CleanupService cleanupService
     MessageService messageService
+    ExecutorService executorService
+    Future activeFuture
 
     void findPackageToUpdateAndUpdate(boolean onlyRowsWithLastChanged = false) {
         List packageNeedsUpdate = []
@@ -64,7 +68,7 @@ class AutoUpdatePackagesService {
                 "from Package p " +
                         "where p.source is not null and " +
                         "p.source.automaticUpdates = true " +
-                        "and (p.source.lastRun is null or p.source.lastRun < current_date)")
+                        "and (p.source.lastRun is null or p.source.lastRun < current_date) order by p.source.lastRun")
         updPacks.each { Package p ->
             if (p.source.needsUpdate()) {
                 packageNeedsUpdate << p
@@ -72,9 +76,22 @@ class AutoUpdatePackagesService {
         }
         log.info("findPackageToUpdateAndUpdate: Package with Source and lastRun < currentDate (${packageNeedsUpdate.size()})")
         if(packageNeedsUpdate.size() > 0){
-                packageNeedsUpdate.each { Package aPackage ->
+              /*  packageNeedsUpdate.eachWithIndex { Package aPackage, int idx ->
+                    while(!(activeFuture) || activeFuture.isDone() || idx == 0) {
+                        activeFuture = executorService.submit({
+                            Package pkg = Package.get(aPackage.id)
+                            Thread.currentThread().setName('startAutoPackageUpdate' + aPackage.id)
+                            startAutoPackageUpdate(pkg, onlyRowsWithLastChanged)
+                        })
+                        println("Wait")
+                    }
+                    println("Test:"+aPackage.name)
+                }*/
+            GParsPool.withPool(THREAD_POOL_SIZE) { pool ->
+                packageNeedsUpdate.anyParallel { aPackage ->
                     startAutoPackageUpdate(aPackage, onlyRowsWithLastChanged)
                 }
+            }
         }
 
     }
@@ -415,84 +432,84 @@ class AutoUpdatePackagesService {
 
     void startAutoPackageUpdate(Package pkg, boolean onlyRowsWithLastChanged = false){
         log.info("Begin startAutoPackageUpdate Package ($pkg.name)")
-        List kbartRows =  []
-        String lastUpdateURL =""
-        Date startTime = new Date()
-        if(pkg.status in [RDStore.KBC_STATUS_REMOVED, RDStore.KBC_STATUS_DELETED]){
-            AutoUpdatePackageInfo autoUpdatePackageInfo = new AutoUpdatePackageInfo(pkg: pkg, startTime: startTime, endTime: new Date(), status: RDStore.AUTO_UPDATE_STATUS_SUCCESSFUL, description: "Package status is ${pkg.status.value}. Auto update for this package is not starting.", onlyRowsWithLastChanged: onlyRowsWithLastChanged).save()
-        }else {
-            AutoUpdatePackageInfo autoUpdatePackageInfo = new AutoUpdatePackageInfo(pkg: pkg, startTime: startTime, status: RDStore.AUTO_UPDATE_STATUS_SUCCESSFUL, description: "Starting auto update package.", onlyRowsWithLastChanged: onlyRowsWithLastChanged)
-            try {
-                if (pkg.source) {
-                    List<URL> updateUrls
-                    if (pkg.getTippCount() <= 0) {
-                        updateUrls = new ArrayList<>()
-                        updateUrls.add(new URL(pkg.source.url))
-                    } else {
-                        // this package had already been filled with data
-                        if ((UrlToolkit.containsDateStamp(pkg.source.url) || UrlToolkit.containsDateStampPlaceholder(pkg.source.url)) && pkg.source.lastUpdateUrl) {
-                            updateUrls = getUpdateUrls(pkg.source.lastUpdateUrl, pkg.source.lastRun.toString(), pkg.dateCreated.toString())
+            List kbartRows = []
+            String lastUpdateURL = ""
+            Date startTime = new Date()
+            if (pkg.status in [RDStore.KBC_STATUS_REMOVED, RDStore.KBC_STATUS_DELETED]) {
+                AutoUpdatePackageInfo autoUpdatePackageInfo = new AutoUpdatePackageInfo(pkg: pkg, startTime: startTime, endTime: new Date(), status: RDStore.AUTO_UPDATE_STATUS_SUCCESSFUL, description: "Package status is ${pkg.status.value}. Auto update for this package is not starting.", onlyRowsWithLastChanged: onlyRowsWithLastChanged)
+                autoUpdatePackageInfo.save()
+            } else {
+                AutoUpdatePackageInfo autoUpdatePackageInfo = new AutoUpdatePackageInfo(pkg: pkg, startTime: startTime, status: RDStore.AUTO_UPDATE_STATUS_SUCCESSFUL, description: "Starting auto update package.", onlyRowsWithLastChanged: onlyRowsWithLastChanged)
+                try {
+                    if (pkg.source) {
+                        List<URL> updateUrls
+                        if (pkg.getTippCount() <= 0) {
+                            updateUrls = new ArrayList<>()
+                            updateUrls.add(new URL(pkg.source.url))
                         } else {
-                            updateUrls = getUpdateUrls(pkg.source.url, pkg.source.lastRun.toString(), pkg.dateCreated.toString())
+                            // this package had already been filled with data
+                            if ((UrlToolkit.containsDateStamp(pkg.source.url) || UrlToolkit.containsDateStampPlaceholder(pkg.source.url)) && pkg.source.lastUpdateUrl) {
+                                updateUrls = getUpdateUrls(pkg.source.lastUpdateUrl, pkg.source.lastRun.toString(), pkg.dateCreated.toString())
+                            } else {
+                                updateUrls = getUpdateUrls(pkg.source.url, pkg.source.lastRun.toString(), pkg.dateCreated.toString())
+                            }
                         }
-                    }
-                    log.info("Got ${updateUrls}")
-                    Iterator urlsIterator = updateUrls.listIterator(updateUrls.size())
+                        log.info("Got ${updateUrls}")
+                        Iterator urlsIterator = updateUrls.listIterator(updateUrls.size())
 
-                    File file
-                    if (updateUrls.size() > 0) {
-                        LocalTime kbartFromUrlStartTime = LocalTime.now()
-                        while (urlsIterator.hasPrevious()) {
-                            URL url = urlsIterator.previous()
-                            lastUpdateURL = url.toString()
-                            try {
-                                file = exportService.kbartFromUrl(lastUpdateURL)
+                        File file
+                        if (updateUrls.size() > 0) {
+                            LocalTime kbartFromUrlStartTime = LocalTime.now()
+                            while (urlsIterator.hasPrevious()) {
+                                URL url = urlsIterator.previous()
+                                lastUpdateURL = url.toString()
+                                try {
+                                    file = exportService.kbartFromUrl(lastUpdateURL)
 
-                                //if (kbartFromUrlStartTime < LocalTime.now().minus(45, ChronoUnit.MINUTES)){ sense???
+                                    //if (kbartFromUrlStartTime < LocalTime.now().minus(45, ChronoUnit.MINUTES)){ sense???
                                     break
-                                //}
+                                    //}
+
+                                }
+                                catch (Exception e) {
+                                    log.info("get kbartFromUrl: ${e}")
+                                    continue
+                                }
 
                             }
-                            catch (Exception e) {
-                                log.error("get kbartFromUrl: ${e}")
-                                continue
+
+                            if (file) {
+                                kbartRows = kbartProcess(file, lastUpdateURL, autoUpdatePackageInfo)
+                            } else {
+                                AutoUpdatePackageInfo.withTransaction {
+                                    autoUpdatePackageInfo.description = "No KBART File found by URL: ${lastUpdateURL}!"
+                                    autoUpdatePackageInfo.status = RDStore.AUTO_UPDATE_STATUS_FAILED
+                                    autoUpdatePackageInfo.endTime = new Date()
+                                    autoUpdatePackageInfo.save()
+                                }
                             }
 
                         }
 
-                        if (file) {
-                            kbartRows = kbartProcess(file, lastUpdateURL, autoUpdatePackageInfo)
-                        } else {
-                            AutoUpdatePackageInfo.withNewTransaction {
-                                autoUpdatePackageInfo.description = "No KBART File found by URL: ${lastUpdateURL}!"
-                                autoUpdatePackageInfo.status = RDStore.AUTO_UPDATE_STATUS_FAILED
-                                autoUpdatePackageInfo.endTime = new Date()
-                                autoUpdatePackageInfo.save()
-                            }
+                        if (kbartRows.size() > 0) {
+                            autoUpdatePackageInfo = kbartImportProcess(kbartRows, pkg, lastUpdateURL, autoUpdatePackageInfo, onlyRowsWithLastChanged)
                         }
-
                     }
 
-                    if (kbartRows.size() > 0) {
-                        autoUpdatePackageInfo = kbartImportProcess(kbartRows, pkg, lastUpdateURL, autoUpdatePackageInfo, onlyRowsWithLastChanged)
+                } catch (Exception exception) {
+                    log.error("Error by startAutoPackageUapdate: ${exception.message}" + exception.printStackTrace())
+                    AutoUpdatePackageInfo.withTransaction {
+                        AutoUpdatePackageInfo autoUpdatePackageFail = new AutoUpdatePackageInfo()
+                        autoUpdatePackageFail.description = "An error occurred while processing the kbart file. More information can be seen in the system log. File from URL: ${lastUpdateURL}"
+                        autoUpdatePackageFail.status = RDStore.AUTO_UPDATE_STATUS_FAILED
+                        autoUpdatePackageFail.startTime = startTime
+                        autoUpdatePackageFail.endTime = new Date()
+                        autoUpdatePackageFail.pkg = pkg
+                        autoUpdatePackageFail.onlyRowsWithLastChanged = onlyRowsWithLastChanged
+                        autoUpdatePackageFail.save()
                     }
-                }
-
-            } catch (Exception exception) {
-                log.error("startAutoPackageUapdate: ${exception.message}")
-                AutoUpdatePackageInfo.withTransaction {
-                    AutoUpdatePackageInfo autoUpdatePackageFail = new AutoUpdatePackageInfo()
-                    autoUpdatePackageFail.description = "An error occurred while processing the kbart file. More information can be seen in the system log. File from URL: ${lastUpdateURL}"
-                    autoUpdatePackageFail.status = RDStore.AUTO_UPDATE_STATUS_FAILED
-                    autoUpdatePackageFail.startTime = startTime
-                    autoUpdatePackageFail.endTime = new Date()
-                    autoUpdatePackageFail.pkg = pkg
-                    autoUpdatePackageFail.onlyRowsWithLastChanged = onlyRowsWithLastChanged
-                    autoUpdatePackageFail.save()
                 }
             }
-        }
-
         log.info("End startAutoPackageUpdate Package ($pkg.name)")
     }
 
@@ -519,19 +536,21 @@ class AutoUpdatePackagesService {
 
 
         if(kbartRows.size() > 0){
-            Source source = pkg.source
-            if(headerOfKbart.containsKey("status")){
-                log.info("kbart has status field and is wekb standard")
-                setAllTippsNotInKbartToDeleted = false
-                listStatus = [status_current, status_expected, status_deleted, status_retired]
-                source.kbartHasWekbFields = true
-            }else {
-                source.kbartHasWekbFields = false
+            Source.withTransaction {
+                Source source = pkg.source
+                if (headerOfKbart.containsKey("status")) {
+                    log.info("kbart has status field and is wekb standard")
+                    setAllTippsNotInKbartToDeleted = false
+                    listStatus = [status_current, status_expected, status_deleted, status_retired]
+                    source.kbartHasWekbFields = true
+                } else {
+                    source.kbartHasWekbFields = false
+                }
+                //source.save()
             }
-            source.save()
         }
 
-        AutoUpdatePackageInfo.withNewTransaction {
+        AutoUpdatePackageInfo.withTransaction {
             if(!setAllTippsNotInKbartToDeleted){
                 autoUpdatePackageInfo.kbartHasWekbFields = true
             }
@@ -932,7 +951,7 @@ class AutoUpdatePackagesService {
 
             AutoUpdatePackageInfo.executeUpdate("update AutoUpdatePackageInfo set countKbartRows = ${kbartRowsCount}, countChangedTipps = ${changedTipps}, countNewTipps = ${newTipps}, countRemovedTipps = ${removedTipps}, countInValidTipps = ${countInvalidKbartRowsForTipps}, countProcessedKbartRows = ${idx}, endTime = ${new Date()}, description = ${description} where id = ${autoUpdatePackageInfo.id}")
 
-            AutoUpdatePackageInfo.withNewTransaction {
+            AutoUpdatePackageInfo.withTransaction {
 
                 Package aPackage = Package.get(autoUpdatePackageInfo.pkg.id)
                 if (aPackage.status != status_deleted) {
@@ -952,8 +971,8 @@ class AutoUpdatePackagesService {
             cleanupService.cleanUpGorm()*/
 
         } catch (Exception e) {
-            log.error("exception caught: ", e)
-            AutoUpdatePackageInfo.withNewTransaction {
+            log.error("Error by kbartImportProcess: ", e)
+            AutoUpdatePackageInfo.withTransaction {
                 autoUpdatePackageInfo.refresh()
                 autoUpdatePackageInfo.endTime = new Date()
                 autoUpdatePackageInfo.description = "An error occurred while processing the kbart file. More information can be seen in the system log. File from URL: ${lastUpdateURL}"
@@ -985,7 +1004,7 @@ class AutoUpdatePackagesService {
        }
         if(!encodingPass) {
             log.error("Encoding of file is wrong. File encoding is: ${encoding}")
-            AutoUpdatePackageInfo.withNewTransaction {
+            AutoUpdatePackageInfo.withTransaction {
                 autoUpdatePackageInfo.description = "Encoding of kbart file is wrong. File encoding was: ${encoding}. File from URL: ${lastUpdateURL}"
                 autoUpdatePackageInfo.status = RDStore.AUTO_UPDATE_STATUS_FAILED
                 autoUpdatePackageInfo.endTime = new Date()
@@ -1004,166 +1023,185 @@ class AutoUpdatePackagesService {
 
 
                 List<String> rows = tsvFile.newInputStream().text.split('\n')
-                Map<String, Integer> colMap = [:]
+                if(rows.size() > 1){
+                    Map<String, Integer> colMap = [:]
 
-                String delimiter = getDelimiter(rows[0])
+                    String delimiter = getDelimiter(rows[0])
+                    if(delimiter) {
+                        rows[0].split(delimiter).eachWithIndex { String headerCol, int c ->
+                            if (headerCol.startsWith("\uFEFF"))
+                                headerCol = headerCol.substring(1)
+                            //println("headerCol: ${headerCol}")
+                            switch (headerCol.toLowerCase().trim()) {
+                                case "publication_title": colMap.publication_title = c
+                                    countMinimumKbartStandard++
+                                    break
+                                case "print_identifier": colMap.print_identifier = c
+                                    break
+                                case "online_identifier": colMap.online_identifier = c
+                                    break
+                                case "date_first_issue_online": colMap.date_first_issue_online = c
+                                    break
+                                case "num_first_vol_online": colMap.num_first_vol_online = c
+                                    break
+                                case "date_last_issue_online": colMap.date_last_issue_online = c
+                                    break
+                                case "num_first_issue_online": colMap.num_first_issue_online = c
+                                    break
+                                case "num_last_vol_online": colMap.num_last_vol_online = c
+                                    break
+                                case "num_last_issue_online": colMap.num_last_issue_online = c
+                                    break
+                                case "title_url": colMap.title_url = c
+                                    countMinimumKbartStandard++
+                                    break
+                                case "first_author": colMap.first_author = c
+                                    break
+                                case "title_id": colMap.title_id = c
+                                    countMinimumKbartStandard++
+                                    break
+                                case "embargo_info": colMap.embargo_info = c
+                                    break
+                                case "coverage_depth": colMap.coverage_depth = c
+                                    break
+                                case "notes": colMap.notes = c
+                                    break
+                                case "publisher_name": colMap.publisher_name = c
+                                    break
+                                case "publication_type": colMap.publication_type = c
+                                    countMinimumKbartStandard++
+                                    break
+                                case "date_monograph_published_print": colMap.date_monograph_published_print = c
+                                    break
+                                case "date_monograph_published_online": colMap.date_monograph_published_online = c
+                                    break
+                                case "monograph_volume": colMap.monograph_volume = c
+                                    break
+                                case "monograph_edition": colMap.monograph_edition = c
+                                    break
+                                case "first_editor": colMap.first_editor = c
+                                    break
+                                case "parent_publication_title_id": colMap.parent_publication_title_id = c
+                                    break
+                                case "preceding_publication_title_id": colMap.preceding_publication_title_id = c
+                                    break
+                                case "access_type": colMap.access_type = c
+                                    break
 
-                rows[0].split(delimiter).eachWithIndex { String headerCol, int c ->
-                    if (headerCol.startsWith("\uFEFF"))
-                        headerCol = headerCol.substring(1)
-                    //println("headerCol: ${headerCol}")
-                    switch (headerCol.toLowerCase().trim()) {
-                        case "publication_title": colMap.publication_title = c
-                            countMinimumKbartStandard++
-                            break
-                        case "print_identifier": colMap.print_identifier = c
-                            break
-                        case "online_identifier": colMap.online_identifier = c
-                            break
-                        case "date_first_issue_online": colMap.date_first_issue_online = c
-                            break
-                        case "num_first_vol_online": colMap.num_first_vol_online = c
-                            break
-                        case "date_last_issue_online": colMap.date_last_issue_online = c
-                            break
-                        case "num_first_issue_online": colMap.num_first_issue_online = c
-                            break
-                        case "num_last_vol_online": colMap.num_last_vol_online = c
-                            break
-                        case "num_last_issue_online": colMap.num_last_issue_online = c
-                            break
-                        case "title_url": colMap.title_url = c
-                            countMinimumKbartStandard++
-                            break
-                        case "first_author": colMap.first_author = c
-                            break
-                        case "title_id": colMap.title_id = c
-                            countMinimumKbartStandard++
-                            break
-                        case "embargo_info": colMap.embargo_info = c
-                            break
-                        case "coverage_depth": colMap.coverage_depth = c
-                            break
-                        case "notes": colMap.notes = c
-                            break
-                        case "publisher_name": colMap.publisher_name = c
-                            break
-                        case "publication_type": colMap.publication_type = c
-                            countMinimumKbartStandard++
-                            break
-                        case "date_monograph_published_print": colMap.date_monograph_published_print = c
-                            break
-                        case "date_monograph_published_online": colMap.date_monograph_published_online = c
-                            break
-                        case "monograph_volume": colMap.monograph_volume = c
-                            break
-                        case "monograph_edition": colMap.monograph_edition = c
-                            break
-                        case "first_editor": colMap.first_editor = c
-                            break
-                        case "parent_publication_title_id": colMap.parent_publication_title_id = c
-                            break
-                        case "preceding_publication_title_id": colMap.preceding_publication_title_id = c
-                            break
-                        case "access_type": colMap.access_type = c
-                            break
+                                    //beginn with headercolumn spec for wekb
+                                case "medium": colMap.medium = c
+                                    break
+                                case "doi_identifier": colMap.doi_identifier = c
+                                    break
+                                case "subject_area": colMap.subject_area = c
+                                    break
+                                case "language": colMap.language = c
+                                    break
+                                case "package_name": colMap.package_name = c
+                                    break
+                                case "package_id": colMap.package_id = c
+                                    break
+                                case "access_start_date": colMap.access_start_date = c
+                                    break
+                                case "access_end_date": colMap.access_end_date = c
+                                    break
+                                case "last_changed": colMap.last_changed = c
+                                    break
+                                case "status": colMap.status = c
+                                    break
+                                case "listprice_eur": colMap.listprice_eur = c
+                                    break
+                                case "listprice_usd": colMap.listprice_usd = c
+                                    break
+                                case "listprice_gbp": colMap.listprice_gbp = c
+                                    break
+                                case "monograph_parent_collection_title": colMap.monograph_parent_collection_title = c
+                                    break
+                                case "zdb_id": colMap.zdb_id = c
+                                    break
+                                case "ezb_id": colMap.ezb_id = c
+                                    break
+                                case "package_ezb_anchor": colMap.package_ezb_anchor = c
+                                    break
+                                case "oa_gold": colMap.oa_gold = c
+                                    break
+                                case "oa_hybrid": colMap.oa_hybrid = c
+                                    break
+                                case "oa_apc_eur": colMap.oa_apc_eur = c
+                                    break
+                                case "oa_apc_usd": colMap.oa_apc_usd = c
+                                    break
+                                case "oa_apc_gbp": colMap.oa_apc_gbp = c
+                                    break
+                                case "package_isil": colMap.package_isil = c
+                                    break
+                                case "package_isci": colMap.package_isci = c
+                                    break
+                                case "ill_indicator": colMap.ill_indicator = c
+                                    break
+                                case "title_gokb_uuid": colMap.title_gokb_uuid = c
+                                    break
+                                case "package_gokb_uuid": colMap.package_gokb_uuid = c
+                                    break
+                                case "title_wekb_uuid": colMap.title_wekb_uuid = c
+                                    break
+                                case "package_wekb_uuid": colMap.package_wekb_uuid = c
+                                    break
+                                default: log.info("unhandled parameter type ${headerCol}, ignoring ...")
+                                    break
+                            }
+                        }
 
-                            //beginn with headercolumn spec for wekb
-                        case "medium": colMap.medium = c
-                            break
-                        case "doi_identifier": colMap.doi_identifier = c
-                            break
-                        case "subject_area": colMap.subject_area = c
-                            break
-                        case "language": colMap.language = c
-                            break
-                        case "package_name": colMap.package_name = c
-                            break
-                        case "package_id": colMap.package_id = c
-                            break
-                        case "access_start_date": colMap.access_start_date = c
-                            break
-                        case "access_end_date": colMap.access_end_date = c
-                            break
-                        case "last_changed": colMap.last_changed = c
-                            break
-                        case "status": colMap.status = c
-                            break
-                        case "listprice_eur": colMap.listprice_eur = c
-                            break
-                        case "listprice_usd": colMap.listprice_usd = c
-                            break
-                        case "listprice_gbp": colMap.listprice_gbp = c
-                            break
-                        case "monograph_parent_collection_title": colMap.monograph_parent_collection_title = c
-                            break
-                        case "zdb_id": colMap.zdb_id = c
-                            break
-                        case "ezb_id": colMap.ezb_id = c
-                            break
-                        case "package_ezb_anchor": colMap.package_ezb_anchor = c
-                            break
-                        case "oa_gold": colMap.oa_gold = c
-                            break
-                        case "oa_hybrid": colMap.oa_hybrid = c
-                            break
-                        case "oa_apc_eur": colMap.oa_apc_eur = c
-                            break
-                        case "oa_apc_usd": colMap.oa_apc_usd = c
-                            break
-                        case "oa_apc_gbp": colMap.oa_apc_gbp = c
-                            break
-                        case "package_isil": colMap.package_isil = c
-                            break
-                        case "package_isci": colMap.package_isci = c
-                            break
-                        case "ill_indicator": colMap.ill_indicator = c
-                            break
-                        case "title_gokb_uuid": colMap.title_gokb_uuid = c
-                            break
-                        case "package_gokb_uuid": colMap.package_gokb_uuid = c
-                            break
-                        case "title_wekb_uuid": colMap.title_wekb_uuid = c
-                            break
-                        case "package_wekb_uuid": colMap.package_wekb_uuid = c
-                            break
-                        default: log.info("unhandled parameter type ${headerCol}, ignoring ...")
-                            break
+                        if (minimumKbartStandard.size() != countMinimumKbartStandard) {
+                            log.error("KBART file does not have one or any of the headers: ${minimumKbartStandard}")
+                            AutoUpdatePackageInfo.withTransaction {
+                                autoUpdatePackageInfo.description = "KBART file does not have one or any of the headers: ${minimumKbartStandard.join(', ')}. File from URL: ${lastUpdateURL}"
+                                autoUpdatePackageInfo.status = RDStore.AUTO_UPDATE_STATUS_FAILED
+                                autoUpdatePackageInfo.endTime = new Date()
+                                autoUpdatePackageInfo.save()
+                            }
+
+
+                        } else {
+                            //Don't delete the header
+                            //rows.remove(0)
+                            countRows = rows.size() - 1
+                            //log.debug("Begin kbart processing rows ${countRows}")
+                            rows.eachWithIndex { row, Integer r ->
+                                //log.debug("now processing entry ${row}")
+                                List<String> cols = row.split(delimiter)
+                                Map rowMap = [:]
+                                colMap.eachWithIndex { def entry, int i ->
+                                    if (cols[entry.value] && !cols[entry.value].isEmpty())
+                                        rowMap."${entry.key}" = cols[entry.value].replace("\r", "")
+                                    rowMap."${entry.key}" = rowMap."${entry.key}" ? rowMap."${entry.key}".replaceAll(/\"/, "") : rowMap."${entry.key}"
+                                }
+                                rowMap.rowIndex = r
+                                result << rowMap
+                            }
+                            //log.debug("End kbart processing rows ${countRows}")
+                        }
+                    }else {
+                        log.error("no delimiter $delimiter: ${lastUpdateURL}")
+                        AutoUpdatePackageInfo.withTransaction {
+                            autoUpdatePackageInfo.description = "Separator for the kbart was not recognized. The following separators are recognized: Tab, comma, semicolons. File from URL: ${lastUpdateURL}"
+                            autoUpdatePackageInfo.status = RDStore.AUTO_UPDATE_STATUS_FAILED
+                            autoUpdatePackageInfo.endTime = new Date()
+                            autoUpdatePackageInfo.save()
+                        }
                     }
-                }
-
-                if (minimumKbartStandard.size() != countMinimumKbartStandard) {
-                    log.info("KBART file does not have one or any of the headers: ${minimumKbartStandard}")
-                    AutoUpdatePackageInfo.withNewTransaction {
-                        autoUpdatePackageInfo.description = "KBART file does not have one or any of the headers: ${minimumKbartStandard.join(', ')}. File from URL: ${lastUpdateURL}"
+                }else {
+                    log.error("KBART file is empty:  ${lastUpdateURL}")
+                    AutoUpdatePackageInfo.withTransaction {
+                        autoUpdatePackageInfo.description = "KBART file is empty. File from URL: ${lastUpdateURL}"
                         autoUpdatePackageInfo.status = RDStore.AUTO_UPDATE_STATUS_FAILED
                         autoUpdatePackageInfo.endTime = new Date()
                         autoUpdatePackageInfo.save()
                     }
-
-
-                } else {
-                    //Don't delete the header
-                    //rows.remove(0)
-                    countRows = rows.size()-1
-                    log.debug("Begin kbart processing rows ${countRows}")
-                    rows.eachWithIndex { row, Integer r ->
-                        //log.debug("now processing entry ${row}")
-                        List<String> cols = row.split(delimiter)
-                        Map rowMap = [:]
-                        colMap.eachWithIndex { def entry, int i ->
-                            if (cols[entry.value] && !cols[entry.value].isEmpty())
-                                rowMap."${entry.key}" = cols[entry.value].replace("\r", "")
-                            rowMap."${entry.key}" = rowMap."${entry.key}" ? rowMap."${entry.key}".replaceAll(/\"/,"") : rowMap."${entry.key}"
-                        }
-                        rowMap.rowIndex = r
-                        result << rowMap
-                    }
-                    log.debug("End kbart processing rows ${countRows}")
                 }
             } catch (Exception e) {
-                log.error("${e}")
-                AutoUpdatePackageInfo.withNewTransaction {
+                log.error("Error by KbartProcess: ${e}")
+                AutoUpdatePackageInfo.withTransaction {
                     autoUpdatePackageInfo.refresh()
                     autoUpdatePackageInfo.description = "An error occurred while processing the kbart file. More information can be seen in the system log. File from URL: ${lastUpdateURL}"
                     autoUpdatePackageInfo.status = RDStore.AUTO_UPDATE_STATUS_FAILED
@@ -1179,9 +1217,7 @@ class AutoUpdatePackagesService {
     }
 
     public LocalDate convertToLocalDateViaInstant(Date dateToConvert) {
-        return dateToConvert.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
+        return dateToConvert ? dateToConvert.toInstant().atZone(ZoneId.systemDefault()).toLocalDate() : null
     }
 
     private String getDelimiter(String line) {

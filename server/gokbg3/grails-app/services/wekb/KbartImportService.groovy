@@ -352,7 +352,8 @@ class KbartImportService {
                     }
                     else if (candidate_orgs.size() == 0) {
                         log.debug("No org match for provider ${packageHeaderDTO.nominalProvider}. Creating new org..")
-                        prov = new Org(name: packageHeaderDTO.nominalProvider.name, normname: norm_prov_name, uuid: packageHeaderDTO.nominalProvider.uuid ?: null).save()
+                        prov = new Org(name: packageHeaderDTO.nominalProvider.name, normname: norm_prov_name, uuid: packageHeaderDTO.nominalProvider.uuid ?: null)
+                        prov.save()
                     }
                     else {
                         log.warn("Multiple org matches for provider ${packageHeaderDTO.nominalProvider}. Skipping..")
@@ -1309,7 +1310,8 @@ class KbartImportService {
 
                     switch (identifiersWithSameNamespace.size()) {
                         case 0:
-                            identifier = new Identifier(namespace: ns, value: identifierValue, tipp: tipp).save()
+                            identifier = new Identifier(namespace: ns, value: identifierValue, tipp: tipp)
+                            identifier.save()
                             identifierChanged = true
                             break
                         case 1:
@@ -1331,7 +1333,8 @@ class KbartImportService {
                                 Identifier.executeUpdate("delete from Identifier where id_id = :id", [id: it])
                             }
                             identifierChanged = true
-                            identifier = new Identifier(namespace: ns, value: identifierValue, tipp: tipp).save()
+                            identifier = new Identifier(namespace: ns, value: identifierValue, tipp: tipp)
+                            identifier.save()
                             break
                     }
                     if (identifier && identifierChanged && !result.newTipp) {
@@ -1371,7 +1374,8 @@ class KbartImportService {
 
         switch (identifiersWithSameNamespace.size()) {
             case 0:
-                identifier = new Identifier(namespace: ns, value: identifierValue, tipp: tipp).save()
+                identifier = new Identifier(namespace: ns, value: identifierValue, tipp: tipp)
+                identifier.save()
                 break
             case 1:
                 identifiersWithSameNamespace[0].value = identifierValue
@@ -1388,7 +1392,8 @@ class KbartImportService {
                     Identifier.executeUpdate("delete from Identifier where id_id = :id", [id: it])
                 }
 
-                identifier = new Identifier(namespace: ns, value: identifierValue, tipp: tipp).save()
+                identifier = new Identifier(namespace: ns, value: identifierValue, tipp: tipp)
+                identifier.save()
                 break
         }
 
