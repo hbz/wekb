@@ -36,7 +36,7 @@
                     ${autoUpdate.description}
                     <br>
                     <br>
-                    <g:set var="linkToAutoUpdateInfo" value="${grailsApplication.config.serverUrl + "resource/show/${autoUpdate.class.name}:${autoUpdate.uuid}"}"/>
+                    <g:set var="linkToAutoUpdateInfo" value="${grailsApplication.config.serverUrl + "resource/show/${autoUpdate.class.name}:${autoUpdate.id}"}"/>
                     ${linkToAutoUpdateInfo}
                 </td>
                 <td>
