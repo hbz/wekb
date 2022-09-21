@@ -48,7 +48,6 @@ import static groovyx.net.http.Method.GET
 import groovyx.gpars.GParsPool
 import java.util.concurrent.Future
 
-@Transactional
 class AutoUpdatePackagesService {
 
     static final THREAD_POOL_SIZE = 5
