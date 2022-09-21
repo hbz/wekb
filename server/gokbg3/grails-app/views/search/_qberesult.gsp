@@ -44,7 +44,6 @@
                     <td>
                         <g:if test="${c.value instanceof java.util.List}">
                             <div class="ui bulleted list">
-
                                 <g:each in="${c.value}" var="element">
                                     <div class="item">
                                         <g:if test="${c.link}">
@@ -64,43 +63,24 @@
                             <g:link controller="resource"
                                     action="show"
                                     id="${c.link}">
-                                ${c.value}
+                                <g:render template="/search/qbevalue" model="[c: c]"/>
                             </g:link>
                         </g:elseif>
                         <g:elseif test="${c.outGoingLink != null}">
-                            ${c.value}
+                            <g:render template="/search/qbevalue" model="[c: c]"/>
                             <g:if test="${c.value && c.value != '-Empty-'}">
                                 &nbsp;<a aria-label="${c.value}"
                                          href="${c.value.startsWith('http') ? c.value : 'http://' + c.value}"
                                          target="_blank"><i class="share square icon"></i></a>
                             </g:if>
                         </g:elseif>
-                        <g:elseif test="${c.value instanceof Boolean}">
-                            <g:if test="${c.value}">
-                                <i class="check green circle icon"
-                                   title="${message(code: 'default.boolean.true')}"></i>
-                            </g:if>
-                            <g:else>
-                                <i class="times red circle icon"
-                                   title="${message(code: 'default.boolean.false')}"></i>
-                            </g:else>
-                        </g:elseif>
-                        <g:elseif test="${c.value instanceof java.lang.Integer}">
-                            <g:if test="${c.value}">
-                                <g:formatNumber number="${c.value}" type="number"/>
-                            </g:if>
-                            <g:else>
-                                0
-                            </g:else>
-                        </g:elseif>
-                        <g:elseif test="${c.value instanceof java.util.Date}">
-                            <g:if test="${c.value}">
-                                <g:formatDate format="${message(code: 'default.date.format.noZWihoutSS')}"
-                                              date="${c.value}"/>
-                            </g:if>
+                        <g:elseif test="${c.jumpToLink != null}">
+                            <g:link uri="${c.jumpToLink}">
+                                <g:render template="/search/qbevalue" model="[c: c]"/>
+                            </g:link>
                         </g:elseif>
                         <g:else>
-                            ${c.value}
+                            <g:render template="/search/qbevalue" model="[c: c]"/>
                         </g:else>
                     </td>
                 </g:each>
@@ -186,7 +166,6 @@
                             <td>
                                 <g:if test="${c.value instanceof java.util.List}">
                                     <div class="ui bulleted list">
-
                                         <g:each in="${c.value}" var="element">
                                             <div class="item">
                                                 <g:if test="${c.link}">
@@ -206,43 +185,24 @@
                                     <g:link controller="resource"
                                             action="show"
                                             id="${c.link}">
-                                        ${c.value}
+                                        <g:render template="/search/qbevalue" model="[c: c]"/>
                                     </g:link>
                                 </g:elseif>
                                 <g:elseif test="${c.outGoingLink != null}">
-                                    ${c.value}
+                                    <g:render template="/search/qbevalue" model="[c: c]"/>
                                     <g:if test="${c.value && c.value != '-Empty-'}">
                                         &nbsp;<a aria-label="${c.value}"
                                                  href="${c.value.startsWith('http') ? c.value : 'http://' + c.value}"
                                                  target="_blank"><i class="share square icon"></i></a>
                                     </g:if>
                                 </g:elseif>
-                                <g:elseif test="${c.value instanceof Boolean}">
-                                    <g:if test="${c.value}">
-                                        <i class="check green circle icon"
-                                           title="${message(code: 'default.boolean.true')}"></i>
-                                    </g:if>
-                                    <g:else>
-                                        <i class="times red circle icon"
-                                           title="${message(code: 'default.boolean.false')}"></i>
-                                    </g:else>
-                                </g:elseif>
-                                <g:elseif test="${c.value instanceof java.lang.Integer}">
-                                    <g:if test="${c.value}">
-                                        <g:formatNumber number="${c.value}" type="number"/>
-                                    </g:if>
-                                    <g:else>
-                                        0
-                                    </g:else>
-                                </g:elseif>
-                                <g:elseif test="${c.value instanceof java.util.Date}">
-                                    <g:if test="${c.value}">
-                                        <g:formatDate format="${message(code: 'default.date.format.noZWihoutSS')}"
-                                                      date="${c.value}"/>
-                                    </g:if>
+                                <g:elseif test="${c.jumpToLink != null}">
+                                    <g:link uri="${c.jumpToLink}">
+                                        <g:render template="/search/qbevalue" model="[c: c]"/>
+                                    </g:link>
                                 </g:elseif>
                                 <g:else>
-                                    ${c.value}
+                                    <g:render template="/search/qbevalue" model="[c: c]"/>
                                 </g:else>
                             </td>
                         </g:each>

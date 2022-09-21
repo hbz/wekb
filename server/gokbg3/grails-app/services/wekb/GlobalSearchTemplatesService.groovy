@@ -1,6 +1,7 @@
 package wekb
 
 import de.wekb.helper.RCConstants
+import de.wekb.helper.RDStore
 import grails.gorm.transactions.Transactional
 
 @Transactional
@@ -191,10 +192,10 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Only Last Changed Update', property: 'onlyRowsWithLastChanged', sort: 'onlyRowsWithLastChanged'],
                                 [heading: 'Rows in KBART-File', property: 'countKbartRows', sort: 'countKbartRows'],
                                 [heading: 'Processed KBART Rows', property: 'countProcessedKbartRows', sort: 'countProcessedKbartRows'],
-                                [heading: 'Changed Titles ', property: 'countChangedTipps', sort: 'countChangedTipps'],
-                                [heading: 'Removed Titles ', property: 'countRemovedTipps', sort: 'countRemovedTipps'],
-                                [heading: 'New Titles', property: 'countNewTipps', sort: 'countNewTipps'],
-                                [heading: 'Invalid Titles', property: 'countInValidTipps', sort: 'countInValidTipps'],
+                                [heading: 'Changed Titles ', property: 'countChangedTipps', sort: 'countChangedTipps', jumpToLink: '/search/componentSearch/wekb.AutoUpdatePackageInfo:objectID?qbe=g:autoUpdateTippInfos&qp_aup_id=objectID&&qp_type=org.gokb.cred.RefdataValue:'+ RDStore.AUTO_UPDATE_TYPE_CHANGED_TITLE.id],
+                                [heading: 'Removed Titles ', property: 'countRemovedTipps', sort: 'countRemovedTipps', jumpToLink: '/search/componentSearch/wekb.AutoUpdatePackageInfo:objectID?qbe=g:autoUpdateTippInfos&qp_aup_id=objectID&&qp_type=org.gokb.cred.RefdataValue:'+ RDStore.AUTO_UPDATE_TYPE_REMOVED_TITLE.id],
+                                [heading: 'New Titles', property: 'countNewTipps', sort: 'countNewTipps', jumpToLink: '/search/componentSearch/wekb.AutoUpdatePackageInfo:objectID?qbe=g:autoUpdateTippInfos&qp_aup_id=objectID&&qp_type=org.gokb.cred.RefdataValue:'+ RDStore.AUTO_UPDATE_TYPE_NEW_TITLE.id],
+                                [heading: 'Invalid Titles', property: 'countInValidTipps', sort: 'countInValidTipps', jumpToLink: '/search/componentSearch/wekb.AutoUpdatePackageInfo:objectID?qbe=g:autoUpdateTippInfos&qp_aup_id=objectID&&qp_type=org.gokb.cred.RefdataValue:'+ RDStore.AUTO_UPDATE_TYPE_FAILED_TITLE.id],
 
                         ]
                 ]
