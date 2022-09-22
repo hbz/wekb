@@ -113,6 +113,19 @@ class GroupController {
         searchResult.result
     }
 
+    @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+    def myAutoUpdateInfos() {
+        def searchResult = [:]
+        searchResult = getResultGenerics()
+
+        params.qbe = 'g:autoUpdatePackageInfos'
+        params.qp_curgroups = searchResult.user.curatoryGroups.id
+        params.hide = ['qp_curgroup', 'qp_curgroups']
+
+        searchResult = searchService.search(searchResult.user, searchResult, params, response.format)
+
+        searchResult.result
+    }
 
     private Map getResultGenerics() {
         Map result = [:]

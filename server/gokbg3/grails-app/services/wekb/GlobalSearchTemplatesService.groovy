@@ -185,7 +185,7 @@ class GlobalSearchTemplatesService {
                         ],
                         qbeResults: [
                                 [heading: 'Description', property: 'description', link: true],
-                                [heading: 'Package', property: 'pkg', link: true],
+                                [heading: 'Package', property: 'pkg.name', link: true],
                                 [heading: 'Status', property: 'status', sort: 'status.value'],
                                 [heading: 'Start Time', property: 'startTime', sort: 'startTime'],
                                 [heading: 'End Time', property: 'endTime', sort: 'endTime'],
