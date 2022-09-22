@@ -48,6 +48,7 @@ import static groovyx.net.http.Method.GET
 import groovyx.gpars.GParsPool
 import java.util.concurrent.Future
 
+@Transactional
 class AutoUpdatePackagesService {
 
     static final THREAD_POOL_SIZE = 5
@@ -440,7 +441,7 @@ class AutoUpdatePackagesService {
             } else {
                 AutoUpdatePackageInfo autoUpdatePackageInfo = new AutoUpdatePackageInfo(pkg: pkg, startTime: startTime, status: RDStore.AUTO_UPDATE_STATUS_SUCCESSFUL, description: "Starting auto update package.", onlyRowsWithLastChanged: onlyRowsWithLastChanged)
                 try {
-                    if (pkg.source) {
+                    if (pkg.source && pkg.source.url) {
                         List<URL> updateUrls
                         if (pkg.getTippCount() <= 0) {
                             updateUrls = new ArrayList<>()
@@ -492,6 +493,17 @@ class AutoUpdatePackagesService {
 
                         if (kbartRows.size() > 0) {
                             autoUpdatePackageInfo = kbartImportProcess(kbartRows, pkg, lastUpdateURL, autoUpdatePackageInfo, onlyRowsWithLastChanged)
+                        }
+                    }else {
+                        AutoUpdatePackageInfo.withTransaction {
+                            AutoUpdatePackageInfo autoUpdatePackageFail = new AutoUpdatePackageInfo()
+                            autoUpdatePackageFail.description = "No url define in the source of the package."
+                            autoUpdatePackageFail.status = RDStore.AUTO_UPDATE_STATUS_FAILED
+                            autoUpdatePackageFail.startTime = startTime
+                            autoUpdatePackageFail.endTime = new Date()
+                            autoUpdatePackageFail.pkg = pkg
+                            autoUpdatePackageFail.onlyRowsWithLastChanged = onlyRowsWithLastChanged
+                            autoUpdatePackageFail.save()
                         }
                     }
 
@@ -1171,11 +1183,14 @@ class AutoUpdatePackagesService {
                                 List<String> cols = row.split(delimiter)
                                 Map rowMap = [:]
                                 colMap.eachWithIndex { def entry, int i ->
-                                    if (cols[entry.value] && !cols[entry.value].isEmpty())
+                                    if (cols[entry.value] && !cols[entry.value].isEmpty()) {
                                         rowMap."${entry.key}" = cols[entry.value].replace("\r", "")
+                                    }
                                     rowMap."${entry.key}" = rowMap."${entry.key}" ? rowMap."${entry.key}".replaceAll(/\"/, "") : rowMap."${entry.key}"
+                                    rowMap."${entry.key}" = rowMap."${entry.key}" ? rowMap."${entry.key}".replaceAll("\\x00", "") : rowMap."${entry.key}"
                                 }
                                 rowMap.rowIndex = r
+                                println(rowMap)
                                 result << rowMap
                             }
                             //log.debug("End kbart processing rows ${countRows}")

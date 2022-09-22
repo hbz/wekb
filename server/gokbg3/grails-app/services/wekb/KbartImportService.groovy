@@ -1692,10 +1692,14 @@ class KbartImportService {
                         valueChanged = true
                         createAutoUpdateTippInfoByTippChange(tipp, autoUpdatePackageInfo, kbartProperty, tippProperty, oldValue, newValue)
                     }
-                    if (kbartProperty == 'title_url') {
-                        tipp[tippProperty] = tippMap[kbartProperty].trim()
-                    } else {
-                        tipp[tippProperty] = tippMap[kbartProperty]
+                    if(tippMap[kbartProperty] == ""){
+                        tipp[tippProperty] = null
+                    }else {
+                        if (kbartProperty == 'title_url') {
+                            tipp[tippProperty] = tippMap[kbartProperty].trim()
+                        } else {
+                            tipp[tippProperty] = tippMap[kbartProperty]
+                        }
                     }
                 }
             }
