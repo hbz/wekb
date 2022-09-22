@@ -204,12 +204,6 @@ class ESWrapperService {
 
       if (acknowledged) {
         log.debug("Index ${indexName} successfully created!")
-        String domainClassName = this.es_indices.find {it.value == indexName}.key
-
-        FTControl.withTransaction {
-          def res = FTControl.executeUpdate("delete FTControl c where c.domainClassName = :deleteFT", [deleteFT: "de.laser.${domainClassName}"])
-          log.info("Result: ${res}")
-        }
         esclient.close()
         return true
 

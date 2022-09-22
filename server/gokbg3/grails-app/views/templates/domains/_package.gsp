@@ -188,6 +188,7 @@
             <input type="hidden" name="__context" value="${d.class.name}:${d.id}"/>
             <input type="hidden" name="__newObjectClass" value="wekb.PackageArchivingAgency"/>
             <input type="hidden" name="__recip" value="pkg"/>
+            <input type="hidden" name="curationOverride" value="${params.curationOverride}"/>
             <div class="field">
                               <label>Archiving Agency</label>
                 <semui:simpleReferenceDropdown  name="archivingAgency"

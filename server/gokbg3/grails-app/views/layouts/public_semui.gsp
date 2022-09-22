@@ -113,6 +113,8 @@
                                 <g:link class="item" controller="admin"
                                         action="findPackagesNeedsAutoUpdates">Packages due to automatic update</g:link>
                                 <g:link class="item" controller="admin"
+                                        action="autoUpdatesFails">Automatic update fails</g:link>
+                                <g:link class="item" controller="admin"
                                         action="findPackagesWithTippDuplicates">Packages with Tipp Duplicates</g:link>
                                 <g:link class="item" controller="admin"
                                         action="tippIdentifiersWithSameNameSpace">Title Identifiers with same Identifier Namespace</g:link>

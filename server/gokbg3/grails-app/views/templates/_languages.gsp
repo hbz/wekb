@@ -6,7 +6,7 @@
             <g:if test="${editable}">
                 <g:link controller="ajaxSupport"
                         action="deleteLanguage" id="${kbComponentLanguage.id}"
-                        params="[fragment: 'languages']">Delete</g:link>
+                        params="[fragment: 'languages', curationOverride: params.curationOverride]">Delete</g:link>
             </g:if>
             </div>
         </g:each>
@@ -25,6 +25,7 @@
                 <input type="hidden" name="__newObjectClass"
                        value="wekb.KBComponentLanguage"/>
                 <input type="hidden" name="__recip" value="kbcomponent"/>
+                <input type="hidden" name="curationOverride" value="${params.curationOverride}"/>
 
                 <div class="field">
                     <label>Language:</label>

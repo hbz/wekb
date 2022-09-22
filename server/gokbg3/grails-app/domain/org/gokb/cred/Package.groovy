@@ -697,7 +697,8 @@ select tipp.id,
       RefdataCategory refdataCategory = RefdataCategory.findByDesc(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE)
 
       IdentifierNamespace namespace = IdentifierNamespace.findByValueIlikeAndTargetType(ns, RefdataValue.findByValueAndOwner('Package', refdataCategory))
-      Identifier identifier = new Identifier(namespace: namespace, value: value, pkg: this).save()
+      Identifier identifier = new Identifier(namespace: namespace, value: value, pkg: this)
+      identifier.save()
 
     }
   }

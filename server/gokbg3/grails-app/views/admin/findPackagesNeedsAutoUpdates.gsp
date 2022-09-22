@@ -17,6 +17,25 @@
 
 <div class="container">
 
+    <div class="ui segment">
+        <g:form controller="admin" action="findPackagesNeedsAutoUpdates" class="ui form">
+            <div class="field">
+                <label>Filter by Curatory Group</label>
+                <semui:simpleReferenceDropdown name="curatoryGroup"
+                                               baseClass="org.gokb.cred.CuratoryGroup"
+                                               filter1="Current" value="${params.curatoryGroup}"/>
+            </div>
+
+            <div class="ui right floated buttons">
+                <button type="submit" class="ui black button">Filter</button>
+                <g:link class="ui button" action="findPackagesNeedsAutoUpdates">Reset</g:link>
+            </div>
+
+            <br>
+            <br>
+        </g:form>
+    </div>
+
     <table class="ui selectable striped sortable celled table">
         <thead>
         <tr>

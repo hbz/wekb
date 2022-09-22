@@ -1,6 +1,7 @@
 package wekb
 
 import de.wekb.helper.RCConstants
+import de.wekb.helper.RDStore
 import grails.core.GrailsClass
 import grails.gorm.transactions.Transactional
 import grails.web.servlet.mvc.GrailsParameterMap
@@ -335,7 +336,8 @@ class CreateComponentService {
 
                     if (name && pkg == null) {
                         String pkg_normname = Package.generateNormname(name)
-                        pkg = new Package(name: name, normname: pkg_normname).save()
+                        pkg = new Package(name: name, normname: pkg_normname)
+                        pkg.save()
                         newCreated = true
                     }
 
@@ -378,11 +380,11 @@ class CreateComponentService {
 
                         }
 
-                        if (colMap.description != null) {
+                        if (colMap.description != null && colMap.description != "") {
                             pkg.description = cols[colMap.description].trim()
                         }
 
-                        if (colMap.url != null) {
+                        if (colMap.url != null && colMap.url != "") {
                             pkg.descriptionURL = cols[colMap.url].trim()
                         }
 
@@ -520,7 +522,11 @@ class CreateComponentService {
                                 if (value) {
                                     RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.PAA_ARCHIVING_AGENCY, value)
                                     if (refdataValue){
-                                        PackageArchivingAgency packageArchivingAgency = new PackageArchivingAgency(archivingAgency: refdataValue, pkg: pkg)
+                                        PackageArchivingAgency packageArchivingAgency
+                                        packageArchivingAgency = PackageArchivingAgency.findByPkgAndArchivingAgency(pkg, refdataValue)
+                                        if(!packageArchivingAgency) {
+                                            packageArchivingAgency = new PackageArchivingAgency(archivingAgency: refdataValue, pkg: pkg)
+                                        }
                                         if (packageArchivingAgency.save()) {
                                             if (colMap.open_access_of_archiving_agency != null) {
                                                 String paaOp = cols[colMap.open_access_of_archiving_agency].trim()
@@ -619,73 +625,83 @@ class CreateComponentService {
             }
         }
 
+        IdentifierNamespace namespace = IdentifierNamespace.findByValueAndTargetType("Anbieter_Produkt_ID", RDStore.IDENTIFIER_NAMESPACE_TARGET_TYPE_PACKAGE)
         identifiers.each { Map map ->
             boolean found = false
             Package aPackage = Package.get(map.pkgID)
             if(aPackage) {
-                aPackage.ids.each {
-                    if (it.namespace.value == map.ns) {
-                        it.value = map.value
-                        it.save()
-                        found = true
+                    aPackage.ids.each { Identifier identifier ->
+                        if (identifier.namespace.value == map.ns) {
+                            if (map.value != "" && identifier.value != map.value) {
+                                identifier = identifier.refresh()
+                                identifier.value = map.value
+                                identifier.save(flush: true)
+                            }
+                            found = true
+                        }
+                    }
+                    if (!found && map.value != "") {
+                        Identifier identifier = new Identifier(namespace: namespace, value: map.value, pkg: aPackage)
+                        identifier.save(flush: true)
                     }
                 }
-
-                if (!found) {
-                    RefdataCategory refdataCategory = RefdataCategory.findByDesc(RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE)
-                    IdentifierNamespace namespace = IdentifierNamespace.findByValueIlikeAndTargetType("Anbieter_Produkt_ID", RefdataValue.findByValueAndOwner('Package', refdataCategory))
-                    Identifier identifier = new Identifier(namespace: namespace, value: map.value, pkg: aPackage).save()
-                }
-            }
         }
 
         sources.each { Map map ->
             Source source
             Package aPackage = Package.get(map.pkgID)
 
-            if (aPackage.source == null) {
-                def dupes = Source.findAllByNameIlikeAndStatusNotEqual(aPackage.name, status_deleted)
-                String sourceName = aPackage.name
-                if (dupes && dupes.size() > 0) {
-                    sourceName = "${sourceName} ${dupes.size()}"
-                }
+            if(aPackage) {
+                if (aPackage.source == null) {
+                    def dupes = Source.findAllByNameIlikeAndStatusNotEqual(aPackage.name, status_deleted)
+                    String sourceName = aPackage.name
+                    if (dupes && dupes.size() > 0) {
+                        sourceName = "${sourceName} ${dupes.size() + 1}"
+                    }
 
-                source = new Source(name: sourceName)
-            } else {
-                source = aPackage.source
-            }
+                    source = new Source(name: sourceName)
+                } else {
+                    source = aPackage.source
+                    def dupes = Source.findAllByNameIlikeAndStatusNotEqual(aPackage.name, status_deleted)
+                    String sourceName = aPackage.name
+                    if (dupes && dupes.size() > 0) {
+                        sourceName = "${sourceName} ${dupes.size() + 1}"
+                    }
 
-            if(map.url)
-            {
-                source.url = map.url
-            }
-
-            if(map.frequency)
-            {
-                source.frequency = RefdataValue.get(map.frequency)
-            }
-
-            if(map.automaticUpdates)
-            {
-                source.automaticUpdates = map.automaticUpdates
-            }
-
-            if(map.targetNamespace)
-            {
-                source.targetNamespace = IdentifierNamespace.get(map.targetNamespace)
-            }
-
-            if (source.save(flush: true)) {
-                user.curatoryGroups.each { CuratoryGroup cg ->
-                    if (!(cg in source.curatoryGroups)) {
-                        def combo_type = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Source.CuratoryGroups')
-
-                        def new_combo = new Combo(fromComponent: source, toComponent: cg, type: combo_type).save()
+                    if(sourceName != source.name){
+                        source.name = sourceName
                     }
                 }
-                if (source != aPackage.source) {
-                    aPackage.source = source
-                    aPackage.save(flush: true)
+
+                if (map.url) {
+                    source.url = map.url
+                }
+
+                if (map.frequency) {
+                    source.frequency = RefdataValue.get(map.frequency)
+                }
+
+                if (map.automaticUpdates) {
+                    source.automaticUpdates = map.automaticUpdates
+                }
+
+                if (map.targetNamespace) {
+                    source.targetNamespace = IdentifierNamespace.get(map.targetNamespace)
+                }
+
+                if (source.save(flush: true) || source.isAttached()) {
+                    user.curatoryGroups.each { CuratoryGroup cg ->
+                        if (!(cg in source.curatoryGroups)) {
+                            def combo_type = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Source.CuratoryGroups')
+
+                            def new_combo = new Combo(fromComponent: source, toComponent: cg, type: combo_type).save()
+                        }
+                    }
+                    if (source != aPackage.source) {
+                        aPackage = aPackage.refresh()
+                        aPackage.source = source
+                        aPackage.save(flush: true)
+                    }
                 }
             }
         }

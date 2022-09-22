@@ -1,11 +1,16 @@
 package org.gokb
 
+
 import org.gokb.cred.Package
 import wekb.AutoUpdatePackagesService
+
+import java.util.concurrent.ExecutorService
 
 class AutoUpdatePackagesJob {
 
   AutoUpdatePackagesService autoUpdatePackagesService
+
+  ExecutorService executorService
   // Allow only one run at a time.
   static concurrent = false
 
@@ -19,7 +24,7 @@ class AutoUpdatePackagesJob {
     if (grailsApplication.config.gokb.packageUpdate.enabled) {
       log.debug("Beginning scheduled auto update packages job.")
 
-      autoUpdatePackagesService.findPackageToUpdateAndUpdate(true)
+        autoUpdatePackagesService.findPackageToUpdateAndUpdate(true)
 
       log.info("auto update packages job completed.")
     } else {

@@ -22,6 +22,7 @@
             <g:form controller="ajaxSupport" action="addToStdCollection" class="ui form">
                 <input type="hidden" name="__context" value="${d.class.name}:${d.id}"/>
                 <input type="hidden" name="__property" value="nationalRanges"/>
+                <input type="hidden" name="curationOverride" value="${params.curationOverride}"/>
 
                 <div class="field">
                     <label>National Range:</label>

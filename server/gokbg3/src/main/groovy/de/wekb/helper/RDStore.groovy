@@ -17,6 +17,7 @@ class RDStore {
     public static final AUTO_UPDATE_TYPE_NEW_TITLE    = getRefdataValue('New Title', RCConstants.AUTO_UPDATE_TYPE)
     public static final AUTO_UPDATE_TYPE_CHANGED_TITLE    = getRefdataValue('Changed Title', RCConstants.AUTO_UPDATE_TYPE)
     public static final AUTO_UPDATE_TYPE_REMOVED_TITLE    = getRefdataValue('Removed Title', RCConstants.AUTO_UPDATE_TYPE)
+    public static final AUTO_UPDATE_TYPE_FAILED_TITLE    = getRefdataValue('Failed Title', RCConstants.AUTO_UPDATE_TYPE)
 
     public static final KBC_STATUS_DELETED    = getRefdataValue('Deleted', RCConstants.KBCOMPONENT_STATUS)
     public static final KBC_STATUS_CURRENT    = getRefdataValue('Current', RCConstants.KBCOMPONENT_STATUS)
@@ -46,6 +47,7 @@ class RDStore {
     public static final TIPP_PUBLIC_TYPE_OTHER = getRefdataValue('Other', RCConstants.TIPP_PUBLICATION_TYPE)
 
     public static final IDENTIFIER_NAMESPACE_TARGET_TYPE_TIPP = getRefdataValue('TitleInstancePackagePlatform', RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE)
+    public static final IDENTIFIER_NAMESPACE_TARGET_TYPE_PACKAGE = getRefdataValue('Package', RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE)
 
 
 
