@@ -787,11 +787,11 @@ class AutoUpdatePackagesService {
             }
 
             if(kbartRowsToCreateTipps.size() > 0){
-                List newTippList = kbartImportService.createTippBatch(kbartRowsToCreateTipps, autoUpdatePackageInfo)
+                List newTippList = kbartImportService.createTippBatch(kbartRowsToCreateTipps, autoUpdatePackageInfo, identifierNamespace)
                 newTipps = newTippList.size()
                 log.debug("kbartRowsToCreateTipps: TippIds -> "+newTippList.tippID)
 
-                Package pkgTipp = pkg
+              /*  Package pkgTipp = pkg
                 Platform platformTipp = plt
 
                 newTippList.eachWithIndex{ Map newTippMap, int i ->
@@ -815,7 +815,7 @@ class AutoUpdatePackagesService {
                             cleanupService.cleanUpGorm()
                         }
                     }
-                }
+                }*/
 
             }
 
@@ -915,7 +915,7 @@ class AutoUpdatePackagesService {
                     [package: pkg, status: listStatus])[0]
 
 
-            if(countExistingTippsAfterImport > (kbartRowsCount-countInvalidKbartRowsForTipps)){
+            if(tippsFound.size() > 0 && kbartRowsCount > 0 && countExistingTippsAfterImport > (kbartRowsCount-countInvalidKbartRowsForTipps)){
 
                 List<Long> existingTippsAfterImport = TitleInstancePackagePlatform.executeQuery(
                         "select tipp.id from TitleInstancePackagePlatform tipp, Combo combo where " +
@@ -966,6 +966,7 @@ class AutoUpdatePackagesService {
 
                 Package aPackage = Package.get(autoUpdatePackageInfo.pkg.id)
                 if (aPackage.status != status_deleted) {
+                    aPackage.lastUpdated = new Date()
                     aPackage.lastUpdateComment = "Updated package with ${kbartRowsCount} Title. (Titles in we:kb previously: ${existing_tipp_ids.size()}, Titles in we:kb now: ${countExistingTippsAfterImport}, Removed Titles: ${removedTipps}, New Titles in we:kb: ${newTipps})"
                     aPackage.save()
                 }
@@ -1190,7 +1191,6 @@ class AutoUpdatePackagesService {
                                     rowMap."${entry.key}" = rowMap."${entry.key}" ? rowMap."${entry.key}".replaceAll("\\x00", "") : rowMap."${entry.key}"
                                 }
                                 rowMap.rowIndex = r
-                                println(rowMap)
                                 result << rowMap
                             }
                             //log.debug("End kbart processing rows ${countRows}")

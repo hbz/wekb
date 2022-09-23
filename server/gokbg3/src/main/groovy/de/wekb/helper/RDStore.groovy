@@ -46,6 +46,9 @@ class RDStore {
     public static final TIPP_PUBLIC_TYPE_DB = getRefdataValue('Database', RCConstants.TIPP_PUBLICATION_TYPE)
     public static final TIPP_PUBLIC_TYPE_OTHER = getRefdataValue('Other', RCConstants.TIPP_PUBLICATION_TYPE)
 
+    public static final TIPP_ACCESS_TYPE_FREE = getRefdataValue('Free', RCConstants.TIPP_ACCESS_TYPE)
+    public static final TIPP_ACCESS_TYPE_PAID = getRefdataValue('Paid', RCConstants.TIPP_ACCESS_TYPE)
+
     public static final IDENTIFIER_NAMESPACE_TARGET_TYPE_TIPP = getRefdataValue('TitleInstancePackagePlatform', RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE)
     public static final IDENTIFIER_NAMESPACE_TARGET_TYPE_PACKAGE = getRefdataValue('Package', RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE)
 

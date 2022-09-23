@@ -19,7 +19,15 @@ class CascadingUpdateService {
     }
 
     void update(ComponentPrice obj, Date lastUpdated) {
-        if (obj.owner) { update(obj.owner, lastUpdated) }
+        if (obj.owner) {
+            if(obj.owner instanceof TitleInstancePackagePlatform) {
+                if (!obj.owner.kbartImportRunning) {
+                    update(obj.owner, lastUpdated)
+                }
+            } else {
+                update(obj.owner, lastUpdated)
+            }
+        }
     }
 
     void update(Contact obj, Date lastUpdated) {
@@ -30,7 +38,9 @@ class CascadingUpdateService {
     void update(Identifier obj, Date lastUpdated) {
         if (obj.org) { update(obj.org, lastUpdated) }
         if (obj.pkg) { update(obj.pkg, lastUpdated) }
-        if (obj.tipp) { update(obj.tipp, lastUpdated) }
+        if (obj.tipp && !obj.tipp.kbartImportRunning) {
+            update(obj.tipp, lastUpdated)
+        }
     }
 
     void update(KBComponentAdditionalProperty obj, Date lastUpdated) {
@@ -50,7 +60,9 @@ class CascadingUpdateService {
     }
 
     void update(TitleInstancePackagePlatform obj, Date lastUpdated) {
-        if (obj.pkg) { update(obj.pkg, lastUpdated) }
+        if (obj.pkg && !obj.kbartImportRunning) {
+            update(obj.pkg, lastUpdated)
+        }
     }
 
     void update(TIPPCoverageStatement obj, Date lastUpdated) {
