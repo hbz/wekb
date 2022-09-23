@@ -547,18 +547,11 @@ class AutoUpdatePackagesService {
 
 
         if(kbartRows.size() > 0){
-            Source.withTransaction {
-                Source source = pkg.source
                 if (headerOfKbart.containsKey("status")) {
                     log.info("kbart has status field and is wekb standard")
                     setAllTippsNotInKbartToDeleted = false
                     listStatus = [status_current, status_expected, status_deleted, status_retired]
-                    source.kbartHasWekbFields = true
-                } else {
-                    source.kbartHasWekbFields = false
                 }
-                //source.save()
-            }
         }
 
         AutoUpdatePackageInfo.withTransaction {
@@ -578,6 +571,8 @@ class AutoUpdatePackagesService {
                         "combo.toComponent = tipp and " +
                         "combo.fromComponent = :package",
                 [package: pkg, status: listStatus])
+
+        int previouslyTipps = existing_tipp_ids.size()
 
         LinkedHashMap tippsWithCoverage = [:]
         List<Long> tippDuplicates = []
@@ -605,7 +600,7 @@ class AutoUpdatePackagesService {
 
         try {
 
-            log.info("Matched package has ${existing_tipp_ids.size()} TIPPs")
+            log.info("Matched package has ${previouslyTipps} TIPPs")
 
             int idx = 0
 
@@ -956,24 +951,33 @@ class AutoUpdatePackagesService {
 
             }
 
-
             String description = "Package Update: (KbartLines: ${kbartRowsCount}, " +
-                    "Processed Titles in this run: ${idx}, Titles in we:kb previously: ${existing_tipp_ids.size()}, Titles in we:kb now: ${countExistingTippsAfterImport}, Removed Titles: ${removedTipps}, New Titles in we:kb: ${newTipps}, Changed Titles in we:kb: ${changedTipps})"
+                    "Processed Titles in this run: ${idx}, Titles in we:kb previously: ${previouslyTipps}, Titles in we:kb now: ${countExistingTippsAfterImport}, Removed Titles: ${removedTipps}, New Titles in we:kb: ${newTipps}, Changed Titles in we:kb: ${changedTipps})"
 
-            AutoUpdatePackageInfo.executeUpdate("update AutoUpdatePackageInfo set countKbartRows = ${kbartRowsCount}, countChangedTipps = ${changedTipps}, countNewTipps = ${newTipps}, countRemovedTipps = ${removedTipps}, countInValidTipps = ${countInvalidKbartRowsForTipps}, countProcessedKbartRows = ${idx}, endTime = ${new Date()}, description = ${description} where id = ${autoUpdatePackageInfo.id}")
+            AutoUpdatePackageInfo.executeUpdate("update AutoUpdatePackageInfo set countKbartRows = ${kbartRowsCount}, " +
+                    "countChangedTipps = ${changedTipps}, " +
+                    "countNowTippsInWekb = ${countExistingTippsAfterImport}, " +
+                    "countPreviouslyTippsInWekb = ${previouslyTipps}, " +
+                    "countNewTipps = ${newTipps}, " +
+                    "countRemovedTipps = ${removedTipps}, " +
+                    "countInValidTipps = ${countInvalidKbartRowsForTipps}, " +
+                    "countProcessedKbartRows = ${idx}, " +
+                    "endTime = ${new Date()}, " +
+                    "description = ${description} " +
+                    "where id = ${autoUpdatePackageInfo.id}")
 
             AutoUpdatePackageInfo.withTransaction {
 
                 Package aPackage = Package.get(autoUpdatePackageInfo.pkg.id)
                 if (aPackage.status != status_deleted) {
                     aPackage.lastUpdated = new Date()
-                    aPackage.lastUpdateComment = "Updated package with ${kbartRowsCount} Title. (Titles in we:kb previously: ${existing_tipp_ids.size()}, Titles in we:kb now: ${countExistingTippsAfterImport}, Removed Titles: ${removedTipps}, New Titles in we:kb: ${newTipps})"
+                    aPackage.lastUpdateComment = "Updated package with ${kbartRowsCount} Title. (Titles in we:kb previously: ${previouslyTipps}, Titles in we:kb now: ${countExistingTippsAfterImport}, Removed Titles: ${removedTipps}, New Titles in we:kb: ${newTipps})"
                     aPackage.save()
                 }
 
                 if (aPackage.source) {
-
                     Source src = Source.get(aPackage.source.id)
+                    src.kbartHasWekbFields = !setAllTippsNotInKbartToDeleted
                     src.lastRun = new Date()
                     src.lastUpdateUrl = lastUpdateURL
                     src.save()

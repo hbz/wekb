@@ -25,6 +25,8 @@ class AutoUpdatePackageInfo {
     int countChangedTipps = 0
     int countRemovedTipps = 0
     int countNewTipps = 0
+    int countNowTippsInWekb = 0
+    int countPreviouslyTippsInWekb = 0
 
     boolean onlyRowsWithLastChanged = false
 
@@ -57,6 +59,8 @@ class AutoUpdatePackageInfo {
         countChangedTipps column: 'aupi_count_changed_tipps'
         countRemovedTipps column: 'aupi_count_removed_tipps'
         countNewTipps column: 'aupi_count_new_tipps'
+        countNowTippsInWekb column: 'aupi_count_now_tipps'
+        countPreviouslyTippsInWekb column: 'aupi_count_previously_tipps'
 
         onlyRowsWithLastChanged column: 'aupi_only_rows_with_last_changed'
 
@@ -72,6 +76,8 @@ class AutoUpdatePackageInfo {
         countChangedTipps (nullable:true)
         countRemovedTipps (nullable:true)
         countNewTipps (nullable:true)
+        countNowTippsInWekb (nullable:true)
+        countPreviouslyTippsInWekb (nullable:true)
         onlyRowsWithLastChanged  (nullable:true)      
     }
 
