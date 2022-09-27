@@ -1,7 +1,5 @@
 Welcome to we:kb
 
-
-forked from https://github.com/openlibraryenvironment/gokb
 forked from https://github.com/openlibraryenvironment/gokb.
 
 Developed by the Hochschulbibliothekszentrum NRW (hbz) in Cologne, the we:kb is an open Knowledge Base which serves as a central
