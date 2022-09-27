@@ -107,4 +107,32 @@ databaseChangeLog = {
     changeSet(author: "djebeniani (generated)", id: "1663965353615-26") {
         dropTable(tableName: "title_instance_platform")
     }
+
+    changeSet(author: "djebeniani (generated)", id: "1663965353615-27") {
+        addColumn(tableName: "source") {
+            column(name: "source_last_changed_in_kbart", type: "timestamp")
+        }
+    }
+
+    changeSet(author: "djebeniani (modified)", id: "1663965353615-28") {
+        grailsChange {
+            change {
+
+                sql.executeUpdate('update auto_update_package_info set aupi_count_now_tipps = 0 where aupi_count_now_tipps is null')
+
+            }
+            rollback {}
+        }
+    }
+
+    changeSet(author: "djebeniani (modified)", id: "1663965353615-29") {
+        grailsChange {
+            change {
+
+                sql.executeUpdate('update auto_update_package_info set aupi_count_previously_tipps = 0 where aupi_count_previously_tipps is null')
+
+            }
+            rollback {}
+        }
+    }
 }

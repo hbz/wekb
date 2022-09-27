@@ -30,6 +30,7 @@ class Source extends KBComponent {
   Org responsibleParty
 
   Boolean kbartHasWekbFields = false
+  Date lastChangedInKbart
 
   static manyByCombo = [
     curatoryGroups: CuratoryGroup
@@ -41,6 +42,7 @@ class Source extends KBComponent {
     ruleset column:'source_ruleset', type:'text'
     lastUpdateUrl column: 'source_last_update_url'
     kbartHasWekbFields column: 'source_kbart_wekb_fields'
+    lastChangedInKbart column: 'source_last_changed_in_kbart'
   }
 
   static constraints = {
@@ -59,6 +61,7 @@ class Source extends KBComponent {
     zdbMatch(nullable:true,default: false)
     automaticUpdates(nullable: true,default: false)
     lastUpdateUrl(nullable:true, blank:true)
+    lastChangedInKbart (nullable:true, default: null)
     name(validator: { val, obj ->
       if (obj.hasChanged('name')) {
         if (val && val.trim()) {

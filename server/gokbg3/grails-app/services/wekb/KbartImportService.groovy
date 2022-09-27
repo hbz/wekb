@@ -857,7 +857,7 @@ class KbartImportService {
 
                 if (tipp_dto.coverage && tipp_dto.coverage.size() > 0 && publicationType && publicationType != RDStore.TIPP_PUBLIC_TYPE_SERIAL) {
                     com.k_int.ClassUtils.setStringIfDifferent(tipp, 'note', tipp_dto.coverage[0].coverageNote)
-                    if(tipp.coverageStatements.size() > 0){
+                    if(tipp.coverageStatements && tipp.coverageStatements.size() > 0){
                         def cStsIDs = tipp.coverageStatements.id.clone()
                         cStsIDs.each {
                             tipp.removeFromCoverageStatements(TIPPCoverageStatement.get(it))
@@ -1405,7 +1405,7 @@ class KbartImportService {
         //tipp = tipp.refresh()
 
         Integer countNewCoverages = coverage.size()
-        Integer countTippCoverages = tipp.coverageStatements.size()
+        Integer countTippCoverages = tipp.coverageStatements?.size()
 
         if(countNewCoverages == 1 && countTippCoverages == 1){
             RefdataValue cov_depth = null
