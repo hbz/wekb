@@ -547,18 +547,11 @@ class AutoUpdatePackagesService {
 
 
         if(kbartRows.size() > 0){
-            Source.withTransaction {
-                Source source = pkg.source
                 if (headerOfKbart.containsKey("status")) {
                     log.info("kbart has status field and is wekb standard")
                     setAllTippsNotInKbartToDeleted = false
                     listStatus = [status_current, status_expected, status_deleted, status_retired]
-                    source.kbartHasWekbFields = true
-                } else {
-                    source.kbartHasWekbFields = false
                 }
-                //source.save()
-            }
         }
 
         AutoUpdatePackageInfo.withTransaction {
@@ -579,6 +572,8 @@ class AutoUpdatePackagesService {
                         "combo.fromComponent = :package",
                 [package: pkg, status: listStatus])
 
+        int previouslyTipps = existing_tipp_ids.size()
+
         LinkedHashMap tippsWithCoverage = [:]
         List<Long> tippDuplicates = []
         List setTippsNotToDeleted = []
@@ -594,6 +589,8 @@ class AutoUpdatePackagesService {
 
         List kbartRowsToCreateTipps = []
 
+        Date lastChangedInKbart = pkg.source.lastChangedInKbart
+        List<LocalDate> lastChangedDates = []
 
         Platform plt = pkg.nominalPlatform
         IdentifierNamespace identifierNamespace
@@ -605,20 +602,29 @@ class AutoUpdatePackagesService {
 
         try {
 
-            log.info("Matched package has ${existing_tipp_ids.size()} TIPPs")
+            log.info("Matched package has ${previouslyTipps} TIPPs")
 
             int idx = 0
 
             if(onlyRowsWithLastChanged){
                 if(headerOfKbart.containsKey("last_changed")) {
+                    LocalDate currentLastChangedInKbart = convertToLocalDateViaInstant(lastChangedInKbart)
+                    LocalDate lastUpdated = convertToLocalDateViaInstant(pkg.source.lastRun)
+                    if(currentLastChangedInKbart && currentLastChangedInKbart.isBefore(lastUpdated)){
+                        lastUpdated = currentLastChangedInKbart
+                    }
+
                     log.info("onlyRowsWithLastChanged is set! before process only last changed rows: ${kbartRowsCount}")
                     List newKbartRows = []
-                    LocalDate lastUpdated = convertToLocalDateViaInstant(pkg.source.lastRun)
                     kbartRows.eachWithIndex { Object entry, int i ->
                         if (entry.containsKey("last_changed") && entry.last_changed != null && entry.last_changed != "") {
                             LocalDate lastChanged = DateToolkit.getAsLocalDate(entry.last_changed)
                             if (lastChanged == null || lastUpdated == null || !lastChanged.isBefore(lastUpdated)) {
                                 newKbartRows << entry
+                            }
+
+                            if(lastChanged){
+                                lastChangedDates << lastChanged
                             }
                         } else {
                             newKbartRows << entry
@@ -630,6 +636,12 @@ class AutoUpdatePackagesService {
 
                 }
             }
+
+            if(lastChangedDates.size() > 0) {
+                LocalDate maxDate = lastChangedDates.max()
+                lastChangedInKbart = Date.from(maxDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant())
+            }
+
             int max = 500
             TitleInstancePackagePlatform.withSession { Session sess ->
                 for (int offset = 0; offset < kbartRows.size(); offset += max) {
@@ -787,11 +799,11 @@ class AutoUpdatePackagesService {
             }
 
             if(kbartRowsToCreateTipps.size() > 0){
-                List newTippList = kbartImportService.createTippBatch(kbartRowsToCreateTipps, autoUpdatePackageInfo)
+                List newTippList = kbartImportService.createTippBatch(kbartRowsToCreateTipps, autoUpdatePackageInfo, identifierNamespace)
                 newTipps = newTippList.size()
                 log.debug("kbartRowsToCreateTipps: TippIds -> "+newTippList.tippID)
 
-                Package pkgTipp = pkg
+              /*  Package pkgTipp = pkg
                 Platform platformTipp = plt
 
                 newTippList.eachWithIndex{ Map newTippMap, int i ->
@@ -815,7 +827,7 @@ class AutoUpdatePackagesService {
                             cleanupService.cleanUpGorm()
                         }
                     }
-                }
+                }*/
 
             }
 
@@ -915,7 +927,7 @@ class AutoUpdatePackagesService {
                     [package: pkg, status: listStatus])[0]
 
 
-            if(countExistingTippsAfterImport > (kbartRowsCount-countInvalidKbartRowsForTipps)){
+            if(tippsFound.size() > 0 && kbartRowsCount > 0 && countExistingTippsAfterImport > (kbartRowsCount-countInvalidKbartRowsForTipps)){
 
                 List<Long> existingTippsAfterImport = TitleInstancePackagePlatform.executeQuery(
                         "select tipp.id from TitleInstancePackagePlatform tipp, Combo combo where " +
@@ -925,56 +937,67 @@ class AutoUpdatePackagesService {
                         [package: pkg, status: listStatus])
 
 
-                List<Long> removeTippsFromWekb = existingTippsAfterImport - tippsFound
+                List<Long> deleteTippsFromWekb = existingTippsAfterImport - tippsFound
 
-                if(removeTippsFromWekb.size() > 0){
-                    Integer tippsToRemoved = KBComponent.executeUpdate("update KBComponent set status = :removed where id in (:tippIds)", [removed: RDStore.KBC_STATUS_REMOVED, tippIds: removeTippsFromWekb])
+                if(deleteTippsFromWekb.size() > 0){
+                    Integer tippsToDeleted = KBComponent.executeUpdate("update KBComponent set status = :deleted where id in (:tippIds)", [deleted: RDStore.KBC_STATUS_DELETED, tippIds: deleteTippsFromWekb])
 
-                    removeTippsFromWekb.each {
+                    deleteTippsFromWekb.each {
                         TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.get(it)
                         AutoUpdateTippInfo.withTransaction {
                             autoUpdatePackageInfo.refresh()
                             AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
-                                    description: "Remove Title '${tipp.name}' because is not in KBART!",
+                                    description: "Delete Title '${tipp.name}' because is not in KBART!",
                                     tipp: tipp,
                                     startTime: new Date(),
                                     endTime: new Date(),
                                     status: RDStore.AUTO_UPDATE_STATUS_SUCCESSFUL,
-                                    type: RDStore.AUTO_UPDATE_TYPE_REMOVED_TITLE,
+                                    type: RDStore.AUTO_UPDATE_TYPE_CHANGED_TITLE,
                                     oldValue: tipp.status.value,
-                                    newValue: 'Removed',
+                                    newValue: 'Deleted',
                                     tippProperty: 'status',
                                     kbartProperty: 'status',
                                     autoUpdatePackageInfo: autoUpdatePackageInfo
                             ).save()
-                            removedTipps++
+                            changedTipps++
                         }
                     }
 
-                    log.info("Rows in KBART is not same with titles in wekb. RemoveTippsFromWekb: ${removeTippsFromWekb.size()}, Set tipps to removed: ${tippsToRemoved}")
+                    log.info("Rows in KBART is not same with titles in wekb. RemoveTippsFromWekb: ${deleteTippsFromWekb.size()}, Set tipps to removed: ${tippsToDeleted}")
                 }
 
             }
 
-
             String description = "Package Update: (KbartLines: ${kbartRowsCount}, " +
-                    "Processed Titles in this run: ${idx}, Titles in we:kb previously: ${existing_tipp_ids.size()}, Titles in we:kb now: ${countExistingTippsAfterImport}, Removed Titles: ${removedTipps}, New Titles in we:kb: ${newTipps}, Changed Titles in we:kb: ${changedTipps})"
+                    "Processed Titles in this run: ${idx}, Titles in we:kb previously: ${previouslyTipps}, Titles in we:kb now: ${countExistingTippsAfterImport}, Removed Titles: ${removedTipps}, New Titles in we:kb: ${newTipps}, Changed Titles in we:kb: ${changedTipps})"
 
-            AutoUpdatePackageInfo.executeUpdate("update AutoUpdatePackageInfo set countKbartRows = ${kbartRowsCount}, countChangedTipps = ${changedTipps}, countNewTipps = ${newTipps}, countRemovedTipps = ${removedTipps}, countInValidTipps = ${countInvalidKbartRowsForTipps}, countProcessedKbartRows = ${idx}, endTime = ${new Date()}, description = ${description} where id = ${autoUpdatePackageInfo.id}")
+            AutoUpdatePackageInfo.executeUpdate("update AutoUpdatePackageInfo set countKbartRows = ${kbartRowsCount}, " +
+                    "countChangedTipps = ${changedTipps}, " +
+                    "countNowTippsInWekb = ${countExistingTippsAfterImport}, " +
+                    "countPreviouslyTippsInWekb = ${previouslyTipps}, " +
+                    "countNewTipps = ${newTipps}, " +
+                    "countRemovedTipps = ${removedTipps}, " +
+                    "countInValidTipps = ${countInvalidKbartRowsForTipps}, " +
+                    "countProcessedKbartRows = ${idx}, " +
+                    "endTime = ${new Date()}, " +
+                    "description = ${description} " +
+                    "where id = ${autoUpdatePackageInfo.id}")
 
             AutoUpdatePackageInfo.withTransaction {
 
                 Package aPackage = Package.get(autoUpdatePackageInfo.pkg.id)
                 if (aPackage.status != status_deleted) {
-                    aPackage.lastUpdateComment = "Updated package with ${kbartRowsCount} Title. (Titles in we:kb previously: ${existing_tipp_ids.size()}, Titles in we:kb now: ${countExistingTippsAfterImport}, Removed Titles: ${removedTipps}, New Titles in we:kb: ${newTipps})"
+                    aPackage.lastUpdated = new Date()
+                    aPackage.lastUpdateComment = "Updated package with ${kbartRowsCount} Title. (Titles in we:kb previously: ${previouslyTipps}, Titles in we:kb now: ${countExistingTippsAfterImport}, Removed Titles: ${removedTipps}, New Titles in we:kb: ${newTipps})"
                     aPackage.save()
                 }
 
                 if (aPackage.source) {
-
                     Source src = Source.get(aPackage.source.id)
+                    src.kbartHasWekbFields = !setAllTippsNotInKbartToDeleted
                     src.lastRun = new Date()
                     src.lastUpdateUrl = lastUpdateURL
+                    src.lastChangedInKbart = lastChangedInKbart
                     src.save()
                 }
           }
@@ -1190,7 +1213,6 @@ class AutoUpdatePackagesService {
                                     rowMap."${entry.key}" = rowMap."${entry.key}" ? rowMap."${entry.key}".replaceAll("\\x00", "") : rowMap."${entry.key}"
                                 }
                                 rowMap.rowIndex = r
-                                println(rowMap)
                                 result << rowMap
                             }
                             //log.debug("End kbart processing rows ${countRows}")

@@ -857,7 +857,7 @@ class KbartImportService {
 
                 if (tipp_dto.coverage && tipp_dto.coverage.size() > 0 && publicationType && publicationType != RDStore.TIPP_PUBLIC_TYPE_SERIAL) {
                     com.k_int.ClassUtils.setStringIfDifferent(tipp, 'note', tipp_dto.coverage[0].coverageNote)
-                    if(tipp.coverageStatements.size() > 0){
+                    if(tipp.coverageStatements && tipp.coverageStatements.size() > 0){
                         def cStsIDs = tipp.coverageStatements.id.clone()
                         cStsIDs.each {
                             tipp.removeFromCoverageStatements(TIPPCoverageStatement.get(it))
@@ -1048,7 +1048,8 @@ class KbartImportService {
             }
 
             if (tipp) {
-                result = updateTippWithKbart(result, tipp, tippMap, autoUpdatePackageInfo, result.tippsWithCoverage, pkg, plt)
+                tipp.kbartImportRunning = true
+                result = updateTippWithKbart(result, tipp, tippMap, autoUpdatePackageInfo, result.tippsWithCoverage, identifierNamespace)
                 tipp = result.tipp
             }
 
@@ -1404,7 +1405,7 @@ class KbartImportService {
         //tipp = tipp.refresh()
 
         Integer countNewCoverages = coverage.size()
-        Integer countTippCoverages = tipp.coverageStatements.size()
+        Integer countTippCoverages = tipp.coverageStatements?.size()
 
         if(countNewCoverages == 1 && countTippCoverages == 1){
             RefdataValue cov_depth = null
@@ -1947,7 +1948,7 @@ class KbartImportService {
         return  result.changedTipp ?: valueChanged
     }
 
-    LinkedHashMap updateTippWithKbart(LinkedHashMap result, TitleInstancePackagePlatform tipp, Map tippMap, AutoUpdatePackageInfo autoUpdatePackageInfo, LinkedHashMap tippsWithCoverage, Package pkg, Platform plt) {
+    LinkedHashMap updateTippWithKbart(LinkedHashMap result, TitleInstancePackagePlatform tipp, Map tippMap, AutoUpdatePackageInfo autoUpdatePackageInfo, LinkedHashMap tippsWithCoverage, IdentifierNamespace identifierNamespace) {
         log.debug("in update")
         List identifierNameSpacesExistOnTipp = []
         //Kbart Fields to Ygor and then to wekb (siehe Wiki)
@@ -2157,15 +2158,8 @@ class KbartImportService {
 
         // KBART -> title_id  -> identifiers
         if (tippMap.title_id) {
-            List<IdentifierNamespace> idnsCheck = IdentifierNamespace.executeQuery('select so.targetNamespace from Package pkg join pkg.source so where pkg = :pkg', [pkg: pkg])
-            if (!idnsCheck)
-                idnsCheck = IdentifierNamespace.executeQuery('select plat.titleNamespace from Platform plat where plat = :plat', [plat: plt])
-            if (idnsCheck && idnsCheck.size() == 1) {
-                IdentifierNamespace identifierNamespace = idnsCheck[0]
                 result.changedTipp = createOrUpdateIdentifierForTipp(result, tipp, identifierNamespace.value, tippMap.title_id, 'title_id', autoUpdatePackageInfo)
                 identifierNameSpacesExistOnTipp << identifierNamespace.value
-            }
-
         }
 
         // KBART -> doi_identifier  -> identifiers
@@ -2257,7 +2251,6 @@ class KbartImportService {
         // KBART -> oa_apc_usd -> prices
         if (tippMap.oa_apc_usd) {
             result.changedTipp = createOrUpdatePrice(result, tipp, RDStore.PRICE_TYPE_OA_APC, RDStore.CURRENCY_USD, tippMap.oa_apc_usd, 'oa_apc_usd', autoUpdatePackageInfo)
-            tipp.setPrice(RDStore.PRICE_TYPE_OA_APC.value, tippMap.oa_apc_usd, RDStore.CURRENCY_USD.value, null, null)
         }
 
         // KBART -> oa_apc_gbp -> prices
@@ -2276,7 +2269,7 @@ class KbartImportService {
         return result
     }
 
-    List createTippBatch(List tippMaps, AutoUpdatePackageInfo autoUpdatePackageInfo) {
+    List createTippBatch(List tippMaps, AutoUpdatePackageInfo autoUpdatePackageInfo, IdentifierNamespace identifierNamespace) {
         List newTippList = []
 
         int counterNewTippsToProcess = tippMaps.size()
@@ -2299,13 +2292,50 @@ class KbartImportService {
                 if (tippMap.type) {
                     tipp_publicationType = determinePublicationType(tippMap.type)
                 }
+
+                RefdataValue tipp_accessType = null
+                if (tippMap.access_type && tippMap.access_type.length() > 0) {
+                    if (tippMap.access_type == 'P') {
+                        tipp_accessType = RDStore.TIPP_ACCESS_TYPE_PAID
+                    } else if (tippMap.access_type == 'F') {
+                        tipp_accessType = RDStore.TIPP_ACCESS_TYPE_FREE
+                    }
+                }
+
+                RefdataValue oaType = tippMap.kbartRowMap.oa_type ? RefdataCategory.lookup(RCConstants.TIPP_OPEN_ACCESS, tippMap.kbartRowMap.oa_type) : null
+
+                Date access_start_date = parseDatebyCreateTipp(tippMap.kbartRowMap.access_start_date)
+                Date access_end_date = parseDatebyCreateTipp(tippMap.kbartRowMap.access_end_date)
+                Date date_monograph_published_print = parseDatebyCreateTipp(tippMap.kbartRowMap.date_monograph_published_print)
+                Date date_monograph_published_online = parseDatebyCreateTipp(tippMap.kbartRowMap.date_monograph_published_online)
+                Date last_changed = parseDatebyCreateTipp(tippMap.kbartRowMap.last_changed)
+
                 TitleInstancePackagePlatform tipp = new TitleInstancePackagePlatform(
                         uuid: tippMap.uuid ?: UUID.randomUUID().toString(),
                         status: tipp_status,
                         name: tippMap.name,
                         medium: tipp_medium,
                         publicationType: tipp_publicationType,
-                        url: tippMap.url)
+                        url: tippMap.url,
+                        accessType: tipp_accessType,
+                        accessStartDate: access_start_date,
+                        accessEndDate: access_end_date,
+                        dateFirstInPrint: date_monograph_published_print,
+                        dateFirstOnline: date_monograph_published_online,
+                        editionStatement: tippMap.kbartRowMap.monograph_edition,
+                        firstAuthor: tippMap.kbartRowMap.first_author,
+                        firstEditor: tippMap.kbartRowMap.first_editor,
+                        lastChangedExternal: last_changed,
+                        note: tippMap.kbartRowMap.notes,
+                        openAccess: oaType,
+                        parentPublicationTitleId: tippMap.kbartRowMap.parent_publication_title_id,
+                        precedingPublicationTitleId: tippMap.kbartRowMap.preceding_publication_title_id,
+                        publisherName: tippMap.kbartRowMap.publisher_name,
+                        subjectArea: tippMap.kbartRowMap.subject_area,
+                        series: tippMap.kbartRowMap.monograph_parent_collection_title,
+                        supersedingPublicationTitleId: tippMap.kbartRowMap.superseding_publication_title_id,
+                        volumeNumber: tippMap.kbartRowMap.monograph_volume
+                        )
                 if (tipp) {
                     tipp.save(flush: true)
                 } else {
@@ -2326,6 +2356,152 @@ class KbartImportService {
                         sql.executeInsert("""insert into combo (combo_id, combo_version, combo_from_fk, combo_to_fk, combo_type_rv_fk, combo_status_rv_fk) values ((select nextval('hibernate_sequence')), 0, ${tippMap.hostPlatform.id}, ${tipp.id}, ${plt_combo_type.id}, ${RDStore.COMBO_STATUS_ACTIVE.id})""")
                     }
 
+                    tipp.kbartImportRunning = true
+
+                    Map result = [newTipp: true]
+
+                    // KBART -> package_isil -> identifiers['package_isil']
+                    if (tippMap.kbartRowMap.package_isil) {
+                        result.changedTipp = createOrUpdateIdentifierForTipp(result, tipp, "package_isil", tippMap.kbartRowMap.package_isil, 'package_isil', autoUpdatePackageInfo)
+                    }
+
+                    // KBART -> package_isci -> identifiers['package_isci']
+                    if (tippMap.kbartRowMap.package_isci) {
+                        result.changedTipp = createOrUpdateIdentifierForTipp(result, tipp, "package_isci", tippMap.kbartRowMap.package_isci, 'package_isci', autoUpdatePackageInfo)
+                    }
+
+                    // KBART -> ill_indicator -> identifiers['ill_indicator']
+                    if (tippMap.kbartRowMap.ill_indicator) {
+                        result.changedTipp = createOrUpdateIdentifierForTipp(result, tipp, "ill_indicator", tippMap.kbartRowMap.ill_indicator, 'ill_indicator', autoUpdatePackageInfo)
+                    }
+
+
+                    // KBART -> date_first_issue_online, date_last_issue_online,
+                    // num_first_vol_online, num_first_issue_online,
+                    // num_last_vol_online, num_last_issue_online
+                    // embargo_info, coverage_depth
+                    if (tipp.publicationType == RDStore.TIPP_PUBLIC_TYPE_SERIAL) {
+                        if (tippMap.kbartRowMap.date_first_issue_online || tippMap.kbartRowMap.date_last_issue_online || tippMap.kbartRowMap.num_first_vol_online ||
+                                tippMap.kbartRowMap.num_first_issue_online || tippMap.kbartRowMap.num_last_vol_online || tippMap.kbartRowMap.num_last_issue_online ||
+                                tippMap.kbartRowMap.coverage_depth || tippMap.kbartRowMap.embargo_info) {
+                            Map coverageMap = [startDate    : tippMap.kbartRowMap.date_first_issue_online,
+                                               endDate      : tippMap.kbartRowMap.date_last_issue_online,
+                                               startVolume  : tippMap.kbartRowMap.num_first_vol_online,
+                                               startIssue   : tippMap.kbartRowMap.num_first_issue_online,
+                                               endVolume    : tippMap.kbartRowMap.num_last_vol_online,
+                                               endIssue     : tippMap.kbartRowMap.num_last_issue_online,
+                                               embargo      : tippMap.kbartRowMap.embargo_info,
+                                               coverageDepth: tippMap.kbartRowMap.coverage_depth]
+
+                            createOrUpdateCoverageForTipp(tipp, [coverageMap])
+                        }
+
+                    }
+
+                    // KBART -> package_ezb_anchor -> identifiers['package_ezb_anchor']
+                    if (tippMap.kbartRowMap.package_ezb_anchor) {
+                        result.changedTipp = createOrUpdateIdentifierForTipp(result, tipp, "package_ezb_anchor", tippMap.kbartRowMap.package_ezb_anchor, 'package_ezb_anchor', autoUpdatePackageInfo)
+                    }
+
+                    // KBART -> zdb_id  -> identifiers['zdb']
+                    if (tippMap.kbartRowMap.zdb_id) {
+                        result.changedTipp = createOrUpdateIdentifierForTipp(result, tipp, "zdb", tippMap.kbartRowMap.zdb_id, 'zdb_id', autoUpdatePackageInfo)
+                    }
+
+                    // KBART -> ezb_id -> identifiers['ezb']
+                    if (tippMap.kbartRowMap.ezb_id) {
+                        result.changedTipp = createOrUpdateIdentifierForTipp(result, tipp, "ezb", tippMap.kbartRowMap.ezb_id, 'ezb_id', autoUpdatePackageInfo)
+                    }
+
+                    if (tipp.publicationType == RDStore.TIPP_PUBLIC_TYPE_SERIAL) {
+                        // KBART -> print_identifier-> identifiers
+                        if (tippMap.kbartRowMap.print_identifier) {
+                            result.changedTipp = createOrUpdateIdentifierForTipp(result, tipp, "issn", tippMap.kbartRowMap.print_identifier, 'print_identifier', autoUpdatePackageInfo)
+                        }
+
+                        // KBART -> online_identifier  -> identifiers
+                        if (tippMap.kbartRowMap.online_identifier) {
+                            result.changedTipp = createOrUpdateIdentifierForTipp(result, tipp, "eissn", tippMap.kbartRowMap.online_identifier, 'online_identifier', autoUpdatePackageInfo)
+                        }
+                    } else if (tipp.publicationType == RDStore.TIPP_PUBLIC_TYPE_MONO) {
+                        // KBART -> print_identifier-> identifiers
+                        if (tippMap.kbartRowMap.print_identifier) {
+                            result.changedTipp = createOrUpdateIdentifierForTipp(result, tipp, "pisbn", tippMap.kbartRowMap.print_identifier, 'print_identifier', autoUpdatePackageInfo)
+                        }
+
+                        // KBART -> online_identifier  -> identifiers
+                        if (tippMap.kbartRowMap.online_identifier) {
+                            result.changedTipp = createOrUpdateIdentifierForTipp(result, tipp, "isbn", tippMap.kbartRowMap.online_identifier, 'online_identifier', autoUpdatePackageInfo)
+                        }
+                    }
+
+                    // KBART -> title_id  -> identifiers
+                    if (tippMap.kbartRowMap.title_id) {
+                            result.changedTipp = createOrUpdateIdentifierForTipp(result, tipp, identifierNamespace.value, tippMap.kbartRowMap.title_id, 'title_id', autoUpdatePackageInfo)
+                    }
+
+                    // KBART -> doi_identifier  -> identifiers
+                    if (tippMap.kbartRowMap.doi_identifier) {
+                        result.changedTipp = createOrUpdateIdentifierForTipp(result, tipp, "doi", tippMap.kbartRowMap.doi_identifier, 'doi_identifier', autoUpdatePackageInfo)
+                    }
+
+                    // KBART -> ddc -> ddcs
+                    if (tippMap.kbartRowMap.ddc) {
+                        List ddcs = tippMap.kbartRowMap.ddc.split(',')
+
+                        ddcs.each { String ddc ->
+                            RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.DDC, ddc)
+                            if (refdataValue && !(refdataValue in tipp.ddcs)) {
+                                tipp.addToDdcs(refdataValue)
+                            }
+                        }
+                    }
+
+                    // KBART -> language -> language -> languages
+                    if (tippMap.kbartRowMap.language) {
+                        List languages = tippMap.kbartRowMap.language.split(',')
+                        languages.each { String lan ->
+                            RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.KBCOMPONENT_LANGUAGE, lan)
+                            if (refdataValue) {
+                                if (!KBComponentLanguage.findByKbcomponentAndLanguage(tipp, refdataValue)) {
+                                    KBComponentLanguage kbComponentLanguage = new KBComponentLanguage(kbcomponent: tipp, language: refdataValue)
+                                    kbComponentLanguage.save()
+                                }
+                            }
+                        }
+
+                        tipp.save()
+                    }
+                    // KBART -> listprice_eur -> prices
+                    if (tippMap.kbartRowMap.listprice_eur) {
+                        result.changedTipp = createOrUpdatePrice(result, tipp, RDStore.PRICE_TYPE_LIST, RDStore.CURRENCY_EUR, tippMap.kbartRowMap.listprice_eur, 'listprice_eur', autoUpdatePackageInfo)
+                    }
+
+                    // KBART -> listprice_usd -> prices
+                    if (tippMap.kbartRowMap.listprice_usd) {
+                        result.changedTipp = createOrUpdatePrice(result, tipp, RDStore.PRICE_TYPE_LIST, RDStore.CURRENCY_USD, tippMap.kbartRowMap.listprice_usd, 'listprice_usd', autoUpdatePackageInfo)
+                    }
+
+                    // KBART -> listprice_gbp -> prices
+                    if (tippMap.kbartRowMap.listprice_gbp) {
+                        result.changedTipp = createOrUpdatePrice(result, tipp, RDStore.PRICE_TYPE_LIST, RDStore.CURRENCY_GBP, tippMap.kbartRowMap.listprice_gbp, 'listprice_gbp', autoUpdatePackageInfo)
+                    }
+
+                    // KBART -> oa_apc_eur -> prices
+                    if (tippMap.kbartRowMap.oa_apc_eur) {
+                        result.changedTipp = createOrUpdatePrice(result, tipp, RDStore.PRICE_TYPE_OA_APC, RDStore.CURRENCY_EUR, tippMap.kbartRowMap.oa_apc_eur, 'oa_apc_eur', autoUpdatePackageInfo)
+                    }
+
+                    // KBART -> oa_apc_usd -> prices
+                    if (tippMap.kbartRowMap.oa_apc_usd) {
+                        result.changedTipp = createOrUpdatePrice(result, tipp, RDStore.PRICE_TYPE_OA_APC, RDStore.CURRENCY_USD, tippMap.kbartRowMap.oa_apc_usd, 'oa_apc_usd', autoUpdatePackageInfo)
+                    }
+
+                    // KBART -> oa_apc_gbp -> prices
+                    if (tippMap.kbartRowMap.oa_apc_gbp) {
+                        result.changedTipp = createOrUpdatePrice(result, tipp, RDStore.PRICE_TYPE_OA_APC, RDStore.CURRENCY_GBP, tippMap.kbartRowMap.oa_apc_gbp, 'oa_apc_gbp', autoUpdatePackageInfo)
+                    }
+
 
                     // autoUpdatePackageInfo = autoUpdatePackageInfo.refresh()
                     AutoUpdateTippInfo autoUpdateTippInfo = new AutoUpdateTippInfo(
@@ -2338,7 +2514,7 @@ class KbartImportService {
                             autoUpdatePackageInfo: autoUpdatePackageInfo
                     ).save()
 
-                    newTippList << [tippID: tipp.id, kbartRowMap: tippMap.kbartRowMap, autoUpdatePackageInfo: autoUpdatePackageInfo]
+                    newTippList << [tippID: tipp.id, autoUpdatePackageInfo: autoUpdatePackageInfo]
                 }
 
                 log.info("createTippBatch (${counter + 1} of $counterNewTippsToProcess) processed at: ${System.currentTimeMillis() - start} msecs")
@@ -2353,5 +2529,37 @@ class KbartImportService {
         }
 
         return newTippList
+    }
+
+    Date parseDatebyCreateTipp(String value){
+        LocalDateTime ldt = null
+        Date instant = null
+
+        if (value && value.trim()) {
+            String newValue = value
+            try {
+                if ( newValue.trim() ) {
+                    if (newValue.length() == 4) {
+                        ldt = LocalDate.parse(newValue + "-01-01", dateformatter).atStartOfDay()
+                    } else if (newValue.length() == 7) {
+                        ldt = LocalDate.parse(newValue + "-01", dateformatter).atStartOfDay()
+                    } else if (newValue.length() == 10 && newValue.contains('-')) {
+                        ldt = LocalDate.parse(newValue, dateformatter).atStartOfDay()
+                    }else if (newValue.length() == 10 && newValue.contains('/')) {
+                        ldt = LocalDate.parse(newValue, dateformatter2).atStartOfDay()
+                    } else {
+                        ldt = LocalDateTime.parse(newValue, datetimeformatter)
+                    }
+                }
+            }
+            catch (Exception e) {
+                log.error("Parse date fail. Date to parse was -> ${newValue}:" + e.toString())
+            }
+
+            if (ldt) {
+                instant = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant())
+            }
+        }
+        return instant
     }
 }

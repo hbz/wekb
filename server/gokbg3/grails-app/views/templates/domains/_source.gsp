@@ -91,6 +91,20 @@
         <semui:xEditableBoolean owner="${d}" field="kbartHasWekbFields" overwriteEditable="false"/>
     </dd>
 </dl>
+<dl>
+    <dt class="control-label">
+        Last Changed in Kbart
+    </dt>
+    <dd>
+        <sec:ifAnyGranted roles="ROLE_SUPERUSER">
+            <semui:xEditable owner="${d}" type="date" field="lastChangedInKbart">${d.lastChangedInKbart}</semui:xEditable>
+        </sec:ifAnyGranted>
+        <sec:ifNotGranted roles="ROLE_SUPERUSER">
+            <g:formatDate format="${message(code: 'default.date.format.notime')}"
+                          date="${d.lastChangedInKbart}"/>
+        </sec:ifNotGranted>
+    </dd>
+</dl>
 %{--<dl>
     <dt class="control-label">
         EZB Matching Enabled
