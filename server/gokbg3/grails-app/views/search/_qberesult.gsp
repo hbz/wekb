@@ -15,6 +15,7 @@
 
     <g:render template="/search/pagination" model="${params}"/>
 
+    <div style="overflow-x: auto">
     <table class="ui selectable striped sortable celled table">
         <thead>
         <tr>
@@ -88,6 +89,7 @@
         </g:each>
         </tbody>
     </table>
+    </div>
     <g:render template="/search/pagination" model="${params}"/>
 </g:if>
 <g:else>
@@ -101,6 +103,7 @@
 
     <g:render template="/search/pagination" model="${params}"/>
     <g:form controller="workflow" action="action" method="post" params="${params}" class='action-form'>
+       <div style="overflow-x: auto">
         <table class="ui selectable striped sortable celled table">
             <thead>
             <sec:ifLoggedIn>
@@ -222,6 +225,7 @@
             </g:each>
             </tbody>
         </table>
+       </div>
     </g:form>
     <g:render template="/search/pagination" model="${params}"/>
 </g:else>

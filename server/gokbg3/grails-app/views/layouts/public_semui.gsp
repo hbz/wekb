@@ -71,9 +71,8 @@
                 </div>
 
                 <div class="menu">
-                    <g:link class="item" controller="search" action="componentSearch"
-                            params="[qbe: 'g:autoUpdatePackageInfos', qp_curgroups: springSecurityService.currentUser.curatoryGroups]">My Auto Update Infos</g:link>
-
+                    <g:link class="item" controller="group" action="myAutoUpdateInfos">My Auto Update Infos</g:link>
+                    <g:link class="item" controller="group" action="myAutoUpdateInfos">My Packages due to automatic update</g:link>
                 </div>
             </div>
 

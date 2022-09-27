@@ -115,6 +115,9 @@ class TitleInstancePackagePlatform extends KBComponent {
   @RefdataAnnotation(cat = RCConstants.TIPP_PUBLICATION_TYPE)
   RefdataValue publicationType
 
+  static transients = [ "kbartImportRunning" ]
+  boolean kbartImportRunning = false
+
 
   private static SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd")
 

@@ -185,17 +185,17 @@ class GlobalSearchTemplatesService {
                         ],
                         qbeResults: [
                                 [heading: 'Description', property: 'description', link: true],
-                                [heading: 'Package', property: 'pkg', link: true],
+                                [heading: 'Package', property: 'pkg.name', link: true],
                                 [heading: 'Status', property: 'status', sort: 'status.value'],
                                 [heading: 'Start Time', property: 'startTime', sort: 'startTime'],
                                 [heading: 'End Time', property: 'endTime', sort: 'endTime'],
                                 [heading: 'Only Last Changed Update', property: 'onlyRowsWithLastChanged', sort: 'onlyRowsWithLastChanged'],
                                 [heading: 'Rows in KBART-File', property: 'countKbartRows', sort: 'countKbartRows'],
                                 [heading: 'Processed KBART Rows', property: 'countProcessedKbartRows', sort: 'countProcessedKbartRows'],
-                                [heading: 'Changed Titles ', property: 'countChangedTipps', sort: 'countChangedTipps', jumpToLink: '/search/componentSearch/wekb.AutoUpdatePackageInfo:objectID?qbe=g:autoUpdateTippInfos&qp_aup_id=objectID&&qp_type=org.gokb.cred.RefdataValue:'+ RDStore.AUTO_UPDATE_TYPE_CHANGED_TITLE.id],
-                                [heading: 'Removed Titles ', property: 'countRemovedTipps', sort: 'countRemovedTipps', jumpToLink: '/search/componentSearch/wekb.AutoUpdatePackageInfo:objectID?qbe=g:autoUpdateTippInfos&qp_aup_id=objectID&&qp_type=org.gokb.cred.RefdataValue:'+ RDStore.AUTO_UPDATE_TYPE_REMOVED_TITLE.id],
-                                [heading: 'New Titles', property: 'countNewTipps', sort: 'countNewTipps', jumpToLink: '/search/componentSearch/wekb.AutoUpdatePackageInfo:objectID?qbe=g:autoUpdateTippInfos&qp_aup_id=objectID&&qp_type=org.gokb.cred.RefdataValue:'+ RDStore.AUTO_UPDATE_TYPE_NEW_TITLE.id],
-                                [heading: 'Invalid Titles', property: 'countInValidTipps', sort: 'countInValidTipps', jumpToLink: '/search/componentSearch/wekb.AutoUpdatePackageInfo:objectID?qbe=g:autoUpdateTippInfos&qp_aup_id=objectID&&qp_type=org.gokb.cred.RefdataValue:'+ RDStore.AUTO_UPDATE_TYPE_FAILED_TITLE.id],
+                                [heading: 'Changed Titles ', property: 'countChangedTipps', sort: 'countChangedTipps', jumpToLink: '/search/componentSearch/wekb.AutoUpdatePackageInfo:objectID?qbe=g:autoUpdateTippInfos&qp_aup_id=objectID&&qp_type_value=Changed Title'],
+                                [heading: 'Removed Titles ', property: 'countRemovedTipps', sort: 'countRemovedTipps', jumpToLink: '/search/componentSearch/wekb.AutoUpdatePackageInfo:objectID?qbe=g:autoUpdateTippInfos&qp_aup_id=objectID&&qp_type_value=Removed Title'],
+                                [heading: 'New Titles', property: 'countNewTipps', sort: 'countNewTipps', jumpToLink: '/search/componentSearch/wekb.AutoUpdatePackageInfo:objectID?qbe=g:autoUpdateTippInfos&qp_aup_id=objectID&&qp_type_value=New Title'],
+                                [heading: 'Invalid Titles', property: 'countInValidTipps', sort: 'countInValidTipps', jumpToLink: '/search/componentSearch/wekb.AutoUpdatePackageInfo:objectID?qbe=g:autoUpdateTippInfos&qp_aup_id=objectID&&qp_type_value=Failed Title'],
 
                         ]
                 ]
@@ -257,6 +257,11 @@ class GlobalSearchTemplatesService {
                                         qparam     : 'qp_status',
                                         placeholder: 'Type',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'status'],
+                                ],
+                                [
+                                        qparam     : 'qp_type_value',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'type.value'],
+                                        hide: true
                                 ],
                         ],
                         qbeGlobals: [

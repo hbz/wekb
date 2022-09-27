@@ -344,7 +344,7 @@ class CreateComponentService {
                     if(pkg != null) {
                         pkg.name = name ?: pkg.name
 
-                        if (colMap.provider_uuid != null) {
+                        if (colMap.provider_uuid != null && cols[colMap.provider_uuid]) {
                             Org provider = Org.findByUuid(cols[colMap.provider_uuid].trim())
                             if (provider){
                                 if(!(pkg.provider && pkg.provider == provider)){
@@ -362,7 +362,7 @@ class CreateComponentService {
 
                         }
 
-                        if (colMap.nominal_platform_uuid != null) {
+                        if (colMap.nominal_platform_uuid != null && cols[colMap.nominal_platform_uuid]) {
                             Platform platform = Platform.findByUuid(cols[colMap.nominal_platform_uuid].trim())
                             if (platform){
                                 if(!(pkg.nominalPlatform && pkg.nominalPlatform == platform)){
@@ -380,11 +380,11 @@ class CreateComponentService {
 
                         }
 
-                        if (colMap.description != null && colMap.description != "") {
+                        if (colMap.description != null && cols[colMap.description]) {
                             pkg.description = cols[colMap.description].trim()
                         }
 
-                        if (colMap.url != null && colMap.url != "") {
+                        if (colMap.url != null && cols[colMap.url]) {
                             pkg.descriptionURL = cols[colMap.url].trim()
                         }
 
@@ -461,7 +461,7 @@ class CreateComponentService {
                           }*/
 
 
-                        if (colMap.national_ranges) {
+                        if (colMap.national_ranges && cols[colMap.national_ranges]) {
                             List<String> national_ranges = cols[colMap.national_ranges].split(',')
                             national_ranges.each { String value ->
                                 RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.COUNTRY, value.trim())
@@ -471,7 +471,7 @@ class CreateComponentService {
                             }
                         }
 
-                        if (colMap.regional_ranges) {
+                        if (colMap.regional_ranges && cols[colMap.regional_ranges]) {
                             List<String> regional_ranges = cols[colMap.regional_ranges].split(',')
                             regional_ranges.each { String value ->
                                 RefdataValue refdataValue = RefdataCategory.lookup(RCConstants.PACKAGE_REGIONAL_RANGE, value.trim())
@@ -495,7 +495,7 @@ class CreateComponentService {
                             }
                         }
 
-                        if (colMap.ddcs) {
+                        if (colMap.ddcs && cols[colMap.ddcs]) {
                             List<String> ddcs = cols[colMap.ddcs].split(',')
                             ddcs.each { String value ->
                                 value = value.trim()
