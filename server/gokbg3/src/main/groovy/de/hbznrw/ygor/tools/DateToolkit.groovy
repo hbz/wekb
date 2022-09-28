@@ -34,7 +34,7 @@ class DateToolkit {
 
     static LocalDateTime fromString(String dateString) throws IllegalArgumentException, DateTimeParseException{
         try{
-            return fromString(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+            return fromString(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))
         }
         catch(IllegalArgumentException | DateTimeParseException e){
             return fromString(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))

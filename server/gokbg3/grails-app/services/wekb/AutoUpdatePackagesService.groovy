@@ -333,15 +333,15 @@ class AutoUpdatePackagesService {
     }*/
 
 
-    static List<URL> getUpdateUrls(String url, String lastProcessingDate, String packageCreationDate) {
-        if (StringUtils.isEmpty(lastProcessingDate)) {
+    static List<URL> getUpdateUrls(String url, Date lastProcessingDate, Date packageCreationDate) {
+        if (lastProcessingDate == null) {
             lastProcessingDate = packageCreationDate
         }
-        if (StringUtils.isEmpty(url) || StringUtils.isEmpty(lastProcessingDate)) {
+        if (StringUtils.isEmpty(url) || lastProcessingDate == null) {
             return new ArrayList<URL>()
         }
         if (UrlToolkit.containsDateStamp(url) || UrlToolkit.containsDateStampPlaceholder(url)) {
-            return UrlToolkit.getUpdateUrlList(url, lastProcessingDate)
+            return UrlToolkit.getUpdateUrlList(url, lastProcessingDate.toString())
         } else {
             return Arrays.asList(new URL(url))
         }
@@ -443,15 +443,15 @@ class AutoUpdatePackagesService {
                 try {
                     if (pkg.source && pkg.source.url) {
                         List<URL> updateUrls
-                        if (pkg.getTippCount() <= 0) {
+                        if (pkg.getTippCount() <= 0 || pkg.source.lastRun == null) {
                             updateUrls = new ArrayList<>()
                             updateUrls.add(new URL(pkg.source.url))
                         } else {
                             // this package had already been filled with data
                             if ((UrlToolkit.containsDateStamp(pkg.source.url) || UrlToolkit.containsDateStampPlaceholder(pkg.source.url)) && pkg.source.lastUpdateUrl) {
-                                updateUrls = getUpdateUrls(pkg.source.lastUpdateUrl, pkg.source.lastRun.toString(), pkg.dateCreated.toString())
+                                updateUrls = getUpdateUrls(pkg.source.lastUpdateUrl, pkg.source.lastRun, pkg.dateCreated)
                             } else {
-                                updateUrls = getUpdateUrls(pkg.source.url, pkg.source.lastRun.toString(), pkg.dateCreated.toString())
+                                updateUrls = getUpdateUrls(pkg.source.url, pkg.source.lastRun, pkg.dateCreated)
                             }
                         }
                         log.info("Got ${updateUrls}")
@@ -467,7 +467,7 @@ class AutoUpdatePackagesService {
                                     file = exportService.kbartFromUrl(lastUpdateURL)
 
                                     //if (kbartFromUrlStartTime < LocalTime.now().minus(45, ChronoUnit.MINUTES)){ sense???
-                                    break
+                                    //break
                                     //}
 
                                 }

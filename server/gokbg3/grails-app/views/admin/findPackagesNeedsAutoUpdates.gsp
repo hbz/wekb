@@ -40,12 +40,12 @@
         <thead>
         <tr>
             <th>#</th>
-            <th>Name</th>
+            <semui:sortableColumn property="p.name" title="Name"/>
             <th>Provider</th>
-            <th>Curatory Groups</th>
+            <semui:sortableColumn property="p.curatoryGroups" title="Curatory Groups"/>
             <th>Source / Kbart URL</th>
-            <th>Last Update URL</th>
-            <th>Last Run</th>
+            <semui:sortableColumn property="p.source.lastUpdateUrl" title="Last Update URL"/>
+            <semui:sortableColumn property="p.source.lastRun" title="Last Run"/>
             <th>Next Run</th>
             <th>Titles</th>
             <th></th>

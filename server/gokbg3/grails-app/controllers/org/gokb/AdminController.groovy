@@ -626,11 +626,13 @@ class AdminController {
 
     params.sort = params.sort ?: 'p.name'
 
+    params.order = params.order ?: 'asc'
+
     Package.executeQuery(
             "from Package p " +
                     "where p.source is not null and " +
                     "p.source.automaticUpdates = true " +
-                    "and (p.source.lastRun is null or p.source.lastRun < current_date) order by ${params.sort} ").each { Package p ->
+                    "and (p.source.lastRun is null or (p.source.lastRun < current_date)) order by ${params.sort} ${params.order}").each { Package p ->
       if (p.source.needsUpdate()) {
         if(curatoryGroupFilter){
          if(curatoryGroupFilter in p.curatoryGroups) {
