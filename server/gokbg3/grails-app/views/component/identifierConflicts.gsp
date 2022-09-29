@@ -4,7 +4,7 @@
 <html>
 <head>
     <meta name="layout" content="public_semui"/>
-    <title><g:message code="gokb.appname" default="we:kb"/>: Identifier Review</title>
+    <title>Identifier Review</title>
 </head>
 
 <body>

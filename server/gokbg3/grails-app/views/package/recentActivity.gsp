@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="layout" content="public_semui"/>
-    <title><g:message code="gokb.appname" default="we:kb"/>: Package Recent Activity</title>
+    <title>Package Recent Activity</title>
 </head>
 
 <body>

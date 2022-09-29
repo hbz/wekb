@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="layout" content="public_semui"/>
-    <title><g:message code="gokb.appname" default="we:kb"/>: Packages due to automatic update</title>
+    <title>Packages due to automatic update</title>
 </head>
 
 <body>
