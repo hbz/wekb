@@ -554,13 +554,6 @@ class AutoUpdatePackagesService {
                 }
         }
 
-        AutoUpdatePackageInfo.withTransaction {
-            if(!setAllTippsNotInKbartToDeleted){
-                autoUpdatePackageInfo.kbartHasWekbFields = true
-            }
-            autoUpdatePackageInfo.save()
-        }
-
         if(addOnly){
             setAllTippsNotInKbartToDeleted = false
         }
@@ -640,6 +633,17 @@ class AutoUpdatePackagesService {
             if(lastChangedDates.size() > 0) {
                 LocalDate maxDate = lastChangedDates.max()
                 lastChangedInKbart = Date.from(maxDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant())
+            }
+
+            AutoUpdatePackageInfo.withTransaction {
+                if(!setAllTippsNotInKbartToDeleted){
+                    autoUpdatePackageInfo.kbartHasWekbFields = true
+                }
+
+                if(lastChangedInKbart){
+                    autoUpdatePackageInfo.lastChangedInKbart = lastChangedInKbart
+                }
+                autoUpdatePackageInfo.save()
             }
 
             int max = 500
