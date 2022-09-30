@@ -115,6 +115,8 @@ class TitleInstancePackagePlatform extends KBComponent {
   @RefdataAnnotation(cat = RCConstants.TIPP_PUBLICATION_TYPE)
   RefdataValue publicationType
 
+  boolean fromKbartImport = false
+
   static transients = [ "kbartImportRunning" ]
   boolean kbartImportRunning = false
 
@@ -236,6 +238,8 @@ class TitleInstancePackagePlatform extends KBComponent {
     url column: 'url', type: 'text', index: 'tipp_url_idx'
     subjectArea column: 'subject_area', type: 'text', index: 'tipp_subject_area_idx'
     openAccess column: 'tipp_open_access_rv_fk', index: 'tipp_open_access_idx'
+
+    fromKbartImport column: 'tipp_from_kbart_import'
 
     ddcs             joinTable: [
             name:   'tipp_dewey_decimal_classification',

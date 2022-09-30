@@ -1049,6 +1049,7 @@ class KbartImportService {
 
             if (tipp) {
                 tipp.kbartImportRunning = true
+                tipp.fromKbartImport = true
                 result = updateTippWithKbart(result, tipp, tippMap, autoUpdatePackageInfo, result.tippsWithCoverage, identifierNamespace)
                 tipp = result.tipp
             }
@@ -2334,7 +2335,8 @@ class KbartImportService {
                         subjectArea: tippMap.kbartRowMap.subject_area,
                         series: tippMap.kbartRowMap.monograph_parent_collection_title,
                         supersedingPublicationTitleId: tippMap.kbartRowMap.superseding_publication_title_id,
-                        volumeNumber: tippMap.kbartRowMap.monograph_volume
+                        volumeNumber: tippMap.kbartRowMap.monograph_volume,
+                        fromKbartImport: true
                         )
                 if (tipp) {
                     tipp.save(flush: true)
