@@ -22,8 +22,10 @@ import java.time.ZoneId
 @Slf4j
 class TitleInstancePackagePlatform extends KBComponent {
 
-  def dateFormatService
   def cascadingUpdateService
+
+  Package pkg
+  Platform hostPlatform
 
   @Deprecated
   String hybridOAUrl
@@ -168,32 +170,11 @@ class TitleInstancePackagePlatform extends KBComponent {
     ],
     'defaultLinks' : [
       'pkg',
-      'title',
       'hostPlatform'
     ],
     'defaultEmbeds': [
       'coverageStatements'
     ]
-  ]
-
-  static hasByCombo = [
-    pkg         : Package,
-    hostPlatform: Platform,
-    derivedFrom : TitleInstancePackagePlatform,
-    masterTipp  : TitleInstancePackagePlatform,
-  ]
-
-  static mappedByCombo = [
-    pkg                : 'tipps',
-    hostPlatform       : 'hostedTipps',
-    additionalPlatforms: 'linkedTipps',
-    title              : 'tipps',
-    derivatives        : 'derivedFrom'
-  ]
-
-  static manyByCombo = [
-    derivatives        : TitleInstancePackagePlatform,
-    additionalPlatforms: Platform,
   ]
 
   static hasMany = [
@@ -209,7 +190,7 @@ class TitleInstancePackagePlatform extends KBComponent {
   ]
 
   def getPersistentId() {
-    "${uuid ?: 'wekb:TIPP:' + title?.id + ':' + pkg?.id + ':' + hostPlatform?.id}"
+    "${uuid ?: 'wekb:TIPP:' + this.id + ':' + pkg?.id + ':' + hostPlatform?.id}"
   }
 
   static mapping = {
@@ -238,6 +219,9 @@ class TitleInstancePackagePlatform extends KBComponent {
     url column: 'url', type: 'text', index: 'tipp_url_idx'
     subjectArea column: 'subject_area', type: 'text', index: 'tipp_subject_area_idx'
     openAccess column: 'tipp_open_access_rv_fk', index: 'tipp_open_access_idx'
+
+    pkg column: 'tipp_pkg_fk', index: 'tipp_pkg_idx'
+    hostPlatform column: 'tipp_host_platform_fk', index: 'tipp_host_platform_idx'
 
     fromKbartImport column: 'tipp_from_kbart_import'
 
@@ -290,12 +274,6 @@ class TitleInstancePackagePlatform extends KBComponent {
     ]
   }
 
-  @Transient
-  def getPermissableCombos() {
-    [
-    ]
-  }
-
   @Override
   String getNiceName() {
     if (publicationType) {
@@ -322,170 +300,11 @@ class TitleInstancePackagePlatform extends KBComponent {
     }
   }
 
-
-
   @Override
   @Transient
   String getDisplayName() {
-    return name ?: "${pkg?.name} / ${title?.name} / ${hostPlatform?.name}"
+    return name ?: "${pkg?.name} / ${this.name} / ${hostPlatform?.name}"
   }
-
-
-
-
-
-
-  @Transient
-  static def oaiConfig = [
-    id             : 'tipps',
-    textDescription: 'TIPP repository for GOKb',
-    pkg            : 'Package.Tipps',
-    query          : " from TitleInstancePackagePlatform as o ",
-    pageSize       : 10
-  ]
-
-  /**
-   *  Render this tipp as OAI_dc
-   */
-  @Transient
-  def toOaiDcXml(builder, attr) {
-    builder.'dc'(attr) {
-      'dc:title'(title.name)
-    }
-  }
-
-  /**
-   *  Render this TIPP as GoKBXML
-   */
-  @Transient
-  def toGoKBXml(builder, attr) {
-    def linked_pkg = getPkg()
-    def ti = getTitle()
-
-    builder.'gokb'(attr) {
-      builder.'tipp'([id: (id), uuid: (uuid)]) {
-
-        addCoreGOKbXmlFields(builder, attr)
-        builder.'lastUpdated'(lastUpdated ? dateFormatService.formatIsoTimestamp(lastUpdated) : null)
-        builder.'type'(titleClass)
-        builder.'url'(url ?: "")
-        builder.'subjectArea'(subjectArea?.trim())
-        builder.'series'(series?.trim())
-        builder.'publisherName'(publisherName?.trim())
-        builder.'dateFirstInPrint'(dateFirstInPrint?.trim())
-        builder.'dateFirstOnline'(dateFirstOnline?.trim())
-        builder.'firstAuthor'(firstAuthor?.trim())
-        builder.'publicationType'(publicationType.value.trim())
-        builder.'volumeNumber'(volumeNumber?.trim())
-        builder.'editionStatement'(editionStatement?.trim())
-        builder.'firstEditor'(firstEditor?.trim())
-        builder.'parentPublicationTitleId'(parentPublicationTitleId?.trim())
-        builder.'precedingPublicationTitleId'(precedingPublicationTitleId?.trim())
-        builder.'supersedingPublicationTitleId'(supersedingPublicationTitleId?.trim())
-        builder.'lastChangedExternal'(lastChangedExternal?.trim())
-        builder.'medium'(medium?.value.trim())
-        builder.'languages' {
-          languages.each {KBComponentLanguage lan ->
-            builder.'language'(lan.language.value.trim())
-          }
-        }
-        builder.'title'([id: ti.id, uuid: ti.uuid]) {
-          builder.'name'(ti.name?.trim())
-          builder.'type'(titleClass)
-          builder.'status'(ti.status?.value)
-          builder.'identifiers' {
-            titleIds.each { tid ->
-              builder.'identifier'([namespace: tid[0], namespaceName: tid[3], value: tid[1], type: tid[2]])
-            }
-          }
-        }
-        builder.'package'([id: linked_pkg.id, uuid: linked_pkg.uuid]) {
-          linked_pkg.with {
-            addCoreGOKbXmlFields(builder, attr)
-
-            'scope'(scope?.value)
-            'openAccess'(openAccess?.value)
-            'file'(file?.value)
-            'breakable'(breakable?.value)
-            'consistent'(consistent?.value)
-            'accessType'(accessType?.value)
-            'globalNote'(globalNote)
-            'contentType'(contentType?.value)
-            'lastUpdated'(lastUpdated ? dateFormatService.formatIsoTimestamp(lastUpdated) : null)
-            if (provider) {
-              builder.'provider'([id: provider?.id, uuid: provider?.uuid]) {
-                'name'(provider?.name)
-                'mission'(provider?.mission?.value)
-              }
-            } else {
-              builder.'provider'()
-            }
-            if (nominalPlatform) {
-              builder.'nominalPlatform'([id: nominalPlatform?.id, uuid: nominalPlatform?.uuid]) {
-                'name'(nominalPlatform.name?.trim())
-                'primaryUrl'(nominalPlatform.primaryUrl?.trim())
-              }
-            } else {
-              builder.'nominalPlatform'()
-            }
-            builder.'curatoryGroups' {
-              pkg.curatoryGroups.each { cg ->
-                builder.'group' {
-                  builder.'name'(cg.name)
-                }
-              }
-            }
-          }
-        }
-        builder.'platform'([id: hostPlatform.id, uuid: hostPlatform.uuid]) {
-          'primaryUrl'(hostPlatform.primaryUrl?.trim())
-          'name'(hostPlatform.name?.trim())
-        }
-        'access'([start: (accessStartDate ? dateFormatService.formatIsoTimestamp(accessStartDate) : null), end: (accessEndDate ? dateFormatService.formatIsoTimestamp(accessEndDate) : null)])
-        def cov_statements = getCoverageStatements()
-        if (cov_statements?.size() > 0) {
-          cov_statements.each { tcs ->
-            'coverage'(
-              startDate: (tcs.startDate ? dateFormatService.formatIsoTimestamp(tcs.startDate) : null),
-              startVolume: (tcs.startVolume),
-              startIssue: (tcs.startIssue),
-              endDate: (tcs.endDate ? dateFormatService.formatIsoTimestamp(tcs.endDate) : null),
-              endVolume: (tcs.endVolume),
-              endIssue: (tcs.endIssue),
-              coverageDepth: (tcs.coverageDepth?.value ?: null),
-              coverageNote: (tcs.coverageNote),
-              embargo: (tcs.embargo)
-            )
-          }
-        }
-        if (prices && prices.size() > 0) {
-          builder.'prices'() {
-            prices.each { price ->
-              builder.'price' {
-                builder.'type'(price.priceType.value)
-                builder.'amount'(price.price)
-                builder.'currency'(price.currency)
-                builder.'startDate'(price.startDate)
-                if (price.endDate) {
-                  builder.'endDate'(price.endDate)
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-
-  @Transient
-  getTitleClass() {
-    def result = KBComponent.get(title.id)?.class.getSimpleName()
-    result
-  }
-
-
-
 
   @Transient
   public String getTitleID(){

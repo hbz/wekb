@@ -27,8 +27,6 @@ class RDStore {
 
 
     public static final COMBO_TYPE_KB_IDS = getRefdataValue('KBComponent.Ids', RCConstants.COMBO_TYPE)
-    public static final COMBO_TYPE_PLT_HOSTEDTIPPS = getRefdataValue('Platform.HostedTipps', RCConstants.COMBO_TYPE)
-    public static final COMBO_TYPE_PKG_TIPPS = getRefdataValue('Package.Tipps', RCConstants.COMBO_TYPE)
 
 
     public static final COMBO_STATUS_ACTIVE = getRefdataValue(Combo.STATUS_ACTIVE, RCConstants.COMBO_STATUS)

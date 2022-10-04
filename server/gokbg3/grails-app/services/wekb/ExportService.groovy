@@ -104,7 +104,7 @@ class ExportService {
             )
 
             def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
-            def combo_pkg_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
+
 
             Map queryParams = [:]
             queryParams.p = pkg.id
@@ -273,7 +273,7 @@ class ExportService {
             )
 
             def status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
-            def combo_pkg_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
+
 
             Map queryParams = [:]
             queryParams.p = pkg.id
@@ -597,14 +597,11 @@ class ExportService {
                 " cs.embargo " +
                 "from TitleInstancePackagePlatform as tipp left join tipp.coverageStatements as cs where tipp.id in (:tippIDs) order by tipp.name"
 
-        def combo_pkg_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
-
         Map queryParams = [:]
-        queryParams.p = pkg.id
+        queryParams.p = pkg
         queryParams.sd = [RDStore.KBC_STATUS_DELETED, RDStore.KBC_STATUS_REMOVED]
-        queryParams.ct = combo_pkg_tipps
 
-        List<Long> tippIDs = TitleInstancePackagePlatform.executeQuery("select tipp.id from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=:p and c.toComponent=tipp and tipp.status not in :sd and c.type = :ct order by tipp.name", queryParams, [readOnly: true])
+        List<Long> tippIDs = TitleInstancePackagePlatform.executeQuery("select tipp.id from TitleInstancePackagePlatform as tipp where tipp.pkg = :p and tipp.status not in :sd order by tipp.name", queryParams, [readOnly: true])
 
         int max = 500
         TitleInstancePackagePlatform.withSession { Session sess ->
@@ -694,7 +691,7 @@ class ExportService {
                                 case 'titleIdNameSpace':
 
                                     if(titleIdNameSpace == 'FAKE') {
-                                        Platform platform = Platform.executeQuery('select p from Platform as p,  Combo as c where c.toComponent.id = :tippID and c.type = :comboType and c.fromComponent = p and c.status = :comboStatus', [tippID: tippID, comboType: RDStore.COMBO_TYPE_PLT_HOSTEDTIPPS, comboStatus: RDStore.COMBO_STATUS_ACTIVE], [readOnly: true])[0]
+                                        Platform platform = Platform.executeQuery('select tipp.hostPlatform from TitleInstancePackagePlatform as tipp where tipp.id = :tippID and tipp.hostPlatform is not null', [tippID: tippID], [readOnly: true])[0]
                                         titleIdNameSpace = (platform && platform.titleNamespace) ? platform.titleNamespace.value : 'FAKE'
                                     }
 

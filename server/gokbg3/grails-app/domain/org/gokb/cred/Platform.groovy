@@ -66,7 +66,8 @@ class Platform extends KBComponent {
 
   static hasMany = [
           roles: RefdataValue,
-          ids: Identifier]
+          ids: Identifier,
+          tipps: TitleInstancePackagePlatform]
 
   static hasByCombo = [
     provider: Org
@@ -78,8 +79,6 @@ class Platform extends KBComponent {
 
   static manyByCombo = [
     hostedPackages: Package,
-    hostedTipps   : TitleInstancePackagePlatform,
-    linkedTipps   : TitleInstancePackagePlatform,
     curatoryGroups: CuratoryGroup
   ]
 
@@ -279,10 +278,9 @@ class Platform extends KBComponent {
     this.status = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Retired');
     this.save();
 
-    // Delete the tipps too as a TIPP should not exist without the associated,
+    /*// Delete the tipps too as a TIPP should not exist without the associated,
     // package.
-    log.debug("Retiring tipps");
-    def tipps = getHostedTipps()
+    log.debug("Retiring tipps")
 
     tipps.each { def t ->
       log.debug("deroxy ${t} ${t.class.name}");
@@ -295,16 +293,14 @@ class Platform extends KBComponent {
       log.debug("Retiring tipp ${tipp.id}");
       tipp.status = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Retired');
       tipp.save()
-    }
+    }*/
   }
 
   @Transient
   public getCurrentTippCount() {
-    def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current');
-    def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Platform.HostedTipps')
-
-    int result = Combo.executeQuery("select count(c.id) from Combo as c where c.fromComponent = ? and c.type = ? and c.toComponent.status = ?"
-            , [this, combo_tipps, refdata_current])[0]
+    def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current')
+    int result = Combo.executeQuery("select count(t.id) from TitleInstancePackagePlatform as t where t.hostPlatform = :plt and t.status = :status"
+            , [plt: this, stauts: refdata_current])[0]
 
     result
   }
