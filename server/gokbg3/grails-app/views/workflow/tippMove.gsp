@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="layout" content="public_semui" />
-<title><g:message code="gokb.appname" default="we:kb"/>: Move TIPP</title>
+<title>Move TIPP</title>
 </head>
 <body>
 

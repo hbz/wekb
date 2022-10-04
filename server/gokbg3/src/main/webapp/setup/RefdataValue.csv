@@ -29,15 +29,10 @@ Combo.Type;Package.NominalPlatform;Package.NominalPlatform;Package.NominalPlatfo
 Combo.Type;Package.Parent;Package.Parent;Package.Parent
 Combo.Type;Package.Previous;Package.Previous;Package.Previous
 Combo.Type;Package.Provider;Package.Provider;Package.Provider
-Combo.Type;Package.Tipps;Package.Tipps;Package.Tipps
 Combo.Type;Package.Vendor;Package.Vendor;Package.Vendor
 Combo.Type;Platform.CuratoryGroups;Platform.CuratoryGroups;Platform.CuratoryGroups
-Combo.Type;Platform.HostedTipps;Platform.HostedTipps;Platform.HostedTipps
-Combo.Type;Platform.HostedTitles;Platform.HostedTitles;Platform.HostedTitles
 Combo.Type;Platform.Provider;Platform.Provider;Platform.Provider
 Combo.Type;Source.CuratoryGroups;Source.CuratoryGroups;Source.CuratoryGroups
-Combo.Type;TitleInstancePackagePlatform.DerivedFrom;TitleInstancePackagePlatform.DerivedFrom;TitleInstancePackagePlatform.DerivedFrom
-Combo.Type;TitleInstancePackagePlatform.MasterTipp;TitleInstancePackagePlatform.MasterTipp;TitleInstancePackagePlatform.MasterTipp
 Contact.Content.Type;E-Mail;E-Mail;E-Mail
 Contact.Content.Type;Fax;Fax;Fax
 Contact.Content.Type;Phone;Phone;Phone

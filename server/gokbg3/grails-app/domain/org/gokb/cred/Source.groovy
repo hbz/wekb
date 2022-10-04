@@ -197,6 +197,26 @@ class Source extends KBComponent {
     return nextUpdate
   }
 
+  List getUpdateDays(int interval){
+    Date today = new Date()
+    List<Date> updateDays = []
+    // calculate from each first day of the year to not create a lag over the years
+    Calendar cal = Calendar.getInstance()
+    cal.set(Calendar.YEAR, cal.get(Calendar.YEAR))
+    cal.set(Calendar.DAY_OF_YEAR, 1)
+    Calendar cal2 = Calendar.getInstance()
+    cal2.set(Calendar.YEAR, cal.get(Calendar.YEAR))
+    cal2.set(Calendar.MONTH, 11) // 11 = december
+    cal2.set(Calendar.DAY_OF_MONTH, 31) // new years eve
+    Date nextUpdate = cal.getTime()
+    Date lastUpdate = cal2.getTime()
+    while (nextUpdate.before(lastUpdate)){
+      nextUpdate = nextUpdate.plus(interval)
+      updateDays << nextUpdate
+    }
+    return updateDays
+  }
+
 
   def intervals = [
       "Daily"       : 1,
@@ -241,6 +261,23 @@ class Source extends KBComponent {
       }
     }else {
       log.info("Source needsUpdate(): Frequency is null")
+    }
+    return null
+  }
+
+  @Transient
+  List<Timestamp> getAllNextUpdateTimestamp() {
+    //20:00:00 is time of Cronjob in AutoUpdatePackagesJob
+    if (automaticUpdates && frequency != null) {
+      def interval = intervals.get(frequency.value)
+      if (interval != null && interval > 1){
+        List<Date> due = getUpdateDays(interval)
+        List<Timestamp> timestampList = []
+        due.each {
+          timestampList << Date.parse('dd.MM.yy hh:mm:SS', "${it.getDateString()} 20:00:00").toTimestamp()
+        }
+        return timestampList
+      }
     }
     return null
   }

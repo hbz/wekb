@@ -146,4 +146,17 @@
     </dd>
 </dl>
 
+<dl>
+    <dt class="control-label">
+        Possible run times
+    </dt>
+    <dd>
+        <div class="ui bulleted list">
+            <g:each in="${d.getAllNextUpdateTimestamp()}" var="updateDate">
+                <div class="item">${updateDate}</div>
+            </g:each>
+        </div>
+    </dd>
+</dl>
+
 

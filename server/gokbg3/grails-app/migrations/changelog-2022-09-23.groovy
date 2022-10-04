@@ -135,4 +135,10 @@ databaseChangeLog = {
             rollback {}
         }
     }
+
+    changeSet(author: "djebeniani (generated)", id: "1663965353615-30") {
+        addColumn(tableName: "auto_update_package_info") {
+            column(name: "aupi_last_changed_in_kbart", type: "timestamp")
+        }
+    }
 }

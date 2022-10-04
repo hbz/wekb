@@ -1049,6 +1049,7 @@ class KbartImportService {
 
             if (tipp) {
                 tipp.kbartImportRunning = true
+                tipp.fromKbartImport = true
                 result = updateTippWithKbart(result, tipp, tippMap, autoUpdatePackageInfo, result.tippsWithCoverage, identifierNamespace)
                 tipp = result.tipp
             }
@@ -1163,21 +1164,16 @@ class KbartImportService {
                 name: tipp_fields.name,
                 medium: tipp_medium,
                 publicationType: tipp_publicationType,
-                url: tipp_fields.url)
-        if (result) {
+                url: tipp_fields.url,
+                pkg: tipp_fields.pkg,
+                hostPlatform: tipp_fields.hostPlatform)
 
-            def pkg_combo_type = RDStore.COMBO_TYPE_PKG_TIPPS
-            new Combo(toComponent: result, fromComponent: tipp_fields.pkg, type: pkg_combo_type).save()
+        result.save()
 
-            def plt_combo_type = RDStore.COMBO_TYPE_PLT_HOSTEDTIPPS
-            new Combo(toComponent: result, fromComponent: tipp_fields.hostPlatform, type: plt_combo_type).save()
-
-        } else {
+        if (!result) {
             log.error("TIPP creation failed!")
         }
         log.debug("processed at: ${System.currentTimeMillis()-start} msecs")
-
-        result.save()
 
         result
     }
@@ -2334,7 +2330,10 @@ class KbartImportService {
                         subjectArea: tippMap.kbartRowMap.subject_area,
                         series: tippMap.kbartRowMap.monograph_parent_collection_title,
                         supersedingPublicationTitleId: tippMap.kbartRowMap.superseding_publication_title_id,
-                        volumeNumber: tippMap.kbartRowMap.monograph_volume
+                        volumeNumber: tippMap.kbartRowMap.monograph_volume,
+                        fromKbartImport: true,
+                        pkg: tippMap.pkg,
+                        hostPlatform: tippMap.hostPlatform
                         )
                 if (tipp) {
                     tipp.save(flush: true)
@@ -2344,18 +2343,6 @@ class KbartImportService {
                 if (!tipp) {
                     log.error("TIPP creation failed!")
                 } else {
-                    def pkg_combo_type = RDStore.COMBO_TYPE_PKG_TIPPS
-                    //Combo pkg_tipp = new Combo(toComponent: tipp, fromComponent: tippMap.pkg, type: pkg_combo_type, status: RDStore.COMBO_STATUS_ACTIVE).save()
-
-                    def plt_combo_type = RDStore.COMBO_TYPE_PLT_HOSTEDTIPPS
-                    //Combo plt_tipp = new Combo(toComponent: tipp, fromComponent: tippMap.hostPlatform, type: plt_combo_type, status: RDStore.COMBO_STATUS_ACTIVE).save()
-
-                    sql.withTransaction {
-                        sql.executeInsert("""insert into combo (combo_id, combo_version, combo_from_fk, combo_to_fk, combo_type_rv_fk, combo_status_rv_fk) values ((select nextval('hibernate_sequence')), 0, ${tippMap.pkg.id}, ${tipp.id}, ${pkg_combo_type.id}, ${RDStore.COMBO_STATUS_ACTIVE.id})""")
-
-                        sql.executeInsert("""insert into combo (combo_id, combo_version, combo_from_fk, combo_to_fk, combo_type_rv_fk, combo_status_rv_fk) values ((select nextval('hibernate_sequence')), 0, ${tippMap.hostPlatform.id}, ${tipp.id}, ${plt_combo_type.id}, ${RDStore.COMBO_STATUS_ACTIVE.id})""")
-                    }
-
                     tipp.kbartImportRunning = true
 
                     Map result = [newTipp: true]

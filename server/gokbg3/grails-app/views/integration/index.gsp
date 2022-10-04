@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="layout" content="public_semui" />
-<title><g:message code="gokb.appname" default="we:kb"/>: Integration API</title>
+<title>Integration API</title>
 </head>
 <body>
 <h1 class="ui header">Integration API</h1>

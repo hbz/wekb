@@ -11,6 +11,7 @@ import org.apache.tika.metadata.Metadata
 import org.gokb.cred.*
 import grails.converters.JSON
 import wekb.AccessService
+import wekb.SearchService
 
 class ResourceController {
 
@@ -19,6 +20,7 @@ class ResourceController {
   def springSecurityService
   def displayTemplateService
   AccessService accessService
+  SearchService searchService
 
   def index() {
   }
@@ -127,5 +129,22 @@ class ResourceController {
   def showLogin() {
 
     redirect(action: 'show', params: params)
+  }
+
+  def packageChangeHistory() {
+    log.debug("packageChangeHistory:: ${params}")
+    def searchResult = [:]
+    params.qp_pkg_id = params.id
+    Package pkg = Package.get(params.id)
+
+    if(params.qp_pkg_id && pkg) {
+      params.qbe = 'g:autoUpdatePackageInfos'
+      params.hide = ['qp_pkg_id']
+      searchResult = searchService.search(searchResult.user, searchResult, params, response.format)
+      searchResult.result.pkg = pkg
+    }else {
+      flash.error = "Unable to find the requested resource."
+    }
+    searchResult.result
   }
 }

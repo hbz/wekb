@@ -24,7 +24,6 @@ class Package extends KBComponent {
   // Status default to 'Current'
   // Scope default to 'Front File'
   // Breakable?: Y
-  // Parent?: N // SO: This should not be needed really now. We should be able to test children for empty set.
   // Global?: Y
   // Consistent?: N
 
@@ -61,25 +60,12 @@ class Package extends KBComponent {
   ]*/
 
   static manyByCombo = [
-    tipps         : TitleInstancePackagePlatform,
-    children      : Package,
     curatoryGroups: CuratoryGroup
   ]
 
   static hasByCombo = [
-    parent         : Package,
-    broker         : Org,
     provider       : Org,
-    licensor       : Org,
-    vendor         : Org,
     nominalPlatform: Platform,
-    'previous'     : Package,
-    successor      : Package
-  ]
-
-  static mappedByCombo = [
-    children : 'parent',
-    successor: 'previous',
   ]
 
   static hasOne = [updateToken: UpdateToken]
@@ -91,7 +77,8 @@ class Package extends KBComponent {
           ddcs : RefdataValue,
           paas : PackageArchivingAgency,
           ids: Identifier,
-          autoUpdatePackageInfos: AutoUpdatePackageInfo
+          autoUpdatePackageInfos: AutoUpdatePackageInfo,
+          tipps: TitleInstancePackagePlatform
   ]
 
   static mapping = {
@@ -221,20 +208,16 @@ class Package extends KBComponent {
   @Transient
   public getCurrentTippCount() {
     def refdata_status = RDStore.KBC_STATUS_CURRENT
-    def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
-
-    int result = Combo.executeQuery("select count(c.id) from Combo as c where c.fromComponent = ? and c.type = ? and c.toComponent.status = ?"
-      , [this, combo_tipps, refdata_status])[0]
+    int result = Combo.executeQuery("select count(t.id) from TitleInstancePackagePlatform as t where t.pkg = :pkg and t.status = :status"
+      , [pkg: this, status: refdata_status])[0]
 
     result
   }
 
   @Transient
   public getTippCount() {
-    def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
-
-    int result = Combo.executeQuery("select count(c.id) from Combo as c where c.fromComponent = ? and c.type = ?"
-            , [this, combo_tipps])[0]
+    int result = Combo.executeQuery("select count(t.id) from TitleInstancePackagePlatform as t where t.pkg = :pkg"
+            , [pkg: this])[0]
 
     result
   }
@@ -242,10 +225,8 @@ class Package extends KBComponent {
   @Transient
   public getRetiredTippCount() {
     def refdata_status = RDStore.KBC_STATUS_RETIRED
-    def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
-
-    int result = Combo.executeQuery("select count(c.id) from Combo as c where c.fromComponent = ? and c.type = ? and c.toComponent.status = ?"
-            , [this, combo_tipps, refdata_status])[0]
+    int result = Combo.executeQuery("select count(t.id) from TitleInstancePackagePlatform as t where t.pkg = :pkg and t.status = :status"
+            , [pkg: this, status: refdata_status])[0]
 
     result
   }
@@ -253,10 +234,8 @@ class Package extends KBComponent {
   @Transient
   public getExpectedTippCount() {
     def refdata_status = RDStore.KBC_STATUS_EXPECTED
-    def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
-
-    int result = Combo.executeQuery("select count(c.id) from Combo as c where c.fromComponent = ? and c.type = ? and c.toComponent.status = ?"
-            , [this, combo_tipps, refdata_status])[0]
+    int result = Combo.executeQuery("select count(t.id) from TitleInstancePackagePlatform as t where t.pkg = :pkg and t.status = :status"
+            , [pkg: this, status: refdata_status])[0]
 
     result
   }
@@ -264,10 +243,8 @@ class Package extends KBComponent {
   @Transient
   public getDeletedTippCount() {
     def refdata_status = RDStore.KBC_STATUS_DELETED
-    def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
-
-    int result = Combo.executeQuery("select count(c.id) from Combo as c where c.fromComponent = ? and c.type = ? and c.toComponent.status = ?"
-            , [this, combo_tipps, refdata_status])[0]
+    int result = Combo.executeQuery("select count(t.id) from TitleInstancePackagePlatform as t where t.pkg = :pkg and t.status = :status"
+            , [pkg: this, status: refdata_status])[0]
 
     result
   }
@@ -394,12 +371,11 @@ select tipp.id,
 
     // Delete the tipps too as a TIPP should not exist without the associated,
     // package.
-    def tipps = getTipps()
     Date now = new Date()
 
-    if (tipps?.size() > 0) {
+    if (tipps.size() > 0) {
       def deleted_status = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
-      def tipp_ids = tipps?.collect { it.id }
+      def tipp_ids = tipps.collect { it.id }
 
       TitleInstancePackagePlatform.executeUpdate("update TitleInstancePackagePlatform as t set t.status = :del, t.lastUpdateComment = 'Deleted via Package delete', t.lastUpdated = :now where t.status != :del and t.id IN (:ttd)", [del: deleted_status, ttd: tipp_ids, now: now])
     }
@@ -417,12 +393,10 @@ select tipp.id,
     // Delete the tipps too as a TIPP should not exist without the associated,
     // package.
     log.debug("Retiring tipps");
-
-    def tipps = getTipps()
     Date now = new Date()
 
-    if (tipps?.size() > 0) {
-      def tipp_ids = tipps?.collect { it.id }
+    if (tipps.size() > 0) {
+      def tipp_ids = tipps.collect { it.id }
 
       TitleInstancePackagePlatform.executeUpdate("update TitleInstancePackagePlatform as t set t.status = :ret, t.lastUpdateComment = 'Retired via Package retire', t.lastUpdated = :now where t.id IN (:ttd)", [ret: retired_status, ttd: tipp_ids, now: now])
     }
@@ -437,11 +411,10 @@ select tipp.id,
 
     log.debug("removed tipps")
 
-    def tipps = getTipps()
     Date now = new Date()
 
-    if (tipps?.size() > 0) {
-      def tipp_ids = tipps?.collect { it.id }
+    if (tipps.size() > 0) {
+      def tipp_ids = tipps.collect { it.id }
 
       TitleInstancePackagePlatform.executeUpdate("update TitleInstancePackagePlatform as t set t.status = :ret, t.lastUpdateComment = 'Removed via Package action removeWithTipps', t.lastUpdated = :now where t.id IN (:ttd)", [ret: removedStatus, ttd: tipp_ids, now: now])
     }
@@ -469,119 +442,6 @@ select tipp.id,
     pageSize       : 3
   ]
 
-  /**
-   *  Render this package as OAI_dc
-   */
-  @Transient
-  def toOaiDcXml(builder, attr) {
-    builder.'dc'(attr) {
-      'dc:title'(name)
-    }
-  }
-
-  /**
-   *  Render this package as GoKBXML
-   */
-  @Transient
-  def toGoKBXml(builder, attr) {
-
-    log.debug("toGoKBXml... ${this.class.name}:${id}");
-
-    def refdata_package_tipps = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Package.Tipps');
-    def refdata_hosted_tipps = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'Platform.HostedTipps');
-    def refdata_ti_tipps = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'TitleInstance.Tipps');
-    def refdata_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted');
-
-    // log.debug("Running package contents qry : ${OAI_PKG_CONTENTS_QRY}");
-
-    // Get the tipps manually rather than iterating over the collection - For better management
-    def tipps = this.status != refdata_deleted ? TitleInstancePackagePlatform.executeQuery(OAI_PKG_CONTENTS_QRY, [this, refdata_package_tipps, refdata_hosted_tipps, refdata_ti_tipps], [readOnly: true]) : []
-
-    log.debug("Query complete...");
-
-    builder.'gokb'(attr) {
-      builder.'package'(['id': (id), 'uuid': (uuid)]) {
-        addCoreGOKbXmlFields(builder, attr)
-
-        'scope'(scope?.value)
-        'breakable'(breakable?.value)
-        'consistent'(consistent?.value)
-        'paymentType'(paymentType?.value)
-        'globalNote'(globalNote)
-        'contentType'(contentType?.value)
-        'openAccess'(openAccess?.value)
-        'file'(file?.value)
-        'editingStatus'(editingStatus?.value)
-
-        if (nominalPlatform) {
-          builder.'nominalPlatform'([id: nominalPlatform.id, uuid: nominalPlatform.uuid]) {
-            'primaryUrl'(nominalPlatform.primaryUrl)
-            'name'(nominalPlatform.name)
-          }
-        }
-
-        if (provider) {
-          builder.'nominalProvider'([id: provider.id, uuid: provider.uuid]) {
-            'name'(provider.name)
-          }
-        }
-
-        builder.'curatoryGroups' {
-          curatoryGroups.each { cg ->
-            builder.'group' {
-              builder.'name'(cg.name)
-            }
-          }
-        }
-
-        'dateCreated'(dateFormatService.formatIsoTimestamp(dateCreated))
-        'TIPPs'(count: tipps?.size()) {
-          tipps.each { tipp ->
-            builder.'TIPP'(['id': tipp[0], 'uuid': tipp[12]]) {
-              builder.'status'(tipp[6]?.value)
-              builder.'name'(tipp[18])
-              builder.'lastUpdated'(tipp[11] ? dateFormatService.formatIsoTimestamp(tipp[11]) : null)
-              builder.'series'(tipp[16])
-              builder.'subjectArea'(tipp[17])
-              builder.'publisherName'(tipp[19])
-              builder.'dateFirstInPrint'(tipp[20])
-              builder.'dateFirstOnline'(tipp[21])
-              builder.'medium'(tipp[9]?.value)
-              builder.'title'(['id': tipp[2], 'uuid': tipp[13]]) {
-                builder.'name'(tipp[1]?.trim())
-                builder.'type'(getTitleClass(tipp[2]))
-                builder.'status'(tipp[15]?.value)
-              }
-              'platform'([id: tipp[4], 'uuid': tipp[14]]) {
-                'primaryUrl'(tipp[10]?.trim())
-                'name'(tipp[3]?.trim())
-              }
-              'access'(start: tipp[7] ? dateFormatService.formatIsoTimestamp(tipp[7]) : null, end: tipp[8] ? dateFormatService.formatIsoTimestamp(tipp[8]) : null)
-              def cov_statements = getCoverageStatements(tipp[0])
-              if (cov_statements?.size() > 0) {
-                cov_statements.each { tcs ->
-                  'coverage'(
-                    startDate: (tcs.startDate ? dateFormatService.formatIsoTimestamp(tcs.startDate) : null),
-                    startVolume: (tcs.startVolume),
-                    startIssue: (tcs.startIssue),
-                    endDate: (tcs.endDate ? dateFormatService.formatIsoTimestamp(tcs.endDate) : null),
-                    endVolume: (tcs.endVolume),
-                    endIssue: (tcs.endIssue),
-                    coverageDepth: (tcs.coverageDepth?.value ?: null),
-                    coverageNote: (tcs.coverageNote),
-                    embargo: (tcs.embargo)
-                  )
-                }
-              }
-              'url'(tipp[5] ?: "")
-            }
-          }
-        }
-      }
-    }
-
-    log.debug("toGoKBXml complete...");
-  }
 
   @Transient
   private static getTitleClass(Long title_id) {
@@ -656,20 +516,6 @@ select tipp.id,
       def cg = CuratoryGroup.findByName(cgname) ?: new CuratoryGroup(name: cgname).save(flush: true, failOnError: true);
       curatoryGroups.add(cg);
     }
-  }
-
-
-
-  @Transient
-  public getAutoUpdateJobResult() {
-    def result = []
-
-    if (this.id) {
-      result = JobResult.executeQuery('select jobR from JobResult as jobR where jobR.linkedItemId = :packageID and jobR.type in (:types) order by jobR.startTime desc',
-              [packageID: this.id,
-              types: [RefdataCategory.lookup(RCConstants.JOB_TYPE, 'PackageCrossRef Auto')]])
-    }
-    return result
   }
 
   void createCoreIdentifiersIfNotExist(){
