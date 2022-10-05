@@ -208,7 +208,7 @@ class Package extends KBComponent {
   @Transient
   public getCurrentTippCount() {
     def refdata_status = RDStore.KBC_STATUS_CURRENT
-    int result = Combo.executeQuery("select count(t.id) from TitleInstancePackagePlatform as t where t.pkg = :pkg and t.status = :status"
+    int result = TitleInstancePackagePlatform.executeQuery("select count(t.id) from TitleInstancePackagePlatform as t where t.pkg = :pkg and t.status = :status"
       , [pkg: this, status: refdata_status])[0]
 
     result
@@ -216,7 +216,7 @@ class Package extends KBComponent {
 
   @Transient
   public getTippCount() {
-    int result = Combo.executeQuery("select count(t.id) from TitleInstancePackagePlatform as t where t.pkg = :pkg"
+    int result = TitleInstancePackagePlatform.executeQuery("select count(t.id) from TitleInstancePackagePlatform as t where t.pkg = :pkg"
             , [pkg: this])[0]
 
     result
@@ -225,7 +225,7 @@ class Package extends KBComponent {
   @Transient
   public getRetiredTippCount() {
     def refdata_status = RDStore.KBC_STATUS_RETIRED
-    int result = Combo.executeQuery("select count(t.id) from TitleInstancePackagePlatform as t where t.pkg = :pkg and t.status = :status"
+    int result = TitleInstancePackagePlatform.executeQuery("select count(t.id) from TitleInstancePackagePlatform as t where t.pkg = :pkg and t.status = :status"
             , [pkg: this, status: refdata_status])[0]
 
     result
@@ -234,7 +234,7 @@ class Package extends KBComponent {
   @Transient
   public getExpectedTippCount() {
     def refdata_status = RDStore.KBC_STATUS_EXPECTED
-    int result = Combo.executeQuery("select count(t.id) from TitleInstancePackagePlatform as t where t.pkg = :pkg and t.status = :status"
+    int result = TitleInstancePackagePlatform.executeQuery("select count(t.id) from TitleInstancePackagePlatform as t where t.pkg = :pkg and t.status = :status"
             , [pkg: this, status: refdata_status])[0]
 
     result
@@ -243,7 +243,7 @@ class Package extends KBComponent {
   @Transient
   public getDeletedTippCount() {
     def refdata_status = RDStore.KBC_STATUS_DELETED
-    int result = Combo.executeQuery("select count(t.id) from TitleInstancePackagePlatform as t where t.pkg = :pkg and t.status = :status"
+    int result = TitleInstancePackagePlatform.executeQuery("select count(t.id) from TitleInstancePackagePlatform as t where t.pkg = :pkg and t.status = :status"
             , [pkg: this, status: refdata_status])[0]
 
     result
@@ -327,43 +327,6 @@ class Package extends KBComponent {
     return all_rrs;
   }
 
-  private static OAI_PKG_CONTENTS_QRY = '''
-select tipp.id,
-       title.name,
-       title.id,
-       plat.name,
-       plat.id,
-       tipp.url,
-       tipp.status,
-       tipp.accessStartDate,
-       tipp.accessEndDate,
-       plat.primaryUrl,
-       tipp.lastUpdated,
-       tipp.uuid,
-       title.uuid,
-       plat.uuid,
-       title.status,
-       tipp.series,
-       tipp.subjectArea,
-       tipp.name,
-       tipp.publisherName,
-       tipp.dateFirstInPrint,
-       tipp.dateFirstOnline
-    from TitleInstancePackagePlatform as tipp,
-         Combo as hostPlatformCombo,
-         Combo as titleCombo,
-         Combo as pkgCombo,
-         Platform as plat
-    where pkgCombo.toComponent=tipp
-      and pkgCombo.fromComponent= ?
-      and pkgCombo.type= ?
-      and hostPlatformCombo.toComponent=tipp
-      and hostPlatformCombo.type = ?
-      and hostPlatformCombo.fromComponent = plat
-      and titleCombo.toComponent=tipp
-      and titleCombo.type = ?
-      and titleCombo.fromComponent=title
-    order by tipp.id''';
 
   public void deleteSoft(context) {
     // Call the delete method on the superClass.
@@ -474,9 +437,9 @@ select tipp.id,
 //                        'where c.fromComponent= :pkg and c.toComponent=tipp and tipp.accessEndDate is not null order by tipp.lastUpdated DESC',
 //                        [pkg: this], [max:n]);
 
-      def changes = TitleInstancePackagePlatform.executeQuery('select tipp from TitleInstancePackagePlatform as tipp, Combo as c ' +
-        'where c.fromComponent= ? and c.toComponent=tipp',
-        [this]);
+      def changes = TitleInstancePackagePlatform.executeQuery('select tipp from TitleInstancePackagePlatform as tipp ' +
+        'where tipp.pkg = :pkg ',
+        [pkg: this]);
 
       use(TimeCategory) {
         changes.each {
@@ -552,9 +515,9 @@ select tipp.id,
   @Transient
   List<TitleInstancePackagePlatform> findTippDuplicatesByName() {
 
-    List<TitleInstancePackagePlatform> tippsDuplicates = TitleInstancePackagePlatform.executeQuery("select tipp from TitleInstancePackagePlatform as tipp, Combo as pkg_combo" +
-            " where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg and tipp.status != :removed and" +
-            " tipp.name in (select tipp2.name from TitleInstancePackagePlatform tipp2, Combo as pkg_combo2 where pkg_combo2.toComponent=tipp2 and pkg_combo2.fromComponent = :pkg and tipp2.status != :removed group by tipp2.name having count(tipp2.name) > 1)" +
+    List<TitleInstancePackagePlatform> tippsDuplicates = TitleInstancePackagePlatform.executeQuery("select tipp from TitleInstancePackagePlatform as tipp " +
+            " where tipp.pkg = :pkg and tipp.status != :removed and" +
+            " tipp.name in (select tipp2.name from TitleInstancePackagePlatform tipp2 where tipp2.pkg = :pkg and tipp2.status != :removed group by tipp2.name having count(tipp2.name) > 1)" +
             " order by tipp.name",
             [pkg: this, removed: RDStore.KBC_STATUS_REMOVED]) ?: []
   }
@@ -562,9 +525,9 @@ select tipp.id,
   @Transient
   List<TitleInstancePackagePlatform> findTippDuplicatesByURL() {
 
-    List<TitleInstancePackagePlatform> tippsDuplicates = TitleInstancePackagePlatform.executeQuery("select tipp from TitleInstancePackagePlatform as tipp, Combo as pkg_combo" +
-            " where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg and tipp.status != :removed and" +
-            " tipp.url in (select tipp2.url from TitleInstancePackagePlatform tipp2, Combo as pkg_combo2 where pkg_combo2.toComponent=tipp2 and pkg_combo2.fromComponent = :pkg and tipp2.status != :removed group by tipp2.url having count(tipp2.url) > 1)" +
+    List<TitleInstancePackagePlatform> tippsDuplicates = TitleInstancePackagePlatform.executeQuery("select tipp from TitleInstancePackagePlatform as tipp" +
+            " where tipp.pkg = :pkg and tipp.status != :removed and" +
+            " tipp.url in (select tipp2.url from TitleInstancePackagePlatform tipp2 where tipp2.pkg = :pkg and tipp2.status != :removed group by tipp2.url having count(tipp2.url) > 1)" +
             " order by tipp.url",
             [pkg: this, removed: RDStore.KBC_STATUS_REMOVED]) ?: []
   }
@@ -575,9 +538,9 @@ select tipp.id,
     IdentifierNamespace identifierNamespace = this.source ? this.source.targetNamespace : null
 
     if(identifierNamespace) {
-      List<TitleInstancePackagePlatform> tippsDuplicates = TitleInstancePackagePlatform.executeQuery("select tipp from TitleInstancePackagePlatform as tipp join tipp.ids as ident, Combo as pkg_combo" +
-              " where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg and tipp.status != :removed " +
-              " and ident.value in (select ident2.value FROM Identifier AS ident2, TitleInstancePackagePlatform as tipp2, Combo as pkg_combo WHERE ident2.namespace = :namespace and ident2.tipp = tipp2 and pkg_combo.toComponent=tipp2 and pkg_combo.fromComponent = :pkg and tipp2.status != :removed" +
+      List<TitleInstancePackagePlatform> tippsDuplicates = TitleInstancePackagePlatform.executeQuery("select tipp from TitleInstancePackagePlatform as tipp join tipp.ids as ident" +
+              " where tipp.pkg = :pkg and tipp.status != :removed " +
+              " and ident.value in (select ident2.value FROM Identifier AS ident2, TitleInstancePackagePlatform as tipp2 WHERE ident2.namespace = :namespace and ident2.tipp = tipp2 and tipp2.pkg = :pkg and tipp2.status != :removed" +
               " group by ident2.value having count(ident2.value) > 1) order by ident.value",
               [pkg: this, namespace: identifierNamespace, removed: RDStore.KBC_STATUS_REMOVED]) ?: []
     }else {
@@ -588,9 +551,9 @@ select tipp.id,
   @Transient
   Integer getTippDuplicatesByNameCount() {
 
-    int result = TitleInstancePackagePlatform.executeQuery("select count(tipp.id) from TitleInstancePackagePlatform as tipp, Combo as pkg_combo" +
-            " where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg and tipp.status != :removed and" +
-            " tipp.name in (select tipp2.name from TitleInstancePackagePlatform tipp2, Combo as pkg_combo2 where pkg_combo2.toComponent=tipp2 and pkg_combo2.fromComponent = :pkg and tipp2.status != :removed group by tipp2.name having count(tipp2.name) > 1)",
+    int result = TitleInstancePackagePlatform.executeQuery("select count(tipp.id) from TitleInstancePackagePlatform as tipp" +
+            " where tipp.pkg = :pkg and tipp.status != :removed and" +
+            " tipp.name in (select tipp2.name from TitleInstancePackagePlatform tipp2 where tipp2.pkg = :pkg and tipp2.status != :removed group by tipp2.name having count(tipp2.name) > 1)",
             [pkg: this, removed: RDStore.KBC_STATUS_REMOVED])[0]
     return result
   }
@@ -598,9 +561,9 @@ select tipp.id,
   @Transient
   Integer getTippDuplicatesByURLCount() {
 
-    int result = TitleInstancePackagePlatform.executeQuery("select count(tipp.id) from TitleInstancePackagePlatform as tipp, Combo as pkg_combo" +
-            " where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg and tipp.status != :removed and " +
-            " tipp.url in (select tipp2.url from TitleInstancePackagePlatform tipp2, Combo as pkg_combo2 where pkg_combo2.toComponent=tipp2 and pkg_combo2.fromComponent = :pkg and tipp2.status != :removed group by tipp2.url having count(tipp2.url) > 1)",
+    int result = TitleInstancePackagePlatform.executeQuery("select count(tipp.id) from TitleInstancePackagePlatform as tipp" +
+            " where tipp.pkg = :pkg and tipp.status != :removed and " +
+            " tipp.url in (select tipp2.url from TitleInstancePackagePlatform tipp2 where tipp2.pkg = :pkg and tipp2.status != :removed group by tipp2.url having count(tipp2.url) > 1)",
             [pkg: this, removed: RDStore.KBC_STATUS_REMOVED])[0]
 
     return result
@@ -611,9 +574,9 @@ select tipp.id,
     IdentifierNamespace identifierNamespace = this.source ? this.source.targetNamespace : null
 
     if(identifierNamespace) {
-      int result = TitleInstancePackagePlatform.executeQuery("select count(tipp.id) from TitleInstancePackagePlatform as tipp join tipp.ids as ident, Combo as pkg_combo" +
-              " where pkg_combo.toComponent=tipp and pkg_combo.fromComponent = :pkg and tipp.status != :removed " +
-              " and ident.value in (select ident2.value FROM Identifier AS ident2, TitleInstancePackagePlatform as tipp2, Combo as pkg_combo WHERE ident2.namespace = :namespace and ident2.tipp = tipp2 and pkg_combo.toComponent=tipp2 and pkg_combo.fromComponent = :pkg and tipp2.status != :removed" +
+      int result = TitleInstancePackagePlatform.executeQuery("select count(tipp.id) from TitleInstancePackagePlatform as tipp join tipp.ids as ident" +
+              " where tipp.pkg = :pkg and tipp.status != :removed " +
+              " and ident.value in (select ident2.value FROM Identifier AS ident2, TitleInstancePackagePlatform as tipp2 WHERE ident2.namespace = :namespace and ident2.tipp = tipp2 and tipp2.pkg = :pkg and tipp2.status != :removed" +
               " group by ident2.value having count(ident2.value) > 1)",
               [pkg: this, namespace: identifierNamespace, removed: RDStore.KBC_STATUS_REMOVED])[0]
       return result
