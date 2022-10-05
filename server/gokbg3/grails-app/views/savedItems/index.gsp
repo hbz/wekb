@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="layout" content="sb-admin" />
-<title><g:message code="gokb.appname" default="we:kb"/>: Saved Searchs</title>
+<meta name="layout" content="public_semui" />
+<title>Saved Searchs</title>
 </head>
 <body>
 

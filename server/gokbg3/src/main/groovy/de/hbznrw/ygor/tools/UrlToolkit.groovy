@@ -1,6 +1,6 @@
 package de.hbznrw.ygor.tools
 
-import groovy.util.logging.Log4j
+import groovy.util.logging.Slf4j
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.validator.routines.UrlValidator
 
@@ -11,7 +11,7 @@ import java.time.format.DateTimeParseException
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-@Log4j
+@Slf4j
 class UrlToolkit {
 
     static final String DATESTAMP_PLACEHOLDER = "{YYYY_MM_DD}"
@@ -130,6 +130,7 @@ class UrlToolkit {
             }
             catch(IllegalArgumentException | DateTimeParseException e){
                 // this is a simple fallback - TODO: work out how far to go back in time
+                log.error("Fallback of formatDateTime from 12 months by: " +from)
                 fromDateTime = LocalDateTime.now().minusMonths(12)
             }
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")

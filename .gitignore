@@ -22,3 +22,6 @@ server/gokb/logs/
 /*.zip
 application-development.yaml
 application-test.yaml
+/server/gokbg3/files/frontend/node_modules/
+
+

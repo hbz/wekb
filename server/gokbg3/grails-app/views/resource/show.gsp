@@ -2,11 +2,10 @@
 <%@ page import="org.gokb.cred.TitleInstancePackagePlatform; de.wekb.helper.RDStore;" %>
 <html>
 <head>
-    <meta name="layout" content="sb-admin"/>
-    <title><g:message code="gokb.appname" default="we:kb"/>: ${displayobj?.getNiceName() ?: 'Component'}
+    <meta name="layout" content="public_semui"/>
+    <title>${displayobj?.getNiceName() ?: 'Component'}
     <g:if test="${displayobj}">
         &lt;${editable ? 'Editable' : (response.status == 403 ? 'Not Accessible' : 'Read Only')}&gt;
-        &lt;${displayobj.isCreatable() ? 'Creatable' : 'Not Creatable'}&gt;
     </g:if>
     <g:else>
         &lt;Not found&gt;
@@ -15,8 +14,10 @@
 </head>
 
 <body>
-<br/>
-<nav class="navbar navbar-inverse ${(displayobj.respondsTo('status') && displayobj.status == RDStore.KBC_STATUS_DELETED) ? 'alert alert-danger' : ''}">
+
+<semui:flashMessage data="${flash}"/>
+
+%{--<nav class="navbar navbar-inverse ${(displayobj.respondsTo('status') && displayobj.status == RDStore.KBC_STATUS_DELETED) ? 'alert alert-danger' : ''}">
     <div class="container-fluid">
         <div class="navbar-header">
             <span class="navbar-brand">
@@ -36,7 +37,7 @@
                 </g:elseif>
             </span>
         </div>
-        <g:if test="${displayobj && response.status != 403}">
+        <g:if test="${displayobj && response.status != 403 && displayobj.class.simpleName in ["Package", "Org", "Platform", "TitleInstancePackagePlatform"]}">
             <ul class="nav navbar-nav navbar-right">
                 <g:if test="${org.gokb.cred.KBComponent.isAssignableFrom(displayobj.class)}">
                     <li><a onClick="javascript:toggleWatch('${displayobj.class.name}:${displayobj.id}')"
@@ -63,117 +64,110 @@
             </ul>
         </g:if>
     </div>
-</nav>
+</nav>--}%
+<g:if test="${displayobj != null}">
 
-<div id="mainarea" class="panel panel-default">
-    <div class="panel-body">
-        <g:if test="${response.status == 403}">
-            <g:message code="springSecurity.denied.message"/>
-        </g:if>
-        <g:elseif test="${displayobj != null}">
-            <div class="col-xs-3 pull-right well" style="min-width:320px;">
-                <g:if test="${!((request.curator != null ? request.curator.size() > 0 : true))}">
-                    <div class="alert alert-info" style="font-weight:bold;">
-                        <h4>Info</h4>
+    <g:if test="${displayobj.hasProperty('status') && displayobj.status == RDStore.KBC_STATUS_REMOVED}">
+        <div class="ui negative icon huge message">
+            <i class="info icon"></i>
 
-                        <p>You are not a curator of this component. If you notice any errors, please contact a curator or request a review.</p>
-                    </div>
-                    <sec:ifAnyGranted roles="ROLE_ADMIN">
-                        <div class="alert alert-warning" style="font-weight:bold;">
-                            <h4>Warning</h4>
+            <div class="content">
+                <div class="header">
+                    Removed component
+                </div>
 
-                            <p>As an admin you can still edit, but please contact a curator before making major changes.</p>
-
-                            <p>
-                                <g:if test="${params.curationOverride == 'true'}">
-                                    <g:link class="btn btn-success"
-                                            controller="${params.controller}"
-                                            action="${params.action}"
-                                            id="${displayobj.className}:${displayobj.id}"
-                                            params="${(request.param ?: [:])}">
-                                        Disable admin override
-                                    </g:link>
-                                </g:if>
-                                <g:else>
-                                    <g:link class="btn btn-danger"
-                                            controller="${params.controller}"
-                                            action="${params.action}"
-                                            id="${displayobj.className}:${displayobj.id}"
-                                            params="${(request.param ?: [:]) + ["curationOverride": true]}">
-                                        Enable admin override
-                                    </g:link>
-                                </g:else>
-                            </p>
-                        </div>
-                    </sec:ifAnyGranted>
-                </g:if>
-
-                <g:if test="${displayobj.respondsTo('availableActions') && editable}">
-
-                    <g:form controller="workflow" action="action" method="post" class='action-form'>
-                        <h4>Available actions</h4>
-                        <input type="hidden"
-                               name="bulk:${displayobj.class.name}:${displayobj.id}"
-                               value="true"/>
-
-                        <div class="input-group">
-                            <select id="selectedAction" name="selectedBulkAction" class="form-control">
-                                <option value="">-- Select an action to perform --</option>
-                                <g:each var="action" in="${displayobj.userAvailableActions()}">
-                                    <g:if test="${action.code in ["packageUrlUpdate", "packageUrlUpdateAllTitles"]}">
-                                        <g:if test="${displayobj.source}">
-                                            <option value="${action.code}">
-                                                ${action.label}
-                                            </option>
-                                        </g:if>
-                                    </g:if>
-                                    <g:else>
-                                        <option value="${action.code}">
-                                            ${action.label}
-                                        </option>
-                                    </g:else>
-
-                                </g:each>
-                            </select>
-                            <span class="input-group-btn">
-                                <button type="submit" class="btn btn-default">Go</button>
-                            </span>
-                        </div>
-                    </g:form>
-                </g:if>
-
-
-                <g:if test="${displayobj.respondsTo('getCuratoryGroups') || displayobj instanceof TitleInstancePackagePlatform}">
-                    <div>
-                        <h4>Curatory Groups</h4>
-
-                        <div style="background-color:#ffffff">
-                            <g:render template="/apptemplates/secondTemplates/curatory_groups"
-                                      model="${[d: displayobj]}"/>
-                        </div>
-                    </div>
-                </g:if>
-
+                <p>This component has been set to removed and will soon be permanently removed from this system</p>
             </div>
+        </div>
+    </g:if>
+
+    <g:if test="${displayobj.respondsTo('availableActions') && editable}">
+
+        <g:set var="object" value="${displayobj.class.name}:${displayobj.id}"/>
+
+        <div class="ui right floated buttons">
+        <semui:actionsDropdown text="Available actions">
+                <g:each var="action" in="${displayobj.userAvailableActions().sort{it.label}}">
+                    <g:if test="${action.code in ["packageUrlUpdate", "packageUrlUpdateAllTitles"]}">
+                        <g:if test="${displayobj.source}">
+                            <semui:actionsDropdownItem controller="workflow" action="action"
+                                                       params="[component: object, selectedBulkAction: action.code, curationOverride: params.curationOverride]" text="${action.label}"/>
+                        </g:if>
+                    </g:if>
+                    <g:else>
+                        <semui:actionsDropdownItem controller="workflow" action="action"
+                                                   params="[component: object, selectedBulkAction: action.code, curationOverride: params.curationOverride]" text="${action.label}"/>
+                    </g:else>
+
+                </g:each>
+        </semui:actionsDropdown>
+        </div>
+
+        %{--<g:form controller="workflow" action="action" method="post" class='action-form'>
+            <h4>Available actions</h4>
+            <input type="hidden"
+                   name="bulk:${displayobj.class.name}:${displayobj.id}"
+                   value="true"/>
+
+            <div class="input-group">
+                <select id="selectedAction" name="selectedBulkAction" >
+                    <option value="">-- Select an action to perform --</option>
+                    <g:each var="action" in="${displayobj.userAvailableActions()}">
+                        <g:if test="${action.code in ["packageUrlUpdate", "packageUrlUpdateAllTitles"]}">
+                            <g:if test="${displayobj.source}">
+                                <option value="${action.code}">
+                                    ${action.label}
+                                </option>
+                            </g:if>
+                        </g:if>
+                        <g:else>
+                            <option value="${action.code}">
+                                ${action.label}
+                            </option>
+                        </g:else>
+
+                    </g:each>
+                </select>
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-default">Go</button>
+                </span>
+            </div>
+        </g:form>--}%
+    </g:if>
+
+    <h1 class="ui header">${displayobj.getDomainName()}: ${displayobj.hasProperty('name') ? displayobj.name : ''}</h1>
+
+    <div class="ui segment">
+        <g:render template="rightBox" model="${[d: displayobj]}"/>
+
+        <div class="content wekb-inline-lists">
             <g:if test="${displaytemplate != null}">
                 <!-- Using display template ${displaytemplate.rendername} -->
                 <g:if test="${displaytemplate.type == 'staticgsp'}">
-                    <g:render template="/apptemplates/mainTemplates/${displaytemplate.rendername}"
+                    <g:render template="/templates/domains/${displaytemplate.rendername}"
                               model="${[d: displayobj, rd: refdata_properties, dtype: displayobjclassname_short]}"/>
                 </g:if>
             </g:if>
-        </g:elseif>
-        <g:else>
-            <div class="alert alert-danger" style="display:inline-block;font-weight:bolder;"><g:message
-                    code="component.notFound.label" args="[params.id]"/></div>
-        </g:else>
+        </div>
     </div>
-</div>
 
-<g:render template="/apptemplates/secondTemplates/messages"
-          model="${["preMessage": preMsg]}"/>
+    <br>
+    <br>
+    <g:if test="${displaytemplate != null}">
+        <g:if test="${displaytemplate.type == 'staticgsp' && displaytemplate.rendername in ["org", "package", "platform", "source", "tipp"]}">
+            <g:render template="/templates/tabTemplates/domainTabs/${displaytemplate.rendername}Tabs"
+                      model="${[d: displayobj]}"/>
+        </g:if>
+    </g:if>
+</g:if>
+<g:else>
+    <semui:message class="negative">
+        <g:message code="component.notFound.label" args="[params.id]"/>
+    </semui:message>
+</g:else>
 
-<div id="infoModal" class="qmodal modal fade modal-wide" role="dialog">
+
+%{--<div id="infoModal" class="qmodal modal fade modal-wide" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -281,6 +275,6 @@
           $('html,body').scrollTop(scrollmem);
         });
 
-</asset:script>
+</asset:script>--}%
 </body>
 </html>

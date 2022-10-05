@@ -5,20 +5,21 @@ Activity.Status;Complete;Complete;Complete
 Activity.Type;TitleTransfer;TitleTransfer;TitleTransfer
 AllocatedReviewGroup.Status;Claimed;Claimed;Claimed
 AllocatedReviewGroup.Status;In Progress;In Progress;In Progress
+AutoUpdate.Status;Successful;Successful;Successful
+AutoUpdate.Status;Failed;Failed;Failed
+AutoUpdate.Status;Warning;Warning;Warning
+AutoUpdate.Type;New Title;New Title;New Title
+AutoUpdate.Type;Changed Title;Changed Title;Changed Title
+AutoUpdate.Type;Removed Title;Removed Title;Removed Title
+AutoUpdate.Type;Failed Title;Failed Title;Failed Title
 Combo.Status;Active;Active;Active
 Combo.Status;Deleted;Deleted;Deleted
 Combo.Status;Expired;Expired;Expired
 Combo.Status;Superseded;Superseded;Superseded
-Combo.Type;IngestionProfile.Source;IngestionProfile.Source;IngestionProfile.Source
-Combo.Type;KBComponent.FileAttachments;KBComponent.FileAttachments;KBComponent.FileAttachments
 Combo.Type;KBComponent.Ids;KBComponent.Ids;KBComponent.Ids
-Combo.Type;License.Licensee;License.Licensee;License.Licensee
 Combo.Type;Office.CuratoryGroups;Office.CuratoryGroups;Office.CuratoryGroups
 Combo.Type;Office.Org;Office.Org;Office.Org
 Combo.Type;Org.CuratoryGroups;Org.CuratoryGroups;Org.CuratoryGroups
-Combo.Type;Org.Imprint;Org.Imprint;Org.Imprint
-Combo.Type;Org.Imprint;Org.Imprint;Org.Imprint
-Combo.Type;Org.OwnedImprints;Org.OwnedImprints;Org.OwnedImprints
 Combo.Type;Org.Parent;Org.Parent;Org.Parent
 Combo.Type;Org.Previous;Org.Previous;Org.Previous
 Combo.Type;Package.Broker;Package.Broker;Package.Broker
@@ -28,25 +29,10 @@ Combo.Type;Package.NominalPlatform;Package.NominalPlatform;Package.NominalPlatfo
 Combo.Type;Package.Parent;Package.Parent;Package.Parent
 Combo.Type;Package.Previous;Package.Previous;Package.Previous
 Combo.Type;Package.Provider;Package.Provider;Package.Provider
-Combo.Type;Package.Tipps;Package.Tipps;Package.Tipps
 Combo.Type;Package.Vendor;Package.Vendor;Package.Vendor
 Combo.Type;Platform.CuratoryGroups;Platform.CuratoryGroups;Platform.CuratoryGroups
-Combo.Type;Platform.HostedTipps;Platform.HostedTipps;Platform.HostedTipps
-Combo.Type;Platform.HostedTitles;Platform.HostedTitles;Platform.HostedTitles
 Combo.Type;Platform.Provider;Platform.Provider;Platform.Provider
 Combo.Type;Source.CuratoryGroups;Source.CuratoryGroups;Source.CuratoryGroups
-Combo.Type;TitleInstance.AbsorbedBy;TitleInstance.AbsorbedBy;TitleInstance.AbsorbedBy
-Combo.Type;TitleInstance.Imprint;TitleInstance.Imprint;TitleInstance.Imprint
-Combo.Type;TitleInstance.Issuer;TitleInstance.Issuer;TitleInstance.Issuer
-Combo.Type;TitleInstance.MergedWith;TitleInstance.MergedWith;TitleInstance.MergedWith
-Combo.Type;TitleInstance.Publisher;TitleInstance.Publisher;TitleInstance.Publisher
-Combo.Type;TitleInstance.RenamedTo;TitleInstance.RenamedTo;TitleInstance.RenamedTo
-Combo.Type;TitleInstance.SplitFrom;TitleInstance.SplitFrom;TitleInstance.SplitFrom
-Combo.Type;TitleInstance.Tipls;TitleInstance.Tipls;TitleInstance.Tipls
-Combo.Type;TitleInstance.Tipps;TitleInstance.Tipps;TitleInstance.Tipps
-Combo.Type;TitleInstance.TranslatedFrom;TitleInstance.TranslatedFrom;TitleInstance.TranslatedFrom
-Combo.Type;TitleInstancePackagePlatform.DerivedFrom;TitleInstancePackagePlatform.DerivedFrom;TitleInstancePackagePlatform.DerivedFrom
-Combo.Type;TitleInstancePackagePlatform.MasterTipp;TitleInstancePackagePlatform.MasterTipp;TitleInstancePackagePlatform.MasterTipp
 Contact.Content.Type;E-Mail;E-Mail;E-Mail
 Contact.Content.Type;Fax;Fax;Fax
 Contact.Content.Type;Phone;Phone;Phone
@@ -55,6 +41,7 @@ Contact.Content.Type;Mobil;Mobil;Mobil
 Contact.Content.Type;Phone 2;Phone 2;Phone 2
 Contact.Type;Technical Support;Technical Support;Technical Support
 Contact.Type;Service Support;Service Support;Service Support
+Contact.Type;Metadata Contact;Metadata Contact;Metadata Contact
 Country;AD;Andorra;Andorra
 Country;AE;Vereinigte Arabische Emirate;United Arab Emirates
 Country;AF;Afghanistan;Afghanistan
@@ -313,13 +300,9 @@ DCType;Admin;Admin;Admin
 DCType;Standard;Standard;Standard
 DCType;Support;Support;Support
 DeletedKBComponent.Status;Permanently Deleted;Permanently Deleted;Permanently Deleted
-IdentifierNamespace.TargetType;Book;Book;Book
-IdentifierNamespace.TargetType;Database;Database;Database
-IdentifierNamespace.TargetType;Journal;Journal;Journal
 IdentifierNamespace.TargetType;Org;Org;Org
-IdentifierNamespace.TargetType;Other;Other;Other
 IdentifierNamespace.TargetType;Package;Package;Package
-IdentifierNamespace.TargetType;Title;Title;Title
+IdentifierNamespace.TargetType;TitleInstancePackagePlatform;TitleInstancePackagePlatform;TitleInstancePackagePlatform
 ingest.filetype;cufts;cufts;cufts
 ingest.filetype;ingram;ingram;ingram
 ingest.filetype;kbart2;kbart2;kbart3
@@ -328,23 +311,19 @@ Job.Type;AutoUpdatePackagesJob;AutoUpdatePackagesJob;AutoUpdatePackagesJob
 Job.Type;ManuellUpdatePackageJob;ManuellUpdatePackageJob;ManuellUpdatePackageJob
 Job.Type;BootstrapIdentifierCleanup;BootstrapIdentifierCleanup;BootstrapIdentifierCleanup
 Job.Type;CleanupDeletedComponents;CleanupDeletedComponents;CleanupDeletedComponents
+Job.Type;CleanupRemovedComponents;CleanupRemovedComponents;CleanupRemovedComponents
 Job.Type;CleanupRejectedComponents;CleanupRejectedComponents;CleanupRejectedComponents
 Job.Type;DeleteTIWithoutHistory;DeleteTIWithoutHistory;DeleteTIWithoutHistory
-Job.Type;DepositDatafile;DepositDatafile;DepositDatafile
 Job.Type;EnrichmentService;EnrichmentService;EnrichmentService
-Job.Type;EnsureTIPLs;EnsureTIPLs;EnsureTIPLs
 Job.Type;EnsureUUIDs;EnsureUUIDs;EnsureUUIDs
 Job.Type;GeneratePackageTypes;GeneratePackageTypes;GeneratePackageTypes
 Job.Type;GenerateTIPPCoverage;GenerateTIPPCoverage;GenerateTIPPCoverage
-Job.Type;Housekeeping;Housekeeping;Housekeeping
 Job.Type;IdentifierCleanup;IdentifierCleanup;IdentifierCleanup
 Job.Type;MarkInconsDateRanges;MarkInconsDateRanges;MarkInconsDateRanges
-Job.Type;MasterListUpdate;MasterListUpdate;MasterListUpdate
 Job.Type;PackageCrossRef;PackageCrossRef;PackageCrossRef
 Job.Type;PackageCrossRef Auto;PackageCrossRef Auto;PackageCrossRef Auto
 Job.Type;PlatformCleanup;PlatformCleanup;PlatformCleanup
 Job.Type;RecalculateStatistics;RecalculateStatistics;RecalculateStatistics
-Job.Type;RegenerateLicenseSummaries;RegenerateLicenseSummaries;RegenerateLicenseSummaries
 Job.Type;RejectTIWithoutIdentifier;RejectTIWithoutIdentifier;RejectTIWithoutIdentifier
 Job.Type;ResetFreeTextIndexes;ResetFreeTextIndexes;ResetFreeTextIndexes
 Job.Type;TidyOrgsData;TidyOrgsData;TidyOrgsData
@@ -357,6 +336,7 @@ KBComponent.Status;Current;Current;Current
 KBComponent.Status;Deleted;Deleted;Deleted
 KBComponent.Status;Expected;Expected;Expected
 KBComponent.Status;Retired;Retired;Retired
+KBComponent.Status;Removed;Removed;Removed
 KBComponentVariantName.Locale;de;de;de
 KBComponentVariantName.Locale;en;en;en
 KBComponentVariantName.Locale;en_GB;en_GB;en_GB
@@ -376,10 +356,6 @@ KBComponentVariantName.VariantType;Authorized;Authorized;Authorized
 KBComponentVariantName.VariantType;Minor Change;Minor Change;Minor Change
 KBComponentVariantName.VariantType;Misspelling;Misspelling;Misspelling
 KBComponentVariantName.VariantType;Nickname;Nickname;Nickname
-License.Category;Content;Content;Content
-License.Category;Software;Software;Software
-License.Type;Other;Other;Other
-License.Type;Template;Template;Template
 MembershipRole;Administrator;Administrator;Administrator
 MembershipRole;Member;Member;Member
 MembershipStatus;Approved;Approved;Approved
@@ -391,7 +367,6 @@ Org.Mission;Community Agency;Community Agency;Community Agency
 Org.Mission;Consortium;Consortium;Consortium
 Org.Role;Broker;Broker;Broker
 Org.Role;Content Provider;Content Provider;Content Provider
-Org.Role;Imprint;Imprint;Imprint
 Org.Role;Issuing Body;Issuing Body;Issuing Body
 Org.Role;Licensee;Licensee;Licensee
 Org.Role;Licensor;Licensor;Licensor
@@ -451,6 +426,29 @@ Package.Scope;Consortium;Consortium;Consortium
 Package.Scope;Global;Global;Global
 Package.Scope;Individual;Individual;Individual
 Package.Scope;National;National;National
+PackageArchivingAgency.ArchivingAgency;Archaeology Data Service;Archaeology Data Service;Archaeology Data Service
+PackageArchivingAgency.ArchivingAgency;British Library;British Library;British Library
+PackageArchivingAgency.ArchivingAgency;Cariniana Network;Cariniana Network;Cariniana Network
+PackageArchivingAgency.ArchivingAgency;CLOCKSS Archive;CLOCKSS Archive;CLOCKSS Archive
+PackageArchivingAgency.ArchivingAgency;Global LOCKSS Network;Global LOCKSS Network;Global LOCKSS Network
+PackageArchivingAgency.ArchivingAgency;HathiTrust;HathiTrust;HathiTrust
+PackageArchivingAgency.ArchivingAgency;Internet Archive;Internet Archive;Internet Archive
+PackageArchivingAgency.ArchivingAgency;Library of Congress;Library of Congress;Library of Congress
+PackageArchivingAgency.ArchivingAgency;Merritt Preservation Repository at the California Digital Library;Merritt Preservation Repository at the California Digital Library;Merritt Preservation Repository at the California Digital Library
+PackageArchivingAgency.ArchivingAgency;National Library of France;National Library of France;National Library of France
+PackageArchivingAgency.ArchivingAgency;National Digital Preservation Program, China;National Digital Preservation Program, China;National Digital Preservation Program, China;National Digital Preservation Program, China
+PackageArchivingAgency.ArchivingAgency;National Library of the Netherlands;National Library of the Netherlands;National Library of the Netherlands
+PackageArchivingAgency.ArchivingAgency;PKP PN;PKP PN;PKP PN
+PackageArchivingAgency.ArchivingAgency;Portico;Portico;Portico
+PackageArchivingAgency.ArchivingAgency;Scholars Portal;Scholars Portal;Scholars Portal
+PackageArchivingAgency.ArchivingAgency;Swiss National Library;Swiss National Library;Swiss National Library
+PackageArchivingAgency.OpenAccess;Yes;Yes;Yes
+PackageArchivingAgency.OpenAccess;No;No;No
+PackageArchivingAgency.OpenAccess;Partly;Partly;Partly
+PackageArchivingAgency.PostCancellationAccess;Yes;Yes;Yes
+PackageArchivingAgency.PostCancellationAccess;No;No;No
+PackageArchivingAgency.PostCancellationAccess;Partly;Partly;Partly
+Platform.IPAuthentication;IPv4;IPv4;IPv4
 Platform.IPAuthentication;IPv4;IPv4;IPv4
 Platform.IPAuthentication;IPv6;IPv6;IPv6
 Platform.IPAuthentication;IPv4/IPv6;IPv4/IPv6;IPv4/IPv6
@@ -516,46 +514,6 @@ Tipp.StatusReason;Xfer Out;Xfer Out;Xfer Out
 TIPPCoverageStatement.CoverageDepth;Abstracts;Abstracts;Abstracts
 TIPPCoverageStatement.CoverageDepth;Fulltext;Fulltext;Fulltext
 TIPPCoverageStatement.CoverageDepth;Selected Articles;Selected Articles;Selected Articles
-TitleInstance.ContinuingSeries;No;No;No
-TitleInstance.ContinuingSeries;Unknown;Unknown;Unknown
-TitleInstance.ContinuingSeries;Yes;Yes;Yes
-TitleInstance.Medium;A & I Database;A & I Database;A & I Database
-TitleInstance.Medium;Article;Article;Article
-TitleInstance.Medium;Audio;Audio;Audio
-TitleInstance.Medium;Biography;Biography;Biography
-TitleInstance.Medium;Book;Book;Book
-TitleInstance.Medium;Cartography;Cartography;Cartography
-TitleInstance.Medium;Database;Database;Database
-TitleInstance.Medium;Dataset;Dataset;Dataset
-TitleInstance.Medium;Film;Film;Film
-TitleInstance.Medium;Image;Image;Image
-TitleInstance.Medium;Journal;Journal;Journal
-TitleInstance.Medium;Legal Text;Legal Text;Legal Text
-TitleInstance.Medium;Market Data;Market Data;Market Data
-TitleInstance.Medium;Miscellaneous;Miscellaneous;Miscellaneous
-TitleInstance.Medium;Other;Other;Other
-TitleInstance.Medium;Published Score;Published Score;Published Score
-TitleInstance.Medium;Software;Software;Software
-TitleInstance.Medium;Standards;Standards;Standards
-TitleInstance.Medium;Statistics;Statistics;Statistics
-TitleInstance.OAStatus;Full OA;Full OA;Full OA
-TitleInstance.OAStatus;Hybrid OA;Hybrid OA;Hybrid OA
-TitleInstance.OAStatus;No OA;No OA;No OA
-TitleInstance.OAStatus;Unknown;Unknown;Unknown
-TitleInstance.PureOA;No;No;No
-TitleInstance.PureOA;Unknown;Unknown;Unknown
-TitleInstance.PureOA;Yes;Yes;Yes
-TitleInstance.ReasonRetired;Ceased;Ceased;Ceased
-TitleInstance.ReasonRetired;Paused;Paused;Paused
-TitleInstance.Rel;Absorbed;Absorbed;Absorbed
-TitleInstance.Rel;In Series;In Series;In Series
-TitleInstance.Rel;Merged;Merged;Merged
-TitleInstance.Rel;Renamed;Renamed;Renamed
-TitleInstance.Rel;Split;Split;Split
-TitleInstance.Rel;Supplement;Supplement;Supplement
-TitleInstance.Rel;Transferred;Transferred;Transferred
-TitleInstance.Rel;Translated;Translated;Translated
-TitleInstance.Rel;Unknown;Unknown;Unknown
 TitleInstancePackagePlatform.AccessType;Free;Free;Free
 TitleInstancePackagePlatform.AccessType;Paid;Paid;Paid
 TitleInstancePackagePlatform.CoverageDepth;Abstracts;Abstracts;Abstracts
@@ -572,6 +530,7 @@ TitleInstancePackagePlatform.Medium;Book;Book;Book
 TitleInstancePackagePlatform.Medium;Cartography;Cartography;Cartography
 TitleInstancePackagePlatform.Medium;Database;Database;Database
 TitleInstancePackagePlatform.Medium;Dataset;Dataset;Dataset
+TitleInstancePackagePlatform.Medium;Encyclopedia;Encyclopedia;Encyclopedia
 TitleInstancePackagePlatform.Medium;Film;Film;Film
 TitleInstancePackagePlatform.Medium;Image;Image;Image
 TitleInstancePackagePlatform.Medium;Journal;Journal;Journal
@@ -583,6 +542,7 @@ TitleInstancePackagePlatform.Medium;Published Score;Published Score;Published Sc
 TitleInstancePackagePlatform.Medium;Software;Software;Software
 TitleInstancePackagePlatform.Medium;Standards;Standards;Standards
 TitleInstancePackagePlatform.Medium;Statistics;Statistics;Statistics
+TitleInstancePackagePlatform.Medium;Video;Video;Video
 TitleInstancePackagePlatform.OpenAccess;Blue OA;Blue OA;Blue OA
 TitleInstancePackagePlatform.OpenAccess;Empty;Empty;Empty
 TitleInstancePackagePlatform.OpenAccess;Gold OA;Gold OA;Gold OA

@@ -20,11 +20,12 @@ class Org extends KBComponent {
 
   def availableActions() {
     [
-      [code: 'org::deprecateReplace', label: 'Replace Publisher With...'],
-      [code: 'org::deprecateDelete', label: 'Remove Publisher name from title records...'],
-      [code: 'method::deleteSoft', label: 'Delete Org', perm: 'delete'],
-      [code: 'method::retire', label: 'Retire Org', perm: 'admin'],
-      [code: 'method::setActive', label: 'Set Current']
+     /* [code: 'org::deprecateReplace', label: 'Replace Publisher With...'],
+      [code: 'org::deprecateDelete', label: 'Remove Publisher name from title records...'],*/
+      [code: 'method::deleteSoft', label: 'Delete Provider', perm: 'delete'],
+      [code: 'method::retire', label: 'Retire Provider', perm: 'admin'],
+      [code: 'method::setActive', label: 'Set Provider Current'],
+      [code: 'setStatus::Removed', label: 'Remove Provider', perm: 'delete'],
     ]
   }
 
@@ -33,24 +34,17 @@ class Org extends KBComponent {
     providedPackages : Package,
     children         : Org,
     'previous'       : Org,
-    ownedImprints    : Imprint,
     curatoryGroups   : CuratoryGroup,
-    publishedTitles  : TitleInstance,
-    issuedTitles     : TitleInstance,
     providedPlatforms: Platform,
     brokeredPackages : Package,
     licensedPackages : Package,
     vendedPackages   : Package,
-    offeredLicenses  : License,
-    heldLicenses     : License,
-    offices          : Office,
     //  ids      : Identifier
   ]
 
   static hasByCombo = [
     parent   : Org,
     successor: Org,
-    imprint  : Imprint
   ]
 
   static mappedByCombo = [
@@ -63,9 +57,6 @@ class Org extends KBComponent {
     brokeredPackages : 'broker',
     licensedPackages : 'licensor',
     vendedPackages   : 'vendor',
-    offeredLicenses  : 'licensor',
-    heldLicenses     : 'licensee',
-    offices          : 'org',
   ]
 
   //  static mappedBy = [
@@ -75,10 +66,10 @@ class Org extends KBComponent {
   static hasMany = [
     roles: RefdataValue,
     contacts: Contact,
+    ids: Identifier
   ]
 
   static mapping = {
-    // From TitleInstance
     includes KBComponent.mapping
     mission column: 'org_mission_fk_rv'
     homepage column: 'org_homepage'
@@ -88,9 +79,9 @@ class Org extends KBComponent {
 
   static constraints = {
     mission(nullable: true, blank: true)
-    homepage(nullable: true, blank: true, url: true)
-    metadataDownloaderURL(nullable: true, blank: true, url: true)
-    kbartDownloaderURL(nullable: true, blank: true, url: true)
+    homepage(nullable: true, blank: true)
+    metadataDownloaderURL(nullable: true, blank: true)
+    kbartDownloaderURL(nullable: true, blank: true)
     name(validator: { val, obj ->
       if (obj.hasChanged('name')) {
         if (val && val.trim()) {
@@ -216,7 +207,6 @@ class Org extends KBComponent {
     def issues = getIssuedTitles()
     def provides = getProvidedPackages()
     def platforms = getProvidedPlatforms()
-    def offices = getOffices()
     def identifiers = getIds()
 
     builder.'gokb'(attr) {
@@ -240,36 +230,6 @@ class Org extends KBComponent {
           curatoryGroups.each { cg ->
             builder.'group' {
               builder.'name'(cg.name)
-            }
-          }
-        }
-
-        if (offices) {
-          builder.'offices' {
-            offices.each { office ->
-              builder.'name'(office.name)
-              builder.'website'(office.website)
-              builder.'phoneNumber'(office.phoneNumber)
-              builder.'otherDetails'(office.otherDetails)
-              builder.'addressLine1'(office.addressLine1)
-              builder.'addressLine2'(office.addressLine2)
-              builder.'city'(office.city)
-              builder.'zipPostcode'(office.zipPostcode)
-              builder.'region'(office.region)
-              builder.'state'(office.state)
-
-              if (office.country) {
-                builder.'country'(office.country.value)
-              }
-
-              builder.curatoryGroups {
-                office.curatoryGroups.each { ocg ->
-                  builder.group {
-                    builder.owner(ocg.owner.username)
-                    builder.name(ocg.name)
-                  }
-                }
-              }
             }
           }
         }
@@ -326,7 +286,7 @@ class Org extends KBComponent {
                 builder.'name'(pkg.name)
                 builder.'identifiers' {
                   pkg.ids?.each { tid ->
-                    builder.'identifier'(['namespace': tid.namespace?.value, 'namespaceName': tid.namespace?.name, 'value': tid.value, 'datatype': tid.namespace.datatype?.value])
+                    builder.'identifier'(['namespace': tid.namespace?.value, 'namespaceName': tid.namespace?.name, 'value': tid.value])
                   }
                 }
                 builder.'curatoryGroups' {
@@ -352,17 +312,15 @@ class Org extends KBComponent {
     result
   }
 
+
   @Transient
-  public getCurrentTippCount() {
-    def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current');
-    def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.Tipps')
+  String getIdentifierValue(idtype){
+    // Null returned if no match.
+    ids?.find{ it.namespace.value.toLowerCase() == idtype.toLowerCase() }?.value
+  }
 
-    int result = 0
-    if(getProvidedPackages()) {
-      result = Combo.executeQuery("select count(c.id) from Combo as c where c.fromComponent in :packages and c.type = :combo_type and c.toComponent.status = :status"
-              , [packages: getProvidedPackages(), combo_type: combo_tipps, status: refdata_current])[0]
-    }
-
-    result
+  @Transient
+  public String getDomainName() {
+    return "Provider"
   }
 }

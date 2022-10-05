@@ -14,6 +14,10 @@ class RCConstants {
 
     public static final String ALLOCATED_REVIEW_GROUP_STATUS = "AllocatedReviewGroup.Status"
 
+    public static final String AUTO_UPDATE_STATUS = "AutoUpdate.Status"
+
+    public static final String AUTO_UPDATE_TYPE = "AutoUpdate.Type"
+
     public static final String COMBO_STATUS = "Combo.Status"
     public static final String COMBO_TYPE = "Combo.Type"
 
@@ -50,9 +54,6 @@ class RCConstants {
     public static final String MEMBERSHIP_ROLE = "MembershipRole"
     public static final String MEMBERSHIP_STATUS = "MembershipStatus"
 
-    public static final String LICENSE_CATEGORY = "License.Category"
-    public static final String LICENSE_TYPE = "License.Type"
-
     public static final String ORG_MISSION = "Org.Mission"
     public static final String ORG_ROLE = "Org.Role"
 
@@ -67,6 +68,10 @@ class RCConstants {
     public static final String PACKAGE_PAYMENT_TYPE = "Package.PaymentType"
     public static final String PACKAGE_OPEN_ACCESS = "Package.OpenAccess"
     public static final String PACKAGE_SCOPE = "Package.Scope"
+
+    public static final String PAA_ARCHIVING_AGENCY = "PackageArchivingAgency.ArchivingAgency"
+    public static final String PAA_OPEN_ACCESS = "PackageArchivingAgency.OpenAccess"
+    public static final String PAA_POST_CANCELLATION_ACCESS = "PackageArchivingAgency.PostCancellationAccess"
 
     public static final String PLATFORM_IP_AUTH= "Platform.IPAuthentication"
     public static final String PLATFORM_ROLE = "Platform.Role"
@@ -103,11 +108,6 @@ class RCConstants {
     public static final String TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH = "TIPPCoverageStatement.CoverageDepth"
 
     public static final String TITLEINSTANCE_MEDIUM = "TitleInstance.Medium"
-    public static final String TITLEINSTANCE_OA_STATUS = "TitleInstance.OAStatus"
-    public static final String TITLEINSTANCE_PURE_OA = "TitleInstance.PureOA"
-    public static final String TITLEINSTANCE_REASON_RETIRED = "TitleInstance.ReasonRetired"
-    public static final String TITLEINSTANCE_CONTINUING_SERIES = "TitleInstance.ContinuingSeries"
-    public static final String TITLEINSTANCE_REL = "TitleInstance.Rel"
 
     public static final String USER_ORGANISATION_MISSION = "UserOrganisation.Mission"
 

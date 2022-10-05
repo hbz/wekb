@@ -1,172 +1,168 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="layout" content="sb-admin" />
-<title>Search <g:if test="${qbetemplate}">${qbetemplate.title}</g:if></title>
+    <meta name="layout" content="public_semui"/>
+    <title>Search in All Components</title>
 </head>
+
 <body>
-	<g:if test="${qbetemplate}">
-		<h1 class="page-header">${qbetemplate.title ?:''} <g:if test="${refObject}">for ${refObject.niceName}: <g:link controller="resource" action="show" id="${refObject.id}">${refObject.name}</g:link></g:if></h1>
-	</g:if>
-	<g:else>
-		<h1 class="page-header">Search</h1>
-	</g:else>
-	<div class="${displayobj != null ? 'col-md-5 ' : ''}" >
-		<div id="mainarea" class="panel panel-default">
-			
-			<g:if test="${qbetemplate==null}">
 
-				<div class="panel-heading">
-					<h3 class="panel-title">
-						Please select a resource to search for
-					</h3>
-				</div>
-				<div class="panel-body">
-					<li><g:link controller="search" action="index" params="[qbe:'g:tipps']" title="Search Titles" > Titles</g:link></li>
-					<li><g:link controller="search" action="index" params="[qbe:'g:packages']" title="Search Packages" > Packages</g:link></li>
-					<li><g:link controller="search" action="index" params="[qbe:'g:platforms']" title="Search Platforms" > Platforms</g:link></li>
+<%
+    def addFacet = { params, facet, val ->
+        def newparams = [:]
+        newparams.putAll(params)
 
-					<li><g:link controller="search" action="index" params="[qbe:'g:curatoryGroups']" title="Search Curatory Groups" > Curatory Groups</g:link></li>
-					<li><g:link controller="search" action="index" params="[qbe:'g:orgs']" title="Search Orgs" > Organizations</g:link></li>
-					<li><g:link controller="search" action="index" params="[qbe:'g:sources']" title="Search Sources" > Sources</g:link></li>
-				</div>
-			</g:if>
-			<g:else>
-				<g:if test="${!params.inline}">
-					<div class="panel-heading">
-						<h3 class="panel-title">
-							Search
-						</h3>
-					</div>
-				</g:if>
-				<div class="panel-body">
-					<g:if test="${(qbetemplate.message != null)}">
-						<p style="text-align: center">
-							<div class="alert-info">
-								${qbetemplate.message}
-							</div>
-						</p>
-					</g:if>
-	
-					<g:render template="qbeform"
-						model="${[formdefn:qbetemplate.qbeConfig?.qbeForm, 'hide':(hide), cfg:qbetemplate.qbeConfig]}" />
-				</div>
-				<!-- panel-body -->
-				<g:if test="${recset && !init}">
-					<g:render template="qberesult"
-						model="${[qbeConfig:qbetemplate.qbeConfig, rows:new_recset, offset:offset, jumpToPage:'jumpToPage', det:det, page:page_current, page_max:page_total, baseClass:qbetemplate.baseclass]}" />
-				</g:if>
-				<g:elseif test="${!init && !params.inline}">
-					<div class="panel-footer">
-						<g:render template="qbeempty" />
-					</div>
-				</g:elseif>
-				<g:else>
-					<div class='no-results' >
-						<p>No results.</p>
-					</div>
-				</g:else>
-			</g:else>
-	 </div>
-  </div>
+        newparams.remove('offset');
+        newparams.remove('max');
 
-	<g:if test="${displayobj != null}">
-	  <div class="col-md-7 desktop-only" >
-			<div class="panel panel-default quickview">
-				<div class="panel-heading">
-					<h3 class="panel-title">Quick View</h3>
-				</div>
-				<div class="panel-body">
-					<!--class="well"-->
-	
-					<nav class="navbar navbar-inverse">
-						<div class="container-fluid">
-							<div class="navbar-header">
-								<span class="navbar-brand">Record ${det} of ${reccount}</span>
-							</div>
-	
-							<ul class="nav navbar-nav navbar-right">
-								<li><a data-toggle="modal" data-cache="false"
-									title="Show History"
-									data-remote='<g:createLink controller="fwk" action="history" id="${displayobj.class.name}:${displayobj.id}"/>'
-									data-target="#modal"><i class="far fa-clock"></i></a></li>
-	
-								<li><a data-toggle="modal" data-cache="false"
-									title="Show Notes"
-									data-remote='<g:createLink controller="fwk" action="notes" id="${displayobj.class.name}:${displayobj.id}"/>'
-									data-target="#modal"><i class="fas fa-comment"></i></a></li>
-	
-								<!-- li>
-		                      <a data-toggle="modal" 
-		                         data-cache="false" 
-		                         title="Show File Attachments"
-		                         data-remote='<g:createLink controller="fwk" action="attachments" id="${displayobj.class.name}:${displayobj.id}"/>' 
-		                         data-target="#modal"><i class="glyphicon glyphicon-file"></i></a>
-		                    </li -->
-								
-								<g:if test="${ det == 1 }">
-									<li class="disabled">
-										<a class="disabled" href="#" ><i class="fas fa-chevron-left"></i></a>
-									</li>
-								</g:if>
-								<g:else>
-									<li><g:link controller="search" title="Previous Record"
-											action="index"
-											params="${params+['det':det-1, offset:((int)((det-2) / max))*max]}">
-											<i class="fas fa-chevron-left"></i>
-										</g:link></li>
-								</g:else>
-								
-								<g:if test="${ det == reccount }">
-									<li class="disabled">
-										<a class="disabled" href="#" ><i class="fas fa-chevron-right"></i></a>
-									</li>
-								</g:if>
-								<g:else>
-									<li><g:link controller="search" title="Next Record"
-										action="index"
-										params="${params+['det':det+1, offset:((int)(det / max))*max]}">
-										<i class="fas fa-chevron-right"></i>
-									</g:link></li>
-								</g:else>
-								
-								<li><g:link controller="search" title="Close"
-                    action="index"
-                    params="${params+['det':null]}">
-                    <i class="fa fa-times"></i>
-                  </g:link></li>
-							</ul>
-						</div>
-					</nav>
-					<g:if test="${displaytemplate != null}">
-						<g:if test="${displaytemplate.type=='staticgsp'}">
-							<h4><g:render template="/apptemplates/secondTemplates/component_heading" model="${[d: displayobj]}" /></h4>
-							<g:render template="/apptemplates/mainTemplates/${displaytemplate.rendername}"
-								model="${[d: displayobj, rd: refdata_properties, dtype: displayobjclassname_short]}" />
-	
-						</g:if>
-					</g:if>
-					<g:else>
-		                No template currently available for instances of ${displayobjclassname}
-						${displayobj as grails.converters.JSON}
-					</g:else>
-				</div>
-			</div>
-		</div>
-	</g:if>
-	<div id="modal" class="qmodal modal fade" role="dialog">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h3 class="modal-title">Modal header</h3>
-				</div>
-				<div class="modal-body"></div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				</div>
-			</div>
-		</div>
-	</div>
+        def current = newparams[facet]
+        if (current == null) {
+            newparams[facet] = val
+        } else if (current instanceof String[]) {
+            newparams.remove(current)
+            newparams[facet] = current as List
+            newparams[facet].add(val);
+        } else {
+            newparams[facet] = [current, val]
+        }
+        newparams
+    }
+
+    def removeFacet = { params, facet, val ->
+        def newparams = [:]
+        newparams.putAll(params)
+        def current = newparams[facet]
+
+        newparams.remove('offset');
+        newparams.remove('max');
+
+        if (current == null) {
+        } else if (current instanceof String[]) {
+            newparams.remove(current)
+            newparams[facet] = current as List
+            newparams[facet].remove(val);
+        } else if (current?.equals(val.toString())) {
+            newparams.remove(facet);
+        }
+        newparams
+    }
+%>
+
+<h1 class="ui header">Search in All Components</h1>
+
+<div class="ui segment">
+    <g:form action="index" method="get" class="ui form">
+        <div class="sixteen wide field">
+            <input type="text" name="q" id="q" value="${params.q}" placeholder="Search for Packages, Titles, Providers, Platforms..."/>
+        </div>
+
+        <div class="sixteen wide field">
+        <div class="ui toggle checkbox">
+            <input type="checkbox" name="allProperties" ${params.allProperties ? 'checked' : ''}>
+            <label>Additionally search in all properties of Packages, Titles, Providers, Platforms</label>
+        </div>
+        </div>
+
+        <div class="ui right floated buttons">
+            <g:link class="ui button" controller="search" action="index">Reset</g:link>
+            <button class="ui button black" type="submit" value="yes" name="search">Search</button>
+        </div>
+
+        <br>
+        <br>
+    </g:form>
+</div>
+
+
+<g:if test="${resultsTotal == null}">
+    <semui:message>
+        <p>Please enter criteria above (* to search all)</p>
+    </semui:message>
+</g:if>
+<g:else>
+    <div class="ui header">
+        <h2>Showing results ${offset + 1} to ${offset + max > resultsTotal ? resultsTotal : ( offset + max )} of
+            ${resultsTotal}</h2>
+    </div>
+
+    <div class="ui blue labels">
+
+        <g:each in="${['componentType']}" var="facet">
+            <g:each in="${params.list(facet)}" var="fv">
+                <div class="ui label">Filter: ${fv == 'TitleInstancePackagePlatform' ? 'Titles' : fv}&nbsp; <g:link
+                        controller="${controller}" action="${action}" params="${removeFacet(params, facet, fv)}"><i
+                            class="icon close"></i></g:link></div>
+            </g:each>
+        </g:each>
+    </div>
+
+    <div class="ui grid">
+        <div class="four wide column">
+            <div class="ui segment">
+                <g:each in="${facets}" var="facet">
+                    <div class="ui header">
+                        <g:message code="facet.so.${facet.key}" default="${facet.key}"/>
+                    </div>
+
+                    <div class="ui bulleted list">
+                        <g:each in="${facet.value.sort { it.display }}" var="v">
+                            <div class="item">
+                                <g:set var="fname" value="facet:${facet.key + ':' + v.term}"/>
+
+                                <g:if test="${params.list('componentType').contains(v.term.toString())}">
+                                    ${v.display} (${v.count})
+                                </g:if>
+                                <g:else>
+                                    <g:link controller="${controller}" action="${action}"
+                                            params="${addFacet(params, 'componentType', v.term)}">${v.display}</g:link> (${v.count})
+                                </g:else>
+                            </div>
+                        </g:each>
+                    </div>
+                </g:each>
+            </div></div>
+
+        <div class="twelve wide column">
+            <table class="ui selectable striped sortable celled table">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <semui:sortableColumn property="sortname" title="Name" params="${params}"/>
+                    <semui:sortableColumn property="componentType" title="Type" params="${params}"/>
+                    <semui:sortableColumn property="status" title="Status" params="${params}"/>
+                </tr>
+                </thead>
+                <tbody>
+                <g:each in="${hits}" var="hit" status="i">
+                    <tr>
+                        <td>
+                            ${(params.offset? Integer.parseInt(params.offset) : 0)+1+i}
+                        </td>
+                        <td>
+                            <g:if test="${hit.getSourceAsMap().uuid}">
+                                <g:link controller="resource" action="show" id="${hit.getSourceAsMap().uuid}">
+                                    ${hit.getSourceAsMap().name ?: "- Not Set -"}
+                                </g:link>
+                            </g:if>
+                            <g:else>
+                                ${hit.getSourceAsMap().name ?: "- Not Set -"}
+                            </g:else>
+                        </td>
+                        <td>${hit.getSourceAsMap().componentType == 'TitleInstancePackagePlatform' ? hit.getSourceAsMap().titleType : (hit.getSourceAsMap().componentType == 'Org' ? 'Provider' : hit.getSourceAsMap().componentType)}</td>
+                        <td>${hit.getSourceAsMap().status?.value ?: 'Unknown'}</td>
+                    </tr>
+                </g:each>
+                </tbody>
+            </table>
+
+            <semui:paginate controller="search" action="index" params="${params}" max="${max}"
+                            total="${resultsTotal ?: 0}"/>
+
+        </div>
+    </div>
+</g:else>
+
+<br>
+
 </body>
 </html>

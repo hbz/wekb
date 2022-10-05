@@ -1,6 +1,6 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
 <div>
-    <table class="table table-bordered">
+    <table class="ui selectable striped sortable celled table">
         <thead>
         <tr>
             <th>Cause</th>
@@ -21,7 +21,7 @@
                             id="org.gokb.cred.ReviewRequest:${rr.id}">${rr.reviewRequest}</g:link>
                 </td>
                 <td>
-                    <gokb:xEditableRefData owner="${rr}" field="status" config="${RCConstants.REVIEW_REQUEST_STATUS}"/>
+                    <semui:xEditableRefData owner="${rr}" field="status" config="${RCConstants.REVIEW_REQUEST_STATUS}"/>
                 </td>
                 <td>
                     ${rr.dateCreated}
@@ -38,11 +38,11 @@
                 data-toggle="collapse" data-target="#collapseableAddReview">
             Add new <i class="fas fa-plus"></i></button>
         <dl id="collapseableAddReview" class="dl-horizontal collapse">
-            <g:form controller="workflow" action="newRRLink" class="form-inline">
+            <g:form controller="workflow" action="newRRLink">
                 <input type="hidden" name="id" value="${d.id}"/>
                 <dt class="dt-label">Aspect to review</dt>
                 <dd>
-                    <input class="form-control" type="text" name="request" required/>
+                    <input  type="text" name="request" required/>
                 </dd>
                 <dt class="dt-label"></dt>
                 <dd>

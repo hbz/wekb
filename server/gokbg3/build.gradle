@@ -8,11 +8,10 @@ buildscript {
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
-        classpath "gradle.plugin.com.energizedwork.webdriver-binaries:webdriver-binaries-gradle-plugin:1.4"
         classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:1.5.1"
         classpath "gradle.plugin.com.energizedwork:idea-gradle-plugins:1.4"
         classpath "org.grails.plugins:hibernate5:${gormVersion-".RELEASE"}"
-        classpath "com.bertramlabs.plugins:asset-pipeline-gradle:2.14.8"
+        classpath "com.bertramlabs.plugins:asset-pipeline-gradle:3.0.10"
         // Experiment with guide from http://guides.grails.org/grails-as-docker-container/guide/index.html
         classpath "com.bmuschko:gradle-docker-plugin:3.2.5"
         // Fixing too long classpath in Windows development environment
@@ -29,11 +28,9 @@ apply plugin:"idea"
 apply plugin:"war"
 apply plugin:"org.grails.grails-web"
 apply plugin:"com.gorylenko.gradle-git-properties"
-apply plugin:"com.energizedwork.webdriver-binaries"
 apply plugin:"com.energizedwork.idea-project-components"
-apply plugin:"asset-pipeline"
+apply plugin: "com.bertramlabs.asset-pipeline"
 apply plugin:"org.grails.grails-gsp"
-apply plugin:"com.bmuschko.docker-remote-api"
 apply plugin:"org.grails.grails-doc"
 // Fixing too long classpath in Windows development environment
 apply plugin: "ua.eshepelyuk.ManifestClasspath"
@@ -105,8 +102,7 @@ dependencies {
     compile group: 'org.postgresql', name: 'postgresql', version: '42.3.0'
     runtime "com.h2database:h2"
     runtime "org.apache.tomcat:tomcat-jdbc"
-    runtime "com.bertramlabs.plugins:asset-pipeline-grails:2.14.10"
-    assets 'com.bertramlabs.plugins:less-asset-pipeline:2.14.10'
+    compile 'com.bertramlabs.plugins:asset-pipeline-grails:3.0.10' // changed: runtime -> compile
 
     testCompile "org.grails:grails-gorm-testing-support"
     testCompile "org.grails:grails-web-testing-support"
@@ -115,7 +111,6 @@ dependencies {
     testRuntime "org.seleniumhq.selenium:selenium-firefox-driver:3.141.59"
     testRuntime "org.seleniumhq.selenium:selenium-remote-driver:3.141.59"
     testRuntime "org.seleniumhq.selenium:selenium-api:3.141.59"
-    testRuntime 'com.bertramlabs.plugins:less-asset-pipeline:2.14.10'
     testRuntime "org.apache.httpcomponents:httpclient"
 
     //database-migration
@@ -126,11 +121,19 @@ dependencies {
     // https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
     implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.0.0'
 
+    //The GPars framework offers Java developers intuitive and safe ways to handle Java or Groovy tasks concurrently
+    compile 'org.codehaus.gpars:gpars:1.2.1'
+
 }
 
 bootRun {
     jvmArgs = ['-Dspring.output.ansi.enabled=always','-Xmx2g']
     addResources = true
+}
+
+war {
+    baseName = 'wekb'
+    archiveName = 'wekb.war'
 }
 
 buildProperties.doLast {
@@ -176,11 +179,6 @@ buildProperties.doLast {
     }
 }
 
-webdriverBinaries {
-    chromedriver '2.46'
-    geckodriver '0.24.0'
-}
-
 sourceSets {
     main {
         resources {
@@ -189,27 +187,10 @@ sourceSets {
     }
 }
 
-tasks.withType(Test) {
-    systemProperty "geb.env", System.getProperty('geb.env')
-    systemProperty "webdriver.chrome.driver", System.getProperty('webdriver.chrome.driver')
-    systemProperty "webdriver.gecko.driver", System.getProperty('webdriver.gecko.driver')
-}
 
 assets {
     minifyJs = true
     minifyCss = true
-    excludes = [
-      '**/_*.less',
-      'gokb/themes/*.less',
-      'gokb/themes/**/*.less',
-      'bootstrap/*.less',
-      'bootstrap/**/*.less'
-    ]
-    includes = [
-      'webfonts/*',
-      'gokb/themes/*/theme.less',
-      'bootstrap/bootstrap.less'
-    ]
 }
 
 // http://guides.grails.org/grails-as-docker-container/guide/index.html

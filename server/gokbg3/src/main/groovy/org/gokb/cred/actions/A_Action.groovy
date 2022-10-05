@@ -1,11 +1,11 @@
 package org.gokb.cred.actions
 
 import grails.util.GrailsNameUtils;
-import groovy.util.logging.Log4j;
+import groovy.util.logging.Slf4j;
 
 import org.gokb.cred.KBComponent
 
-@Log4j
+@Slf4j
 abstract class A_Action {
   
   abstract String name

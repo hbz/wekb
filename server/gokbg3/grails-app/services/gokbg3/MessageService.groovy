@@ -77,6 +77,19 @@ class MessageService {
     result
   }
 
+  public List processValidationErrorsToListForFlashError(errors, def locale = null) {
+    List result = []
+
+    def errorsMap = [:]
+
+    errorsMap = processValidationErrors(errors, locale)
+
+    errorsMap.each {
+      result << it.value.message
+    }
+    result
+  }
+
   def resolveCode(code, args, locale) {
     log.debug("Resolve ${code} with args ${args} (${locale})")
     def result = null

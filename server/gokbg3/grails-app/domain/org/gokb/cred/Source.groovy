@@ -3,6 +3,8 @@ package org.gokb.cred
 import de.wekb.helper.RCConstants
 
 import javax.persistence.Transient
+import java.sql.Timestamp
+import java.time.LocalDate
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -27,6 +29,9 @@ class Source extends KBComponent {
   Boolean ezbMatch = false
   Org responsibleParty
 
+  Boolean kbartHasWekbFields = false
+  Date lastChangedInKbart
+
   static manyByCombo = [
     curatoryGroups: CuratoryGroup
   ]
@@ -36,6 +41,8 @@ class Source extends KBComponent {
     url column:'source_url'
     ruleset column:'source_ruleset', type:'text'
     lastUpdateUrl column: 'source_last_update_url'
+    kbartHasWekbFields column: 'source_kbart_wekb_fields'
+    lastChangedInKbart column: 'source_last_changed_in_kbart'
   }
 
   static constraints = {
@@ -54,6 +61,7 @@ class Source extends KBComponent {
     zdbMatch(nullable:true,default: false)
     automaticUpdates(nullable: true,default: false)
     lastUpdateUrl(nullable:true, blank:true)
+    lastChangedInKbart (nullable:true, default: null)
     name(validator: { val, obj ->
       if (obj.hasChanged('name')) {
         if (val && val.trim()) {
@@ -189,6 +197,26 @@ class Source extends KBComponent {
     return nextUpdate
   }
 
+  List getUpdateDays(int interval){
+    Date today = new Date()
+    List<Date> updateDays = []
+    // calculate from each first day of the year to not create a lag over the years
+    Calendar cal = Calendar.getInstance()
+    cal.set(Calendar.YEAR, cal.get(Calendar.YEAR))
+    cal.set(Calendar.DAY_OF_YEAR, 1)
+    Calendar cal2 = Calendar.getInstance()
+    cal2.set(Calendar.YEAR, cal.get(Calendar.YEAR))
+    cal2.set(Calendar.MONTH, 11) // 11 = december
+    cal2.set(Calendar.DAY_OF_MONTH, 31) // new years eve
+    Date nextUpdate = cal.getTime()
+    Date lastUpdate = cal2.getTime()
+    while (nextUpdate.before(lastUpdate)){
+      nextUpdate = nextUpdate.plus(interval)
+      updateDays << nextUpdate
+    }
+    return updateDays
+  }
+
 
   def intervals = [
       "Daily"       : 1,
@@ -201,7 +229,8 @@ class Source extends KBComponent {
   @Transient
   def availableActions() {
     [
-            [code: 'method::deleteSoft', label: 'Delete', perm: 'delete'],
+            [code: 'method::deleteSoft', label: 'Delete Source', perm: 'delete'],
+            [code: 'setStatus::Removed', label: 'Remove Source', perm: 'delete'],
     ]
   }
 
@@ -214,6 +243,54 @@ class Source extends KBComponent {
       it.save(flush: true, failOnError: true)
     }
 
+  }
+
+  @Transient
+  Timestamp getNextUpdateTimestamp() {
+    //20:00:00 is time of Cronjob in AutoUpdatePackagesJob
+    if (automaticUpdates && lastRun == null) {
+      return Date.parse('dd.MM.yy hh:mm:SS', "${new Date().getDateString()} 20:00:00").toTimestamp()
+    }
+    if (automaticUpdates && frequency != null) {
+      def interval = intervals.get(frequency.value)
+      if (interval != null){
+        Date due = getUpdateDay(interval)
+          return Date.parse('dd.MM.yy hh:mm:SS', "${due.getDateString()} 20:00:00").toTimestamp()
+      }else {
+        log.info("Source needsUpdate(): Frequency (${frequency}) is not null but intervals is null")
+      }
+    }else {
+      log.info("Source needsUpdate(): Frequency is null")
+    }
+    return null
+  }
+
+  @Transient
+  List<Timestamp> getAllNextUpdateTimestamp() {
+    //20:00:00 is time of Cronjob in AutoUpdatePackagesJob
+    if (automaticUpdates && frequency != null) {
+      def interval = intervals.get(frequency.value)
+      if (interval != null && interval > 1){
+        List<Date> due = getUpdateDays(interval)
+        List<Timestamp> timestampList = []
+        due.each {
+          timestampList << Date.parse('dd.MM.yy hh:mm:SS', "${it.getDateString()} 20:00:00").toTimestamp()
+        }
+        return timestampList
+      }
+    }
+    return null
+  }
+
+  @Transient
+  public String getDomainName() {
+    return "Source"
+  }
+
+  @Transient
+  public List<Package> getPackages() {
+    def result = Package.findAllBySource(this)
+    result
   }
 
 }

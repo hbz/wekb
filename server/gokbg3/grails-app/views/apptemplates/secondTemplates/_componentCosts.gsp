@@ -1,4 +1,4 @@
-<table class="table table-bordered">
+<table class="ui selectable striped sortable celled table">
   <thead>
     <tr>
       <th>Price Type</th>

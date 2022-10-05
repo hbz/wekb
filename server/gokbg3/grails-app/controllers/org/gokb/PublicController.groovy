@@ -2,7 +2,9 @@ package org.gokb
 
 import de.wekb.helper.RCConstants
 import de.wekb.helper.RDStore
+import de.wekb.helper.ServerUtils
 import grails.core.GrailsApplication
+import grails.plugin.springsecurity.SpringSecurityUtils
 import grails.plugins.mail.MailService
 import org.gokb.cred.*
 import org.hibernate.ScrollMode
@@ -10,20 +12,28 @@ import org.hibernate.ScrollableResults
 import wekb.ExportService
 import wekb.SearchService
 
+import javax.servlet.ServletOutputStream
+
 
 class PublicController {
 
   def genericOIDService
   def ESSearchService
   def dateFormatService
-  def sessionFactory
-  def classExaminationService
   ExportService exportService
   MailService mailService
   SearchService searchService
-  def globalSearchTemplatesService
 
   public static String TIPPS_QRY = 'from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=? and c.toComponent=tipp and c.type = ? and tipp.status = ?';
+
+  def robots() {
+    if(ServerUtils.getCurrentServer() != ServerUtils.SERVER_PROD) {
+      def text = "User-agent: *\n"+
+              "Disallow: / \n"
+      render(text: text, contentType: "text/plain", encoding: "UTF-8")
+    }
+    else render (status: 404, text: 'Failed to load robots.txt')
+  }
 
   def wcagPlainEnglish() {
     log.debug("wcagPlainEnglish::${params}")
@@ -59,122 +69,32 @@ class PublicController {
 
   def packageContent() {
     log.debug("packageContent::${params}")
-    def result = [:]
-    if ( params.id ) {
-      def pkg_id_components = params.id.split(':');
-      
-      if ( pkg_id_components?.size() == 2 ) {
-        result.pkg = Package.get(Long.parseLong(pkg_id_components[1]));
-      }
-      else {
-        result.pkg = Package.findByUuid(params.id)
-      }
-      
-      if (result.pkg) {
-        def tipp_combo_rdv = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE,'Package.Tipps')
-        def status_current = RDStore.KBC_STATUS_CURRENT
-        def status_retired = RDStore.KBC_STATUS_RETIRED
-        def status_expected = RDStore.KBC_STATUS_EXPECTED
-        def status_deleted = RDStore.KBC_STATUS_DELETED
-        
-        result.pkgId = result.pkg.id
-        result.pkgName = result.pkg.name
-        log.debug("Tipp qry name: ${result.pkgName}")
-
-        //result.refdata_properties = classExaminationService.getRefdataPropertyNames(result.pkg.class.name)
-
-        Map newParams = [:]
-        params.sort = params.sort ? "${params.sort}" : 'tipp.name'
-        params.order = params.order ? "${params.order}" : 'asc'
-
-        if (params.newMax) {
-          session.setAttribute("newMax", params.newMax)
-          params.remove(params.newMax)
-          params.offset = 0
-        }
-        params.offset = params.offset ?: 0
-        params.max = session.getAttribute("newMax") ?: 10
-
-        params.tab = params.tab ?: 'currentTipps'
-
-        result.currentTitleCount = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_current])[0]
-        result.currentTipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY + " order by ${params.sort} ${params.order}",[result.pkgId, tipp_combo_rdv, status_current], params)
-        //log.debug("Tipp qry done ${result.tipps?.size()}")
-
-        result.retiredTitleCount = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_retired])[0]
-        result.retiredTipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY + " order by ${params.sort} ${params.order}",[result.pkgId, tipp_combo_rdv, status_retired], params)
-
-        result.expectedTitleCount = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_expected])[0]
-        result.expectedTipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY + " order by ${params.sort} ${params.order}",[result.pkgId, tipp_combo_rdv, status_expected], params)
-
-        result.deletedTitleCount = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) '+TIPPS_QRY,[result.pkgId, tipp_combo_rdv, status_deleted])[0]
-        result.deletedTipps = TitleInstancePackagePlatform.executeQuery('select tipp '+TIPPS_QRY + " order by ${params.sort} ${params.order}",[result.pkgId, tipp_combo_rdv, status_deleted], params)
-
-      }else {
-        flash.error = "Package not found"
-      }
-    }
-    result
+    redirect(controller: 'resource', action: 'show', id: params.id)
   }
 
   def tippContent() {
     log.debug("tippContent::${params}")
-    def result = [:]
-    if ( params.id ) {
-      def tipp_id_components = params.id.split(':');
+    redirect(controller: 'resource', action: 'show', id: params.id)
+  }
 
-      if ( tipp_id_components?.size() == 2 ) {
-        result.tipp = TitleInstancePackagePlatform.get(Long.parseLong(tipp_id_components[1]));
-      }
-      else {
-        result.tipp = TitleInstancePackagePlatform.findByUuid(params.id)
-      }
-
-      if (!result.tipp) {
-        flash.error = "Tipp not found"
-      }
-    }
-    result
+  def identifierContent() {
+    log.debug("identifierContent::${params}")
+    redirect(controller: 'resource', action: 'show', id: params.id)
   }
 
   def orgContent() {
     log.debug("orgContent::${params}")
-    def result = [:]
-    if ( params.id ) {
-      def org_id_components = params.id.split(':');
+    redirect(controller: 'resource', action: 'show', id: params.id)
+  }
 
-      if ( org_id_components?.size() == 2 ) {
-        result.org = Org.get(Long.parseLong(org_id_components[1]));
-      }
-      else {
-        result.org = Org.findByUuid(params.id)
-      }
-
-      if (!result.org) {
-        flash.error = "Tipp not found"
-      }
-    }
-    result
+  def sourceContent() {
+    log.debug("sourceContent::${params}")
+    redirect(controller: 'resource', action: 'show', id: params.id)
   }
 
   def platformContent() {
     log.debug("tippContent::${params}")
-    def result = [:]
-    if ( params.id ) {
-      def platform_id_components = params.id.split(':');
-
-      if ( platform_id_components?.size() == 2 ) {
-        result.platform = Platform.get(Long.parseLong(platform_id_components[1]));
-      }
-      else {
-        result.platform = Platform.findByUuid(params.id)
-      }
-
-      if (!result.platform) {
-        flash.error = "Platform not found"
-      }
-    }
-    result
+    redirect(controller: 'resource', action: 'show', id: params.id)
   }
 
 
@@ -182,7 +102,7 @@ class PublicController {
     log.debug("PublicController::index ${params}");
     def result = [:]
 
-    def mutableParams = new HashMap(params)
+    /*def mutableParams = new HashMap(params)
 
     if (mutableParams.newMax) {
       session.setAttribute("newMax", mutableParams.newMax)
@@ -222,7 +142,16 @@ class PublicController {
     }
 
     result =  ESSearchService.search(mutableParams)
+*/
+    def searchResult = [:]
 
+    params.qbe = 'g:publicPackages'
+    searchResult = searchService.search(null, searchResult, params, response.format)
+
+    result = searchResult.result
+
+    //result.s_action = actionName
+    //result.s_controller = controllerName
 
     def query_params = [forbiddenStatus : RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, KBComponent.STATUS_DELETED)]
 
@@ -241,13 +170,12 @@ class PublicController {
         result.countComponent."${component.toLowerCase()}" = KBComponent.executeQuery(fetch_all.toString(), query_params, [readOnly: true])[0]
       }
 
-
     }
 
-    params.max = mutableParams.max
+   /* params.max = mutableParams.max
     params.offset = mutableParams.offset
     params.remove('newMax')
-    params.remove('search')
+    params.remove('search')*/
 
     result
   }
@@ -267,7 +195,7 @@ class PublicController {
 
     String export_date = dateFormatService.formatDate(new Date());
 
-    String filename = "kbart_${pkg.name}_${export_date}"
+    String filename = "kbart_${pkg.name}_${export_date}.txt"
 
     try {
 
@@ -276,6 +204,7 @@ class PublicController {
       def out = response.outputStream
 
       exportService.exportOriginalKBART(out, pkg)
+      return
 
     }
     catch ( Exception e ) {
@@ -298,51 +227,27 @@ class PublicController {
 
     String export_date = dateFormatService.formatDate(new Date());
 
-    String filename = "wekb_package_${pkg.name.toLowerCase()}_${export_date}.txt"
+    String filename = "wekb_package_${pkg.name.toLowerCase()}_${export_date}.tsv"
 
     try {
       response.setContentType('text/tab-separated-values');
       response.setHeader("Content-disposition", "attachment; filename=\"${filename}\"")
 
-      def out = response.outputStream
+      ServletOutputStream out = response.outputStream
 
-      exportService.exportPackageTippsAsTSVNew(out, pkg)
+      Map<String,List> export = exportService.exportPackageTippsAsTSVNew(pkg)
+
+      out.withWriter { writer ->
+        writer.write("we:kb Export : Provider (${pkg.provider?.name}) : Package (${pkg.name}) : ${export_date}\n");
+        writer.write(exportService.generateSeparatorTableString(export.titleRow, export.rows, '\t'))
+      }
+      out.flush()
+      out.close()
+      return
 
     }
     catch ( Exception e ) {
       log.error("Problem with export",e);
     }
-  }
-
-  def search() {
-    def start_time = System.currentTimeMillis();
-
-    log.debug("Entering SearchController:index ${params}")
-
-    def searchResult = [:]
-
-    List allowedSearch = ["g:tipps", "g:platforms", "g:packages", "g:packages", "g:orgs"]
-
-    if(params.qbe in allowedSearch) {
-
-      if (params.newMax) {
-        session.setAttribute("newMax", params.newMax)
-        params.remove(params.newMax)
-        params.offset = "0"
-      }
-      params.offset = params.offset ? params.offset.toString() : "0"
-      params.max = session.getAttribute("newMax") ? session.getAttribute("newMax").toString() : "10"
-
-      searchResult = searchService.search(null, searchResult, params, null)
-
-      log.debug("Search completed after ${System.currentTimeMillis() - start_time}");
-
-    }else {
-      searchResult.result = [:]
-      searchResult.result.message = "This search is not allowed!"
-    }
-      searchResult.result
-
-
   }
 }

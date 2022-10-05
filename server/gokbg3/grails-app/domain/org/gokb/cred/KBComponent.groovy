@@ -1,6 +1,7 @@
 package org.gokb.cred
 
 import de.wekb.helper.RCConstants
+import de.wekb.helper.RDStore
 import grails.util.GrailsNameUtils
 import groovy.util.logging.*
 import wekb.KBComponentLanguage
@@ -78,6 +79,9 @@ abstract class KBComponent implements Auditable{
   def springSecurityService
 
   @Transient
+  def accessService
+
+  @Transient
   protected grails.core.GrailsApplication grailsApplication
 
   /*@Transient
@@ -90,51 +94,6 @@ abstract class KBComponent implements Auditable{
     this.grailsApplication = ga
   }
 
-  @Transient
-  protected void touchAllDependants(){
-
-    //TODO: SO - This really needs to be reviewed. There must be an easy way to do this without hibernate freaking out. Commenting out for now.
-    log.debug("Update dependent objects for ${this}..")
-
-    // The update closure.
-    def doUpdate = { obj, Date stamp ->
-      try{
-        def saveParams = [failOnError: true]
-
-        obj.lastSeen = stamp.getTime()
-        obj.save(saveParams)
-
-      }
-      catch (Throwable t){
-        // Suppress but log.
-        log.error("${t}")
-      }
-    }
-
-    if (hasProperty("touchOnUpdate")){
-      // We should also update the object(s).
-      this.touchOnUpdate.each{ dep_name ->
-        // Get the dependant.
-        def deps = this.getProperty(dep_name)
-        log.debug("Got ${dep_name}: ${deps}")
-        if (deps){
-          if (deps instanceof Map){
-            deps.each{ k, obj ->
-              doUpdate(obj, this.lastUpdated)
-            }
-          }
-          else if (deps instanceof Iterable){
-            deps.each{ obj ->
-              doUpdate(obj, this.lastUpdated)
-            }
-          }
-          else if (grailsApplication.isDomainClass(deps.class)){
-            doUpdate(deps, this.lastUpdated)
-          }
-        }
-      }
-    }
-  }
 
 
   @Transient
@@ -298,7 +257,6 @@ abstract class KBComponent implements Auditable{
   Set languages
   String lastUpdateComment
 
-  // Set tags = []
   List additionalProperties = []
   Set outgoingCombos = []
   Set incomingCombos = []
@@ -333,12 +291,6 @@ abstract class KBComponent implements Auditable{
   String componentDiscriminator
 
 
-  // ids moved to combos.
-  static manyByCombo = [
-      ids            : Identifier,
-      fileAttachments: DataFile,
-  ]
-
 
   static mappedBy = [
       outgoingCombos      : 'fromComponent',
@@ -346,21 +298,18 @@ abstract class KBComponent implements Auditable{
       additionalProperties: 'fromComponent',
       variantNames        : 'owner',
       reviewRequests      : 'componentToReview',
-      people              : 'component',
       prices              : 'owner'
   ]
 
 
   static hasMany = [
-      // tags:RefdataValue,
       outgoingCombos      : Combo,
       incomingCombos      : Combo,
       additionalProperties: KBComponentAdditionalProperty,
       variantNames        : KBComponentVariantName,
       reviewRequests      : ReviewRequest,
-      people              : ComponentPerson,
       prices              : ComponentPrice,
-      languages            : KBComponentLanguage
+      languages           : KBComponentLanguage
   ]
 
 
@@ -377,7 +326,6 @@ abstract class KBComponent implements Auditable{
     source column: 'kbc_source_fk'
     status column: 'kbc_status_rv_fk', index: 'kbc_status_idx'
     shortcode column: 'kbc_shortcode', index: 'kbc_shortcode_idx'
-    // tags joinTable: [name: 'kb_component_tags_value', key: 'kbctgs_kbc_id', column: 'kbctgs_rdv_id']
     dateCreated column: 'kbc_date_created', index: 'kbc_date_created_idx'
     lastUpdated column: 'kbc_last_updated', index: 'kbc_last_updated_idx'
     duplicateOf column: 'kbc_duplicate_of'
@@ -497,33 +445,6 @@ abstract class KBComponent implements Auditable{
   }
 
 
-  /**
-   *  ignore any namespace or type - see if we can find a component where a linked identifier has the specified value
-   *  @return LIST of all components with this identifier as a value
-   */
-  static def lookupByIdentifierValue(String[] idvalue){
-    def result = []
-    if (idvalue != null){
-      def crit = Identifier.createCriteria()
-      // def combotype = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE,'KBComponent.Ids')
-      def lr = crit.list{
-        or{
-          idvalue.each{
-            if ((it != null) && (it.trim().length() > 0)){
-              eq('value', it)
-            }
-          }
-        }
-      }
-      lr?.each{ id ->
-        id.identifiedComponents.each{ component ->
-          result.add(component)
-        }
-      }
-    }
-    result
-  }
-
 
   /**
    *  refdataFind generic pattern needed by inplace edit taglib to provide reference data to typedowns and other UI components.
@@ -579,7 +500,7 @@ abstract class KBComponent implements Auditable{
     // Generate any necessary values.
     generateShortcode()
     generateNormname()
-    generateComponentHash()
+    //generateComponentHash()
     generateUuid()
     // Ensure any defaults defined get set.
     ensureDefaults()
@@ -587,21 +508,15 @@ abstract class KBComponent implements Auditable{
 
 
   def afterInsert(){
-    // Alter the timestamps of any dependants.
-    touchAllDependants()
+
   }
 
 
   def afterUpdate(){
-    // Alter the timestamps of any dependants.
-    touchAllDependants()
   }
 
 
   def afterDelete(){
-
-    // Alter the timestamps of any dependants.
-    touchAllDependants()
   }
 
 
@@ -612,7 +527,7 @@ abstract class KBComponent implements Auditable{
         this.shortcode = generateShortcode(name)
       }
       generateNormname()
-      generateComponentHash()
+      //generateComponentHash()
     }
     if (!uuid){
       generateUuid()
@@ -621,15 +536,6 @@ abstract class KBComponent implements Auditable{
     if (user != null){
       this.lastUpdatedBy = user
     }
-  }
-
-
-  @Transient
-  String getIdentifierValue(idtype){
-    // As ids are combo controlled it should be enough just to call find here.
-    // This will return only the first match and stop looking afterwards.
-    // Null returned if no match.
-    ids?.find{ it.namespace.value.toLowerCase() == idtype.toLowerCase() }?.value
   }
 
 
@@ -689,7 +595,7 @@ abstract class KBComponent implements Auditable{
 
   void deleteSoft(context){
     // Set the status to deleted.
-    setStatus(RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, STATUS_DELETED))
+    setStatus(RDStore.KBC_STATUS_DELETED)
     save(flush: true, failOnError: true)
   }
 
@@ -697,44 +603,44 @@ abstract class KBComponent implements Auditable{
   void retire(def context = null){
     log.debug("KBComponent::retire")
     // Set the status to retired.
-    setStatus(RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, STATUS_RETIRED))
+    setStatus(RDStore.KBC_STATUS_RETIRED)
     save(flush: true, failOnError: true)
   }
 
 
   void setActive(context){
-    setStatus(RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, STATUS_CURRENT))
+    setStatus(RDStore.KBC_STATUS_CURRENT)
     save(flush: true, failOnError: true)
   }
 
 
   void setExpected(context){
-    setStatus(RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, STATUS_EXPECTED))
+    setStatus(RDStore.KBC_STATUS_EXPECTED)
     save(flush: true, failOnError: true)
   }
 
 
   @Transient
   boolean isRetired(){
-    return (getStatus() == RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, STATUS_RETIRED))
+    return (getStatus() == RDStore.KBC_STATUS_RETIRED)
   }
 
 
   @Transient
   boolean isDeleted(){
-    return (getStatus() == RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, STATUS_DELETED))
+    return (getStatus() == RDStore.KBC_STATUS_DELETED)
   }
 
 
   @Transient
   boolean isCurrent(){
-    return (getStatus() == RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, STATUS_CURRENT))
+    return (getStatus() == RDStore.KBC_STATUS_CURRENT)
   }
 
 
   @Transient
   boolean isExpected(){
-    return (getStatus() == RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, STATUS_EXPECTED))
+    return (getStatus() == RDStore.KBC_STATUS_EXPECTED)
   }
 
 
@@ -828,7 +734,8 @@ abstract class KBComponent implements Auditable{
 
 
   String toString(){
-    "${name ?: ''} (${getNiceName()} ${this.id})".toString()
+    //"${name ?: ''} (${getNiceName()} ${this.id})".toString()
+    "${name ?: ''}".toString()
   }
 
 
@@ -849,7 +756,7 @@ abstract class KBComponent implements Auditable{
     // difference between f(x) and f([x]) closure called with a list containing one argument. Not been able to fully
     // wrap my head around A_Api yet, so added skippedTitles here as a stop-gap. Substantial changes already made to A_Api and don't
     // want to change any more yet.
-    // added variantNames, ids
+    // added variantNames
 
     // SO: Think the issue was actually that deproxy was being called on the list of items when iterating [each (el in val)]
     // should have been called on el not val.
@@ -858,13 +765,10 @@ abstract class KBComponent implements Auditable{
         'outgoingCombos',
         'incomingCombos',
 //      'reviewRequests',
-        'tags',
         'systemOnly',
         'additionalProperties',
 //      'skippedTitles',
-        'variantNames',
-        'ids',
-        'fileAttachments'
+        'variantNames'
     ]
 
     // Get the domain class.
@@ -915,13 +819,10 @@ abstract class KBComponent implements Auditable{
         'outgoingCombos',
         'incomingCombos',
         'reviewRequests',
-        'tags',
         'systemOnly',
         'additionalProperties',
 //      'skippedTitles',
-//      'variantNames',
-        'ids',
-        'fileAttachments'
+//      'variantNames'
     ]
     // Get the domain class.
     def domainClass = grailsApplication.getDomainClass(this."class".name)
@@ -1098,140 +999,6 @@ abstract class KBComponent implements Auditable{
   }
 
 
-  @Transient
-  def getDecisionSupportLines(filter = null){
-    // Return an array consisting of DS Categories, in each category the Criterion and then null or the currently selected value
-    def result = [:]
-    def criterion = null
-    // N.B. for steve.. saying "if id != null" always fails - id is hibernate injected - should investigate this
-    if (getId() != null){
-      // N.B. Long standing bug in hibernate means that dsac.appliedTo = ? throws a 'can only ref props in the driving table' exception
-      // Workaround is to use the id directly
-      log.debug("Package being processed (KB COMPONENT): ${getId()}")
-      criterion = DSCriterion.executeQuery('select c, dsac from DSCriterion as c left outer join c.appliedCriterion as dsac with dsac.appliedTo.id = ?', getId())
-      def currentUser = springSecurityService.currentUser
-      def criterionMap = [:] //Convert results to group many DSAppliedCriterion's (Val) to a DSCriterion (Key)
-      criterion.each{ c ->
-        if (!criterionMap.containsKey(c[0])){
-          criterionMap.put(c[0], [])
-        }
-        if (c[1]){
-          criterionMap[c[0]].add(c[1])
-        }
-      }
-      Closure dates = { a, b -> a.lastUpdated <= b.lastUpdated ? 1 : -1 }
-      criterionMap.each{ c, acrit ->
-        def cat_code = c.owner.code //e.g. Fromat,Access - Read Online, etc.
-        if (result[cat_code] == null){
-          result[cat_code] = [description  : c.owner.description,
-                              id           : c.owner.id,
-                              criterion    : [:],
-                              comment_count: 0,
-                              vote_count   : 0,
-                              vote_y_count : 0,
-                              vote_n_count : 0,
-                              vote_o_count : 0]
-        } //criterion now a map
-        // Add criteria title, current value if present, a string of componentId:CriteriaId (For setter/getter)
-        if (!result[cat_code].criterion[c.id]){
-          // Set all params.
-          //use criterion key instead for id
-          result[cat_code].criterion[c.id] = [
-              "title"       : c.title,         //Downloadable PDF, Embedded PDF, etc.
-              "description" : c.description,   //Downloadable PDF, Embedded PDF, etc.
-              "explanation" : c.explanation,   //Downloadable PDF, Embedded PDF, etc.
-              "title"       : c.title,         //Downloadable PDF, Embedded PDF, etc.
-              "appliedTo"   : getId(),         //Package extends KBComponent
-              "yourVote"    : [],              //logged in users vote
-              "otherVotes"  : [],              //Every else minus logged in & master vote
-              "voteCounter" : [0, 0, 0, 0],       //Red,Amber,Green,Unknown
-              "notes"       : [],              //Comments organised
-              "deletedNotes": []               //Comments organised
-          ]
-        }
-
-        //ORDERING
-        def liveOrg = [] //Live comments by logged in user domain, in date order (last updated)
-        def deleted = [] //Remaining deleted comments by last updated
-        acrit.each{ ac ->
-          //Your votes placeholder
-          if (currentUser == ac?.user){
-            // Current users vote.
-            result[cat_code].criterion[c.id]['yourVote'] = [
-                ac?.value?.value, //colour
-                ac,               //dsac
-                ac.user           //user
-            ]
-          }
-          else{
-            //Has there been any other vote
-            result[cat_code].criterion[c.id]['otherVotes'] << [
-                ac?.value?.value,
-                ac,
-                ac?.user
-            ]
-          }
-
-          //DSAppliedCriterion level, not possible to check if deleted unless loop through each individual note
-          //colour value is per vote, additional checks will need to be made
-          switch (ac?.value?.value){
-            case 'Red':
-              result[cat_code].criterion[c.id]['voteCounter'][0]++
-              result[cat_code].vote_n_count++
-              result[cat_code].vote_count++
-              break
-            case 'Amber':
-              result[cat_code].criterion[c.id]['voteCounter'][1]++
-              result[cat_code].vote_o_count++
-              result[cat_code].vote_count++
-              break
-            case 'Green':
-              result[cat_code].criterion[c.id]['voteCounter'][2]++
-              result[cat_code].vote_y_count++
-              result[cat_code].vote_count++
-              break
-            default:
-              result[cat_code].criterion[c.id]['voteCounter'][3]++
-              break
-          }
-
-          //Notes processing, for ordering and separation of deleted notes
-          ac?.notes?.each{ note ->
-            result[cat_code].comment_count++
-            def comment_user_is_curator = note.criterion.user.curatoryGroups?.id.intersect(this.curatoryGroups?.id)
-            def group_intersection = note.criterion.user.groupMemberships?.intersect(currentUser.groupMemberships)
-
-            // Control comment inclusion based on filter
-            if (
-            (filter == null) || (filter == 'all') || (filter == '') ||                                // NO filter == everything
-                ((filter == 'mylib') && ((note.criterion.user.org == currentUser.org) || group_intersection)) ||              // User only wants comments from their own org
-                ((filter == 'otherlib') && (note.criterion.user.org != currentUser.org) && !group_intersection) ||               // HEIs other than the users
-                ((filter == 'vendor') && (note.criterion.user.org?.mission?.value == 'Commercial' || note.criterion.user.groupMemberships?.collect{ it.mission?.value == 'Commercial' })) ||  // Filter to vendor comments
-                ((filter == 'curator') && comment_user_is_curator)                                         // User is a curator
-            ){
-              if (!note.isDeleted){
-                liveOrg.add(note)
-              }
-              else if (note.isDeleted){
-                deleted.add(note)
-              }
-              else{
-                liveOrg.add(note)
-              }
-            }
-          }
-        }
-        //End of DSAppliedCriterion processing for current criterion. Now to sort the notes...
-        liveOrg.sort(true, dates)
-        result[cat_code].criterion[c.id]['notes'].addAll(liveOrg)
-        deleted.sort(true, dates)
-        result[cat_code].criterion[c.id]['deletedNotes'].addAll(deleted)
-      }
-      return result
-    }
-  }
-
-
   def expunge(){
     log.debug("Component expunge")
     def result = [deleteType: this.class.name, deleteId: this.id]
@@ -1257,8 +1024,6 @@ abstract class KBComponent implements Auditable{
         }
     }
     ReviewRequest.executeUpdate("delete from ReviewRequest as c where c.componentToReview=:component", [component: this])
-    ComponentPerson.executeUpdate("delete from ComponentPerson as c where c.component=:component", [component: this])
-    ComponentIngestionSource.executeUpdate("delete from ComponentIngestionSource as c where c.component=:component", [component: this])
     KBComponent.executeUpdate("update KBComponent set duplicateOf = NULL where duplicateOf=:component", [component: this])
     KBComponent.executeUpdate("delete from ComponentPrice where owner=:component", [component: this])
     this.delete(failOnError: true)
@@ -1288,8 +1053,6 @@ abstract class KBComponent implements Auditable{
         ComponentHistoryEvent.executeUpdate("delete from ComponentHistoryEvent as c where c.id = ?", [it.id])
       }
       ReviewRequest.executeUpdate("delete from ReviewRequest as c where c.componentToReview.id IN (:component)", [component: batch])
-      ComponentPerson.executeUpdate("delete from ComponentPerson as c where c.component.id IN (:component)", [component: batch])
-      ComponentIngestionSource.executeUpdate("delete from ComponentIngestionSource as c where c.component.id IN (:component)", [component: batch])
       KBComponent.executeUpdate("update KBComponent set duplicateOf = NULL where duplicateOf.id IN (:component)", [component: batch])
       ComponentPrice.executeUpdate("delete from ComponentPrice as cp where cp.owner.id IN (:component)", [component: batch])
       result.num_expunged += KBComponent.executeUpdate("delete KBComponent as c where c.id IN (:component)", [component: batch])
@@ -1300,9 +1063,6 @@ abstract class KBComponent implements Auditable{
 
   @Transient
   def addCoreGOKbXmlFields(builder, attr) {
-    def refdata_ids = RefdataCategory.lookupOrCreate(RCConstants.COMBO_TYPE, 'KBComponent.Ids')
-    def status_active = RefdataCategory.lookupOrCreate(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE)
-    def cids = Identifier.executeQuery("select i.namespace.value, i.namespace.name, i.value, i.namespace.family from Identifier as i, Combo as c where c.fromComponent = ? and c.type = ? and c.toComponent = i and c.status = ?", [this, refdata_ids, status_active], [readOnly: true])
     String cName = this.class.name
 
     // Single props.
@@ -1317,15 +1077,6 @@ abstract class KBComponent implements Auditable{
     }
     builder.'shortcode'(shortcode)
 
-    // Identifiers
-    builder.'identifiers'{
-      cids?.each{ tid ->
-        builder.'identifier'('namespace': tid[0], 'namespaceName': tid[1], 'value': tid[2], 'type': tid[3])
-      }
-      if (grailsApplication.config.serverUrl || grailsApplication.config.baseUrl){
-        builder.'identifier'('namespace': 'originEditUrl', 'value': "${grailsApplication.config.serverUrl ?: grailsApplication.config.baseUrl}/resource/show/${cName}:${id}")
-      }
-    }
     // Variant Names
     if (variantNames){
       builder.'variantNames'{
@@ -1340,23 +1091,6 @@ abstract class KBComponent implements Auditable{
           String pName = prop.propertyDefn?.propertyName
           if (pName && prop.apValue){
             builder.'additionalProperty'('name': pName, 'value': prop.apValue)
-          }
-        }
-      }
-    }
-    if (fileAttachments){
-      builder.'fileAttachments'{
-        fileAttachments.each{ fa ->
-          builder.'fileAttachment'{
-            builder.'guid'(fa.guid)
-            builder.'md5'(fa.md5)
-            builder.'uploadName'(fa.uploadName)
-            builder.'uploadMimeType'(fa.uploadMimeType)
-            builder.'filesize'(fa.filesize)
-            builder.'doctype'(fa.doctype)
-            builder.'content'{
-              builder.'mkp'.yieldUnescaped "<![CDATA[${fa.fileData.encodeBase64().toString()}]]>"
-            }
           }
         }
       }
@@ -1457,7 +1191,7 @@ abstract class KBComponent implements Auditable{
             '(endDate is null or endDate>:start) and priceType=:type and currency=:currency' ,
             [start: cp.startDate, tipp: this, type: cp.priceType, currency:cp.currency])*/
         // enter the new price
-        prices << cp
+        //prices << cp
         save()
       }
     }
@@ -1472,9 +1206,9 @@ abstract class KBComponent implements Auditable{
     if (this.respondsTo('availableActions')){
       allActions = this.availableActions()
       allActions.each{ ao ->
-        if (ao.perm == "delete" && !this.isDeletable()){
+        if (ao.perm == "delete" && !accessService.checkDeletable(this.class.name)){
         }
-        else if (ao.perm == "admin" && !this.isAdministerable()){
+        else if (ao.perm == "admin" && !user.hasRole('ROLE_ADMIN')){
         }
         else if (ao.perm == "su" && !user.hasRole('ROLE_SUPERUSER')){
         }

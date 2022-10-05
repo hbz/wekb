@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="layout" content="sb-admin"/>
-    <title><g:message code="gokb.appname" default="we:kb"/>: Frontend</title>
+    <meta name="layout" content="public_semui"/>
+    <title>Frontend</title>
 </head>
 
 <body>
@@ -16,11 +16,11 @@
                 <h3>Bootstrap 3.3.7</h3>
                 <!-- Nav tabs -->
                 <div id="js-tabPanelWidget">
-                    <bootStrap:tabs>
+                    <semui:tabs>
                         <li class="active"><a  href="#home" role="tab">Home</a></li>
-                        <bootStrap:tabsItem href="#profile" controller="frontend" action="tabExample" text="Profile" />
-                        <bootStrap:tabsItem href="#messages" controller="frontend" action="tabExample" text="Messages" />
-                    </bootStrap:tabs>
+                        <semui:tabsItem href="#profile" controller="frontend" action="tabExample" text="Profile" />
+                        <semui:tabsItem href="#messages" controller="frontend" action="tabExample" text="Messages" />
+                    </semui:tabs>
 
                 <!-- Tab panes -->
                     <div class="tab-content">
@@ -37,7 +37,7 @@
 </div>
 
 
-<script>
+%{--<script>
   //AJAX for Tab Panel Widget
   $('#js-tabPanelWidget').on('click','#js-tabList a',function (e) {
     e.preventDefault();
@@ -53,7 +53,7 @@
       $(this).tab('show');
     }
   });
-</script>
+</script>--}%
 
 
 </body>

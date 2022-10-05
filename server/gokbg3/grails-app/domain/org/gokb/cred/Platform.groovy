@@ -25,6 +25,9 @@ class Platform extends KBComponent {
   @RefdataAnnotation(cat = RCConstants.YN)
   RefdataValue passwordAuthentication
 
+  @RefdataAnnotation(cat = RCConstants.YN)
+  RefdataValue openAthens
+
   @RefdataAnnotation(cat = RCConstants.PLATFORM_STATISTICS_FORMAT)
   RefdataValue statisticsFormat
 
@@ -61,7 +64,10 @@ class Platform extends KBComponent {
 
   Date lastAuditDate
 
-  static hasMany = [roles: RefdataValue]
+  static hasMany = [
+          roles: RefdataValue,
+          ids: Identifier,
+          tipps: TitleInstancePackagePlatform]
 
   static hasByCombo = [
     provider: Org
@@ -73,9 +79,6 @@ class Platform extends KBComponent {
 
   static manyByCombo = [
     hostedPackages: Package,
-    hostedTipps   : TitleInstancePackagePlatform,
-    linkedTipps   : TitleInstancePackagePlatform,
-    hostedTitles  : TitleInstancePlatform,
     curatoryGroups: CuratoryGroup
   ]
 
@@ -89,6 +92,7 @@ class Platform extends KBComponent {
     authentication column: 'plat_authentication_fk_rv'
     ipAuthentication column: 'plat_auth_by_ip_fk_rv'
     shibbolethAuthentication column: 'plat_auth_by_shib_fk_rv'
+    openAthens column: 'plat_open_athens_fk_rv'
     passwordAuthentication column: 'plat_auth_by_pass_fk_rv'
     statisticsFormat column: 'plat_statistics_format_fk_rv'
     counterR3Supported column: 'plat_counter_r3_supported_fk_rv'
@@ -113,6 +117,7 @@ class Platform extends KBComponent {
     authentication(nullable: true, blank: false)
     ipAuthentication(nullable: true, blank: false)
     shibbolethAuthentication(nullable: true, blank: false)
+    openAthens (nullable: true, blank: false)
     passwordAuthentication(nullable: true, blank: false)
     name(validator: { val, obj ->
       if (obj.hasChanged('name')) {
@@ -255,9 +260,9 @@ class Platform extends KBComponent {
 
   def availableActions() {
     [
-      [code: 'platform::replacewith', label: 'Replace platform with...', perm: 'admin'],
+      /*[code: 'platform::replacewith', label: 'Replace platform with...', perm: 'admin'],*/
       [code: 'method::deleteSoft', label: 'Delete Platform', perm: 'delete'],
-      [code: 'method::retire', label: 'Retire Platform (with hosted TIPPs)', perm: 'admin']
+      /*[code: 'method::retire', label: 'Retire Platform (with hosted TIPPs)', perm: 'admin']*/
     ]
   }
 
@@ -273,10 +278,9 @@ class Platform extends KBComponent {
     this.status = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Retired');
     this.save();
 
-    // Delete the tipps too as a TIPP should not exist without the associated,
+    /*// Delete the tipps too as a TIPP should not exist without the associated,
     // package.
-    log.debug("Retiring tipps");
-    def tipps = getHostedTipps()
+    log.debug("Retiring tipps")
 
     tipps.each { def t ->
       log.debug("deroxy ${t} ${t.class.name}");
@@ -289,180 +293,38 @@ class Platform extends KBComponent {
       log.debug("Retiring tipp ${tipp.id}");
       tipp.status = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Retired');
       tipp.save()
-    }
-  }
-
-
-  @Transient
-  public static def validateDTO(platformDTO) {
-    def result = ['valid': true, 'errors': [:]]
-
-    if (platformDTO?.name?.trim()) {
-    } else {
-      result.valid = false
-      result.errors.name = [[message: "Platform name is missing!", baddata: (platformDTO?.name ?: null)]]
-    }
-
-    if (!result.valid) {
-      log.error("platform failed validation ${platformDTO}");
-    }
-
-    result
-  }
-
-  @Transient
-  public static Platform upsertDTO(platformDTO, def user = null, def project = null) {
-    // Ideally this should be done on platformUrl, but we fall back to name here
-
-    def result = false;
-    Boolean skip = false;
-    def status_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current')
-    def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
-    def name_candidates = []
-    def url_candidates = [];
-    def changed = false
-    Boolean viable_url = false;
-
-    if (platformDTO.uuid) {
-      result = Platform.findByUuid(platformDTO.uuid)
-    }
-    if (result) {
-      changed |= com.k_int.ClassUtils.setStringIfDifferent(result, 'name', platformDTO.name)
-    } else {
-      if (platformDTO.name.startsWith("http")) {
-        try {
-          log.debug("checking if platform name is an URL..")
-
-          def url_as_name = new URL(platformDTO.name)
-
-          if (url_as_name.getProtocol()) {
-            if (!platformDTO.primaryUrl || !platformDTO.primaryUrl.trim()) {
-              log.debug("identified URL as platform name")
-              platformDTO.primaryUrl = platformDTO.name
-            }
-            platformDTO.name = url_as_name.getHost()
-
-            if (platformDTO.name.startsWith("www.")) {
-              platformDTO.name = platformDTO.name.substring(4)
-            }
-
-            log.debug("New platform name is ${platformDTO.name}.")
-          }
-        } catch (MalformedURLException) {
-          log.debug("Platform name is no valid URL")
-        }
-      }
-
-      name_candidates = Platform.executeQuery("from Platform where name = ? and status != ? ", [platformDTO.name, status_deleted]);
-
-      if (platformDTO.primaryUrl && platformDTO.primaryUrl.trim().size() > 0) {
-        try {
-          def inc_url = new URL(platformDTO.primaryUrl);
-          def other_candidates = []
-
-          if (inc_url) {
-            viable_url = true;
-            String urlHost = inc_url.getHost();
-
-            if (urlHost.startsWith("www.")) {
-              urlHost = urlHost.substring(4)
-            }
-
-            def platform_crit = Platform.createCriteria()
-
-            //TODO: MOE Matching
-            url_candidates = platform_crit.list {
-              or {
-                like("name", "${urlHost}")
-                like("primaryUrl", "%${urlHost}%")
-              }
-            }
-          }
-        } catch (MalformedURLException ex) {
-          log.error("URL of ingest Platform ${platformDTO} is broken!")
-        }
-      }
-
-      if (name_candidates.size() == 0) {
-        log.debug("No platforms matched by name!")
-
-        def variant_normname = GOKbTextUtils.normaliseString(platformDTO.name)
-
-        def varname_candidates = Platform.executeQuery("select distinct pl from Platform as pl join pl.variantNames as v where v.normVariantName = ? and pl.status = ? ", [variant_normname, status_current])
-
-        if (varname_candidates.size() == 1) {
-          log.debug("Platform matched by variant name!")
-          result = varname_candidates[0]
-        }
-
-      } else if (name_candidates.size() == 1 && name_candidates[0].status == status_current) {
-        log.debug("Platform ${platformDTO.name} matched by name!")
-        result = name_candidates[0];
-      } else {
-        log.warn("Could not match a specific current platform for ${platformDTO.name}!");
-      }
-
-      if (!result && viable_url) {
-        log.debug("Trying to match platform by primary URL..")
-
-        if (url_candidates.size() == 0) {
-          log.debug("Could not match an existing platform!")
-        } else if (url_candidates.size() == 1) {
-          log.debug("Matched existing platform by URL!")
-          result = url_candidates[0];
-        } else if (url_candidates.size() > 1) {
-          log.warn("Matched multiple platforms by URL!")
-
-          def current_platforms = url_candidates.findAll { it.status == status_current }
-
-          if (current_platforms.size() == 1) {
-            result = current_platforms[0]
-
-            if (!result.primaryUrl) {
-              result.primaryUrl = platformDTO.primaryUrl
-              result.save(flush: true, failOnError: true)
-            }
-          } else if (current_platforms.size() == 0) {
-            log.error("Matched only non-current platforms by URL!")
-            result = url_candidates[0]
-          } else {
-
-            // Picking randomly from multiple results is bad, but right now a result is always expected. Maybe this should be skipped...
-            // skip = true
-
-            log.error("Multiple matched current platforms: ${current_platforms}")
-            result = current_platforms[0]
-          }
-        }
-      }
-
-      if (!result && !skip) {
-        log.debug("Creating new platform for: ${platformDTO}")
-        result = new Platform(name: platformDTO.name, normname: KBComponent.generateNormname(platformDTO.name), primaryUrl: (viable_url ? platformDTO.primaryUrl : null), uuid: platformDTO.uuid ?: null).save(flush: true, failOnError: true)
-
-       /* ReviewRequest.raise(
-          result,
-          "The platform ${result} did not exist and was newly created.",
-          "New platform created",
-          user,
-          project,
-          null,
-          RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'New Platform')
-        )*/
-      }
-    }
-
-    result;
+    }*/
   }
 
   @Transient
   public getCurrentTippCount() {
-    def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current');
-    def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Platform.HostedTipps')
-
-    int result = Combo.executeQuery("select count(c.id) from Combo as c where c.fromComponent = ? and c.type = ? and c.toComponent.status = ?"
-            , [this, combo_tipps, refdata_current])[0]
+    def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current')
+    int result = Combo.executeQuery("select count(t.id) from TitleInstancePackagePlatform as t where t.hostPlatform = :plt and t.status = :status"
+            , [plt: this, stauts: refdata_current])[0]
 
     result
+  }
+
+  @Transient
+  public getPackagesCount() {
+    def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current');
+    def combo_tipps = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'Package.NominalPlatform')
+
+    int result = Combo.executeQuery("select count(c.id) from Combo as c where c.toComponent = :to and c.type = :type and c.toComponent.status = :status"
+            , [to: this, type: combo_tipps, status: refdata_current])[0]
+
+    result
+  }
+
+  @Transient
+  String getIdentifierValue(idtype){
+    // This will return only the first match and stop looking afterwards.
+    // Null returned if no match.
+    ids?.find{ it.namespace.value.toLowerCase() == idtype.toLowerCase() }?.value
+  }
+
+  @Transient
+  public String getDomainName() {
+    return "Platform"
   }
 }

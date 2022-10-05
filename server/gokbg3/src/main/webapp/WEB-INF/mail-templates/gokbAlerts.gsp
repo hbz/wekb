@@ -17,7 +17,7 @@
       </thead>
       <tbody>
         <% updates.each { pkg -> %>
-          <tr><td colspan="5"><h2><a href="${serverUrl}/resource/show/org.gokb.cred.Folder%3A${pkg.id}">${pkg.name} ( List owned by ${pkg.owner} )</a></h2></td></tr>
+          <tr><td colspan="5"><h2></h2></td></tr>
           <% pkg.titles.each { ti -> %>
             <tr>
               <td><a href="${serverUrl}/resource/show/${ti.watchlist_title.class.name}%3A${ti.watchlist_title.id}">${ti.watchlist_title.name}</a></td>

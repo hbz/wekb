@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="layout" content="sb-admin" />
-<title><g:message code="gokb.appname" default="we:kb"/>: Move TIPP</title>
+<meta name="layout" content="public_semui" />
+<title>Move TIPP</title>
 </head>
 <body>
 
@@ -23,7 +23,7 @@
 				<div class="row">
 					<div class="col-md-6">
 						<h3>TIPP(s) to transfer</h3>
-						<table class="table table-striped table-bordered no-select-all">
+						<table class="ui selectable striped sortable celled table">
 							<thead>
 								<tr>
 									<th></th>
@@ -56,7 +56,7 @@
 										<tr class="ex-${o.id} hidden">
 											<td><b>Coverage</b></td>
 											<td colspan="3" >
-												<table class="table table-striped table-bordered">
+												<table class="ui selectable striped sortable celled table">
 													<thead>
 														<tr>
 															<th>Start Date</th>
@@ -111,14 +111,11 @@
 
             <h3>New Context:</h3>
 
-						<label>New Title:</label>
-						<gokb:simpleReferenceTypedown class="form-control" name="newtitle" baseClass="org.gokb.cred.TitleInstance" filter1="Current"/>
-
 						<label>New Platform:</label>
-						<gokb:simpleReferenceTypedown class="form-control" name="newplatform" baseClass="org.gokb.cred.Platform" filter1="Current"/>
+						<semui:simpleReferenceDropdown  name="newplatform" baseClass="org.gokb.cred.Platform" filter1="Current"/>
 
 						<label>New Package:</label>
-						<gokb:simpleReferenceTypedown class="form-control" name="newpackage" baseClass="org.gokb.cred.Package" filter1="Current"/>
+						<semui:simpleReferenceDropdown  name="newpackage" baseClass="org.gokb.cred.Package" filter1="Current"/>
 
 						<hr/>
 

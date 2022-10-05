@@ -5,11 +5,13 @@ import de.wekb.helper.RCConstants
 import groovy.util.logging.Slf4j
 import org.apache.commons.logging.LogFactory
 import org.gokb.cred.Org
-import org.gokb.cred.RefdataCategory
 import org.gokb.cred.RefdataValue
 
 @Slf4j
 class Contact{
+
+
+    def cascadingUpdateService
 
     String content
     Org org
@@ -104,6 +106,24 @@ class Contact{
             LogFactory.getLog(this).debug(info)
             result
         }
+    }
+
+    def afterInsert (){
+        log.debug("afterSave for ${this}")
+        cascadingUpdateService.update(this, dateCreated)
+
+    }
+
+    def beforeDelete (){
+        log.debug("beforeDelete for ${this}")
+        cascadingUpdateService.update(this, lastUpdated)
+
+    }
+
+    def afterUpdate(){
+        log.debug("afterUpdate for ${this}")
+        cascadingUpdateService.update(this, lastUpdated)
+
     }
 
 }

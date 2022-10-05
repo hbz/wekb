@@ -4,7 +4,6 @@ import grails.converters.JSON
 import grails.gorm.transactions.Transactional
 import grails.web.servlet.mvc.GrailsParameterMap
 import org.gokb.ClassExaminationService
-import org.gokb.DisplayTemplateService
 import org.gokb.GenericOIDService
 import org.gokb.GokbAclService
 import org.gokb.cred.KBComponent
@@ -26,7 +25,7 @@ class SearchService {
         com.k_int.HQLBuilder.build(grailsApplication, qbetemplate, params, result, target_class, genericOIDService)
     }
 
-    Map search(User user, Map result, GrailsParameterMap params, String responseFormat = null){
+    Map search(User user = null, Map result, GrailsParameterMap params, String responseFormat = null){
 
         if ( params.init ) {
             result.init = true
@@ -55,7 +54,7 @@ class SearchService {
         params.offset = result.offset
         result.hide = params.list("hide") ?: []
 
-        if ( params.searchAction == 'save' ) {
+        if ( params.searchAction == 'Save' ) {
             log.debug("Saving query... ${params.searchName}");
             def defn = [:] << params
             defn.remove('searchAction')
@@ -180,14 +179,14 @@ class SearchService {
             result.qbetemplate.qbeConfig.qbeResults.each { rh ->
                 def ppath = rh.property.split(/\./)
                 def cobj = r
-                def final_oid = "${cobj.class.name}:${cobj.id}"
+                def final_oid = cobj instanceof org.gokb.cred.KBComponent ? cobj.uuid : cobj.class.name + ':' + cobj.id
 
                 if (!params.hide || (params.hide instanceof String ? (params.hide != rh.qpEquiv) : !params.hide.contains(rh.qpEquiv))) {
 
                     ppath.eachWithIndex { prop, idx ->
                         def sp = prop.minus('?')
 
-                        if( cobj?.class?.name == 'org.gokb.cred.RefdataValue' ) {
+                        if(result.qbetemplate.baseclass != 'org.gokb.cred.RefdataValue' && cobj?.class?.name == 'org.gokb.cred.RefdataValue' ) {
                             cobj = cobj.value
                         }
                         else {
@@ -202,7 +201,7 @@ class SearchService {
 
                                 if (ppath.size() > 1 && idx == ppath.size()-2) {
                                     if (cobj && sp != 'class') {
-                                        final_oid = "${cobj.class.name}:${cobj.id}"
+                                        final_oid = cobj instanceof org.gokb.cred.KBComponent ? cobj.uuid : cobj.class.name + ':' + cobj.id
                                     }
                                     else {
                                         final_oid = null
@@ -219,7 +218,17 @@ class SearchService {
                         api_record["${rh.heading}"] = cobj ?: null
                     }
                     else {
-                        response_record.cols.add([link: (rh.link ? (final_oid ?: response_record.oid ) : null), value: (cobj != null ? (cobj ?: false) : '-Empty-')])
+
+                        String jumpToLink = null
+                        if(rh.jumpToLink) {
+                            jumpToLink = rh.jumpToLink.replace("objectID", "${r.id}")
+                        }
+
+                        response_record.cols.add([
+                                link: (rh.link ? (final_oid ?: response_record.oid ) : null),
+                                value: (cobj != null ? (cobj) : '-Empty-'),
+                                outGoingLink: rh.outGoingLink ?: null,
+                                jumpToLink: jumpToLink ?: null])
                     }
                 }
             }

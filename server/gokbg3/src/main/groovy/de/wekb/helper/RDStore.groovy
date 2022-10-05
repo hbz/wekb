@@ -10,21 +10,50 @@ import javax.persistence.Transient
 //@CompileStatic
 class RDStore {
 
+    public static final AUTO_UPDATE_STATUS_SUCCESSFUL    = getRefdataValue('Successful', RCConstants.AUTO_UPDATE_STATUS)
+    public static final AUTO_UPDATE_STATUS_FAILED    = getRefdataValue('Failed', RCConstants.AUTO_UPDATE_STATUS)
+    public static final AUTO_UPDATE_STATUS_WARNING    = getRefdataValue('Warning', RCConstants.AUTO_UPDATE_STATUS)
+
+    public static final AUTO_UPDATE_TYPE_NEW_TITLE    = getRefdataValue('New Title', RCConstants.AUTO_UPDATE_TYPE)
+    public static final AUTO_UPDATE_TYPE_CHANGED_TITLE    = getRefdataValue('Changed Title', RCConstants.AUTO_UPDATE_TYPE)
+    public static final AUTO_UPDATE_TYPE_REMOVED_TITLE    = getRefdataValue('Removed Title', RCConstants.AUTO_UPDATE_TYPE)
+    public static final AUTO_UPDATE_TYPE_FAILED_TITLE    = getRefdataValue('Failed Title', RCConstants.AUTO_UPDATE_TYPE)
+
     public static final KBC_STATUS_DELETED    = getRefdataValue('Deleted', RCConstants.KBCOMPONENT_STATUS)
     public static final KBC_STATUS_CURRENT    = getRefdataValue('Current', RCConstants.KBCOMPONENT_STATUS)
     public static final KBC_STATUS_EXPECTED    = getRefdataValue('Expected', RCConstants.KBCOMPONENT_STATUS)
     public static final KBC_STATUS_RETIRED    = getRefdataValue('Retired', RCConstants.KBCOMPONENT_STATUS)
+    public static final KBC_STATUS_REMOVED    = getRefdataValue('Removed', RCConstants.KBCOMPONENT_STATUS)
 
 
     public static final COMBO_TYPE_KB_IDS = getRefdataValue('KBComponent.Ids', RCConstants.COMBO_TYPE)
+
+
     public static final COMBO_STATUS_ACTIVE = getRefdataValue(Combo.STATUS_ACTIVE, RCConstants.COMBO_STATUS)
+    public static final COMBO_STATUS_DELETED = getRefdataValue(Combo.STATUS_DELETED, RCConstants.COMBO_STATUS)
 
-    public static final CURRENCY_EUR = RefdataCategory.lookup(RCConstants.CURRENCY, 'EUR')
-    public static final CURRENCY_USD = RefdataCategory.lookup(RCConstants.CURRENCY, 'USD')
-    public static final CURRENCY_GBP = RefdataCategory.lookup(RCConstants.CURRENCY, 'GBP')
+    public static final CURRENCY_EUR = getRefdataValue('EUR', RCConstants.CURRENCY)
+    public static final CURRENCY_USD = getRefdataValue('USD', RCConstants.CURRENCY)
+    public static final CURRENCY_GBP = getRefdataValue('GBP', RCConstants.CURRENCY)
 
-    public static final PRICE_TYPE_LIST = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'list')
-    public static final PRICE_TYPE_OA_APC = RefdataCategory.lookup(RCConstants.PRICE_TYPE, 'open access apc')
+    public static final PRICE_TYPE_LIST = getRefdataValue('list', RCConstants.PRICE_TYPE)
+    public static final PRICE_TYPE_OA_APC = getRefdataValue('open access apc', RCConstants.PRICE_TYPE)
+
+    public static final TIPP_PUBLIC_TYPE_SERIAL = getRefdataValue('Serial', RCConstants.TIPP_PUBLICATION_TYPE)
+    public static final TIPP_PUBLIC_TYPE_MONO = getRefdataValue('Monograph', RCConstants.TIPP_PUBLICATION_TYPE)
+    public static final TIPP_PUBLIC_TYPE_DB = getRefdataValue('Database', RCConstants.TIPP_PUBLICATION_TYPE)
+    public static final TIPP_PUBLIC_TYPE_OTHER = getRefdataValue('Other', RCConstants.TIPP_PUBLICATION_TYPE)
+
+    public static final TIPP_ACCESS_TYPE_FREE = getRefdataValue('Free', RCConstants.TIPP_ACCESS_TYPE)
+    public static final TIPP_ACCESS_TYPE_PAID = getRefdataValue('Paid', RCConstants.TIPP_ACCESS_TYPE)
+
+    public static final IDENTIFIER_NAMESPACE_TARGET_TYPE_TIPP = getRefdataValue('TitleInstancePackagePlatform', RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE)
+    public static final IDENTIFIER_NAMESPACE_TARGET_TYPE_PACKAGE = getRefdataValue('Package', RCConstants.IDENTIFIER_NAMESPACE_TARGET_TYPE)
+
+
+
+    public static final YN_YES              = getRefdataValue('Yes', RCConstants.YN)
+    public static final YN_NO               = getRefdataValue('No', RCConstants.YN)
 
 
 

@@ -45,7 +45,7 @@ class UserOrganisation extends Party {
   }
 
   @Transient
-  def getFolders() {
-    Folder.executeQuery('select f from Folder as f where f.owner = :org',[org:this]);
+  public String getDomainName() {
+    return "User Organisation"
   }
 }

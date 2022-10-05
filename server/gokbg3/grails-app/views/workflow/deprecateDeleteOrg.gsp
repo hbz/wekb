@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="layout" content="sb-admin" />
-<title><g:message code="gokb.appname" default="we:kb"/>: Deprecate Org Transfer</title>
+<meta name="layout" content="public_semui" />
+<title>Deprecate Org Transfer</title>
 </head>
 <body>
 

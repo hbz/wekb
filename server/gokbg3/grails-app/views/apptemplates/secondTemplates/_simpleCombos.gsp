@@ -1,7 +1,8 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
 <g:set var="ctxoid" value="${org.gokb.cred.KBComponent.deproxy(d).class.name}:${d.id}"/>
+<wekb:serviceInjection/>
 <!-- pjn created this as I couldn't ever see identifiers anywhere. -->
-<table class="table table-striped table-bordered">
+<table class="ui selectable striped sortable celled table">
   <thead>
     <tr>
       <g:each in="${cols}" var="ch">
@@ -36,7 +37,7 @@
   </tbody>
 </table>
 
-<g:if test="${targetClass && d.isEditable()}">
+<g:if test="${targetClass && accessService.checkEditableObject(d, params)}">
 
   <g:if test="${direction=='in'}">
     <g:set var="recip" value="toComponent"/>
@@ -47,12 +48,12 @@
     <g:set var="comboprop" value="toComponent"/>
   </g:else>
 
-  <g:form controller="ajaxSupport" action="addToCollection" class="form-inline">
+  <g:form controller="ajaxSupport" action="addToCollection">
     <input type="hidden" name="__context" value="${ctxoid}"/>
     <input type="hidden" name="__newObjectClass" value="org.gokb.cred.Combo"/>
     <input type="hidden" name="__recip" value="${recip}"/>
     <input type="hidden" name="type" value="${org.gokb.cred.RefdataCategory.getOID(RCConstants.COMBO_TYPE,d.getComboTypeValue(property))}"/>
-    Add To List : <gokb:simpleReferenceTypedown class="form-control" name="${comboprop}" baseClass="${targetClass}"/>
+    Add To List : <semui:simpleReferenceDropdown  name="${comboprop}" baseClass="${targetClass}"/>
     <button type="submit" class="btn btn-default btn-primary btn-sm ">Add</button>
   </g:form>
 

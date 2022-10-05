@@ -2,6 +2,7 @@ package org.gokb
 
 
 import de.wekb.helper.RCConstants
+import de.wekb.helper.RDStore
 import org.gokb.cred.*
 import groovy.transform.Synchronized
 import com.k_int.ClassUtils
@@ -41,128 +42,12 @@ class ComponentUpdateService {
       'status',
     ], data, component)
 
-    // Identifiers
-    log.debug("Identifier processing ${data.identifiers}")
-    Set<String> ids = component.ids.collect { "${it.namespace?.value}|${it.value}".toString() }
-    RefdataValue combo_active = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_ACTIVE)
-    RefdataValue combo_deleted = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_DELETED)
-    RefdataValue combo_type_id = RefdataCategory.lookup(RCConstants.COMBO_TYPE, 'KBComponent.Ids')
+    RefdataValue combo_active = RDStore.COMBO_STATUS_ACTIVE
 
-    data.identifiers.each { ci ->
-      def namespace_val = ci.type ?: ci.namespace
-      String testKey = "${namespace_val}|${ci.value}".toString()
-
-      if (namespace_val && ci.value && namespace_val.toLowerCase() != "originediturl") {
-
-        if (!ids.contains(testKey)) {
-          def canonical_identifier = null
-
-          if (!KBComponent.has(component, 'publisher')) {
-            canonical_identifier = componentLookupService.lookupOrCreateCanonicalIdentifier(namespace_val, ci.value)
-          }
-          else {
-            def norm_id = Identifier.normalizeIdentifier(ci.value)
-            def ns = IdentifierNamespace.findByValueIlike(namespace_val)
-            canonical_identifier = Identifier.findByNamespaceAndNormnameIlike(ns, norm_id)
-          }
-
-          log.debug("Checking identifiers of component ${component.id}")
-          if (canonical_identifier) {
-            def duplicate = Combo.executeQuery("from Combo as c where c.toComponent = ? and c.fromComponent = ?", [canonical_identifier, component])
-
-            if (duplicate.size() == 0) {
-              log.debug("adding identifier(${namespace_val},${ci.value})(${canonical_identifier.id})")
-              def new_id = new Combo(fromComponent: component, toComponent: canonical_identifier, status: combo_active, type: combo_type_id).save(flush: true, failOnError: true)
-              hasChanged = true
-            }
-            else if (duplicate.size() == 1 && duplicate[0].status == combo_deleted) {
-
-              log.debug("Found a deleted identifier combo for ${canonical_identifier.value} -> ${component}")
-              reviewRequestService.raise(
-                component,
-                "Review ID status.",
-                "Identifier ${canonical_identifier} was previously connected to '${component}', but has since been manually removed.",
-                RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'Import Request'),
-                null,
-                null,
-                RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Removed Identifier'),
-                null
-              )
-            }
-            else {
-              log.debug("Identifier combo is already present, probably via titleLookupService.")
-            }
-
-            // Add the value for comparison.
-            ids << testKey
-          }
-          else {
-            log.debug("Could not find or create Identifier!")
-          }
-        }
-      }
-    }
-
-    if (sync) {
-      log.debug("Cleaning up deprecated IDs ..")
-      component.ids.each { cid ->
-        if (!data.identifiers.collect { "${it.type.toLowerCase()}|${Identifier.normalizeIdentifier(it.value)}".toString() }.contains("${cid.namespace?.value}|${Identifier.normalizeIdentifier(cid.value)}".toString())) {
-          def ctr = Combo.executeQuery("from Combo as c where c.toComponent = ? and c.fromComponent = ?", [cid, component])
-
-          if (ctr.size() == 1) {
-            ctr[0].delete()
-            hasChanged = true
-          }
-        }
-      }
-    }
-
-    // Flags
-    log.debug("Tag Processing: ${data.tags}");
-
-    data.tags?.each { t ->
-      log.debug("Adding tag ${t.type},${t.value}")
-
-      component.addToTags(
-        RefdataCategory.lookupOrCreate(t.type, t.value)
-      )
-    }
 
     // handle the source.
     if (!component.source && data.source) {
       component.source = createOrUpdateSource(data.source)?.get('component')
-    }
-
-    // Add each file upload too!
-    data.fileAttachments.each { fa ->
-
-      if (fa?.md5) {
-
-        DataFile file = DataFile.findByMd5(fa.md5) ?: new DataFile(guid: fa.guid, md5: fa.md5)
-
-        // Single properties.
-        file.with {
-          (name, uploadName, uploadMimeType, filesize, doctype) = [
-            fa.uploadName, fa.uploadName, fa.uploadMimeType, fa.filesize, fa.doctype
-          ]
-
-          // The contents of the file.
-          if (fa.content) {
-            fileData = fa.content.decodeBase64()
-          }
-
-          // Update.
-          save()
-        }
-
-        // Grab the attachments.
-        def attachments = component.getFileAttachments()
-        if (!attachments.contains(file)) {
-
-          // Add to the attached files.
-          attachments.add(file)
-        }
-      }
     }
 
     // If this is a component that supports curatoryGroups we should check for them.

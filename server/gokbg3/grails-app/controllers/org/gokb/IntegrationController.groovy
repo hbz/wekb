@@ -22,23 +22,14 @@ class IntegrationController {
 
   def springSecurityService
   def concurrencyManagerService
-  def classExaminationService
-  def componentUpdateService
-  def componentLookupService
-  def titleLookupService
-  def applicationEventService
-  def reviewRequestService
   def sessionFactory
-  def packageService
-  def messageService
-  def titleHistoryService
   def crossReferenceService
 
   @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
   def index() {
   }
 
-  @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
+  /*@Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
   def assertJsonldPlatform() {
     def result = [result: 'OK']
     def name = request.JSON.'skos:prefLabel'
@@ -123,9 +114,9 @@ class IntegrationController {
     }
 
     render result as JSON
-  }
+  }*/
 
-  @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
+/*  @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
   def assertJsonldOrg() {
     // log.debug("assertOrg, request.json = ${request.JSON}");
     def result = [:]
@@ -231,7 +222,7 @@ class IntegrationController {
     def id = request.JSON.'@id'
     def new_org = new Org(name: name)
 
-    def primary_identifier = componentLookupService.lookupOrCreateCanonicalIdentifier('global', id)
+
     new_org.ids.add(primary_identifier)
 
     request.JSON.'owl:sameAs'?.each { said ->
@@ -239,7 +230,7 @@ class IntegrationController {
       // Double check that this identifier is NOT already used
       def existing_usage = KBComponent.lookupByIO('global', said)
       if (existing_usage == null) {
-        def identifier = componentLookupService.lookupOrCreateCanonicalIdentifier('global', said)
+
         new_org.ids.add(identifier)
       }
       else {
@@ -276,7 +267,7 @@ class IntegrationController {
       org.ensureVariantName(al);
     }
 
-  }
+  }*/
 
   /**
    *  assertOrg()
@@ -293,7 +284,7 @@ class IntegrationController {
    *      ]
    *
    */
-  @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
+/*  @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
   def assertOrg() {
     log.debug("assertOrg, request.json = ${request.JSON}");
     def result = [result: 'OK']
@@ -464,7 +455,7 @@ class IntegrationController {
       response.setStatus(500)
     }
     render result as JSON
-  }
+  }*/
 
   /**
    *
@@ -483,7 +474,7 @@ class IntegrationController {
    *         defaultDataFormat:''
    *      ]
    */
-  @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
+  /*@Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
   def assertSource() {
     createOrUpdateSource(request.JSON)
   }
@@ -529,10 +520,10 @@ class IntegrationController {
       e.printStackTrace()
     }
     result
-  }
+  }*/
 
 
-  @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
+ /* @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
   @Transactional(readOnly = true)
   private resolveOrgUsingPrivateIdentifiers(idlist) {
     def located_or_new_org = null;
@@ -589,7 +580,7 @@ class IntegrationController {
     // See if we can locate the item using any of the custom identifiers
 
     located_or_new_org
-  }
+  }*/
 
 //  @Secured(['ROLE_API', 'IS_AUTHENTICATED_FULLY'])
 //  private resolveOrgUsingPrivateIdentifiers(idlist) {
@@ -629,7 +620,7 @@ class IntegrationController {
 //    located_or_new_org
 //  }
 
-  @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
+/*  @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
   def registerVariantName() {
     log.debug("registerVariantName ${params} ${request.JSON}")
 
@@ -650,7 +641,7 @@ class IntegrationController {
     // Delete the variant org
 
     render addVariantNameToComponent(org_to_update, request.JSON.name)
-  }
+  }*/
 
   private static addVariantNameToComponent(KBComponent component, variant_name) {
     component.ensureVariantName(variant_name)
@@ -703,6 +694,10 @@ class IntegrationController {
       fullsync = true
     }
 
+    if (params.resultHash) {
+      rjson.ygorStatisticResultHash = params.resultHash
+    }
+
     if (!async) {
       result = crossReferenceService.xRefPkg(rjson,
           addOnly as boolean, fullsync as boolean, token != null,
@@ -730,7 +725,7 @@ class IntegrationController {
     render result as JSON
   }
 
-  @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
+ /* @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
   @Transactional
   def crossReferencePlatform() {
     def result = ['result': 'OK']
@@ -812,7 +807,7 @@ class IntegrationController {
       result.result = "ERROR"
     }
     render result as JSON
-  }
+  }*/
 
   private static boolean setAllRefdata(propNames, data, target, boolean createNew = false) {
     boolean changed = false
@@ -821,38 +816,6 @@ class IntegrationController {
     }
     changed
   }
-
-  /*@Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
-  def crossReferenceLicense() {
-    def result = ['result': 'OK']
-    def user = springSecurityService.currentUser
-
-    // Add the license.
-    def data = request.JSON
-    if (data && data.name) {
-      // Use the name to either match or create a Licence.
-      License l = License.findOrCreateByName(License.generateNormname(data.name)) ?: new License(name: data.name)
-
-      // Update the properties on the license.
-      l.with {
-        url = data.url
-        file = data.file
-        summaryStatement = data.summaryStatement
-      }
-
-      componentUpdateService.setAllRefdata([
-          'type'
-      ], data, l)
-
-
-      // Add the core data.
-      componentUpdateService.ensureCoreData(l, data, false, user)
-
-//      l.save(flush:true, failOnError:true)
-    }
-
-    render result as JSON
-  }*/
 
 /**
  *  Cross reference an incoming title with the database. See an example of calling this controller method
@@ -883,7 +846,7 @@ class IntegrationController {
  *       'amount':12.89
  *}*    ]
  *}*/
-  @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
+ /* @Secured(value = ["hasRole('ROLE_API')", 'IS_AUTHENTICATED_FULLY'], httpMethod = 'POST')
   def crossReferenceTitle() {
     User user = springSecurityService.currentUser
     def rjson = request.JSON
@@ -1024,17 +987,6 @@ class IntegrationController {
           if (title && !title.hasErrors()) {
             def title_changed = false;
 
-            if (titleObj.imprint) {
-              if (title.imprint?.name == titleObj.imprint) {
-                // Imprint already set
-              }
-              else {
-                def imprint = Imprint.findByName(titleObj.imprint) ?: new Imprint(name: titleObj.imprint).save(flush: true, failOnError: true);
-                title.imprint = imprint;
-                title_changed = true
-              }
-            }
-
             // Add the core data.
             componentUpdateService.ensureCoreData(title, titleObj, fullsync, user)
 
@@ -1050,20 +1002,12 @@ class IntegrationController {
             title_changed |= ClassUtils.setDateIfPresent(pubFrom, title, 'publishedFrom')
             title_changed |= ClassUtils.setDateIfPresent(pubTo, title, 'publishedTo')
 
-            if (titleObj.historyEvents?.size() > 0) {
-              def he_result = titleHistoryService.processHistoryEvents(title, titleObj, title_class_name, user, fullsync, locale)
-
-              if (he_result.errors) {
-                result.errors = he_result.errors
-              }
-            }
 
             if (title_class_name == 'org.gokb.cred.BookInstance') {
 
               log.debug("Adding Monograph fields for ${title.class.name}: ${title}")
               def mg_change = addMonographFields(title, titleObj)
 
-              // TODO: Here we will have to add authors and editors, like addPerson() in TSVIngestionService
               if (mg_change) {
                 title_changed = true
               }
@@ -1130,42 +1074,9 @@ class IntegrationController {
       }
     }
     result
-  }
+  }*/
 
-  public static determineTitleClass(titleObj) {
-    if (titleObj.type) {
-      switch (titleObj.type) {
-        case "serial":
-        case "Serial":
-        case "Journal":
-        case "journal":
-          return "org.gokb.cred.JournalInstance"
-          break;
-        case "monograph":
-        case "Monograph":
-        case "Book":
-        case "book":
-          return "org.gokb.cred.BookInstance"
-          break;
-        case "Database":
-        case "database":
-          return "org.gokb.cred.DatabaseInstance"
-          break;
-        case "Other":
-        case "other":
-          return "org.gokb.cred.OtherInstance"
-          break;
-        default:
-          return null
-          break;
-      }
-    }
-    else {
-      return null
-    }
-  }
-
-  private static addPublisherHistory(TitleInstance ti, publishers) {
+  /*private static addPublisherHistory(TitleInstance ti, publishers) {
     if (publishers && ti) {
       log.debug("Handling publisher history ..")
 
@@ -1287,9 +1198,9 @@ class IntegrationController {
         }
       }
     }
-  }
+  }*/
 
-  private static addMonographFields(BookInstance bi, titleObj) {
+  /*private static addMonographFields(BookInstance bi, titleObj) {
 
     def book_changed = false
 
@@ -1313,7 +1224,7 @@ class IntegrationController {
     }
 
     book_changed
-  }
+  }*/
 
   def getJobInfo() {
     def result = ['result': 'OK', 'params': params]
@@ -1417,57 +1328,8 @@ class IntegrationController {
     render result as JSON
   }
 
-  @Secured(['ROLE_API', 'IS_AUTHENTICATED_FULLY'])
-  def loadMacroList() {
 
-    def cleanData = { String data ->
-      String d = data.trim()
-      d != '' && d != '\\N' ? d : null
-    }
-
-    def title_file = request.getFile("macros")?.inputStream
-    char del = '\t'
-    char quote = '"'
-    def r = new CSVReader(new InputStreamReader(title_file, java.nio.charset.Charset.forName('UTF-8')), del, quote)
-
-    def col_positions = ['id': 0, 'name': 1, 'desc': 2, 'transformations': 3]
-    String[] nl = r.readNext()
-
-    int rowctr = 0
-    def ret = [:]
-    while (nl != null) {
-      rowctr++
-      try {
-        if (nl.length >= col_positions.size() && cleanData(nl[col_positions.'name'])) {
-
-          String name = cleanData(nl[col_positions.'name'])
-          Macro m = Macro.findByNormname(Macro.generateNormname(name)) ?: new Macro()
-
-          // Update
-          m.name = name
-          m.description = cleanData(nl[col_positions.'desc'])
-          m.refineTransformations = cleanData(nl[col_positions.'transformations'])
-
-          // Save to DB
-          m.save(flush: true, failOnError: true)
-          log.info "Created/Updated macro with id ${m.id}"
-          ret["Row ${rowctr}"] = "Created Macro with ID ${m.id}"
-        }
-        else {
-          log.error("Unable to parse row ${rowctr}..")
-          ret["Row ${rowctr}"] = "Failed to parse"
-        }
-      }
-      catch (Exception e) {
-        log.error("Unable to process row ${rowctr}..", e)
-        ret["Row ${rowctr}"] = "Exception thrown ${e}"
-      }
-      nl = r.readNext()
-    }
-    render ret as JSON
-  }
-
-  @Secured(['ROLE_API', 'IS_AUTHENTICATED_FULLY'])
+  /*@Secured(['ROLE_API', 'IS_AUTHENTICATED_FULLY'])
   def loadTitleList() {
     def title_file = request.getFile("titleFile")?.inputStream
     char tab = '\t'
@@ -1533,7 +1395,7 @@ class IntegrationController {
     }
     log.debug("Done");
     redirect(action: 'index');
-  }
+  }*/
 
   private def cleanUpGorm() {
     log.debug("Clean up GORM");

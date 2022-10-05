@@ -17,7 +17,7 @@
     </div>
 </g:if>
 
-<table class="table table-striped table-bordered">
+<table class="ui selectable striped sortable celled table">
     <thead>
     <tr>
         <g:each in="${cols}" var="ch">
@@ -47,7 +47,7 @@
                                 id="${linkedoid}">${groovy.util.Eval.x(row, 'x.' + c.expr)}</g:link>
                     </g:if>
                     <g:elseif test="${c.action == 'editRefData'}">
-                        <gokb:xEditableRefData owner="${row}" field="${c.expr}" config="${RCConstants.COMBO_STATUS}"/>
+                        <semui:xEditableRefData owner="${row}" field="${c.expr}" config="${RCConstants.COMBO_STATUS}"/>
                     </g:elseif>
                     <g:else>
                         <span class="${row.status?.value == 'Deleted' ? 'text-deleted' : ''}"
@@ -90,7 +90,7 @@
                             params="${['id': row.id, 'fragment': fragment, 'propagate': "true"]}"
                             class="confirm-click btn-delete"
                             title="Delete this link"
-                            data-confirm-message="Are you sure you wish to delete this ${row.toComponent.niceName}?">Unlink</g:link>
+                            data-confirm-message="Are you sure you wish to delete this ${row.toComponent.niceName}?">Delete</g:link>
                 </td>
             </g:if>
         </tr>

@@ -3,6 +3,8 @@ package org.gokb.cred
 import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
 
+import javax.persistence.Transient
+
 class CuratoryGroup extends KBComponent {
 
   static belongsTo = User
@@ -24,20 +26,16 @@ class CuratoryGroup extends KBComponent {
   static mappedBy = [users: "curatoryGroups", ]
 
   static manyByCombo = [
-    licenses: License,
     packages: Package,
     platforms: Platform,
     orgs: Org,
-    offices: Office,
     sources: Source
   ]
 
   static mappedByCombo = [
-    licenses: 'curatoryGroups',
     packages: 'curatoryGroups',
     platforms: 'curatoryGroups',
     orgs: 'curatoryGroups',
-    offices: 'curatoryGroups',
     sources: 'curatoryGroups'
   ]
 
@@ -79,9 +77,7 @@ class CuratoryGroup extends KBComponent {
     ql = CuratoryGroup.findAllByNameIlikeAndStatusNotEqual("${params.q}%", status_deleted ,params)
 
     ql.each { t ->
-      if( !params.filter1 || t.status?.value == params.filter1 ){
         result.add([id:"${t.class.name}:${t.id}", text:"${t.name}", status:"${t.status?.value}"])
-      }
     }
 
     result
@@ -93,9 +89,27 @@ class CuratoryGroup extends KBComponent {
 
     this.generateShortcode()
     this.generateNormname()
-    this.generateComponentHash()
+    //this.generateComponentHash()
     this.generateUuid()
     this.ensureDefaults()
   }
+
+  @Transient
+  def availableActions() {
+    [
+            [code: 'method::deleteSoft', label: 'Delete Curatory Group', perm: 'delete'],
+    ]
+  }
+
+  public void deleteSoft(context) {
+    // Call the delete method on the superClass.
+    super.deleteSoft(context)
+  }
+
+  @Transient
+  public String getDomainName() {
+    return "Curatory Group"
+  }
+
 }
 

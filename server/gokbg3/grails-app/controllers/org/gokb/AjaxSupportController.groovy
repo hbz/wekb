@@ -116,7 +116,7 @@ class AjaxSupportController {
 
       GrailsClass dc = grailsApplication.getArtefact("Domain", 'org.gokb.cred.'+ config.domain)
 
-      if (dc?.getClazz()?.isTypeReadable()) {
+      if (dc) {
         def cq = dc.getClazz().executeQuery(config.countQry,query_params);
         def rq = dc.getClazz().executeQuery(config.rowQry,
                                   query_params,
@@ -215,16 +215,6 @@ class AjaxSupportController {
       cols:['value'],
       format:'simple'
     ],
-    'TitleInstance.Medium' : [
-      domain:'RefdataValue',
-      countQry:"select count(rdv) from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
-      rowQry:"select rdv from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
-      required:true,
-      qryParams:[],
-      rdvCat: RCConstants.TITLEINSTANCE_MEDIUM,
-      cols:['value'],
-      format:'simple'
-    ],
     'TitleInstancePackagePlatform.CoverageDepth' : [
       domain:'RefdataValue',
       countQry:"select count(rdv) from RefdataValue as rdv where rdv.useInstead is null and rdv.owner.desc=?",
@@ -268,9 +258,9 @@ class AjaxSupportController {
     def errors = []
     GrailsClass domain_class = grailsApplication.getArtefact('Domain',params.__newObjectClass)
 
-    if (domain_class && (domain_class.getClazz().isTypeCreatable() || domain_class.getClazz().isTypeAdministerable())) {
+    if (domain_class) {
       if (contextObj) {
-        def editable = checkEditable(contextObj)
+        def editable = accessService.checkEditableObject(contextObj, params)//checkEditable(contextObj)
 
         if (editable || contextObj.id == user.id) {
           log.debug("Create a new instance of ${params.__newObjectClass}");
@@ -377,7 +367,7 @@ class AjaxSupportController {
                 contextObj.save(flush: true)
               }
               else {
-                errors.addAll(messageService.processValidationErrors(new_obj.errors, request.locale))
+                errors.addAll(messageService.processValidationErrorsToListForFlashError(new_obj.errors, request.locale))
               }
             }
             else if ( params.__addToColl ) {
@@ -389,7 +379,7 @@ class AjaxSupportController {
                 log.debug("New Object Saved OK");
               }
               else {
-                errors.addAll(messageService.processValidationErrors(new_obj.errors, request.locale))
+                errors.addAll(messageService.processValidationErrorsToListForFlashError(new_obj.errors, request.locale))
               }
 
               if ( contextObj.validate() ) {
@@ -397,7 +387,7 @@ class AjaxSupportController {
                 log.debug("Context Object Saved OK");
               }
               else {
-                errors.addAll(messageService.processValidationErrors(contextObj.errors, request.locale))
+                errors.addAll(messageService.processValidationErrorsToListForFlashError(contextObj.errors, request.locale))
               }
             }
             else {
@@ -408,7 +398,7 @@ class AjaxSupportController {
                 log.debug("Saved OK (${new_obj.class.name} ${new_obj.id})");
               }
               else {
-                errors.addAll(messageService.processValidationErrors(new_obj.errors, request.locale))
+                errors.addAll(messageService.processValidationErrorsToListForFlashError(new_obj.errors, request.locale))
               }
             }
 
@@ -427,7 +417,7 @@ class AjaxSupportController {
                 new_obj.save(flush:true, failOnError:true)
               }
               else {
-                errors.addAll(messageService.processValidationErrors(new_obj.errors, request.locale))
+                errors.addAll(messageService.processValidationErrorsToListForFlashError(new_obj.errors, request.locale))
               }
             }
           }
@@ -604,7 +594,7 @@ class AjaxSupportController {
             log.debug("Saved context object ${contextObj.class.name}")
           }
           else {
-            flash.error = messageService.processValidationErrors(contextObj.errors, request.locale)
+            flash.error = messageService.processValidationErrorsToListForFlashError(contextObj.errors, request.locale)
             result.result = 'ERROR'
             result.code = 400
           }
@@ -621,7 +611,7 @@ class AjaxSupportController {
               log.debug("parent removed: "+item_to_remove[params.__otherEnd]);
             }
             if (!item_to_remove.validate()) {
-              flash.error = messageService.processValidationErrors(item_to_remove.errors, request.locale)
+              flash.error = messageService.processValidationErrorsToListForFlashError(item_to_remove.errors, request.locale)
             }
             else {
               item_to_remove.save(flush:true)
@@ -682,7 +672,7 @@ class AjaxSupportController {
     if ( contextObj ) {
       def editable = checkEditable(contextObj)
 
-      if (editable && contextObj.isDeletable()) {
+      if (editable) {
         if(contextObj.respondsTo('deleteSoft')) {
           contextObj.deleteSoft()
         }
@@ -748,41 +738,6 @@ class AjaxSupportController {
       log.debug("resolve OID failed to identify a domain class. Input was ${oid_components}");
     }
     result
-  }
-
-  /**
-   *  lookup : Calls the refdataFind function of a specific class and returns a simple result list.
-   * @param baseClass : The class name to
-   * @param max : Number of results to return
-   * @param addEmpty : Add an empty row at the start of the list
-   * @param filter1 : A status value string which should be filtered out after the query has been executed
-   */
-
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  def lookup() {
-    log.debug("AjaxController::lookup ${params}");
-    def result = [:]
-    User user = springSecurityService.getCurrentUser()
-    params.max = params.max ?: user.defaultPageSizeAsInteger
-    def domain_class = grailsApplication.getArtefact('Domain',params.baseClass)
-    if ( domain_class && domain_class.getClazz().isTypeReadable() ) {
-      result.values = domain_class.getClazz().refdataFind(params);
-    }
-    else {
-      log.debug("Unable to locate domain class ${params.baseClass} or not readable");
-      result.values = []
-      result.error = "Unable to locate domain class ${params.baseClass}, or this user is not permitted to view it."
-    }
-    //result.values = [[id:'Person:45',text:'Fred'],
-    //                 [id:'Person:23',text:'Jim'],
-    //                 [id:'Person:22',text:'Jimmy'],
-    //                 [id:'Person:3',text:'JimBob']]
-
-    //     if ( params.addEmpty=='Y' || params.addEmpty=='y' ) {
-    //       result.values.add(0, [id:'', text:'']);
-    //     }
-
-    render result as JSON
   }
 
   /**
@@ -1034,18 +989,21 @@ class AjaxSupportController {
         if (editable) {
           // Lookup or create Identifier
           try {
-              identifier_instance = componentLookupService.lookupOrCreateCanonicalIdentifier(ns.value, params.identifierValue)
+            String attr = Identifier.getAttributeName(owner)
+            def ident = Identifier.executeQuery(
+                    'select ident from Identifier ident where ident.value = :val and ident.namespace = :namespace and ident.' + attr +' = :owner order by ident.id',
+                    [val: params.identifierValue, namespace: ns, owner: owner])
 
-              if (identifier_instance && !identifier_instance.hasErrors()) {
-
-                log.debug("Got ID: ${identifier_instance}")
-                // Link if not existing
-                if (!owner.ids.contains(identifier_instance)) {
-                  owner.ids.add(identifier_instance)
-                  owner.save()
-                }
-                else {
-                  flash.error = message(code:'identifier.link.unique')
+            if (ident){
+              flash.error = message(code:'identifier.no.unique.by.component')
+            }else if (!ident) {
+                ident = new Identifier(namespace: ns, value: params.identifierValue)
+                ident.setReference(owner)
+                boolean success = ident.save(flush: true) //needed to trigger afterInsert(); temp solution
+                if (success){
+                  flash.message = message(code:'identifier.create.success')
+                } else {
+                  flash.error = message(code:'identifier.create.fail')
                 }
               }
           }
@@ -1084,150 +1042,8 @@ class AjaxSupportController {
     }
   }
 
-  /**
-   *  appliedCriterion : Used to create an applied decision support criterion for the current user.
-   * @param comp : The id of the context object
-   * @param crit : The id of the used criterion
-   * @param val : The status value for the applied criterion ("r"|"a"|"g")
-   */
-
-  @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  def appliedCriterion() {
-    log.debug("applied criterion AJAXSupportController - ${params} ");
-    def result = [status:'OK']
-
-    // val:r, comp:139862, crit:1
-    def component = KBComponent.get(params.comp);
-    def crit      = DSCriterion.get(params.crit);
-    def lookup    = [ 'r' : 'Red', 'a' : 'Amber', 'g' : 'Green' ]
-    def rdv       = RefdataCategory.lookupOrCreate('RAG', lookup[params.val]).save()
-    def user      = springSecurityService.currentUser
-
-    def current_applied = DSAppliedCriterion.findByUserAndAppliedToAndCriterion(user,component,crit);
-    if ( current_applied == null ) {
-      log.debug("Create new applied criterion");
-      result.changedFrom = null
-      current_applied = new DSAppliedCriterion(user: user, appliedTo:component, criterion:crit, value: rdv).save(flush: true, failOnError:true)
-    }
-    else {
-      if ( rdv != current_applied.value ) {
-        log.debug("Update existing vote");
-        result.changedFrom = lookup.find { it.value == current_applied.value.value }?.key
-
-        current_applied.value=rdv
-        current_applied.save(flush: true, failOnError:true)
-      }
-      else {
-        result.changedFrom = params.val
-      }
-    }
-    result.username = user.username
-    render result as JSON
-  }
-
-  /**
-   *  criterionComment : Used to create a decision support note for an applied criterion of the current user.
-   * @param comp : A combination of the component and criterion with format [component_id]_[criterion_id]
-   * @param comment : The text of the new note
-   */
-
-  @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  def criterionComment() {
-    log.debug("criterionComment: ${params}");
-    def result    = [:]
-    result.status = 'OK'
-    def idparts   = params.comp.split('_');
-    log.debug("${idparts}")
-    if ( idparts.length == 2 ) {
-      def component = KBComponent.get(idparts[0]);
-      def crit      = DSCriterion.get(idparts[1]);
-
-      def user = springSecurityService.currentUser
-      def current_applied = DSAppliedCriterion.findByUserAndAppliedToAndCriterion(user,component,crit);
-
-      if ( current_applied == null ) {
-        // Create a new applied criterion to comment on
-        def rdv  = RefdataCategory.lookupOrCreate('RAG', 'Unknown');
-        current_applied = new DSAppliedCriterion(user: user, appliedTo:component, criterion:crit, value: rdv).save(failOnError:true)
-      }
-
-      def note = new DSNote(criterion:current_applied, note:params.comment, isDeleted:false).save(failOnError:true);
-      result.newNote  = note.id
-      result.created  = note.dateCreated
-      log.debug("Found applied criterion ${current_applied} for ${idparts[0]} ${idparts[1]} ${component} ${crit}");
-    }
-    render result as JSON
-  }
-
-  /**
-   *  criterionCommentDelete : Used to delete a decision support note for an applied criterion of the current user.
-   * @param note : The id of the note to delete
-   */
-
-  @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  def criterionCommentDelete() {
-    log.debug('criterionCommentDelete:'+params);
-    def result       = [:]
-    result.status    = 'OK'
-    def user         = springSecurityService.currentUser
-    def note         = DSNote.get(params.note)
-    if (note)
-    {
-        if (note.criterion.user?.id == user?.id)
-            note.isDeleted       = true
-        else
-            result.status = '401'
-    }
-
-    render result as JSON
-  }
-
-  /**
-   *  plusOne : Like or Unlike a component for the current user.
-   * @param object : The OID ([FullyQualifiedClassName]:[PrimaryKey]) of the context object
-   */
-
-  @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  def plusOne() {
-    log.debug("plusOne ${params}");
-    def result       = [:]
-    def user         = springSecurityService.currentUser
-    def oid = params.object
-    if (oid) {
-      def oid_components = oid.split(':');
-
-      log.debug("oid_components:${oid_components}");
-
-       if ( oid_components.length == 2 ) {
-         def existing_like = ComponentLike.executeQuery('select cl from ComponentLike as cl where cl.ownerClass=:oc and cl.ownerId=:oi and cl.user=:u',
-                             [oc:oid_components[0], oi:Long.parseLong(oid_components[1]), u:user]);
-         switch ( existing_like.size() ) {
-           case 0:
-             log.debug("Like");
-             new ComponentLike(ownerClass:oid_components[0], ownerId:Long.parseLong(oid_components[1]), user:user).save(flush:true, failOnError:true)
-             break;
-           case 1:
-             log.debug("UnLike");
-             existing_like.get(0).delete(flush:true, failOnError:true)
-             break;
-           default:
-             break;
-         }
-       }
-
-       result.status = 'OK'
-       result.newcount = ComponentLike.executeQuery('select count(cl) from ComponentLike as cl where cl.ownerClass=:oc and cl.ownerId=:oi',
-                             [oc:oid_components[0], oi:Long.parseLong(oid_components[1])]).get(0)
 
 
-    }
-    log.debug("result: ${result}");
-    render result as JSON
-  }
 
   /**
    *  authorizeVariant : Used to replace the name of a component by one of its existing variant names.

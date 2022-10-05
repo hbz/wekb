@@ -1,29 +1,32 @@
 package org.gokb
 
-import com.k_int.ClassUtils
+
 import com.k_int.ConcurrencyManagerService.Job
 import de.wekb.helper.RCConstants
+import de.wekb.helper.RDStore
 import gokbg3.MessageService
 import grails.converters.JSON
 import grails.plugin.springsecurity.SpringSecurityService
 import grails.util.Holders
-import grails.validation.ValidationException
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang.RandomStringUtils
 import org.gokb.cred.*
-import org.gokb.exceptions.MultipleComponentsMatchedException
 import org.grails.web.json.JSONObject
+import wekb.KbartImportService
+import wekb.KbartImportValidationService
+
+import java.nio.file.Files
 
 @Slf4j
 class CrossRefPkgRun {
 
   static MessageService messageService = Holders.grailsApplication.mainContext.getBean('messageService')
-  static PackageService packageService = Holders.grailsApplication.mainContext.getBean('packageService')
   static SpringSecurityService springSecurityService = Holders.grailsApplication.mainContext.getBean('springSecurityService')
   static ComponentUpdateService componentUpdateService = Holders.grailsApplication.mainContext.getBean('componentUpdateService')
-  static TitleLookupService titleLookupService = Holders.grailsApplication.mainContext.getBean('titleLookupService')
   static ReviewRequestService reviewRequestService = Holders.grailsApplication.mainContext.getBean('reviewRequestService')
   static CleanupService cleanupService = Holders.grailsApplication.mainContext.getBean('cleanupService')
+  static KbartImportValidationService kbartImportValidationService = Holders.grailsApplication.mainContext.getBean('kbartImportValidationService')
+  static KbartImportService kBartImportService = Holders.grailsApplication.mainContext.getBean('kbartImportService')
 
   def rjson // request JSON
   boolean addOnly
@@ -41,6 +44,8 @@ class CrossRefPkgRun {
   def pkg_validation
   def pltCache = [:] // DTO.name : validPlatformInstance
   Job job = null
+
+  List setTippsNotToDeleted = []
 
   def status_current
   def status_deleted
@@ -70,18 +75,22 @@ class CrossRefPkgRun {
     int total = 0
 
     try {
-      status_current = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Current')
-      status_deleted = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
-      status_retired = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Retired')
-      status_expected = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Expected')
+      status_current = RDStore.KBC_STATUS_CURRENT
+      status_deleted = RDStore.KBC_STATUS_DELETED
+      status_retired = RDStore.KBC_STATUS_RETIRED
+      status_expected = RDStore.KBC_STATUS_EXPECTED
       rr_deleted = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Status Deleted')
       rr_nonCurrent = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Platform Noncurrent')
       rr_TIPPs_retired = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'TIPPs Retired')
       rr_TIPPs_invalid = RefdataCategory.lookupOrCreate(RCConstants.REVIEW_REQUEST_STD_DESC, 'Invalid TIPPs')
       rr_type = RefdataCategory.lookup(RCConstants.REVIEW_REQUEST_TYPE, 'Import Request')
 
+      List listStatus = []
 
-      springSecurityService.reauthenticate(user.username)
+      listStatus = [status_current, status_expected, status_deleted, status_retired]
+
+
+      //springSecurityService.reauthenticate(user.username)
       user = User.get(user.id)
       job?.ownerId = user.id
 
@@ -106,7 +115,7 @@ class CrossRefPkgRun {
       //TODO: Permission AccessService!!!!!
 
       // Package Validation
-      pkg_validation = Package.validateDTO(rjson.packageHeader, locale)
+      pkg_validation = kbartImportValidationService.packagevalidateDTO(rjson.packageHeader, locale)
       if (!pkg_validation.valid) {
         globalError([code   : 403,
                      message: messageService.resolveCode('crossRef.package.error.validation.global', null, locale),
@@ -117,7 +126,7 @@ class CrossRefPkgRun {
       }
 
       // upsert Package
-      def proxy = packageService.upsertDTO(rjson.packageHeader, user)
+      def proxy = kBartImportService.packageUpsertDTO(rjson.packageHeader)
       if (!proxy) {
         globalError([code   : 400,
                      message: messageService.resolveCode('crossRef.package.error', null, locale),
@@ -136,35 +145,53 @@ class CrossRefPkgRun {
 
       handleUpdateToken()
 
+      //Needed if kbart not wekb standard
+      boolean setAllTippsNotInKbartToDeleted = true
+      listStatus = [status_current]
+
+      if(rjson.tipps.size() > 0){
+        if(rjson.tipps[0].containsKey("status")){
+          setAllTippsNotInKbartToDeleted = false
+          listStatus = [status_current, status_expected, status_deleted, status_retired]
+        }
+      }
+
+      if(addOnly){
+        setAllTippsNotInKbartToDeleted = false
+      }
+
       existing_tipp_ids = TitleInstancePackagePlatform.executeQuery(
         "select tipp.id from TitleInstancePackagePlatform tipp, Combo combo where " +
           "tipp.status in :status and " +
           "combo.toComponent = tipp and " +
           "combo.fromComponent = :package",
-        [package: pkg, status: [status_current, status_expected]])
-      log.debug("Matched package has ${pkg.tipps.size()} TIPPs")
+        [package: pkg, status: listStatus])
+
+      log.info("Matched package has ${pkg.tipps.size()} TIPPs")
       total = rjson.tipps.size() + (addOnly ? 0 : existing_tipp_ids.size())
 
       int idx = 0
+
+      LinkedHashMap tippsWithCoverage = [:]
+      List<Long> tippDuplicates = []
+
+      List<Long> tippsFound = []
+
+      int jsonTipps = rjson.tipps.size()
+
       for (def json_tipp : rjson.tipps) {
         idx++
         def currentTippError = [index: idx]
-        log.info("Crossreferencing #$idx title ${json_tipp.name ?: json_tipp.title.name}")
+        log.info("Crossreferencing (#$idx of $jsonTipps): title ${json_tipp.name}")
         if ((json_tipp.package == null) && (pkg.id)) {
           json_tipp.package = [internalId: pkg.id]
         }
         else {
           log.error("No package")
-          currentTippError.put('package', ['message': messageService.resolveCode('crossRef.package.tipps.error.pkgId', [json_tipp.title.name], request_locale), baddata: json_tipp.package])
+          currentTippError.put('package', ['message': messageService.resolveCode('crossRef.package.tipps.error.pkgId', [json_tipp.name], locale), baddata: json_tipp.package])
           invalidTipps << json_tipp
         }
-/*        if (!invalidTipps.contains(json_tipp)) {
-          // validate and upsert TitleInstance
-          Map titleErrorMap = handleTitle(json_tipp)
-          if (titleErrorMap.size() > 0) {
-            currentTippError.put('title', titleErrorMap)
-          }
-        }*/
+
         if (!invalidTipps.contains(json_tipp)) {
           // validate and upsert PlatformInstance
           Map pltErrorMap = handlePlt(json_tipp)
@@ -174,7 +201,7 @@ class CrossRefPkgRun {
         }
         if (!invalidTipps.contains(json_tipp)) {
           // validate and upsert TIPP
-          Map tippErrorMap = handleTIPPNew(json_tipp)
+          Map tippErrorMap = handleTIPPNew(json_tipp, setAllTippsNotInKbartToDeleted, tippsWithCoverage, tippDuplicates, tippsFound)
           if (tippErrorMap.size() > 0) {
             currentTippError.put('tipp', tippErrorMap)
           }
@@ -183,7 +210,7 @@ class CrossRefPkgRun {
           reviewRequestService.raise(
             pkg,
             "TIPP rejected",
-            "TIPP ${json_tipp.name ?: json_tipp.title.name} coudn't be imported. ${(currentTippError as JSON).toString()}",
+            "TIPP ${json_tipp.name} couldn't be imported. ${(currentTippError as JSON).toString()}",
             rr_type,
             null,
             (currentTippError as JSON).toString(),
@@ -214,6 +241,17 @@ class CrossRefPkgRun {
         }
       }
 
+      if(tippDuplicates.size() > 0){
+        log.debug("remove tippDuplicates -> ${tippDuplicates.size()}: ${tippDuplicates}")
+
+        tippDuplicates.each {
+          if(!(it in tippsFound)){
+            KBComponent.executeUpdate("update KBComponent set status = :deleted where id = (:tippId)", [deleted: status_deleted, tippId: it])
+          }
+        }
+
+      }
+
       if (!cancelled) {
         pkg = Package.get(pkg.id)
 
@@ -229,7 +267,7 @@ class CrossRefPkgRun {
         if (rjson.tipps?.size() > 0 && rjson.tipps.size() > invalidTipps.size()) {
         }
         else {
-          log.debug("imported Package $pkg.name contains no valid TIPPs")
+          log.info("imported Package $pkg.name contains no valid TIPPs")
         }
 
         //Setzt vorraus, dass das Paket immer mit dem gleichen Paket-Inhalt importiert wird. Jedoch kann ein Anbieter auch nur ein Zuschnitt eines Paket aktualisieren!!!
@@ -274,11 +312,34 @@ class CrossRefPkgRun {
           }
         }*/
 
-        log.debug("Removed ${removedNum} TIPPS from the matched package!")
+
+        log.info("Removed ${removedNum} TIPPS from the matched package!")
         jsonResult.result = 'OK'
         def msg = messageService.resolveCode('crossRef.package.success', [rjson.packageHeader.name, rjson.tipps.size(), existing_tipp_ids.size(), removedNum, addNewNum], locale)
         jsonResult.message = msg
         job?.message(msg)
+
+        if(setAllTippsNotInKbartToDeleted){
+
+          List<Long> tippsIds = setTippsNotToDeleted ? TitleInstancePackagePlatform.executeQuery("select tipp.id from TitleInstancePackagePlatform tipp, Combo combo where " +
+                  "tipp.status in :status and " +
+                  "combo.toComponent = tipp and " +
+                  "combo.fromComponent = :package and tipp.id not in (:setTippsNotToDeleted)",
+                  [package: pkg, status: [status_current, status_expected, status_retired], setTippsNotToDeleted: setTippsNotToDeleted]) : []
+
+          Integer tippsToDeleted = tippsIds ? KBComponent.executeUpdate("update KBComponent set status = :deleted where id in (:tippIds)", [deleted: status_deleted, tippIds: tippsIds]) : 0
+
+          log.info("kbart is not wekb standard. set title to deleted. Found tipps: ${tippsIds.size()}, Set tipps to deleted: ${tippsToDeleted}")
+        }
+
+        tippsWithCoverage.each {
+          TitleInstancePackagePlatform titleInstancePackagePlatform = TitleInstancePackagePlatform.get(it.key)
+
+          if(titleInstancePackagePlatform){
+            kBartImportService.createOrUpdateCoverageForTipp(titleInstancePackagePlatform, it.value)
+          }
+
+        }
 
         if (pkg.status != status_deleted) {
           pkg = Package.get(pkg.id)
@@ -287,6 +348,8 @@ class CrossRefPkgRun {
         }
 
         if (autoUpdate && pkg.source) {
+          job.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'PackageCrossRef Auto')
+
           Source src = Source.get(pkg.source.id)
           src.lastRun = new Date()
           src.lastUpdateUrl = rjson.updateURL
@@ -302,8 +365,18 @@ class CrossRefPkgRun {
                   creator: user,
                   note: note).save(flush: true)
 
-          job.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'PackageCrossRef Auto')
+          jsonResult.packageUpdateNote = note
 
+          if(rjson.ygorStatisticResultHash && Holders.grailsApplication.config.ygorUploadLocation && Holders.grailsApplication.config.ygorStatisticStorageLocation) {
+              File dowloadFolder = new File("${Holders.grailsApplication.config.ygorUploadLocation.toString()}/${rjson.ygorStatisticResultHash}.raw.zip")
+
+              File uploadFolder = new File("${Holders.grailsApplication.config.ygorStatisticStorageLocation.toString()}/${rjson.ygorStatisticResultHash}.raw.zip")
+
+              Files.copy(dowloadFolder.toPath(), uploadFolder.toPath())
+
+              jsonResult.ygorStatisticResultHash = rjson.ygorStatisticResultHash
+
+          }
         }
       }
       log.debug("final flush");
@@ -376,7 +449,6 @@ class CrossRefPkgRun {
   }
 
   private def handleUpdateToken() {
-    boolean curated_pkg = false
     def curatory_group_ids = null
     if (pkg.curatoryGroups && pkg.curatoryGroups?.size() > 0) {
       curatory_group_ids = user.curatoryGroups?.id?.intersect(pkg.curatoryGroups?.id)
@@ -388,12 +460,10 @@ class CrossRefPkgRun {
         job?.groupId = curatory_group_ids[0]
       }
       curatoryGroup = CuratoryGroup.get(job?.groupId)
-      curated_pkg = true
     }
 
-    if (curatory_group_ids || !curated_pkg
-      || user.authorities.contains(Role.findByAuthority('ROLE_SUPERUSER'))) {
-      componentUpdateService.ensureCoreData(pkg, rjson.packageHeader, fullsync, user)
+/*    if (curatory_group_ids || user.authorities.contains(Role.findByAuthority('ROLE_SUPERUSER'))) {
+      //componentUpdateService.ensureCoreData(pkg, rjson.packageHeader, fullsync, user)
 
       if (!pkg_validation.match && rjson.packageHeader.generateToken) {
         String charset = (('a'..'z') + ('0'..'9')).join()
@@ -408,10 +478,10 @@ class CrossRefPkgRun {
         def update_token = new UpdateToken(pkg: pkg, updateUser: user, value: tokenValue).merge(flush: true)
         jsonResult.updateToken = update_token.value
       }
-    }
+    }*/
   }
 
-  @Deprecated
+ /* @Deprecated
   private Map handleTitle(JSONObject tippJson) {
     Map titleErrorMap = [:] // [<jsonPropertyName>: [message: <msg>, baddata: <jsonPropertyValue>], ..]
     def title_validation = Class.forName(IntegrationController.determineTitleClass(tippJson.title)).validateDTO(tippJson.title, locale)
@@ -443,16 +513,6 @@ class CrossRefPkgRun {
       )
 
       if (ti?.id && !ti.hasErrors()) {
-        if (titleObj.imprint) {
-          if (ti.imprint?.name == titleObj.imprint) {
-            // Imprint already set
-          }
-          else {
-            def imprint = Imprint.findByName(titleObj.imprint) ?: new Imprint(name: titleObj.imprint).save(failOnError: true)
-            ti.imprint = imprint
-            title_changed = true
-          }
-        }
 
         // Add the core data.
         componentUpdateService.ensureCoreData(ti, titleObj, fullsync, user)
@@ -471,23 +531,7 @@ class CrossRefPkgRun {
         title_changed |= ClassUtils.setDateIfPresent(pubFrom, ti, 'publishedFrom')
         title_changed |= ClassUtils.setDateIfPresent(pubTo, ti, 'publishedTo')
 
-        if (titleObj.historyEvents?.size() > 0) {
-          def he_result = titleHistoryService.processHistoryEvents(ti, titleObj, title_class_name, user, fullsync, locale)
-          if (he_result.errors) {
-            if (!currentTippError.title) {
-              currentTippError.title = [:]
-            }
-            currentTippError[title].put('historyEvents': [
-              message: messageService.resolveCode('crossRef.package.tipps.error.title.history', null, locale),
-              baddata: tippJson.title,
-              errors : he_result.errors])
-          }
-        }
 
-        if (title_class_name == 'org.gokb.cred.BookInstance') {
-          log.debug("Adding Monograph fields for ${ti.class.name}: ${ti}")
-          title_changed |= ti.addMonographFields(titleObj)
-        }
 
         if (title_changed) {
           ti.merge(flush: true)
@@ -526,21 +570,24 @@ class CrossRefPkgRun {
         baddata: tippJson?.title?.name])
     }
     return titleErrorMap
-  }
+  }*/
 
   private Map handlePlt(JSONObject tippJson) {
-    def pltKey = 'platform'
-    def tippPlt = tippJson[pltKey]
+    def tippPlt = tippJson.hostPlatform ?: tippJson.platform
     def pltError = [:]
-    if (!tippPlt) {
-      pltKey = 'hostPlatform'
-      tippPlt = tippJson[pltKey]
+
+    Platform pl = null
+    if(tippPlt.oid) {
+      List platform_id_components = tippPlt.oid.split(':')
+      if (platform_id_components.size() == 2) {
+        pl = pltCache[platform_id_components[1].trim()]
+      }
     }
 
-    def pl = pltCache[tippPlt.name]
+
     if (!pl) {
       log.debug("validating platform $tippPlt")
-      def valid_plt = Platform.validateDTO(tippPlt)
+      def valid_plt = kbartImportValidationService.platformValidateDTO(tippPlt)
       if (valid_plt && !valid_plt.valid) {
         log.error("platform ${tippPlt} invalid!")
         invalidTipps << tippJson
@@ -551,11 +598,11 @@ class CrossRefPkgRun {
           pltError.putAll(valid_plt.errors)
         }
         try {
-          pl = Platform.upsertDTO(tippPlt, user)
+          pl = kBartImportService.platformUpsertDTO(tippPlt)
           if (pl) {
-            pltCache[tippPlt.name] = pl
+            pltCache[pl.id.toString()] = pl
             pl.merge(flush: true)
-            componentUpdateService.ensureCoreData(pl, tippPlt, fullsync, user)
+            //componentUpdateService.ensureCoreData(pl, tippPlt, fullsync, user)
           }
           else {
             log.error("Could not find/create ${tippPlt}")
@@ -573,145 +620,35 @@ class CrossRefPkgRun {
         }
       }
     }
-    tippJson[pltKey].internalId = pl.id
+    tippPlt.internalId = pl.id
     return pltError
   }
 
-  @Deprecated
-  private Map handleTIPP(JSONObject tippJson) {
-    /*Map tippError = [:]
-    def validation_result = TitleInstancePackagePlatform.validateDTONew(tippJson, locale)
-    log.debug("validate TIPP ${tippJson.name ?: tippJson.title.name}")
-    if (!validation_result.valid) {
-      invalidTipps << tippJson
-      log.debug("TIPP Validation failed on ${tippJson.name ?: tippJson.title.name}")
-      return validation_result.errors
-    }
-    else {
-      if (validation_result.errors?.size() > 0) {
-        tippError.putAll(validation_result.errors)
-      }
-      log.debug("upsert TIPP ${tippJson.name ?: tippJson.title.name}")
-      def upserted_tipp = null
-      try {
-        upserted_tipp = TitleInstancePackagePlatform.upsertDTO(tippJson, user)
-        log.debug("Upserted TIPP ${upserted_tipp} with URL ${upserted_tipp?.url}")
-        upserted_tipp.merge(flush: true)
-        componentUpdateService.ensureCoreData(upserted_tipp, tippJson, fullsync, user)
-      }
-      catch (grails.validation.ValidationException ve) {
-        log.error("ValidationException attempting to cross reference TIPP", ve)
-        upserted_tipp?.discard()
-        tippError.putAll(messageService.processValidationErrors(ve.errors))
-        return tippError
-      }
-      catch (Exception ge) {
-        log.error("Exception attempting to cross reference TIPP:", ge)
-        def tipp_error = [
-          message: messageService.resolveCode('crossRef.package.tipps.error', [tippJson.title.name], locale),
-          baddata: tippJson,
-          errors : [message: ge.toString()]
-        ]
-        upserted_tipp?.discard()
-        return tipp_error
-      }
-      if (upserted_tipp) {
-        if (existing_tipp_ids.size() > 0 && existing_tipp_ids.contains(upserted_tipp.id)) {
-          log.debug("Existing TIPP matched!")
-          existing_tipp_ids.removeElement(upserted_tipp.id)
-        }
-        if (upserted_tipp.status != status_deleted && tippJson.status == "Deleted") {
-          upserted_tipp.deleteSoft()
-          removedNum++;
-        }
-        else if (upserted_tipp.status != status_retired && tippJson.status == "Retired") {
-          upserted_tipp.retire()
-          removedNum++;
-        }
-        else if (upserted_tipp.status != status_current && (!tippJson.status || tippJson.status == "Current")) {
-          if (upserted_tipp.isDeleted() && !fullsync) {
-            // upserted_tipp.merge(flush: true)
-            reviewRequestService.raise(
-              upserted_tipp,
-              "Matched TIPP was marked as Deleted.",
-              "Check TIPP Status.",
-              rr_type,
-              null,
-              null,
-              rr_deleted,
-              [curatoryGroup]
-            )
-          }
-          upserted_tipp.status = status_current
-        }
-//        upserted_tipp.save()
-        upserted_tipp.merge(flush: true)
-        if (upserted_tipp.isCurrent() && upserted_tipp.hostPlatform?.status != status_current) {
-          def additionalInfo = [:]
-          additionalInfo.vars = [upserted_tipp.hostPlatform.name, upserted_tipp.hostPlatform.status?.value]
-          reviewRequestService.raise(
-            upserted_tipp,
-            "The existing platform matched for this TIPP (${upserted_tipp.hostPlatform}) is marked as ${upserted_tipp.hostPlatform.status?.value}! Please review the URL/Platform for validity.",
-            "Platform not marked as current.",
-            rr_type,
-            null,
-            (additionalInfo as JSON).toString(),
-            rr_nonCurrent,
-            [curatoryGroup]
-          )
-        }
-      }
-      else {
-        log.debug("Could not reference TIPP")
-        invalidTipps << tippJson
-        def tipp_error = [
-          message: messageService.resolveCode('crossRef.package.tipps.error', [tippJson.title.name], locale),
-          baddata: tippJson
-        ]
-        return tipp_error
-      }
-    }
-    return tippError*/
-  }
-
-
-  private Map handleTIPPNew(JSONObject tippJson) {
+  private Map handleTIPPNew(JSONObject tippJson, boolean setAllTippsNotInKbartToDeleted, LinkedHashMap tippsWithCoverage, List<Long> tippDuplicates, List<Long> tippFounds) {
     Map tippError = [:]
-    def validation_result = TitleInstancePackagePlatform.validateDTONew(tippJson, locale)
-    log.debug("validate TIPP ${tippJson.name ?: tippJson.title.name}")
+    def validation_result = kbartImportValidationService.tippValidateDTONew(tippJson, locale)
+    log.debug("validate TIPP ${tippJson.name}")
     if (!validation_result.valid) {
       invalidTipps << tippJson
-      log.debug("TIPP Validation failed on ${tippJson.name ?: tippJson.title.name}")
+      log.debug("TIPP Validation failed on ${tippJson.name}")
       return validation_result.errors
     }
     else {
       if (validation_result.errors?.size() > 0) {
         tippError.putAll(validation_result.errors)
       }
-      log.debug("upsert TIPP ${tippJson.name ?: tippJson.title.name}")
+      log.debug("upsert TIPP ${tippJson.name}")
       def upserted_tipp = null
       try {
-        upserted_tipp = TitleInstancePackagePlatform.upsertDTO(tippJson, user)
-        log.debug("Upserted TIPP ${upserted_tipp} with URL ${upserted_tipp?.url}")
-        upserted_tipp.merge(flush: true)
-        componentUpdateService.ensureCoreData(upserted_tipp, tippJson, fullsync, user)
-
-
-        /*if (titleObj.historyEvents?.size() > 0) {
-          def he_result = titleHistoryService.processHistoryEvents(ti, titleObj, title_class_name, user, fullsync, locale)
-          if (he_result.errors) {
-            if (!currentTippError.title) {
-              currentTippError.title = [:]
-            }
-            currentTippError[title].put('historyEvents': [
-                    message: messageService.resolveCode('crossRef.package.tipps.error.title.history', null, locale),
-                    baddata: tippJson.title,
-                    errors : he_result.errors])
-          }
+        upserted_tipp = kBartImportService.tippUpsertDTO(tippJson, user, tippsWithCoverage, tippDuplicates)
+        if(setAllTippsNotInKbartToDeleted && upserted_tipp.status != status_current){
+          upserted_tipp.status = status_current
+          setTippsNotToDeleted << upserted_tipp.id
         }
 
-        titleLookupService.addPublisherHistory(ti, titleObj.publisher_history)*/
-
+        log.debug("Upserted TIPP ${upserted_tipp} with URL ${upserted_tipp?.url}")
+        upserted_tipp.merge(flush: true)
+        tippFounds << upserted_tipp.id
 
       }
       catch (grails.validation.ValidationException ve) {
@@ -723,7 +660,7 @@ class CrossRefPkgRun {
       catch (Exception ge) {
         log.error("Exception attempting to cross reference TIPP:", ge)
         def tipp_error = [
-                message: messageService.resolveCode('crossRef.package.tipps.error', [tippJson.title.name], locale),
+                message: messageService.resolveCode('crossRef.package.tipps.error', [tippJson.name], locale),
                 baddata: tippJson,
                 errors : [message: ge.toString()]
         ]
@@ -732,9 +669,9 @@ class CrossRefPkgRun {
       }
       if (upserted_tipp) {
 
-        if(autoUpdate && (pkg.source && (upserted_tipp.dateCreated > pkg.source.lastRun || pkg.source.lastRun == null))){
+       /* if(autoUpdate && (pkg.source && (upserted_tipp.dateCreated > pkg.source.lastRun || pkg.source.lastRun == null))){
           addNewNum++
-        }
+        }*/
 
         /*if (existing_tipp_ids.size() > 0 && existing_tipp_ids.contains(upserted_tipp.id)) {
           log.debug("Existing TIPP matched!")
@@ -785,7 +722,7 @@ class CrossRefPkgRun {
         log.debug("Could not reference TIPP")
         invalidTipps << tippJson
         def tipp_error = [
-                message: messageService.resolveCode('crossRef.package.tipps.error', [tippJson.title.name], locale),
+                message: messageService.resolveCode('crossRef.package.tipps.error', [tippJson.name], locale),
                 baddata: tippJson
         ]
         return tipp_error

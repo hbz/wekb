@@ -1,27 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name='layout' content='sb-admin'/>
-    <title><g:message code="gokb.appname" default="we:kb"/>: Packages Changes</title>
+    <meta name="layout" content="public_semui"/>
+    <title>Packages Changes</title>
 </head>
 
 <body>
 
 <wekb:serviceInjection/>
 
-
-<div class="container">
-    <h1>Packages Changes (${packagesCount})</h1>
-
-</div>
+    <h1 class="ui header">Packages Changes (${packagesCount})</h1>
 
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
 
 
-            <table class="table table-striped ">
+            <table class="ui selectable striped sortable celled table">
                 <thead>
                 <tr>
                     <th>#</th>
@@ -67,10 +60,11 @@
                             </g:if>
                         </td>
                         <td>
-                            <a data-toggle="modal" data-cache="false"
+                           %{-- TODO:Moe
+                           <a data-toggle="modal" data-cache="false"
                                title="Show History (with Titles)"
                                data-remote='<g:createLink controller="fwk" action="history"
-                                                          id="${pkg.class.name}:${pkg.id}"
+                                                          id="${pkg.uuid}"
                                                           params="[withCombos: true]"/>'
                                data-target="#infoModal">Show History with Title</a>
 
@@ -78,7 +72,7 @@
                             <a data-toggle="modal" data-cache="false"
                                title="Show History"
                                data-remote='<g:createLink controller="fwk" action="history" id="${pkg.class.name}:${pkg.id}"/>'
-                               data-target="#infoModal">Show History</a>
+                               data-target="#infoModal">Show History</a>--}%
 
                         </td>
                     </tr>
@@ -86,21 +80,13 @@
                 </tbody>
             </table>
 
-            <g:if test="${packagesCount ?: 0 > 0}">
-                <div class="pagination mb-4 d-flex justify-content-center">
-                    <g:paginate controller="${controllerName}" action="${actionName}" params="${params}" next="&raquo;" prev="&laquo;"
+
+                    <semui:paginate controller="${controllerName}" action="${actionName}" params="${params}"
                                 max="${max}" total="${packagesCount}"/>
-                </div>
-            </g:if>
 
-        </div>
-    </div>
 
-</div>
 
-</div> <!-- /.container -->
-
-<div id="infoModal" class="qmodal modal fade modal-wide" role="dialog">
+%{--<div id="infoModal" class="qmodal modal fade modal-wide" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -125,7 +111,7 @@
       $(".modal-content").append('<div class="modal-loading"><h4>Loading <asset:image src="img/loading.gif"/></h4></div>');
         });
 
-</asset:script>
+</asset:script>--}%
 
 </body>
 </html>

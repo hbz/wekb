@@ -2,7 +2,12 @@ package org.gokb.cred
 
 import org.gokb.GOKbTextUtils
 
+
+
 class KBComponentVariantName {
+
+
+  def cascadingUpdateService
 
   KBComponent owner
   RefdataValue variantType
@@ -63,4 +68,22 @@ class KBComponentVariantName {
   def beforeUpdate() {
     normVariantName = GOKbTextUtils.normaliseString(variantName);
   }
+
+    def afterInsert() {
+        log.debug("afterSave for ${this}")
+        cascadingUpdateService.update(this, dateCreated)
+
+    }
+
+    def beforeDelete (){
+        log.debug("beforeDelete for ${this}")
+        cascadingUpdateService.update(this, lastUpdated)
+
+    }
+
+    def afterUpdate() {
+        log.debug("afterUpdate for ${this}")
+        cascadingUpdateService.update(this, lastUpdated)
+
+    }
 }

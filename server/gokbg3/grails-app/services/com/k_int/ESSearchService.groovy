@@ -426,21 +426,21 @@ class ESSearchService{
         labelQuery.should(QueryBuilders.termQuery('uuid', qpars.q).boost(10))
       }
 
-      labelQuery.should(QueryBuilders.matchQuery('name', qpars.label).boost(2))
-      labelQuery.should(QueryBuilders.matchQuery('altname', qpars.label).boost(1.3))
-      labelQuery.should(QueryBuilders.matchQuery('suggest', qpars.label).boost(0.6))
+      labelQuery.should(QueryBuilders.wildcardQuery('name', "*${qpars.label}*").boost(2))
+      labelQuery.should(QueryBuilders.wildcardQuery('altname', "*${qpars.label}*").boost(1.3))
+      labelQuery.should(QueryBuilders.wildcardQuery('suggest', "*${qpars.label}*").boost(0.6))
       labelQuery.minimumShouldMatch(1)
 
       query.must(labelQuery)
     }
     else if (qpars.name) {
-      query.must(QueryBuilders.matchQuery('name', qpars.name))
+      query.must(QueryBuilders.wildcardQuery('name', "*${qpars.name}*"))
     }
     else if (qpars.altname) {
-      query.must(QueryBuilders.matchQuery('altname', qpars.altname))
+      query.must(QueryBuilders.wildcardQuery('altname', "*${qpars.altname}*"))
     }
     else if (qpars.suggest) {
-      query.must(QueryBuilders.matchQuery('suggest', qpars.suggest).boost(0.6))
+      query.must(QueryBuilders.wildcardQuery('suggest', "*${qpars.suggest}*").boost(0.6))
     }
   }
 
@@ -512,13 +512,14 @@ class ESSearchService{
     }
     catch (java.lang.NumberFormatException nfe) {
     }
-
-    log.debug("processLinkedField: ${field} -> ${finalVal}")
+    if(finalVal instanceof String)
+        finalVal = finalVal.replaceAll('ampersand', '&')
+    println "processLinkedField: ${field} -> ${finalVal}"
 
     linkedFieldQuery.should(QueryBuilders.termQuery(field, finalVal))
-    linkedFieldQuery.should(QueryBuilders.termQuery("${field}Uuid".toString(), val))
+    linkedFieldQuery.should(QueryBuilders.termQuery("${field}Uuid".toString(), finalVal))
     //linkedFieldQuery.should(QueryBuilders.termQuery("${field}Name".toString(), val))
-    linkedFieldQuery.should(QueryBuilders.wildcardQuery("${field}Name".toString(), "*${val}*")) //check if it does not cause side effects! May be subject of further precision!
+    linkedFieldQuery.should(QueryBuilders.wildcardQuery("${field}Name".toString(), "*${finalVal}*")) //check if it does not cause side effects! May be subject of further precision!
     linkedFieldQuery.minimumShouldMatch(1)
 
     query.must(linkedFieldQuery)
@@ -727,7 +728,7 @@ class ESSearchService{
       processGenericFields(exactQuery, errors, params)
       if(params.name && ["ids","identifier","identifiers"].any { String identifierKey -> params.keySet().contains(identifierKey) }) {
         QueryBuilder nameIdentifierQuery = QueryBuilders.boolQuery()
-        nameIdentifierQuery.should(QueryBuilders.matchQuery('name', params.name))
+        nameIdentifierQuery.should(QueryBuilders.wildcardQuery('name', "*${params.name}*"))
         addIdentifierQuery(nameIdentifierQuery, errors, params, true)
         exactQuery.must(nameIdentifierQuery).boost(2)
       }
@@ -897,7 +898,7 @@ class ESSearchService{
         exactQuery.must(QueryBuilders.matchQuery(k, final_val))
       }
       else if (requestMapping.simpleMap?.containsKey(k)){
-        exactQuery.must(QueryBuilders.matchQuery(requestMapping.simpleMap[k], v))
+        exactQuery.must(QueryBuilders.matchQuery(requestMapping.simpleMap[k], v.replaceAll('ampersand', '&')))
       }
       else if (requestMapping.linked?.containsKey(k)){
         processLinkedField(exactQuery, requestMapping.linked[k], v)
@@ -941,16 +942,7 @@ class ESSearchService{
 
   private void filterByComponentType(BoolQueryBuilder exactQuery, component_type, params){
     if (params.componentType){
-      if (component_type == "TitleInstance"){
-        QueryBuilder typeQuery = QueryBuilders.boolQuery()
-        typeQuery.should(QueryBuilders.termQuery('componentType', "JournalInstance"))
-        typeQuery.should(QueryBuilders.termQuery('componentType', "DatabaseInstance"))
-        typeQuery.should(QueryBuilders.termQuery('componentType', "BookInstance"))
-        typeQuery.should(QueryBuilders.termQuery('componentType', "OtherInstance"))
-        typeQuery.minimumShouldMatch(1)
-        exactQuery.must(typeQuery)
-      }
-      else if (component_type){
+      if (component_type){
         exactQuery.must(QueryBuilders.termQuery('componentType', component_type))
       }
       log.debug("Using component type ${component_type}")
@@ -1205,19 +1197,9 @@ class ESSearchService{
     def defined_types = [
         "Package",
         "Org",
-        "JournalInstance",
-        "Journal",
-        "BookInstance",
-        "Book",
-        "DatabaseInstance",
-        "Database",
         "Platform",
         "TitleInstancePackagePlatform",
         "TIPP",
-        "TitleInstance",
-        "Title",
-        "OtherInstance",
-        "Other"
     ]
     def final_type = typeString.capitalize()
 
@@ -1226,22 +1208,6 @@ class ESSearchService{
       if (final_type== 'TIPP') {
         final_type = 'TitleInstancePackagePlatform'
       }
-      else if (final_type == 'Book') {
-        final_type = 'BookInstance'
-      }
-      else if (final_type == 'Journal') {
-        final_type = 'JournalInstance'
-      }
-      else if (final_type == 'Database') {
-        final_type = 'DatabaseInstance'
-      }
-      else if (final_type == 'Title') {
-        final_type = 'TitleInstance'
-      }
-      else if (final_type == 'Other') {
-        final_type = 'OtherInstance'
-      }
-
       result = final_type
     }
     result
@@ -1253,7 +1219,7 @@ class ESSearchService{
 
     if(params.containsKey('identifiers.namespace')) {
       idQuery.must(QueryBuilders.termQuery('identifiers.namespace', params['identifiers.namespace']))
-      idQuery.must(QueryBuilders.wildcardQuery('identifiers.value', params['identifiers.value']))
+      idQuery.must(QueryBuilders.wildcardQuery('identifiers.value', params['identifiers.value']).caseInsensitive(true))
     }
     else {
       params.each { k, v ->

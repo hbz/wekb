@@ -22,7 +22,7 @@ if (typeof jQuery !== 'undefined') {
 
       var allActionsAvailable = [];
 
-      // Step through each checked box.
+      /*// Step through each checked box.
       $('input.obj-action-ck-box:checked').each(function(i) {
         var elem = $(this);
         if (i == 0) {
@@ -43,6 +43,15 @@ if (typeof jQuery !== 'undefined') {
             });
             return match.length > 0
           });
+        }
+      });*/
+
+      $('input.obj-action-ck-box').each(function(i) {
+        var elem = $(this);
+        if (i == 0) {
+          var json = elem.attr('data-actns');
+          // Set all actions available to this objects actions.
+          allActionsAvailable = $.parseJSON(json);
         }
       });
 
@@ -87,7 +96,8 @@ if (typeof jQuery !== 'undefined') {
           gokb.confirm (
             function() {
               // Submit the form that is attached to the dropdown.
-              var form = selectedLink.closest(".navbar").siblings('form.action-form');
+              //var form = selectedLink.closest(".navbar").siblings('form.action-form');
+              var form = $('form.action-form');
               var workflowValue = $('<input>',{type:'hidden',name:'selectedBulkAction',value:selectedLink.attr('bulkaction')})
               workflowValue.appendTo(form);
               form.submit();

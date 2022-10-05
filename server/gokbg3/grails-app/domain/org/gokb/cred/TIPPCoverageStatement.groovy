@@ -3,9 +3,13 @@ package org.gokb.cred
 import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
 
-import javax.persistence.Transient
+
+
 
 class TIPPCoverageStatement {
+
+
+  def cascadingUpdateService
 
   TitleInstancePackagePlatform owner
 
@@ -30,10 +34,11 @@ class TIPPCoverageStatement {
   ]
 
   static mapping = {
-    startDate column:'tipp_start_date'
+    owner column: 'owner_id', index: 'tipp_owner_idx' //TODO adapt to naming convention
+    startDate column:'tipp_start_date', index: 'tipp_start_date_idx'
     startVolume column:'tipp_start_volume'
     startIssue column:'tipp_start_issue'
-    endDate column:'tipp_end_date'
+    endDate column:'tipp_end_date', index: 'tipp_end_date_idx'
     endVolume column:'tipp_end_volume'
     endIssue column:'tipp_end_issue'
     embargo column:'tipp_embargo'
@@ -63,20 +68,24 @@ class TIPPCoverageStatement {
     lastUpdated(nullable:true, blank:true)
   }
 
-  def afterUpdate() {
-    this.owner?.lastUpdateComment = "Coverage Statement ${this.id} updated"
+  def afterInsert (){
+    log.debug("afterSave for ${this}")
+    this.owner?.lastUpdateComment = "Coverage Statement ${this.id} created"
+    cascadingUpdateService.update(this, dateCreated)
 
-    if (!coverageDepth) {
-      coverageDepth = RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, 'Fulltext')
-    }
   }
 
-  def afterInsert() {
-    this.owner?.lastUpdateComment = "Coverage Statement ${this.id} created"
+  def beforeDelete (){
+    log.debug("beforeDelete for ${this}")
+    cascadingUpdateService.update(this, lastUpdated)
 
-    if (!coverageDepth) {
-      coverageDepth = RefdataCategory.lookup(RCConstants.TIPPCOVERAGESTATEMENT_COVERAGE_DEPTH, 'Fulltext')
-    }
+  }
+
+  def afterUpdate(){
+    log.debug("afterUpdate for ${this}")
+    this.owner?.lastUpdateComment = "Coverage Statement ${this.id} created"
+    cascadingUpdateService.update(this, lastUpdated)
+
   }
 
 }

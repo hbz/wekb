@@ -1,6 +1,5 @@
 <g:set var="current_key" value=""/>
-<table class="table table-bordered">
-    <thead>
+<table class="table table-bordered"><table class="ui selectable striped sortable celled table">    <thead>
     <tr>
         <th>Property</th>
         <th>Value</th>
@@ -20,7 +19,7 @@
                     <td>
                         <g:link controller="ajaxSupport" action="unlinkManyToMany" class="confirm-click"
                                 data-confirm-message="Are you sure you wish to unlink this property?"
-                                params="${["__property": "additionalProperties", "__context": d.getClassName() + ":" + d.id, "__itemToRemove": cp.getClassName() + ":" + cp.id]}">Unlink</g:link>
+                                params="${["__property": "additionalProperties", "__context": d.getClassName() + ":" + d.id, "__itemToRemove": cp.getClassName() + ":" + cp.id]}">Delete</g:link>
                     </td>
                 </g:if>
             </tr>
@@ -40,27 +39,29 @@
 
 <g:if test="${editable}">
 
-        <a data-toggle="modal" data-cache="false"
-           data-target="#additionalPropertiesModal">Add Additional Property</a>
+    <a class="ui right floated black button" href="#" onclick="$('#additionalPropertiesModal').modal('show');">Add Additional Property</a>
 
-        <bootStrap:modal id="additionalPropertiesModal" title="Add Additional Property">
+    <br>
+    <br>
 
-            <g:form controller="ajaxSupport" action="addToCollection" class="form-inline">
+        <semui:modal id="additionalPropertiesModal" title="Add Additional Property">
+
+            <g:form controller="ajaxSupport" action="addToCollection">
                 <input type="hidden" name="__context" value="${d.class.name}:${d.id}"/>
                 <input type="hidden" name="__newObjectClass" value="org.gokb.cred.KBComponentAdditionalProperty"/>
                 <input type="hidden" name="__addToColl" value="additionalProperties"/>
-                <dt class="dt-label">Additional Property Definition</dt>
-                <dd>
-                <gokb:simpleReferenceTypedown class="form-control" name="propertyDefn"
+                <div class="field">
+                    <label>Additional Property Definition</label>
+                <semui:simpleReferenceDropdown  name="propertyDefn"
                                                   baseClass="org.gokb.cred.AdditionalPropertyDefinition"
                                                   editable="${editable}"/>
-                </dd>
-                <dt class="dt-label">Value</dt>
-                <dd>
-                    <input type="text" class="form-control" name="apValue"/>
-                </dd>
+                </div>
+                <div class="field">
+                    <label>Value</label>
+                    <input type="text"  name="apValue"/>
+                </div>
             </g:form>
-        </bootStrap:modal>
+        </semui:modal>
 
 </g:if>
 

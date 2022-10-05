@@ -1,5 +1,7 @@
 package org.gokb.cred
 
+import javax.persistence.Transient
+
 class Note {
   String ownerClass
   Long ownerId
@@ -27,5 +29,10 @@ class Note {
     creator(nullable:false, blank:false)
     dateCreated(nullable:true, blank:true)
     lastUpdated(nullable:true, blank:true)
+  }
+
+  @Transient
+  public String getDomainName() {
+    return "Note"
   }
 }

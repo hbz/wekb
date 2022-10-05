@@ -4,29 +4,46 @@ import com.k_int.ESSearchService
 
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
+import org.elasticsearch.action.admin.indices.flush.FlushRequest
+import org.elasticsearch.action.admin.indices.flush.FlushResponse
 import org.elasticsearch.action.bulk.BulkItemResponse
 import org.elasticsearch.action.bulk.BulkRequest
 import org.elasticsearch.action.bulk.BulkResponse
 import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.client.RequestOptions
+import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.xcontent.XContentType
 import org.gokb.cred.KBComponent
 import org.gokb.cred.KBComponentAdditionalProperty
 import org.gokb.cred.TIPPCoverageStatement
 import org.gokb.cred.RefdataValue
+import org.hibernate.Session
 import wekb.Contact
 import wekb.KBComponentLanguage
+import wekb.PackageArchivingAgency
 
 import java.text.Normalizer
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Future
 
-@Transactional
+
 class FTUpdateService {
 
   def ESWrapperService
   def sessionFactory
   def dateFormatService
+  Future activeFuture
+  ExecutorService executorService
 
   public static boolean running = false
+
+  static Map indicesPerType = [
+          "TitleInstancePackagePlatform" : "wekbtipps",
+          "Org" : "wekborgs",
+          "Package" : "wekbpackages",
+          "Platform" : "wekbplatforms",
+          "DeletedKBComponent": "wekbdeletedcomponents"
+  ]
 
 
   /**
@@ -35,28 +52,45 @@ class FTUpdateService {
    * is responsible for ensuring only 1 FT index task runs at a time. It's a simple mutex.
    * see https://async.grails.org/latest/guide/index.html
    */
-  def synchronized updateFTIndexes() {
+  def updateFTIndexes() {
     log.info("updateFTIndexes")
     if (running == false) {
-      running = true
-      doFTUpdate()
-      log.info("FTUpdate done.")
-      return new Date()
+      if(!(activeFuture) || activeFuture.isDone()) {
+        activeFuture = executorService.submit({
+          Thread.currentThread().setName("FTUpdateServiceUpdateFTIndexes")
+          doFTUpdate()
+        })
+        log.debug("updateFTIndexes returning")
+      }else{
+        log.debug("FT update already running")
+        return false
+      }
     }
     else {
-      log.error("FTUpdate already running")
-      return "Job cancelled – FTUpdate was already running!"
+      log.debug("FT update already running")
+      return false
     }
   }
 
-  def doFTUpdate() {
+  boolean doFTUpdate() {
     log.info("Execute IndexUpdateJob starting at ${new Date()}")
-    def esclient = ESWrapperService.getClient()
+
+    synchronized(this) {
+      if ( running ) {
+        log.debug("Exiting FT update - one already running");
+        return false
+      }
+      else {
+        running = true;
+      }
+    }
+
+    def start_time = System.currentTimeMillis()
     try {
-      updateES(esclient, org.gokb.cred.Package.class) { org.gokb.cred.Package kbc ->
+      updateES(org.gokb.cred.Package.class) { org.gokb.cred.Package kbc ->
         def result = null
         result = [:]
-        result._id = "${kbc.class.name}:${kbc.id}"
+        result.recid = "${kbc.class.name}:${kbc.id}"
         result.uuid = kbc.uuid
         result.name = kbc.name
 
@@ -110,10 +144,10 @@ class FTUpdateService {
         result.status = kbc.status?.value
         result.editingStatus = kbc.editingStatus?.value
         result.identifiers = []
-        kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
-          result.identifiers.add([namespace    : idc.toComponent.namespace.value,
-                                  value        : idc.toComponent.value,
-                                  namespaceName: idc.toComponent.namespace.name])
+        kbc.ids.each { idc ->
+          result.identifiers.add([namespace    : idc.namespace.value,
+                                  value        : idc.value,
+                                  namespaceName: idc.namespace.name])
         }
         result.componentType = kbc.class.simpleName
 
@@ -145,13 +179,20 @@ class FTUpdateService {
                                 value_en  : kbl.language.value_en])
         }
 
+        result.packageArchivingAgencies = []
+        kbc.paas.each { PackageArchivingAgency paa ->
+          result.packageArchivingAgencies.add([archivingAgency: paa.archivingAgency?.value,
+                                               openAccess  : paa.openAccess?.value,
+                                               postCancellationAccess  : paa.postCancellationAccess?.value])
+        }
+
 
         result
       }
 
-      updateES(esclient, org.gokb.cred.Org.class) { org.gokb.cred.Org kbc ->
+      updateES(org.gokb.cred.Org.class) { org.gokb.cred.Org kbc ->
         def result = [:]
-        result._id = "${kbc.class.name}:${kbc.id}"
+        result.recid = "${kbc.class.name}:${kbc.id}"
         result.uuid = kbc.uuid
         result.name = kbc.name
         result.sortname = generateSortName(kbc.name)
@@ -177,10 +218,10 @@ class FTUpdateService {
 
         result.status = kbc.status?.value
         result.identifiers = []
-        kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
-          result.identifiers.add([namespace    : idc.toComponent.namespace.value,
-                                  value        : idc.toComponent.value,
-                                  namespaceName: idc.toComponent.namespace.name])
+        kbc.ids.each { idc ->
+          result.identifiers.add([namespace    : idc.namespace.value,
+                                  value        : idc.value,
+                                  namespaceName: idc.namespace.name])
         }
         result.componentType = kbc.class.simpleName
         result.platforms = []
@@ -203,19 +244,20 @@ class FTUpdateService {
         kbc.contacts.each { Contact contact ->
           result.contacts.add([  content: contact.content,
                                  contentType: contact.contentType?.value,
-                                 type: contact.type,
+                                 type: contact.type?.value,
                                  language: contact.language?.value])
         }
 
         result.kbartDownloaderURL = kbc.kbartDownloaderURL
         result.metadataDownloaderURL = kbc.metadataDownloaderURL
+        result.homepage = kbc.homepage
 
         result
       }
 
-      updateES(esclient, org.gokb.cred.Platform.class) { org.gokb.cred.Platform kbc ->
+      updateES(org.gokb.cred.Platform.class) { org.gokb.cred.Platform kbc ->
         def result = [:]
-        result._id = "${kbc.class.name}:${kbc.id}"
+        result.recid = "${kbc.class.name}:${kbc.id}"
         result.uuid = kbc.uuid
         result.name = kbc.name
         result.sortname = generateSortName(kbc.name)
@@ -243,10 +285,10 @@ class FTUpdateService {
         result.primaryUrl = kbc.primaryUrl
         result.status = kbc.status?.value
         result.identifiers = []
-        kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
-          result.identifiers.add([namespace    : idc.toComponent.namespace.value,
-                                  value        : idc.toComponent.value,
-                                  namespaceName: idc.toComponent.namespace.name])
+        kbc.ids.each { idc ->
+          result.identifiers.add([namespace    : idc.namespace.value,
+                                  value        : idc.value,
+                                  namespaceName: idc.namespace.name])
         }
         result.componentType = kbc.class.simpleName
 
@@ -257,6 +299,8 @@ class FTUpdateService {
         result.ipAuthentication = kbc.ipAuthentication?.value
 
         result.shibbolethAuthentication = kbc.shibbolethAuthentication?.value
+
+        result.openAthens = kbc.openAthens?.value
 
         result.passwordAuthentication = kbc.passwordAuthentication?.value
 
@@ -277,131 +321,11 @@ class FTUpdateService {
         result
       }
 
-/*      updateES(esclient, org.gokb.cred.JournalInstance.class) { org.gokb.cred.JournalInstance kbc ->
-        def result = null
-        def current_pub = kbc.currentPublisher
-        result = [:]
-        result._id = "${kbc.class.name}:${kbc.id}"
-        result.uuid = kbc.uuid
-        result.name = kbc.name
-        result.sortname = generateSortName(kbc.name)
-        result.updater = 'journal'
-        // result.publisher = kbc.currentPublisher?.name
-        result.publisher = current_pub ? current_pub.getLogEntityId() : ""
-        result.publisherName = current_pub?.name
-        result.publisherUuid = current_pub?.uuid ?: ""
-        result.altname = []
-        kbc.variantNames.each { vn ->
-          result.altname.add(vn.variantName)
-        }
-        result.lastUpdatedDisplay = dateFormatService.formatIsoTimestamp(kbc.lastUpdated)
-        result.status = kbc.status?.value
-        result.identifiers = []
-        kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
-          result.identifiers.add([namespace    : idc.toComponent.namespace.value,
-                                  value        : idc.toComponent.value,
-                                  namespaceName: idc.toComponent.namespace.name])
-        }
-        result.componentType = kbc.class.simpleName
-        // log.debug("process ${result}")
-        result
-      }
 
-      updateES(esclient, org.gokb.cred.DatabaseInstance.class) { org.gokb.cred.DatabaseInstance kbc ->
-        def result = null
-        def current_pub = kbc.currentPublisher
-        result = [:]
-        result._id = "${kbc.class.name}:${kbc.id}"
-        result.uuid = kbc.uuid
-        result.name = kbc.name
-        result.sortname = generateSortName(kbc.name)
-        // result.publisher = kbc.currentPublisher?.name
-        result.publisher = current_pub ? current_pub.getLogEntityId() : ""
-        result.publisherName = current_pub?.name
-        result.publisherUuid = current_pub?.uuid ?: ""
-        result.altname = []
-        kbc.variantNames.each { vn ->
-          result.altname.add(vn.variantName)
-        }
-        result.lastUpdatedDisplay = dateFormatService.formatIsoTimestamp(kbc.lastUpdated)
-        result.status = kbc.status?.value
-        result.identifiers = []
-        kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
-          result.identifiers.add([namespace    : idc.toComponent.namespace.value,
-                                  value        : idc.toComponent.value,
-                                  namespaceName: idc.toComponent.namespace.name])
-        }
-        result.componentType = kbc.class.simpleName
-        // log.debug("process ${result}")
-        result
-      }
-
-      updateES(esclient, org.gokb.cred.OtherInstance.class) { org.gokb.cred.OtherInstance kbc ->
-
-        def result = null
-        def current_pub = kbc.currentPublisher
-
-        result = [:]
-        result._id = "${kbc.class.name}:${kbc.id}"
-        result.uuid = kbc.uuid
-        result.name = kbc.name
-        result.sortname = generateSortName(kbc.name)
-        // result.publisher = kbc.currentPublisher?.name
-        result.publisher = current_pub ? current_pub.getLogEntityId() : ""
-        result.publisherName = current_pub?.name
-        result.publisherUuid = current_pub?.uuid ?: ""
-        result.altname = []
-        kbc.variantNames.each { vn ->
-          result.altname.add(vn.variantName)
-        }
-        result.lastUpdatedDisplay = dateFormatService.formatIsoTimestamp(kbc.lastUpdated)
-        result.status = kbc.status?.value
-        result.identifiers = []
-        kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
-          result.identifiers.add([namespace    : idc.toComponent.namespace.value,
-                                  value        : idc.toComponent.value,
-                                  namespaceName: idc.toComponent.namespace.name])
-        }
-        result.componentType = kbc.class.simpleName
-        // log.debug("process ${result}")
-        result
-      }
-
-      updateES(esclient, org.gokb.cred.BookInstance.class) { org.gokb.cred.BookInstance kbc ->
-        def result = null
-        def current_pub = kbc.currentPublisher
-
-        result = [:]
-        result._id = "${kbc.class.name}:${kbc.id}"
-        result.uuid = kbc.uuid
-        result.name = kbc.name
-        result.sortname = generateSortName(kbc.name)
-//         result.publisher = kbc.currentPublisher?.name
-        result.publisher = current_pub ? current_pub.getLogEntityId() : ""
-        result.publisherName = current_pub?.name
-        result.publisherUuid = current_pub?.uuid ?: ""
-        result.altname = []
-        result.updater = 'book'
-        kbc.variantNames.each { vn ->
-          result.altname.add(vn.variantName)
-        }
-        result.lastUpdatedDisplay = dateFormatService.formatIsoTimestamp(kbc.lastUpdated)
-        result.status = kbc.status?.value
-        result.identifiers = []
-        kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
-          result.identifiers.add([namespace    : idc.toComponent.namespace.value,
-                                  value        : idc.toComponent.value,
-                                  namespaceName: idc.toComponent.namespace.name])
-        }
-        result.componentType = kbc.class.simpleName
-        // log.debug("process ${result}")
-        result
-      }*/
-
-      updateES(esclient, org.gokb.cred.TitleInstancePackagePlatform.class) { org.gokb.cred.TitleInstancePackagePlatform kbc ->
+      updateES(org.gokb.cred.TitleInstancePackagePlatform.class) { org.gokb.cred.TitleInstancePackagePlatform kbc ->
 
         def result = [:]
-        result._id = "${kbc.class.name}:${kbc.id}"
+        result.recid = "${kbc.class.name}:${kbc.id}"
         result.uuid = kbc.uuid
         result.name = kbc.name
         result.componentType = kbc.class.simpleName
@@ -454,7 +378,6 @@ class FTUpdateService {
           if (kbc.title?.dateFirstOnline) result.titleDateFirstOnline = dateFormatService.formatIsoTimestamp(kbc.title.dateFirstOnline)
           result.titleFirstEditor = kbc.title?.firstEditor ?: ""
           result.titleFirstAuthor = kbc.title?.firstAuthor ?: ""
-          result.titleImprint = kbc.title?.imprint?.name ?: ""
         }*/
 
         if (kbc.pkg) {
@@ -514,10 +437,10 @@ class FTUpdateService {
         if (kbc.accessType) result.accessType = kbc.accessType.value
 
         result.identifiers = []
-        kbc.getCombosByPropertyNameAndStatus('ids', 'Active').each { idc ->
-          result.identifiers.add([namespace    : idc.toComponent.namespace.value,
-                                  value        : idc.toComponent.value,
-                                  namespaceName: idc.toComponent.namespace.name])
+        kbc.ids.each { idc ->
+          result.identifiers.add([namespace    : idc.namespace.value,
+                                  value        : idc.value,
+                                  namespaceName: idc.namespace.name])
         }
         if (kbc.dateFirstOnline) result.dateFirstOnline = dateFormatService.formatIsoTimestamp(kbc.dateFirstOnline)
         if (kbc.dateFirstInPrint) result.dateFristInPrint = dateFormatService.formatIsoTimestamp(kbc.dateFirstInPrint)
@@ -569,26 +492,39 @@ class FTUpdateService {
 
         result
       }
+
+      updateES(wekb.DeletedKBComponent.class) { wekb.DeletedKBComponent deletedKBComponent ->
+
+        def result = [:]
+        result.recid = "${deletedKBComponent.class.name}:${deletedKBComponent.id}"
+        result.uuid = deletedKBComponent.uuid
+        result.name = deletedKBComponent.name
+        result.componentType = deletedKBComponent.componentType
+        result.status = deletedKBComponent.status.value
+        result.dateCreated = dateFormatService.formatIsoTimestamp(deletedKBComponent.dateCreated)
+        result.lastUpdated = dateFormatService.formatIsoTimestamp(deletedKBComponent.lastUpdated)
+        result.oldDateCreated = dateFormatService.formatIsoTimestamp(deletedKBComponent.oldDateCreated)
+        result.oldLastUpdated = dateFormatService.formatIsoTimestamp(deletedKBComponent.oldLastUpdated)
+        result.oldId = deletedKBComponent.oldId
+
+        result
+      }
     }
     catch (Exception e) {
       log.error("Problem", e)
     }
 
-    finally {
-      try {
-        esclient.close()
-      }
-      catch (Exception e) {
-        log.error("Problem by Close ES Client", e)
-      }
-    }
+    def elapsed = System.currentTimeMillis() - start_time;
+    log.debug("FTUpdate completed in ${elapsed}ms at ${new Date()} ")
 
     running = false
+    return true
   }
 
 
-  def updateES(esclient, domain, recgen_closure) {
+  def updateES(domain, recgen_closure) {
     log.debug("updateES(${domain}...)")
+    RestHighLevelClient esclient = ESWrapperService.getClient()
     cleanUpGorm()
     def count = 0
     try {
@@ -601,14 +537,13 @@ class FTUpdateService {
         log.debug("result of findByDomain: ${domain} ${latest_ft_record}")
         if (!latest_ft_record) {
           latest_ft_record =
-              new FTControl(domainClassName: domain.name, activity: 'ESIndex', lastTimestamp: 0, lastId: 0)
-                  .save(flush: true, failOnError: true)
+                  new FTControl(domainClassName: domain.name, activity: 'ESIndex', lastTimestamp: 0, lastId: 0)
+                          .save()
           log.debug("Create new FT control record, as none available for ${domain.name}")
-        }
-        else {
+        } else {
           highest_timestamp = latest_ft_record.lastTimestamp
           log.debug("Got existing ftcontrol record for ${domain.name} max timestamp is ${highest_timestamp} which is " +
-              "${new Date(highest_timestamp)}")
+                  "${new Date(highest_timestamp)}")
         }
       }
       log.debug("updateES ${domain.name} since ${latest_ft_record.lastTimestamp}")
@@ -616,47 +551,79 @@ class FTUpdateService {
       def total = 0
       Date from = new Date(latest_ft_record.lastTimestamp)
       def countq = domain.executeQuery("select count(o.id) from " + domain.name +
-          " as o where (( o.lastUpdated > :ts ) OR ( o.dateCreated > :ts )) ", [ts: from], [readonly: true])[0]
+              " as o where (( o.lastUpdated > :ts ) OR ( o.dateCreated > :ts )) ", [ts: from], [readonly: true])[0]
       log.debug("Will process ${countq} records")
       def q = domain.executeQuery("select o.id from " + domain.name +
-          " as o where ((o.lastUpdated > :ts ) OR ( o.dateCreated > :ts )) order by o.lastUpdated, o.id", [ts: from],
-          [readonly: true])
+              " as o where ((o.lastUpdated > :ts ) OR ( o.dateCreated > :ts )) order by o.lastUpdated, o.id", [ts: from],
+              [readonly: true])
       log.debug("Query completed.. processing rows...")
 
       BulkRequest bulkRequest = new BulkRequest()
       // while (results.next()) {
-      for (r_id in q) {
-        if (Thread.currentThread().isInterrupted()) {
-          log.debug("Job cancelling ..")
-          running = false
-          break
-        }
-        Object r = domain.get(r_id)
-        log.debug("${r.id} ${domain.name} -- (rects)${r.lastUpdated} > (from)${from}")
-        def idx_record = recgen_closure(r)
-        def es_index = ESSearchService.indicesPerType.get(idx_record['componentType'])
-        if (idx_record != null) {
-          def recid = idx_record['_id'].toString()
-          idx_record.remove('_id')
+      FTControl.withNewSession { Session session ->
+        for (r_id in q) {
+          if (Thread.currentThread().isInterrupted()) {
+            log.debug("Job cancelling ..")
+            running = false
+            break
+          }
+          Object r = domain.get(r_id)
+          if (indicesPerType.get(r.class.simpleName)) {
+            log.debug("${r.id} ${domain.name} -- (rects)${r.lastUpdated} > (from)${from}")
+            def idx_record = recgen_closure(r)
+            def es_index = indicesPerType.get(r.class.simpleName)
 
-          IndexRequest request = new IndexRequest(es_index);
-          request.id(recid);
-          String jsonString = idx_record as JSON
-          //String jsonString = JsonOutput.toJson(idx_record)
-          //println(jsonString)
-          request.source(jsonString, XContentType.JSON)
+            if (idx_record != null) {
+              def recid = idx_record['recid'].toString()
+              idx_record.remove('recid')
 
-          bulkRequest.add(request)
+              IndexRequest request = new IndexRequest(es_index)
+              request.id(recid)
+              String jsonString = idx_record as JSON
+              //String jsonString = JsonOutput.toJson(idx_record)
+              //println(jsonString)
+              request.source(jsonString, XContentType.JSON)
+
+              bulkRequest.add(request)
+            }
+            if (r.lastUpdated?.getTime() > highest_timestamp) {
+              highest_timestamp = r.lastUpdated?.getTime()
+            }
+            highest_id = r.id
+            count++
+            total++
+          }
+          if (count == 100) {
+            count = 0
+            log.debug("interim:: processed ${total} out of ${countq} records (${domain.name}) - updating highest timestamp to ${highest_timestamp} interim flush")
+            BulkResponse bulkResponse = esclient.bulk(bulkRequest, RequestOptions.DEFAULT)
+
+            if (bulkResponse.hasFailures()) {
+              for (BulkItemResponse bulkItemResponse : bulkResponse) {
+                if (bulkItemResponse.isFailed()) {
+                  BulkItemResponse.Failure failure = bulkItemResponse.getFailure()
+                  log.debug("updateES ${domain.name}: ES Bulk operation has failure -> ${failure}")
+                }
+              }
+            }
+            log.debug("BulkResponse: ${bulkResponse}")
+            FTControl.withNewTransaction {
+              Long id = latest_ft_record.id
+              latest_ft_record = FTControl.get(id)
+              if (latest_ft_record) {
+                latest_ft_record.lastTimestamp = highest_timestamp
+                latest_ft_record.lastId = highest_id
+                latest_ft_record.save()
+              } else {
+                log.error("Unable to locate free text control record with ID ${id}. Possibe parallel FT update")
+              }
+            }
+            /*synchronized (this) {
+              Thread.yield()
+            }*/
+          }
         }
-        if (r.lastUpdated?.getTime() > highest_timestamp) {
-          highest_timestamp = r.lastUpdated?.getTime()
-        }
-        highest_id = r.id
-        count++
-        total++
-        if (count > 250) {
-          count = 0
-          log.debug("interim:: processed ${total} out of ${countq} records (${domain.name}) - updating highest timestamp to ${highest_timestamp} interim flush")
+        if (count > 0) {
           BulkResponse bulkResponse = esclient.bulk(bulkRequest, RequestOptions.DEFAULT)
 
           if (bulkResponse.hasFailures()) {
@@ -667,52 +634,28 @@ class FTUpdateService {
               }
             }
           }
-          log.debug("BulkResponse: ${bulkResponse}")
-          FTControl.withNewTransaction {
-            Long id = latest_ft_record.id
-            latest_ft_record = FTControl.get(id)
-            if (latest_ft_record) {
-              latest_ft_record.lastTimestamp = highest_timestamp
-              latest_ft_record.lastId = highest_id
-              latest_ft_record.save(flush: true, failOnError: true)
-            }
-            else {
-              log.error("Unable to locate free text control record with ID ${id}. Possibe parallel FT update")
-            }
-          }
-          cleanUpGorm()
-          synchronized (this) {
-            Thread.yield()
-          }
+          session.flush()
+          log.debug("Final BulkResponse: ${bulkResponse}")
         }
-      }
-      if (count > 0) {
-        BulkResponse bulkResponse = esclient.bulk(bulkRequest, RequestOptions.DEFAULT)
-
-        if (bulkResponse.hasFailures()) {
-          for (BulkItemResponse bulkItemResponse : bulkResponse) {
-            if (bulkItemResponse.isFailed()) {
-              BulkItemResponse.Failure failure = bulkItemResponse.getFailure()
-              log.debug("updateES ${domain.name}: ES Bulk operation has failure -> ${failure}")
-            }
-          }
+        // update timestamp
+        FTControl.withNewTransaction {
+          latest_ft_record = FTControl.get(latest_ft_record.id)
+          latest_ft_record.lastTimestamp = highest_timestamp
+          latest_ft_record.lastId = highest_id
+          latest_ft_record.save()
         }
-        log.debug("Final BulkResponse: ${bulkResponse}")
+        session.flush()
+        session.clear()
+        log.debug("final:: Processed ${total} out of ${countq} records for ${domain.name}. Max TS seen ${highest_timestamp} highest id with that TS: ${highest_id}")
       }
-      // update timestamp
-      FTControl.withNewTransaction {
-        latest_ft_record = FTControl.get(latest_ft_record.id)
-        latest_ft_record.lastTimestamp = highest_timestamp
-        latest_ft_record.lastId = highest_id
-        latest_ft_record.save(flush: true, failOnError: true)
-      }
-      cleanUpGorm()
-      log.debug("final:: Processed ${total} out of ${countq} records for ${domain.name}. Max TS seen ${highest_timestamp} highest id with that TS: ${highest_id}")
     }
     catch (Exception e) {
       log.error("Problem with FT index", e)
     }
     finally {
+      FlushRequest request = new FlushRequest(indicesPerType.get(domain.name))
+      FlushResponse flushResponse = esclient.indices().flush(request, RequestOptions.DEFAULT)
+      esclient.close()
       log.debug("Completed processing on ${domain.name} - saved ${count} records")
     }
   }

@@ -1,198 +1,195 @@
-<g:set var="s_action" value="${s_action?:'index'}"/>
-<g:set var="s_controller" value="${s_controller?:'search'}"/>
+%{--<g:set var="s_action" value="${s_action ?: 'componentSearch'}"/>
+<g:set var="s_controller" value="${s_controller ?: 'search'}"/>--}%
 
 <g:if test="${hide.contains('SEARCH_FORM')}">
 </g:if>
 <g:elseif test="${params.inline}">
-  <g:form method="get" class="form-horizontal" controller="${s_controller}" action="${s_action}" id="${params.id}">
-    <input type="hidden" name="qbe" value="${params.qbe}"/>
+    <g:form method="get" class="ui form" controller="search" action="componentSearch" id="${params.id}">
+        <input type="hidden" name="qbe" value="${params.qbe}"/>
 
-    <g:each in="${hide}" var="hidden_var">
-      <input type="hidden" name="hide" value="${hidden_var}"/>
-    </g:each>
-
-    <g:if test="${refOid}">
-      <input type="hidden" name="refOid" value="${refOid}"/>
-    </g:if>
-
-    <g:each in="${formdefn}" var="fld">
-      <g:if test="${((hide?.contains(fld.qparam)) || ( fld.hide==true))}">
-        <input type="hidden" name="${fld.qparam}" id="${fld.qparam}" value="${params[fld.qparam]}" />
-      </g:if>
-    </g:each>
-
-    <div class="form-group">
-      <div class="col-sm-12">
-        <g:each in="${cfg.qbeGlobals}" var="glob">
-          <g:if test="${(glob.qparam) && ( glob.prompt )}">
-            <span>${glob.prompt}: <b>${params[glob.qparam] ?: glob.default}</b></span>
-          </g:if>
+        <g:each in="${hide}" var="hidden_var">
+            <input type="hidden" name="hide" value="${hidden_var}"/>
         </g:each>
 
-        <div class="btn-group pull-right" role="group" aria-label="Search Buttons">
-          <button name="searchAction" type="submit" class="btn btn-success" value="search">Search View</button>
+        <g:if test="${refOid}">
+            <input type="hidden" name="refOid" value="${refOid}"/>
+        </g:if>
+
+        <g:each in="${formdefn}" var="fld">
+            <g:if test="${((hide?.contains(fld.qparam)) || (fld.hide == true))}">
+                <input type="hidden" name="${fld.qparam}" id="${fld.qparam}" value="${params[fld.qparam]}"/>
+            </g:if>
+        </g:each>
+
+        <div class="ui right floated buttons">
+            <button class="ui button black" type="submit" value="search"
+                    name="searchAction">Search View</button>
         </div>
-      </div>
-    </div>
-  </g:form>
+    </g:form>
 </g:elseif>
 <g:else>
-  <g:form method="get" class="form-horizontal" controller="${s_controller}" action="${s_action}" id="${params.id}">
 
-    <input type="hidden" name="qbe" value="${params.qbe}"/>
+    <% Map advancedSearchMap = [:] %>
+    <div class="ui segment">
+        <h1 class="ui header">Filter</h1>
+    <g:form method="get" class="ui form" controller="${controllerName}" action="${actionName}" id="${params.id}">
 
-    <g:if test="${refOid}">
-      <input type="hidden" name="refOid" value="${refOid}"/>
-    </g:if>
+        <input type="hidden" name="qbe" value="${params.qbe}"/>
 
-    <g:each in="${hide}" var="hidden_var">
-      <input type="hidden" name="hide" value="${hidden_var}"/>
-    </g:each>
+        <g:if test="${refOid}">
+            <input type="hidden" name="refOid" value="${refOid}"/>
+        </g:if>
 
-    <g:each in="${formdefn}" var="fld" status="frmidx">
-      <g:if test="${((hide?.contains(fld.qparam)) || ( fld.hide==true))}">
-        <input type="hidden" name="${fld.qparam}" id="${fld.qparam}" value="${params[fld.qparam]}" />
-      </g:if>
-      <g:else>
-        <div class="col-sm-6">
-          <div class="form-group">
-                <label class="col-sm-3 control-label" for="${fld.qparam}">${fld.prompt}</label>
-                <div class="col-sm-9">
-                  <g:if test="${fld.type=='lookup'}">
-                    <gokb:simpleReferenceTypedown id="refdata_combo_${params.inline ? 'inline_': ''}${fld.qparam}"
-                                              class="form-control"
-                                              name="${fld.qparam}"
-                                              baseClass="${fld.baseClass}"
-                                              filter1="${fld.filter1?:''}"
-                                              value="${params[fld.qparam]}"
-                                              addBlankValue="yes" />
-                  </g:if>
-                  <g:else>
-                    <div class="${fld.contextTree.wildcard!=null?'input-group':''}">
-                      <g:if test="${fld.contextTree.wildcard=='B' || fld.contextTree.wildcard=='L'}"><span class="input-group-addon">*</span></g:if>
-                      <input class="form-control" type="${fld.contextTree.type == 'java.lang.Long' ? 'number' : 'text'}" name="${fld.qparam}" id="${fld.qparam}" placeholder="${fld.placeholder}" value="${params[fld.qparam]}" />
-                      <g:if test="${fld.contextTree.wildcard=='B' || fld.contextTree.wildcard=='R'}"><span class="input-group-addon">*</span></g:if>
-                    </div>
-                  </g:else>
+        <g:each in="${hide}" var="hidden_var">
+            <input type="hidden" name="hide" value="${hidden_var}"/>
+        </g:each>
+        <div class="two fields">
+        <g:each in="${formdefn}" var="fld" status="frmidx">
+            <g:if test="${((hide?.contains(fld.qparam)) || (fld.hide == true))}">
+                <input type="hidden" name="${fld.qparam}" id="${fld.qparam}" value="${params[fld.qparam]}"/>
+            </g:if>
+            <g:elseif test="${fld.advancedSearch}">
+                <%
+                    if (!advancedSearchMap."${fld.advancedSearch.category}") {
+                        advancedSearchMap."${fld.advancedSearch.category}" = [title: fld.advancedSearch.title, formFields: []]
+                    }
+                    advancedSearchMap."${fld.advancedSearch.category}".formFields << fld
+                %>
+            </g:elseif>
+            <g:else>
+
+                <div class="field">
+                    <label for="${fld.qparam}">${fld.prompt}</label>
+                    <g:if test="${fld.type == 'lookup'}">
+                        <div class="ui field">
+                            <semui:simpleReferenceDropdown
+                                    id="refdata_combo_${params.inline ? 'inline_' : ''}${fld.qparam}"
+                                    name="${fld.qparam}"
+                                    baseClass="${fld.baseClass}"
+                                    filter1="${fld.filter1 ?: ''}"
+                                    value="${params[fld.qparam]}"/>
+                        </div>
+                    </g:if>
+                    <g:else>
+                        <div class="${fld.contextTree.wildcard != null ? 'ui labeled input' : ''}">
+                            <g:if test="${fld.contextTree.wildcard == 'B' || fld.contextTree.wildcard == 'L'}"><div
+                                    class="ui label">*</div></g:if>
+                            <input type="${fld.contextTree.type == 'java.lang.Long' ? 'number' : 'text'}"
+                                   name="${fld.qparam}" id="${fld.qparam}" placeholder="${fld.placeholder}"
+                                   value="${params[fld.qparam]}"/>
+                            <g:if test="${fld.contextTree.wildcard == 'B' || fld.contextTree.wildcard == 'R'}"><div
+                                    class="ui label">*</div></g:if>
+                        </div>
+                    </g:else>
+
                 </div>
-          </div>
-        </div>
-      </g:else>
-    </g:each>
 
-    <div class="col-sm-12">
-      <div class="form-group">
-        <div class="col-sm-10">
-          <div class="col-sm-2">
-          </div>
-          <div class="col-sm-10">
-            <g:each in="${cfg.qbeGlobals}" var="glob">
-              <g:if test="${(glob.qparam) && ( glob.prompt )}">
-                <span>
-                  ${glob.prompt} : <select class="form-control" style="display:inline;max-width:75px" name="${glob.qparam}" value="${params[glob.qparam]}">
-                    <option value="on" ${(params[glob.qparam] ?: glob.default ) == 'on' ? 'selected' : ''}>On</option>
-                    <option value="off" ${(params[glob.qparam] ?: glob.default ) == 'off' ? 'selected' : ''}>Off</option>
-                  </select>
-                </span>
-              </g:if>
-            </g:each>
-          </div>
+                <g:if test="${((frmidx) % 2) == 0}">
+                    </div>
+                    <div class="two fields">
+                </g:if>
+
+            </g:else>
+        </g:each>
         </div>
-        <div class="col-sm-2">
-          <g:if test="${hide.contains('SEARCH_BUTTONS')}">
-          </g:if>
-          <g:else>
-            <div class="btn-group pull-right" role="group" aria-label="Search Buttons">
-              <g:link class="btn btn-success btn-sm" controller="${s_controller}" action="${s_action}" params="[id: params.id, qbe: params.qbe]">Reset</g:link>
-              <button name="searchAction" type="submit" class="btn btn-success btn-sm" value="search">Search</button>
-              <div class="btn-group" role="group">
-                <button class="btn btn-success btn-sm"
-                        data-toggle="dropdown" >Save <span class="caret"></span></button>
-                <ul id="savePopupForm" class="dropdown-menu pull-right well" role="menu" style="width: 400px;">
-                  <li>
-                    <div class="panel panel-default">
-                      <div class="panel-heading">
-                        <h3 class="panel-title">Save Search</h3>
-                      </div>
-                      <div class="panel-body">
-                        Save As : <input type="text" name="searchName"/> <input class="btn btn-success btn-sm" type="submit" name="searchAction" value="save"/>
-                      </div>
+
+        <g:each in="${advancedSearchMap}" var="advancedSearch" status="fieldIndex">
+            <g:set var="filterSetInAccordion" value="${0}"/>
+
+            <g:each in="${params}" var="parameter">
+                <g:if test="${parameter.key in advancedSearch.value.formFields.qparam && (parameter.value != null && parameter.value != "")}">
+                    <g:set var="filterSetInAccordion" value="${filterSetInAccordion+1}"/>
+                </g:if>
+            </g:each>
+
+            <div class="ui accordion field">
+                <div class="title">
+                    <i class="icon dropdown"></i>
+                ${advancedSearch.value.title}
+                <g:if test="${filterSetInAccordion > 0}">
+                    <b>Filter Set:</b> <div class="ui black circular label">${filterSetInAccordion}</div>
+                </g:if>
+            </div>
+
+            <div class="content">
+            <div class="two fields">
+                <g:each in="${advancedSearch.value.formFields}" var="field" status="formFieldsIndex">
+                    <div class=" field">
+                        <label for="${field.qparam}">${field.prompt}</label>
+                        <g:if test="${field.type == 'lookup'}">
+                            <div class="ui field">
+                                <semui:simpleReferenceDropdown
+                                        id="refdata_combo_${params.inline ? 'inline_' : ''}${field.qparam}"
+                                        name="${field.qparam}"
+                                        baseClass="${field.baseClass}"
+                                        filter1="${field.filter1 ?: ''}"
+                                        value="${params[field.qparam]}"/>
+                            </div>
+                        </g:if>
+                        <g:else>
+                            <div class="${field.contextTree.wildcard != null ? 'ui labeled input' : ''}">
+                                <g:if test="${field.contextTree.wildcard == 'B' || field.contextTree.wildcard == 'L'}"><div
+                                        class="ui label">*</div></g:if>
+                                <input type="${field.contextTree.type == 'java.lang.Long' ? 'number' : 'text'}"
+                                       name="${field.qparam}" id="${field.qparam}" placeholder="${field.placeholder}"
+                                       value="${params[field.qparam]}"/>
+                                <g:if test="${field.contextTree.wildcard == 'B' || field.contextTree.wildcard == 'R'}"><div
+                                        class="ui label">*</div></g:if>
+                            </div>
+                        </g:else>
+
                     </div>
 
-                  </li>
-                </ul>
-              </div>
+                    <g:if test="${(formFieldsIndex + 1) % 2 == 0}">
+                        </div>
+                        <div class="two fields">
+                    </g:if>
+                </g:each>
             </div>
-          </g:else>
-        </div>
-      </div>
+            </div>
+            </div>
+        </g:each>
+
+
+
+        <g:if test="${hide.contains('SEARCH_BUTTONS')}">
+        </g:if>
+        <g:else>
+            <div class="ui right floated buttons">
+                <g:link class="ui button" controller="${controllerName}" action="${actionName}"
+                        params="[id: params.id, qbe: params.qbe]">Reset</g:link>
+                <button class="ui button black" type="submit" value="Search"
+                        name="searchAction">Filter</button>
+
+                <sec:ifLoggedIn>
+                    <div class="ui icon dropdown button">
+                        <div class="text">Save</div>
+                        <i class="dropdown icon"></i>
+
+                        <div class="menu">
+                            <div class="header">
+                                Save as:
+                            </div>
+
+                            <div class="ui left input">
+                                <input type="text" name="searchName"
+                                       placeholder="Search Name">
+                            </div>
+
+                            <div class="item">
+                                <input class="ui button black" type="submit" name="searchAction"
+                                       value="Save"/>
+                            </div>
+                        </div>
+                    </div>
+                </sec:ifLoggedIn>
+
+            </div>
+            <br>
+            <br>
+        </g:else>
+    </g:form>
     </div>
-  </g:form>
 </g:else>
 
-<g:javascript>
-  // When DOM is ready.
-  $(document).ready(function(){
-
-    $("#savePopupForm").click(function(e) {
-      e.stopPropagation();
-      // $('#savePopupForm').toggle();
-    });
-
-    var form_selects = $(".simpleReferenceTypedown");
-
-    form_selects.each(function() {
-
-      var conf = {
-        placeholder: "Search for...",
-        allowClear: true,
-        width:'resolve',
-        minimumInputLength: 0,
-        ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
-          url: gokb.config.lookupURI,
-          dataType: 'json',
-          data: function (term, page) {
-            return {
-              format:'json',
-              q: term,
-              baseClass:$(this).data('domain'),
-              filter1:$(this).data('filter1'),
-              addEmpty:'Y'
-            };
-          },
-          results: function (data, page) {
-            // console.log("resultsFn");
-            return {results: data.values};
-          }
-        },
-        initSelection : function (element, callback) {
-          var idv=$(element).val();
-          // console.log("initSelection..%o"+idv,element);
-          var txt=$(element).context.dataset.displayvalue;
-          var data = {id: idv, text: txt};
-          callback(data);
-        }
-      };
-
-      var me = $(this);
-
-      if (me.hasClass("allow-add")) {
-        // Add to the config...
-        conf.createSearchChoice = function(term, data) {
-          if ($(data).filter(function() {
-            return term.localeCompare(this.text) === 0;
-          }).length === 0) {
-            return {
-              id: me.data('domain') + ":__new__:" + me.data('filter1') + ":" + term,
-              text:  term  + ' (new tag)'
-            };
-          }
-        };
-      }
-
-      me.select2(conf);
-    });
-
-  });
-</g:javascript>
 

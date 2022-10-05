@@ -7,6 +7,8 @@ import org.gokb.cred.RefdataValue
 
 class KBComponentLanguage {
 
+    def cascadingUpdateService
+
     @RefdataAnnotation(cat = RCConstants.KBCOMPONENT_LANGUAGE)
     RefdataValue language
 
@@ -30,5 +32,23 @@ class KBComponentLanguage {
         kbcomponent           column: 'kbc_lang_kbc_fk', index: 'kbc_lang_kbc_idx'
         dateCreated           column: 'kbc_lang_date_created'
         lastUpdated           column: 'kbc_lang_last_updated'
+    }
+
+    def afterInsert (){
+        log.debug("afterSave for ${this}")
+        cascadingUpdateService.update(this, dateCreated)
+
+    }
+
+    def beforeDelete (){
+        log.debug("beforeDelete for ${this}")
+        cascadingUpdateService.update(this, lastUpdated)
+
+    }
+
+    def afterUpdate(){
+        log.debug("afterUpdate for ${this}")
+        cascadingUpdateService.update(this, lastUpdated)
+
     }
 }

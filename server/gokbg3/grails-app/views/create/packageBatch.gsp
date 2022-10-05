@@ -2,26 +2,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="layout" content="sb-admin"/>
-    <title><g:message code="gokb.appname" default="we:kb"/>: Package batch processing</title>
+    <meta name="layout" content="public_semui"/>
+    <title>Upload Packages</title>
 </head>
 
 <body>
-<h1 class="page-header">
-    Package batch processing
+<h1 class="ui header">
+    Upload Packages
 </h1>
 
-<g:render template="/apptemplates/secondTemplates/messages"/>
+<semui:flashMessage data="${flash}"/>
 
-<div class="panel panel-default">
-    <div class="panel-heading clearfix">
-        <h3 class="panel-title">Information</h3>
-    </div>
+<div class="ui segment">
+    <h3 class="ui header">Information</h3>
 
-    <div class="panel-body">
-        The option "Package batch processing" allows you to create several packages at once via the provided package template below.
+    <div class="content">
+        The option "Upload Packages" allows you to create several packages at once via the provided package template below.
         <br><br>
-        In order to create your packages, download the template below and type in the name of the packages. Give all the relevant information for each individual package and save the template file as a csv file (tab separated and UTF-8 coded).
+        In order to create your packages, download the template below and type in the name of the packages. Give all the relevant information for each individual package and save the template file as a tsv file (tab separated and UTF-8 coded).
         <br>
         For the upload of the package template, click on „Durchsuchen“ to choose the file you created and Upload it to the we:kb.
         <br><br>
@@ -29,29 +27,26 @@
     </div>
 </div>
 
-<div class="panel panel-default">
-    <div class="panel-heading clearfix">
-        <h3 class="panel-title">Upload Template</h3>
-    </div>
+<div class="ui segment">
+    <h3 class="ui header">Upload Template</h3>
 
-    <div class="panel-body">
-        <g:uploadForm action="processPackageBatch" method="post">
-            <dl>
-                <input type="file" class="btn btn-default" name="tsvFile"  accept=".tsv, .txt"/>
-                <br>
-                <button class="btn btn-default btn-sm" type="submit">Upload</button>
-            </dl>
+    <div class="content">
+        <g:uploadForm class="ui form" action="processPackageBatch" method="post">
+            <div class="fields">
+                <div class="field">
+                <input type="file" class="ui button" name="tsvFile" accept=".tsv, .txt"/>
+                </div>
+                <button class="ui black button" type="submit">Upload</button>
+            </div>
         </g:uploadForm>
     </div>
 </div>
 
-<div class="panel panel-default">
-    <div class="panel-heading clearfix">
-        <h3 class="panel-title">Template Description</h3>
-    </div>
+<div class="ui segment">
+    <h3 class="ui header">Template Description</h3>
 
-    <div class="panel-body">
-        <table class="celled striped table la-table">
+    <div class="content">
+        <table class="ui selectable striped sortable celled table">
             <thead>
             <tr>
                 <th>ColumnName</th>
@@ -78,7 +73,7 @@
                             break
                         case 'scope': args.addAll(RefdataCategory.lookup(RCConstants.PACKAGE_SCOPE).sort { it.value }.collect { it -> it.value })
                             break
-                        case 'editing_status': args.addAll(RefdataCategory.lookup(RCConstants.PACKAGE_EDITING_STATUS).sort{it.value}.collect { it -> it.value })
+                        case 'editing_status': args.addAll(RefdataCategory.lookup(RCConstants.PACKAGE_EDITING_STATUS).sort { it.value }.collect { it -> it.value })
                             break
                         case 'national_range': args.addAll(["EN", "FRE", "GER"])
                             break
@@ -92,6 +87,12 @@
                             break
                         case 'automated_updates': args.addAll(RefdataCategory.lookup(RCConstants.YN).sort { it.value }.collect { it -> it.value })
                             break
+                        case 'archiving_agency': args.addAll(RefdataCategory.lookup(RCConstants.PAA_ARCHIVING_AGENCY).sort { it.value }.collect { it -> it.value })
+                            break
+                        case 'open_access_of_archiving_agency': args.addAll(RefdataCategory.lookup(RCConstants.PAA_OPEN_ACCESS).sort { it.value }.collect { it -> it.value })
+                            break
+                        case 'post_cancellation_access_of_archiving_agency': args.addAll(RefdataCategory.lookup(RCConstants.PAA_POST_CANCELLATION_ACCESS).sort { it.value }.collect { it -> it.value })
+                            break
                     }
                 %>
                 <tr>
@@ -104,7 +105,6 @@
         </table>
 
     </div>
-</div>
 </div>
 </body>
 </html>

@@ -9,9 +9,13 @@ import groovy.time.TimeCategory
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
 import java.time.format.DateTimeParseException
 
 class DateToolkit {
+
+    static List<String> DATE_TIME_FORMATS = ["yyyy-MM-dd", "dd-MM-yyyy", "M[M]/d[d]/yyyy", "d[d].M[M].yyyy",
+                                             "yyyy", "yyyy-MM", "MM-yyyy", "yyyy-MM-dd'T'HH:mm:ss'Z'"]
 
     static String getDateMinusOneMinute(String date) {
         try {
@@ -30,7 +34,7 @@ class DateToolkit {
 
     static LocalDateTime fromString(String dateString) throws IllegalArgumentException, DateTimeParseException{
         try{
-            return fromString(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+            return fromString(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))
         }
         catch(IllegalArgumentException | DateTimeParseException e){
             return fromString(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
@@ -57,9 +61,19 @@ class DateToolkit {
         String dateString = DateNormalizer.getDateString(value)
         LocalDate itemLastUpdate = null
         if (!StringUtils.isEmpty(dateString)) {
-            itemLastUpdate = LocalDate.parse(dateString)
+            for (String dateTimeFormat in DATE_TIME_FORMATS){
+                try{
+                    DateTimeFormatter df = new DateTimeFormatterBuilder().parseCaseInsensitive().appendPattern(dateTimeFormat).toFormatter()
+                    itemLastUpdate = LocalDate.parse(value, df)
+                }
+                catch(DateTimeParseException dtpe){ /* log only on method exit */ }
+                if (itemLastUpdate != null){
+                    return itemLastUpdate
+                }
+            }
         }
-        itemLastUpdate
+        //log.info("Could not parse date string: ${dateString}")
+        return null
     }
 
 }

@@ -1,5 +1,7 @@
 package org.gokb.cred
 
+
+
 /**
  * ComponentPrice - variant prices for a component based on different scenarios.
  * Allow a package/tipp to hold multiple variant prices - EG list price for a normal subscription, list price for 
@@ -7,6 +9,9 @@ package org.gokb.cred
  * Requirements derived from Jisc DAC project - See owen stephens for more info.
  */
 class ComponentPrice {
+
+
+  def cascadingUpdateService
 
   KBComponent owner
   RefdataValue priceType  // Examples are list, list-perpetual, list, list-topup, etc
@@ -22,8 +27,8 @@ class ComponentPrice {
     owner column: 'cp_owner_component_fk', index: 'cp_owner_component_idx'
     priceType column: 'cp_type_fk', index: 'cp_type_idx'
     currency column: 'cp_currency_fk', index: 'cp_currency_idx'
-    startDate column: 'cp_start_date'
-    endDate column: 'cp_end_date'
+    startDate column: 'cp_start_date', index: 'cp_start_date_idx'
+    endDate column: 'cp_end_date', index: 'cp_end_date_idx'
     price column: 'cp_price'
     dateCreated     column: 'cp_date_created'
     lastUpdated     column: 'cp_last_updated'
@@ -88,4 +93,29 @@ class ComponentPrice {
     }
     true
   }
+
+  def beforeValidate (){
+    log.debug("beforeValidate for ${this}")
+    this.startDate = new Date()
+
+  }
+
+  def afterInsert (){
+    log.debug("afterSave for ${this}")
+    cascadingUpdateService.update(this, dateCreated)
+
+  }
+
+  def beforeDelete (){
+    log.debug("beforeDelete for ${this}")
+    cascadingUpdateService.update(this, lastUpdated)
+
+  }
+
+  def afterUpdate(){
+    log.debug("afterUpdate for ${this}")
+    cascadingUpdateService.update(this, lastUpdated)
+
+  }
+
 }
