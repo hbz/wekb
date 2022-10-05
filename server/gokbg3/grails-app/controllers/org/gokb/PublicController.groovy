@@ -24,8 +24,6 @@ class PublicController {
   MailService mailService
   SearchService searchService
 
-  public static String TIPPS_QRY = 'from TitleInstancePackagePlatform as tipp, Combo as c where c.fromComponent.id=? and c.toComponent=tipp and c.type = ? and tipp.status = ?';
-
   def robots() {
     if(ServerUtils.getCurrentServer() != ServerUtils.SERVER_PROD) {
       def text = "User-agent: *\n"+

@@ -161,10 +161,9 @@ class CrossRefPkgRun {
       }
 
       existing_tipp_ids = TitleInstancePackagePlatform.executeQuery(
-        "select tipp.id from TitleInstancePackagePlatform tipp, Combo combo where " +
+        "select tipp.id from TitleInstancePackagePlatform tipp where " +
           "tipp.status in :status and " +
-          "combo.toComponent = tipp and " +
-          "combo.fromComponent = :package",
+          "tipp.pkg = :package",
         [package: pkg, status: listStatus])
 
       log.info("Matched package has ${pkg.tipps.size()} TIPPs")
@@ -321,10 +320,9 @@ class CrossRefPkgRun {
 
         if(setAllTippsNotInKbartToDeleted){
 
-          List<Long> tippsIds = setTippsNotToDeleted ? TitleInstancePackagePlatform.executeQuery("select tipp.id from TitleInstancePackagePlatform tipp, Combo combo where " +
+          List<Long> tippsIds = setTippsNotToDeleted ? TitleInstancePackagePlatform.executeQuery("select tipp.id from TitleInstancePackagePlatform tipp where " +
                   "tipp.status in :status and " +
-                  "combo.toComponent = tipp and " +
-                  "combo.fromComponent = :package and tipp.id not in (:setTippsNotToDeleted)",
+                  "tipp.pkg = :package and tipp.id not in (:setTippsNotToDeleted)",
                   [package: pkg, status: [status_current, status_expected, status_retired], setTippsNotToDeleted: setTippsNotToDeleted]) : []
 
           Integer tippsToDeleted = tippsIds ? KBComponent.executeUpdate("update KBComponent set status = :deleted where id in (:tippIds)", [deleted: status_deleted, tippIds: tippsIds]) : 0
