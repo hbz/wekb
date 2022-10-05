@@ -191,3 +191,14 @@
     </dd>
 
 </dl>
+
+<sec:ifAnyGranted roles="ROLE_ADMIN">
+<dl>
+    <dt class="control-label">
+        Status
+    </dt>
+    <dd>
+        <semui:xEditableBoolean owner="${d}" field="fromKbartImport"/>
+    </dd>
+</dl>
+</sec:ifAnyGranted>

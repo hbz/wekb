@@ -2,8 +2,7 @@
 <html>
 <head>
     <meta name="layout" content="public_semui"/>
-    <title><g:message code="gokb.appname"
-                      default="we:kb"/>: My Sources of Curatory Groups (${groups.name.join(',')})</title>
+    <title>My Sources of Curatory Groups (${groups.name.join(',')})</title>
 </head>
 
 <body>

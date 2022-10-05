@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="layout" content="public_semui"/>
-    <title><g:message code="gokb.appname" default="we:kb"/>: Title Identifiers with same Identifier Namespace </title>
+    <title>Title Identifiers with same Identifier Namespace </title>
 </head>
 
 <body>

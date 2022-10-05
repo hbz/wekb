@@ -130,6 +130,7 @@ class UrlToolkit {
             }
             catch(IllegalArgumentException | DateTimeParseException e){
                 // this is a simple fallback - TODO: work out how far to go back in time
+                log.error("Fallback of formatDateTime from 12 months by: " +from)
                 fromDateTime = LocalDateTime.now().minusMonths(12)
             }
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")

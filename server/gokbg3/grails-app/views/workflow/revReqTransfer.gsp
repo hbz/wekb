@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="layout" content="public_semui" />
-<title><g:message code="gokb.appname" default="we:kb"/>::Review Request Transfer</title>
+<title>::Review Request Transfer</title>
 </head>
 <body>
 	<h1 class="page-header">Review Request Transfer</h1>

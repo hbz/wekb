@@ -16,4 +16,10 @@
 			  ${d.uuid}
 		</dd>
 	</g:if>
+	<sec:ifAnyGranted roles="ROLE_ADMIN">
+		<dt class="control-label">DB-ID</dt>
+		<dd>
+			${d.id}
+		</dd>
+	</sec:ifAnyGranted>
 </dl>

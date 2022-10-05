@@ -12,15 +12,17 @@
         <g:each in="${curatoryGroups}" var="cg">
             <div class="item">${cg.name}
                 <g:if test="${params.curationOverride == 'true' && springSecurityService.isLoggedIn() && SpringSecurityUtils.ifAnyGranted("ROLE_ADMIN")}">
-                    <g:link controller="ajaxSupport" action="unlinkManyToMany" class="ui negative button"
+                    <g:link controller="ajaxSupport" action="unlinkManyToMany" class="ui right floated negative mini button"
                     params="['curationOverride': params.curationOverride, '__property':'curatoryGroups', '__context':d.getClassName() + ':' + d.id, '__itemToRemove' : cg.getClassName() + ':' + cg.id]">Unlink Curatory Group</g:link>
                 </g:if>
             </div>
         </g:each>
 
+
         <g:if test="${!curatoryGroups}">
             <div class="item">There are currently no linked Curatory Groups</div>
         </g:if>
+    </div>
 
         <g:if test="${(params.curationOverride == 'true' || !curatoryGroups) && !(d instanceof CuratoryGroup) && !(d instanceof TitleInstancePackagePlatform) && springSecurityService.isLoggedIn() && SpringSecurityUtils.ifAnyGranted("ROLE_ADMIN")}">
             <div class="ui segment">
@@ -41,7 +43,6 @@
             </div>
 
         </g:if>
-    </div>
 
     </g:if>
     <sec:ifNotLoggedIn>
@@ -57,34 +58,33 @@
 
                 <p>You are not a curator of this component. If you notice any errors, please contact a curator or request a review.</p>
             </div>
-
-            <sec:ifAnyGranted roles="ROLE_ADMIN">
-                <div class="ui segment">
-                    <h4 class="ui header">Warning</h4>
-
-                    <p>As an admin you can still edit, but please contact a curator before making major changes.</p>
-
-                    <g:if test="${params.curationOverride == 'true'}">
-                        <g:link class="ui button green"
-                                controller="${params.controller}"
-                                action="${params.action}"
-                                id="${displayobj.class.name}:${displayobj.id}"
-                                params="${(request.param ?: [:])}">
-                            Disable admin override
-                        </g:link>
-                    </g:if>
-                    <g:else>
-                        <g:link class="ui button red"
-                                controller="${params.controller}"
-                                action="${params.action}"
-                                id="${displayobj.class.name}:${displayobj.id}"
-                                params="${(request.param ?: [:]) + ["curationOverride": true]}">
-                            Enable admin override
-                        </g:link>
-                    </g:else>
-                </div>
-            </sec:ifAnyGranted>
         </g:if>
+        <sec:ifAnyGranted roles="ROLE_ADMIN">
+            <div class="ui segment">
+                <h4 class="ui header">Warning</h4>
+
+                <p>As an admin you can still edit, but please contact a curator before making major changes.</p>
+
+                <g:if test="${params.curationOverride == 'true'}">
+                    <g:link class="ui button green"
+                            controller="${params.controller}"
+                            action="${params.action}"
+                            id="${displayobj.class.name}:${displayobj.id}"
+                            params="${(request.param ?: [:])}">
+                        Disable admin override
+                    </g:link>
+                </g:if>
+                <g:else>
+                    <g:link class="ui button red"
+                            controller="${params.controller}"
+                            action="${params.action}"
+                            id="${displayobj.class.name}:${displayobj.id}"
+                            params="${(request.param ?: [:]) + ["curationOverride": true]}">
+                        Enable admin override
+                    </g:link>
+                </g:else>
+            </div>
+        </sec:ifAnyGranted>
     </sec:ifLoggedIn>
 
     <g:render template="/templates/componentStatus" model="${[d: d]}"/>

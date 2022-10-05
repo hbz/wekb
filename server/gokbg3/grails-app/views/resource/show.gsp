@@ -3,7 +3,7 @@
 <html>
 <head>
     <meta name="layout" content="public_semui"/>
-    <title><g:message code="gokb.appname" default="we:kb"/>: ${displayobj?.getNiceName() ?: 'Component'}
+    <title>${displayobj?.getNiceName() ?: 'Component'}
     <g:if test="${displayobj}">
         &lt;${editable ? 'Editable' : (response.status == 403 ? 'Not Accessible' : 'Read Only')}&gt;
     </g:if>

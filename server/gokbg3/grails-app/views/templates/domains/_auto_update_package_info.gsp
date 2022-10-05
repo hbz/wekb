@@ -1,16 +1,16 @@
-<%@ page import="de.wekb.helper.RCConstants" %>
+<%@ page import="org.gokb.cred.RefdataValue; de.wekb.helper.RDStore; de.wekb.helper.RCConstants" %>
 <dl>
     <dt class="control-label">
         Package
     </dt>
     <dd>
-            <g:if test="${d.pkg}">
-                <g:link controller="resource" action="show"
-                        id="${d.pkg.uuid}">
-                    ${(d.pkg.name) ?: 'Empty'}
-                </g:link>
-            </g:if>
-            <g:else>Empty</g:else>
+        <g:if test="${d.pkg}">
+            <g:link controller="resource" action="show"
+                    id="${d.pkg.uuid}">
+                ${(d.pkg.name) ?: 'Empty'}
+            </g:link>
+        </g:if>
+        <g:else>Empty</g:else>
     </dd>
 </dl>
 <dl>
@@ -26,7 +26,8 @@
         Status
     </dt>
     <dd>
-        <semui:xEditableRefData owner="${d}" field="status" config="${RCConstants.AUTO_UPDATE_STATUS}" overwriteEditable="false"/>
+        <semui:xEditableRefData owner="${d}" field="status" config="${RCConstants.AUTO_UPDATE_STATUS}"
+                                overwriteEditable="false"/>
     </dd>
 </dl>
 <dl>
@@ -49,10 +50,26 @@
 </dl>
 <dl>
     <dt class="control-label">
+        Titles in we:kb before update
+    </dt>
+    <dd>
+        <g:formatNumber number="${d.countPreviouslyTippsInWekb}" type="number"/>
+    </dd>
+</dl>
+<dl>
+    <dt class="control-label">
+        Titles in we:kb after update
+    </dt>
+    <dd>
+        <g:formatNumber number="${d.countNowTippsInWekb}" type="number"/>
+    </dd>
+</dl>
+<dl>
+    <dt class="control-label">
         Rows in KBART-File by Update
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="countKbartRows" overwriteEditable="false"/>
+        <g:formatNumber number="${d.countKbartRows}" type="number"/>
     </dd>
 </dl>
 <dl>
@@ -60,7 +77,7 @@
         Processed KBART Rows by Update
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="countProcessedKbartRows" overwriteEditable="false"/>
+        <g:formatNumber number="${d.countProcessedKbartRows}" type="number"/>
     </dd>
 </dl>
 <dl>
@@ -68,7 +85,10 @@
         Changed Titles by Update
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="countChangedTipps" overwriteEditable="false"/>
+        <g:link controller="search" action="componentSearch" id=""
+                params="[qbe: 'g:autoUpdateTippInfos', qp_aup_id: d.id, qp_type: RefdataValue.class.name+':'+RDStore.AUTO_UPDATE_TYPE_CHANGED_TITLE.id]">
+            <g:formatNumber number="${d.countChangedTipps}" type="number"/>
+        </g:link>
     </dd>
 </dl>
 <dl>
@@ -76,7 +96,10 @@
         Removed Titles by Update
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="countRemovedTipps" overwriteEditable="false"/>
+        <g:link controller="search" action="componentSearch" id=""
+                params="[qbe: 'g:autoUpdateTippInfos', qp_aup_id: d.id, qp_type: RefdataValue.class.name+':'+RDStore.AUTO_UPDATE_TYPE_REMOVED_TITLE.id]">
+            <g:formatNumber number="${d.countRemovedTipps}" type="number"/>
+        </g:link>
     </dd>
 </dl>
 <dl>
@@ -84,7 +107,10 @@
         New Titles by Update
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="countNewTipps" overwriteEditable="false"/>
+        <g:link controller="search" action="componentSearch" id=""
+                params="[qbe: 'g:autoUpdateTippInfos', qp_aup_id: d.id, qp_type: RefdataValue.class.name+':'+RDStore.AUTO_UPDATE_TYPE_NEW_TITLE.id]">
+            <g:formatNumber number="${d.countNewTipps}" type="number"/>
+        </g:link>
     </dd>
 </dl>
 <dl>
@@ -92,7 +118,10 @@
         In valid Titles by Update
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" field="countInValidTipps" overwriteEditable="false"/>
+        <g:link controller="search" action="componentSearch" id=""
+                params="[qbe: 'g:autoUpdateTippInfos', qp_aup_id: d.id, qp_type: RefdataValue.class.name+':'+RDStore.AUTO_UPDATE_TYPE_FAILED_TITLE.id]">
+            <g:formatNumber number="${d.countInValidTipps}" type="number"/>
+        </g:link>
     </dd>
 </dl>
 <dl>
@@ -110,6 +139,15 @@
     </dt>
     <dd>
         <semui:xEditableBoolean owner="${d}" field="kbartHasWekbFields" overwriteEditable="false"/>
+    </dd>
+</dl>
+<dl>
+    <dt class="control-label">
+        Last Changed in Kbart
+    </dt>
+    <dd>
+        <g:formatDate format="${message(code: 'default.date.format.notime')}"
+                      date="${d.lastChangedInKbart}"/>
     </dd>
 </dl>
 

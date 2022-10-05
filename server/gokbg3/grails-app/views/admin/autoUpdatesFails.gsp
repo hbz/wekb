@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="layout" content="public_semui"/>
-    <title><g:message code="gokb.appname" default="we:kb"/>: Automatic Update Fails</title>
+    <title>Automatic Update Fails</title>
 </head>
 
 <body>

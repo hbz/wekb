@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="layout" content="public_semui" />
-<title><g:message code="gokb.appname" default="we:kb"/>: Group</title>
+<title>Group</title>
 </head>
 <body>
 <h1 class="ui header">My Compoents (${groups.name.join(',')})</h1>

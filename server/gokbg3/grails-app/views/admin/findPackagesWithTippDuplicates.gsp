@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="layout" content="public_semui"/>
-    <title><g:message code="gokb.appname" default="we:kb"/>: Packages with Tipp Duplicates</title>
+    <title>Packages with Tipp Duplicates</title>
 </head>
 
 <body>
