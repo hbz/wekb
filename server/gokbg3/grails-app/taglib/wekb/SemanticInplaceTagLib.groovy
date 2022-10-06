@@ -464,7 +464,6 @@ class SemanticInplaceTagLib {
         boolean editable = isEditable(request.getAttribute('editable'), attrs.overwriteEditable)
 
         if (editable) {
-            def viewable = true
             def owner = ClassUtils.deproxy(attrs.owner)
 
             def oid = attrs.owner.id != null ? "${owner.class.name}:${owner.id}" : ''
@@ -485,15 +484,13 @@ class SemanticInplaceTagLib {
 
             def follow_link = null
 
-            if (viewable && owner != null && owner[attrs.field] != null) {
+            if (owner != null && owner[attrs.field] != null) {
                 String urlWithClassAndID = null
                 if(!(owner[attrs.field] instanceof org.gokb.cred.KBComponent))
                     urlWithClassAndID = "${ClassUtils.deproxy(owner[attrs.field]).class.name}" + ':' + owner[attrs.field].id
 
                 follow_link = createLink(controller: 'resource', action: 'show', id: urlWithClassAndID ?: owner[attrs.field].uuid)
             }
-
-            if (viewable && editable) {
                 out << "<a href=\"#\" data-domain=\"${attrs.baseClass}\" id=\"${id}\" class=\"xEditableManyToOne\" "
 
                 if ((attrs.filter1 != null) && (attrs.filter1.length() > 0)) {
@@ -524,7 +521,10 @@ class SemanticInplaceTagLib {
                     }
                 }
                 out << "</a>"
-            }
+
+
+            if(attrs.owner && attrs.owner."${attrs.field}")
+                out << g.link('Unlink', controller: "ajaxSupport", action: "unlinkManyToOne", class: "ui right floated negative mini button", params: ['curationOverride': params.curationOverride, '__property': attrs.field, '__context': attrs.owner.getClassName() + ':' + attrs.owner.id])
 
           if (follow_link) {
                 out << ' &nbsp; <a href="' + follow_link + '" title="Jump to resource"><i class="ui share square icon"></i></a>'

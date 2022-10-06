@@ -655,6 +655,60 @@ class AjaxSupportController {
     }
   }
 
+  @Transactional
+  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  def unlinkManyToOne() {
+    log.debug("unlinkManyToOne(${params})");
+    def contextObj = resolveOID2(params.__context)
+    def result = ['result': 'OK', 'params': params]
+    if (contextObj) {
+      def editable = checkEditable(contextObj)
+
+      if (editable) {
+          contextObj[params.__property] = null
+
+          if (contextObj.save(flush: true, failOnError: true)) {
+            log.debug("Saved context object ${contextObj.class.name}")
+          }
+          else {
+            flash.error = messageService.processValidationErrorsToListForFlashError(contextObj.errors, request.locale)
+            result.result = 'ERROR'
+            result.code = 400
+          }
+      }
+      else {
+        flash.error = message(code:'component.delete.denied.label')
+        log.debug("Located instance of context class with oid ${params.__context} is not editable.");
+        result.result = 'ERROR'
+        result.code = 403
+      }
+    }
+    else {
+      flash.error = message(code:'component.context.notFound.label')
+      log.debug("Unable to locate instance of context class with oid ${params.__context}");
+      result.result = 'ERROR'
+      result.code = 404
+    }
+
+    withFormat {
+      html {
+        def redirect_to = request.getHeader('referer')
+
+        if ( params.fragment && params.fragment.length() > 0 ) {
+          redirect_to = "${redirect_to}#${params.fragment}"
+        }
+        redirect(url: redirect_to)
+      }
+      json {
+        if (flash.error) {
+          result.errors = flash.error
+        }
+
+        render result as JSON
+      }
+    }
+  }
+
   /**
    *  delete : Used to delete a domain class object.
    * @param __context : the OID ([FullyQualifiedClassName]:[PrimaryKey]) of the context object
