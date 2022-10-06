@@ -33,7 +33,6 @@ class RestMappingService {
     'componentHash',
     'subjects',
     'lastUpdateComment',
-    'duplicateOf',
     'componentDiscriminator',
     'incomingCombos',
     'outgoingCombos'
