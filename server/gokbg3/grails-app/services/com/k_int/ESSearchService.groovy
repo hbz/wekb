@@ -572,6 +572,10 @@ class ESSearchService{
           QueryBuilder typeFilter = QueryBuilders.matchQuery("componentType", params.component_type)
           scrollQuery.must(typeFilter)
         }
+        if (params.componentType) {
+          QueryBuilder typeFilter = QueryBuilders.matchQuery("componentType", params.componentType)
+          scrollQuery.must(typeFilter)
+        }
         addStatusQuery(scrollQuery, errors, params.status)
         //TODO: add this after upgrade to Elasticsearch 7 -> DONE
         addDateQueries(scrollQuery, errors, params)
@@ -581,7 +585,8 @@ class ESSearchService{
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
         searchSourceBuilder.query(scrollQuery)
         searchSourceBuilder.size(scrollSize)
-        SearchRequest searchRequest = new SearchRequest(usedComponentTypes.values() as String[])
+        //SearchRequest searchRequest = new SearchRequest(usedComponentTypes.values() as String[])
+        SearchRequest searchRequest = new SearchRequest(grailsApplication.config.searchApi.indices as String[])
         //searchRequest.scroll("1m")
         // ... set scroll interval to 15 minutes, reason: ERMS-3460
         //SearchRequest searchRequest = new SearchRequest(grailsApplication.config.gokb.es.index)
