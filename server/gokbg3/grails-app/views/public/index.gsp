@@ -10,6 +10,8 @@
 
 <wekb:serviceInjection/>
 
+<semui:flashMessage data="${flash}"/>
+
 <g:render template="number-chart-hero"/>
 
 %{--<div class="ui segment">

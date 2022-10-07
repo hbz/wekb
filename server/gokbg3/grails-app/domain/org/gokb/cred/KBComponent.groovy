@@ -274,8 +274,6 @@ abstract class KBComponent implements Auditable{
   // Read only flag should be honoured in the UI
   boolean systemComponent = false
 
-  // used in data tidy routines
-  KBComponent duplicateOf
 
   // MD5 Hash of the comparable title for the component. This hash is used to group
   // candidate duplicate works together. It is the means by which we group possible duplicates
@@ -328,7 +326,6 @@ abstract class KBComponent implements Auditable{
     shortcode column: 'kbc_shortcode', index: 'kbc_shortcode_idx'
     dateCreated column: 'kbc_date_created', index: 'kbc_date_created_idx'
     lastUpdated column: 'kbc_last_updated', index: 'kbc_last_updated_idx'
-    duplicateOf column: 'kbc_duplicate_of'
     reviewRequests sort: 'id', order: 'asc'
     lastSeen column: 'kbc_last_seen'
     insertBenchmark column: 'kbc_insert_benchmark'
@@ -350,7 +347,6 @@ abstract class KBComponent implements Auditable{
     name(nullable: true, blank: false, maxSize: 2048)
     shortcode(nullable: true, blank: false, maxSize: 128)
     description(nullable: true, blank: false)
-    duplicateOf(nullable: true, blank: false)
     normname(nullable: true, blank: false, maxSize: 2048)
     status(nullable: true, blank: false)
     source(nullable: true, blank: false)
@@ -1024,7 +1020,6 @@ abstract class KBComponent implements Auditable{
         }
     }
     ReviewRequest.executeUpdate("delete from ReviewRequest as c where c.componentToReview=:component", [component: this])
-    KBComponent.executeUpdate("update KBComponent set duplicateOf = NULL where duplicateOf=:component", [component: this])
     KBComponent.executeUpdate("delete from ComponentPrice where owner=:component", [component: this])
     this.delete(failOnError: true)
     result
@@ -1053,7 +1048,6 @@ abstract class KBComponent implements Auditable{
         ComponentHistoryEvent.executeUpdate("delete from ComponentHistoryEvent as c where c.id = ?", [it.id])
       }
       ReviewRequest.executeUpdate("delete from ReviewRequest as c where c.componentToReview.id IN (:component)", [component: batch])
-      KBComponent.executeUpdate("update KBComponent set duplicateOf = NULL where duplicateOf.id IN (:component)", [component: batch])
       ComponentPrice.executeUpdate("delete from ComponentPrice as cp where cp.owner.id IN (:component)", [component: batch])
       result.num_expunged += KBComponent.executeUpdate("delete KBComponent as c where c.id IN (:component)", [component: batch])
     }

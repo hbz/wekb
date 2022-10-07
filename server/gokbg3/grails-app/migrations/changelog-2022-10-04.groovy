@@ -84,5 +84,9 @@ databaseChangeLog = {
         }
     }
 
+    changeSet(author: "djebeniani (generated)", id: "1664737653848-11") {
+        dropColumn(columnName: "kbc_duplicate_of", tableName: "kbcomponent")
+    }
+
 
 }

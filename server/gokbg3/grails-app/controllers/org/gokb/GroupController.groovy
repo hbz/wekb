@@ -28,8 +28,14 @@ class GroupController {
         def searchResult = [:]
         searchResult = getResultGenerics()
 
+        if(!searchResult.groups){
+            flash.error = "You are not assigned to any curatory group to view this area!"
+            redirect(controller: 'public', action: 'index')
+            return
+        }
+
         params.qbe = 'g:orgs'
-        params.qp_curgroups = searchResult.user.curatoryGroups.id
+        params.qp_curgroups = searchResult.groups.id
         params.hide = ['qp_curgroup', 'qp_curgroups']
 
         searchResult = searchService.search(searchResult.user, searchResult, params, response.format)
@@ -43,8 +49,14 @@ class GroupController {
 
         searchResult = getResultGenerics()
 
+        if(!searchResult.groups){
+            flash.error = "You are not assigned to any curatory group to view this area!"
+            redirect(controller: 'public', action: 'index')
+            return
+        }
+
         params.qbe = 'g:packages'
-        params.qp_curgroups = searchResult.user.curatoryGroups.id
+        params.qp_curgroups = searchResult.groups.id
         params.hide = ['qp_curgroup', 'qp_curgroups']
 
         searchResult = searchService.search(searchResult.user, searchResult, params, response.format)
@@ -58,8 +70,14 @@ class GroupController {
         def searchResult = [:]
         searchResult = getResultGenerics()
 
+        if(!searchResult.groups){
+            flash.error = "You are not assigned to any curatory group to view this area!"
+            redirect(controller: 'public', action: 'index')
+            return
+        }
+
         params.qbe = 'g:platforms'
-        params.qp_curgroups = searchResult.user.curatoryGroups.id
+        params.qp_curgroups = searchResult.groups.id
         params.hide = ['qp_curgroup', 'qp_curgroups']
 
         searchResult = searchService.search(searchResult.user, searchResult, params, response.format)
@@ -73,8 +91,14 @@ class GroupController {
         def searchResult = [:]
             searchResult = getResultGenerics()
 
+        if(!searchResult.groups){
+            flash.error = "You are not assigned to any curatory group to view this area!"
+            redirect(controller: 'public', action: 'index')
+            return
+        }
+
             params.qbe = 'g:allocatedReviewGroups'
-            params.qp_curgroups = searchResult.user.curatoryGroups.id
+            params.qp_curgroups = searchResult.groups.id
             params.hide = ['qp_curgroup', 'qp_curgroups']
 
             searchResult = searchService.search(searchResult.user, searchResult, params, response.format)
@@ -89,8 +113,14 @@ class GroupController {
 
         searchResult = getResultGenerics()
 
+        if(!searchResult.groups){
+            flash.error = "You are not assigned to any curatory group to view this area!"
+            redirect(controller: 'public', action: 'index')
+            return
+        }
+
         params.qbe = 'g:sources'
-        params.qp_curgroups = searchResult.user.curatoryGroups.id
+        params.qp_curgroups = searchResult.groups.id
         params.hide = ['qp_curgroup', 'qp_curgroups']
 
         searchResult = searchService.search(searchResult.user, searchResult, params, response.format)
@@ -104,8 +134,14 @@ class GroupController {
         def searchResult = [:]
         searchResult = getResultGenerics()
 
+        if(!searchResult.groups){
+            flash.error = "You are not assigned to any curatory group to view this area!"
+            redirect(controller: 'public', action: 'index')
+            return
+        }
+
         params.qbe = 'g:tipps'
-        params.qp_curgroups = searchResult.user.curatoryGroups.id
+        params.qp_curgroups = searchResult.groups.id
         params.hide = ['qp_curgroup', 'qp_curgroups']
 
         searchResult = searchService.search(searchResult.user, searchResult, params, response.format)
@@ -118,8 +154,14 @@ class GroupController {
         def searchResult = [:]
         searchResult = getResultGenerics()
 
+        if(!searchResult.groups){
+            flash.error = "You are not assigned to any curatory group to view this area!"
+            redirect(controller: 'public', action: 'index')
+            return
+        }
+
         params.qbe = 'g:autoUpdatePackageInfos'
-        params.qp_curgroups = searchResult.user.curatoryGroups.id
+        params.qp_curgroups = searchResult.groups.id
         params.hide = ['qp_curgroup', 'qp_curgroups']
 
         searchResult = searchService.search(searchResult.user, searchResult, params, response.format)
@@ -151,8 +193,14 @@ class GroupController {
         def searchResult = [:]
         searchResult = getResultGenerics()
 
+        if(!searchResult.groups){
+            flash.error = "You are not assigned to any curatory group to view this area!"
+            redirect(controller: 'public', action: 'index')
+            return
+        }
+
         params.qbe = 'g:packages'
-        params.qp_curgroups = searchResult.user.curatoryGroups.id
+        params.qp_curgroups = searchResult.groups.id
         params.hide = ['qp_curgroup', 'qp_curgroups']
         params.max = '10000'
 
