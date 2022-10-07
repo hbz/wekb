@@ -839,7 +839,7 @@ class AutoUpdatePackagesService {
 
                 tippDuplicates.each {
                     if(!(it in tippsFound)){
-                        KBComponent.executeUpdate("update KBComponent set status = :removed where id = (:tippId)", [removed: RDStore.KBC_STATUS_REMOVED, tippId: it])
+                        KBComponent.executeUpdate("update KBComponent set status = :removed, lastUpdated = CURRENT_DATE where id = (:tippId)", [removed: RDStore.KBC_STATUS_REMOVED, tippId: it])
 
                         TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.get(it)
                         AutoUpdateTippInfo.withTransaction {
@@ -885,7 +885,7 @@ class AutoUpdatePackagesService {
                         "tipp.pkg = :package and tipp.id not in (:setTippsNotToDeleted)",
                         [package: pkg, status: [status_current, status_expected, status_retired], setTippsNotToDeleted: setTippsNotToDeleted]) : []
 
-                Integer tippsToDeleted = tippsIds ? KBComponent.executeUpdate("update KBComponent set status = :deleted where id in (:tippIds)", [deleted: status_deleted, tippIds: tippsIds]) : 0
+                Integer tippsToDeleted = tippsIds ? KBComponent.executeUpdate("update KBComponent set status = :deleted, lastUpdated = CURRENT_DATE where id in (:tippIds)", [deleted: status_deleted, tippIds: tippsIds]) : 0
 
                 tippsIds.each {
                     TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.get(it)
@@ -940,7 +940,7 @@ class AutoUpdatePackagesService {
                 List<Long> deleteTippsFromWekb = existingTippsAfterImport - tippsFound
 
                 if(deleteTippsFromWekb.size() > 0){
-                    Integer tippsToDeleted = KBComponent.executeUpdate("update KBComponent set status = :deleted where id in (:tippIds)", [deleted: RDStore.KBC_STATUS_DELETED, tippIds: deleteTippsFromWekb])
+                    Integer tippsToDeleted = KBComponent.executeUpdate("update KBComponent set status = :deleted, lastUpdated = CURRENT_DATE where id in (:tippIds)", [deleted: RDStore.KBC_STATUS_DELETED, tippIds: deleteTippsFromWekb])
 
                     deleteTippsFromWekb.each {
                         TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.get(it)
