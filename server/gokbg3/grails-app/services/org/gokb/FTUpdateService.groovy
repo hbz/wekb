@@ -506,6 +506,7 @@ class FTUpdateService {
         result.oldDateCreated = dateFormatService.formatIsoTimestamp(deletedKBComponent.oldDateCreated)
         result.oldLastUpdated = dateFormatService.formatIsoTimestamp(deletedKBComponent.oldLastUpdated)
         result.oldId = deletedKBComponent.oldId
+        result.lastUpdatedDisplay = dateFormatService.formatIsoTimestamp(deletedKBComponent.lastUpdated)
 
         result
       }
