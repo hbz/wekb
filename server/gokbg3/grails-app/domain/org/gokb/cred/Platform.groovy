@@ -299,8 +299,8 @@ class Platform extends KBComponent {
   @Transient
   public getCurrentTippCount() {
     def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current')
-    int result = Combo.executeQuery("select count(t.id) from TitleInstancePackagePlatform as t where t.hostPlatform = :plt and t.status = :status"
-            , [plt: this, stauts: refdata_current])[0]
+    int result = TitleInstancePackagePlatform.executeQuery("select count(t.id) from TitleInstancePackagePlatform as t where t.hostPlatform = :plt and t.status = :status"
+            , [plt: this, status: refdata_current])[0]
 
     result
   }

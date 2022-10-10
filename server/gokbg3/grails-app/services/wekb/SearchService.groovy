@@ -170,6 +170,10 @@ class SearchService {
         result.new_recset = []
         log.debug("Create new recset..")
         result.recset.each { r ->
+            if(params.sort == 'currentTippCount'){
+                r = r[0]
+            }
+
             def response_record = [:]
             response_record.oid = "${r.class.name}:${r.id}"
             response_record.obj = r

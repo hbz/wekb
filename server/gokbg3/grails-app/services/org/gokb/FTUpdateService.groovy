@@ -506,6 +506,7 @@ class FTUpdateService {
         result.oldDateCreated = dateFormatService.formatIsoTimestamp(deletedKBComponent.oldDateCreated)
         result.oldLastUpdated = dateFormatService.formatIsoTimestamp(deletedKBComponent.oldLastUpdated)
         result.oldId = deletedKBComponent.oldId
+        result.lastUpdatedDisplay = dateFormatService.formatIsoTimestamp(deletedKBComponent.lastUpdated)
 
         result
       }
@@ -605,24 +606,30 @@ class FTUpdateService {
                   log.debug("updateES ${domain.name}: ES Bulk operation has failure -> ${failure}")
                 }
               }
-            }
-            log.debug("BulkResponse: ${bulkResponse}")
-            FTControl.withNewTransaction {
-              Long id = latest_ft_record.id
-              latest_ft_record = FTControl.get(id)
-              if (latest_ft_record) {
-                latest_ft_record.lastTimestamp = highest_timestamp
-                latest_ft_record.lastId = highest_id
-                latest_ft_record.save()
-              } else {
-                log.error("Unable to locate free text control record with ID ${id}. Possibe parallel FT update")
+            }else{
+              bulkRequest = new BulkRequest()
+              FTControl.withNewTransaction {
+                Long id = latest_ft_record.id
+                latest_ft_record = FTControl.get(id)
+                if (latest_ft_record) {
+                  latest_ft_record.lastTimestamp = highest_timestamp
+                  latest_ft_record.lastId = highest_id
+                  latest_ft_record.save()
+                } else {
+                  log.error("Unable to locate free text control record with ID ${id}. Possibe parallel FT update")
+                }
               }
             }
+            log.debug("BulkResponse: ${bulkResponse}")
             /*synchronized (this) {
               Thread.yield()
             }*/
+
+            session.flush()
+            session.clear()
           }
         }
+
         if (count > 0) {
           BulkResponse bulkResponse = esclient.bulk(bulkRequest, RequestOptions.DEFAULT)
 
@@ -633,17 +640,19 @@ class FTUpdateService {
                 log.debug("updateES ${domain.name}: ES Bulk operation has failure -> ${failure}")
               }
             }
+          }else {
+            FTControl.withNewTransaction {
+              latest_ft_record = FTControl.get(latest_ft_record.id)
+              latest_ft_record.lastTimestamp = highest_timestamp
+              latest_ft_record.lastId = highest_id
+              latest_ft_record.save()
+            }
           }
-          session.flush()
+          //session.flush()
           log.debug("Final BulkResponse: ${bulkResponse}")
         }
         // update timestamp
-        FTControl.withNewTransaction {
-          latest_ft_record = FTControl.get(latest_ft_record.id)
-          latest_ft_record.lastTimestamp = highest_timestamp
-          latest_ft_record.lastId = highest_id
-          latest_ft_record.save()
-        }
+
         session.flush()
         session.clear()
         log.debug("final:: Processed ${total} out of ${countq} records for ${domain.name}. Max TS seen ${highest_timestamp} highest id with that TS: ${highest_id}")

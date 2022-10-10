@@ -559,10 +559,9 @@ class AutoUpdatePackagesService {
         }
 
         List<Long> existing_tipp_ids = TitleInstancePackagePlatform.executeQuery(
-                "select tipp.id from TitleInstancePackagePlatform tipp, Combo combo where " +
+                "select tipp.id from TitleInstancePackagePlatform tipp where " +
                         "tipp.status in :status and " +
-                        "combo.toComponent = tipp and " +
-                        "combo.fromComponent = :package",
+                        "tipp.pkg = :package",
                 [package: pkg, status: listStatus])
 
         int previouslyTipps = existing_tipp_ids.size()
@@ -840,7 +839,7 @@ class AutoUpdatePackagesService {
 
                 tippDuplicates.each {
                     if(!(it in tippsFound)){
-                        KBComponent.executeUpdate("update KBComponent set status = :removed where id = (:tippId)", [removed: RDStore.KBC_STATUS_REMOVED, tippId: it])
+                        KBComponent.executeUpdate("update KBComponent set status = :removed, lastUpdated = CURRENT_DATE where id = (:tippId)", [removed: RDStore.KBC_STATUS_REMOVED, tippId: it])
 
                         TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.get(it)
                         AutoUpdateTippInfo.withTransaction {
@@ -881,13 +880,12 @@ class AutoUpdatePackagesService {
 
             if (setAllTippsNotInKbartToDeleted) {
 
-                List<Long> tippsIds = setTippsNotToDeleted ? TitleInstancePackagePlatform.executeQuery("select tipp.id from TitleInstancePackagePlatform tipp, Combo combo where " +
+                List<Long> tippsIds = setTippsNotToDeleted ? TitleInstancePackagePlatform.executeQuery("select tipp.id from TitleInstancePackagePlatform tipp where " +
                         "tipp.status in :status and " +
-                        "combo.toComponent = tipp and " +
-                        "combo.fromComponent = :package and tipp.id not in (:setTippsNotToDeleted)",
+                        "tipp.pkg = :package and tipp.id not in (:setTippsNotToDeleted)",
                         [package: pkg, status: [status_current, status_expected, status_retired], setTippsNotToDeleted: setTippsNotToDeleted]) : []
 
-                Integer tippsToDeleted = tippsIds ? KBComponent.executeUpdate("update KBComponent set status = :deleted where id in (:tippIds)", [deleted: status_deleted, tippIds: tippsIds]) : 0
+                Integer tippsToDeleted = tippsIds ? KBComponent.executeUpdate("update KBComponent set status = :deleted, lastUpdated = CURRENT_DATE where id in (:tippIds)", [deleted: status_deleted, tippIds: tippsIds]) : 0
 
                 tippsIds.each {
                     TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.get(it)
@@ -924,27 +922,25 @@ class AutoUpdatePackagesService {
             }
 
             int countExistingTippsAfterImport = TitleInstancePackagePlatform.executeQuery(
-                    "select count(tipp.id) from TitleInstancePackagePlatform tipp, Combo combo where " +
+                    "select count(tipp.id) from TitleInstancePackagePlatform tipp where " +
                             "tipp.status in :status and " +
-                            "combo.toComponent = tipp and " +
-                            "combo.fromComponent = :package",
+                            "tipp.pkg = :package",
                     [package: pkg, status: listStatus])[0]
 
 
             if(tippsFound.size() > 0 && kbartRowsCount > 0 && countExistingTippsAfterImport > (kbartRowsCount-countInvalidKbartRowsForTipps)){
 
                 List<Long> existingTippsAfterImport = TitleInstancePackagePlatform.executeQuery(
-                        "select tipp.id from TitleInstancePackagePlatform tipp, Combo combo where " +
+                        "select tipp.id from TitleInstancePackagePlatform tipp where " +
                                 "tipp.status in :status and " +
-                                "combo.toComponent = tipp and " +
-                                "combo.fromComponent = :package",
+                                "tipp.pkg = :package",
                         [package: pkg, status: listStatus])
 
 
                 List<Long> deleteTippsFromWekb = existingTippsAfterImport - tippsFound
 
                 if(deleteTippsFromWekb.size() > 0){
-                    Integer tippsToDeleted = KBComponent.executeUpdate("update KBComponent set status = :deleted where id in (:tippIds)", [deleted: RDStore.KBC_STATUS_DELETED, tippIds: deleteTippsFromWekb])
+                    Integer tippsToDeleted = KBComponent.executeUpdate("update KBComponent set status = :deleted, lastUpdated = CURRENT_DATE where id in (:tippIds)", [deleted: RDStore.KBC_STATUS_DELETED, tippIds: deleteTippsFromWekb])
 
                     deleteTippsFromWekb.each {
                         TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.get(it)

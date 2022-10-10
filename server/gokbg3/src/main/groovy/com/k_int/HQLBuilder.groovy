@@ -168,8 +168,14 @@ public class HQLBuilder {
     if ( hql_builder_context.containsKey('sort' ) && 
          ( hql_builder_context.get('sort') != null ) && 
          ( hql_builder_context.get('sort').length() > 0 ) ) {
-      log.debug("Setting sort order to ${hql_builder_context.sort}");
-      fetch_hql += " order by o.${hql_builder_context.sort} ${hql_builder_context.order}";
+      log.debug("Setting sort order to ${hql_builder_context.sort}")
+
+      if(hql_builder_context.sort == 'currentTippCount'){
+        fetch_hql = fetch_hql.replaceFirst(" o ", " o, (select count(t.id) from  org.gokb.cred.TitleInstancePackagePlatform as t where t.pkg = o.id and t.status = ${RDStore.KBC_STATUS_CURRENT.id}) as currentTippCount ")
+        fetch_hql += " order by currentTippCount ${hql_builder_context.order}";
+      }else {
+        fetch_hql += " order by o.${hql_builder_context.sort} ${hql_builder_context.order}";
+      }
     }
 
 
