@@ -330,7 +330,7 @@ class Org extends KBComponent {
 
         int result = 0
         if (getProvidedPackages()) {
-            TitleInstancePackagePlatform.executeQuery("select count(t.id) from TitleInstancePackagePlatform as t where t.pkg in (:pkgs) and t.status = :status"
+            result = TitleInstancePackagePlatform.executeQuery("select count(t.id) from TitleInstancePackagePlatform as t where t.pkg in (:pkgs) and t.status = :status"
                     , [pkgs: getProvidedPackages(), status: refdata_current])[0]
         }
 
