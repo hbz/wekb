@@ -713,7 +713,7 @@ class AutoUpdatePackagesService {
                                         }
 
                                         if (setAllTippsNotInKbartToDeleted && updateTipp && updateTipp.status != RDStore.KBC_STATUS_CURRENT) {
-                                            //updateTipp.status = RDStore.KBC_STATUS_CURRENT
+                                            updateTipp.status = RDStore.KBC_STATUS_CURRENT
                                             setTippsNotToDeleted << updateTipp.id
                                         }
                                             updateTipp.save()
@@ -878,7 +878,7 @@ class AutoUpdatePackagesService {
             }
 
 
-            if (setAllTippsNotInKbartToDeleted) {
+            if (!onlyRowsWithLastChanged && setAllTippsNotInKbartToDeleted) {
 
                 List<Long> tippsIds = setTippsNotToDeleted ? TitleInstancePackagePlatform.executeQuery("select tipp.id from TitleInstancePackagePlatform tipp where " +
                         "tipp.status in (:status) and " +

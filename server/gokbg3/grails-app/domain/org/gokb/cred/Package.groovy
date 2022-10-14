@@ -601,4 +601,11 @@ class Package extends KBComponent {
     return ids.findAll{it.namespace.value == 'Anbieter_Produkt_ID' && it.value != 'Unknown'}.value.join(', ')
   }
 
+  @Transient
+  public getLastSuccessfulAutoUpdateInfo() {
+    AutoUpdatePackageInfo autoUpdatePackageInfo = AutoUpdatePackageInfo.executeQuery("from AutoUpdatePackageInfo where pkg = :pkg and status = :status" +
+            " order by lastUpdated desc", [pkg: this, status: RDStore.AUTO_UPDATE_STATUS_SUCCESSFUL], [max: 1, offset: 0])[0]
+    autoUpdatePackageInfo
+  }
+
 }
