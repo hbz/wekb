@@ -352,10 +352,7 @@ KBComponentVariantName.Status;Deleted;Deleted;Deleted
 KBComponentVariantName.Status;Expected;Expected;Expected
 KBComponentVariantName.Status;Retired;Retired;Retired
 KBComponentVariantName.VariantType;Acronym;Acronym;Acronym
-KBComponentVariantName.VariantType;Authorized;Authorized;Authorized
-KBComponentVariantName.VariantType;Minor Change;Minor Change;Minor Change
-KBComponentVariantName.VariantType;Misspelling;Misspelling;Misspelling
-KBComponentVariantName.VariantType;Nickname;Nickname;Nickname
+KBComponentVariantName.VariantType;Alternate Title;Alternate Title;Alternate Title
 MembershipRole;Administrator;Administrator;Administrator
 MembershipRole;Member;Member;Member
 MembershipStatus;Approved;Approved;Approved

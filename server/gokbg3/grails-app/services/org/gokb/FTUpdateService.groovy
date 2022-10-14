@@ -524,14 +524,14 @@ class FTUpdateService {
 
 
   def updateES(domain, recgen_closure) {
-    log.debug("updateES(${domain}...)")
     RestHighLevelClient esclient = ESWrapperService.getClient()
     cleanUpGorm()
     def count = 0
+    long currentTimestamp = 0
+
     try {
-      log.debug("updateES - ${domain.name}")
+      log.info("updateES - ${domain.name}")
       def latest_ft_record = null
-      def highest_timestamp = 0
       def highest_id = 0
       FTControl.withNewTransaction {
         latest_ft_record = FTControl.findByDomainClassNameAndActivity(domain.name, 'ESIndex')
@@ -542,22 +542,23 @@ class FTUpdateService {
                           .save()
           log.debug("Create new FT control record, as none available for ${domain.name}")
         } else {
-          highest_timestamp = latest_ft_record.lastTimestamp
-          log.debug("Got existing ftcontrol record for ${domain.name} max timestamp is ${highest_timestamp} which is " +
-                  "${new Date(highest_timestamp)}")
+          log.debug("Got existing ftcontrol record for ${domain.name} max timestamp is ${latest_ft_record.lastTimestamp} which is " +
+                  "${new Date(latest_ft_record.lastTimestamp)}")
         }
       }
-      log.debug("updateES ${domain.name} since ${latest_ft_record.lastTimestamp}")
+      log.info("updateES ${domain.name} since ${latest_ft_record.lastTimestamp}")
 
       def total = 0
       Date from = new Date(latest_ft_record.lastTimestamp)
       def countq = domain.executeQuery("select count(o.id) from " + domain.name +
               " as o where (( o.lastUpdated > :ts ) OR ( o.dateCreated > :ts )) ", [ts: from], [readonly: true])[0]
-      log.debug("Will process ${countq} records")
+      log.info("Will process ${countq} records")
       def q = domain.executeQuery("select o.id from " + domain.name +
               " as o where ((o.lastUpdated > :ts ) OR ( o.dateCreated > :ts )) order by o.lastUpdated, o.id", [ts: from],
               [readonly: true])
       log.debug("Query completed.. processing rows...")
+
+      currentTimestamp = System.currentTimeMillis()
 
       BulkRequest bulkRequest = new BulkRequest()
       // while (results.next()) {
@@ -587,16 +588,13 @@ class FTUpdateService {
 
               bulkRequest.add(request)
             }
-            if (r.lastUpdated?.getTime() > highest_timestamp) {
-              highest_timestamp = r.lastUpdated?.getTime()
-            }
             highest_id = r.id
             count++
             total++
           }
-          if (count == 100) {
+          if (count == 1000) {
             count = 0
-            log.debug("interim:: processed ${total} out of ${countq} records (${domain.name}) - updating highest timestamp to ${highest_timestamp} interim flush")
+            log.debug("interim:: processed ${total} out of ${countq} records (${domain.name})")
             BulkResponse bulkResponse = esclient.bulk(bulkRequest, RequestOptions.DEFAULT)
 
             if (bulkResponse.hasFailures()) {
@@ -608,19 +606,8 @@ class FTUpdateService {
               }
             }else{
               bulkRequest = new BulkRequest()
-              FTControl.withNewTransaction {
-                Long id = latest_ft_record.id
-                latest_ft_record = FTControl.get(id)
-                if (latest_ft_record) {
-                  latest_ft_record.lastTimestamp = highest_timestamp
-                  latest_ft_record.lastId = highest_id
-                  latest_ft_record.save()
-                } else {
-                  log.error("Unable to locate free text control record with ID ${id}. Possibe parallel FT update")
-                }
-              }
             }
-            log.debug("BulkResponse: ${bulkResponse}")
+            //log.debug("BulkResponse: ${bulkResponse}")
             /*synchronized (this) {
               Thread.yield()
             }*/
@@ -640,22 +627,21 @@ class FTUpdateService {
                 log.debug("updateES ${domain.name}: ES Bulk operation has failure -> ${failure}")
               }
             }
-          }else {
-            FTControl.withNewTransaction {
-              latest_ft_record = FTControl.get(latest_ft_record.id)
-              latest_ft_record.lastTimestamp = highest_timestamp
-              latest_ft_record.lastId = highest_id
-              latest_ft_record.save()
-            }
           }
           //session.flush()
           log.debug("Final BulkResponse: ${bulkResponse}")
         }
         // update timestamp
+        FTControl.withNewTransaction {
+          latest_ft_record = FTControl.get(latest_ft_record.id)
+          latest_ft_record.lastTimestamp = currentTimestamp
+          latest_ft_record.lastId = highest_id
+          latest_ft_record.save()
+        }
 
         session.flush()
         session.clear()
-        log.debug("final:: Processed ${total} out of ${countq} records for ${domain.name}. Max TS seen ${highest_timestamp} highest id with that TS: ${highest_id}")
+        log.info("final:: Processed ${total} out of ${countq} records for ${domain.name}.")
       }
     }
     catch (Exception e) {
@@ -665,7 +651,7 @@ class FTUpdateService {
       FlushRequest request = new FlushRequest(indicesPerType.get(domain.name))
       FlushResponse flushResponse = esclient.indices().flush(request, RequestOptions.DEFAULT)
       esclient.close()
-      log.debug("Completed processing on ${domain.name} - saved ${count} records")
+      log.info("Completed processing on ${domain.name} - saved ${count} records")
     }
   }
 

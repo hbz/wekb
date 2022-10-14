@@ -923,16 +923,18 @@ class KbartImportService {
 
             List<TitleInstancePackagePlatform> tipps = []
 
+            String title = tippMap.publication_title
+
             countTipps = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) from TitleInstancePackagePlatform as tipp ' +
-                    'where tipp.name = :tiDtoName and tipp.status != :removed ' +
+                    'where lower(tipp.name) = :tiDtoName and tipp.status != :removed ' +
                     'and tipp.pkg = :pkg ',
-                    [pkg: pkg, tiDtoName: tippMap.publication_title, removed: RDStore.KBC_STATUS_REMOVED])[0]
+                    [pkg: pkg, tiDtoName: title.toLowerCase(), removed: RDStore.KBC_STATUS_REMOVED])[0]
 
             if(countTipps > 0) {
                 tipps = TitleInstancePackagePlatform.executeQuery('select tipp from TitleInstancePackagePlatform as tipp ' +
-                        'where tipp.name = :tiDtoName and tipp.status != :removed ' +
+                        'where lower(tipp.name) = :tiDtoName and tipp.status != :removed ' +
                         'and tipp.pkg = :pkg order by tipp.lastUpdated DESC',
-                        [pkg: pkg, tiDtoName: tippMap.publication_title, removed: RDStore.KBC_STATUS_REMOVED])
+                        [pkg: pkg, tiDtoName: title.toLowerCase(), removed: RDStore.KBC_STATUS_REMOVED])
             }
 
             TitleInstancePackagePlatform tipp = null

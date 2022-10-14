@@ -75,7 +75,7 @@
                             break
                         case 'editing_status': args.addAll(RefdataCategory.lookup(RCConstants.PACKAGE_EDITING_STATUS).sort { it.value }.collect { it -> it.value })
                             break
-                        case 'national_range': args.addAll(["EN", "FRE", "GER"])
+                        case 'national_range': args.addAll(["GB", "FR", "DE", "AT", "CH", "NL"])
                             break
                         case 'regional_range': args.addAll(RefdataCategory.lookup(RCConstants.PACKAGE_REGIONAL_RANGE).sort { it.value }.collect { it -> it.value })
                             break

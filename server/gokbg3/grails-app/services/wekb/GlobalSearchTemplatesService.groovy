@@ -1425,7 +1425,7 @@ class GlobalSearchTemplatesService {
                                         prompt     : 'Refdata Category',
                                         qparam     : 'qp_owner',
                                         placeholder: 'Refdata Category',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'owner.desc.id']
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'owner']
                                 ],
                         ],
                         qbeGlobals: [

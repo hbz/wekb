@@ -517,7 +517,7 @@ class ExportService {
     }
 
 
-    Map<String,List> exportPackageTippsAsTSVNew(Package pkg) {
+    Map<String,List> exportPackageTippsAsTSVNew(Package pkg, List status) {
 
         def export_date = dateFormatService.formatDate(new Date())
         List<String> titleHeaders = getTitleHeadersTSV()
@@ -599,9 +599,14 @@ class ExportService {
 
         Map queryParams = [:]
         queryParams.p = pkg
-        queryParams.sd = [RDStore.KBC_STATUS_DELETED, RDStore.KBC_STATUS_REMOVED]
+        queryParams.removed = RDStore.KBC_STATUS_REMOVED
+        String query = "select tipp.id from TitleInstancePackagePlatform as tipp where tipp.pkg = :p and tipp.status != :removed order by tipp.name"
+        if(status) {
+            query = "select tipp.id from TitleInstancePackagePlatform as tipp where tipp.pkg = :p and tipp.status in (:status) and tipp.status != :removed order by tipp.name"
+            queryParams.status = status
+        }
 
-        List<Long> tippIDs = TitleInstancePackagePlatform.executeQuery("select tipp.id from TitleInstancePackagePlatform as tipp where tipp.pkg = :p and tipp.status not in :sd order by tipp.name", queryParams, [readOnly: true])
+        List<Long> tippIDs = TitleInstancePackagePlatform.executeQuery(query, queryParams, [readOnly: true])
 
         int max = 500
         TitleInstancePackagePlatform.withSession { Session sess ->

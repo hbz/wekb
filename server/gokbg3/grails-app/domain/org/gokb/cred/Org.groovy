@@ -174,7 +174,7 @@ class Org extends KBComponent {
 
   @Override
   public String getNiceName() {
-    return "Organization";
+    return "Provider";
   }
 
   @Transient
@@ -323,4 +323,17 @@ class Org extends KBComponent {
   public String getDomainName() {
     return "Provider"
   }
+
+    @Transient
+    public getCurrentTippCount() {
+        def refdata_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current')
+
+        int result = 0
+        if (getProvidedPackages()) {
+            result = TitleInstancePackagePlatform.executeQuery("select count(t.id) from TitleInstancePackagePlatform as t where t.pkg in (:pkgs) and t.status = :status"
+                    , [pkgs: getProvidedPackages(), status: refdata_current])[0]
+        }
+
+        result
+    }
 }

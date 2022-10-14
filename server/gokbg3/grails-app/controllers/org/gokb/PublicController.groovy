@@ -233,7 +233,23 @@ class PublicController {
 
       ServletOutputStream out = response.outputStream
 
-      Map<String,List> export = exportService.exportPackageTippsAsTSVNew(pkg)
+      List status = []
+
+      if("Current" in params.list('status') || "Current" == params.status){
+        status << RDStore.KBC_STATUS_CURRENT
+      }
+      if("Retired" in params.list('status') || "Retired" == params.status){
+        status << RDStore.KBC_STATUS_RETIRED
+      }
+      if("Expected" in params.list('status') || "Expected" == params.status){
+        status << RDStore.KBC_STATUS_EXPECTED
+      }
+      if("Deleted" in params.list('status') || "Deleted" == params.status){
+        status << RDStore.KBC_STATUS_DELETED
+      }
+
+      println(status)
+      Map<String,List> export = exportService.exportPackageTippsAsTSVNew(pkg, status)
 
       out.withWriter { writer ->
         writer.write("we:kb Export : Provider (${pkg.provider?.name}) : Package (${pkg.name}) : ${export_date}\n");

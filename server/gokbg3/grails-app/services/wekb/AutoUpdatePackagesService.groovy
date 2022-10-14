@@ -834,7 +834,7 @@ class AutoUpdatePackagesService {
 
             }
 
-            if(tippDuplicates.size() > 0){
+            if(!onlyRowsWithLastChanged && tippDuplicates.size() > 0){
                 log.info("remove tippDuplicates -> ${tippDuplicates.size()}: ${tippDuplicates}")
 
                 tippDuplicates.each {
@@ -878,10 +878,10 @@ class AutoUpdatePackagesService {
             }
 
 
-            if (setAllTippsNotInKbartToDeleted) {
+            if (!onlyRowsWithLastChanged && setAllTippsNotInKbartToDeleted) {
 
                 List<Long> tippsIds = setTippsNotToDeleted ? TitleInstancePackagePlatform.executeQuery("select tipp.id from TitleInstancePackagePlatform tipp where " +
-                        "tipp.status in :status and " +
+                        "tipp.status in (:status) and " +
                         "tipp.pkg = :package and tipp.id not in (:setTippsNotToDeleted)",
                         [package: pkg, status: [status_current, status_expected, status_retired], setTippsNotToDeleted: setTippsNotToDeleted]) : []
 
@@ -928,7 +928,7 @@ class AutoUpdatePackagesService {
                     [package: pkg, status: listStatus])[0]
 
 
-            if(tippsFound.size() > 0 && kbartRowsCount > 0 && countExistingTippsAfterImport > (kbartRowsCount-countInvalidKbartRowsForTipps)){
+            if(!onlyRowsWithLastChanged && tippsFound.size() > 0 && kbartRowsCount > 0 && countExistingTippsAfterImport > (kbartRowsCount-countInvalidKbartRowsForTipps)){
 
                 List<Long> existingTippsAfterImport = TitleInstancePackagePlatform.executeQuery(
                         "select tipp.id from TitleInstancePackagePlatform tipp where " +
