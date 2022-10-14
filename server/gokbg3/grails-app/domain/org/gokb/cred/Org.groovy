@@ -174,7 +174,7 @@ class Org extends KBComponent {
 
   @Override
   public String getNiceName() {
-    return "Organization";
+    return "Provider";
   }
 
   @Transient
