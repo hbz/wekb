@@ -559,6 +559,8 @@ class FTUpdateService {
               [readonly: true])
       log.debug("Query completed.. processing rows...")
 
+      long start = new Date().getTime()
+
       BulkRequest bulkRequest = new BulkRequest()
       // while (results.next()) {
       FTControl.withNewSession { Session session ->
@@ -640,18 +642,19 @@ class FTUpdateService {
                 log.debug("updateES ${domain.name}: ES Bulk operation has failure -> ${failure}")
               }
             }
-          }else {
-            FTControl.withNewTransaction {
-              latest_ft_record = FTControl.get(latest_ft_record.id)
-              latest_ft_record.lastTimestamp = highest_timestamp
-              latest_ft_record.lastId = highest_id
-              latest_ft_record.save()
-            }
           }
           //session.flush()
           log.debug("Final BulkResponse: ${bulkResponse}")
         }
         // update timestamp
+        FTControl.withNewTransaction {
+          latest_ft_record = FTControl.get(latest_ft_record.id)
+          long processTime = new Date().getTime()-start
+          highest_timestamp = highest_timestamp - processTime
+          latest_ft_record.lastTimestamp = highest_timestamp
+          latest_ft_record.lastId = highest_id
+          latest_ft_record.save()
+        }
 
         session.flush()
         session.clear()
