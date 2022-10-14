@@ -834,7 +834,7 @@ class AutoUpdatePackagesService {
 
             }
 
-            if(tippDuplicates.size() > 0){
+            if(!onlyRowsWithLastChanged && tippDuplicates.size() > 0){
                 log.info("remove tippDuplicates -> ${tippDuplicates.size()}: ${tippDuplicates}")
 
                 tippDuplicates.each {
