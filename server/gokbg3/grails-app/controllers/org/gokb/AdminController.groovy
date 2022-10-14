@@ -649,6 +649,40 @@ class AdminController {
     result
   }
 
+  def findPackagesAutoUpdatesTippsDiff() {
+    log.debug("findPackagesAutoUpdatesTippsDiff::${params}")
+    def result = [:]
+
+    List pkgs = []
+
+    CuratoryGroup curatoryGroupFilter = params.curatoryGroup ? genericOIDService.resolveOID(params.curatoryGroup) : null
+
+    params.sort = params.sort ?: 'p.name'
+
+    params.order = params.order ?: 'asc'
+
+    Package.executeQuery("from Package p " +
+                    "where p.status != ${RDStore.KBC_STATUS_DELETED.id} and p.source is not null and " +
+                    "p.source.automaticUpdates = true " +
+                    " order by ${params.sort} ${params.order}").each { Package p ->
+
+      AutoUpdatePackageInfo autoUpdatePackageInfo = p.getLastSuccessfulAutoUpdateInfo()
+      if ((autoUpdatePackageInfo && autoUpdatePackageInfo.countKbartRows > p.tippCount) || !autoUpdatePackageInfo || (p.currentTippCount < p.deletedTippCount)) {
+        if (curatoryGroupFilter) {
+          if (curatoryGroupFilter in p.curatoryGroups) {
+            pkgs << p
+          }
+        } else {
+          pkgs << p
+        }
+      }
+    }
+
+    result.pkgs = pkgs
+
+    result
+  }
+
   def autoUpdatesFails() {
     log.debug("autoUpdatesFails::${params}")
     def result = [:]
