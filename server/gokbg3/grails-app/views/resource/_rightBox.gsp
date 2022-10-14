@@ -101,9 +101,44 @@
                         id="${params.id}">KBart File</g:link> &nbsp;
                 <div class="or"></div>
             </g:if>
-            <g:link controller="public" action="packageTSVExport" class="ui inverted button"
+            <a class="ui inverted button" href="#" onclick="$('#packageTSVExport').modal('show');"><g:message
+                    code="gokb.appname" default="we:kb"/> File</a>
+
+            <semui:modal id="packageTSVExport" title="Export we:kb File" msgSave="Export">
+
+                <g:form controller="public" action="packageTSVExport"  id="${params.id}" class="ui form">
+                    <div class="grouped fields">
+                        <label>Which titles should be exported:</label>
+                        <div class="field">
+                            <div class="ui checkbox">
+                                <input type="checkbox" name="status" value="Current">
+                                <label>Current Titles</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui checkbox">
+                               <input type="checkbox" name="status" value="Retired">
+                                <label>Retired Titles</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui checkbox">
+                               <input type="checkbox" name="status" value="Expected">
+                                <label>Expected Titlesx</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui checkbox">
+                               <input type="checkbox" name="status" value="Deleted">
+                                <label>Deleted Titles</label>
+                            </div>
+                        </div>
+                    </div>
+                </g:form>
+            </semui:modal>
+          %{--  <g:link controller="public" action="packageTSVExport" class="ui inverted button"
                     id="${params.id}"><g:message
-                    code="gokb.appname" default="we:kb"/> File</g:link>
+                    code="gokb.appname" default="we:kb"/> File</g:link>--}%
         </div>
     </g:if>
 </div>
