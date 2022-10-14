@@ -46,6 +46,7 @@
             <semui:sortableColumn property="p.source.lastRun" title="Last Run"/>
             <th>Titles in Package</th>
             <th>Titles in Kbart</th>
+            <th>Invalid Titles in Kbart</th>
             <th>Current Titles</th>
             <th>Deleted Titles</th>
             <th></th>
@@ -89,6 +90,11 @@
                 <td class="${(autoUpdateInfo && (autoUpdateInfo.countKbartRows > tippCount)) ? 'negative': ''}">
                     <g:if test="${autoUpdateInfo}">
                         ${autoUpdateInfo.countKbartRows}
+                    </g:if>
+                </td>
+                <td>
+                    <g:if test="${autoUpdateInfo}">
+                        ${autoUpdateInfo.countInValidTipps}
                     </g:if>
                 </td>
                 <td class="${deletedTippCount > currentTippCount ? 'negative': ''}">
