@@ -13,8 +13,6 @@ class GlobalSearchTemplatesService {
     def init() {
         globalSearchTemplates.put('additionalPropertyDefinitions', additionalPropertyDefinitions())
         globalSearchTemplates.put('allocatedReviewGroups', allocatedReviewGroups())
-        globalSearchTemplates.put('updatePackageInfos', updatePackageInfos())
-        globalSearchTemplates.put('updateTippInfos', updateTippInfos())
         globalSearchTemplates.put('components', components())
         globalSearchTemplates.put('curatoryGroups', curatoryGroups())
         globalSearchTemplates.put('identifiers', identifiers())
@@ -31,6 +29,8 @@ class GlobalSearchTemplatesService {
         globalSearchTemplates.put('sources', sources())
         globalSearchTemplates.put('tipps', tipps())
         globalSearchTemplates.put('tippsOfPkg', tippsOfPkg())
+        globalSearchTemplates.put('updatePackageInfos', updatePackageInfos())
+        globalSearchTemplates.put('updateTippInfos', updateTippInfos())
         globalSearchTemplates.put('userOrganisation', userOrganisations())
         globalSearchTemplates.put('users', users())
         globalSearchTemplates.put('userJobs', userJobs())
@@ -139,7 +139,7 @@ class GlobalSearchTemplatesService {
     Map updatePackageInfos() {
         Map result = [
                 baseclass: 'wekb.UpdatePackageInfo',
-                title    : 'Update Infos',
+                title    : 'Package Update Infos',
                 group    : 'Secondary',
                 defaultSort : 'startTime',
                 defaultOrder: 'desc',
@@ -219,7 +219,7 @@ class GlobalSearchTemplatesService {
     Map updateTippInfos() {
         Map result = [
                 baseclass: 'wekb.UpdateTippInfo',
-                title    : 'Update Title Infos',
+                title    : 'Title Update Infos',
                 group    : 'Secondary',
                 defaultSort : 'startTime',
                 defaultOrder: 'desc',

@@ -161,7 +161,7 @@
 
 <semui:tabs>
     <semui:tabsItemWithoutLink tab="updateTippInfos" counts="${d.updateTippInfos.size()}" class="active">
-        Update Title Infos
+        Title Update Infos
     </semui:tabsItemWithoutLink>
 </semui:tabs>
 
@@ -172,7 +172,7 @@
 
         <g:link class="display-inline" controller="search" action="inlineSearch"
                 params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:updateTippInfos', qp_aup_id: d.id, inline: true]"
-                id="">Update Title Info on this Source</g:link>
+                id="">Title Update Infos on this Source</g:link>
 
     </div>
 

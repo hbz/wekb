@@ -40,39 +40,39 @@ class UpdatePackageInfo {
     RefdataValue status
 
     static mapping = {
-        id          column:'aupi_id'
-        version     column:'aupi_version'
+        id          column:'upi_id'
+        version     column:'upi_version'
 
-        pkg         column: 'aupi_pkg_fk', index: 'aupi_pkg_idx'
+        pkg         column: 'upi_pkg_fk', index: 'upi_pkg_idx'
 
-        startTime         column: 'aupi_start_time', index: 'aupi_start_time_idx'
-        endTime         column: 'aupi_end_time', index: 'aupi_start_time_idx'
+        startTime         column: 'upi_start_time', index: 'upi_start_time_idx'
+        endTime         column: 'upi_end_time', index: 'upi_start_time_idx'
 
-        uuid column: 'aupi_uuid', index: 'aupi_uuid_idx'
-        description column: 'aupi_description', type: 'text'
+        uuid column: 'upi_uuid', index: 'upi_uuid_idx'
+        description column: 'upi_description', type: 'text'
 
 
-        dateCreated column: 'aupi_date_created'
-        lastUpdated column: 'aupi_last_updated'
+        dateCreated column: 'upi_date_created'
+        lastUpdated column: 'upi_last_updated'
 
-        status column: 'aupi_status_fk', index: 'aupi_status_idx'
+        status column: 'upi_status_fk', index: 'upi_status_idx'
 
-        countKbartRows column: 'aupi_count_kbart_rows'
-        countProcessedKbartRows column: 'aupi_count_processed_kbart_rows'
-        countInValidTipps column: 'aupi_count_invalid_tipps'
-        countChangedTipps column: 'aupi_count_changed_tipps'
-        countRemovedTipps column: 'aupi_count_removed_tipps'
-        countNewTipps column: 'aupi_count_new_tipps'
-        countNowTippsInWekb column: 'aupi_count_now_tipps'
-        countPreviouslyTippsInWekb column: 'aupi_count_previously_tipps'
+        countKbartRows column: 'upi_count_kbart_rows'
+        countProcessedKbartRows column: 'upi_count_processed_kbart_rows'
+        countInValidTipps column: 'upi_count_invalid_tipps'
+        countChangedTipps column: 'upi_count_changed_tipps'
+        countRemovedTipps column: 'upi_count_removed_tipps'
+        countNewTipps column: 'upi_count_new_tipps'
+        countNowTippsInWekb column: 'upi_count_now_tipps'
+        countPreviouslyTippsInWekb column: 'upi_count_previously_tipps'
 
-        onlyRowsWithLastChanged column: 'aupi_only_rows_with_last_changed'
+        onlyRowsWithLastChanged column: 'upi_only_rows_with_last_changed'
 
-        kbartHasWekbFields column: 'aupi_kbart_has_wekb_fields'
+        kbartHasWekbFields column: 'upi_kbart_has_wekb_fields'
 
-        lastChangedInKbart column: 'aupi_last_changed_in_kbart'
+        lastChangedInKbart column: 'upi_last_changed_in_kbart'
 
-        automaticUpdate column: 'upi_auto_update'
+        automaticUpdate column: 'upi_automatic_update'
     }
 
     static constraints = {
@@ -106,12 +106,12 @@ class UpdatePackageInfo {
 
 
     public String getNiceName() {
-        return "Update Package Info";
+        return "Package Update Infos";
     }
 
     @Transient
     public String getDomainName() {
-        return "Update Package Info"
+        return "Package Update Infos"
     }
 
     @Transient

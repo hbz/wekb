@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RDStore;" %>
 <g:if test="${d}">
     <semui:tabs>
 
@@ -57,8 +58,8 @@
             <div class="content">
 
                 <g:link class="display-inline" controller="search" action="inlineSearch"
-                        params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:updateTippInfos', qp_tipp_id: d.id, inline: true, refOid: d.getLogEntityId()]"
-                        id="">Update Package Info on this Source</g:link>
+                        params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:updateTippInfos', qp_tipp_id: d.id, inline: true, refOid: d.getLogEntityId(), qp_automaticUpdate: RDStore.YN_YES.class.name+':'+RDStore.YN_YES.id]"
+                        id="">Package Update Infos on this Source</g:link>
 
             </div>
 

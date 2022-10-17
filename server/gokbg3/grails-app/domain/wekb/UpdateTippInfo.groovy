@@ -31,31 +31,30 @@ class UpdateTippInfo {
     String oldValue
 
     static mapping = {
-        id          column:'auti_id'
-        version     column:'auti_version'
+        id          column:'uti_id'
+        version     column:'uti_version'
 
-        tipp         column: 'auti_tipp_fk', index: 'auti_tipp_idx'
+        tipp         column: 'uti_tipp_fk', index: 'uti_tipp_idx'
 
-        startTime         column: 'auti_start_time', index: 'auti_start_time_idx'
-        endTime         column: 'auti_end_time', index: 'auti_end_time_idx'
+        startTime         column: 'uti_start_time', index: 'uti_start_time_idx'
+        endTime         column: 'uti_end_time', index: 'uti_end_time_idx'
 
-        uuid column: 'auti_uuid', index: 'auti_uuid_idx'
-        description column: 'auti_description', type: 'text'
+        uuid column: 'uti_uuid', index: 'uti_uuid_idx'
+        description column: 'uti_description', type: 'text'
 
-        dateCreated column: 'auti_date_created'
-        lastUpdated column: 'auti_last_updated'
+        dateCreated column: 'uti_date_created'
+        lastUpdated column: 'uti_last_updated'
 
-        updatePackageInfo column: 'auti_aupi_fk', index: 'auti_aupi_idx'
-        //tipp column: 'auti_tipp_fk'
+        updatePackageInfo column: 'uti_upi_fk', index: 'uti_upi_idx'
 
-        status column: 'auti_status_fk', index: 'auti_status_idx'
+        status column: 'uti_status_fk', index: 'uti_status_idx'
 
-        type column: 'auti_type_fk', index: 'auti_type_idx'
+        type column: 'uti_type_fk', index: 'uti_type_idx'
 
-        tippProperty column: 'auti_tipp_property', index: 'auti_tipp_property_idx'
-        kbartProperty column: 'auti_kbart_property', index: 'auti_kbart_property_idx'
-        newValue column: 'auti_new_value', type: 'text'
-        oldValue column: 'auti_old_value', type: 'text'
+        tippProperty column: 'uti_tipp_property', index: 'uti_tipp_property_idx'
+        kbartProperty column: 'uti_kbart_property', index: 'uti_kbart_property_idx'
+        newValue column: 'uti_new_value', type: 'text'
+        oldValue column: 'uti_old_value', type: 'text'
     }
 
     static constraints = {
@@ -82,11 +81,11 @@ class UpdateTippInfo {
     }
 
     public String getNiceName() {
-        return "Update Title Info";
+        return "Title Update Infos";
     }
 
     @Transient
     public String getDomainName() {
-        return "Update Title Info"
+        return "Title Update Infos"
     }
 }

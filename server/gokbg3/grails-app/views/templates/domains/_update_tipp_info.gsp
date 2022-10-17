@@ -1,6 +1,20 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
 <dl>
     <dt class="control-label">
+        Package Update Info
+    </dt>
+    <dd>
+        <g:if test="${d.updatePackageInfo}">
+            <g:link controller="resource" action="show"
+                    id="${d.updatePackageInfo.class.name}:${d.updatePackageInfo.id}">
+                ${(d.updatePackageInfo.pkg.name) ?: 'Empty'}
+            </g:link>
+        </g:if>
+        <g:else>Empty</g:else>
+    </dd>
+</dl>
+<dl>
+    <dt class="control-label">
         Title
     </dt>
     <dd>

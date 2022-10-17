@@ -162,7 +162,7 @@ class GroupController {
         }
 
         params.qbe = 'g:updatePackageInfos'
-        params.qp_automaticUpdate = RDStore.YN_YES
+        params.qp_automaticUpdate = "${RDStore.YN_YES.class.name}:${RDStore.YN_YES.id}"
         params.qp_curgroups = searchResult.groups.id
         params.hide = ['qp_curgroup', 'qp_curgroups']
 
