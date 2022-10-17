@@ -101,7 +101,7 @@
                 <g:each in="${d.contacts?.sort { it.content }}" var="contact" status="i">
                     <tr>
                         <td>${i + 1}</td>
-                        <td><semui:xEditable owner="${contact}" field="content"/></td>
+                        <td><semui:xEditable owner="${contact}" field="content" validation="${contact.contentType == RDStore.CONTACT_CONTENT_TYPE_EMAIL ? 'email' : ''}"/></td>
                         <td><semui:xEditableRefData owner="${contact}" field="contentType"
                                                     config="${RCConstants.CONTACT_CONTENT_TYPE}"/>
                         <td><semui:xEditableRefData owner="${contact}" field="type"
@@ -137,7 +137,7 @@
 <g:if test="${editable}">
     <semui:modal id="contactModal" title="Add Contact">
 
-        <g:form controller="ajaxSupport" action="addToCollection" class="ui form">
+        <g:form controller="ajaxSupport" action="addContact" class="ui form">
             <input type="hidden" name="__context" value="${d.class.name}:${d.id}"/>
             <input type="hidden" name="__newObjectClass" value="wekb.Contact"/>
             <input type="hidden" name="__recip" value="org"/>

@@ -28,6 +28,8 @@ class RDStore {
 
     public static final COMBO_TYPE_KB_IDS = getRefdataValue('KBComponent.Ids', RCConstants.COMBO_TYPE)
 
+    public static final CONTACT_CONTENT_TYPE_EMAIL = getRefdataValue('E-Mail', RCConstants.CONTACT_CONTENT_TYPE)
+
 
     public static final COMBO_STATUS_ACTIVE = getRefdataValue(Combo.STATUS_ACTIVE, RCConstants.COMBO_STATUS)
     public static final COMBO_STATUS_DELETED = getRefdataValue(Combo.STATUS_DELETED, RCConstants.COMBO_STATUS)
