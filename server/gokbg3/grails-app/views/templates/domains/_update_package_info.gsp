@@ -26,8 +26,16 @@
         Status
     </dt>
     <dd>
-        <semui:xEditableRefData owner="${d}" field="status" config="${RCConstants.AUTO_UPDATE_STATUS}"
+        <semui:xEditableRefData owner="${d}" field="status" config="${RCConstants.UPDATE_STATUS}"
                                 overwriteEditable="false"/>
+    </dd>
+</dl>
+<dl>
+    <dt class="control-label">
+        Update was automatic
+    </dt>
+    <dd>
+        <semui:xEditableBoolean owner="${d}" field="automaticUpdate" overwriteEditable="false"/>
     </dd>
 </dl>
 <dl>
@@ -86,7 +94,7 @@
     </dt>
     <dd>
         <g:link controller="search" action="componentSearch" id=""
-                params="[qbe: 'g:autoUpdateTippInfos', qp_aup_id: d.id, qp_type: RefdataValue.class.name+':'+RDStore.AUTO_UPDATE_TYPE_CHANGED_TITLE.id]">
+                params="[qbe: 'g:updateTippInfos', qp_aup_id: d.id, qp_type: RefdataValue.class.name+':'+RDStore.UPDATE_TYPE_CHANGED_TITLE.id]">
             <g:formatNumber number="${d.countChangedTipps}" type="number"/>
         </g:link>
     </dd>
@@ -97,7 +105,7 @@
     </dt>
     <dd>
         <g:link controller="search" action="componentSearch" id=""
-                params="[qbe: 'g:autoUpdateTippInfos', qp_aup_id: d.id, qp_type: RefdataValue.class.name+':'+RDStore.AUTO_UPDATE_TYPE_REMOVED_TITLE.id]">
+                params="[qbe: 'g:updateTippInfos', qp_aup_id: d.id, qp_type: RefdataValue.class.name+':'+RDStore.UPDATE_TYPE_REMOVED_TITLE.id]">
             <g:formatNumber number="${d.countRemovedTipps}" type="number"/>
         </g:link>
     </dd>
@@ -108,7 +116,7 @@
     </dt>
     <dd>
         <g:link controller="search" action="componentSearch" id=""
-                params="[qbe: 'g:autoUpdateTippInfos', qp_aup_id: d.id, qp_type: RefdataValue.class.name+':'+RDStore.AUTO_UPDATE_TYPE_NEW_TITLE.id]">
+                params="[qbe: 'g:updateTippInfos', qp_aup_id: d.id, qp_type: RefdataValue.class.name+':'+RDStore.UPDATE_TYPE_NEW_TITLE.id]">
             <g:formatNumber number="${d.countNewTipps}" type="number"/>
         </g:link>
     </dd>
@@ -119,7 +127,7 @@
     </dt>
     <dd>
         <g:link controller="search" action="componentSearch" id=""
-                params="[qbe: 'g:autoUpdateTippInfos', qp_aup_id: d.id, qp_type: RefdataValue.class.name+':'+RDStore.AUTO_UPDATE_TYPE_FAILED_TITLE.id]">
+                params="[qbe: 'g:updateTippInfos', qp_aup_id: d.id, qp_type: RefdataValue.class.name+':'+RDStore.UPDATE_TYPE_FAILED_TITLE.id]">
             <g:formatNumber number="${d.countInValidTipps}" type="number"/>
         </g:link>
     </dd>
@@ -152,19 +160,19 @@
 </dl>
 
 <semui:tabs>
-    <semui:tabsItemWithoutLink tab="autoUpdateTippInfos" counts="${d.autoUpdateTippInfos.size()}" class="active">
-        Auto Update Title Infos
+    <semui:tabsItemWithoutLink tab="updateTippInfos" counts="${d.updateTippInfos.size()}" class="active">
+        Update Title Infos
     </semui:tabsItemWithoutLink>
 </semui:tabs>
 
 
-<semui:tabsItemContent tab="autoUpdateTippInfos">
+<semui:tabsItemContent tab="updateTippInfos">
 
     <div class="content">
 
         <g:link class="display-inline" controller="search" action="inlineSearch"
-                params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:autoUpdateTippInfos', qp_aup_id: d.id, inline: true]"
-                id="">Auto Update Title Info on this Source</g:link>
+                params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:updateTippInfos', qp_aup_id: d.id, inline: true]"
+                id="">Update Title Info on this Source</g:link>
 
     </div>
 

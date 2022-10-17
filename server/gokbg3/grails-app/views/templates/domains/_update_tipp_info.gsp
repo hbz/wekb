@@ -26,7 +26,7 @@
         Status
     </dt>
     <dd>
-        <semui:xEditableRefData owner="${d}" field="status" config="${RCConstants.AUTO_UPDATE_STATUS}" overwriteEditable="false"/>
+        <semui:xEditableRefData owner="${d}" field="status" config="${RCConstants.UPDATE_STATUS}" overwriteEditable="false"/>
     </dd>
 </dl>
 <dl>
@@ -34,7 +34,7 @@
         Type
     </dt>
     <dd>
-        <semui:xEditableRefData owner="${d}" field="type" config="${RCConstants.AUTO_UPDATE_TYPE}" overwriteEditable="false"/>
+        <semui:xEditableRefData owner="${d}" field="type" config="${RCConstants.UPDATE_TYPE}" overwriteEditable="false"/>
     </dd>
 </dl>
 <dl>

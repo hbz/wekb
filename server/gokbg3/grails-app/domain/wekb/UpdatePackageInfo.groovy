@@ -7,7 +7,7 @@ import org.gokb.cred.RefdataValue
 
 import javax.persistence.Transient
 
-class AutoUpdatePackageInfo {
+class UpdatePackageInfo {
 
     String uuid
 
@@ -32,9 +32,11 @@ class AutoUpdatePackageInfo {
 
     boolean kbartHasWekbFields = false
 
+    boolean automaticUpdate = false
+
     Date lastChangedInKbart
 
-    @RefdataAnnotation(cat = RCConstants.AUTO_UPDATE_STATUS)
+    @RefdataAnnotation(cat = RCConstants.UPDATE_STATUS)
     RefdataValue status
 
     static mapping = {
@@ -69,6 +71,8 @@ class AutoUpdatePackageInfo {
         kbartHasWekbFields column: 'aupi_kbart_has_wekb_fields'
 
         lastChangedInKbart column: 'aupi_last_changed_in_kbart'
+
+        automaticUpdate column: 'upi_auto_update'
     }
 
     static constraints = {
@@ -86,7 +90,7 @@ class AutoUpdatePackageInfo {
         lastChangedInKbart (nullable:true, default: null)
     }
 
-    static hasMany = [autoUpdateTippInfos: AutoUpdateTippInfo]
+    static hasMany = [updateTippInfos: UpdateTippInfo]
 
     static belongsTo = [pkg: Package]
 
@@ -102,17 +106,17 @@ class AutoUpdatePackageInfo {
 
 
     public String getNiceName() {
-        return "Auto Update Package Info";
+        return "Update Package Info";
     }
 
     @Transient
     public String getDomainName() {
-        return "Auto Update Package Info"
+        return "Update Package Info"
     }
 
     @Transient
-    public int getCountAutoUpdateTipps() {
-        return autoUpdateTippInfos.size()
+    public int getCountUpdateTipps() {
+        return updateTippInfos.size()
     }
 
 

@@ -14,9 +14,9 @@ class RCConstants {
 
     public static final String ALLOCATED_REVIEW_GROUP_STATUS = "AllocatedReviewGroup.Status"
 
-    public static final String AUTO_UPDATE_STATUS = "AutoUpdate.Status"
+    public static final String UPDATE_STATUS = "Update.Status"
 
-    public static final String AUTO_UPDATE_TYPE = "AutoUpdate.Type"
+    public static final String UPDATE_TYPE = "Update.Type"
 
     public static final String COMBO_STATUS = "Combo.Status"
     public static final String COMBO_TYPE = "Combo.Type"

@@ -35,7 +35,7 @@
 <dl>
     <dt class="control-label">Last Update Comment</dt>
     <dd><semui:xEditable owner="${d}" field="lastUpdateComment"/>
-        <g:if test="${d.autoUpdatePackageInfos && d.autoUpdatePackageInfos.size() > 0}">
+        <g:if test="${d.updatePackageInfos && d.updatePackageInfos.size() > 0}">
             <br>
             <br>
             <g:link class="ui mini black button" id="${d.id}" controller="resource" action="packageChangeHistory">Change History</g:link>

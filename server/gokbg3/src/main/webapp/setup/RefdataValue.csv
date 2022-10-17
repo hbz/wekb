@@ -5,13 +5,13 @@ Activity.Status;Complete;Complete;Complete
 Activity.Type;TitleTransfer;TitleTransfer;TitleTransfer
 AllocatedReviewGroup.Status;Claimed;Claimed;Claimed
 AllocatedReviewGroup.Status;In Progress;In Progress;In Progress
-AutoUpdate.Status;Successful;Successful;Successful
-AutoUpdate.Status;Failed;Failed;Failed
-AutoUpdate.Status;Warning;Warning;Warning
-AutoUpdate.Type;New Title;New Title;New Title
-AutoUpdate.Type;Changed Title;Changed Title;Changed Title
-AutoUpdate.Type;Removed Title;Removed Title;Removed Title
-AutoUpdate.Type;Failed Title;Failed Title;Failed Title
+Update.Status;Successful;Successful;Successful
+Update.Status;Failed;Failed;Failed
+Update.Status;Warning;Warning;Warning
+Update.Type;New Title;New Title;New Title
+Update.Type;Changed Title;Changed Title;Changed Title
+Update.Type;Removed Title;Removed Title;Removed Title
+Update.Type;Failed Title;Failed Title;Failed Title
 Combo.Status;Active;Active;Active
 Combo.Status;Deleted;Deleted;Deleted
 Combo.Status;Expired;Expired;Expired

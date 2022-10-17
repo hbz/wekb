@@ -25,8 +25,8 @@ class AccessService {
                                'org.gokb.cred.ReviewRequest',
                                'org.gokb.cred.TitleInstancePackagePlatform',
                                'org.gokb.cred.Source',
-                               'wekb.AutoUpdatePackageInfo',
-                               'wekb.AutoUpdateTippInfo']
+                               'wekb.UpdatePackageInfo',
+                               'wekb.UpdateTippInfo']
 
     List allowedToCreate = ['org.gokb.cred.Org',
                             'org.gokb.cred.Package',
@@ -34,8 +34,8 @@ class AccessService {
                             'org.gokb.cred.TitleInstancePackagePlatform',
                             'org.gokb.cred.Source',]
 
-    List allowedPublicShow = ['AutoUpdatePackageInfo',
-                              'AutoUpdateTippInfo',
+    List allowedPublicShow = ['UpdatePackageInfo',
+                              'UpdateTippInfo',
                               'CuratoryGroup',
                               'Identifier',
                               'Org',
@@ -44,8 +44,8 @@ class AccessService {
                               'Source',
                               'TitleInstancePackagePlatform']
 
-    List allowedComponentSearch = ["g:autoUpdatePackageInfos",
-                                   "g:autoUpdateTippInfos",
+    List allowedComponentSearch = ["g:updatePackageInfos",
+                                   "g:updateTippInfos",
                                    "g:curatoryGroups",
                                    "g:identifiers",
                                    "g:orgs",
@@ -55,8 +55,8 @@ class AccessService {
                                    "g:tippsOfPkg",
                                    "g:sources"]
 
-    List allowedInlineSearch = ["g:autoUpdatePackageInfos",
-                                "g:autoUpdateTippInfos",
+    List allowedInlineSearch = ["g:updatePackageInfos",
+                                "g:updateTippInfos",
                                 "g:curatoryGroups",
                                 "g:identifiers",
                                 "g:orgs",

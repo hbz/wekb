@@ -7,7 +7,7 @@ import org.gokb.cred.TitleInstancePackagePlatform
 
 import javax.persistence.Transient
 
-class AutoUpdateTippInfo {
+class UpdateTippInfo {
 
     String uuid
 
@@ -19,10 +19,10 @@ class AutoUpdateTippInfo {
     Date dateCreated
     Date lastUpdated
 
-    @RefdataAnnotation(cat = RCConstants.AUTO_UPDATE_STATUS)
+    @RefdataAnnotation(cat = RCConstants.UPDATE_STATUS)
     RefdataValue status
 
-    @RefdataAnnotation(cat = RCConstants.AUTO_UPDATE_TYPE)
+    @RefdataAnnotation(cat = RCConstants.UPDATE_TYPE)
     RefdataValue type
 
     String tippProperty
@@ -45,7 +45,7 @@ class AutoUpdateTippInfo {
         dateCreated column: 'auti_date_created'
         lastUpdated column: 'auti_last_updated'
 
-        autoUpdatePackageInfo column: 'auti_aupi_fk', index: 'auti_aupi_idx'
+        updatePackageInfo column: 'auti_aupi_fk', index: 'auti_aupi_idx'
         //tipp column: 'auti_tipp_fk'
 
         status column: 'auti_status_fk', index: 'auti_status_idx'
@@ -68,7 +68,7 @@ class AutoUpdateTippInfo {
 
     }
 
-    static belongsTo = [autoUpdatePackageInfo: AutoUpdatePackageInfo,
+    static belongsTo = [updatePackageInfo: UpdatePackageInfo,
                         tipp: TitleInstancePackagePlatform]
 
     def beforeInsert(){
@@ -82,11 +82,11 @@ class AutoUpdateTippInfo {
     }
 
     public String getNiceName() {
-        return "Auto Update Title Info";
+        return "Update Title Info";
     }
 
     @Transient
     public String getDomainName() {
-        return "Auto Update Title Info"
+        return "Update Title Info"
     }
 }

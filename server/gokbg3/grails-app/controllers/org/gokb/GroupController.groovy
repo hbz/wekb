@@ -1,6 +1,7 @@
 package org.gokb
 
 import de.wekb.helper.RCConstants
+import de.wekb.helper.RDStore
 import gokbg3.DateFormatService
 import org.springframework.security.access.annotation.Secured;
 
@@ -160,7 +161,8 @@ class GroupController {
             return
         }
 
-        params.qbe = 'g:autoUpdatePackageInfos'
+        params.qbe = 'g:updatePackageInfos'
+        params.qp_automaticUpdate = RDStore.YN_YES
         params.qp_curgroups = searchResult.groups.id
         params.hide = ['qp_curgroup', 'qp_curgroups']
 

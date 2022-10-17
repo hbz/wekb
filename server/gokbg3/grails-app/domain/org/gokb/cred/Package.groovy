@@ -4,9 +4,8 @@ package org.gokb.cred
 import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
 import de.wekb.helper.RDStore
-import wekb.AutoUpdatePackageInfo
 import wekb.PackageArchivingAgency
-import org.gokb.GOKbTextUtils
+import wekb.UpdatePackageInfo
 
 import javax.persistence.Transient
 import groovy.util.logging.*
@@ -77,7 +76,7 @@ class Package extends KBComponent {
           ddcs : RefdataValue,
           paas : PackageArchivingAgency,
           ids: Identifier,
-          autoUpdatePackageInfos: AutoUpdatePackageInfo,
+          updatePackageInfos: UpdatePackageInfo,
           tipps: TitleInstancePackagePlatform
   ]
 
@@ -603,9 +602,9 @@ class Package extends KBComponent {
 
   @Transient
   public getLastSuccessfulAutoUpdateInfo() {
-    AutoUpdatePackageInfo autoUpdatePackageInfo = AutoUpdatePackageInfo.executeQuery("from AutoUpdatePackageInfo where pkg = :pkg and status = :status" +
-            " order by lastUpdated desc", [pkg: this, status: RDStore.AUTO_UPDATE_STATUS_SUCCESSFUL], [max: 1, offset: 0])[0]
-    autoUpdatePackageInfo
+    UpdatePackageInfo updatePackageInfo = UpdatePackageInfo.executeQuery("from UpdatePackageInfo where pkg = :pkg and status = :status and automaticUpdate = true" +
+            " order by lastUpdated desc", [pkg: this, status: RDStore.UPDATE_STATUS_SUCCESSFUL], [max: 1, offset: 0])[0]
+    updatePackageInfo
   }
 
 }

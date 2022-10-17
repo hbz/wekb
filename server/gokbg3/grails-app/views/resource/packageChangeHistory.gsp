@@ -96,25 +96,25 @@
                     </td>
                     <td>
                         <g:link controller="search" action="componentSearch" id=""
-                                params="[qbe: 'g:autoUpdateTippInfos', qp_aup_id: row_obj.id, qp_type: RefdataValue.class.name+':'+RDStore.AUTO_UPDATE_TYPE_CHANGED_TITLE.id]">
+                                params="[qbe: 'g:updateTippInfos', qp_aup_id: row_obj.id, qp_type: RefdataValue.class.name+':'+RDStore.UPDATE_TYPE_CHANGED_TITLE.id]">
                             <g:formatNumber number="${row_obj.countChangedTipps}" type="number"/>
                         </g:link>
                     </td>
                     <td>
                         <g:link controller="search" action="componentSearch" id=""
-                                params="[qbe: 'g:autoUpdateTippInfos', qp_aup_id: row_obj.id, qp_type: RefdataValue.class.name+':'+RDStore.AUTO_UPDATE_TYPE_REMOVED_TITLE.id]">
+                                params="[qbe: 'g:updateTippInfos', qp_aup_id: row_obj.id, qp_type: RefdataValue.class.name+':'+RDStore.UPDATE_TYPE_REMOVED_TITLE.id]">
                             <g:formatNumber number="${row_obj.countRemovedTipps}" type="number"/>
                         </g:link>
                     </td>
                     <td>
                         <g:link controller="search" action="componentSearch" id=""
-                                params="[qbe: 'g:autoUpdateTippInfos', qp_aup_id: row_obj.id, qp_type: RefdataValue.class.name+':'+RDStore.AUTO_UPDATE_TYPE_NEW_TITLE.id]">
+                                params="[qbe: 'g:updateTippInfos', qp_aup_id: row_obj.id, qp_type: RefdataValue.class.name+':'+RDStore.UPDATE_TYPE_NEW_TITLE.id]">
                             <g:formatNumber number="${row_obj.countNewTipps}" type="number"/>
                         </g:link>
                     </td>
                     <td>
                         <g:link controller="search" action="componentSearch" id=""
-                                params="[qbe: 'g:autoUpdateTippInfos', qp_aup_id: row_obj.id, qp_type: RefdataValue.class.name+':'+RDStore.AUTO_UPDATE_TYPE_FAILED_TITLE.id]">
+                                params="[qbe: 'g:updateTippInfos', qp_aup_id: row_obj.id, qp_type: RefdataValue.class.name+':'+RDStore.UPDATE_TYPE_FAILED_TITLE.id]">
                             <g:formatNumber number="${row_obj.countInValidTipps}" type="number"/>
                         </g:link>
                     </td>
