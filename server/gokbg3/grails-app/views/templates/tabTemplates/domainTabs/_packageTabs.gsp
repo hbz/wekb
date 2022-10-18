@@ -30,7 +30,7 @@
 
         <g:if test="${d.source && d.source.url}">
             <semui:tabsItemWithoutLink tab="updatePackageInfos" activeTab="${params.activeTab}" counts="${d.updatePackageInfos.size()}">
-                Update Infos
+                Auto Update Infos
             </semui:tabsItemWithoutLink>
         </g:if>
     </semui:tabs>
