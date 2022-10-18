@@ -416,7 +416,7 @@ class ExportService {
     def exportPackageBatchImportTemplate(def outputStream) {
 
         List titles = ["package_uuid", "package_name", "provider_uuid", "nominal_platform_uuid", "description", "url", "breakable", "content_type",
-                              "file", "open_access", "payment_type", "scope", "national_range", "regional_range", "anbieter_produkt_id", "ddc", "source_url", "frequency", "title_id_namespace", "automated_updates", "archiving_agency", "open_access_of_archiving_agency", "post_cancellation_access_of_archiving_agency"]
+                              "file", "open_access", "payment_type", "scope", "national_range", "regional_range", "provider_product_id", "ddc", "source_url", "frequency", "title_id_namespace", "automated_updates", "archiving_agency", "open_access_of_archiving_agency", "post_cancellation_access_of_archiving_agency"]
 
 
         XSSFWorkbook workbook = new XSSFWorkbook()
@@ -793,7 +793,7 @@ class ExportService {
         def export_date = dateFormatService.formatDate(new Date())
         List<String> titleHeaders = ["package_uuid", "package_name", "provider_name", "provider_uuid", "nominal_platform_name",
                                      "nominal_platform_uuid", "description", "url", "breakable", "content_type",
-                                     "file", "open_access", "payment_type", "scope", "national_range", "regional_range", "anbieter_produkt_id", "ddc",
+                                     "file", "open_access", "payment_type", "scope", "national_range", "regional_range", "provider_product_id", "ddc",
                                      "source_url", "frequency", "title_id_namespace", "automated_updates",
                                      "archiving_agency", "open_access_of_archiving_agency", "post_cancellation_access_of_archiving_agency"]
         Map<String,List> export = [titleRow:titleHeaders,rows:[]]
@@ -821,7 +821,7 @@ class ExportService {
             row.add(sanitize(pkg.scope?.value))
             row.add(sanitize(pkg.nationalRanges?.value.join(',')))
             row.add(sanitize(pkg.regionalRanges?.value.join(',')))
-            row.add(sanitize(pkg.getIdentifierValue('Anbieter_Produkt_Id')))
+            row.add(sanitize(pkg.getAnbieterProduktIDs()))
             row.add(sanitize(pkg.ddcs?.value.join(',')))
             row.add(sanitize(pkg.source?.url))
             row.add(sanitize(pkg.source?.frequency?.value))

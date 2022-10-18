@@ -336,6 +336,15 @@ databaseChangeLog = {
         }
     }
 
+    changeSet(author: "djebeniani (modified)", id: "1665995678506-33") {
+        grailsChange {
+            change {
+                sql.executeUpdate('''update identifier_namespace set idns_name = 'Provider_Product_ID' where idns_name = 'Anbieter_Produkt_ID'; ''')
+            }
+            rollback {}
+        }
+    }
+
 /*    changeSet(author: "djebeniani (generated)", id: "1665995678506-33") {
         dropTable(tableName: "auto_update_package_info")
     }
