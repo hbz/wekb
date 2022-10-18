@@ -107,4 +107,57 @@ class PackageController {
         }
         searchResult.result
     }
+
+    @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
+    def kbartImport() {
+        log.debug("PackageController::kbartImport ${params}");
+        def result = ['params':params]
+        def oid = params.id
+        Package pkg = null
+        def read_perm = false
+
+        if (params.int('id')) {
+            pkg = Package.get(params.int('id'))
+            oid = (pkg ? (pkg.class.name + ":" + params.id) : null)
+        }
+
+        if ( oid ) {
+            pkg = Package.findByUuid(oid)
+
+            if (!pkg) {
+                pkg = genericOIDService.resolveOID(oid)
+            }
+
+            if ( pkg ) {
+
+                read_perm = accessService.checkReadable(pkg.class.name)
+
+                if (read_perm) {
+
+                    result.editable = accessService.checkEditableObject(pkg, params)
+
+                }
+                else {
+                    response.setStatus(403)
+                    result.code = 403
+                    result.result = "ERROR"
+                    result.message = "You have no permission to view this resource."
+                }
+            }
+            else {
+                log.debug("unable to resolve object")
+                response.setStatus(404)
+                result.status = 404
+                result.result = "ERROR"
+                result.message = "Unable to find the requested resource."
+            }
+        }
+
+        if (pkg && read_perm) {
+            result.pkg = pkg
+        }
+
+        result
+    }
+
 }
