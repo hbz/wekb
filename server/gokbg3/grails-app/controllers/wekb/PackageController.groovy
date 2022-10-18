@@ -18,6 +18,7 @@ class PackageController {
     GenericOIDService genericOIDService
     AccessService accessService
     GrailsApplication grailsApplication
+    SearchService searchService
 
     def index() { }
 
@@ -77,7 +78,7 @@ class PackageController {
         result
     }
 
-    @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+/*    @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
     def showYgorStatistic() {
         if(params.id && grailsApplication.config.gokb.ygorUrl) {
 
@@ -88,5 +89,22 @@ class PackageController {
             flash.error = "We are sorry. Unfortunately an error happened. The statistics cannot be displayed"
             redirect(url: request.getHeader("referer"))
         }
+    }*/
+
+    def packageChangeHistory() {
+        log.debug("packageChangeHistory:: ${params}")
+        def searchResult = [:]
+        params.qp_pkg_id = params.id
+        Package pkg = Package.get(params.id)
+
+        if(params.qp_pkg_id && pkg) {
+            params.qbe = 'g:updatePackageInfos'
+            params.hide = ['qp_pkg_id']
+            searchResult = searchService.search(searchResult.user, searchResult, params, response.format)
+            searchResult.result.pkg = pkg
+        }else {
+            flash.error = "Unable to find the requested resource."
+        }
+        searchResult.result
     }
 }

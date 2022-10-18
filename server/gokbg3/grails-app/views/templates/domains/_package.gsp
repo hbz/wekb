@@ -38,7 +38,7 @@
         <g:if test="${d.updatePackageInfos && d.updatePackageInfos.size() > 0}">
             <br>
             <br>
-            <g:link class="ui mini black button" id="${d.id}" controller="resource" action="packageChangeHistory">Change History</g:link>
+            <g:link class="ui mini black button" id="${d.id}" controller="package" action="packageChangeHistory">Change History</g:link>
         </g:if>
     </dd>
 </dl>
