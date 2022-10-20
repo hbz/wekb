@@ -1,4 +1,4 @@
-<%@ page import="de.wekb.helper.ServerUtils" %>
+<%@ page import="de.wekb.helper.ServerUtils; de.wekb.helper.RDStore;" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -123,9 +123,9 @@
                             <div class="header"> Admin Search</div>
                             <div class="menu">
                                 <g:link class="item" controller="search" action="componentSearch"
-                                        params="[qbe: 'g:autoUpdatePackageInfos']">Auto Update Package Infos</g:link>
+                                        params="[qbe: 'g:updatePackageInfos']">Update Package Infos</g:link>
                                 <g:link class="item" controller="search" action="componentSearch"
-                                params="[qbe: 'g:autoUpdateTippInfos']">Auto Update Title Infos</g:link>
+                                params="[qbe: 'g:updateTippInfos']">Update Title Infos</g:link>
                                 <g:link class="item" controller="search" action="componentSearch"
                                         params="[qbe: 'g:identifiers']">Identifiers</g:link>
                                 <g:link class="item" controller="search" action="componentSearch"

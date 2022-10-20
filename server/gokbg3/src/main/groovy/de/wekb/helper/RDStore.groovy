@@ -10,14 +10,14 @@ import javax.persistence.Transient
 //@CompileStatic
 class RDStore {
 
-    public static final AUTO_UPDATE_STATUS_SUCCESSFUL    = getRefdataValue('Successful', RCConstants.AUTO_UPDATE_STATUS)
-    public static final AUTO_UPDATE_STATUS_FAILED    = getRefdataValue('Failed', RCConstants.AUTO_UPDATE_STATUS)
-    public static final AUTO_UPDATE_STATUS_WARNING    = getRefdataValue('Warning', RCConstants.AUTO_UPDATE_STATUS)
+    public static final UPDATE_STATUS_SUCCESSFUL    = getRefdataValue('Successful', RCConstants.UPDATE_STATUS)
+    public static final UPDATE_STATUS_FAILED    = getRefdataValue('Failed', RCConstants.UPDATE_STATUS)
+    public static final UPDATE_STATUS_WARNING    = getRefdataValue('Warning', RCConstants.UPDATE_STATUS)
 
-    public static final AUTO_UPDATE_TYPE_NEW_TITLE    = getRefdataValue('New Title', RCConstants.AUTO_UPDATE_TYPE)
-    public static final AUTO_UPDATE_TYPE_CHANGED_TITLE    = getRefdataValue('Changed Title', RCConstants.AUTO_UPDATE_TYPE)
-    public static final AUTO_UPDATE_TYPE_REMOVED_TITLE    = getRefdataValue('Removed Title', RCConstants.AUTO_UPDATE_TYPE)
-    public static final AUTO_UPDATE_TYPE_FAILED_TITLE    = getRefdataValue('Failed Title', RCConstants.AUTO_UPDATE_TYPE)
+    public static final UPDATE_TYPE_NEW_TITLE    = getRefdataValue('New Title', RCConstants.UPDATE_TYPE)
+    public static final UPDATE_TYPE_CHANGED_TITLE    = getRefdataValue('Changed Title', RCConstants.UPDATE_TYPE)
+    public static final UPDATE_TYPE_REMOVED_TITLE    = getRefdataValue('Removed Title', RCConstants.UPDATE_TYPE)
+    public static final UPDATE_TYPE_FAILED_TITLE    = getRefdataValue('Failed Title', RCConstants.UPDATE_TYPE)
 
     public static final KBC_STATUS_DELETED    = getRefdataValue('Deleted', RCConstants.KBCOMPONENT_STATUS)
     public static final KBC_STATUS_CURRENT    = getRefdataValue('Current', RCConstants.KBCOMPONENT_STATUS)
@@ -27,6 +27,8 @@ class RDStore {
 
 
     public static final COMBO_TYPE_KB_IDS = getRefdataValue('KBComponent.Ids', RCConstants.COMBO_TYPE)
+
+    public static final CONTACT_CONTENT_TYPE_EMAIL = getRefdataValue('E-Mail', RCConstants.CONTACT_CONTENT_TYPE)
 
 
     public static final COMBO_STATUS_ACTIVE = getRefdataValue(Combo.STATUS_ACTIVE, RCConstants.COMBO_STATUS)

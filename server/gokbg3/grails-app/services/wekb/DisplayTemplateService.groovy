@@ -7,8 +7,8 @@ public class DisplayTemplateService {
   @javax.annotation.PostConstruct
   def init() {
     globalDisplayTemplates.put('org.gokb.cred.AdditionalPropertyDefinition',[ type:'staticgsp', rendername:'addpropdef' ]);
-    globalDisplayTemplates.put('wekb.AutoUpdatePackageInfo',[ type:'staticgsp', rendername:'auto_update_package_info', noCreate:true]);
-    globalDisplayTemplates.put('wekb.AutoUpdateTippInfo',[ type:'staticgsp', rendername:'auto_update_tipp_info', noCreate:true]);
+    globalDisplayTemplates.put('wekb.UpdatePackageInfo',[ type:'staticgsp', rendername:'update_package_info', noCreate:true]);
+    globalDisplayTemplates.put('wekb.UpdateTippInfo',[ type:'staticgsp', rendername:'update_tipp_info', noCreate:true]);
     globalDisplayTemplates.put('org.gokb.cred.CuratoryGroup',[ type:'staticgsp', rendername:'curatory_group' ]);
     globalDisplayTemplates.put('org.gokb.cred.Identifier',[ type:'staticgsp', rendername:'identifier', noCreate:true ]);
     globalDisplayTemplates.put('org.gokb.cred.IdentifierNamespace',[ type:'staticgsp', rendername:'identifier_namespace' ]);

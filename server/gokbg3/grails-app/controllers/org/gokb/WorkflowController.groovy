@@ -150,7 +150,7 @@ class WorkflowController{
               def status_to_set = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, method_config[1])
               // def ota_ids = result.objects_to_action.collect{ it.id }
               if (status_to_set){
-                def res = KBComponent.executeUpdate("update KBComponent as kbc set kbc.status = :st where kbc IN (:clist)", [st: status_to_set, clist: result.objects_to_action])
+                def res = KBComponent.executeUpdate("update KBComponent as kbc set kbc.status = :st, kbc.lastUpdated = CURRENT_DATE where kbc IN (:clist)", [st: status_to_set, clist: result.objects_to_action])
                 log.debug("Updated status of ${res} components")
               }
               break
@@ -178,7 +178,7 @@ class WorkflowController{
 
 
   @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
   def processPackageReplacement(){
     def retired_status = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Retired')
     def result = [:]
@@ -212,7 +212,7 @@ class WorkflowController{
   }
 
   @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
   def processTippRetire(){
     log.debug("processTippRetire ${params}")
     def retired_status = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Retired')
@@ -234,7 +234,7 @@ class WorkflowController{
   }
 
   @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
   def processTippMove(){
     log.debug("processTippMove ${params}")
     def deleted_status = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
@@ -280,7 +280,7 @@ class WorkflowController{
   }
 
   @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
   def processRRTransfer(){
     def result = [:]
     log.debug("processRRTransfer ${params}")
@@ -302,7 +302,7 @@ class WorkflowController{
   }
 
   @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
   def newRRLink(){
     def new_rr = null
     log.debug("newRRLink ${params}")
@@ -355,7 +355,7 @@ class WorkflowController{
             '\n')
   }
 
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
   def addToRulebase(){
     def result = [:]
 
@@ -471,7 +471,7 @@ class WorkflowController{
   }
 
   @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
   private def verifyTitleList(packages_to_verify){
     def user = springSecurityService.currentUser
     boolean userAdmin = user.isAdmin()

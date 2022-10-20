@@ -29,8 +29,15 @@
         </semui:tabsItemWithoutLink>
 
         <g:if test="${d.source && d.source.url}">
-            <semui:tabsItemWithoutLink tab="autoUpdatePackageInfos" activeTab="${params.activeTab}" counts="${d.autoUpdatePackageInfos.size()}">
+            <semui:tabsItemWithoutLink tab="autoUpdatePackageInfos" activeTab="${params.activeTab}" counts="${d.getCountAutoUpdateInfos()}">
                 Auto Update Infos
+            </semui:tabsItemWithoutLink>
+        </g:if>
+
+        <g:set var="countManuelUpdateInfos" value="${d.getCountManuelUpdateInfos()}"/>
+        <g:if test="${countManuelUpdateInfos > 0}">
+            <semui:tabsItemWithoutLink tab="manuelUpdatePackageInfos" activeTab="${params.activeTab}" counts="${countManuelUpdateInfos}">
+                Manuel Update Infos
             </semui:tabsItemWithoutLink>
         </g:if>
     </semui:tabs>
@@ -98,8 +105,22 @@
             <div class="content">
 
                 <g:link class="display-inline" controller="search" action="inlineSearch"
-                        params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:autoUpdatePackageInfos', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], activeTab: 'autoUpdatePackageInfos']"
-                        id="">Auto Update Package Info on this Source</g:link>
+                        params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:updatePackageInfos', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], activeTab: 'updatePackageInfos', qp_automaticUpdate: RDStore.YN_YES.class.name+':'+RDStore.YN_YES.id]"
+                        id="">Update Package Info on this Source</g:link>
+
+            </div>
+
+        </semui:tabsItemContent>
+    </g:if>
+
+    <g:if test="${countManuelUpdateInfos > 0}">
+        <semui:tabsItemContent tab="manuelUpdatePackageInfos" activeTab="${params.activeTab}">
+
+            <div class="content">
+
+                <g:link class="display-inline" controller="search" action="inlineSearch"
+                        params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:updatePackageInfos', qp_pkg_id: d.id, inline: true, refOid: d.getLogEntityId(), hide: ['qp_pkg_id', 'qp_pkg'], activeTab: 'updatePackageInfos', qp_automaticUpdate: RDStore.YN_NO.class.name+':'+RDStore.YN_NO.id]"
+                        id="">Update Package Info on this Source</g:link>
 
             </div>
 

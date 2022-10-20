@@ -279,6 +279,8 @@ class CreateComponentService {
                     break
                 case "anbieter_produkt_id": colMap.anbieter_produkt_id = c
                     break
+                case "provider_product_id": colMap.provider_product_id = c
+                    break
                 case "ddc": colMap.ddcs = c
                     break
                 case "source_url": colMap.source_url = c
@@ -483,6 +485,20 @@ class CreateComponentService {
 
                         if (colMap.anbieter_produkt_id != null) {
                             String value = cols[colMap.anbieter_produkt_id].trim()
+                            if (value) {
+
+                                Map idenitiferMap = [:]
+                                idenitiferMap.pkgID = pkg.id
+                                idenitiferMap.ns = "Anbieter_Produkt_ID"
+                                idenitiferMap.value = value
+
+                                identifiers << idenitiferMap
+
+                            }
+                        }
+
+                        if (colMap.provider_product_id != null) {
+                            String value = cols[colMap.provider_product_id].trim()
                             if (value) {
 
                                 Map idenitiferMap = [:]

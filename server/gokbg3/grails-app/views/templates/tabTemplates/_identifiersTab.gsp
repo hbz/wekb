@@ -4,7 +4,8 @@
     <table class="ui selectable striped sortable celled table">
         <thead>
         <tr>
-            <th>Identifier Namespace</th>
+            <th>Identifier Namespace Name</th>
+            <th>Identifier Namespace Value</th>
             <th>Identifier</th>
             <g:if test="${editable}">
                 <th>Actions</th>
@@ -14,6 +15,9 @@
         <tbody>
             <g:each in="${d.ids?.sort { it.namespace?.value }}" var="identifier">
                 <tr>
+                    <td>
+                        ${identifier.namespace.name}
+                    </td>
                     <td>
                         ${identifier.namespace.value}
                     </td>

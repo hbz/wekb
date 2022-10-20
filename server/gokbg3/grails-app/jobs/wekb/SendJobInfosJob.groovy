@@ -1,11 +1,9 @@
 package wekb
 
-import de.wekb.helper.RCConstants
+
 import de.wekb.helper.RDStore
 import de.wekb.helper.ServerUtils
 import grails.plugins.mail.MailService
-import org.gokb.cred.JobResult
-import org.gokb.cred.RefdataCategory
 
 class SendJobInfosJob {
 
@@ -28,7 +26,7 @@ class SendJobInfosJob {
 
   private sendPackageUpdateInfosJob(){
 
-    List<AutoUpdatePackageInfo> autoUpdates = AutoUpdatePackageInfo.executeQuery("from AutoUpdatePackageInfo where status = :status and dateCreated > (CURRENT_DATE-1) order by dateCreated desc", [status: RDStore.AUTO_UPDATE_STATUS_FAILED])
+    List<UpdatePackageInfo> autoUpdates = UpdatePackageInfo.executeQuery("from UpdatePackageInfo where automaticUpdate = true and status = :status and dateCreated > (CURRENT_DATE-1) order by dateCreated desc", [status: RDStore.UPDATE_STATUS_FAILED])
 
       String currentServer = ServerUtils.getCurrentServer()
       String subjectSystemPraefix = (currentServer == ServerUtils.SERVER_PROD)? "" : (ServerUtils.getCurrentServerSystemId() + " - ")

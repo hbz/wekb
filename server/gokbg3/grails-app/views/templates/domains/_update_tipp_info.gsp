@@ -1,6 +1,20 @@
 <%@ page import="de.wekb.helper.RCConstants" %>
 <dl>
     <dt class="control-label">
+        Package Update Info
+    </dt>
+    <dd>
+        <g:if test="${d.updatePackageInfo}">
+            <g:link controller="resource" action="show"
+                    id="${d.updatePackageInfo.class.name}:${d.updatePackageInfo.id}">
+                ${(d.updatePackageInfo.pkg.name) ?: 'Empty'}
+            </g:link>
+        </g:if>
+        <g:else>Empty</g:else>
+    </dd>
+</dl>
+<dl>
+    <dt class="control-label">
         Title
     </dt>
     <dd>
@@ -26,7 +40,7 @@
         Status
     </dt>
     <dd>
-        <semui:xEditableRefData owner="${d}" field="status" config="${RCConstants.AUTO_UPDATE_STATUS}" overwriteEditable="false"/>
+        <semui:xEditableRefData owner="${d}" field="status" config="${RCConstants.UPDATE_STATUS}" overwriteEditable="false"/>
     </dd>
 </dl>
 <dl>
@@ -34,7 +48,7 @@
         Type
     </dt>
     <dd>
-        <semui:xEditableRefData owner="${d}" field="type" config="${RCConstants.AUTO_UPDATE_TYPE}" overwriteEditable="false"/>
+        <semui:xEditableRefData owner="${d}" field="type" config="${RCConstants.UPDATE_TYPE}" overwriteEditable="false"/>
     </dd>
 </dl>
 <dl>

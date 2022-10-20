@@ -248,7 +248,11 @@ class PublicController {
         status << RDStore.KBC_STATUS_DELETED
       }
 
-      println(status)
+      if(status.size() == 0){
+        status = [RDStore.KBC_STATUS_CURRENT, RDStore.KBC_STATUS_RETIRED, RDStore.KBC_STATUS_EXPECTED, RDStore.KBC_STATUS_DELETED]
+      }
+
+
       Map<String,List> export = exportService.exportPackageTippsAsTSVNew(pkg, status)
 
       out.withWriter { writer ->

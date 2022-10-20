@@ -4,20 +4,13 @@ import de.wekb.annotations.HbzKbartAnnotation
 import de.wekb.annotations.KbartAnnotation
 import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
-import org.gokb.ComponentLookupService
-import org.grails.web.json.JSONArray
-import org.grails.web.json.JSONObject
-import wekb.AutoUpdateTippInfo
-import wekb.KBComponentLanguage
+import wekb.UpdateTippInfo
 
 import javax.persistence.Transient
-import com.k_int.ClassUtils
-import org.gokb.GOKbTextUtils
+
 import groovy.util.logging.*
 
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.ZoneId
 
 @Slf4j
 class TitleInstancePackagePlatform extends KBComponent {
@@ -181,7 +174,7 @@ class TitleInstancePackagePlatform extends KBComponent {
     coverageStatements: TIPPCoverageStatement,
     ddcs: RefdataValue,
     ids: Identifier,
-    autoUpdateTippInfos: AutoUpdateTippInfo
+    updateTippInfos: UpdateTippInfo
 
   ]
 

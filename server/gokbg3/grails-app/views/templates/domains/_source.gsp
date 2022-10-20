@@ -148,7 +148,7 @@
 
 <dl>
     <dt class="control-label">
-        Possible run times
+        Anticipated Run Times
     </dt>
     <dd>
         <div class="ui bulleted list">
