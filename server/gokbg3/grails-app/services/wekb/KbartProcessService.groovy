@@ -3,6 +3,8 @@ package wekb
 import de.hbznrw.ygor.tools.DateToolkit
 import de.wekb.helper.RDStore
 import grails.gorm.transactions.Transactional
+import grails.util.Holders
+import org.gokb.CleanupService
 import org.gokb.cred.IdentifierNamespace
 import org.gokb.cred.KBComponent
 import org.gokb.cred.Package
@@ -14,6 +16,9 @@ import org.hibernate.Session
 import org.mozilla.universalchardet.UniversalDetector
 
 import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.StandardCopyOption
 import java.time.LocalDate
 import java.time.ZoneId
 
@@ -22,10 +27,52 @@ class KbartProcessService {
 
     KbartImportValidationService kbartImportValidationService
     KbartImportService kbartImportService
+    CleanupService cleanupService
+
+    void kbartImportManuel(Package pkg, File tsvFile){
+        List kbartRows = []
+        String lastUpdateURL = ""
+        Date startTime = new Date()
+        UpdatePackageInfo updatePackageInfo = new UpdatePackageInfo(pkg: pkg, startTime: startTime, status: RDStore.UPDATE_STATUS_SUCCESSFUL, description: "Starting Update package.", onlyRowsWithLastChanged: false, automaticUpdate: false)
+        try {
+            kbartRows = kbartProcess(tsvFile, lastUpdateURL, updatePackageInfo)
+
+            if (kbartRows.size() > 0) {
+                String fPathSource = '/tmp/wekb/kbartImportTmp'
+                String fPathTarget = Holders.grailsApplication.config.kbartImportStorageLocation ? "${Holders.grailsApplication.config.kbartImportStorageLocation.toString()}" : '/tmp/wekb/kbartImport'
+
+                File folder = new File("${fPathTarget}")
+                if (!folder.exists()) {
+                    folder.mkdirs()
+                }
+
+                String packageName = "${pkg.name.toLowerCase().replaceAll("\\s", '_')}_${pkg.id}"
+
+                Path source = new File("${fPathSource}/${packageName}").toPath()
+                Path target = new File("${fPathTarget}/${packageName}").toPath()
+                Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING)
+
+                updatePackageInfo = kbartImportProcess(kbartRows, pkg, lastUpdateURL, updatePackageInfo, false)
+            }
+
+        } catch (Exception exception) {
+            log.error("Error by startAutoPackageUapdate: ${exception.message}" + exception.printStackTrace())
+            UpdatePackageInfo.withTransaction {
+                UpdatePackageInfo updatePackageFail = new UpdatePackageInfo()
+                updatePackageFail.description = "An error occurred while processing the kbart file. More information can be seen in the system log."
+                updatePackageFail.status = RDStore.UPDATE_STATUS_FAILED
+                updatePackageFail.startTime = startTime
+                updatePackageFail.endTime = new Date()
+                updatePackageFail.pkg = pkg
+                updatePackageFail.onlyRowsWithLastChanged = false
+                updatePackageFail.automaticUpdate = false
+                updatePackageFail.save()
+            }
+        }
+    }
 
     UpdatePackageInfo kbartImportProcess(List kbartRows, Package pkg, String lastUpdateURL, UpdatePackageInfo updatePackageInfo, Boolean onlyRowsWithLastChanged) {
         log.info("Begin kbartImportProcess Package ($pkg.name)")
-        int total = 0
         boolean addOnly = false //Thing about it where to set or to change
 
         RefdataValue status_current = RDStore.KBC_STATUS_CURRENT
@@ -80,16 +127,11 @@ class KbartProcessService {
 
         List kbartRowsToCreateTipps = []
 
-        Date lastChangedInKbart = pkg.source.lastChangedInKbart
+        Date lastChangedInKbart = pkg.source ? pkg.source.lastChangedInKbart : null
         List<LocalDate> lastChangedDates = []
 
         Platform plt = pkg.nominalPlatform
-        IdentifierNamespace identifierNamespace
-        List<IdentifierNamespace> idnsCheck = IdentifierNamespace.executeQuery('select so.targetNamespace from Package pkg join pkg.source so where pkg = :pkg', [pkg: pkg])
-        if (!idnsCheck && plt)
-            idnsCheck = IdentifierNamespace.executeQuery('select plat.titleNamespace from Platform plat where plat = :plat', [plat: plt])
-        if (idnsCheck && idnsCheck.size() == 1)
-            identifierNamespace = idnsCheck[0]
+        IdentifierNamespace identifierNamespace = pkg.getTitleIDNameSpace()
 
         try {
 
@@ -190,7 +232,7 @@ class KbartProcessService {
                                                             }*/
                                     TitleInstancePackagePlatform updateTipp = null
                                     try {
-                                        Map autoUpdateResultTipp = kbartImportService.tippImportForAutoUpdate(kbartRow, tippsWithCoverage, tippDuplicates, updatePackageInfo, kbartRowsToCreateTipps, identifierNamespace)
+                                        Map autoUpdateResultTipp = kbartImportService.tippImportForUpdate(kbartRow, tippsWithCoverage, tippDuplicates, updatePackageInfo, kbartRowsToCreateTipps, identifierNamespace)
 
                                         kbartRowsToCreateTipps = autoUpdateResultTipp.kbartRowsToCreateTipps
                                         tippsWithCoverage = autoUpdateResultTipp.tippsWithCoverage
@@ -492,7 +534,7 @@ class KbartProcessService {
                     aPackage.save()
                 }
 
-                if (aPackage.source) {
+                if (aPackage.source && updatePackageInfo.automaticUpdate) {
                     Source src = Source.get(aPackage.source.id)
                     src.kbartHasWekbFields = !setAllTippsNotInKbartToDeleted
                     src.lastRun = new Date()
@@ -509,7 +551,11 @@ class KbartProcessService {
             UpdatePackageInfo.withTransaction {
                 updatePackageInfo.refresh()
                 updatePackageInfo.endTime = new Date()
-                updatePackageInfo.description = "An error occurred while processing the kbart file. More information can be seen in the system log. File from URL: ${lastUpdateURL}"
+                String description = "An error occurred while processing the kbart file. More information can be seen in the system log. "
+                if(updatePackageInfo.automaticUpdate){
+                    description = description+ "File from URL: ${lastUpdateURL}"
+                }
+                updatePackageInfo.description = description
                 updatePackageInfo.status = RDStore.UPDATE_STATUS_FAILED
                 updatePackageInfo.onlyRowsWithLastChanged = onlyRowsWithLastChanged
                 updatePackageInfo.save()
@@ -539,7 +585,11 @@ class KbartProcessService {
         if(!encodingPass) {
             log.error("Encoding of file is wrong. File encoding is: ${encoding}")
             UpdatePackageInfo.withTransaction {
-                updatePackageInfo.description = "Encoding of kbart file is wrong. File encoding was: ${encoding}. File from URL: ${lastUpdateURL}"
+                String description = "Encoding of kbart file is wrong. File encoding was: ${encoding}. "
+                if(updatePackageInfo.automaticUpdate){
+                    description = description+ "File from URL: ${lastUpdateURL}"
+                }
+                updatePackageInfo.description = description
                 updatePackageInfo.status = RDStore.UPDATE_STATUS_FAILED
                 updatePackageInfo.endTime = new Date()
                 updatePackageInfo.save()
@@ -689,7 +739,11 @@ class KbartProcessService {
                         if (minimumKbartStandard.size() != countMinimumKbartStandard) {
                             log.error("KBART file does not have one or any of the headers: ${minimumKbartStandard}")
                             UpdatePackageInfo.withTransaction {
-                                updatePackageInfo.description = "KBART file does not have one or any of the headers: ${minimumKbartStandard.join(', ')}. File from URL: ${lastUpdateURL}"
+                                String description = "KBART file does not have one or any of the headers: ${minimumKbartStandard.join(', ')}. "
+                                if(updatePackageInfo.automaticUpdate){
+                                    description = description+ "File from URL: ${lastUpdateURL}"
+                                }
+                                updatePackageInfo.description = description
                                 updatePackageInfo.status = RDStore.UPDATE_STATUS_FAILED
                                 updatePackageInfo.endTime = new Date()
                                 updatePackageInfo.save()
@@ -720,7 +774,11 @@ class KbartProcessService {
                     }else {
                         log.error("no delimiter $delimiter: ${lastUpdateURL}")
                         UpdatePackageInfo.withTransaction {
-                            updatePackageInfo.description = "Separator for the kbart was not recognized. The following separators are recognized: Tab, comma, semicolons. File from URL: ${lastUpdateURL}"
+                            String description = "Separator for the kbart was not recognized. The following separators are recognized: Tab, comma, semicolons. "
+                            if(updatePackageInfo.automaticUpdate){
+                                description = description+ "File from URL: ${lastUpdateURL}"
+                            }
+                            updatePackageInfo.description = description
                             updatePackageInfo.status = RDStore.UPDATE_STATUS_FAILED
                             updatePackageInfo.endTime = new Date()
                             updatePackageInfo.save()
@@ -729,7 +787,11 @@ class KbartProcessService {
                 }else {
                     log.error("KBART file is empty:  ${lastUpdateURL}")
                     UpdatePackageInfo.withTransaction {
-                        updatePackageInfo.description = "KBART file is empty. File from URL: ${lastUpdateURL}"
+                        String description = "KBART file is empty. "
+                        if(updatePackageInfo.automaticUpdate){
+                            description = description+ "File from URL: ${lastUpdateURL}"
+                        }
+                        updatePackageInfo.description = description
                         updatePackageInfo.status = RDStore.UPDATE_STATUS_FAILED
                         updatePackageInfo.endTime = new Date()
                         updatePackageInfo.save()
@@ -739,7 +801,11 @@ class KbartProcessService {
                 log.error("Error by KbartProcess: ${e}")
                 UpdatePackageInfo.withTransaction {
                     updatePackageInfo.refresh()
-                    updatePackageInfo.description = "An error occurred while processing the kbart file. More information can be seen in the system log. File from URL: ${lastUpdateURL}"
+                    String description = "An error occurred while processing the kbart file. More information can be seen in the system log. "
+                    if(updatePackageInfo.automaticUpdate){
+                        description = description+ "File from URL: ${lastUpdateURL}"
+                    }
+                    updatePackageInfo.description = description
                     updatePackageInfo.status = RDStore.UPDATE_STATUS_FAILED
                     updatePackageInfo.endTime = new Date()
                     updatePackageInfo.save(flush: true)

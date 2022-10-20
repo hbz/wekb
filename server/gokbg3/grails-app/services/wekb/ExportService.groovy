@@ -5,6 +5,7 @@ import de.wekb.helper.RCConstants
 import de.wekb.helper.RDStore
 import gokbg3.DateFormatService
 import grails.gorm.transactions.Transactional
+import grails.util.Holders
 import org.apache.commons.io.FileUtils
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Row
@@ -323,7 +324,7 @@ class ExportService {
 
     public void exportOriginalKBART(def outputStream, Package pkg) {
 
-        if((pkg.source.lastUpdateUrl || pkg.source.url)){
+        if(pkg.source && (pkg.source.lastUpdateUrl || pkg.source.url)){
             if((UrlToolkit.containsDateStamp(pkg.source.url) || UrlToolkit.containsDateStampPlaceholder(pkg.source.url)) && pkg.source.lastUpdateUrl){
                 File file = kbartFromUrl(pkg.source.lastUpdateUrl)
                 outputStream << file.bytes
@@ -331,7 +332,25 @@ class ExportService {
                 File file = kbartFromUrl(pkg.source.url)
                 outputStream << file.bytes
             }
-        }else {
+            outputStream.close()
+        }else if(pkg.getLastSuccessfulManuelUpdateInfo()){
+            def output
+
+            try {
+                String fPath = "${Holders.grailsApplication.config.kbartImportStorageLocation.toString()}" ?: '/tmp/wekb/kbartImport'
+
+                String packageName = "${pkg.name.toLowerCase().replaceAll("\\s", '_')}_${pkg.id}"
+                File file = new File("${fPath}/${packageName}")
+                output = file.getBytes()
+
+            } catch(Exception e) {
+                log.error(e)
+            }
+
+            outputStream << output
+            outputStream.close()
+        }
+        else {
 
             outputStream.withWriter { writer ->
 

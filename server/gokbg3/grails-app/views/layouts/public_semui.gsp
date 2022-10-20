@@ -123,9 +123,9 @@
                             <div class="header"> Admin Search</div>
                             <div class="menu">
                                 <g:link class="item" controller="search" action="componentSearch"
-                                        params="[qbe: 'g:updatePackageInfos', qp_automaticUpdate: RDStore.YN_YES.class.name+':'+RDStore.YN_YES.id]">Auto Update Package Infos</g:link>
+                                        params="[qbe: 'g:updatePackageInfos']">Update Package Infos</g:link>
                                 <g:link class="item" controller="search" action="componentSearch"
-                                params="[qbe: 'g:updateTippInfos']">Auto Update Title Infos</g:link>
+                                params="[qbe: 'g:updateTippInfos']">Update Title Infos</g:link>
                                 <g:link class="item" controller="search" action="componentSearch"
                                         params="[qbe: 'g:identifiers']">Identifiers</g:link>
                                 <g:link class="item" controller="search" action="componentSearch"

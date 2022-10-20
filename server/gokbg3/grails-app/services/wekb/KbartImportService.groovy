@@ -21,6 +21,7 @@ import org.gokb.cred.RefdataValue
 import org.gokb.cred.TIPPCoverageStatement
 import org.gokb.cred.TitleInstancePackagePlatform
 import org.grails.web.json.JSONArray
+import org.hibernate.Session
 
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -617,7 +618,7 @@ class KbartImportService {
                                     } else if (tippsByUrlAndTitleID.size() == 1) {
                                         tipp = tippsByUrlAndTitleID[0]
                                     }else {
-                                        log.debug("not found Tipp after tipps and tippMatchingByTitleID: [pkg: ${pkg}, platform: ${plt}, tiDtoName: ${tipp_dto.name}, url: ${trimmed_url}, ids: ${tipp_dto.identifiers}]")
+                                        log.debug("not found Tipp after tipps and tippsMatchingByTitleID: [pkg: ${pkg}, platform: ${plt}, tiDtoName: ${tipp_dto.name}, url: ${trimmed_url}, ids: ${tipp_dto.identifiers}]")
                                     }
                                 }
                             }
@@ -898,10 +899,10 @@ class KbartImportService {
         result
     }
 
-    LinkedHashMap tippImportForAutoUpdate(Map tippMap, LinkedHashMap tippsWithCoverage, List<Long> tippDuplicates = [], UpdatePackageInfo updatePackageInfo, List kbartRowsToCreateTipps, IdentifierNamespace identifierNamespace) {
+    LinkedHashMap tippImportForUpdate(Map tippMap, LinkedHashMap tippsWithCoverage, List<Long> tippDuplicates = [], UpdatePackageInfo updatePackageInfo, List kbartRowsToCreateTipps, IdentifierNamespace identifierNamespace) {
         LinkedHashMap result = [newTipp: false, removedTipp: false, tippObject: null, updatePackageInfo: updatePackageInfo,
                                 tippsWithCoverage: tippsWithCoverage, kbartRowsToCreateTipps: kbartRowsToCreateTipps, tippDuplicates: tippDuplicates]
-        log.info("Begin tippImportForAutoUpdate")
+        log.info("Begin tippImportForUpdate")
         long start = System.currentTimeMillis()
         Package pkg = tippMap.pkg
         Platform plt = tippMap.nominalPlatform
@@ -921,10 +922,11 @@ class KbartImportService {
             String title = tippMap.publication_title
 
             countTipps = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) from TitleInstancePackagePlatform as tipp ' +
-                    'where lower(tipp.name) = :tiDtoName and tipp.status != :removed ' +
+                    'where tipp.status != :removed and lower(tipp.name) = :tiDtoName ' +
                     'and tipp.pkg = :pkg ',
                     [pkg: pkg, tiDtoName: title.toLowerCase(), removed: RDStore.KBC_STATUS_REMOVED])[0]
 
+            log.debug("$countTipps")
             if(countTipps > 0) {
                 tipps = TitleInstancePackagePlatform.executeQuery('select tipp from TitleInstancePackagePlatform as tipp ' +
                         'where lower(tipp.name) = :tiDtoName and tipp.status != :removed ' +
@@ -1015,7 +1017,7 @@ class KbartImportService {
                                     } else if (tippsByUrlAndTitleID.size() == 1) {
                                         tipp = tippsByUrlAndTitleID[0]
                                     }else {
-                                        log.debug("not found Tipp after tipps and tippMatchingByTitleID: [pkg: ${pkg}, platform: ${plt}, tiDtoName: ${tippMap.publication_title}, url: ${trimmed_url}, title_id: ${tippMap.title_id}]")
+                                        log.debug("not found Tipp after tipps and tippsMatchingByTitleID: [pkg: ${pkg}, platform: ${plt}, tiDtoName: ${tippMap.publication_title}, url: ${trimmed_url}, title_id: ${tippMap.title_id}]")
                                     }
                                 }
                             }
@@ -1055,14 +1057,15 @@ class KbartImportService {
             log.debug("Not able to reference TIPP: ${tippMap}")
         }
 
-        log.debug("processed tippImportForAutoUpdate at: ${System.currentTimeMillis()-start} msecs")
-        log.info("End tippImportForAutoUpdate: TIPP UUID -> ${result.tippObject?.uuid}")
+        log.debug("processed tippImportForUpdate at: ${System.currentTimeMillis()-start} msecs")
+        log.info("End tippImportForUpdate: TIPP UUID -> ${result.tippObject?.uuid}")
 
         result.updatePackageInfo = updatePackageInfo
 
         result
     }
-    
+
+    @Deprecated
     TitleInstancePackagePlatform tippMatchingByTitleID(JSONArray identifiers, Package aPackage, Platform platform) {
         if(identifiers && aPackage.source && aPackage.source.targetNamespace){
 
@@ -1071,7 +1074,7 @@ class KbartImportService {
             List<TitleInstancePackagePlatform> tippList = Identifier.executeQuery('select i.tipp from Identifier as i where LOWER(i.namespace.value) = :namespaceValue and i.value = :value and i.tipp is not null', [namespaceValue: aPackage.source.targetNamespace.value.toLowerCase(), value: value])
 
             if(tippList.size() == 1){
-                    log.debug("tippMatchingByTitleID provider internal identifier matching by "+tippList.size() + ": "+ tippList.id)
+                    log.debug("tippsMatchingByTitleID provider internal identifier matching by "+tippList.size() + ": "+ tippList.id)
                     return tippList[0]
             }
         }
@@ -1081,7 +1084,7 @@ class KbartImportService {
             List<TitleInstancePackagePlatform> tippList = Identifier.executeQuery('select i.tipp from Identifier as i where LOWER(i.namespace.value) = :namespaceValue and i.value = :value and i.tipp is not null', [namespaceValue: platform.titleNamespace.value.toLowerCase(), value: value])
 
             if(tippList.size() == 1){
-                log.debug("tippMatchingByTitleID provider internal identifier matching by "+tippList.size() + ": "+ tippList.id)
+                log.debug("tippsMatchingByTitleID provider internal identifier matching by "+tippList.size() + ": "+ tippList.id)
                 return tippList[0]
             }
         }
@@ -2268,7 +2271,15 @@ class KbartImportService {
         def dataSource = Holders.grailsApplication.mainContext.getBean('dataSource')
         Sql sql = new Sql(dataSource)
 
-        tippMaps.eachWithIndex { Map tippMap, int counter ->
+        int max = 500
+        int idx = 0
+        TitleInstancePackagePlatform.withSession { Session sess ->
+            for (int offset = 0; offset < tippMaps.size(); offset += max) {
+
+                List tippMapsToProcess = tippMaps.drop(offset).take(max)
+                for (Map tippMap : tippMapsToProcess) {
+                    idx++
+
             long start = System.currentTimeMillis()
 
             try {
@@ -2331,7 +2342,7 @@ class KbartImportService {
                         hostPlatform: tippMap.hostPlatform
                         )
                 if (tipp) {
-                    tipp.save(flush: true)
+                    tipp.save()
                 } else {
                     log.error("TIPP creation failed!")
                 }
@@ -2499,14 +2510,19 @@ class KbartImportService {
                     newTippList << [tippID: tipp.id, updatePackageInfo: updatePackageInfo]
                 }
 
-                log.info("createTippBatch (${counter + 1} of $counterNewTippsToProcess) processed at: ${System.currentTimeMillis() - start} msecs")
+                log.info("createTippBatch (${idx + 1} of $counterNewTippsToProcess) processed at: ${System.currentTimeMillis() - start} msecs")
 
             }catch (Exception e) {
                 log.error("createTippBatch: -> ${tippMap.kbartRowMap}:" + e.toString())
             }
 
-            if (counter.mod(250) == 0) {
-                cleanupService.cleanUpGorm()
+                    if (idx % 250 == 0) {
+                        log.info("Clean up");
+                        cleanupService.cleanUpGorm()
+                    }
+                }
+                sess.flush()
+                sess.clear()
             }
         }
 
