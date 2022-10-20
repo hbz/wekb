@@ -34,7 +34,7 @@
             </semui:tabsItemWithoutLink>
         </g:if>
 
-        <g:set var="countManuelUpdateInfos" value="${d.getCountAutoUpdateInfos()}"/>
+        <g:set var="countManuelUpdateInfos" value="${d.getCountManuelUpdateInfos()}"/>
         <g:if test="${countManuelUpdateInfos > 0}">
             <semui:tabsItemWithoutLink tab="manuelUpdatePackageInfos" activeTab="${params.activeTab}" counts="${countManuelUpdateInfos}">
                 Manuel Update Infos
