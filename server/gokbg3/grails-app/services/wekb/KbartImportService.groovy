@@ -922,16 +922,15 @@ class KbartImportService {
             String title = tippMap.publication_title
 
             countTipps = TitleInstancePackagePlatform.executeQuery('select count(tipp.id) from TitleInstancePackagePlatform as tipp ' +
-                    'where tipp.status != :removed and lower(tipp.name) = :tiDtoName ' +
-                    'and tipp.pkg = :pkg ',
-                    [pkg: pkg, tiDtoName: title.toLowerCase(), removed: RDStore.KBC_STATUS_REMOVED])[0]
+                    'where tipp.pkg = :pkg and tipp.status != :removed and tipp.name = :tiDtoName ',
+                    [pkg: pkg, tiDtoName: title, removed: RDStore.KBC_STATUS_REMOVED])[0]
 
             log.debug("$countTipps")
             if(countTipps > 0) {
                 tipps = TitleInstancePackagePlatform.executeQuery('select tipp from TitleInstancePackagePlatform as tipp ' +
-                        'where lower(tipp.name) = :tiDtoName and tipp.status != :removed ' +
-                        'and tipp.pkg = :pkg order by tipp.lastUpdated DESC',
-                        [pkg: pkg, tiDtoName: title.toLowerCase(), removed: RDStore.KBC_STATUS_REMOVED])
+                        'where tipp.pkg = :pkg and tipp.status != :removed and tipp.name = :tiDtoName ' +
+                        ' order by tipp.lastUpdated DESC',
+                        [pkg: pkg, tiDtoName: title, removed: RDStore.KBC_STATUS_REMOVED])
             }
 
             TitleInstancePackagePlatform tipp = null
@@ -1395,7 +1394,7 @@ class KbartImportService {
     }
 
     void createOrUpdateCoverageForTipp(TitleInstancePackagePlatform tipp, def coverage){
-
+        log.debug("createOrUpdateCoverageForTipp Beginn")
         //tipp = tipp.refresh()
 
         Integer countNewCoverages = coverage.size()
@@ -1594,6 +1593,7 @@ class KbartImportService {
             }
             // refdata setStringIfDifferent(tipp, 'coverageDepth', c.coverageDepth)
         }*/
+        log.debug("createOrUpdateCoverageForTipp End")
     }
 
 

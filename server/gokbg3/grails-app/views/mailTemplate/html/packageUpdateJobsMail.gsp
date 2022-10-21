@@ -11,7 +11,7 @@
 <body>
 <g:set var="grailsApplication" bean="grailsApplication"/>
 
-<h1>Auto Updates Fail (autoUpdates.size())</h1>
+<h1>Auto Updates Fail (${autoUpdates.size()})</h1>
 
 <g:if test="${autoUpdates.size() > 0}">
     <table>

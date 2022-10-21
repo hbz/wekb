@@ -115,8 +115,9 @@ class UpdatePackageInfo {
     }
 
     @Transient
-    public int getCountUpdateTipps() {
-        return updateTippInfos.size()
+    public int getCountUpdateTippInfos() {
+        int result = UpdateTippInfo.executeQuery("select count(id) from UpdateTippInfo where updatePackageInfo = :updatePackageInfo", [updatePackageInfo: this])[0]
+        result
     }
 
 
