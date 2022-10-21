@@ -31,27 +31,35 @@ class WorkflowController{
   ExecutorService executorService
 
   def actionConfig = [
+      'deleteIdentifierNamespace'        : [actionType: 'process', method: 'deleteIdentifierNamespace'],
+
+      'manuelKbartImport'  : [actionType: 'redirectToView', view: 'kbartImport', controller: 'package'],
+
       'method::deleteSoft'     : [actionType: 'simple'],
-      'platform::replacewith'  : [actionType: 'workflow', view: 'platformReplacement'],
-      'method::RRTransfer'     : [actionType: 'workflow', view: 'revReqTransfer'],
-      'method::RRClose'        : [actionType: 'simple'],
+      'method::retire'         : [actionType: 'simple'],
+      'method::removeWithTipps' : [actionType: 'simple'],
+      'method::currentWithTipps': [actionType: 'simple'],
+      'method::setCurrent'      : [actionType: 'simple'],
+
+      /*'method::setExpected'    : [actionType: 'simple'],*/
+      /*'method::RRTransfer'     : [actionType: 'workflow', view: 'revReqTransfer'],
+      'method::RRClose'        : [actionType: 'simple'],*/
+
       'packageUrlUpdate'       : [actionType: 'process', method: 'triggerSourceUpdate'],
       'packageUrlUpdateAllTitles':[actionType:'process', method: 'triggerSourceUpdateAllTitles'],
-      'tipp::retire'           : [actionType: 'workflow', view: 'tippRetire'],
-      'tipp::move'             : [actionType: 'workflow', view: 'tippMove'],
-      'method::retire'         : [actionType: 'simple'],
-      'method::removeWithTipps'         : [actionType: 'simple'],
-      'method::setActive'      : [actionType: 'simple'],
-      'method::setExpected'    : [actionType: 'simple'],
+
+      //'platform::replacewith'  : [actionType: 'workflow', view: 'platformReplacement'],
+      /*'tipp::retire'           : [actionType: 'workflow', view: 'tippRetire'],
+      'tipp::move'             : [actionType: 'workflow', view: 'tippMove'],*/
+
       'setStatus::Retired'     : [actionType: 'simple'],
       'setStatus::Current'     : [actionType: 'simple'],
       'setStatus::Expected'    : [actionType: 'simple'],
       'setStatus::Deleted'     : [actionType: 'simple'],
       'setStatus::Removed'     : [actionType: 'simple'],
-      'org::deprecateReplace'  : [actionType: 'workflow', view: 'deprecateOrg'],
-      'org::deprecateDelete'   : [actionType: 'workflow', view: 'deprecateDeleteOrg'],
-      'verifyTitleList'        : [actionType: 'process', method: 'verifyTitleList'],
-      'deleteIdentifierNamespace'        : [actionType: 'process', method: 'deleteIdentifierNamespace']
+      /*'org::deprecateReplace'  : [actionType: 'workflow', view: 'deprecateOrg'],
+      'org::deprecateDelete'   : [actionType: 'workflow', view: 'deprecateDeleteOrg'],*/
+      /*'verifyTitleList'        : [actionType: 'process', method: 'verifyTitleList'],*/
   ]
 
 
@@ -160,6 +168,14 @@ class WorkflowController{
           break
         case 'workflow':
           render view: action_config.view, model: result
+          break
+        case 'redirectToView':
+          if(result.objects_to_action.size() == 1){
+            redirect(controller: action_config.controller, action: action_config.view, id: result.objects_to_action[0].id)
+          }else {
+            flash.error = "This action can only be performed for one component! Try again, but only with one component."
+          }
+
           break
         case 'process':
           this."${action_config.method}"(result.objects_to_action)

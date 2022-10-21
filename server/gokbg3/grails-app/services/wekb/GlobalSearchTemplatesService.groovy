@@ -198,6 +198,7 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Description', property: 'description', link: true],
                                 [heading: 'Package', property: 'pkg.name', link: true],
                                 [heading: 'Status', property: 'status', sort: 'status.value'],
+                                [heading: 'Automatic Update', property: 'automaticUpdate', sort: 'automaticUpdate'],
                                 [heading: 'Start Time', property: 'startTime', sort: 'startTime'],
                                 [heading: 'End Time', property: 'endTime', sort: 'endTime'],
                                 [heading: 'Only Last Changed Update', property: 'onlyRowsWithLastChanged', sort: 'onlyRowsWithLastChanged'],

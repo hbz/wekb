@@ -72,7 +72,7 @@
 
                 <div class="menu">
                     <g:link class="item" controller="group" action="myAutoUpdateInfos">My Auto Update Infos</g:link>
-                    <g:link class="item" controller="group" action="myAutoUpdateInfos">My Packages due to automatic update</g:link>
+                    <g:link class="item" controller="group" action="myPackagesNeedsAutoUpdates">My Packages due to automatic update</g:link>
                 </div>
             </div>
 
@@ -115,6 +115,8 @@
                                         action="autoUpdatesFails">Automatic update fails</g:link>
                                 <g:link class="item" controller="admin"
                                         action="findPackagesWithTippDuplicates">Packages with Tipp Duplicates</g:link>
+                                <g:link class="item" controller="admin"
+                                        action="findPackagesAutoUpdatesTippsDiff">Auto Update Packages with Tipp Diff</g:link>
                                 <g:link class="item" controller="admin"
                                         action="tippIdentifiersWithSameNameSpace">Title Identifiers with same Identifier Namespace</g:link>
                             </div>

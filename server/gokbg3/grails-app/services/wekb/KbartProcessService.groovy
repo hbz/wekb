@@ -13,6 +13,9 @@ import org.gokb.cred.RefdataValue
 import org.gokb.cred.Source
 import org.gokb.cred.TitleInstancePackagePlatform
 import org.hibernate.Session
+import org.hibernate.SessionFactory
+import org.hibernate.StatelessSession
+import org.hibernate.Transaction
 import org.mozilla.universalchardet.UniversalDetector
 
 import java.nio.charset.StandardCharsets
@@ -28,8 +31,10 @@ class KbartProcessService {
     KbartImportValidationService kbartImportValidationService
     KbartImportService kbartImportService
     CleanupService cleanupService
+    SessionFactory sessionFactory
 
     void kbartImportManuel(Package pkg, File tsvFile){
+        log.info("Beginn kbartImportManuel ${pkg.name}")
         List kbartRows = []
         String lastUpdateURL = ""
         Date startTime = new Date()
@@ -56,7 +61,7 @@ class KbartProcessService {
             }
 
         } catch (Exception exception) {
-            log.error("Error by startAutoPackageUapdate: ${exception.message}" + exception.printStackTrace())
+            log.error("Error by kbartImportManuel: ${exception.message}" + exception.printStackTrace())
             UpdatePackageInfo.withTransaction {
                 UpdatePackageInfo updatePackageFail = new UpdatePackageInfo()
                 updatePackageFail.description = "An error occurred while processing the kbart file. More information can be seen in the system log."
@@ -69,6 +74,7 @@ class KbartProcessService {
                 updatePackageFail.save()
             }
         }
+        log.info("End kbartImportManuel ${pkg.name}")
     }
 
     UpdatePackageInfo kbartImportProcess(List kbartRows, Package pkg, String lastUpdateURL, UpdatePackageInfo updatePackageInfo, Boolean onlyRowsWithLastChanged) {
@@ -380,7 +386,7 @@ class KbartProcessService {
 
                 tippDuplicates.each {
                     if(!(it in tippsFound)){
-                        KBComponent.executeUpdate("update KBComponent set status = :removed, lastUpdated = CURRENT_DATE where id = (:tippId)", [removed: RDStore.KBC_STATUS_REMOVED, tippId: it])
+                        KBComponent.executeUpdate("update KBComponent set status = :removed, lastUpdated = CURRENT_DATE where id = (:tippId) and status != :removed", [removed: RDStore.KBC_STATUS_REMOVED, tippId: it])
 
                         TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.get(it)
                         UpdateTippInfo.withTransaction {
@@ -426,12 +432,21 @@ class KbartProcessService {
                         "tipp.pkg = :package and tipp.id not in (:setTippsNotToDeleted)",
                         [package: pkg, status: [status_current, status_expected, status_retired], setTippsNotToDeleted: setTippsNotToDeleted]) : []
 
-                Integer tippsToDeleted = tippsIds ? KBComponent.executeUpdate("update KBComponent set status = :deleted, lastUpdated = CURRENT_DATE where id in (:tippIds)", [deleted: status_deleted, tippIds: tippsIds]) : 0
+                int deletedCount = tippsIds.size()
+                int idxDeleted = 0
+                if(deletedCount > 0) {
+                    int maxDeleted = 30000
+                    for (int offset = 0; offset < deletedCount; offset += maxDeleted) {
+                        List deleteTippsFromWekbToProcess = tippsIds.drop(offset).take(maxDeleted)
+                        KBComponent.executeUpdate("update KBComponent set status = :deleted, lastUpdated = CURRENT_DATE where id in (:tippIDs) and status != :deleted", [deleted: RDStore.KBC_STATUS_DELETED, tippIDs: deleteTippsFromWekbToProcess])
+                    }
 
-                tippsIds.each {
-                    TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.get(it)
-                    UpdateTippInfo.withTransaction {
-                        updatePackageInfo.refresh()
+                    StatelessSession session = sessionFactory.openStatelessSession()
+                    Transaction tx = session.beginTransaction()
+                    tippsIds.each { tippID ->
+                        idxDeleted++
+                        log.info("setAllTippsNotInKbartToDeleted (#$idxDeleted of $deletedCount): tippID ${tippID}")
+                        TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.get(tippID)
                         UpdateTippInfo updateTippInfo = new UpdateTippInfo(
                                 description: "Delete Title '${tipp.name}' because is not in KBART!",
                                 tipp: tipp,
@@ -443,15 +458,22 @@ class KbartProcessService {
                                 newValue: 'Deleted',
                                 tippProperty: 'status',
                                 kbartProperty: 'status',
-                                updatePackageInfo: updatePackageInfo
-                        ).save()
-                        changedTipps++
+                                updatePackageInfo: updatePackageInfo,
+                                lastUpdated: new Date(),
+                                dateCreated: new Date(),
+                                uuid: UUID.randomUUID().toString()
+                        )
+
+                        session.insert(updateTippInfo)
                     }
+                    tx.commit()
+                    session.close()
                 }
 
-                log.info("kbart is not wekb standard. set title to deleted. Found tipps: ${tippsIds.size()}, Set tipps to deleted: ${tippsToDeleted}")
+                log.info("kbart is not wekb standard. set title to deleted. Found tipps: ${tippsIds.size()}, Set tipps to deleted: ${idxDeleted}")
             }
 
+            log.info("tippsWithCoverage: ${tippsWithCoverage.size()}")
 
             tippsWithCoverage.each {
                 TitleInstancePackagePlatform titleInstancePackagePlatform = TitleInstancePackagePlatform.get(it.key)
@@ -480,31 +502,47 @@ class KbartProcessService {
 
                 List<Long> deleteTippsFromWekb = existingTippsAfterImport - tippsFound
 
+                log.info("deleteTippsFromWekb: ${deleteTippsFromWekb.size()}")
                 if(deleteTippsFromWekb.size() > 0){
-                    Integer tippsToDeleted = KBComponent.executeUpdate("update KBComponent set status = :deleted, lastUpdated = CURRENT_DATE where id in (:tippIds)", [deleted: RDStore.KBC_STATUS_DELETED, tippIds: deleteTippsFromWekb])
 
-                    deleteTippsFromWekb.each {
-                        TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.get(it)
-                        UpdateTippInfo.withTransaction {
-                            updatePackageInfo.refresh()
-                            UpdateTippInfo updateTippInfo = new UpdateTippInfo(
-                                    description: "Delete Title '${tipp.name}' because is not in KBART!",
-                                    tipp: tipp,
-                                    startTime: new Date(),
-                                    endTime: new Date(),
-                                    status: RDStore.UPDATE_STATUS_SUCCESSFUL,
-                                    type: RDStore.UPDATE_TYPE_CHANGED_TITLE,
-                                    oldValue: tipp.status.value,
-                                    newValue: 'Deleted',
-                                    tippProperty: 'status',
-                                    kbartProperty: 'status',
-                                    updatePackageInfo: updatePackageInfo
-                            ).save()
-                            changedTipps++
-                        }
+                    int maxDeleted = 30000
+                    int idxDeleted = 0
+                    int deletedCount = deleteTippsFromWekb.size()
+
+                    for (int offset = 0; offset < deletedCount; offset += maxDeleted) {
+                        List deleteTippsFromWekbToProcess = deleteTippsFromWekb.drop(offset).take(maxDeleted)
+                        KBComponent.executeUpdate("update KBComponent set status = :deleted, lastUpdated = CURRENT_DATE where id in (:tippIDs) and status != :deleted", [deleted: RDStore.KBC_STATUS_DELETED, tippIDs: deleteTippsFromWekbToProcess])
                     }
 
-                    log.info("Rows in KBART is not same with titles in wekb. RemoveTippsFromWekb: ${deleteTippsFromWekb.size()}, Set tipps to removed: ${tippsToDeleted}")
+                    StatelessSession session = sessionFactory.openStatelessSession()
+                    Transaction tx = session.beginTransaction()
+                    deleteTippsFromWekb.each {tippID ->
+                        idxDeleted++
+                        log.info("deleteTippsFromWekb (#$idxDeleted of $deletedCount): tippID ${tippID}")
+                        TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.get(tippID)
+                        UpdateTippInfo updateTippInfo = new UpdateTippInfo(
+                                description: "Delete Title '${tipp.name}' because is not in KBART!",
+                                tipp: tipp,
+                                startTime: new Date(),
+                                endTime: new Date(),
+                                status: RDStore.UPDATE_STATUS_SUCCESSFUL,
+                                type: RDStore.UPDATE_TYPE_CHANGED_TITLE,
+                                oldValue: tipp.status.value,
+                                newValue: 'Deleted',
+                                tippProperty: 'status',
+                                kbartProperty: 'status',
+                                updatePackageInfo: updatePackageInfo,
+                                lastUpdated: new Date(),
+                                dateCreated: new Date(),
+                                uuid: UUID.randomUUID().toString()
+                        )
+
+                        session.insert(updateTippInfo)
+                    }
+                    tx.commit()
+                    session.close()
+
+                    log.info("Rows in KBART is not same with titles in wekb. DeleteTippsFromWekb: ${deleteTippsFromWekb.size()}, Set tipps to deleted: ${idxDeleted}")
                 }
 
             }

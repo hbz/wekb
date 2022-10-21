@@ -28,10 +28,18 @@
         </semui:tabsItemWithoutLink>
 
         <g:if test="${d.pkg && d.pkg.source && d.pkg.source.url}">
-            <semui:tabsItemWithoutLink tab="updatePackageInfos" activeTab="${params.activeTab}" counts="${d.updateTippInfos.size()}">
+            <semui:tabsItemWithoutLink tab="updatePackageInfos" activeTab="${params.activeTab}" counts="${d.getCountAutoUpdateTippInfos()}">
                 Auto Update Infos
             </semui:tabsItemWithoutLink>
         </g:if>
+
+        <g:set var="countManuelUpdateInfos" value="${d.getCountManuelUpdateTippInfos()}"/>
+        <g:if test="${countManuelUpdateInfos > 0}">
+            <semui:tabsItemWithoutLink tab="manuelUpdatePackageInfos" activeTab="${params.activeTab}" counts="${countManuelUpdateInfos}">
+                Manuel Update Infos
+            </semui:tabsItemWithoutLink>
+        </g:if>
+
     </semui:tabs>
 
 

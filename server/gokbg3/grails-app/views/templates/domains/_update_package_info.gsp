@@ -160,7 +160,7 @@
 </dl>
 
 <semui:tabs>
-    <semui:tabsItemWithoutLink tab="updateTippInfos" counts="${d.updateTippInfos.size()}" class="active">
+    <semui:tabsItemWithoutLink tab="updateTippInfos" counts="${d.getCountUpdateTippInfos()}" class="active">
         Title Update Infos
     </semui:tabsItemWithoutLink>
 </semui:tabs>

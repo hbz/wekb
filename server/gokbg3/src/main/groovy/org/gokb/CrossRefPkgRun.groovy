@@ -245,7 +245,7 @@ class CrossRefPkgRun {
 
         tippDuplicates.each {
           if(!(it in tippsFound)){
-            KBComponent.executeUpdate("update KBComponent set status = :deleted, lastUpdated = CURRENT_DATE where id = (:tippId)", [deleted: status_deleted, tippId: it])
+            KBComponent.executeUpdate("update KBComponent set status = :deleted, lastUpdated = CURRENT_DATE where id = (:tippId) and status != :deleted", [deleted: status_deleted, tippId: it])
           }
         }
 
@@ -325,7 +325,7 @@ class CrossRefPkgRun {
                   "tipp.pkg = :package and tipp.id not in (:setTippsNotToDeleted)",
                   [package: pkg, status: [status_current, status_expected, status_retired], setTippsNotToDeleted: setTippsNotToDeleted]) : []
 
-          Integer tippsToDeleted = tippsIds ? KBComponent.executeUpdate("update KBComponent set status = :deleted, lastUpdated = CURRENT_DATE where id in (:tippIds)", [deleted: status_deleted, tippIds: tippsIds]) : 0
+          Integer tippsToDeleted = tippsIds ? KBComponent.executeUpdate("update KBComponent set status = :deleted, lastUpdated = CURRENT_DATE where id in (:tippIds) and status != :deleted", [deleted: status_deleted, tippIds: tippsIds]) : 0
 
           log.info("kbart is not wekb standard. set title to deleted. Found tipps: ${tippsIds.size()}, Set tipps to deleted: ${tippsToDeleted}")
         }
