@@ -925,7 +925,6 @@ class KbartImportService {
                     'where tipp.pkg = :pkg and tipp.status != :removed and tipp.name = :tiDtoName ',
                     [pkg: pkg, tiDtoName: title, removed: RDStore.KBC_STATUS_REMOVED])[0]
 
-            log.debug("$countTipps")
             if(countTipps > 0) {
                 tipps = TitleInstancePackagePlatform.executeQuery('select tipp from TitleInstancePackagePlatform as tipp ' +
                         'where tipp.pkg = :pkg and tipp.status != :removed and tipp.name = :tiDtoName ' +
@@ -2254,7 +2253,7 @@ class KbartImportService {
 
         //log.debug("after price section")
 
-        tipp.save(failOnError: true)
+        tipp = tipp.save(failOnError: true)
 
         result.tippsWithCoverage = tippsWithCoverage
         result.updatePackageInfo = updatePackageInfo
