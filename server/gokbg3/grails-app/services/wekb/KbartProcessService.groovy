@@ -263,7 +263,7 @@ class KbartProcessService {
                                                 updateTipp.status = RDStore.KBC_STATUS_CURRENT
                                                 setTippsNotToDeleted << updateTipp.id
                                             }
-                                            updateTipp.save()
+                                            updateTipp = updateTipp.save()
                                             tippsFound << updateTipp.id
                                         }
 
@@ -425,7 +425,7 @@ class KbartProcessService {
             }
 
 
-            if (!onlyRowsWithLastChanged && setAllTippsNotInKbartToDeleted) {
+            /*if (!onlyRowsWithLastChanged && setAllTippsNotInKbartToDeleted) {
 
                 List<Long> tippsIds = setTippsNotToDeleted ? TitleInstancePackagePlatform.executeQuery("select tipp.id from TitleInstancePackagePlatform tipp where " +
                         "tipp.status in (:status) and " +
@@ -471,7 +471,7 @@ class KbartProcessService {
                 }
 
                 log.info("kbart is not wekb standard. set title to deleted. Found tipps: ${tippsIds.size()}, Set tipps to deleted: ${idxDeleted}")
-            }
+            }*/
 
             log.info("tippsWithCoverage: ${tippsWithCoverage.size()}")
 
@@ -491,6 +491,7 @@ class KbartProcessService {
                     [package: pkg, status: listStatus])[0]
 
 
+            //TODO: countExistingTippsAfterImport > (kbartRowsCount-countInvalidKbartRowsForTipps) ??? nötig noch
             if(!onlyRowsWithLastChanged && tippsFound.size() > 0 && kbartRowsCount > 0 && countExistingTippsAfterImport > (kbartRowsCount-countInvalidKbartRowsForTipps)){
 
                 List<Long> existingTippsAfterImport = TitleInstancePackagePlatform.executeQuery(
@@ -536,7 +537,7 @@ class KbartProcessService {
                                 dateCreated: new Date(),
                                 uuid: UUID.randomUUID().toString()
                         )
-
+                        changedTipps++
                         session.insert(updateTippInfo)
                     }
                     tx.commit()
