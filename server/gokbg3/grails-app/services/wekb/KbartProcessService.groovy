@@ -263,8 +263,9 @@ class KbartProcessService {
                                                 updateTipp.status = RDStore.KBC_STATUS_CURRENT
                                                 setTippsNotToDeleted << updateTipp.id
                                             }
-                                            updateTipp = updateTipp.save()
-                                            tippsFound << updateTipp.id
+                                            if(updateTipp) {
+                                                tippsFound << updateTipp.id
+                                            }
                                         }
 
                                     }

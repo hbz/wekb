@@ -368,7 +368,7 @@ class Package extends KBComponent {
     TitleInstancePackagePlatform.executeUpdate("update TitleInstancePackagePlatform as t set t.status = :rev, t.lastUpdateComment = 'Removed via Package action remove', t.lastUpdated = :now where t.status != :rev and t.pkg = :pkg", [rev: removedStatus, pkg: this, now: now])
   }
 
-  public void currentWithTipps() {
+  public void currentWithTipps(context) {
     log.debug("package::currentWithTipps");
     log.debug("Updating package status to current");
     def currentStatus = RDStore.KBC_STATUS_CURRENT
@@ -391,7 +391,6 @@ class Package extends KBComponent {
       [code: 'method::removeWithTipps', label: 'Remove the package (with all Titles)', perm: 'delete'],
       /*[code: 'verifyTitleList', label: 'Verify Title List'],*/
       [code: 'packageUrlUpdate', label: 'Trigger Update (Changed Titles)'],
-      [code: 'packageUrlUpdateAllTitles', label: 'Trigger Update (all Titles)'],
       [code: 'packageUrlUpdateAllTitles', label: 'Trigger Update (all Titles)'],
     ]
   }

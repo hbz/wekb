@@ -1303,15 +1303,15 @@ class KbartImportService {
 
                     switch (identifiersWithSameNamespace.size()) {
                         case 0:
-                            identifier = new Identifier(namespace: ns, value: identifierValue, tipp: tipp)
+                            identifier = new Identifier(namespace: ns, value: newValue, tipp: tipp)
                             identifier.save()
                             identifierChanged = true
                             break
                         case 1:
-                            if (identifiersWithSameNamespace[0].value != identifierValue) {
+                            if (identifiersWithSameNamespace[0].value != newValue) {
                                 identifierChanged = true
                                 oldValue = identifiersWithSameNamespace[0].value
-                                identifiersWithSameNamespace[0].value = identifierValue
+                                identifiersWithSameNamespace[0].value = newValue
                                 identifiersWithSameNamespace[0].save()
                                 identifier = identifiersWithSameNamespace[0]
                             }
@@ -1326,7 +1326,7 @@ class KbartImportService {
                                 Identifier.executeUpdate("delete from Identifier where id_id = :id", [id: it])
                             }
                             identifierChanged = true
-                            identifier = new Identifier(namespace: ns, value: identifierValue, tipp: tipp)
+                            identifier = new Identifier(namespace: ns, value: newValue, tipp: tipp)
                             identifier.save()
                             break
                     }
@@ -2253,7 +2253,26 @@ class KbartImportService {
 
         //log.debug("after price section")
 
-        tipp = tipp.save(failOnError: true)
+        try {
+            tipp = tipp.save(failOnError: true)
+
+        } catch (Exception e) {
+            log.error("KbartImportService tipp.save() error: " + e.toString())
+           /* updatePackageInfo = updatePackageInfo.refresh()
+            UpdateTippInfo updateTippInfo = new UpdateTippInfo(
+                        description: "Changes in title fail. More information can be seen in the system log.",
+                        tipp: tipp,
+                        startTime: new Date(),
+                        endTime: new Date(),
+                        status: RDStore.UPDATE_STATUS_FAILED,
+                        type: RDStore.UPDATE_TYPE_CHANGED_TITLE,
+                        updatePackageInfo: updatePackageInfo,
+                        kbartProperty: null,
+                        tippProperty: null,
+                        oldValue: null,
+                        newValue: null
+                ).save()*/
+        }
 
         result.tippsWithCoverage = tippsWithCoverage
         result.updatePackageInfo = updatePackageInfo
