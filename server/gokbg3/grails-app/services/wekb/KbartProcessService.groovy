@@ -33,8 +33,8 @@ class KbartProcessService {
     CleanupService cleanupService
     SessionFactory sessionFactory
 
-    void kbartImportManuel(Package pkg, File tsvFile){
-        log.info("Beginn kbartImportManuel ${pkg.name}")
+    void kbartImportManual(Package pkg, File tsvFile){
+        log.info("Beginn kbartImportManual ${pkg.name}")
         List kbartRows = []
         String lastUpdateURL = ""
         Date startTime = new Date()
@@ -61,7 +61,7 @@ class KbartProcessService {
             }
 
         } catch (Exception exception) {
-            log.error("Error by kbartImportManuel: ${exception.message}" + exception.printStackTrace())
+            log.error("Error by kbartImportManual: ${exception.message}" + exception.printStackTrace())
             UpdatePackageInfo.withTransaction {
                 UpdatePackageInfo updatePackageFail = new UpdatePackageInfo()
                 updatePackageFail.description = "An error occurred while processing the kbart file. More information can be seen in the system log."
@@ -74,7 +74,7 @@ class KbartProcessService {
                 updatePackageFail.save()
             }
         }
-        log.info("End kbartImportManuel ${pkg.name}")
+        log.info("End kbartImportManual ${pkg.name}")
     }
 
     UpdatePackageInfo kbartImportProcess(List kbartRows, Package pkg, String lastUpdateURL, UpdatePackageInfo updatePackageInfo, Boolean onlyRowsWithLastChanged) {

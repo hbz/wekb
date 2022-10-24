@@ -33,10 +33,10 @@
             </semui:tabsItemWithoutLink>
         </g:if>
 
-        <g:set var="countManuelUpdateInfos" value="${d.getCountManuelUpdateTippInfos()}"/>
-        <g:if test="${countManuelUpdateInfos > 0}">
-            <semui:tabsItemWithoutLink tab="manuelUpdatePackageInfos" activeTab="${params.activeTab}" counts="${countManuelUpdateInfos}">
-                Manuel Update Infos
+        <g:set var="countManualUpdateInfos" value="${d.getCountManualUpdateTippInfos()}"/>
+        <g:if test="${countManualUpdateInfos > 0}">
+            <semui:tabsItemWithoutLink tab="manualUpdatePackageInfos" activeTab="${params.activeTab}" counts="${countManualUpdateInfos}">
+                Manual Update Infos
             </semui:tabsItemWithoutLink>
         </g:if>
 

@@ -96,7 +96,7 @@
 
         <div class="ui buttons">
 
-            <g:if test="${(d.source && (d.source.lastUpdateUrl || d.source.url)) || d.getLastSuccessfulManuelUpdateInfo()}">
+            <g:if test="${(d.source && (d.source.lastUpdateUrl || d.source.url)) || d.getLastSuccessfulManualUpdateInfo()}">
                 <g:link controller="public" action="kbart" class="ui inverted button"
                         id="${params.id}">KBart File</g:link> &nbsp;
                 <div class="or"></div>

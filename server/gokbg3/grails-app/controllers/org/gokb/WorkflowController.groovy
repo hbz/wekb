@@ -33,7 +33,7 @@ class WorkflowController{
   def actionConfig = [
       'deleteIdentifierNamespace'        : [actionType: 'process', method: 'deleteIdentifierNamespace'],
 
-      'manuelKbartImport'  : [actionType: 'redirectToView', view: 'kbartImport', controller: 'package'],
+      'manualKbartImport'  : [actionType: 'redirectToView', view: 'kbartImport', controller: 'package'],
 
       'method::deleteSoft'     : [actionType: 'simple'],
       'method::retire'         : [actionType: 'simple'],

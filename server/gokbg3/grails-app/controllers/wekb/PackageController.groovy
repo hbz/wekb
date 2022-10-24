@@ -210,7 +210,7 @@ class PackageController {
                                 executorService.execute({
                                     Package aPackage = Package.get(pkg.id)
                                     Thread.currentThread().setName('kbartImport' + pkg.id)
-                                    kbartProcessService.kbartImportManuel(aPackage, file)
+                                    kbartProcessService.kbartImportManual(aPackage, file)
                                 })
 
                                 flash.success = "The package update for Package '${pkg.name}' was started. This runs in the background. When the update has gone through, you will see this on the Update Info of the package tab."

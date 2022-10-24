@@ -383,7 +383,7 @@ class Package extends KBComponent {
   @Transient
   def availableActions() {
     [
-      [code: 'manuelKbartImport', label: 'Manuel Kbart Import'],
+      [code: 'manualKbartImport', label: 'Manual Kbart Import'],
 
       [code: 'method::currentWithTipps', label: 'Mark the package as current (with all Titles)'],
       [code: 'method::deleteSoft', label: 'Mark the package as deleted (with all Titles)', perm: 'delete'],
@@ -629,13 +629,13 @@ class Package extends KBComponent {
   }
 
   @Transient
-  public getCountManuelUpdateInfos() {
+  public getCountManualUpdateInfos() {
     int result = UpdatePackageInfo.executeQuery("select count(id) from UpdatePackageInfo where pkg = :pkg and automaticUpdate = false", [pkg: this])[0]
     result
   }
 
     @Transient
-    public getLastSuccessfulManuelUpdateInfo() {
+    public getLastSuccessfulManualUpdateInfo() {
         UpdatePackageInfo updatePackageInfo = UpdatePackageInfo.executeQuery("from UpdatePackageInfo where pkg = :pkg and status = :status and automaticUpdate = false" +
                 " order by lastUpdated desc", [pkg: this, status: RDStore.UPDATE_STATUS_SUCCESSFUL], [max: 1, offset: 0])[0]
         updatePackageInfo

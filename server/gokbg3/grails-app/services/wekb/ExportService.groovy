@@ -333,7 +333,7 @@ class ExportService {
                 outputStream << file.bytes
             }
             outputStream.close()
-        }else if(pkg.getLastSuccessfulManuelUpdateInfo()){
+        }else if(pkg.getLastSuccessfulManualUpdateInfo()){
             def output
 
             try {

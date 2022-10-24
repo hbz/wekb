@@ -426,7 +426,7 @@ class TitleInstancePackagePlatform extends KBComponent {
     }
 
     @Transient
-    public getCountManuelUpdateTippInfos() {
+    public getCountManualUpdateTippInfos() {
         int result = UpdateTippInfo.executeQuery("select count(id) from UpdateTippInfo where tipp = :tipp and updatePackageInfo.automaticUpdate = false", [tipp: this])[0]
         result
     }
