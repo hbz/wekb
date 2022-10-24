@@ -1,4 +1,4 @@
-<%@ page import="de.wekb.helper.RCConstants" %>
+<%@ page import="de.wekb.helper.RCConstants; de.wekb.helper.RDStore;" %>
 <dl>
     <dt class="control-label">
         Name
