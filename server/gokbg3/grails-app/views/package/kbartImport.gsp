@@ -74,17 +74,34 @@
         </div>
     </div>
 
+    <g:set var="lastSuccessfulUpdateInfo" value="${pkg.getLastSuccessfulUpdateInfo()}"/>
+
     <div class="ui segment">
         <h3 class="ui header">Kbart Import File</h3>
 
         <div class="content">
             <g:uploadForm class="ui form" action="processKbartImport" method="post" id="${pkg.id}">
+                    <div class="field">
+                        <div class="ui checkbox">
+                            <input type="checkbox" name="onlyRowsWithLastChanged">
+                            <label>Only update titles where the <b>last changed in kbart</b> after the last changed from the last update. Last changed is current
+                            <g:if test="${lastSuccessfulUpdateInfo && lastSuccessfulUpdateInfo.lastChangedInKbart}">
+                                on <b><g:formatDate format="${message(code: 'default.date.format.notime')}"
+                                                    date="${lastSuccessfulUpdateInfo.lastChangedInKbart}"/></b>
+                            </g:if><g:else>
+                                <b>empty</b>
+                            </g:else>.
+                            </label>
+                        </div>
+                    </div>
+
                 <div class="fields">
                     <div class="field">
                         <input type="file" class="ui button" name="tsvFile" accept=".tsv, .txt"/>
                     </div>
-                    <button class="ui black button" type="submit">Process Kbart Import</button>
                 </div>
+
+                <button class="ui black button" type="submit">Process Kbart Import</button>
             </g:uploadForm>
         </div>
     </div>

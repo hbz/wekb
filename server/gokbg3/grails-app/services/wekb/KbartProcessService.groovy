@@ -33,12 +33,12 @@ class KbartProcessService {
     CleanupService cleanupService
     SessionFactory sessionFactory
 
-    void kbartImportManual(Package pkg, File tsvFile){
+    void kbartImportManual(Package pkg, File tsvFile, Boolean onlyRowsWithLastChanged){
         log.info("Beginn kbartImportManual ${pkg.name}")
         List kbartRows = []
         String lastUpdateURL = ""
         Date startTime = new Date()
-        UpdatePackageInfo updatePackageInfo = new UpdatePackageInfo(pkg: pkg, startTime: startTime, status: RDStore.UPDATE_STATUS_SUCCESSFUL, description: "Starting Update package.", onlyRowsWithLastChanged: false, automaticUpdate: false)
+        UpdatePackageInfo updatePackageInfo = new UpdatePackageInfo(pkg: pkg, startTime: startTime, status: RDStore.UPDATE_STATUS_SUCCESSFUL, description: "Starting Update package.", onlyRowsWithLastChanged: onlyRowsWithLastChanged, automaticUpdate: false)
         try {
             kbartRows = kbartProcess(tsvFile, lastUpdateURL, updatePackageInfo)
 
@@ -57,7 +57,7 @@ class KbartProcessService {
                 Path target = new File("${fPathTarget}/${packageName}").toPath()
                 Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING)
 
-                updatePackageInfo = kbartImportProcess(kbartRows, pkg, lastUpdateURL, updatePackageInfo, false)
+                updatePackageInfo = kbartImportProcess(kbartRows, pkg, lastUpdateURL, updatePackageInfo, onlyRowsWithLastChanged)
             }
 
         } catch (Exception exception) {
@@ -69,7 +69,7 @@ class KbartProcessService {
                 updatePackageFail.startTime = startTime
                 updatePackageFail.endTime = new Date()
                 updatePackageFail.pkg = pkg
-                updatePackageFail.onlyRowsWithLastChanged = false
+                updatePackageFail.onlyRowsWithLastChanged = onlyRowsWithLastChanged
                 updatePackageFail.automaticUpdate = false
                 updatePackageFail.save()
             }
@@ -193,6 +193,7 @@ class KbartProcessService {
             }
 
             int max = 500
+            String kbartImportProcessInfo = onlyRowsWithLastChanged ? "${kbartRows.size()} (Total: $kbartRowsCount)" : "$kbartRowsCount"
             TitleInstancePackagePlatform.withSession { Session sess ->
                 for (int offset = 0; offset < kbartRows.size(); offset += max) {
 
@@ -200,7 +201,7 @@ class KbartProcessService {
                     for (def kbartRow : kbartRowsToProcess) {
                         idx++
                         def currentTippError = [index: idx]
-                        log.info("kbartImportProcess (#$idx of $kbartRowsCount): title ${kbartRow.publication_title}")
+                        log.info("kbartImportProcess (#$idx of $kbartImportProcessInfo): title ${kbartRow.publication_title}")
                         if (!invalidKbartRowsForTipps.contains(kbartRow.rowIndex)) {
 
                             kbartRow.pkg = pkg
@@ -803,7 +804,8 @@ class KbartProcessService {
                                     if (cols[entry.value] && !cols[entry.value].isEmpty()) {
                                         rowMap."${entry.key}" = cols[entry.value].replace("\r", "")
                                     }
-                                    rowMap."${entry.key}" = rowMap."${entry.key}" ? rowMap."${entry.key}".replaceAll(/\"/, "") : rowMap."${entry.key}"
+                                    // With rowMap."${entry.key}".replaceAll(/\"/, "") come not in titles with  "A" Force
+                                    //rowMap."${entry.key}" = rowMap."${entry.key}" ? rowMap."${entry.key}".replaceAll(/\"/, "") : rowMap."${entry.key}"
                                     rowMap."${entry.key}" = rowMap."${entry.key}" ? rowMap."${entry.key}".replaceAll("\\x00", "") : rowMap."${entry.key}"
                                 }
                                 rowMap.rowIndex = r

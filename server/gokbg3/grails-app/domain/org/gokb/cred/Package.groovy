@@ -640,4 +640,11 @@ class Package extends KBComponent {
         updatePackageInfo
     }
 
+  @Transient
+  public getLastSuccessfulUpdateInfo() {
+    UpdatePackageInfo updatePackageInfo = UpdatePackageInfo.executeQuery("from UpdatePackageInfo where pkg = :pkg and status = :status" +
+            " order by lastUpdated desc", [pkg: this, status: RDStore.UPDATE_STATUS_SUCCESSFUL], [max: 1, offset: 0])[0]
+    updatePackageInfo
+  }
+
 }

@@ -167,7 +167,7 @@ class PackageController {
         def result = ['params': params]
 
         Package pkg = Package.get(params.int('id'))
-
+        Boolean onlyRowsWithLastChanged = params.onlyRowsWithLastChanged ? true : false
         if (pkg) {
             params.curationOverride = SpringSecurityUtils.ifAnyGranted("ROLE_ADMIN") ? 'true' : null
             result.editable = accessService.checkEditableObject(pkg, params)
@@ -210,7 +210,7 @@ class PackageController {
                                 executorService.execute({
                                     Package aPackage = Package.get(pkg.id)
                                     Thread.currentThread().setName('kbartImport' + pkg.id)
-                                    kbartProcessService.kbartImportManual(aPackage, file)
+                                    kbartProcessService.kbartImportManual(aPackage, file, onlyRowsWithLastChanged)
                                 })
 
                                 flash.success = "The package update for Package '${pkg.name}' was started. This runs in the background. When the update has gone through, you will see this on the Update Info of the package tab."
