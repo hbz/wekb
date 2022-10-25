@@ -31,7 +31,7 @@
 <dl>
     <dt class="control-label">Last Update Comment</dt>
     <dd><semui:xEditable owner="${d}" field="lastUpdateComment"/>
-        <g:if test="${d.getCountManualUpdateInfos() > 0 || d.getCountAutoUpdateInfos() > 0}">
+        <g:if test="${controllerName != 'create' && (d.getCountManualUpdateInfos() > 0 || d.getCountAutoUpdateInfos() > 0)}">
             <br>
             <br>
             <g:link class="ui mini black button" id="${d.id}" controller="package" action="packageChangeHistory">Change History</g:link>
@@ -183,7 +183,7 @@
 </g:if>
 
 
-<g:if test="${editable}">
+<g:if test="${editable && controllerName != 'create'}">
     <semui:modal id="paaModal" title="Add Archiving Agency">
 
         <g:form controller="ajaxSupport" action="addToCollection" class="ui form">
