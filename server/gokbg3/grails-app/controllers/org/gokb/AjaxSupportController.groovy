@@ -1057,7 +1057,7 @@ class AjaxSupportController {
                 ident.setReference(owner)
                 boolean success = ident.save(flush: true) //needed to trigger afterInsert(); temp solution
                 if (success){
-                  flash.message = message(code:'identifier.create.success')
+                  flash.success = message(code:'identifier.create.success')
                 } else {
                   flash.error = message(code:'identifier.create.fail')
                 }
@@ -1081,7 +1081,13 @@ class AjaxSupportController {
 
     withFormat {
       html {
-        redirect(url: (request.getHeader('referer')+params.hash?:''))
+        if(params.hash){
+          redirect(url: (request.getHeader('referer')+params.hash))
+        }else if(params.activeTab){
+          redirect(url: (request.getHeader('referer')+'?activeTab='+params.activeTab))
+        }else {
+          redirect(url: (request.getHeader('referer')))
+        }
       }
       json {
         if (flash.error) {

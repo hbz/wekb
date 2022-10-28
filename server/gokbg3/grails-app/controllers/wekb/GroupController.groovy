@@ -1,13 +1,12 @@
-package org.gokb
+package wekb
 
 import de.wekb.helper.RCConstants
 import de.wekb.helper.RDStore
 import gokbg3.DateFormatService
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.annotation.Secured
 
-import org.gokb.cred.*
-import wekb.ExportService
-import wekb.SearchService
+import org.gokb.cred.Package
+
 
 @Secured(['IS_AUTHENTICATED_FULLY'])
 class GroupController {
@@ -16,6 +15,8 @@ class GroupController {
     SearchService searchService
     DateFormatService dateFormatService
     ExportService exportService
+    AccessService accessService
+    ManagementService managementService
 
     @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
     def index() {
@@ -250,6 +251,38 @@ class GroupController {
         result.pkgs = pkgs
 
         result
+    }
+
+    @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+    def myPackageManagement() {
+        def searchResult = [:]
+
+        searchResult = getResultGenerics()
+
+        if(!searchResult.groups){
+            flash.error = "You are not assigned to any curatory group to view this area!"
+            redirect(controller: 'public', action: 'index')
+            return
+        }
+
+
+        if(params.processOption){
+            managementService.processPackageManagement(params)
+        }
+
+        params.qbe = 'g:packages'
+        params.qp_curgroups = searchResult.groups.id
+        params.hide = ['qp_curgroup', 'qp_curgroups']
+
+        searchResult = searchService.search(searchResult.user, searchResult, params, response.format)
+
+        searchResult.result.editable = accessService.checkReadable(searchResult.result.qbetemplate.baseclass)
+
+        searchResult.result.packageGeneralInfosBatchForm = managementService.packageGeneralInfosBatchForm
+
+        searchResult.result.packageSourceInfosBatchForm = managementService.packageSourceInfosBatchForm
+
+        searchResult.result
     }
 
 }
