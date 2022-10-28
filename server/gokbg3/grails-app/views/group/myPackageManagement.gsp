@@ -31,9 +31,9 @@
         <semui:tabsItemWithoutLink tab="generalInfos" defaultTab="generalInfos" activeTab="${params.activeTab}">
             General Informations
         </semui:tabsItemWithoutLink>
-        <semui:tabsItemWithoutLink tab="rangeInfos" activeTab="${params.activeTab}">
+       %{-- <semui:tabsItemWithoutLink tab="rangeInfos" activeTab="${params.activeTab}">
             Range Informations
-        </semui:tabsItemWithoutLink>
+        </semui:tabsItemWithoutLink>--}%
         <semui:tabsItemWithoutLink tab="archivingAgencyInfos" activeTab="${params.activeTab}">
             Archiving Agency Informations
         </semui:tabsItemWithoutLink>
@@ -53,10 +53,10 @@
     <semui:tabsItemContent tab="generalInfos" activeTab="${params.activeTab}">
         <g:render template="management/package/generalInfos"/>
     </semui:tabsItemContent>
-
+%{--
     <semui:tabsItemContent tab="rangeInfos" activeTab="${params.activeTab}">
         <g:render template="management/package/rangeInfos"/>
-    </semui:tabsItemContent>
+    </semui:tabsItemContent>--}%
 
     <semui:tabsItemContent tab="archivingAgencyInfos" activeTab="${params.activeTab}">
         <g:render template="management/package/archivingAgencyInfos"/>
