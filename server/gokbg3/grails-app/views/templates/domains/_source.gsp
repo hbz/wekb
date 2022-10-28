@@ -126,7 +126,13 @@
         Last Run
     </dt>
     <dd>
-        <semui:xEditable owner="${d}" type="date" field="lastRun" overwriteEditable="false">${d.lastRun}</semui:xEditable>
+        <sec:ifAnyGranted roles="ROLE_SUPERUSER">
+            <semui:xEditable owner="${d}" type="date" field="lastRun">${d.lastRun}</semui:xEditable>
+        </sec:ifAnyGranted>
+        <sec:ifNotGranted roles="ROLE_SUPERUSER">
+            <semui:xEditable owner="${d}" type="date" field="lastRun" overwriteEditable="false">${d.lastRun}</semui:xEditable>
+        </sec:ifNotGranted>
+
     </dd>
 </dl>
 <dl>

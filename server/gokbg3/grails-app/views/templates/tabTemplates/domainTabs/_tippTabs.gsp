@@ -28,7 +28,7 @@
         </semui:tabsItemWithoutLink>
 
         <g:if test="${d.pkg && d.pkg.source && d.pkg.source.url}">
-            <semui:tabsItemWithoutLink tab="updatePackageInfos" activeTab="${params.activeTab}" counts="${d.getCountAutoUpdateTippInfos()}">
+            <semui:tabsItemWithoutLink tab="autoUpdatePackageInfos" activeTab="${params.activeTab}" counts="${d.getCountAutoUpdateTippInfos()}">
                 Auto Update Infos
             </semui:tabsItemWithoutLink>
         </g:if>
@@ -61,12 +61,26 @@
     <g:render template="/templates/tabTemplates/pricesTab" model="${[d: d]}"/>
 
     <g:if test="${d.pkg && d.pkg.source && d.pkg.source.url}">
-        <semui:tabsItemContent tab="updatePackageInfos" activeTab="${params.activeTab}">
+        <semui:tabsItemContent tab="autoUpdatePackageInfos" activeTab="${params.activeTab}">
 
             <div class="content">
 
                 <g:link class="display-inline" controller="search" action="inlineSearch"
                         params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:updateTippInfos', qp_tipp_id: d.id, inline: true, refOid: d.getLogEntityId(), qp_automaticUpdate: RDStore.YN_YES.class.name+':'+RDStore.YN_YES.id]"
+                        id="">Package Update Infos on this Source</g:link>
+
+            </div>
+
+        </semui:tabsItemContent>
+    </g:if>
+
+    <g:if test="${countManualUpdateInfos > 0}">
+        <semui:tabsItemContent tab="manualUpdatePackageInfos" activeTab="${params.activeTab}">
+
+            <div class="content">
+
+                <g:link class="display-inline" controller="search" action="inlineSearch"
+                        params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:updateTippInfos', qp_tipp_id: d.id, inline: true, refOid: d.getLogEntityId(), qp_automaticUpdate: RDStore.YN_NO.class.name+':'+RDStore.YN_NO.id]"
                         id="">Package Update Infos on this Source</g:link>
 
             </div>
