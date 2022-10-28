@@ -21,11 +21,14 @@
     <g:set var="counter" value="${offset}"/>
 
     <g:render template="/search/pagination" model="${params}"/>
+    <div style="overflow-x: auto">
     <table class="ui selectable striped sortable celled table">
         <thead>
         <tr>
             <th>#</th>
             <semui:sortableColumn property="status.value" title="Status"
+                                  params="${params}"/>
+            <semui:sortableColumn property="automaticUpdate" title="Automatic Update"
                                   params="${params}"/>
             <semui:sortableColumn property="startTime" title="Start Time"
                                   params="${params}"/>
@@ -51,6 +54,7 @@
                                   params="${params}"/>
             <semui:sortableColumn property="kbartHasWekbFields" title="Kbart Wekb Fields"
                                   params="${params}"/>
+            <th>Last Changed in Kbart</th>
         </tr>
         </thead>
         <tbody>
@@ -63,6 +67,16 @@
                         <g:link controller="resource" action="show" id="${row_obj.class.name}:${row_obj.id}">
                             ${row_obj.status.value}
                         </g:link>
+                    </td>
+                    <td>
+                        <g:if test="${row_obj.automaticUpdate}">
+                            <i class="check green circle icon"
+                               title="${message(code: 'default.boolean.true')}"></i>
+                        </g:if>
+                        <g:else>
+                            <i class="times red circle icon"
+                               title="${message(code: 'default.boolean.false')}"></i>
+                        </g:else>
                     </td>
                     <td><g:if test="${row_obj.startTime}">
                         <g:formatDate format="${message(code: 'default.date.format.noZWihoutSS')}"
@@ -96,25 +110,25 @@
                     </td>
                     <td>
                         <g:link controller="search" action="componentSearch" id=""
-                                params="[qbe: 'g:autoUpdateTippInfos', qp_aup_id: row_obj.id, qp_type: RefdataValue.class.name+':'+RDStore.AUTO_UPDATE_TYPE_CHANGED_TITLE.id]">
+                                params="[qbe: 'g:updateTippInfos', qp_aup_id: row_obj.id, qp_type: RefdataValue.class.name+':'+RDStore.UPDATE_TYPE_CHANGED_TITLE.id]">
                             <g:formatNumber number="${row_obj.countChangedTipps}" type="number"/>
                         </g:link>
                     </td>
                     <td>
                         <g:link controller="search" action="componentSearch" id=""
-                                params="[qbe: 'g:autoUpdateTippInfos', qp_aup_id: row_obj.id, qp_type: RefdataValue.class.name+':'+RDStore.AUTO_UPDATE_TYPE_REMOVED_TITLE.id]">
+                                params="[qbe: 'g:updateTippInfos', qp_aup_id: row_obj.id, qp_type: RefdataValue.class.name+':'+RDStore.UPDATE_TYPE_REMOVED_TITLE.id]">
                             <g:formatNumber number="${row_obj.countRemovedTipps}" type="number"/>
                         </g:link>
                     </td>
                     <td>
                         <g:link controller="search" action="componentSearch" id=""
-                                params="[qbe: 'g:autoUpdateTippInfos', qp_aup_id: row_obj.id, qp_type: RefdataValue.class.name+':'+RDStore.AUTO_UPDATE_TYPE_NEW_TITLE.id]">
+                                params="[qbe: 'g:updateTippInfos', qp_aup_id: row_obj.id, qp_type: RefdataValue.class.name+':'+RDStore.UPDATE_TYPE_NEW_TITLE.id]">
                             <g:formatNumber number="${row_obj.countNewTipps}" type="number"/>
                         </g:link>
                     </td>
                     <td>
                         <g:link controller="search" action="componentSearch" id=""
-                                params="[qbe: 'g:autoUpdateTippInfos', qp_aup_id: row_obj.id, qp_type: RefdataValue.class.name+':'+RDStore.AUTO_UPDATE_TYPE_FAILED_TITLE.id]">
+                                params="[qbe: 'g:updateTippInfos', qp_aup_id: row_obj.id, qp_type: RefdataValue.class.name+':'+RDStore.UPDATE_TYPE_FAILED_TITLE.id]">
                             <g:formatNumber number="${row_obj.countInValidTipps}" type="number"/>
                         </g:link>
                     </td>
@@ -128,6 +142,10 @@
                                title="${message(code: 'default.boolean.false')}"></i>
                         </g:else>
                     </td>
+                    <td><g:if test="${row_obj.lastChangedInKbart}">
+                        <g:formatDate format="${message(code: 'default.date.format.noZWihoutSS')}"
+                                      date="${row_obj.lastChangedInKbart}"/>
+                    </g:if></td>
                 </tr>
             </g:if>
             <g:else>
@@ -138,6 +156,7 @@
         </g:each>
         </tbody>
     </table>
+    </div>
     <g:render template="/search/pagination" model="${params}"/>
 </g:if>
 <g:elseif test="${!init && !params.inline}">

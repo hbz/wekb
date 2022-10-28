@@ -13,8 +13,6 @@ class GlobalSearchTemplatesService {
     def init() {
         globalSearchTemplates.put('additionalPropertyDefinitions', additionalPropertyDefinitions())
         globalSearchTemplates.put('allocatedReviewGroups', allocatedReviewGroups())
-        globalSearchTemplates.put('autoUpdatePackageInfos', autoUpdatePackageInfos())
-        globalSearchTemplates.put('autoUpdateTippInfos', autoUpdateTippInfos())
         globalSearchTemplates.put('components', components())
         globalSearchTemplates.put('curatoryGroups', curatoryGroups())
         globalSearchTemplates.put('identifiers', identifiers())
@@ -31,6 +29,8 @@ class GlobalSearchTemplatesService {
         globalSearchTemplates.put('sources', sources())
         globalSearchTemplates.put('tipps', tipps())
         globalSearchTemplates.put('tippsOfPkg', tippsOfPkg())
+        globalSearchTemplates.put('updatePackageInfos', updatePackageInfos())
+        globalSearchTemplates.put('updateTippInfos', updateTippInfos())
         globalSearchTemplates.put('userOrganisation', userOrganisations())
         globalSearchTemplates.put('users', users())
         globalSearchTemplates.put('userJobs', userJobs())
@@ -136,10 +136,10 @@ class GlobalSearchTemplatesService {
         result
     }
 
-    Map autoUpdatePackageInfos() {
+    Map updatePackageInfos() {
         Map result = [
-                baseclass: 'wekb.AutoUpdatePackageInfo',
-                title    : 'Auto Update Infos',
+                baseclass: 'wekb.UpdatePackageInfo',
+                title    : 'Package Update Infos',
                 group    : 'Secondary',
                 defaultSort : 'startTime',
                 defaultOrder: 'desc',
@@ -174,11 +174,22 @@ class GlobalSearchTemplatesService {
                                 [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : RCConstants.AUTO_UPDATE_STATUS,
+                                        filter1    : RCConstants.UPDATE_STATUS,
                                         prompt     : 'Status',
                                         qparam     : 'qp_status',
                                         placeholder: 'Type',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'status'],
+                                ],
+
+                                [
+                                        type       : 'lookup',
+                                        baseClass  : 'org.gokb.cred.RefdataValue',
+                                        filter1    : RCConstants.YN,
+                                        prompt     : 'Automatic Update',
+                                        qparam     : 'qp_automaticUpdate',
+                                        placeholder: 'Automatic Update',
+                                        propType   : 'Boolean',
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'automaticUpdate'],
                                 ],
                         ],
                         qbeGlobals: [
@@ -187,6 +198,7 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Description', property: 'description', link: true],
                                 [heading: 'Package', property: 'pkg.name', link: true],
                                 [heading: 'Status', property: 'status', sort: 'status.value'],
+                                [heading: 'Automatic Update', property: 'automaticUpdate', sort: 'automaticUpdate'],
                                 [heading: 'Start Time', property: 'startTime', sort: 'startTime'],
                                 [heading: 'End Time', property: 'endTime', sort: 'endTime'],
                                 [heading: 'Only Last Changed Update', property: 'onlyRowsWithLastChanged', sort: 'onlyRowsWithLastChanged'],
@@ -194,10 +206,10 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Titles in we:kb after update', property: 'countNowTippsInWekb', sort: 'countNowTippsInWekb'],
                                 [heading: 'Rows in KBART-File', property: 'countKbartRows', sort: 'countKbartRows'],
                                 [heading: 'Processed KBART Rows', property: 'countProcessedKbartRows', sort: 'countProcessedKbartRows'],
-                                [heading: 'Changed Titles ', property: 'countChangedTipps', sort: 'countChangedTipps', jumpToLink: '/search/componentSearch/wekb.AutoUpdatePackageInfo:objectID?qbe=g:autoUpdateTippInfos&qp_aup_id=objectID&&qp_type_value=Changed Title'],
-                                [heading: 'Removed Titles ', property: 'countRemovedTipps', sort: 'countRemovedTipps', jumpToLink: '/search/componentSearch/wekb.AutoUpdatePackageInfo:objectID?qbe=g:autoUpdateTippInfos&qp_aup_id=objectID&&qp_type_value=Removed Title'],
-                                [heading: 'New Titles', property: 'countNewTipps', sort: 'countNewTipps', jumpToLink: '/search/componentSearch/wekb.AutoUpdatePackageInfo:objectID?qbe=g:autoUpdateTippInfos&qp_aup_id=objectID&&qp_type_value=New Title'],
-                                [heading: 'Invalid Titles', property: 'countInValidTipps', sort: 'countInValidTipps', jumpToLink: '/search/componentSearch/wekb.AutoUpdatePackageInfo:objectID?qbe=g:autoUpdateTippInfos&qp_aup_id=objectID&&qp_type_value=Failed Title'],
+                                [heading: 'Changed Titles ', property: 'countChangedTipps', sort: 'countChangedTipps', jumpToLink: '/search/componentSearch/wekb.UpdatePackageInfo:objectID?qbe=g:updateTippInfos&qp_aup_id=objectID&&qp_type_value=Changed Title'],
+                                [heading: 'Removed Titles ', property: 'countRemovedTipps', sort: 'countRemovedTipps', jumpToLink: '/search/componentSearch/wekb.UpdatePackageInfo:objectID?qbe=g:updateTippInfos&qp_aup_id=objectID&&qp_type_value=Removed Title'],
+                                [heading: 'New Titles', property: 'countNewTipps', sort: 'countNewTipps', jumpToLink: '/search/componentSearch/wekb.UpdatePackageInfo:objectID?qbe=g:updateTippInfos&qp_aup_id=objectID&&qp_type_value=New Title'],
+                                [heading: 'Invalid Titles', property: 'countInValidTipps', sort: 'countInValidTipps', jumpToLink: '/search/componentSearch/wekb.UpdatePackageInfo:objectID?qbe=g:updateTippInfos&qp_aup_id=objectID&&qp_type_value=Failed Title'],
 
                         ]
                 ]
@@ -205,10 +217,10 @@ class GlobalSearchTemplatesService {
         result
     }
 
-    Map autoUpdateTippInfos() {
+    Map updateTippInfos() {
         Map result = [
-                baseclass: 'wekb.AutoUpdateTippInfo',
-                title    : 'Auto Update Title Infos',
+                baseclass: 'wekb.UpdateTippInfo',
+                title    : 'Title Update Infos',
                 group    : 'Secondary',
                 defaultSort : 'startTime',
                 defaultOrder: 'desc',
@@ -216,7 +228,7 @@ class GlobalSearchTemplatesService {
                         qbeForm   : [
                                 [
                                         qparam     : 'qp_aup_id',
-                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'autoUpdatePackageInfo.id', 'type': 'java.lang.Long'],
+                                        contextTree: ['ctxtp': 'qry', 'comparator': 'eq', 'prop': 'updatePackageInfo.id', 'type': 'java.lang.Long'],
                                         hide       : true
                                 ],
                                 [
@@ -245,7 +257,7 @@ class GlobalSearchTemplatesService {
                                 [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : RCConstants.AUTO_UPDATE_TYPE,
+                                        filter1    : RCConstants.UPDATE_TYPE,
                                         prompt     : 'Type',
                                         qparam     : 'qp_type',
                                         placeholder: 'Type',
@@ -254,7 +266,7 @@ class GlobalSearchTemplatesService {
                                 [
                                         type       : 'lookup',
                                         baseClass  : 'org.gokb.cred.RefdataValue',
-                                        filter1    : RCConstants.AUTO_UPDATE_STATUS,
+                                        filter1    : RCConstants.UPDATE_STATUS,
                                         prompt     : 'Status',
                                         qparam     : 'qp_status',
                                         placeholder: 'Type',

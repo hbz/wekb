@@ -5,6 +5,7 @@ import de.wekb.helper.RCConstants
 import de.wekb.helper.RDStore
 import gokbg3.DateFormatService
 import grails.gorm.transactions.Transactional
+import grails.util.Holders
 import org.apache.commons.io.FileUtils
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Row
@@ -323,7 +324,7 @@ class ExportService {
 
     public void exportOriginalKBART(def outputStream, Package pkg) {
 
-        if((pkg.source.lastUpdateUrl || pkg.source.url)){
+        if(pkg.source && (pkg.source.lastUpdateUrl || pkg.source.url)){
             if((UrlToolkit.containsDateStamp(pkg.source.url) || UrlToolkit.containsDateStampPlaceholder(pkg.source.url)) && pkg.source.lastUpdateUrl){
                 File file = kbartFromUrl(pkg.source.lastUpdateUrl)
                 outputStream << file.bytes
@@ -331,7 +332,25 @@ class ExportService {
                 File file = kbartFromUrl(pkg.source.url)
                 outputStream << file.bytes
             }
-        }else {
+            outputStream.close()
+        }else if(pkg.getLastSuccessfulManualUpdateInfo()){
+            def output
+
+            try {
+                String fPath = "${Holders.grailsApplication.config.kbartImportStorageLocation.toString()}" ?: '/tmp/wekb/kbartImport'
+
+                String packageName = "${pkg.name.toLowerCase().replaceAll("\\s", '_')}_${pkg.id}"
+                File file = new File("${fPath}/${packageName}")
+                output = file.getBytes()
+
+            } catch(Exception e) {
+                log.error(e)
+            }
+
+            outputStream << output
+            outputStream.close()
+        }
+        else {
 
             outputStream.withWriter { writer ->
 
@@ -416,7 +435,7 @@ class ExportService {
     def exportPackageBatchImportTemplate(def outputStream) {
 
         List titles = ["package_uuid", "package_name", "provider_uuid", "nominal_platform_uuid", "description", "url", "breakable", "content_type",
-                              "file", "open_access", "payment_type", "scope", "national_range", "regional_range", "anbieter_produkt_id", "ddc", "source_url", "frequency", "title_id_namespace", "automated_updates", "archiving_agency", "open_access_of_archiving_agency", "post_cancellation_access_of_archiving_agency"]
+                              "file", "open_access", "payment_type", "scope", "national_range", "regional_range", "provider_product_id", "ddc", "source_url", "frequency", "title_id_namespace", "automated_updates", "archiving_agency", "open_access_of_archiving_agency", "post_cancellation_access_of_archiving_agency"]
 
 
         XSSFWorkbook workbook = new XSSFWorkbook()
@@ -793,7 +812,7 @@ class ExportService {
         def export_date = dateFormatService.formatDate(new Date())
         List<String> titleHeaders = ["package_uuid", "package_name", "provider_name", "provider_uuid", "nominal_platform_name",
                                      "nominal_platform_uuid", "description", "url", "breakable", "content_type",
-                                     "file", "open_access", "payment_type", "scope", "national_range", "regional_range", "anbieter_produkt_id", "ddc",
+                                     "file", "open_access", "payment_type", "scope", "national_range", "regional_range", "provider_product_id", "ddc",
                                      "source_url", "frequency", "title_id_namespace", "automated_updates",
                                      "archiving_agency", "open_access_of_archiving_agency", "post_cancellation_access_of_archiving_agency"]
         Map<String,List> export = [titleRow:titleHeaders,rows:[]]
@@ -821,7 +840,7 @@ class ExportService {
             row.add(sanitize(pkg.scope?.value))
             row.add(sanitize(pkg.nationalRanges?.value.join(',')))
             row.add(sanitize(pkg.regionalRanges?.value.join(',')))
-            row.add(sanitize(pkg.getIdentifierValue('Anbieter_Produkt_Id')))
+            row.add(sanitize(pkg.getAnbieterProduktIDs()))
             row.add(sanitize(pkg.ddcs?.value.join(',')))
             row.add(sanitize(pkg.source?.url))
             row.add(sanitize(pkg.source?.frequency?.value))

@@ -195,7 +195,7 @@
 <sec:ifAnyGranted roles="ROLE_ADMIN">
 <dl>
     <dt class="control-label">
-        Status
+        This information comes from KBART import
     </dt>
     <dd>
         <semui:xEditableBoolean owner="${d}" field="fromKbartImport"/>

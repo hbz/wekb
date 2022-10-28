@@ -1,3 +1,4 @@
+<%@ page import="de.wekb.helper.RDStore;" %>
 <g:if test="${d}">
     <semui:tabs>
 
@@ -27,10 +28,18 @@
         </semui:tabsItemWithoutLink>
 
         <g:if test="${d.pkg && d.pkg.source && d.pkg.source.url}">
-            <semui:tabsItemWithoutLink tab="autoUpdatePackageInfos" activeTab="${params.activeTab}" counts="${d.autoUpdateTippInfos.size()}">
+            <semui:tabsItemWithoutLink tab="updatePackageInfos" activeTab="${params.activeTab}" counts="${d.getCountAutoUpdateTippInfos()}">
                 Auto Update Infos
             </semui:tabsItemWithoutLink>
         </g:if>
+
+        <g:set var="countManualUpdateInfos" value="${d.getCountManualUpdateTippInfos()}"/>
+        <g:if test="${countManualUpdateInfos > 0}">
+            <semui:tabsItemWithoutLink tab="manualUpdatePackageInfos" activeTab="${params.activeTab}" counts="${countManualUpdateInfos}">
+                Manual Update Infos
+            </semui:tabsItemWithoutLink>
+        </g:if>
+
     </semui:tabs>
 
 
@@ -52,13 +61,13 @@
     <g:render template="/templates/tabTemplates/pricesTab" model="${[d: d]}"/>
 
     <g:if test="${d.pkg && d.pkg.source && d.pkg.source.url}">
-        <semui:tabsItemContent tab="autoUpdatePackageInfos" activeTab="${params.activeTab}">
+        <semui:tabsItemContent tab="updatePackageInfos" activeTab="${params.activeTab}">
 
             <div class="content">
 
                 <g:link class="display-inline" controller="search" action="inlineSearch"
-                        params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:autoUpdateTippInfos', qp_tipp_id: d.id, inline: true, refOid: d.getLogEntityId()]"
-                        id="">Auto Update Package Info on this Source</g:link>
+                        params="[s_controllerName: controllerName, s_actionName: actionName, objectUUID: params.id, max: params.max, offset: params.offset, sort: params.sort, order: params.order, qbe: 'g:updateTippInfos', qp_tipp_id: d.id, inline: true, refOid: d.getLogEntityId(), qp_automaticUpdate: RDStore.YN_YES.class.name+':'+RDStore.YN_YES.id]"
+                        id="">Package Update Infos on this Source</g:link>
 
             </div>
 

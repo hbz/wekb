@@ -4,9 +4,8 @@ package org.gokb.cred
 import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
 import de.wekb.helper.RDStore
-import wekb.AutoUpdatePackageInfo
 import wekb.PackageArchivingAgency
-import org.gokb.GOKbTextUtils
+import wekb.UpdatePackageInfo
 
 import javax.persistence.Transient
 import groovy.util.logging.*
@@ -77,7 +76,7 @@ class Package extends KBComponent {
           ddcs : RefdataValue,
           paas : PackageArchivingAgency,
           ids: Identifier,
-          autoUpdatePackageInfos: AutoUpdatePackageInfo,
+          updatePackageInfos: UpdatePackageInfo,
           tipps: TitleInstancePackagePlatform
   ]
 
@@ -336,12 +335,8 @@ class Package extends KBComponent {
     // package.
     Date now = new Date()
 
-    if (tipps.size() > 0) {
-      def deleted_status = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
-      def tipp_ids = tipps.collect { it.id }
-
-      TitleInstancePackagePlatform.executeUpdate("update TitleInstancePackagePlatform as t set t.status = :del, t.lastUpdateComment = 'Deleted via Package delete', t.lastUpdated = :now where t.status != :del and t.id IN (:ttd)", [del: deleted_status, ttd: tipp_ids, now: now])
-    }
+    def deleted_status =  RDStore.KBC_STATUS_DELETED
+    TitleInstancePackagePlatform.executeUpdate("update TitleInstancePackagePlatform as t set t.status = :del, t.lastUpdateComment = 'Deleted via Package action delete', t.lastUpdated = :now where t.status != :del and t.pkg = :pkg", [del: deleted_status, pkg: this, now: now])
   }
 
 
@@ -357,12 +352,7 @@ class Package extends KBComponent {
     // package.
     log.debug("Retiring tipps");
     Date now = new Date()
-
-    if (tipps.size() > 0) {
-      def tipp_ids = tipps.collect { it.id }
-
-      TitleInstancePackagePlatform.executeUpdate("update TitleInstancePackagePlatform as t set t.status = :ret, t.lastUpdateComment = 'Retired via Package retire', t.lastUpdated = :now where t.id IN (:ttd)", [ret: retired_status, ttd: tipp_ids, now: now])
-    }
+    TitleInstancePackagePlatform.executeUpdate("update TitleInstancePackagePlatform as t set t.status = :ret, t.lastUpdateComment = 'Retired via Package action retire', t.lastUpdated = :now where t.status != :ret and t.pkg = :pkg", [ret: retired_status, pkg: this, now: now])
   }
 
   public void removeWithTipps(context) {
@@ -375,24 +365,33 @@ class Package extends KBComponent {
     log.debug("removed tipps")
 
     Date now = new Date()
+    TitleInstancePackagePlatform.executeUpdate("update TitleInstancePackagePlatform as t set t.status = :rev, t.lastUpdateComment = 'Removed via Package action remove', t.lastUpdated = :now where t.status != :rev and t.pkg = :pkg", [rev: removedStatus, pkg: this, now: now])
+  }
 
-    if (tipps.size() > 0) {
-      def tipp_ids = tipps.collect { it.id }
+  public void currentWithTipps(context) {
+    log.debug("package::currentWithTipps");
+    log.debug("Updating package status to current");
+    def currentStatus = RDStore.KBC_STATUS_CURRENT
+    this.status = currentStatus
+    this.save()
 
-      TitleInstancePackagePlatform.executeUpdate("update TitleInstancePackagePlatform as t set t.status = :ret, t.lastUpdateComment = 'Removed via Package action removeWithTipps', t.lastUpdated = :now where t.id IN (:ttd)", [ret: removedStatus, ttd: tipp_ids, now: now])
-    }
+    Date now = new Date()
+    TitleInstancePackagePlatform.executeUpdate("update TitleInstancePackagePlatform as t set t.status = :cur, t.lastUpdateComment = 'Current via Package action current', t.lastUpdated = :now where t.status != :cur and t.pkg = :pkg", [cur: currentStatus, pkg: this, now: now])
   }
 
 
   @Transient
   def availableActions() {
     [
-      [code: 'method::deleteSoft', label: 'Delete Package (with associated Titles)', perm: 'delete'],
-      [code: 'method::retire', label: 'Retire Package (with associated Titles)'],
-      [code: 'method::removeWithTipps', label: 'Remove Package (with associated Titles)', perm: 'delete'],
+      [code: 'manualKbartImport', label: 'Manual Kbart Import'],
+
+      [code: 'method::currentWithTipps', label: 'Mark the package as current (with all Titles)'],
+      [code: 'method::deleteSoft', label: 'Mark the package as deleted (with all Titles)', perm: 'delete'],
+      [code: 'method::retire', label: 'Mark the package as retired (with all Titles)'],
+      [code: 'method::removeWithTipps', label: 'Remove the package (with all Titles)', perm: 'delete'],
       /*[code: 'verifyTitleList', label: 'Verify Title List'],*/
       [code: 'packageUrlUpdate', label: 'Trigger Update (Changed Titles)'],
-      [code: 'packageUrlUpdateAllTitles', label: 'Trigger Update (all Titles)']
+      [code: 'packageUrlUpdateAllTitles', label: 'Trigger Update (all Titles)'],
     ]
   }
 
@@ -603,9 +602,49 @@ class Package extends KBComponent {
 
   @Transient
   public getLastSuccessfulAutoUpdateInfo() {
-    AutoUpdatePackageInfo autoUpdatePackageInfo = AutoUpdatePackageInfo.executeQuery("from AutoUpdatePackageInfo where pkg = :pkg and status = :status" +
-            " order by lastUpdated desc", [pkg: this, status: RDStore.AUTO_UPDATE_STATUS_SUCCESSFUL], [max: 1, offset: 0])[0]
-    autoUpdatePackageInfo
+    UpdatePackageInfo updatePackageInfo = UpdatePackageInfo.executeQuery("from UpdatePackageInfo where pkg = :pkg and status = :status and automaticUpdate = true" +
+            " order by lastUpdated desc", [pkg: this, status: RDStore.UPDATE_STATUS_SUCCESSFUL], [max: 1, offset: 0])[0]
+    updatePackageInfo
+  }
+
+  @Transient
+  public IdentifierNamespace getTitleIDNameSpace(){
+    IdentifierNamespace identifierNamespace
+    List<IdentifierNamespace> idnsCheck = IdentifierNamespace.executeQuery('select so.targetNamespace from Package pkg join pkg.source so where pkg = :pkg', [pkg: this])
+    if (!idnsCheck && this.nominalPlatform) {
+      idnsCheck = IdentifierNamespace.executeQuery('select plat.titleNamespace from Platform plat where plat = :plat', [plat: this.nominalPlatform])
+    }
+    if (idnsCheck && idnsCheck.size() == 1) {
+      identifierNamespace = idnsCheck[0]
+    }
+
+    return identifierNamespace
+  }
+
+  @Transient
+  public getCountAutoUpdateInfos() {
+    int result = UpdatePackageInfo.executeQuery("select count(id) from UpdatePackageInfo where pkg = :pkg and automaticUpdate = true", [pkg: this])[0]
+    result
+  }
+
+  @Transient
+  public getCountManualUpdateInfos() {
+    int result = UpdatePackageInfo.executeQuery("select count(id) from UpdatePackageInfo where pkg = :pkg and automaticUpdate = false", [pkg: this])[0]
+    result
+  }
+
+    @Transient
+    public getLastSuccessfulManualUpdateInfo() {
+        UpdatePackageInfo updatePackageInfo = UpdatePackageInfo.executeQuery("from UpdatePackageInfo where pkg = :pkg and status = :status and automaticUpdate = false" +
+                " order by lastUpdated desc", [pkg: this, status: RDStore.UPDATE_STATUS_SUCCESSFUL], [max: 1, offset: 0])[0]
+        updatePackageInfo
+    }
+
+  @Transient
+  public getLastSuccessfulUpdateInfo() {
+    UpdatePackageInfo updatePackageInfo = UpdatePackageInfo.executeQuery("from UpdatePackageInfo where pkg = :pkg and status = :status" +
+            " order by lastUpdated desc", [pkg: this, status: RDStore.UPDATE_STATUS_SUCCESSFUL], [max: 1, offset: 0])[0]
+    updatePackageInfo
   }
 
 }

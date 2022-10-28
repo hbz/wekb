@@ -4,9 +4,7 @@ import com.k_int.ConcurrencyManagerService
 import com.k_int.ConcurrencyManagerService.Job
 import de.wekb.helper.RCConstants
 import de.wekb.helper.RDStore
-import gokbg3.DateFormatService
 import grails.converters.JSON
-import grails.gorm.transactions.Transactional
 import grails.plugin.springsecurity.SpringSecurityService
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
@@ -16,11 +14,9 @@ import org.elasticsearch.client.indices.GetIndexRequest
 
 import org.gokb.cred.*
 import org.hibernate.SessionFactory
-import org.hibernate.criterion.CriteriaSpecification
-
 import org.springframework.security.access.annotation.Secured
 import wekb.AdminService
-import wekb.AutoUpdatePackageInfo
+import wekb.UpdatePackageInfo
 import wekb.AutoUpdatePackagesService
 
 import java.util.concurrent.CancellationException
@@ -206,7 +202,7 @@ class AdminController {
 
     log.info("autoUpdatePackages: auto update packages job completed.")
 
-    redirect(controller: 'search', action: 'componentSearch', params: [qbe: 'g:autoUpdatePackageInfos'])
+    redirect(controller: 'search', action: 'componentSearch', params: [qbe: 'g:updatePackageInfos'])
   }
 
   @Secured(['ROLE_SUPERUSER'])
@@ -219,7 +215,7 @@ class AdminController {
 
     log.info("autoUpdatePackagesAllTitles: auto update packages job completed.")
 
-    redirect(controller: 'search', action: 'componentSearch', params: [qbe: 'g:autoUpdatePackageInfos'])
+    redirect(controller: 'search', action: 'componentSearch', params: [qbe: 'g:updatePackageInfos'])
   }
 
   @Secured(['ROLE_SUPERUSER'])
@@ -598,7 +594,7 @@ class AdminController {
 
     List<Long> tippsIds = TitleInstancePackagePlatform.executeQuery("select id from TitleInstancePackagePlatform where (url is null or url = '') and status != :removed", [deleted: RDStore.KBC_STATUS_REMOVED])
 
-    Integer tippsToRemoved = tippsIds ? KBComponent.executeUpdate("update KBComponent set status = :removed where id in (:tippIds)", [removed: RDStore.KBC_STATUS_REMOVED, tippIds: tippsIds]) : 0
+    Integer tippsToRemoved = tippsIds ? KBComponent.executeUpdate("update KBComponent set status = :removed, lastUpdated = CURRENT_DATE where id in (:tippIds) and status != :removed", [removed: RDStore.KBC_STATUS_REMOVED, tippIds: tippsIds]) : 0
 
     flash.message = "Tipp without Url: ${tippsIds.size()}, Set tipps to removed: ${tippsToRemoved}"
 
@@ -666,8 +662,8 @@ class AdminController {
                     "p.source.automaticUpdates = true " +
                     " order by ${params.sort} ${params.order}").each { Package p ->
 
-      AutoUpdatePackageInfo autoUpdatePackageInfo = p.getLastSuccessfulAutoUpdateInfo()
-      if ((autoUpdatePackageInfo && autoUpdatePackageInfo.countKbartRows > p.tippCount) || !autoUpdatePackageInfo || (p.currentTippCount < p.deletedTippCount)) {
+      UpdatePackageInfo updatePackageInfo = p.getLastSuccessfulAutoUpdateInfo()
+      if ((updatePackageInfo && updatePackageInfo.countKbartRows > p.tippCount) || !updatePackageInfo || (p.currentTippCount < p.deletedTippCount)) {
         if (curatoryGroupFilter) {
           if (curatoryGroupFilter in p.curatoryGroups) {
             pkgs << p
@@ -687,7 +683,7 @@ class AdminController {
     log.debug("autoUpdatesFails::${params}")
     def result = [:]
 
-    List<AutoUpdatePackageInfo> autoUpdates = AutoUpdatePackageInfo.executeQuery("from AutoUpdatePackageInfo where status = :status and dateCreated > (CURRENT_DATE-1) order by dateCreated desc", [status: RDStore.AUTO_UPDATE_STATUS_FAILED])
+    List<UpdatePackageInfo> autoUpdates = UpdatePackageInfo.executeQuery("from UpdatePackageInfo where automaticUpdate = true and status = :status and dateCreated > (CURRENT_DATE-1) order by dateCreated desc", [status: RDStore.UPDATE_STATUS_FAILED])
 
     result.autoUpdates = autoUpdates
 

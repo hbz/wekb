@@ -76,7 +76,7 @@ class IdentifierNamespace {
     }
     if ( ql ) {
       ql.each { t ->
-        result.add([id:"org.gokb.cred.IdentifierNamespace:${t.id}",text:"${t.value} ${params.filter1 == 'all' ? ( t.targetType ? '(for '+t.targetType.value+')' : '' ) : ''}"])
+        result.add([id:"org.gokb.cred.IdentifierNamespace:${t.id}",text:"${t.name} ${params.filter1 == 'all' ? ( t.targetType ? '(for '+t.targetType.value+')' : '' ) : ''}"])
       }
     }
     result

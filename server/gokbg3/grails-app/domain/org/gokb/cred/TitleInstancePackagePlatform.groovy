@@ -4,20 +4,14 @@ import de.wekb.annotations.HbzKbartAnnotation
 import de.wekb.annotations.KbartAnnotation
 import de.wekb.annotations.RefdataAnnotation
 import de.wekb.helper.RCConstants
-import org.gokb.ComponentLookupService
-import org.grails.web.json.JSONArray
-import org.grails.web.json.JSONObject
-import wekb.AutoUpdateTippInfo
-import wekb.KBComponentLanguage
+import wekb.UpdatePackageInfo
+import wekb.UpdateTippInfo
 
 import javax.persistence.Transient
-import com.k_int.ClassUtils
-import org.gokb.GOKbTextUtils
+
 import groovy.util.logging.*
 
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.ZoneId
 
 @Slf4j
 class TitleInstancePackagePlatform extends KBComponent {
@@ -181,7 +175,7 @@ class TitleInstancePackagePlatform extends KBComponent {
     coverageStatements: TIPPCoverageStatement,
     ddcs: RefdataValue,
     ids: Identifier,
-    autoUpdateTippInfos: AutoUpdateTippInfo
+    updateTippInfos: UpdateTippInfo
 
   ]
 
@@ -264,12 +258,12 @@ class TitleInstancePackagePlatform extends KBComponent {
   public static final String restPath = "/package-titles"
 
   def availableActions() {
-    [[code: 'setStatus::Retired', label: 'Mark Title Retire'],
+    [[code: 'setStatus::Retired', label: 'Mark the title as retired'],
      /*[code: 'tipp::retire', label: 'Retire (with Date)'],*/
-     [code: 'setStatus::Deleted', label: 'Mark Title Delete', perm: 'delete'],
-     [code: 'setStatus::Removed', label: 'Remove Title', perm: 'delete'],
-     [code: 'setStatus::Expected', label: 'Mark Title Expected'],
-     [code: 'setStatus::Current', label: 'Mark Titel Current'],
+     [code: 'setStatus::Deleted', label: 'Mark the title as deleted', perm: 'delete'],
+     [code: 'setStatus::Removed', label: 'Remove the title', perm: 'delete'],
+     [code: 'setStatus::Expected', label: 'Mark the title as expected'],
+     [code: 'setStatus::Current', label: 'Mark the title as current'],
      /*[code: 'tipp::move', label: 'Move TIPP']*/
     ]
   }
@@ -424,5 +418,17 @@ class TitleInstancePackagePlatform extends KBComponent {
   public String getDomainName() {
     return "Title"
   }
+
+    @Transient
+    public getCountAutoUpdateTippInfos() {
+        int result = UpdateTippInfo.executeQuery("select count(id) from UpdateTippInfo where tipp = :tipp and updatePackageInfo.automaticUpdate = true", [tipp: this])[0]
+        result
+    }
+
+    @Transient
+    public getCountManualUpdateTippInfos() {
+        int result = UpdateTippInfo.executeQuery("select count(id) from UpdateTippInfo where tipp = :tipp and updatePackageInfo.automaticUpdate = false", [tipp: this])[0]
+        result
+    }
 
 }

@@ -31,27 +31,35 @@ class WorkflowController{
   ExecutorService executorService
 
   def actionConfig = [
+      'deleteIdentifierNamespace'        : [actionType: 'process', method: 'deleteIdentifierNamespace'],
+
+      'manualKbartImport'  : [actionType: 'redirectToView', view: 'kbartImport', controller: 'package'],
+
       'method::deleteSoft'     : [actionType: 'simple'],
-      'platform::replacewith'  : [actionType: 'workflow', view: 'platformReplacement'],
-      'method::RRTransfer'     : [actionType: 'workflow', view: 'revReqTransfer'],
-      'method::RRClose'        : [actionType: 'simple'],
+      'method::retire'         : [actionType: 'simple'],
+      'method::removeWithTipps' : [actionType: 'simple'],
+      'method::currentWithTipps': [actionType: 'simple'],
+      'method::setCurrent'      : [actionType: 'simple'],
+
+      /*'method::setExpected'    : [actionType: 'simple'],*/
+      /*'method::RRTransfer'     : [actionType: 'workflow', view: 'revReqTransfer'],
+      'method::RRClose'        : [actionType: 'simple'],*/
+
       'packageUrlUpdate'       : [actionType: 'process', method: 'triggerSourceUpdate'],
       'packageUrlUpdateAllTitles':[actionType:'process', method: 'triggerSourceUpdateAllTitles'],
-      'tipp::retire'           : [actionType: 'workflow', view: 'tippRetire'],
-      'tipp::move'             : [actionType: 'workflow', view: 'tippMove'],
-      'method::retire'         : [actionType: 'simple'],
-      'method::removeWithTipps'         : [actionType: 'simple'],
-      'method::setActive'      : [actionType: 'simple'],
-      'method::setExpected'    : [actionType: 'simple'],
+
+      //'platform::replacewith'  : [actionType: 'workflow', view: 'platformReplacement'],
+      /*'tipp::retire'           : [actionType: 'workflow', view: 'tippRetire'],
+      'tipp::move'             : [actionType: 'workflow', view: 'tippMove'],*/
+
       'setStatus::Retired'     : [actionType: 'simple'],
       'setStatus::Current'     : [actionType: 'simple'],
       'setStatus::Expected'    : [actionType: 'simple'],
       'setStatus::Deleted'     : [actionType: 'simple'],
       'setStatus::Removed'     : [actionType: 'simple'],
-      'org::deprecateReplace'  : [actionType: 'workflow', view: 'deprecateOrg'],
-      'org::deprecateDelete'   : [actionType: 'workflow', view: 'deprecateDeleteOrg'],
-      'verifyTitleList'        : [actionType: 'process', method: 'verifyTitleList'],
-      'deleteIdentifierNamespace'        : [actionType: 'process', method: 'deleteIdentifierNamespace']
+      /*'org::deprecateReplace'  : [actionType: 'workflow', view: 'deprecateOrg'],
+      'org::deprecateDelete'   : [actionType: 'workflow', view: 'deprecateDeleteOrg'],*/
+      /*'verifyTitleList'        : [actionType: 'process', method: 'verifyTitleList'],*/
   ]
 
 
@@ -150,7 +158,7 @@ class WorkflowController{
               def status_to_set = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, method_config[1])
               // def ota_ids = result.objects_to_action.collect{ it.id }
               if (status_to_set){
-                def res = KBComponent.executeUpdate("update KBComponent as kbc set kbc.status = :st where kbc IN (:clist)", [st: status_to_set, clist: result.objects_to_action])
+                def res = KBComponent.executeUpdate("update KBComponent as kbc set kbc.status = :st, kbc.lastUpdated = CURRENT_DATE where kbc IN (:clist)", [st: status_to_set, clist: result.objects_to_action])
                 log.debug("Updated status of ${res} components")
               }
               break
@@ -160,6 +168,14 @@ class WorkflowController{
           break
         case 'workflow':
           render view: action_config.view, model: result
+          break
+        case 'redirectToView':
+          if(result.objects_to_action.size() == 1){
+            redirect(controller: action_config.controller, action: action_config.view, id: result.objects_to_action[0].id)
+          }else {
+            flash.error = "This action can only be performed for one component! Try again, but only with one component."
+          }
+
           break
         case 'process':
           this."${action_config.method}"(result.objects_to_action)
@@ -178,7 +194,7 @@ class WorkflowController{
 
 
   @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
   def processPackageReplacement(){
     def retired_status = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Retired')
     def result = [:]
@@ -212,7 +228,7 @@ class WorkflowController{
   }
 
   @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
   def processTippRetire(){
     log.debug("processTippRetire ${params}")
     def retired_status = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Retired')
@@ -234,7 +250,7 @@ class WorkflowController{
   }
 
   @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
   def processTippMove(){
     log.debug("processTippMove ${params}")
     def deleted_status = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
@@ -280,7 +296,7 @@ class WorkflowController{
   }
 
   @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
   def processRRTransfer(){
     def result = [:]
     log.debug("processRRTransfer ${params}")
@@ -302,7 +318,7 @@ class WorkflowController{
   }
 
   @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
   def newRRLink(){
     def new_rr = null
     log.debug("newRRLink ${params}")
@@ -355,7 +371,7 @@ class WorkflowController{
             '\n')
   }
 
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
   def addToRulebase(){
     def result = [:]
 
@@ -471,7 +487,7 @@ class WorkflowController{
   }
 
   @Transactional
-  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_EDITOR', 'IS_AUTHENTICATED_FULLY'])
   private def verifyTitleList(packages_to_verify){
     def user = springSecurityService.currentUser
     boolean userAdmin = user.isAdmin()

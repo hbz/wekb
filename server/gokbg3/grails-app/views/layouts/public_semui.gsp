@@ -1,4 +1,4 @@
-<%@ page import="de.wekb.helper.ServerUtils" %>
+<%@ page import="de.wekb.helper.ServerUtils; de.wekb.helper.RDStore;" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,7 +72,7 @@
 
                 <div class="menu">
                     <g:link class="item" controller="group" action="myAutoUpdateInfos">My Auto Update Infos</g:link>
-                    <g:link class="item" controller="group" action="myAutoUpdateInfos">My Packages due to automatic update</g:link>
+                    <g:link class="item" controller="group" action="myPackagesNeedsAutoUpdates">My Packages due to automatic update</g:link>
                 </div>
             </div>
 
@@ -116,6 +116,8 @@
                                 <g:link class="item" controller="admin"
                                         action="findPackagesWithTippDuplicates">Packages with Tipp Duplicates</g:link>
                                 <g:link class="item" controller="admin"
+                                        action="findPackagesAutoUpdatesTippsDiff">Auto Update Packages with Tipp Diff</g:link>
+                                <g:link class="item" controller="admin"
                                         action="tippIdentifiersWithSameNameSpace">Title Identifiers with same Identifier Namespace</g:link>
                             </div>
                         </div>
@@ -123,9 +125,9 @@
                             <div class="header"> Admin Search</div>
                             <div class="menu">
                                 <g:link class="item" controller="search" action="componentSearch"
-                                        params="[qbe: 'g:autoUpdatePackageInfos']">Auto Update Package Infos</g:link>
+                                        params="[qbe: 'g:updatePackageInfos']">Update Package Infos</g:link>
                                 <g:link class="item" controller="search" action="componentSearch"
-                                params="[qbe: 'g:autoUpdateTippInfos']">Auto Update Title Infos</g:link>
+                                params="[qbe: 'g:updateTippInfos']">Update Title Infos</g:link>
                                 <g:link class="item" controller="search" action="componentSearch"
                                         params="[qbe: 'g:identifiers']">Identifiers</g:link>
                                 <g:link class="item" controller="search" action="componentSearch"

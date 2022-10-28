@@ -188,7 +188,7 @@ class BootStrap {
                 [value: 'package_ezb_anchor', name: 'EZB Anchor',  targetType: 'TitleInstancePackagePlatform'],
 
 
-                [value: 'Anbieter_Produkt_ID', name: 'Anbieter_Produkt_ID', targetType: 'Package'],
+                [value: 'Anbieter_Produkt_ID', name: 'Provider_Product_ID', targetType: 'Package'],
                 [value: 'dnb', name: 'dnb', targetType: 'Package'],
                 [value: 'doi', name: 'DOI', targetType: 'Package'],
                 [value: 'ezb', name: 'EZB-ID', targetType: 'Package'],
