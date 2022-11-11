@@ -63,6 +63,10 @@ class CascadingUpdateService {
         if (obj.pkg && !obj.kbartImportRunning) {
             update(obj.pkg, lastUpdated)
         }
+
+        KBComponent.executeUpdate("update KBComponent kbc set kbc.lastUpdated = :lastUpdated where kbc = :obj", [
+                lastUpdated: lastUpdated, obj: obj
+        ])
     }
 
     void update(TIPPCoverageStatement obj, Date lastUpdated) {

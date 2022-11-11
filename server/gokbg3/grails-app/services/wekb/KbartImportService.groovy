@@ -889,6 +889,8 @@ class KbartImportService {
                     Identifier.executeUpdate("delete from Identifier where id_id = :id", [id: it])
                 }
 
+                tipp.lastUpdated = new Date()
+
                 tipp.save()
             }
 
