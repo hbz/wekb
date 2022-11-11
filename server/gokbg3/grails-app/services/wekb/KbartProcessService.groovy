@@ -388,7 +388,7 @@ class KbartProcessService {
 
                 tippDuplicates.each {
                     if(!(it in tippsFound)){
-                        KBComponent.executeUpdate("update KBComponent set status = :removed, lastUpdated = CURRENT_DATE where id = (:tippId) and status != :removed", [removed: RDStore.KBC_STATUS_REMOVED, tippId: it])
+                        KBComponent.executeUpdate("update KBComponent set status = :removed, lastUpdated = ${new Date()} where id = (:tippId) and status != :removed", [removed: RDStore.KBC_STATUS_REMOVED, tippId: it])
 
                         TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.get(it)
                         UpdateTippInfo.withTransaction {
@@ -440,7 +440,7 @@ class KbartProcessService {
                     int maxDeleted = 30000
                     for (int offset = 0; offset < deletedCount; offset += maxDeleted) {
                         List deleteTippsFromWekbToProcess = tippsIds.drop(offset).take(maxDeleted)
-                        KBComponent.executeUpdate("update KBComponent set status = :deleted, lastUpdated = CURRENT_DATE where id in (:tippIDs) and status != :deleted", [deleted: RDStore.KBC_STATUS_DELETED, tippIDs: deleteTippsFromWekbToProcess])
+                        KBComponent.executeUpdate("update KBComponent set status = :deleted, lastUpdated = ${new Date()} where id in (:tippIDs) and status != :deleted", [deleted: RDStore.KBC_STATUS_DELETED, tippIDs: deleteTippsFromWekbToProcess])
                     }
 
                     StatelessSession session = sessionFactory.openStatelessSession()
@@ -514,7 +514,7 @@ class KbartProcessService {
 
                     for (int offset = 0; offset < deletedCount; offset += maxDeleted) {
                         List deleteTippsFromWekbToProcess = deleteTippsFromWekb.drop(offset).take(maxDeleted)
-                        KBComponent.executeUpdate("update KBComponent set status = :deleted, lastUpdated = CURRENT_DATE where id in (:tippIDs) and status != :deleted", [deleted: RDStore.KBC_STATUS_DELETED, tippIDs: deleteTippsFromWekbToProcess])
+                        KBComponent.executeUpdate("update KBComponent set status = :deleted, lastUpdated = ${new Date()} where id in (:tippIDs) and status != :deleted", [deleted: RDStore.KBC_STATUS_DELETED, tippIDs: deleteTippsFromWekbToProcess])
                     }
 
                     StatelessSession session = sessionFactory.openStatelessSession()
@@ -563,7 +563,7 @@ class KbartProcessService {
                     "countProcessedKbartRows = ${idx}, " +
                     "endTime = ${new Date()}, " +
                     "description = ${description}, " +
-                    "lastUpdated = CURRENT_DATE " +
+                    "lastUpdated = ${new Date()} " +
                     "where id = ${updatePackageInfo.id}")
 
             UpdatePackageInfo.withTransaction {
