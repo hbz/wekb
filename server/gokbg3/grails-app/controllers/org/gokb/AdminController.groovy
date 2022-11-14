@@ -705,100 +705,102 @@ class AdminController {
     result
   }
 
-  def processTippsNotIndex(){
-      log.info("Beginning process tipps not index.")
-      executorService.execute({
+  def processTippsNotIndex() {
+    log.info("Beginning process tipps not index.")
+    executorService.execute({
 
-          int countsTipps = TitleInstancePackagePlatform.executeQuery("select count(tipp.id) from TitleInstancePackagePlatform as tipp")[0]
-          int max = 20000
-          int count = 0
-          List<String> tippUuidsNotInIndex = []
-          RestHighLevelClient esclient = ESWrapperService.getClient()
+      int countsTipps = TitleInstancePackagePlatform.executeQuery("select count(tipp.id) from TitleInstancePackagePlatform as tipp")[0]
+      int max = 20000
+      int count = 0
+      List<String> tippUuidsNotInIndex = []
+      RestHighLevelClient esclient = ESWrapperService.getClient()
 
-          Set<String> result = []
-          try {
-              Map<String, Object> recordBatch = ESSearchService.scroll([component_type: 'TitleInstancePackagePlatform'])
-              boolean more = true
-              while (more) {
-                  result.addAll(recordBatch.records.collect { record -> record.uuid })
-                  more = recordBatch.hasMoreRecords
-                  log.info("more: $more")
-                  log.info("Size: " + result.size())
-                  if (more)
-                      recordBatch = ESSearchService.scroll([component_type: 'TitleInstancePackagePlatform', scrollId: recordBatch.scrollId])
-              }
-
-              /*result.each {
-                  println(it)
-              }*/
-
-              log.info("EndSize: " + result.size())
-
-          }
-          finally {
-              try {
-                  esclient.close()
-              }
-              catch (Exception e) {
-                  log.error("Problem by Close ES Client", e)
-              }
-          }
-
-          TitleInstancePackagePlatform.withSession { Session sess ->
-              for (int offset = 0; offset < countsTipps; offset += max) {
-                  List<String> tippUuids = TitleInstancePackagePlatform.executeQuery("select tipp.uuid from TitleInstancePackagePlatform as tipp " +
-                          " order by id desc", [max: max, offset: offset])
-
-                  tippUuids.each {
-                      count++
-                      log.info("Process $count of $countsTipps:")
-                      String uuid = it
-
-                      if (!(uuid in result)) {
-                          tippUuidsNotInIndex << uuid
-                      }
-
-                  }
-                  sess.flush()
-                  sess.clear()
-              }
-          }
-
-          log.info("tipp uuids not in index count: " + tippUuidsNotInIndex.size())
-
-          String fPath = '/tmp/wekb/'
-
-          File file = new File("${fPath}/tippsNotInIndex")
-          file.withWriter { out ->
-              tippUuidsNotInIndex.each { out.println it }
-          }
-
-          Date currentDate = new Date()
-          int changeLastUpdated = 0
-
-        TitleInstancePackagePlatform.withSession { Session sess ->
-          for (int offset = 0; offset < tippUuidsNotInIndex.size(); offset += max) {
-
-            List tippUuidsToProcess = tippUuidsNotInIndex.drop(offset).take(max)
-            for (String uuid : tippUuidsToProcess) {
-              TitleInstancePackagePlatform.withTransaction {
-                TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.findByUuid(uuid)
-                if (tipp) {
-                  tipp.lastUpdated = currentDate
-                  tipp = tipp.save()
-                  changeLastUpdated++
-                }
-              }
-            }
-            sess.flush()
-            sess.clear()
-          }
+      Set<String> result = []
+      try {
+        Map<String, Object> recordBatch = ESSearchService.scroll([component_type: 'TitleInstancePackagePlatform'])
+        boolean more = true
+        while (more) {
+          result.addAll(recordBatch.records.collect { record -> record.uuid })
+          more = recordBatch.hasMoreRecords
+          log.info("more: $more")
+          log.info("Size: " + result.size())
+          if (more)
+            recordBatch = ESSearchService.scroll([component_type: 'TitleInstancePackagePlatform', scrollId: recordBatch.scrollId])
         }
 
-          log.info("tipp uuids not in index -> change lastUpdated: " + changeLastUpdated)
-      })
+        /*result.each {
+            println(it)
+        }*/
 
-      log.info("End process tipps not index.")
+        log.info("EndSize: " + result.size())
+
+      }
+      finally {
+        try {
+          esclient.close()
+        }
+        catch (Exception e) {
+          log.error("Problem by Close ES Client", e)
+        }
+      }
+
+      TitleInstancePackagePlatform.withSession { Session sess ->
+        for (int offset = 0; offset < countsTipps; offset += max) {
+          List<String> tippUuids = TitleInstancePackagePlatform.executeQuery("select tipp.uuid from TitleInstancePackagePlatform as tipp " +
+                  " order by id desc", [max: max, offset: offset])
+
+          tippUuids.each {
+            count++
+            log.info("Process $count of $countsTipps:")
+            String uuid = it
+
+            if (!(uuid in result)) {
+              tippUuidsNotInIndex << uuid
+            }
+
+          }
+          sess.flush()
+          sess.clear()
+        }
+      }
+
+      log.info("tipp uuids not in index count: " + tippUuidsNotInIndex.size())
+
+      String fPath = '/tmp/wekb/'
+
+      File file = new File("${fPath}/tippsNotInIndex")
+      file.withWriter { out ->
+        tippUuidsNotInIndex.each { out.println it }
+      }
+
+      String pattern = "yyyy-MM-dd HH:mm:ss"
+      String currentDateString = new Date().format("yyyy-MM-dd HH:mm:ss").toString()
+      Date currentDate = new SimpleDateFormat(pattern).parse(currentDateString)
+      int changeLastUpdated = 0
+      max = 20000
+      TitleInstancePackagePlatform.withSession { Session sess ->
+        for (int offset = 0; offset < tippUuidsNotInIndex.size(); offset += max) {
+
+          List tippUuidsToProcess = tippUuidsNotInIndex.drop(offset).take(max)
+          for (String uuid : tippUuidsToProcess) {
+            TitleInstancePackagePlatform.withTransaction {
+              TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.findByUuid(uuid)
+              if (tipp) {
+                tipp.lastUpdated = currentDate
+                tipp = tipp.save()
+                changeLastUpdated++
+              }
+            }
+          }
+          sess.flush()
+          sess.clear()
+        }
+      }
+
+      log.info("tipp uuids not in index -> change lastUpdated: " + changeLastUpdated)
+    })
+
+    log.info("End process tipps not index.")
   }
 
 }
