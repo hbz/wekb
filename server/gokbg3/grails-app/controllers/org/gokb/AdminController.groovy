@@ -782,7 +782,7 @@ class AdminController {
         for (int offset = 0; offset < tippUuidsNotInIndex.size(); offset += max) {
 
           List tippUuidsToProcess = tippUuidsNotInIndex.drop(offset).take(max)
-            def res = KBComponent.executeUpdate("update KBComponent as kbc set kbc.lastUpdated = :currentDate where kbc IN (:uuidList)", [uuidList: tippUuidsToProcess, currentDate: currentDate])
+            def res = KBComponent.executeUpdate("update KBComponent set lastUpdated = :currentDate where uuid IN (:uuidList)", [uuidList: tippUuidsToProcess, currentDate: currentDate])
             log.info("Updated lastUpdated of ${res} components")
           }
           sess.flush()
