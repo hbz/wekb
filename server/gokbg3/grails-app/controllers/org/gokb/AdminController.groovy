@@ -6,19 +6,32 @@ import de.wekb.helper.RCConstants
 import de.wekb.helper.RDStore
 import grails.converters.JSON
 import grails.plugin.springsecurity.SpringSecurityService
+import grails.util.Holders
+import org.elasticsearch.action.search.SearchRequest
+import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.client.core.CountRequest
 import org.elasticsearch.client.core.CountResponse
 import org.elasticsearch.client.indices.GetIndexRequest
-
+import org.elasticsearch.index.query.QueryBuilder
+import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.rest.RestStatus
+import org.elasticsearch.search.SearchHit
+import org.elasticsearch.search.SearchHits
+import org.elasticsearch.search.aggregations.AggregationBuilders
+import org.elasticsearch.search.builder.SearchSourceBuilder
+import org.elasticsearch.search.sort.FieldSortBuilder
+import org.elasticsearch.search.sort.SortOrder
 import org.gokb.cred.*
+import org.hibernate.Session
 import org.hibernate.SessionFactory
 import org.springframework.security.access.annotation.Secured
 import wekb.AdminService
 import wekb.UpdatePackageInfo
 import wekb.AutoUpdatePackagesService
 
+import java.text.SimpleDateFormat
 import java.util.concurrent.CancellationException
 import java.util.concurrent.ExecutorService
 
@@ -37,6 +50,8 @@ class AdminController {
   SessionFactory sessionFactory
   GenericOIDService genericOIDService
   ExecutorService executorService
+
+  def ESSearchService
 
   static Map typePerIndex = [
           "wekbtipps": "TitleInstancePackagePlatform",
@@ -594,7 +609,7 @@ class AdminController {
 
     List<Long> tippsIds = TitleInstancePackagePlatform.executeQuery("select id from TitleInstancePackagePlatform where (url is null or url = '') and status != :removed", [deleted: RDStore.KBC_STATUS_REMOVED])
 
-    Integer tippsToRemoved = tippsIds ? KBComponent.executeUpdate("update KBComponent set status = :removed, lastUpdated = CURRENT_DATE where id in (:tippIds) and status != :removed", [removed: RDStore.KBC_STATUS_REMOVED, tippIds: tippsIds]) : 0
+    Integer tippsToRemoved = tippsIds ? KBComponent.executeUpdate("update KBComponent set status = :removed, lastUpdated = ${new Date()} where id in (:tippIds) and status != :removed", [removed: RDStore.KBC_STATUS_REMOVED, tippIds: tippsIds]) : 0
 
     flash.message = "Tipp without Url: ${tippsIds.size()}, Set tipps to removed: ${tippsToRemoved}"
 
@@ -688,6 +703,95 @@ class AdminController {
     result.autoUpdates = autoUpdates
 
     result
+  }
+
+  def processTippsNotIndex(){
+      log.info("Beginning process tipps not index.")
+      executorService.execute({
+
+          int countsTipps = TitleInstancePackagePlatform.executeQuery("select count(tipp.id) from TitleInstancePackagePlatform as tipp")[0]
+          int max = 20000
+          int count = 0
+          List<String> tippUuidsNotInIndex = []
+          RestHighLevelClient esclient = ESWrapperService.getClient()
+
+          Set<String> result = []
+          try {
+              Map<String, Object> recordBatch = ESSearchService.scroll([component_type: 'TitleInstancePackagePlatform'])
+              boolean more = true
+              while (more) {
+                  result.addAll(recordBatch.records.collect { record -> record.uuid })
+                  more = recordBatch.hasMoreRecords
+                  log.info("more: $more")
+                  log.info("Size: " + result.size())
+                  if (more)
+                      recordBatch = ESSearchService.scroll([component_type: 'TitleInstancePackagePlatform', scrollId: recordBatch.scrollId])
+              }
+
+              /*result.each {
+                  println(it)
+              }*/
+
+              log.info("EndSize: " + result.size())
+
+          }
+          finally {
+              try {
+                  esclient.close()
+              }
+              catch (Exception e) {
+                  log.error("Problem by Close ES Client", e)
+              }
+          }
+
+          TitleInstancePackagePlatform.withSession { Session sess ->
+              for (int offset = 0; offset < countsTipps; offset += max) {
+                  List<String> tippUuids = TitleInstancePackagePlatform.executeQuery("select tipp.uuid from TitleInstancePackagePlatform as tipp " +
+                          " order by id desc", [max: max, offset: offset])
+
+                  tippUuids.each {
+                      count++
+                      log.info("Process $count of $countsTipps:")
+                      String uuid = it
+
+                      if (!(uuid in result)) {
+                          tippUuidsNotInIndex << uuid
+                      }
+
+                  }
+                  sess.flush()
+                  sess.clear()
+              }
+          }
+
+          log.info("tipp uuids not in index count: " + tippUuidsNotInIndex.size())
+
+          String fPath = '/tmp/wekb/'
+
+          File file = new File("${fPath}/tippsNotInIndex")
+          file.withWriter { out ->
+              tippUuidsNotInIndex.each { out.println it }
+          }
+
+          Date currentDate = new Date()
+          int changeLastUpdated = 0
+          tippUuidsNotInIndex.each { String uuid ->
+
+              TitleInstancePackagePlatform.withTransaction {
+                  TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.findByUuid(uuid)
+                  if(tipp) {
+                      tipp.lastUpdated = currentDate
+                      tipp = tipp.save()
+                      changeLastUpdated++
+                  }
+              }
+
+          }
+
+          log.info("tipp uuids not in index -> change lastUpdated: " + changeLastUpdated)
+      })
+
+      log.info("End process tipps not index.")
   }
 
 }
