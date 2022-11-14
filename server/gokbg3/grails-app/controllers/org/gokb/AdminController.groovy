@@ -775,18 +775,25 @@ class AdminController {
 
           Date currentDate = new Date()
           int changeLastUpdated = 0
-          tippUuidsNotInIndex.each { String uuid ->
 
+        TitleInstancePackagePlatform.withSession { Session sess ->
+          for (int offset = 0; offset < tippUuidsNotInIndex.size(); offset += max) {
+
+            List tippUuidsToProcess = tippUuidsNotInIndex.drop(offset).take(max)
+            for (String uuid : tippUuidsToProcess) {
               TitleInstancePackagePlatform.withTransaction {
-                  TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.findByUuid(uuid)
-                  if(tipp) {
-                      tipp.lastUpdated = currentDate
-                      tipp = tipp.save()
-                      changeLastUpdated++
-                  }
+                TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.findByUuid(uuid)
+                if (tipp) {
+                  tipp.lastUpdated = currentDate
+                  tipp = tipp.save()
+                  changeLastUpdated++
+                }
               }
-
+            }
+            sess.flush()
+            sess.clear()
           }
+        }
 
           log.info("tipp uuids not in index -> change lastUpdated: " + changeLastUpdated)
       })
