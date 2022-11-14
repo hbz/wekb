@@ -158,7 +158,7 @@ class WorkflowController{
               def status_to_set = RefdataCategory.lookup(RCConstants.KBCOMPONENT_STATUS, method_config[1])
               // def ota_ids = result.objects_to_action.collect{ it.id }
               if (status_to_set){
-                def res = KBComponent.executeUpdate("update KBComponent as kbc set kbc.status = :st, kbc.lastUpdated = ${new Date()} where kbc IN (:clist)", [st: status_to_set, clist: result.objects_to_action])
+                def res = KBComponent.executeUpdate("update KBComponent as kbc set kbc.status = :st, kbc.lastUpdated = :currentDate where kbc IN (:clist)", [st: status_to_set, clist: result.objects_to_action, currentDate: new Date()])
                 log.debug("Updated status of ${res} components")
               }
               break

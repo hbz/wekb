@@ -609,7 +609,7 @@ class AdminController {
 
     List<Long> tippsIds = TitleInstancePackagePlatform.executeQuery("select id from TitleInstancePackagePlatform where (url is null or url = '') and status != :removed", [deleted: RDStore.KBC_STATUS_REMOVED])
 
-    Integer tippsToRemoved = tippsIds ? KBComponent.executeUpdate("update KBComponent set status = :removed, lastUpdated = ${new Date()} where id in (:tippIds) and status != :removed", [removed: RDStore.KBC_STATUS_REMOVED, tippIds: tippsIds]) : 0
+    Integer tippsToRemoved = tippsIds ? KBComponent.executeUpdate("update KBComponent set status = :removed, lastUpdated = :currentDate where id in (:tippIds) and status != :removed", [removed: RDStore.KBC_STATUS_REMOVED, tippIds: tippsIds, currentDate: new Date()]) : 0
 
     flash.message = "Tipp without Url: ${tippsIds.size()}, Set tipps to removed: ${tippsToRemoved}"
 
