@@ -782,19 +782,11 @@ class AdminController {
         for (int offset = 0; offset < tippUuidsNotInIndex.size(); offset += max) {
 
           List tippUuidsToProcess = tippUuidsNotInIndex.drop(offset).take(max)
-          for (String uuid : tippUuidsToProcess) {
-            TitleInstancePackagePlatform.withTransaction {
-              TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.findByUuid(uuid)
-              if (tipp) {
-                tipp.lastUpdated = currentDate
-                tipp = tipp.save()
-                changeLastUpdated++
-              }
-            }
+            def res = KBComponent.executeUpdate("update KBComponent as kbc kbc.lastUpdated = :currentDate where kbc IN (:uuidList)", [uuidList: tippUuidsToProcess, currentDate: currentDate])
+            log.debug("Updated lastUpdated of ${res} components")
           }
           sess.flush()
           sess.clear()
-        }
       }
 
       log.info("tipp uuids not in index -> change lastUpdated: " + changeLastUpdated)
