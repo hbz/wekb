@@ -265,6 +265,8 @@ class KbartProcessService {
                                                 setTippsNotToDeleted << updateTipp.id
                                             }
                                             if(updateTipp) {
+                                                updateTipp.lastUpdated = new Date()
+                                                updateTipp = updateTipp.save()
                                                 tippsFound << updateTipp.id
                                             }
                                         }

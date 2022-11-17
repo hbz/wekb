@@ -2527,6 +2527,9 @@ class KbartImportService {
                             updatePackageInfo: updatePackageInfo
                     ).save()
 
+                    tipp.lastUpdated = new Date()
+                    tipp = tipp.save()
+
                     newTippList << [tippID: tipp.id, updatePackageInfo: updatePackageInfo]
                 }
 
