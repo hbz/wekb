@@ -19,13 +19,6 @@ class Package extends KBComponent {
   def dateFormatService
   static def messageService
 
-  // Owens defaults:
-  // Status default to 'Current'
-  // Scope default to 'Front File'
-  // Breakable?: Y
-  // Global?: Y
-  // Consistent?: N
-
   // Refdata
   @RefdataAnnotation(cat = RCConstants.PACKAGE_SCOPE)
   RefdataValue scope
