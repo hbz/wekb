@@ -14,6 +14,7 @@ class Platform extends KBComponent {
 
   IdentifierNamespace titleNamespace
 
+  @Deprecated
   RefdataValue authentication
 
   @RefdataAnnotation(cat = RCConstants.PLATFORM_IP_AUTH)
@@ -170,68 +171,6 @@ class Platform extends KBComponent {
       'curatoryGroups'
     ]
   ]
-
-  @Transient
-  static def oaiConfig = [
-    id             : 'platforms',
-    textDescription: 'Platform repository for GOKb',
-    query          : " from Platform as o ",
-    curators       : 'Platform.CuratoryGroups',
-    statusFilter   : ["Deleted"]
-  ]
-
-  /**
-   *  Render this package as OAI_dc
-   */
-  @Transient
-  def toOaiDcXml(builder, attr) {
-    builder.'dc'(attr) {
-      'dc:title'(name)
-    }
-  }
-
-  /**
-   *  Render this package as GoKBXML
-   */
-  @Transient
-  def toGoKBXml(builder, attr) {
-    def identifiers = getIds()
-
-    builder.'gokb'(attr) {
-      builder.'platform'(['id': (id), 'uuid': (uuid)]) {
-
-        addCoreGOKbXmlFields(builder, attr)
-
-        builder.'primaryUrl'(primaryUrl)
-        builder.'authentication'(authentication?.value)
-
-        if (ipAuthentication) builder.'ipAuthentication'(ipAuthentication.value)
-        if (shibbolethAuthentication) builder.'shibbolethAuthentication'(shibbolethAuthentication.value)
-        if (passwordAuthentication) builder.'passwordAuthentication'(passwordAuthentication.value)
-
-        if (provider) {
-          builder.'provider'([id: provider.id, uuid: (provider.uuid)]) {
-            builder.'name'(provider.name)
-          }
-        }
-        if (roles) {
-          builder.'roles' {
-            roles.each { role ->
-              builder.'role'(role.value)
-            }
-          }
-        }
-
-        builder.curatoryGroups {
-          curatoryGroups.each { cg ->
-            builder.group {
-              builder.name(cg.name)
-            }
-          }
-        }
-      }
-    }
-  }
 
   static def refdataFind(params) {
     def result = [];
