@@ -476,29 +476,38 @@ class ESSearchService{
     Map<String, String> subQueryParams = [:]
     //TODO this may be extended upon free-text (then, I need wildcardQuery as second field)
     if(qpars.ddc) {
-      subQueryParams['ddcs.value'] = qpars.ddc
+      subQueryParams['ddcs.value'] = qpars.list("ddc")
     }
     else if(qpars.ddcs) {
-      subQueryParams['ddcs.value'] = qpars.ddcs
+      subQueryParams['ddcs.value'] = qpars.list("ddcs")
     }
     if(qpars.language) {
-      subQueryParams['languages.value'] = qpars.language
+      subQueryParams['languages.value'] = qpars.list("language")
     }
     else if(qpars.languages) {
-      subQueryParams['languages.value'] = qpars.languages
+      subQueryParams['languages.value'] = qpars.list("languages")
     }
     if(qpars.curatoryGroupType) {
       subQueryParams['curatoryGroups.type'] = qpars.curatoryGroupType
     }
-    subQueryParams.each { String k, String v ->
-      if(k == 'curatoryGroups.type' && v.toLowerCase() == 'other') {
-        QueryBuilder curatoryGroupsSubQuery = QueryBuilders.boolQuery()
-        curatoryGroupsSubQuery.should(QueryBuilders.termQuery(k, v))
-        curatoryGroupsSubQuery.should(QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery(k)))
-        query.must(curatoryGroupsSubQuery)
+    subQueryParams.each { String k, v ->
+      if(v instanceof String) {
+        if(k == 'curatoryGroups.type' && v.toLowerCase() == 'other') {
+          QueryBuilder curatoryGroupsSubQuery = QueryBuilders.boolQuery()
+          curatoryGroupsSubQuery.should(QueryBuilders.termQuery(k, v))
+          curatoryGroupsSubQuery.should(QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery(k)))
+          query.must(curatoryGroupsSubQuery)
+        }
+        else {
+          query.must(QueryBuilders.termQuery(k, v))
+        }
       }
-      else {
-        query.must(QueryBuilders.termQuery(k, v))
+      else if(v instanceof List) {
+        QueryBuilder listSubQuery = QueryBuilders.boolQuery()
+        v.each { String subV ->
+          listSubQuery.should(QueryBuilders.termQuery(k, subV))
+        }
+        query.must(listSubQuery)
       }
     }
   }
