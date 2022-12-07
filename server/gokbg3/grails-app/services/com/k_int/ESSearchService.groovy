@@ -426,18 +426,18 @@ class ESSearchService{
         labelQuery.should(QueryBuilders.termQuery('uuid', qpars.q).boost(10))
       }
 
-      labelQuery.should(QueryBuilders.wildcardQuery('name', "*${qpars.label}*").boost(2))
-      labelQuery.should(QueryBuilders.wildcardQuery('altname', "*${qpars.label}*").boost(1.3))
-      labelQuery.should(QueryBuilders.wildcardQuery('suggest', "*${qpars.label}*").boost(0.6))
+      labelQuery.should(QueryBuilders.wildcardQuery('name', "*${qpars.label.toLowerCase()}*").boost(2))
+      labelQuery.should(QueryBuilders.wildcardQuery('altname', "*${qpars.label.toLowerCase()}*").boost(1.3))
+      labelQuery.should(QueryBuilders.wildcardQuery('suggest', "*${qpars.label.toLowerCase()}*").boost(0.6))
       labelQuery.minimumShouldMatch(1)
 
       query.must(labelQuery)
     }
     else if (qpars.name) {
-      query.must(QueryBuilders.wildcardQuery('name', "*${qpars.name}*"))
+      query.must(QueryBuilders.wildcardQuery('name', "*${qpars.name.toLowerCase()}*"))
     }
     else if (qpars.altname) {
-      query.must(QueryBuilders.wildcardQuery('altname', "*${qpars.altname}*"))
+      query.must(QueryBuilders.wildcardQuery('altname', "*${qpars.altname.toLowerCase()}*"))
     }
     else if (qpars.suggest) {
       query.must(QueryBuilders.wildcardQuery('suggest', "*${qpars.suggest}*").boost(0.6))
@@ -742,7 +742,7 @@ class ESSearchService{
       processGenericFields(exactQuery, errors, params)
       if(params.name && ["ids","identifier","identifiers"].any { String identifierKey -> params.keySet().contains(identifierKey) }) {
         QueryBuilder nameIdentifierQuery = QueryBuilders.boolQuery()
-        nameIdentifierQuery.should(QueryBuilders.wildcardQuery('name', "*${params.name}*"))
+        nameIdentifierQuery.should(QueryBuilders.wildcardQuery('name', "*${params.name.toLowerCase()}*"))
         addIdentifierQuery(nameIdentifierQuery, errors, params, true)
         exactQuery.must(nameIdentifierQuery).boost(2)
       }
