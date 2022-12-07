@@ -426,18 +426,18 @@ class ESSearchService{
         labelQuery.should(QueryBuilders.termQuery('uuid', qpars.q).boost(10))
       }
 
-      labelQuery.should(QueryBuilders.wildcardQuery('name', "*${qpars.label}*").boost(2))
-      labelQuery.should(QueryBuilders.wildcardQuery('altname', "*${qpars.label}*").boost(1.3))
-      labelQuery.should(QueryBuilders.wildcardQuery('suggest', "*${qpars.label}*").boost(0.6))
+      labelQuery.should(QueryBuilders.wildcardQuery('name', "*${qpars.label.toLowerCase()}*").boost(2))
+      labelQuery.should(QueryBuilders.wildcardQuery('altname', "*${qpars.label.toLowerCase()}*").boost(1.3))
+      labelQuery.should(QueryBuilders.wildcardQuery('suggest', "*${qpars.label.toLowerCase()}*").boost(0.6))
       labelQuery.minimumShouldMatch(1)
 
       query.must(labelQuery)
     }
     else if (qpars.name) {
-      query.must(QueryBuilders.wildcardQuery('name', "*${qpars.name}*"))
+      query.must(QueryBuilders.wildcardQuery('name', "*${qpars.name.toLowerCase()}*"))
     }
     else if (qpars.altname) {
-      query.must(QueryBuilders.wildcardQuery('altname', "*${qpars.altname}*"))
+      query.must(QueryBuilders.wildcardQuery('altname', "*${qpars.altname.toLowerCase()}*"))
     }
     else if (qpars.suggest) {
       query.must(QueryBuilders.wildcardQuery('suggest', "*${qpars.suggest}*").boost(0.6))
@@ -476,29 +476,38 @@ class ESSearchService{
     Map<String, String> subQueryParams = [:]
     //TODO this may be extended upon free-text (then, I need wildcardQuery as second field)
     if(qpars.ddc) {
-      subQueryParams['ddcs.value'] = qpars.ddc
+      subQueryParams['ddcs.value'] = qpars.list("ddc")
     }
     else if(qpars.ddcs) {
-      subQueryParams['ddcs.value'] = qpars.ddcs
+      subQueryParams['ddcs.value'] = qpars.list("ddcs")
     }
     if(qpars.language) {
-      subQueryParams['languages.value'] = qpars.language
+      subQueryParams['languages.value'] = qpars.list("language")
     }
     else if(qpars.languages) {
-      subQueryParams['languages.value'] = qpars.languages
+      subQueryParams['languages.value'] = qpars.list("languages")
     }
     if(qpars.curatoryGroupType) {
       subQueryParams['curatoryGroups.type'] = qpars.curatoryGroupType
     }
-    subQueryParams.each { String k, String v ->
-      if(k == 'curatoryGroups.type' && v.toLowerCase() == 'other') {
-        QueryBuilder curatoryGroupsSubQuery = QueryBuilders.boolQuery()
-        curatoryGroupsSubQuery.should(QueryBuilders.termQuery(k, v))
-        curatoryGroupsSubQuery.should(QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery(k)))
-        query.must(curatoryGroupsSubQuery)
+    subQueryParams.each { String k, v ->
+      if(v instanceof String) {
+        if(k == 'curatoryGroups.type' && v.toLowerCase() == 'other') {
+          QueryBuilder curatoryGroupsSubQuery = QueryBuilders.boolQuery()
+          curatoryGroupsSubQuery.should(QueryBuilders.termQuery(k, v))
+          curatoryGroupsSubQuery.should(QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery(k)))
+          query.must(curatoryGroupsSubQuery)
+        }
+        else {
+          query.must(QueryBuilders.termQuery(k, v))
+        }
       }
-      else {
-        query.must(QueryBuilders.termQuery(k, v))
+      else if(v instanceof List) {
+        QueryBuilder listSubQuery = QueryBuilders.boolQuery()
+        v.each { String subV ->
+          listSubQuery.should(QueryBuilders.termQuery(k, subV))
+        }
+        query.must(listSubQuery)
       }
     }
   }
@@ -733,7 +742,7 @@ class ESSearchService{
       processGenericFields(exactQuery, errors, params)
       if(params.name && ["ids","identifier","identifiers"].any { String identifierKey -> params.keySet().contains(identifierKey) }) {
         QueryBuilder nameIdentifierQuery = QueryBuilders.boolQuery()
-        nameIdentifierQuery.should(QueryBuilders.wildcardQuery('name', "*${params.name}*"))
+        nameIdentifierQuery.should(QueryBuilders.wildcardQuery('name', "*${params.name.toLowerCase()}*"))
         addIdentifierQuery(nameIdentifierQuery, errors, params, true)
         exactQuery.must(nameIdentifierQuery).boost(2)
       }
