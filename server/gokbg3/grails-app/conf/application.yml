@@ -208,7 +208,6 @@ environments:
                 greenmail:
                     disabled: true
 gokb:
-    ygorUrl: null
     languagesUrl: http://localhost:8070
     ftupdate_enabled: true
     costInfo: false

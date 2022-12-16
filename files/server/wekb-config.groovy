@@ -17,7 +17,6 @@ gokb.packageUpdate.enabled = false
 gokb.enable_statsrewrite = false
 gokb.sendJobInfosJob = false
 gokb.tsvExportTempDirectory = '/tmp'
-gokb.ygorUrl = 'localhost/ygor'
 
 deployBackupLocation = ''
 pgDumpPath = ''
@@ -34,9 +33,5 @@ systemId = 'we:kb-Dev'
 
 logSql = true
 formatSql = true
-
-ygorUploadLocation = '/tmp'
-ygorStatisticStorageLocation = '/tmp'
-ygorUploadJsonLocation = '/tmp'
 
 kbartImportStorageLocation = '/tmp/kbartImport'

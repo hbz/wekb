@@ -364,17 +364,6 @@ class CrossRefPkgRun {
                   note: note).save(flush: true)
 
           jsonResult.packageUpdateNote = note
-
-          if(rjson.ygorStatisticResultHash && Holders.grailsApplication.config.ygorUploadLocation && Holders.grailsApplication.config.ygorStatisticStorageLocation) {
-              File dowloadFolder = new File("${Holders.grailsApplication.config.ygorUploadLocation.toString()}/${rjson.ygorStatisticResultHash}.raw.zip")
-
-              File uploadFolder = new File("${Holders.grailsApplication.config.ygorStatisticStorageLocation.toString()}/${rjson.ygorStatisticResultHash}.raw.zip")
-
-              Files.copy(dowloadFolder.toPath(), uploadFolder.toPath())
-
-              jsonResult.ygorStatisticResultHash = rjson.ygorStatisticResultHash
-
-          }
         }
       }
       log.debug("final flush");

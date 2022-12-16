@@ -268,4 +268,10 @@ class PublicController {
       log.error("Problem with export",e);
     }
   }
+
+  def ygor() {
+    log.debug("ygor::${params}")
+    def result = [:]
+    result
+  }
 }
