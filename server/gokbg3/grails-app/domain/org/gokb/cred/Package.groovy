@@ -376,7 +376,7 @@ class Package extends KBComponent {
   @Transient
   def availableActions() {
     [
-      [code: 'manualKbartImport', label: 'Manual Kbart Import'],
+      [code: 'manualKbartImport', label: 'Manual KBART Import'],
 
       [code: 'method::currentWithTipps', label: 'Mark the package as current (with all Titles)'],
       [code: 'method::deleteSoft', label: 'Mark the package as deleted (with all Titles)', perm: 'delete'],

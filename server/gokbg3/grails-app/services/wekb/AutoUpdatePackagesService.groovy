@@ -157,7 +157,7 @@ class AutoUpdatePackagesService {
                     log.error("Error by startAutoPackageUapdate: ${exception.message}" + exception.printStackTrace())
                     UpdatePackageInfo.withTransaction {
                         UpdatePackageInfo updatePackageFail = new UpdatePackageInfo()
-                        updatePackageFail.description = "An error occurred while processing the kbart file. More information can be seen in the system log. File from URL: ${lastUpdateURL}"
+                        updatePackageFail.description = "An error occurred while processing the KBART file. More information can be seen in the system log. File from URL: ${lastUpdateURL}"
                         updatePackageFail.status = RDStore.UPDATE_STATUS_FAILED
                         updatePackageFail.startTime = startTime
                         updatePackageFail.endTime = new Date()

@@ -98,7 +98,7 @@
 
             <g:if test="${(d.source && (d.source.lastUpdateUrl || d.source.url)) || d.getLastSuccessfulManualUpdateInfo()}">
                 <g:link controller="public" action="kbart" class="ui inverted button"
-                        id="${params.id}">KBart File</g:link> &nbsp;
+                        id="${params.id}">KBART File</g:link> &nbsp;
                 <div class="or"></div>
             </g:if>
             <a class="ui inverted button" href="#" onclick="$('#packageTSVExport').modal('show');"><g:message
