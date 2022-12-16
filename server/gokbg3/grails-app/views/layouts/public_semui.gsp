@@ -71,8 +71,9 @@
                 </div>
 
                 <div class="menu">
-                    <g:link class="item" controller="group" action="myAutoUpdateInfos">My Auto Update Infos</g:link>
+                    <g:link class="item" controller="group" action="myPackageManagement">My Package Management</g:link>
                     <g:link class="item" controller="group" action="myPackagesNeedsAutoUpdates">My Packages due to automatic update</g:link>
+                    <g:link class="item" controller="group" action="myAutoUpdateInfos">My Auto Update Infos</g:link>
                 </div>
             </div>
 
