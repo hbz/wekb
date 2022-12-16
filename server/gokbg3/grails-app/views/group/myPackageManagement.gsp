@@ -29,13 +29,13 @@
 
     <semui:tabs>
         <semui:tabsItemWithoutLink tab="generalInfos" defaultTab="generalInfos" activeTab="${params.activeTab}">
-            General Informations
+            General Information
         </semui:tabsItemWithoutLink>
        %{-- <semui:tabsItemWithoutLink tab="rangeInfos" activeTab="${params.activeTab}">
-            Range Informations
+            Range Information
         </semui:tabsItemWithoutLink>--}%
         <semui:tabsItemWithoutLink tab="archivingAgencyInfos" activeTab="${params.activeTab}">
-            Archiving Agency Informations
+            Archiving Agency
         </semui:tabsItemWithoutLink>
         <semui:tabsItemWithoutLink tab="identifiers" activeTab="${params.activeTab}">
             Identifiers
@@ -44,7 +44,7 @@
             Dewey Decimal Classifications
         </semui:tabsItemWithoutLink>
         <semui:tabsItemWithoutLink tab="sources" activeTab="${params.activeTab}">
-            Source Informations
+            Source
         </semui:tabsItemWithoutLink>
     </semui:tabs>
 

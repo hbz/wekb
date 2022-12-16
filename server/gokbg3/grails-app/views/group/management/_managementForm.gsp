@@ -35,7 +35,7 @@
 </div>
 
     <button class="ui button black" type="submit" value="changeProperties"
-                name="processOption">Do bulk process to the selected items</button>
+                name="processOption">Start Bulk Process for selected items</button>
 
     <br>
     <br>

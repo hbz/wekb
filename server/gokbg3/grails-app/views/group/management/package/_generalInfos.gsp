@@ -17,10 +17,6 @@
                                       params="${params}"/>
                 <semui:sortableColumn property="status" title="Status"
                                       params="${params}"/>
-                <semui:sortableColumn property="descriptionURL" title="Description URL"
-                                      params="${params}"/>
-                <semui:sortableColumn property="globalNote" title="Global Note"
-                                      params="${params}"/>
                 <semui:sortableColumn property="breakable" title="Breakable"
                                       params="${params}"/>
                 <semui:sortableColumn property="contentType" title="Content Type"
@@ -55,13 +51,6 @@
                         <td>
                             <semui:xEditableRefData owner="${row_obj}" field="status"
                                                     config="${RCConstants.KBCOMPONENT_STATUS}"/>
-                        </td>
-                        <td>
-                            <semui:xEditable owner="${row_obj}" field="descriptionURL" validation="url"
-                                             outGoingLink="true"/>
-                        </td>
-                        <td>
-                            <semui:xEditable owner="${row_obj}" field="globalNote"/>
                         </td>
                         <td>
                             <semui:xEditableRefData owner="${row_obj}" field="breakable"
