@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="layout" content="public_semui"/>
-    <title><g:message code="gokb.appname" default="we:kb"/>: Page Not Found</title>
+    <title><g:message code="gokb.appname" default="we:kb"/>: Forbidden</title>
 </head>
 
 <body>
@@ -12,17 +12,18 @@
         <span class="ui black label huge">${code}</span>
     </div>
     <div class="ui icon header">
-        <i class="eye slash icon"></i>
+        <i class="exclamation triangle icon"></i>
         <h2 class="ui header">
-            Page not found!
+            Forbidden
         </h2>
     </div>
 
+    <p>You do not have permission to view the requested page.</p>
+    <br />
+    <br />
     <p><strong>${request.forwardURI}</strong></p>
-
     <br />
     <br />
-
     <p>
         <button class="ui black button" onclick="window.history.back()">${message(code: 'default.button.back')}</button>
     </p>

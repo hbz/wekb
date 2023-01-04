@@ -7,18 +7,35 @@
 </head>
 
 <body>
-<div class="ui segment">
-    <h3 class="ui header">${message(code: "default.error.exception")}</h3>
+<div class="ui tall stacked segment">
+        <div>
+            <span class="ui black label huge">${code}</span>
+        </div>
+    <div class="ui icon header">
+        <i class="ambulance icon"></i>
+        <h2 class="ui header">
+            ${message(code: "default.error.exception")}
+        </h2>
+    </div>
 
     <p><strong>${request.forwardURI}</strong></p>
-
+    <br />
+    <br />
     <g:if test="${exception}">
-        <p>${exception.message}</p>
+        <p>${exception?.message}</p>
         <br/>
+        <p>
+            <a href="mailto:laser@hbz-nrw.de?${mailString}">
+                Send Mail to support
+            </a>
+        </p>
     </g:if>
-    <br>
-    <button class="ui black button"
-            onclick="window.history.back()">${message(code: 'default.button.back')}</button>
+    <br />
+    <br />
+
+    <p>
+        <button class="ui black button" onclick="window.history.back()">${message(code: 'default.button.back')}</button>
+    </p>
 
 </div>
 
