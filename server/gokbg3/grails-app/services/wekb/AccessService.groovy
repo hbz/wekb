@@ -74,7 +74,7 @@ class AccessService {
     boolean checkEditableObject(Object o, boolean curationOverride = false) {
         boolean editable = false
 
-        if (!(o.respondsTo('isSystemComponent') && o.isSystemComponent())) {
+        if (SpringSecurityUtils.ifAnyGranted("ROLE_EDITOR, ROLE_ADMIN, ROLE_SUPERUSER")) {
             def curatedObj = null
             if(o instanceof Identifier){
                 curatedObj = o.reference.respondsTo("getCuratoryGroups") ? o.reference : ( o.reference.hasProperty('pkg') ? o.reference.pkg : null )
@@ -118,9 +118,20 @@ class AccessService {
 
     }
 
+    boolean checkEditable(String baseclassName) {
+
+        if(baseclassName in allowedBaseClasses && SpringSecurityUtils.ifAnyGranted('ROLE_EDITOR')){
+            return true
+        }else {
+            return SpringSecurityUtils.ifAnyGranted('ROLE_SUPERUSER')
+        }
+
+
+    }
+
     boolean checkDeletable(String baseclassName) {
 
-        if(baseclassName in allowedBaseClasses){
+        if(baseclassName in allowedToCreate){
             return true
         }else {
             return SpringSecurityUtils.ifAnyGranted('ROLE_SUPERUSER')

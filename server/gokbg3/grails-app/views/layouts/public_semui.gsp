@@ -71,8 +71,9 @@
                 </div>
 
                 <div class="menu">
-                    <g:link class="item" controller="group" action="myAutoUpdateInfos">My Auto Update Infos</g:link>
+                    <g:link class="item" controller="group" action="myPackageManagement">My Package Management</g:link>
                     <g:link class="item" controller="group" action="myPackagesNeedsAutoUpdates">My Packages due to automatic update</g:link>
+                    <g:link class="item" controller="group" action="myAutoUpdateInfos">My Auto Update Infos</g:link>
                 </div>
             </div>
 
@@ -249,12 +250,6 @@
                                 class="sign in alternate icon icon"></i>Login</g:link>
                     </div>
                 </sec:ifNotLoggedIn>
-                <g:if test="${grailsApplication.config.gokb.ygorUrl}">
-                    <div class="item">
-                        <a class="ui inverted button" href="${grailsApplication.config.gokb.ygorUrl}"
-                           target="_blank">Ygor</a>
-                    </div>
-                </g:if>
                 <sec:ifAnyGranted roles="ROLE_ADMIN">
                             <div class="item">
                             ${adminService.getNumberOfActiveUsers()} User online

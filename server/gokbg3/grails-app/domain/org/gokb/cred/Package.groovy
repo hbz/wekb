@@ -19,13 +19,6 @@ class Package extends KBComponent {
   def dateFormatService
   static def messageService
 
-  // Owens defaults:
-  // Status default to 'Current'
-  // Scope default to 'Front File'
-  // Breakable?: Y
-  // Global?: Y
-  // Consistent?: N
-
   // Refdata
   @RefdataAnnotation(cat = RCConstants.PACKAGE_SCOPE)
   RefdataValue scope
@@ -383,7 +376,7 @@ class Package extends KBComponent {
   @Transient
   def availableActions() {
     [
-      [code: 'manualKbartImport', label: 'Manual Kbart Import'],
+      [code: 'manualKbartImport', label: 'Manual KBART Import'],
 
       [code: 'method::currentWithTipps', label: 'Mark the package as current (with all Titles)'],
       [code: 'method::deleteSoft', label: 'Mark the package as deleted (with all Titles)', perm: 'delete'],

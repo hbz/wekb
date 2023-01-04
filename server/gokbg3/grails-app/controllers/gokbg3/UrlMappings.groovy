@@ -13,6 +13,8 @@ class UrlMappings {
     "/package"(controller: 'packages')
     "/robots.txt"(controller: 'public', action: 'robots')
 
+    "/ygor"(controller: 'public', action: 'ygor')
+
     group "/rest", {
       "/packages/$id/$action"(controller: 'package', namespace: 'rest')
       get "/packages/$id"(controller: 'package', namespace: 'rest', action: 'show')

@@ -23,7 +23,7 @@
             <th>#</th>
             <th>Name</th>
             <th>Provider</th>
-            <th>Source / Kbart URL</th>
+            <th>Source / KBART URL</th>
             <th>Last Update URL</th>
             <th>Last Run</th>
             <th>Next Run</th>
@@ -52,7 +52,7 @@
                     <br>
                     <br>
                     ${pkg.source.url}
-                    <semui:showOutGoingLink text="Kbart Url" outGoingLink="${pkg.source.url}"/>
+                    <semui:showOutGoingLink text="KBART Url" outGoingLink="${pkg.source.url}"/>
                 </td>
                 <td>
                     ${pkg.source.lastUpdateUrl} <semui:showOutGoingLink text="Last Update Url" outGoingLink="${pkg.source.lastUpdateUrl}"/>

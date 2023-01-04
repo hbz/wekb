@@ -889,6 +889,8 @@ class KbartImportService {
                     Identifier.executeUpdate("delete from Identifier where id_id = :id", [id: it])
                 }
 
+                tipp.lastUpdated = new Date()
+
                 tipp.save()
             }
 
@@ -2524,6 +2526,9 @@ class KbartImportService {
                             type: RDStore.UPDATE_TYPE_NEW_TITLE,
                             updatePackageInfo: updatePackageInfo
                     ).save()
+
+                    tipp.lastUpdated = new Date()
+                    tipp = tipp.save()
 
                     newTippList << [tippID: tipp.id, updatePackageInfo: updatePackageInfo]
                 }

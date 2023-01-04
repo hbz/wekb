@@ -30,7 +30,7 @@
 </dl>
 <dl>
     <dt class="control-label">Last Update Comment</dt>
-    <dd><semui:xEditable owner="${d}" field="lastUpdateComment"/>
+    <dd><semui:xEditable owner="${d}" field="lastUpdateComment" overwriteEditable="false"/>
         <g:if test="${controllerName != 'create' && (d.getCountManualUpdateInfos() > 0 || d.getCountAutoUpdateInfos() > 0)}">
             <br>
             <br>

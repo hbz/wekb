@@ -43,7 +43,7 @@
             <semui:sortableColumn property="p.name" title="Name"/>
             <th>Provider</th>
             <semui:sortableColumn property="p.curatoryGroups" title="Curatory Groups"/>
-            <th>Source / Kbart URL</th>
+            <th>Source / KBART URL</th>
             <semui:sortableColumn property="p.source.lastUpdateUrl" title="Last Update URL"/>
             <semui:sortableColumn property="p.source.lastRun" title="Last Run"/>
             <th>Next Run</th>
@@ -74,7 +74,7 @@
                     <g:link controller="resource" action="show" id="${pkg.source.uuid}">
                         ${pkg.source.name}
                     </g:link>
-                    <semui:showOutGoingLink text="Kbart Url" outGoingLink="${pkg.source.url}"/>
+                    <semui:showOutGoingLink text="KBART Url" outGoingLink="${pkg.source.url}"/>
                 </td>
                 <td>
                     <semui:showOutGoingLink text="Last Update Url" outGoingLink="${pkg.source.lastUpdateUrl}"/>

@@ -143,7 +143,7 @@
 
 <dl>
     <dt class="control-label">
-        Kbart has additional fields for we:kb
+        KBART has additional fields for we:kb
     </dt>
     <dd>
         <semui:xEditableBoolean owner="${d}" field="kbartHasWekbFields" overwriteEditable="false"/>
@@ -151,7 +151,7 @@
 </dl>
 <dl>
     <dt class="control-label">
-        Last Changed in Kbart
+        Last Changed in KBART
     </dt>
     <dd>
         <g:formatDate format="${message(code: 'default.date.format.notime')}"

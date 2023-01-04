@@ -239,7 +239,7 @@ class GlobalSearchTemplatesService {
                                 [
                                         prompt     : 'KBART Field',
                                         qparam     : 'qp_kbartProperty',
-                                        placeholder: 'Kbart Field',
+                                        placeholder: 'KBART Field',
                                         contextTree: ['ctxtp': 'qry', 'comparator': 'ilike', 'prop': 'kbartProperty']
                                 ],
                                 [

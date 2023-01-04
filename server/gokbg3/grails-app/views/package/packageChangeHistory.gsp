@@ -52,9 +52,9 @@
                                   params="${params}"/>
             <semui:sortableColumn property="countInValidTipps" title="Invalid Titles"
                                   params="${params}"/>
-            <semui:sortableColumn property="kbartHasWekbFields" title="Kbart Wekb Fields"
+            <semui:sortableColumn property="kbartHasWekbFields" title="KBART Wekb Fields"
                                   params="${params}"/>
-            <th>Last Changed in Kbart</th>
+            <th>Last Changed in KBART</th>
         </tr>
         </thead>
         <tbody>

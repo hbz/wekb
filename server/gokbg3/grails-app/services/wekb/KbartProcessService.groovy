@@ -51,7 +51,7 @@ class KbartProcessService {
                     folder.mkdirs()
                 }
 
-                String packageName = "${pkg.name.toLowerCase().replaceAll("\\s", '_')}_${pkg.id}"
+                String packageName = "${pkg.name.toLowerCase().replaceAll('[+\\-/\\\\(){}\\[\\]<>!§$%&=?*#€¿&_\\".,:;]','').replaceAll("\\s", '_')}_${pkg.id}"
 
                 Path source = new File("${fPathSource}/${packageName}").toPath()
                 Path target = new File("${fPathTarget}/${packageName}").toPath()
@@ -64,7 +64,7 @@ class KbartProcessService {
             log.error("Error by kbartImportManual: ${exception.message}" + exception.printStackTrace())
             UpdatePackageInfo.withTransaction {
                 UpdatePackageInfo updatePackageFail = new UpdatePackageInfo()
-                updatePackageFail.description = "An error occurred while processing the kbart file. More information can be seen in the system log."
+                updatePackageFail.description = "An error occurred while processing the KBART file. More information can be seen in the system log."
                 updatePackageFail.status = RDStore.UPDATE_STATUS_FAILED
                 updatePackageFail.startTime = startTime
                 updatePackageFail.endTime = new Date()
@@ -265,6 +265,8 @@ class KbartProcessService {
                                                 setTippsNotToDeleted << updateTipp.id
                                             }
                                             if(updateTipp) {
+                                                updateTipp.lastUpdated = new Date()
+                                                updateTipp = updateTipp.save()
                                                 tippsFound << updateTipp.id
                                             }
                                         }
@@ -277,7 +279,7 @@ class KbartProcessService {
                                                 UpdateTippInfo.withTransaction {
                                                     updatePackageInfo.refresh()
                                                     UpdateTippInfo updateTippInfo = new UpdateTippInfo(
-                                                            description: "An error occurred while processing the title: ${kbartRow.publication_title}. Check kbart row of this title.",
+                                                            description: "An error occurred while processing the title: ${kbartRow.publication_title}. Check KBART row of this title.",
                                                             tipp: updateTipp,
                                                             startTime: new Date(),
                                                             endTime: new Date(),
@@ -302,7 +304,7 @@ class KbartProcessService {
                                                 UpdateTippInfo.withTransaction {
                                                     updatePackageInfo.refresh()
                                                     UpdateTippInfo updateTippInfo = new UpdateTippInfo(
-                                                            description: "An error occurred while processing the title: ${kbartRow.publication_title}. Check kbart row of this title.",
+                                                            description: "An error occurred while processing the title: ${kbartRow.publication_title}. Check KBART row of this title.",
                                                             tipp: updateTipp,
                                                             startTime: new Date(),
                                                             endTime: new Date(),
@@ -388,7 +390,7 @@ class KbartProcessService {
 
                 tippDuplicates.each {
                     if(!(it in tippsFound)){
-                        KBComponent.executeUpdate("update KBComponent set status = :removed, lastUpdated = CURRENT_DATE where id = (:tippId) and status != :removed", [removed: RDStore.KBC_STATUS_REMOVED, tippId: it])
+                        KBComponent.executeUpdate("update KBComponent set status = :removed, lastUpdated = :currentDate where id = (:tippId) and status != :removed", [removed: RDStore.KBC_STATUS_REMOVED, tippId: it, currentDate: new Date()])
 
                         TitleInstancePackagePlatform tipp = TitleInstancePackagePlatform.get(it)
                         UpdateTippInfo.withTransaction {
@@ -440,7 +442,7 @@ class KbartProcessService {
                     int maxDeleted = 30000
                     for (int offset = 0; offset < deletedCount; offset += maxDeleted) {
                         List deleteTippsFromWekbToProcess = tippsIds.drop(offset).take(maxDeleted)
-                        KBComponent.executeUpdate("update KBComponent set status = :deleted, lastUpdated = CURRENT_DATE where id in (:tippIDs) and status != :deleted", [deleted: RDStore.KBC_STATUS_DELETED, tippIDs: deleteTippsFromWekbToProcess])
+                        KBComponent.executeUpdate("update KBComponent set status = :deleted, lastUpdated = :currentDate where id in (:tippIDs) and status != :deleted", [deleted: RDStore.KBC_STATUS_DELETED, tippIDs: deleteTippsFromWekbToProcess, currentDate: new Date()])
                     }
 
                     StatelessSession session = sessionFactory.openStatelessSession()
@@ -514,7 +516,7 @@ class KbartProcessService {
 
                     for (int offset = 0; offset < deletedCount; offset += maxDeleted) {
                         List deleteTippsFromWekbToProcess = deleteTippsFromWekb.drop(offset).take(maxDeleted)
-                        KBComponent.executeUpdate("update KBComponent set status = :deleted, lastUpdated = CURRENT_DATE where id in (:tippIDs) and status != :deleted", [deleted: RDStore.KBC_STATUS_DELETED, tippIDs: deleteTippsFromWekbToProcess])
+                        KBComponent.executeUpdate("update KBComponent set status = :deleted, lastUpdated = :currentDate where id in (:tippIDs) and status != :deleted", [deleted: RDStore.KBC_STATUS_DELETED, tippIDs: deleteTippsFromWekbToProcess, currentDate: new Date()])
                     }
 
                     StatelessSession session = sessionFactory.openStatelessSession()
@@ -561,10 +563,10 @@ class KbartProcessService {
                     "countRemovedTipps = ${removedTipps}, " +
                     "countInValidTipps = ${countInvalidKbartRowsForTipps}, " +
                     "countProcessedKbartRows = ${idx}, " +
-                    "endTime = ${new Date()}, " +
+                    "endTime = :currentDate, " +
                     "description = ${description}, " +
-                    "lastUpdated = CURRENT_DATE " +
-                    "where id = ${updatePackageInfo.id}")
+                    "lastUpdated = :currentDate " +
+                    "where id = ${updatePackageInfo.id}", [currentDate: new Date()])
 
             UpdatePackageInfo.withTransaction {
 
@@ -592,7 +594,7 @@ class KbartProcessService {
             UpdatePackageInfo.withTransaction {
                 updatePackageInfo.refresh()
                 updatePackageInfo.endTime = new Date()
-                String description = "An error occurred while processing the kbart file. More information can be seen in the system log. "
+                String description = "An error occurred while processing the KBART file. More information can be seen in the system log. "
                 if(updatePackageInfo.automaticUpdate){
                     description = description+ "File from URL: ${lastUpdateURL}"
                 }
@@ -626,7 +628,7 @@ class KbartProcessService {
         if(!encodingPass) {
             log.error("Encoding of file is wrong. File encoding is: ${encoding}")
             UpdatePackageInfo.withTransaction {
-                String description = "Encoding of kbart file is wrong. File encoding was: ${encoding}. "
+                String description = "Encoding of KBART file is wrong. File encoding was: ${encoding}. "
                 if(updatePackageInfo.automaticUpdate){
                     description = description+ "File from URL: ${lastUpdateURL}"
                 }
@@ -816,7 +818,7 @@ class KbartProcessService {
                     }else {
                         log.error("no delimiter $delimiter: ${lastUpdateURL}")
                         UpdatePackageInfo.withTransaction {
-                            String description = "Separator for the kbart was not recognized. The following separators are recognized: Tab, comma, semicolons. "
+                            String description = "Separator for the KBART was not recognized. The following separators are recognized: Tab, comma, semicolons. "
                             if(updatePackageInfo.automaticUpdate){
                                 description = description+ "File from URL: ${lastUpdateURL}"
                             }
@@ -843,7 +845,7 @@ class KbartProcessService {
                 log.error("Error by KbartProcess: ${e}")
                 UpdatePackageInfo.withTransaction {
                     updatePackageInfo.refresh()
-                    String description = "An error occurred while processing the kbart file. More information can be seen in the system log. "
+                    String description = "An error occurred while processing the KBART file. More information can be seen in the system log. "
                     if(updatePackageInfo.automaticUpdate){
                         description = description+ "File from URL: ${lastUpdateURL}"
                     }

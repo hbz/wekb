@@ -88,19 +88,6 @@ class PackageController {
         result
     }
 
-/*    @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-    def showYgorStatistic() {
-        if(params.id && grailsApplication.config.gokb.ygorUrl) {
-
-            redirect(url: "${grailsApplication.config.gokb.ygorUrl}/enrichment/uploadRawFileFromWEKB?ygorStatisticResultHash=${params.id}")
-
-        }else {
-
-            flash.error = "We are sorry. Unfortunately an error happened. The statistics cannot be displayed"
-            redirect(url: request.getHeader("referer"))
-        }
-    }*/
-
     def packageChangeHistory() {
         log.debug("packageChangeHistory:: ${params}")
         def searchResult = [:]
@@ -189,7 +176,7 @@ class PackageController {
                                 folder.mkdirs()
                             }
 
-                            String packageName = "${pkg.name.toLowerCase().replaceAll("\\s", '_')}_${pkg.id}"
+                            String packageName = "${pkg.name.toLowerCase().replaceAll('[+\\-/\\\\(){}\\[\\]<>!§$%&=?*#€¿&_\\".,:;]','').replaceAll("\\s", '_')}_${pkg.id}"
                             String fileName = folder.absolutePath.concat(File.separator).concat(packageName)
                             File file = new File(fileName)
 

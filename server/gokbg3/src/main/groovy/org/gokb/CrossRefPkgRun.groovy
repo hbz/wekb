@@ -245,7 +245,7 @@ class CrossRefPkgRun {
 
         tippDuplicates.each {
           if(!(it in tippsFound)){
-            KBComponent.executeUpdate("update KBComponent set status = :deleted, lastUpdated = CURRENT_DATE where id = (:tippId) and status != :deleted", [deleted: status_deleted, tippId: it])
+            KBComponent.executeUpdate("update KBComponent set status = :deleted, lastUpdated = :currentDate where id = (:tippId) and status != :deleted", [deleted: status_deleted, tippId: it, currentDate: new Date()])
           }
         }
 
@@ -325,7 +325,7 @@ class CrossRefPkgRun {
                   "tipp.pkg = :package and tipp.id not in (:setTippsNotToDeleted)",
                   [package: pkg, status: [status_current, status_expected, status_retired], setTippsNotToDeleted: setTippsNotToDeleted]) : []
 
-          Integer tippsToDeleted = tippsIds ? KBComponent.executeUpdate("update KBComponent set status = :deleted, lastUpdated = CURRENT_DATE where id in (:tippIds) and status != :deleted", [deleted: status_deleted, tippIds: tippsIds]) : 0
+          Integer tippsToDeleted = tippsIds ? KBComponent.executeUpdate("update KBComponent set status = :deleted, lastUpdated = :currentDate where id in (:tippIds) and status != :deleted", [deleted: status_deleted, tippIds: tippsIds, currentDate: new Date()]) : 0
 
           log.info("kbart is not wekb standard. set title to deleted. Found tipps: ${tippsIds.size()}, Set tipps to deleted: ${tippsToDeleted}")
         }
@@ -364,17 +364,6 @@ class CrossRefPkgRun {
                   note: note).save(flush: true)
 
           jsonResult.packageUpdateNote = note
-
-          if(rjson.ygorStatisticResultHash && Holders.grailsApplication.config.ygorUploadLocation && Holders.grailsApplication.config.ygorStatisticStorageLocation) {
-              File dowloadFolder = new File("${Holders.grailsApplication.config.ygorUploadLocation.toString()}/${rjson.ygorStatisticResultHash}.raw.zip")
-
-              File uploadFolder = new File("${Holders.grailsApplication.config.ygorStatisticStorageLocation.toString()}/${rjson.ygorStatisticResultHash}.raw.zip")
-
-              Files.copy(dowloadFolder.toPath(), uploadFolder.toPath())
-
-              jsonResult.ygorStatisticResultHash = rjson.ygorStatisticResultHash
-
-          }
         }
       }
       log.debug("final flush");
