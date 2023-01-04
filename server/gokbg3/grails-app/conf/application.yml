@@ -123,9 +123,9 @@ environments:
     development:
         dataSource:
             dbCreate: none # update // none because of database migration
-            url: jdbc:postgresql://pghost:5432/gokbg3dev
-            username: knowint
-            password: knowint
+            url: jdbc:postgresql://pghost:5432/wekb_dev
+            username: username
+            password: password
             driverClassName: org.postgresql.Driver
             dialect: org.hibernate.dialect.PostgreSQLDialect
             defaultTransactionIsolation: java.sql.Connection.TRANSACTION_READ_COMMITTED
@@ -151,14 +151,14 @@ environments:
         cache:
             headers:
                 enabled: false
-        gokb:
+        wekb:
             defaultCuratoryGroup: Local
     test:
         dataSource:
             dbCreate: none # create-drop // none because of database migration
-            url: jdbc:postgresql://pghost:5432/gokbg3test
-            username: knowint
-            password: knowint
+            url: jdbc:postgresql://pghost:5432/wekb_test
+            username: username
+            password: password
             driverClassName: org.postgresql.Driver
             dialect: org.hibernate.dialect.PostgreSQLDialect
             defaultTransactionIsolation: java.sql.Connection.TRANSACTION_READ_COMMITTED
@@ -186,9 +186,9 @@ environments:
     production:
         dataSource:
             dbCreate: none #update // none because of database migration
-            url: jdbc:postgresql://localhost:5432/gokbg3
-            username: gokb
-            password: knowint
+            url: jdbc:postgresql://localhost:5432/wekb_dev
+            username: username
+            password: password
             driverClassName: org.postgresql.Driver
             dialect: org.hibernate.dialect.PostgreSQLDialect
             defaultTransactionIsolation: java.sql.Connection.TRANSACTION_READ_COMMITTED
@@ -203,27 +203,3 @@ environments:
                 testOnReturn: true
                 validationQuery: select 1
                 defaultTransactionIsolation: java.sql.Connection.TRANSACTION_READ_COMMITTED
-        grails:
-            plugin:
-                greenmail:
-                    disabled: true
-gokb:
-    languagesUrl: http://localhost:8070
-    ftupdate_enabled: true
-    costInfo: false
-    packageUpdate:
-        enabled: false
-    es:
-        cluster: gokbg3-test
-        host: localhost
-        indices:
-            tipps: wekbtipps
-            orgs: wekborgs
-            packages: wekbpackages
-            platforms: wekbplatforms
-            deletedKBComponent: wekbdeletedcomponents
-    tsvExportTempDirectory: /tmp/gokb/export
-
-quartz:
-    autoStartup: true
-    waitForJobsToCompleteOnShutdown: false

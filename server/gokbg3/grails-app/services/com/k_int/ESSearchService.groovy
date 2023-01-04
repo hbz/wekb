@@ -595,10 +595,10 @@ class ESSearchService{
         searchSourceBuilder.query(scrollQuery)
         searchSourceBuilder.size(scrollSize)
         //SearchRequest searchRequest = new SearchRequest(usedComponentTypes.values() as String[])
-        SearchRequest searchRequest = new SearchRequest(grailsApplication.config.searchApi.indices as String[])
+        SearchRequest searchRequest = new SearchRequest(grailsApplication.config.wekb.es.searchApi.indices as String[])
         //searchRequest.scroll("1m")
         // ... set scroll interval to 15 minutes, reason: ERMS-3460
-        //SearchRequest searchRequest = new SearchRequest(grailsApplication.config.gokb.es.index)
+        //SearchRequest searchRequest = new SearchRequest(grailsApplication.config.wekb.es.index)
         searchRequest.scroll("15m")
         searchRequest.source(searchSourceBuilder)
         searchResponse = esclient.search(searchRequest, RequestOptions.DEFAULT)
@@ -761,7 +761,7 @@ class ESSearchService{
 
         try {
 
-          SearchRequest searchRequest = new SearchRequest(grailsApplication.config.searchApi.indices as String[])
+          SearchRequest searchRequest = new SearchRequest(grailsApplication.config.wekb.es.searchApi.indices as String[])
           SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
 
           searchSourceBuilder.query(exactQuery)
@@ -769,8 +769,8 @@ class ESSearchService{
 
           /* SearchRequestBuilder es_request =  esclient.prepareSearch()
         //println exactQuery
-        es_request.setIndices(grailsApplication.config.searchApi.indices as String[])
-        es_request.setTypes(grailsApplication.config.searchApi.types)
+        es_request.setIndices(grailsApplication.config.wekb.es.searchApi.indices as String[])
+        es_request.setTypes(grailsApplication.config.wekb.es.searchApi.types)
         es_request.setQuery(exactQuery)*/
 
           checkInt(result, errors, params.max, 'max')
@@ -1267,9 +1267,9 @@ class ESSearchService{
 
     params.q = URLEncoder.encode(params.q, "UTF-8")
 
-    int port = grailsApplication.config.searchApi.port
-    def indices = grailsApplication.config.searchApi.indices
-    String host = grailsApplication.config.gokb.es.host
+    int port = grailsApplication.config.wekb.es.searchApi.port
+    def indices = grailsApplication.config.wekb.es.searchApi.indices
+    String host = grailsApplication.config.wekb.es.host
     String url = "http://${host}:${port}/${indices.join(',')}/_search?q=${params.q}"
     if (params.size){
       url = url + "&size=${params.size}"

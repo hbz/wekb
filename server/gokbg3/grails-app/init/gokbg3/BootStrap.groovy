@@ -123,12 +123,12 @@ class BootStrap {
         //migrateDiskFilesToDatabase()
 
         CuratoryGroup.withTransaction() {
-            if (grailsApplication.config.gokb.defaultCuratoryGroup != null && grailsApplication.config.gokb.defaultCuratoryGroup != "") {
+            if (grailsApplication.config.wekb.defaultCuratoryGroup != null && grailsApplication.config.wekb.defaultCuratoryGroup != "") {
 
-                log.info("Ensure curatory group: ${grailsApplication.config.gokb?.defaultCuratoryGroup}");
+                log.info("Ensure curatory group: ${grailsApplication.config.wekb.defaultCuratoryGroup}");
 
-                def local_cg = CuratoryGroup.findByName(grailsApplication.config.gokb?.defaultCuratoryGroup) ?:
-                        new CuratoryGroup(name: grailsApplication.config.gokb?.defaultCuratoryGroup).save(flush: true, failOnError: true);
+                def local_cg = CuratoryGroup.findByName(grailsApplication.config.wekb.defaultCuratoryGroup) ?:
+                        new CuratoryGroup(name: grailsApplication.config.wekb.defaultCuratoryGroup).save(flush: true, failOnError: true);
             }
         }
 
@@ -384,7 +384,7 @@ class BootStrap {
     }
 
     def anonymizeUsers() {
-        if(grailsApplication.config.gokb.anonymizeUsers) {
+        if(grailsApplication.config.wekb.anonymizeUsers) {
             log.info("anonymizeUsers")
             User.findAll().each { User user ->
 
@@ -407,7 +407,7 @@ class BootStrap {
 
 
     def ensureEsIndices() {
-        def esIndices = grailsApplication.config.gokb.es.indices?.values()
+        def esIndices = grailsApplication.config.wekb.es.indices?.values()
         for (String indexName in esIndices) {
             try {
                 ESWrapperService.createIndex(indexName)

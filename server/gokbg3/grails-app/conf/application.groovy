@@ -167,7 +167,52 @@ grails.spring.bean.packages = []
 // whether to disable processing of multi part requests
 grails.web.disable.multipart=false
 
+grails.plugin.greenmail.disabled = true
+
 grails.converters.json.circular.reference.behaviour = 'INSERT_NULL'
+
+cache.headers.presets = [
+        "none": false,
+        "until_changed": [shared:true, validFor: (3600 * 12)] // cache content for 12 hours.
+]
+
+quartz.autoStartup = true
+quartz.waitForJobsToCompleteOnShutdown = false
+
+
+apiClasses = [
+        "com.k_int.apis.GrailsDomainHelpersApi"
+]
+
+wekb.es.globalSearch = [
+        'indices'     : ['wekbtipps', 'wekborgs', 'wekbpackages', 'wekbplatforms'],
+        'types'       : 'component',
+        'typingField' : 'componentType',
+        'port'        : 9300
+]
+
+wekb.es.searchApi = [
+        'path'        : '/',
+        'indices'     : ['wekbtipps', 'wekborgs', 'wekbpackages', 'wekbplatforms', 'wekbdeletedcomponents'],
+        'types'       : 'component',
+        'typingField' : 'componentType',
+        'port'        : 9200
+]
+
+
+
+wekb.languagesUrl = 'http://localhost:8070'
+wekb.ftupdate_enabled = true
+wekb.packageUpdate.enabled = false
+
+wekb.es.cluster = 'gokbg3-test'
+wekb.es.indices = [
+        tipps             : 'wekbtipps',
+        orgs              : 'wekborgs',
+        packages          : 'wekbpackages',
+        platforms         : 'wekbplatforms',
+        deletedKBComponent: 'wekbdeletedcomponents']
+
 
 
 

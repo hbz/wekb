@@ -12,7 +12,7 @@ class ComponentStatisticCollectionJob {
 
   def execute() {
     log.debug("Beginning scheduled statistics update job.")
-    if (grailsApplication.config.gokb.enable_statsrewrite) {
+    if (grailsApplication.config.wekb.enable_statsrewrite) {
       log.debug("Also updating existing stats.")
       componentStatisticService.updateCompStats(12,0,true)
     }

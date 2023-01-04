@@ -60,14 +60,14 @@ class SearchController {
 
                 log.debug("Searching for ${query_str}");
 
-                def typing_field = grailsApplication.config.globalSearch.typingField ?: 'componentType'
+                def typing_field = grailsApplication.config.wekb.es.globalSearch.typingField ?: 'componentType'
 
                 //QueryBuilder esQuery = QueryBuilders.queryStringQuery(query_str)
 
-                log.debug("Using indices ${grailsApplication.config.globalSearch.indices.join(", ")}")
+                log.debug("Using indices ${grailsApplication.config.wekb.es.globalSearch.indices.join(", ")}")
 
                 SearchResponse searchResponse
-                SearchRequest searchRequest = new SearchRequest(grailsApplication.config.globalSearch.indices as String[])
+                SearchRequest searchRequest = new SearchRequest(grailsApplication.config.wekb.es.globalSearch.indices as String[])
                 SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
 
                 params.sort = params.sort ?: "sortname"
@@ -202,12 +202,12 @@ class SearchController {
 
                 log.debug("Searching for ${query_str}")
 
-                //def typing_field = grailsApplication.config.globalSearch.typingField ?: 'componentType'
+                //def typing_field = grailsApplication.config.wekb.es.globalSearch.typingField ?: 'componentType'
 
-                log.debug("Using indices ${grailsApplication.config.globalSearch.indices.join(", ")}")
+                log.debug("Using indices ${grailsApplication.config.wekb.es.globalSearch.indices.join(", ")}")
 
                 SearchResponse searchResponse
-                SearchRequest searchRequest = new SearchRequest(grailsApplication.config.globalSearch.indices as String[])
+                SearchRequest searchRequest = new SearchRequest(grailsApplication.config.wekb.es.globalSearch.indices as String[])
                 SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
 
                 params.sort = params.sort ?: "sortname"

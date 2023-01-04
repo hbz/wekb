@@ -21,14 +21,14 @@ class AutoUpdatePackagesJob {
   }
 
   def execute() {
-    if (grailsApplication.config.gokb.packageUpdate.enabled) {
+    if (grailsApplication.config.wekb.packageUpdate.enabled) {
       log.debug("Beginning scheduled auto update packages job.")
 
         autoUpdatePackagesService.findPackageToUpdateAndUpdate(true)
 
       log.info("auto update packages job completed.")
     } else {
-      log.debug("automatic package update is not enabled - set config.gokb.packageUpdate_enabled = true");
+      log.debug("automatic package update is not enabled - set config.wekb.packageUpdate_enabled = true");
     }
   }
 }
