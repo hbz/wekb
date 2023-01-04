@@ -4,20 +4,6 @@ println("------- Using local config from ~/.grails/wekb-config.groovy ------- ")
 grails.mail.host = 'localhost'
 grails.mail.port = 25
 
-gokb.alerts.emailFrom = 'localhost@localhost.de'
-gokb.alerts.subject = 'Your we:kb User Alerts'
-gokb.anonymizeUsers = false
-gokb.costInfo = false
-gokb.defaultCuratoryGroup = 'Local'
-gokb.es.cluster = 'gokbes'
-gokb.es.host = 'localhost'
-gokb.ftupdate_enabled = false
-gokb.languagesUrl = 'localhost/languages'
-gokb.packageUpdate.enabled = false
-gokb.enable_statsrewrite = false
-gokb.sendJobInfosJob = false
-gokb.tsvExportTempDirectory = '/tmp'
-
 deployBackupLocation = ''
 pgDumpPath = ''
 
@@ -34,4 +20,15 @@ systemId = 'we:kb-Dev'
 logSql = true
 formatSql = true
 
-kbartImportStorageLocation = '/tmp/kbartImport'
+wekb.anonymizeUsers = false
+wekb.defaultCuratoryGroup = 'Local'
+wekb.es.cluster = 'gokbes'
+wekb.es.host = 'localhost'
+wekb.ftupdate_enabled = false
+wekb.languagesUrl = 'localhost/languages'
+wekb.packageUpdate.enabled = false
+wekb.enable_statsrewrite = false
+wekb.sendJobInfosJob = false
+wekb.kbartImportStorageLocation = '/tmp/kbartImport'
+
+

@@ -15,12 +15,12 @@ class SendJobInfosJob {
   }
 
   def execute() {
-    if (grailsApplication.config.gokb.sendJobInfosJob) {
+    if (grailsApplication.config.wekb.sendJobInfosJob) {
       log.debug("Beginning scheduled send job infos job.")
       sendPackageUpdateInfosJob()
       log.info("send job infos job completed.")
     } else {
-      log.debug("automatic send job infos Job is not enabled - set config.gokb.sendJobInfosJob = true");
+      log.debug("automatic send job infos Job is not enabled - set config.wekb.sendJobInfosJob = true");
     }
   }
 

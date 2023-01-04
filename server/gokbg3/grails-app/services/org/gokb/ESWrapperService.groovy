@@ -41,9 +41,9 @@ class ESWrapperService {
   def init() {
     log.debug("ESWrapperService::init")
 
-    es_indices = grailsApplication.config.gokb.es.indices
-    es_cluster_name = grailsApplication.config.gokb.es.cluster ?: ESWrapperService.ES_CLUSTER
-    es_host         = grailsApplication.config.gokb.es.host ?: ESWrapperService.ES_HOST
+    es_indices = grailsApplication.config.wekb.es.indices
+    es_cluster_name = grailsApplication.config.wekb.es.cluster ?: ESWrapperService.ES_CLUSTER
+    es_host         = grailsApplication.config.wekb.es.host ?: ESWrapperService.ES_HOST
 
     log.debug("es_cluster = ${es_cluster_name}")
     log.debug("es_indices = ${es_indices}")

@@ -44,7 +44,7 @@ class KbartProcessService {
 
             if (kbartRows.size() > 0) {
                 String fPathSource = '/tmp/wekb/kbartImportTmp'
-                String fPathTarget = Holders.grailsApplication.config.kbartImportStorageLocation ? "${Holders.grailsApplication.config.kbartImportStorageLocation.toString()}" : '/tmp/wekb/kbartImport'
+                String fPathTarget = Holders.grailsApplication.config.wekb.kbartImportStorageLocation ? "${Holders.grailsApplication.config.wekb.kbartImportStorageLocation.toString()}" : '/tmp/wekb/kbartImport'
 
                 File folder = new File("${fPathTarget}")
                 if (!folder.exists()) {

@@ -244,7 +244,7 @@ class AdminController {
     /*Client esclient = ESWrapperService.getClient()
 
     result.indices = []
-    def esIndices = grailsApplication.config.gokb.es.indices?.values()
+    def esIndices = grailsApplication.config.wekb.es.indices?.values()
 
     esIndices.each{ String indexName ->
       Map indexInfo = [:]
