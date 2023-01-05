@@ -1,4 +1,4 @@
-package wekb
+
 
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.acls.model.NotFoundException

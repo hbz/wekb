@@ -1,7 +1,5 @@
-package org.gokb
+package wekb
 
-import grails.converters.*
-import org.springframework.security.acls.model.NotFoundException
 import org.springframework.security.access.annotation.Secured;
 
 import org.gokb.cred.*

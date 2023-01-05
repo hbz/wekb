@@ -100,69 +100,6 @@ class CleanupService {
   }
 
   @Transactional
-  def deleteNoUrlPlatforms(Job j = null) {
-    log.debug("Delete platforms without URL")
-
-    def status_deleted = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Deleted')
-    def status_current = RefdataCategory.lookupOrCreate(RCConstants.KBCOMPONENT_STATUS, 'Current')
-
-    def delete_candidates = Platform.executeQuery('from Platform as plt where plt.primaryUrl IS NULL and plt.status <> ?', [status_deleted])
-
-    delete_candidates.each { ptr ->
-      def repl_crit = Platform.createCriteria()
-      def orig_plt = repl_crit.list () {
-        isNotNull('primaryUrl')
-        eq ('name', ptr.name)
-        eq ('status', status_current)
-      }
-
-      if ( orig_plt?.size() == 1 ) {
-        log.debug("Found replacement platform for ${ptr}")
-        def new_plt = orig_plt[0]
-
-        def old_from_combos = Combo.executeQuery("from Combo where fromComponent = ?", [ptr])
-        def old_to_combos = Combo.executeQuery("from Combo where toComponent = ?", [ptr])
-
-        old_from_combos.each { oc ->
-          def existing_new = Combo.executeQuery("from Combo where type = ? and fromComponent = ? and toComponent = ?",[oc.type, new_plt, oc.toComponent])
-
-          if (existing_new?.size() == 0 && oc.toComponent != new_plt) {
-            oc.fromComponent = new_plt
-            oc.save(flush:true)
-          }
-          else {
-            log.debug("New Combo already exists, or would link item to itself.. deleting instead!")
-            oc.status = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_DELETED)
-            oc.save(flush:true)
-          }
-        }
-
-        old_to_combos.each { oc ->
-          def existing_new = Combo.executeQuery("from Combo where type = ? and toComponent = ? and fromComponent = ?",[oc.type, new_plt, oc.fromComponent])
-
-          if (existing_new?.size() == 0 && oc.fromComponent != new_plt) {
-            oc.toComponent = new_plt
-            oc.save(flush:true)
-          }
-          else {
-            log.debug("New Combo already exists, or would link item to itself.. deleting instead!")
-            oc.status = RefdataCategory.lookup(RCConstants.COMBO_STATUS, Combo.STATUS_DELETED)
-            oc.save(flush:true)
-          }
-        }
-
-        ptr.name = "${ptr.name} DELETED"
-        ptr.deleteSoft()
-      }
-      else {
-        log.debug("Could not find a valid replacement for platform ${ptr}")
-      }
-
-    }
-    j.endTime = new Date();
-  }
-
-  @Transactional
   def ensureUuids(Job j = null)  {
     log.debug("GOKb missing uuid check..")
     def ctr = 0
@@ -296,56 +233,6 @@ class CleanupService {
     log.debug("Finished cleaning identifiers elapsed = ${System.currentTimeMillis() - start_time}")
   }
 
-
-
-  def reviewDatesOfTippCoverage(Job j = null) {
-    log.debug("Adding Reviews to components with inconsistent dates")
-    TitleInstancePackagePlatform.withNewSession {
-      def tippCoverageDates = TIPPCoverageStatement.executeQuery("from TIPPCoverageStatement where endDate < startDate",[readOnly: true])
-
-      log.debug("Found ${tippCoverageDates.size()} offending coverageStatements")
-      j.message("Found ${tippCoverageDates.size()} offending coverageStatements".toString())
-
-      tippCoverageDates.each { tcs ->
-        KBComponent kbc = KBComponent.get(tcs.owner.id)
-
-        if (kbc) {
-          log.debug("Adding RR to TIPP ${kbc}")
-          def new_rr = ReviewRequest.raise(
-            kbc,
-            "Please review the coverage dates.",
-            "Found an end date earlier than the start date!."
-          ).save(flush:true)
-          log.debug("Created RR: ${new_rr}")
-        }
-        else {
-          log.debug("Could not get KBComponent for ${tcs}!")
-        }
-      }
-
-      def tippAccessDates = TitleInstancePackagePlatform.executeQuery("from TitleInstancePackagePlatform where accessEndDate < accessStartDate",[readOnly: true])
-
-      log.debug("Found ${tippAccessDates.size()} offending tipp access dates")
-      j.message("Found ${tippAccessDates.size()} offending tipp access dates".toString())
-
-      tippAccessDates.each { tcs ->
-        if (tcs){
-          log.debug("Adding RR to TIPP ${tcs}")
-          def new_rr = ReviewRequest.raise(
-            tcs,
-            "Please review the coverage dates.",
-            "Found an end date earlier than the start date!."
-          ).save(flush:true)
-          log.debug("Created RR: ${new_rr}")
-        }
-        else {
-          log.debug("Could not get KBComponent for ${tcs}!")
-        }
-      }
-    }
-    log.debug("Done");
-    j.endTime = new Date()
-  }
 
   def cleanUpGorm() {
     log.debug("Clean up GORM");

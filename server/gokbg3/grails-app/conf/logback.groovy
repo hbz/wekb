@@ -29,7 +29,6 @@ if (Environment.isDevelopmentMode() || Environment.current == Environment.TEST) 
 
   logger('org.gokb.DomainClassExtender', WARN)
   /*logger('org.gokb.ClassExaminationService', WARN)
-  logger('org.gokb.IntegrationController', WARN)
   logger('org.gokb.CrossReferenceService', ERROR)
   logger('org.gokb.CrossRefPkgRun', DEBUG)
   logger('org.gokb.CleanupService', INFO)

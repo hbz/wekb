@@ -1,5 +1,6 @@
-package org.gokb
+package wekb
 
+import org.gokb.UserProfileService
 import org.springframework.security.access.annotation.Secured
 
 @Secured(['IS_AUTHENTICATED_FULLY'])

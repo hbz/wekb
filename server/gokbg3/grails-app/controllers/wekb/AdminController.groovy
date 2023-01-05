@@ -1,4 +1,4 @@
-package org.gokb
+package wekb
 
 import com.k_int.ConcurrencyManagerService
 import com.k_int.ConcurrencyManagerService.Job
@@ -6,30 +6,19 @@ import de.wekb.helper.RCConstants
 import de.wekb.helper.RDStore
 import grails.converters.JSON
 import grails.plugin.springsecurity.SpringSecurityService
-import grails.util.Holders
-import org.elasticsearch.action.search.SearchRequest
-import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.client.core.CountRequest
 import org.elasticsearch.client.core.CountResponse
 import org.elasticsearch.client.indices.GetIndexRequest
-import org.elasticsearch.index.query.QueryBuilder
-import org.elasticsearch.index.query.QueryBuilders
-import org.elasticsearch.rest.RestStatus
-import org.elasticsearch.search.SearchHit
-import org.elasticsearch.search.SearchHits
-import org.elasticsearch.search.aggregations.AggregationBuilders
-import org.elasticsearch.search.builder.SearchSourceBuilder
-import org.elasticsearch.search.sort.FieldSortBuilder
-import org.elasticsearch.search.sort.SortOrder
+import org.gokb.CleanupService
+import org.gokb.FTControl
+import org.gokb.FTUpdateService
+import org.gokb.GenericOIDService
 import org.gokb.cred.*
 import org.hibernate.Session
 import org.hibernate.SessionFactory
 import org.springframework.security.access.annotation.Secured
-import wekb.AdminService
-import wekb.UpdatePackageInfo
-import wekb.AutoUpdatePackagesService
 
 import java.text.SimpleDateFormat
 import java.util.concurrent.CancellationException
@@ -73,19 +62,6 @@ class AdminController {
 
     redirect(controller: 'admin', action: 'jobs');
 
-  }
-
-
-  def reviewDatesOfTippCoverage() {
-    Job j = concurrencyManagerService.createJob { Job j ->
-      cleanupService.reviewDatesOfTippCoverage(j)
-    }.startOrQueue()
-
-    j.description = "Mark insonsistent date ranges"
-    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'MarkInconsDateRanges')
-    j.startTime = new Date()
-
-    redirect(controller: 'admin', action: 'jobs');
   }
 
   def updateTextIndexes() {
@@ -175,20 +151,6 @@ class AdminController {
 
     j.description = "Cleanup Removed Components"
     j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'CleanupRemovedComponents')
-    j.startTime = new Date()
-
-    redirect(controller: 'admin', action: 'jobs');
-  }
-
-  def cleanupPlatforms() {
-    Job j = concurrencyManagerService.createJob { Job j ->
-      cleanupService.deleteNoUrlPlatforms(j)
-    }.startOrQueue()
-
-    log.debug("Triggering cleanup task. Started job #${j.uuid}")
-
-    j.description = "Platform Cleanup"
-    j.type = RefdataCategory.lookupOrCreate(RCConstants.JOB_TYPE, 'PlatformCleanup')
     j.startTime = new Date()
 
     redirect(controller: 'admin', action: 'jobs');
@@ -713,7 +675,7 @@ class AdminController {
       int max = 20000
       int count = 0
       List<String> tippUuidsNotInIndex = []
-      RestHighLevelClient esclient = ESWrapperService.getClient()
+      RestHighLevelClient esclient = org.gokb.ESWrapperService.getClient()
 
       Set<String> result = []
       try {

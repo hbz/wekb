@@ -1,9 +1,10 @@
-package org.gokb
+package wekb
 
 import de.wekb.helper.RCConstants
 import grails.converters.JSON
 import grails.plugin.springsecurity.SpringSecurityUtils
 import org.apache.commons.lang.RandomStringUtils
+import org.gokb.ComponentLookupService
 import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.security.access.annotation.Secured;
 import org.gokb.cred.*

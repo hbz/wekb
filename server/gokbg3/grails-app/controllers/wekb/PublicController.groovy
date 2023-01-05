@@ -1,14 +1,10 @@
-package org.gokb
+package wekb
 
 import de.wekb.helper.RCConstants
 import de.wekb.helper.RDStore
 import de.wekb.helper.ServerUtils
-import grails.core.GrailsApplication
-import grails.plugin.springsecurity.SpringSecurityUtils
 import grails.plugins.mail.MailService
 import org.gokb.cred.*
-import org.hibernate.ScrollMode
-import org.hibernate.ScrollableResults
 import wekb.ExportService
 import wekb.SearchService
 
@@ -18,7 +14,6 @@ import javax.servlet.ServletOutputStream
 class PublicController {
 
   def genericOIDService
-  def ESSearchService
   def dateFormatService
   ExportService exportService
   MailService mailService
@@ -100,56 +95,12 @@ class PublicController {
     log.debug("PublicController::index ${params}");
     def result = [:]
 
-    /*def mutableParams = new HashMap(params)
-
-    if (mutableParams.newMax) {
-      session.setAttribute("newMax", mutableParams.newMax)
-    }
-
-    if (mutableParams.max == null && !session.getAttribute("newMax")){
-      mutableParams.max = 10
-    }
-    else {
-      mutableParams.max = session.getAttribute("newMax") ? Integer.parseInt(session.getAttribute("newMax")) : Integer.parseInt(mutableParams.max)
-    }
-
-    if (mutableParams.offset == null || mutableParams.newMax ) {
-      mutableParams.offset = 0
-    }
-    else {
-      mutableParams.offset = Integer.parseInt(mutableParams.offset)
-    }
-
-    if (!mutableParams.sort){
-      mutableParams.sort='sortname'
-      mutableParams.order = 'asc'
-    }
-
-    mutableParams.componentType = "Package" // Tells ESSearchService what to look for
-
-    if((mutableParams.q == null ) || (mutableParams.q == '') ) {
-      mutableParams.q = '*'
-    }
-    // params.remove('q');
-    // params.isPublic="Yes"
-
-    if(mutableParams.search.equals('yes')){
-      //when searching make sure results start from first page
-      mutableParams.offset = 0
-      mutableParams.search = null
-    }
-
-    result =  ESSearchService.search(mutableParams)
-*/
     def searchResult = [:]
 
     params.qbe = 'g:publicPackages'
     searchResult = searchService.search(null, searchResult, params, response.format)
 
     result = searchResult.result
-
-    //result.s_action = actionName
-    //result.s_controller = controllerName
 
     def query_params = [forbiddenStatus : [RDStore.KBC_STATUS_DELETED, RDStore.KBC_STATUS_REMOVED]]
 
@@ -169,11 +120,6 @@ class PublicController {
       }
 
     }
-
-   /* params.max = mutableParams.max
-    params.offset = mutableParams.offset
-    params.remove('newMax')
-    params.remove('search')*/
 
     result
   }

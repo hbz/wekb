@@ -22,10 +22,7 @@ import java.text.SimpleDateFormat
 class AjaxSupportController {
 
   def genericOIDService
-  def aclUtilService
   def springSecurityService
-  def componentLookupService
-  def messageSource
   def messageService
   AccessService accessService
 
@@ -950,7 +947,7 @@ class AjaxSupportController {
           // We should clear the session values for a user if this is a user to force reload of the,
           // parameters.
           if (target instanceof User) {
-            session.userPereferences = null
+            //session.userPereferences = null
           }
           else {
             if ( value ) {

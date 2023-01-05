@@ -382,7 +382,6 @@ class Package extends KBComponent {
       [code: 'method::deleteSoft', label: 'Mark the package as deleted (with all Titles)', perm: 'delete'],
       [code: 'method::retire', label: 'Mark the package as retired (with all Titles)'],
       [code: 'method::removeWithTipps', label: 'Remove the package (with all Titles)', perm: 'delete'],
-      /*[code: 'verifyTitleList', label: 'Verify Title List'],*/
       [code: 'packageUrlUpdate', label: 'Trigger Update (Changed Titles)'],
       [code: 'packageUrlUpdateAllTitles', label: 'Trigger Update (all Titles)'],
     ]

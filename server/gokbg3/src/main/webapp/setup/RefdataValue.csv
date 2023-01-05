@@ -1,8 +1,4 @@
 rdc;token;value_de;value_en
-Activity.Status;Abandoned;Abandoned;Abandoned
-Activity.Status;Active;Active;Active
-Activity.Status;Complete;Complete;Complete
-Activity.Type;TitleTransfer;TitleTransfer;TitleTransfer
 AllocatedReviewGroup.Status;Claimed;Claimed;Claimed
 AllocatedReviewGroup.Status;In Progress;In Progress;In Progress
 Update.Status;Successful;Successful;Successful
