@@ -22,7 +22,7 @@
     <br />
     <br />
     <g:if test="${exception}">
-        <p>${exception?.message}</p>
+        <p>${exception.message}</p>
         <br/>
         <p>
             <a href="mailto:laser@hbz-nrw.de?${mailString}">
