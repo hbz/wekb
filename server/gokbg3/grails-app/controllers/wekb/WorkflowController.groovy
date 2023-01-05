@@ -241,7 +241,7 @@ class WorkflowController{
             }
 
             if(processRunning){
-              flash.error = 'A package update is already in progress. Please wait this has finished.'
+              flash.error = 'A package update is already in progress. Please wait until that has finished.'
             }else {
               executorService.execute({
                 Package aPackage = Package.get(pkgObj.id)
