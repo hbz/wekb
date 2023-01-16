@@ -1,8 +1,9 @@
 package gokbg3
 
-
+import de.wekb.PasswordUtils
 import grails.config.Config
 import grails.core.support.GrailsConfigurationAware
+import grails.gorm.transactions.Transactional
 import grails.gsp.PageRenderer
 import grails.plugin.springsecurity.authentication.dao.NullSaltSource
 import grails.plugin.springsecurity.ui.strategy.MailStrategy
@@ -12,7 +13,9 @@ import grails.plugin.springsecurity.ui.RegisterCommand
 import grails.plugin.springsecurity.ui.ResetPasswordCommand
 import grails.plugin.springsecurity.ui.ForgotPasswordCommand
 import grails.plugin.springsecurity.ui.RegistrationCode
+import grails.plugins.mail.MailService
 import groovy.text.SimpleTemplateEngine
+import org.gokb.cred.User
 import org.springframework.context.MessageSource
 import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.security.authentication.dao.SaltSource
@@ -23,6 +26,8 @@ import groovy.util.logging.*
 @Slf4j
 @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
 class RegisterController extends grails.plugin.springsecurity.ui.RegisterController {
+
+    MailService mailService
 
   static defaultAction = 'register'
 
@@ -161,7 +166,7 @@ class RegisterController extends grails.plugin.springsecurity.ui.RegisterControl
   @Override
 	def forgotPassword(ForgotPasswordCommand forgotPasswordCommand) {
 
-		if (!request.post) {
+		/*if (!request.post) {
 			return [forgotPasswordCommand: new ForgotPasswordCommand()]
 		}
 
@@ -200,10 +205,47 @@ class RegisterController extends grails.plugin.springsecurity.ui.RegisterControl
 			}
 
 			body
-		}
+		}*/
 
-		[emailSent: true, forgotPasswordCommand: forgotPasswordCommand]
+		[emailSent: params.emailSent, forgotPasswordCommand: forgotPasswordCommand]
 	}
+
+    @Transactional
+    def resetForgottenPassword() {
+        boolean emailSent = false
+        if(!params.fgp_username) {
+            flash.error = g.message(code:'forgottenPassword.userMissing') as String
+        }
+        else {
+            User user = User.findByUsername(params.fgp_username)
+            if (user) {
+                if(!user.email) {
+                    flash.error = g.message(code:'forgottenPassword.noEmail') as String
+                }else{
+                    String newPassword = PasswordUtils.getRandomUserPassword()
+                    user.password = newPassword
+                    if (user.save()) {
+                        try {
+                            mailService.sendMail {
+                                to user.email
+                                from 'laser@hbz-nrw.de'
+                                subject grailsApplication.config.systemId + ' - Password Reset'
+                                body (view: '/mailTemplate/text/resetPassword', model: [newPassword: newPassword])
+                            }
+                            emailSent = true
+                        }
+                        catch (Exception e) {
+                            emailSent = false
+                            println "Unable to perform email due to exception ${e.message}"
+                            flash.error = g.message(code:'forgottenPassword.userError') as String
+                        }
+                    }
+                }
+            }
+            else flash.error = g.message(code:'forgottenPassword.userError') as String
+        }
+        redirect action: 'forgotPassword', params: [emailSent: emailSent]
+    }
 
 	/*def resetPassword(ResetPasswordCommand resetPasswordCommand) {
 

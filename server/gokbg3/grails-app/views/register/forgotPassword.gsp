@@ -10,7 +10,9 @@
 <semui:flashMessage data="${flash}"/>
 
 <g:if test='${emailSent}'>
-    <semui:message code='spring.security.ui.forgotPassword.sent'/>
+    <semui:message>
+        <g:message code="spring.security.ui.forgotPassword.sent"/>
+    </semui:message>
 </g:if>
 
 <g:if test="${!emailSent}">
@@ -21,13 +23,13 @@
                     <g:message code='spring.security.ui.forgotPassword.title'/>
                 </div>
             </h2>
-            <g:form action='forgotPassword' name="forgotPasswordForm" autocomplete='off' class="ui form">
+            <g:form action='resetForgottenPassword' name="forgotPasswordForm" autocomplete='off' class="ui form">
 
                 <div class="ui stacked segment">
                     <div class="field">
                         <div class="ui left icon input">
                             <i class="user icon"></i>
-                            <g:textField id="username" placeholder="Requested Username" name="username" size="25"/>
+                            <g:textField id="fgp_username" placeholder="Requested Username" name="fgp_username" size="25"/>
                         </div>
                     </div>
 
