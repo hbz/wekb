@@ -811,11 +811,13 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Scope', property: 'scope', sort: 'scope'],
                                 [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
                                 [heading: 'Status', property: 'status?.value', sort: 'status'],
-                                [heading: 'Titles', property: 'currentTippCount', sort: 'currentTippCount'],
+                                [heading: 'Current Titles', property: 'currentTippCount', sort: 'currentTippCount'],
+                                [heading: 'Retired Titles', property: 'retiredTippCount', sort: 'retiredTippCount'],
+                                [heading: 'Expected Titles', property: 'expectedTippCount', sort: 'expectedTippCount'],
+                                [heading: 'Deleted Titles', property: 'deletedTippCount', sort: 'deletedTippCount'],
                                //[heading: 'T', property: 'tippDuplicatesByURLCount'],
                                 [heading: 'Product IDs', property: 'anbieterProduktIDs'],
-                                [heading: 'Source', property: 'source?.name', link: true, sort: 'source.name'],
-                                [heading: 'Automatic Updates', property: 'source?.automaticUpdates']
+                                [heading: 'Automatic Updates', property: 'source?.automaticUpdates', link: true]
                         ],
                         actions   : [
                         ]
@@ -1177,7 +1179,10 @@ class GlobalSearchTemplatesService {
                                 [heading: 'Curatory Groups', property: 'curatoryGroups', link: true],
                                 [heading: 'Content Type', property: 'contentType?.value', sort: 'contentType'],
                                 [heading: 'Product IDs', property: 'anbieterProduktIDs'],
-                                [heading: 'Titles', property: 'currentTippCount', sort: 'currentTippCount'],
+                                [heading: 'Current Titles', property: 'currentTippCount', sort: 'currentTippCount'],
+                                [heading: 'Retired Titles', property: 'retiredTippCount', sort: 'retiredTippCount'],
+                                [heading: 'Expected Titles', property: 'expectedTippCount', sort: 'expectedTippCount'],
+                                [heading: 'Deleted Titles', property: 'deletedTippCount', sort: 'deletedTippCount'],
                                 [heading: 'Last Updated', property: 'lastUpdated', sort: 'lastUpdated'],
                                 [heading: 'Automatic Updates', property: 'source?.automaticUpdates']
                         ],
