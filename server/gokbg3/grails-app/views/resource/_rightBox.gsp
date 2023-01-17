@@ -134,6 +134,24 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="inline fields">
+                        <label>Export as: </label>
+
+                        <div class="field">
+                            <div class="ui radio checkbox">
+                                <input type="radio" name="exportFormat" checked="checked"  value="tsv">
+                                <label>TSV-File</label>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="ui radio checkbox">
+                                <input type="radio" name="exportFormat" value="xcel">
+                                <label>Excel-File</label>
+                            </div>
+                        </div>
+                    </div>
                 </g:form>
             </semui:modal>
           %{--  <g:link controller="public" action="packageTSVExport" class="ui inverted button"
