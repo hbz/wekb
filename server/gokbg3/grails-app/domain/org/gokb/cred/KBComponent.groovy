@@ -99,7 +99,8 @@ abstract class KBComponent implements Auditable{
   @Transient
   private ensureDefaults(){
     try{
-      // Metaclass
+      status = RDStore.KBC_STATUS_CURRENT
+      /*// Metaclass
       ExpandoMetaClass metaclass_of_this_component = this.metaClass
       // First get or build up the full static map of defaults
       final Class rootClass = metaclass_of_this_component.getTheClass()
@@ -190,7 +191,7 @@ abstract class KBComponent implements Auditable{
             }
           }
         }
-      }
+      }*/
     }
     catch (Exception e){
       log.error("Problem initializing defaults", e)
@@ -495,7 +496,7 @@ abstract class KBComponent implements Auditable{
   def beforeInsert(){
     // Generate any necessary values.
     generateShortcode()
-    generateNormname()
+    //generateNormname()
     //generateComponentHash()
     generateUuid()
     // Ensure any defaults defined get set.
@@ -522,7 +523,7 @@ abstract class KBComponent implements Auditable{
       if (!shortcode){
         this.shortcode = generateShortcode(name)
       }
-      generateNormname()
+      //generateNormname()
       //generateComponentHash()
     }
     if (!uuid){

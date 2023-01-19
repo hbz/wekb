@@ -88,7 +88,7 @@ class CuratoryGroup extends KBComponent {
     this.owner = user
 
     this.generateShortcode()
-    this.generateNormname()
+    //this.generateNormname()
     //this.generateComponentHash()
     this.generateUuid()
     this.ensureDefaults()
