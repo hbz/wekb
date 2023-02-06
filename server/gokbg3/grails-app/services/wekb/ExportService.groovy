@@ -636,6 +636,7 @@ class ExportService {
         int max = 10000
         TitleInstancePackagePlatform.withSession { Session sess ->
             for (int offset = 0; offset < tippIDs.size(); offset += max) {
+                log.debug("Count:"+offset)
                 List tippAttributes = TitleInstancePackagePlatform.executeQuery(hqlQuery, [tippIDs: tippIDs.drop(offset).take(max)], [readOnly: true])
                 tippAttributes.each { def attribute ->
                     List row = []
@@ -650,7 +651,7 @@ class ExportService {
                                     List existPrice = ComponentPrice.executeQuery('select price from ComponentPrice where price is not null and owner.id = :owner and priceType = :priceType and currency = :currency ', [owner: tippID, priceType: priceTypeList, currency: RDStore.CURRENCY_EUR], [readOnly: true])
 
                                     if (existPrice.size() > 0) {
-                                        row.add(sanitize(existPrice[0]))
+                                        row.add(existPrice[0])
                                     } else {
                                         row.add("")
                                     }
@@ -659,7 +660,7 @@ class ExportService {
                                     List existPrice = ComponentPrice.executeQuery('select price from ComponentPrice where price is not null and owner.id = :owner and priceType = :priceType and currency = :currency ', [owner: tippID, priceType: priceTypeList, currency: RDStore.CURRENCY_USD], [readOnly: true])
 
                                     if (existPrice.size() > 0) {
-                                        row.add(sanitize(existPrice[0]))
+                                        row.add(existPrice[0])
                                     } else {
                                         row.add("")
                                     }
@@ -668,7 +669,7 @@ class ExportService {
                                     List existPrice = ComponentPrice.executeQuery('select price from ComponentPrice where price is not null and owner.id = :owner and priceType = :priceType and currency = :currency ', [owner: tippID, priceType: priceTypeList, currency: RDStore.CURRENCY_GBP], [readOnly: true])
 
                                     if (existPrice.size() > 0) {
-                                        row.add(sanitize(existPrice[0]))
+                                        row.add(existPrice[0])
                                     } else {
                                         row.add("")
                                     }
@@ -677,7 +678,7 @@ class ExportService {
                                     List existPrice = ComponentPrice.executeQuery('select price from ComponentPrice where price is not null and owner.id = :owner and priceType = :priceType and currency = :currency ', [owner: tippID, priceType: priceTypeOAAPC, currency: RDStore.CURRENCY_EUR], [readOnly: true])
 
                                     if (existPrice.size() > 0) {
-                                        row.add(sanitize(existPrice[0]))
+                                        row.add(existPrice[0])
                                     } else {
                                         row.add("")
                                     }
@@ -686,7 +687,7 @@ class ExportService {
                                     List existPrice = ComponentPrice.executeQuery('select price from ComponentPrice where price is not null and owner.id = :owner and priceType = :priceType and currency = :currency ', [owner: tippID, priceType: priceTypeOAAPC, currency: RDStore.CURRENCY_USD], [readOnly: true])
 
                                     if (existPrice.size() > 0) {
-                                        row.add(sanitize(existPrice[0]))
+                                        row.add(existPrice[0])
                                     } else {
                                         row.add("")
                                     }
@@ -695,7 +696,7 @@ class ExportService {
                                     List existPrice = ComponentPrice.executeQuery('select price from ComponentPrice where price is not null and owner.id = :owner and priceType = :priceType and currency = :currency ', [owner: tippID, priceType: priceTypeOAAPC, currency: RDStore.CURRENCY_GBP], [readOnly: true])
 
                                     if (existPrice.size() > 0) {
-                                        row.add(sanitize(existPrice[0]))
+                                        row.add(existPrice[0])
                                     } else {
                                         row.add("")
                                     }
@@ -704,7 +705,7 @@ class ExportService {
                                     List identifiers = Identifier.executeQuery('select i.value from Identifier as i where LOWER(i.namespace.value) in (:namespaceValue) and i.tipp.id = :tippID', [namespaceValue: printIdentifier, tippID: tippID], [readOnly: true])
 
                                     if (identifiers.size() > 0) {
-                                        row.add(sanitize(identifiers.join(';')))
+                                        row.add(identifiers.join(';'))
                                     } else {
                                         row.add("")
                                     }
@@ -713,7 +714,7 @@ class ExportService {
                                     List identifiers = Identifier.executeQuery('select i.value from Identifier as i where LOWER(i.namespace.value) in (:namespaceValue) and i.tipp.id = :tippID', [namespaceValue: onlineIdentifier, tippID: tippID], [readOnly: true])
 
                                     if (identifiers.size() > 0) {
-                                        row.add(sanitize(identifiers.join(';')))
+                                        row.add(identifiers.join(';'))
                                     } else {
                                         row.add("")
                                     }
@@ -728,7 +729,7 @@ class ExportService {
                                     List identifiers = Identifier.executeQuery('select i.value from Identifier as i where LOWER(i.namespace.value) = :namespaceValue and i.tipp.id = :tippID', [namespaceValue: titleIdNameSpace.toLowerCase(), tippID: tippID], [readOnly: true])
 
                                     if (identifiers.size() > 0) {
-                                        row.add(sanitize(identifiers.join(';')))
+                                        row.add(identifiers.join(';'))
                                     } else {
                                         row.add("")
                                     }
@@ -737,7 +738,7 @@ class ExportService {
                                     List identifiers = Identifier.executeQuery('select i.value from Identifier as i where LOWER(i.namespace.value) = :namespaceValue and i.tipp.id = :tippID', [namespaceValue: doiIdentifier.toLowerCase(), tippID: tippID], [readOnly: true])
 
                                     if (identifiers.size() > 0) {
-                                        row.add(sanitize(identifiers.join(';')))
+                                        row.add(identifiers.join(';'))
                                     } else {
                                         row.add("")
                                     }
@@ -746,7 +747,7 @@ class ExportService {
                                     List identifiers = Identifier.executeQuery('select i.value from Identifier as i where LOWER(i.namespace.value) = :namespaceValue and i.tipp.id = :tippID', [namespaceValue: zdbIdentifier.toLowerCase(), tippID: tippID], [readOnly: true])
 
                                     if (identifiers.size() > 0) {
-                                        row.add(sanitize(identifiers.join(';')))
+                                        row.add(identifiers.join(';'))
                                     } else {
                                         row.add("")
                                     }
@@ -755,7 +756,7 @@ class ExportService {
                                     List identifiers = Identifier.executeQuery('select i.value from Identifier as i where LOWER(i.namespace.value) = :namespaceValue and i.tipp.id = :tippID', [namespaceValue: ezbIdentifier.toLowerCase(), tippID: tippID], [readOnly: true])
 
                                     if (identifiers.size() > 0) {
-                                        row.add(sanitize(identifiers.join(';')))
+                                        row.add(identifiers.join(';'))
                                     } else {
                                         row.add("")
                                     }
@@ -764,7 +765,7 @@ class ExportService {
                                     List identifiers = Identifier.executeQuery('select i.value from Identifier as i where LOWER(i.namespace.value) = :namespaceValue and i.tipp.id = :tippID', [namespaceValue: packageEzbAnchor.toLowerCase(), tippID: tippID], [readOnly: true])
 
                                     if (identifiers.size() > 0) {
-                                        row.add(sanitize(identifiers.join(';')))
+                                        row.add(identifiers.join(';'))
                                     } else {
                                         row.add("")
                                     }
@@ -773,7 +774,7 @@ class ExportService {
                                     List identifiers = Identifier.executeQuery('select i.value from Identifier as i where LOWER(i.namespace.value) = :namespaceValue and i.tipp.id = :tippID', [namespaceValue: packageIsci.toLowerCase(), tippID: tippID], [readOnly: true])
 
                                     if (identifiers.size() > 0) {
-                                        row.add(sanitize(identifiers.join(';')))
+                                        row.add(identifiers.join(';'))
                                     } else {
                                         row.add("")
                                     }
@@ -782,7 +783,7 @@ class ExportService {
                                     List<KBComponentLanguage> languages = KBComponentLanguage.executeQuery('select language.value from KBComponentLanguage where kbcomponent.id = :tippID', [tippID: tippID], [readOnly: true])
 
                                     if (languages.size() > 0) {
-                                        row.add(sanitize(languages.join(';')))
+                                        row.add(languages.join(';'))
                                     } else {
                                         row.add("")
                                     }
@@ -791,16 +792,16 @@ class ExportService {
                                     TitleInstancePackagePlatform titleInstancePackagePlatform = TitleInstancePackagePlatform.get(tippID)
 
                                     if (titleInstancePackagePlatform.ddcs.size() > 0) {
-                                        row.add(sanitize(titleInstancePackagePlatform.ddcs.join(';')))
+                                        row.add(titleInstancePackagePlatform.ddcs.join(';'))
                                     } else {
                                         row.add("")
                                     }
                                     break;
                                 case 'pkg.name':
-                                        row.add(sanitize(pkg.name))
+                                        row.add(pkg.name)
                                     break;
                                 case 'pkg.uuid':
-                                    row.add(sanitize(pkg.uuid))
+                                    row.add(pkg.uuid)
                                     break;
                                 default:
                                     row.add(sanitize(attribute[index]))
