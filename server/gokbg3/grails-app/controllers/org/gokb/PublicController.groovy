@@ -156,7 +156,9 @@ class PublicController {
 
     //List providerRoles = [RefdataCategory.lookup(RCConstants.ORG_ROLE, 'Content Provider'), RefdataCategory.lookup(RCConstants.ORG_ROLE, 'Platform Provider'), RefdataCategory.lookup(RCConstants.ORG_ROLE, 'Publisher')]
 
-    def query_params2 = [forbiddenStatus : [RDStore.KBC_STATUS_DELETED, RDStore.KBC_STATUS_REMOVED], roles: providerRoles]
+    //def query_params2 = [forbiddenStatus : [RDStore.KBC_STATUS_DELETED, RDStore.KBC_STATUS_REMOVED], roles: providerRoles]
+
+    def query_params2 = [forbiddenStatus : [RDStore.KBC_STATUS_DELETED, RDStore.KBC_STATUS_REMOVED]]
 
     result.componentsOfStatistic = ["Provider", "Package", "Platform", "CuratoryGroup", "TitleInstancePackagePlatform"]
 
@@ -164,7 +166,7 @@ class PublicController {
     result.componentsOfStatistic.each { component ->
       if(component == "Provider"){
         //result.countComponent."${component.toLowerCase()}" = Org.executeQuery("select count(o.id) from Org as o where exists (select orgRoles from o.roles as orgRoles where orgRoles in (:roles)) and o.status not in (:forbiddenStatus)", query_params2, [readOnly: true])[0]
-        result.countComponent."${component.toLowerCase()}" = Org.executeQuery("select count(o.id) from Org as o where exists (select orgRoles from o.roles as orgRoles where o.status not in (:forbiddenStatus)", query_params2, [readOnly: true])[0]
+        result.countComponent."${component.toLowerCase()}" = Org.executeQuery("select count(o.id) from Org as o where o.status not in (:forbiddenStatus)", query_params2, [readOnly: true])[0]
       }else {
         def fetch_all = "select count(o.id) from ${component} as o where status not in (:forbiddenStatus)"
         result.countComponent."${component.toLowerCase()}" = KBComponent.executeQuery(fetch_all.toString(), query_params, [readOnly: true])[0]
