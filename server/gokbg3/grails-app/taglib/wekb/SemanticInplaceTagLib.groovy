@@ -157,7 +157,7 @@ class SemanticInplaceTagLib {
             if (body) {
                 out << body()
             } else {
-                String content = (attrs.owner?."${attrs.field}" ? renderObjectValue(attrs.owner."${attrs.field}") : "")
+                String content = (renderObjectValue(attrs.owner."${attrs.field}"))
                 if(content){
                     out << content
                 }else {
@@ -170,7 +170,7 @@ class SemanticInplaceTagLib {
             if (body) {
                 out << body()
             } else {
-                String content = (attrs.owner?."${attrs.field}" ? renderObjectValue(attrs.owner."${attrs.field}") : "")
+                String content = (renderObjectValue(attrs.owner."${attrs.field}"))
                 if(content){
                     out << content
                 }else {
@@ -269,7 +269,7 @@ class SemanticInplaceTagLib {
             if (body) {
                 out << body()
             } else {
-                def content = (attrs.owner?."${attrs.field}" ? renderObjectValue(attrs.owner."${attrs.field}") : "")
+                def content = (renderObjectValue(attrs.owner."${attrs.field}"))
                 out << "${content ?: 'Empty'}"
             }
         }
@@ -362,6 +362,9 @@ class SemanticInplaceTagLib {
                     break;
                 case Boolean.class:
                     result = (value == true ? 'Yes' : 'No')
+                    break;
+                case Float.class:
+                    result = value
                     break;
                 case Date.class:
                     def sdf = new java.text.SimpleDateFormat('yyyy-MM-dd')
@@ -513,7 +516,7 @@ class SemanticInplaceTagLib {
                 if (body) {
                     out << body()
                 } else {
-                    String content = (attrs.owner?."${attrs.field}" ? renderObjectValue(attrs.owner."${attrs.field}") : "")
+                    String content = (renderObjectValue(attrs.owner."${attrs.field}"))
                     if(content){
                         out << content
                     }else {
@@ -533,7 +536,7 @@ class SemanticInplaceTagLib {
             if (body) {
                 out << body()
             } else {
-                String content = (attrs.owner?."${attrs.field}" ? renderObjectValue(attrs.owner."${attrs.field}") : "")
+                String content = (renderObjectValue(attrs.owner."${attrs.field}"))
                 if(content){
                     out << g.link(content, controller: 'resource', action: 'show', id: attrs.owner."${attrs.field}".uuid)
                 }else {
