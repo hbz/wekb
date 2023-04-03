@@ -1,3 +1,7 @@
+This repo will no longer be updated because there is a new repo for the we:kb. This can be found here:
+
+https://github.com/hbz/wekb2
+
 Welcome to we:kb
 
 forked from https://github.com/openlibraryenvironment/gokb.
